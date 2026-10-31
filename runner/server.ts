@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import { lapBaoGia, type DanhMuc, type DonGia, type KhoiLuong } from "./bao_gia";
 import { docDonGia, taoMauDonGia, xuatBaoGia } from "./excel";
 import { hoiClaude } from "./claude";
-import { khaoSatTrong, khoiLuongSoBo, tachJsonKhaoSat, HE_THONG, type KhaoSat } from "./khao_sat";
+import { chuanHoaKhaoSat, ghepGoiY, khoiLuongSoBo, tachJsonKhaoSat, HE_THONG, type KhaoSat } from "./khao_sat";
 import { xuatKhaoSat } from "./word";
 import { marked } from "marked";
 
@@ -24,13 +24,15 @@ const HOST = arg("--host", "127.0.0.1");
 const danhMuc = (): DanhMuc => JSON.parse(readFileSync(path.join(GOC, "data", "vat_tu.json"), "utf8"));
 const donGia = (): DonGia => (existsSync(FILE_DON_GIA) ? JSON.parse(readFileSync(FILE_DON_GIA, "utf8")) : {});
 
-/** Tên dự án thành tên thư mục an toàn (chặn ../, ký tự cấm Windows). */
+class LoiNguoiDung extends Error {}
+
+/** Tên dự án thành tên thư mục an toàn: chặn ../, ký tự cấm, tên thiết bị (CON, NUL…) và dấu chấm/cách cuối mà Windows tự cắt. */
 export function tenThuMuc(ten: unknown): string {
-  const s = String(ten ?? "").replace(/[<>:"/\\|?*\x00-\x1f]/g, "_").replace(/^\.+/, "").trim().slice(0, 100);
+  let s = String(ten ?? "").replace(/[<>:"/\\|?*\x00-\x1f]/g, "_").trim().slice(0, 100).replace(/^\.+/, "").replace(/[. ]+$/, "");
+  if (/^(con|prn|aux|nul|com\d|lpt\d)(\.|$)/i.test(s)) s = "_" + s;
   if (!s) throw new LoiNguoiDung("Thiếu tên dự án");
   return s;
 }
-class LoiNguoiDung extends Error {}
 
 // nguon: "cad" = bóc từ bản vẽ (PCCC_BOC), "so_bo" = ước theo khảo sát.
 const fileKL = (duAn: unknown, nguon: unknown = "cad") => path.join(DU_AN, tenThuMuc(duAn), nguon === "so_bo" ? "khoi_luong_so_bo.json" : "khoi_luong.json");
@@ -40,7 +42,12 @@ function docKL(duAn: unknown, nguon: unknown = "cad"): KhoiLuong {
   if (!existsSync(f)) throw new LoiNguoiDung(nguon === "so_bo" ? "Chưa có khối lượng sơ bộ: lưu khảo sát rồi bấm Ước khối lượng" : "Dự án chưa có khối lượng: chạy PCCC_BOC trong AutoCAD");
   return JSON.parse(readFileSync(f, "utf8"));
 }
-const docKS = (duAn: unknown): KhaoSat => (existsSync(fileKS(duAn)) ? JSON.parse(readFileSync(fileKS(duAn), "utf8")) : khaoSatTrong(tenThuMuc(duAn)));
+const docKS = (duAn: unknown): KhaoSat =>
+  chuanHoaKhaoSat(existsSync(fileKS(duAn)) ? JSON.parse(readFileSync(fileKS(duAn), "utf8")) : {}, tenThuMuc(duAn));
+/** Thư mục trong du_an/ có dữ liệu (khối lượng CAD, sơ bộ hoặc khảo sát); bỏ qua thư mục tên lạ. */
+function coDuLieu(d: string) {
+  try { return existsSync(fileKL(d)) || existsSync(fileKL(d, "so_bo")) || existsSync(fileKS(d)); } catch { return false; }
+}
 function ghiJson(f: string, x: unknown) {
   mkdirSync(path.dirname(f), { recursive: true });
   writeFileSync(f, JSON.stringify(x, null, 1), "utf8");
@@ -77,23 +84,25 @@ async function xuLy(req: IncomingMessage, res: ServerResponse) {
     return res.end(readFileSync(path.join(GOC, "web", "index.html")));
   }
   if (r === "GET /api/vat-tu") return json(res, danhMuc());
-  if (r === "GET /api/du-an") return json(res, existsSync(DU_AN) ? readdirSync(DU_AN).filter((d) => existsSync(fileKL(d)) || existsSync(fileKL(d, "so_bo")) || existsSync(fileKS(d))) : []);
+  if (r === "GET /api/du-an") return json(res, existsSync(DU_AN) ? readdirSync(DU_AN).filter(coDuLieu) : []);
   if (r === "GET /api/huong-dan") return json(res, JSON.parse(readFileSync(path.join(GOC, "data", "huong_dan.json"), "utf8")));
   if (r === "GET /api/tai-lieu") {
+    const html = await marked.parse(readFileSync(fileTaiLieu(q.get("f")), "utf8")); // tính xong mới gửi header: lỗi còn trả JSON được
     res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
-    return res.end(await marked.parse(readFileSync(fileTaiLieu(q.get("f")), "utf8")));
+    return res.end(html);
   }
   if (r === "GET /api/khao-sat") return json(res, { he_thong_mac_dinh: HE_THONG.map((h) => h.ten), khao_sat: docKS(q.get("du_an")) });
   if (r === "POST /api/khao-sat") {
-    const ks = JSON.parse((await docBody(req)).toString("utf8")) as KhaoSat;
-    ks.du_an = tenThuMuc(ks.du_an);
+    const vao = JSON.parse((await docBody(req)).toString("utf8"));
+    const ks = chuanHoaKhaoSat(vao, tenThuMuc(vao?.du_an));
     ghiJson(fileKS(ks.du_an), ks);
-    return json(res, { ok: true, du_an: ks.du_an });
+    return json(res, { ok: true, du_an: ks.du_an, khao_sat: ks });
   }
   if (r === "POST /api/khao-sat/goi-y") {
-    const ks = JSON.parse((await docBody(req)).toString("utf8")) as KhaoSat;
+    const vao = JSON.parse((await docBody(req)).toString("utf8"));
+    const ks = chuanHoaKhaoSat(vao, tenThuMuc(vao?.du_an));
     const cauHoi = [
-      "Đọc knowledge/khao-sat-bao-gia.md và làm đúng hướng dẫn trong đó. Tri thức quy chuẩn nằm trong thư mục knowledge/ (QCVN 06, QCVN 10:2025, nghị định thẩm định, MOD_*, SKILL_thoat_nan); chỉ trích điều khoản có trong các file này.",
+      "Đọc knowledge/khao-sat-bao-gia.md và làm đúng hướng dẫn trong đó (8 mục, định dạng trả lời có một khối ```json {\"khao_sat\": …} ở cuối). Tri thức quy chuẩn nằm trong thư mục knowledge/ (QCVN 06, QCVN 10:2025, nghị định thẩm định, MOD_*, SKILL_thoat_nan); chỉ trích điều khoản có trong các file này. Trả lời tiếng Việt.",
       "Không có bản vẽ, chỉ có số liệu dưới đây (đầu vào loại 3). Số liệu đã có thì dùng nguyên, ô trống thì ước lượng có nhãn \"ước lượng\" hoặc ghi CẦN XÁC NHẬN.",
       "Mục he_thong trả đúng các tên sau, đúng thứ tự: " + HE_THONG.map((h) => h.ten).join("; ") + ".",
       "Số liệu hiện có (JSON): " + JSON.stringify(ks),
@@ -101,12 +110,13 @@ async function xuLy(req: IncomingMessage, res: ServerResponse) {
     const traLoi = await hoiClaude(cauHoi, GOC, 10 * 60_000);
     const goiY = tachJsonKhaoSat(traLoi);
     if (!goiY) throw new Error("Claude không trả khối json khao_sat. Trả lời: " + traLoi.slice(0, 300));
-    return json(res, { khao_sat: { ...ks, ...goiY, du_an: ks.du_an }, tra_loi: traLoi });
+    return json(res, { khao_sat: ghepGoiY(ks, chuanHoaKhaoSat(goiY, ks.du_an)), tra_loi: traLoi });
   }
   if (r === "GET /api/khao-sat.docx") {
     const ks = docKS(q.get("du_an"));
+    const buf = await xuatKhaoSat(ks);
     res.writeHead(200, { "content-type": DOCX, "content-disposition": `attachment; filename*=UTF-8''${encodeURIComponent("bao_cao_khao_sat_" + ks.du_an + ".docx")}` });
-    return res.end(await xuatKhaoSat(ks));
+    return res.end(buf);
   }
   if (r === "POST /api/khao-sat/so-bo") {
     const kl = khoiLuongSoBo(docKS(q.get("du_an")));
@@ -147,7 +157,17 @@ async function xuLy(req: IncomingMessage, res: ServerResponse) {
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  createServer((req, res) => {
-    xuLy(req, res).catch((e) => json(res, { loi: e instanceof Error ? e.message : String(e) }, e instanceof LoiNguoiDung || e instanceof SyntaxError ? 400 : 500));
-  }).listen(PORT, HOST, () => console.log(`TKPCCC runner: http://${HOST === "0.0.0.0" ? "<IP-máy>" : HOST}:${PORT}`));
+  const sv = createServer((req, res) => {
+    xuLy(req, res).catch((e) => {
+      const m = e instanceof Error ? e.message : String(e);
+      if (!(e instanceof LoiNguoiDung)) console.error(new Date().toLocaleTimeString("vi-VN"), req.method, req.url, m);
+      if (res.headersSent) return res.end(); // lỗi giữa chừng khi đã gửi dữ liệu: đóng kết nối, không làm sập runner
+      json(res, { loi: m }, e instanceof LoiNguoiDung || e instanceof SyntaxError ? 400 : 500);
+    });
+  });
+  sv.on("error", (e: NodeJS.ErrnoException) => {
+    console.error(e.code === "EADDRINUSE" ? `Cổng ${PORT} đang bận: runner khác đang chạy? Tắt nó hoặc chạy npm start -- --port 8788` : e.message);
+    process.exit(1);
+  });
+  sv.listen(PORT, HOST, () => console.log(`TKPCCC runner: http://${HOST === "0.0.0.0" ? "<IP-máy>" : HOST}:${PORT}`));
 }

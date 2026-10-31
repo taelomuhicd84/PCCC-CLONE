@@ -15,7 +15,7 @@ export async function xuatKhaoSat(ks: KhaoSat): Promise<Buffer> {
     sections: [{
       children: [
         new Paragraph({ text: "BÁO CÁO KHẢO SÁT PCCC", heading: HeadingLevel.TITLE, alignment: AlignmentType.CENTER }),
-        new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: `Dự án: ${ks.du_an}`, italics: true })] }),
+        new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: `Dự án: ${ks.du_an} · Ngày lập: ${new Date().toLocaleDateString("vi-VN")}`, italics: true })] }),
         h("1. Hạng mục, công năng"),
         bang([["Nội dung", "Thông tin"], ["Hạng mục", ks.hang_muc], ["Công năng (nhóm F)", ks.cong_nang]]),
         h("2. Diện tích, số tầng"),

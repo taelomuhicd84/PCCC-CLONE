@@ -1,6 +1,6 @@
 // Excel: file đơn giá mẫu (người dùng điền), đọc lại đơn giá, xuất báo giá có công thức để sửa tiếp trong Excel.
 import ExcelJS from "exceljs";
-import type { BaoGia, DanhMuc, DonGia, KhoiLuong } from "./bao_gia";
+import { docSoVN, type BaoGia, type DanhMuc, type DonGia, type KhoiLuong } from "./bao_gia";
 
 const COT_DON_GIA = ["MA_VT", "Tên vật tư", "ĐVT", "Hệ", "Đơn giá vật tư (VNĐ)", "Đơn giá nhân công (VNĐ)"];
 
@@ -21,26 +21,24 @@ export async function docDonGia(buf: Buffer): Promise<DonGia> {
   await wb.xlsx.load(buf);
   const ws = wb.worksheets[0];
   if (!ws) throw new Error("File Excel không có sheet nào.");
-  const so = (x: ExcelJS.CellValue): number | null => {
-    const v = x && typeof x === "object" && "result" in x ? x.result : x;
-    if (v == null || v === "") return null;
-    const n = typeof v === "number" ? v : Number(String(v).replace(/[.,\s](?=\d{3}\b)/g, ""));
-    return Number.isFinite(n) ? n : null;
-  };
+  // .text đọc được cả công thức (kết quả), rich text; số gõ dạng chữ "350.000đ" thì docSoVN tách ra.
+  const so = (c: ExcelJS.Cell) => (typeof c.value === "number" ? c.value : docSoVN(c.text));
   const gia: DonGia = {};
   ws.eachRow((r, i) => {
-    const ma = String(r.getCell(1).value ?? "").trim();
+    const ma = r.getCell(1).text.trim();
     if (i === 1 || !ma) return;
-    gia[ma] = { vt: so(r.getCell(5).value), nc: so(r.getCell(6).value) };
+    gia[ma] = { vt: so(r.getCell(5)), nc: so(r.getCell(6)) };
   });
   return gia;
 }
 
 export async function xuatBaoGia(bg: BaoGia, kl: KhoiLuong): Promise<Buffer> {
   const wb = new ExcelJS.Workbook();
+  wb.calcProperties.fullCalcOnLoad = true; // Excel tính lại công thức khi mở, không dùng số tạm
   const ws = wb.addWorksheet("BaoGia");
+  const luc = kl.luc && !isNaN(Date.parse(kl.luc)) ? new Date(kl.luc).toLocaleString("vi-VN") : "";
   ws.addRow([`BÁO GIÁ HỆ THỐNG PCCC — ${kl.du_an}`]).font = { bold: true, size: 14 };
-  ws.addRow([`Khối lượng bóc từ bản vẽ: ${kl.ban_ve ?? ""} ${kl.luc ?? ""}`]);
+  ws.addRow([`Nguồn khối lượng: ${kl.ban_ve ?? ""}${luc ? " · " + luc : ""}`]);
   ws.addRow([]);
   ws.addRow(["STT", "Mã", "Hạng mục", "ĐVT", "Khối lượng", "Đơn giá VT", "Đơn giá NC", "Thành tiền", "Ghi chú"]).font = { bold: true };
   const dongCong: number[] = [];
@@ -69,5 +67,19 @@ export async function xuatBaoGia(bg: BaoGia, kl: KhoiLuong): Promise<Buffer> {
   [5].forEach((i) => (ws.getColumn(i).numFmt = "#,##0.##"));
   [6, 7, 8].forEach((i) => (ws.getColumn(i).numFmt = "#,##0"));
   thue.getCell(5).numFmt = "0%"; // sau định dạng cột để không bị ghi đè
+  if (kl.khu_vuc?.length) themSheetKhuVuc(wb, kl, bg);
   return Buffer.from(await wb.xlsx.writeBuffer());
+}
+
+/** Sheet phụ: khối lượng theo tầng/khu vực (PCCC_BOC chọn "Co" tách khu). Dòng theo thứ tự báo giá. */
+function themSheetKhuVuc(wb: ExcelJS.Workbook, kl: KhoiLuong, bg: BaoGia) {
+  const khu = kl.khu_vuc ?? [];
+  const ws = wb.addWorksheet("TheoKhuVuc");
+  ws.addRow(["Mã", "Hạng mục", "ĐVT", ...khu.map((k) => k.ten), "Tổng"]).font = { bold: true };
+  for (const d of bg.nhom.flatMap((n) => n.dong)) {
+    const sl = khu.map((k) => k.dong.filter((x) => x.ma === d.ma).reduce((s, x) => s + x.sl, 0) || null);
+    ws.addRow([d.ma, d.ten, d.dvt, ...sl, d.sl]);
+  }
+  ws.columns.forEach((c, i) => (c.width = i === 1 ? 46 : i < 3 ? 14 : 12));
+  ws.views = [{ state: "frozen", ySplit: 1, xSplit: 3 }];
 }

@@ -15,6 +15,28 @@ export type BaoGia = {
   thieu_gia: string[]; // mã có khối lượng nhưng chưa có đơn giá (tính 0 vào tổng)
 };
 
+/**
+ * Đọc số kiểu Việt Nam lẫn quốc tế: "1.200" = 1200, "3,5" = 3.5, "1.200,5" = 1200.5, "350.000đ" = 350000, "3.5" = 3.5.
+ * Một dấu chấm/phẩy theo sau đúng 3 chữ số được coi là phân cách hàng nghìn. Không có số thì null.
+ */
+export function docSoVN(x: unknown): number | null {
+  if (typeof x === "number") return Number.isFinite(x) ? x : null;
+  const m = String(x ?? "").match(/-?\d[\d.,\s]*/);
+  if (!m) return null;
+  let t = m[0].replace(/\s/g, "").replace(/[.,]+$/, "");
+  const cham = t.split(".").length - 1, phay = t.split(",").length - 1;
+  if (cham && phay) {
+    const thapPhan = t.lastIndexOf(".") > t.lastIndexOf(",") ? "." : ",";
+    t = t.replace(thapPhan === "." ? /,/g : /\./g, "").replace(",", ".");
+  } else if (cham + phay) {
+    const d = cham ? "." : ",";
+    const nghin = cham + phay > 1 || (new RegExp(`\\${d}\\d{3}$`).test(t) && !/^-?0[.,]/.test(t));
+    t = nghin ? t.split(d).join("") : t.replace(d, ".");
+  }
+  const n = Number(t);
+  return Number.isFinite(n) ? n : null;
+}
+
 export function lapBaoGia(kl: KhoiLuong, dm: DanhMuc, gia: DonGia, vat = 0.1): BaoGia {
   const sl = new Map<string, number>();
   for (const d of kl.dong) if (d.sl > 0) sl.set(d.ma, (sl.get(d.ma) ?? 0) + d.sl);
