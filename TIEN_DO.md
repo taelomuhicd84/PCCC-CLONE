@@ -13,6 +13,11 @@ Làm tiếp theo mục "Kế hoạch Pha 3" ở cuối file này, bắt đầu t
 Đã chạy thử CLI gốc TestPCCC (đường offline `--extractor vector`) trên 1 bản vẽ PDF thật (16:06): chạy được, ra
 `findings.jsonl`, `report.md`, PDF ghi chú (0 lỗi, 1 cảnh báo, 5 thông tin; thiếu `height_pccc_m`, nhóm F tự suy ra). Kết quả để trong
 `ket_qua/` (không commit). Web CHƯA có tab "Thẩm định PDF" (runner cổng 8787 chỉ có 3 tab: Hướng dẫn, Khảo sát, Khối lượng & Báo giá).
+Chạy thử thêm trên hồ sơ KS Hoàng Hùng (18 trang, `ket_qua/thu_ks_hoang_hung/`, không commit): Đạt 0, KD 3, XM 3. Cả 3 KD là
+"không đọc được số liệu" (STAIR-DATA BTB1/BTB2 tr 4, EXIT-DOOR-DATA D01 tr 6), chưa phải vi phạm thật. Thiếu `height_pccc_m`, bậc chịu lửa,
+tỉ lệ bản vẽ; không nhận diện được lối ra tr 17. **Khi chép lõi vào `thamdinh/` (bước 1): hạ các dòng "không đọc được" từ KD xuống XM,
+chỉ giữ KD khi đo được số liệu và vi phạm** (đề xuất, chờ người dùng đồng ý). Muốn đọc được số liệu cửa/thang mà không dùng API: thêm đọc bảng cửa/thang.
+Lõi Python chạy được ở thư mục tạm `scratchpad/tdcore` (bản sao TestPCCC, không `.env`), lệnh: `extract --extractor vector --pages auto` → `check` → `annotate` → `findings`.
 
 Việc người dùng cần làm:
 - 👤 Tắt hẳn AutoCAD rồi mở lại để nạp plugin mới (DLL đã build; bản cũ đổi tên `TKPCCC.Cad.dll.cu*`).

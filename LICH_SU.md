@@ -24,3 +24,5 @@
   Danh sách file cần chép + kế hoạch 6 bước ghi ở cuối `TIEN_DO.md`. Dừng trước khi viết code vì usage 5 giờ chạm 85%.
 - Pha 3: chạy thử CLI gốc TestPCCC (offline, vector) trên 1 bản vẽ PDF thật → ra report + PDF ghi chú (để trong `ket_qua/`).
   Xác nhận đường chạy dùng được; chưa chép code vào TKPCCC, web chưa có tab Thẩm định.
+- Pha 3: chạy thử lõi TestPCCC (bản sao thư mục tạm) trên PDF mẫu `make_sample_pdf.py` (4 KD + 1 XM đúng lỗi cài sẵn, PDF ghi chú đúng vị trí)
+  và hồ sơ KS Hoàng Hùng 18 trang (0 Đạt, 3 KD "không đọc được số liệu", 3 XM). Đề xuất hạ KD "không đọc được" xuống XM khi chép vào `thamdinh/`.
