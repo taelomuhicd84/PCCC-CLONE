@@ -1,7 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { docSoVN } from "./bao_gia";
-import { chuanHoaKhaoSat, ghepGoiY, khaoSatTrong, khoiLuongSoBo, maHeThong, tachJsonKhaoSat, uocKhoiLuong, HE_THONG } from "./khao_sat";
-import { xuatKhaoSat } from "./word";
+import { chuanHoaKhaoSat, ghepGoiY, khaoSatTrong, khoiLuongSoBo, maHeThong, tachJsonKhaoSat, uocKhoiLuong, HE_THONG } from "../src/khao_sat";
 
 function mau() {
   const ks = khaoSatTrong("Thử");
@@ -11,14 +9,6 @@ function mau() {
   ks.he_thong[2].co = "KHÔNG";         // sprinkler
   return ks;
 }
-
-describe("docSoVN", () => {
-  it.each([
-    ["1.200", 1200], ["1.200.000", 1200000], ["350,000", 350000], ["3,5", 3.5], ["3.5", 3.5], ["1.200,5", 1200.5],
-    ["1,200.5", 1200.5], ["350.000đ", 350000], ["120 000 m²", 120000], ["2 nổi + 1 hầm", 2], ["0.500", 0.5], [12, 12],
-    ["", null], ["không rõ", null], [null, null],
-  ])("%s -> %s", (vao, ra) => expect(docSoVN(vao)).toBe(ra));
-});
 
 describe("maHeThong", () => {
   it("mỗi tên chuẩn khớp đúng mã của nó", () => {
@@ -87,12 +77,5 @@ describe("tachJsonKhaoSat", () => {
     expect(tachJsonKhaoSat('chữ\n```json\n{"khao_sat":{"hang_muc":"A"}}\n```\n```json\n{hỏng}\n```')).toEqual({ hang_muc: "A" });
     expect(tachJsonKhaoSat('Kết quả: {"khao_sat": {"hang_muc": "B"}} hết.')).toEqual({ hang_muc: "B" });
     expect(tachJsonKhaoSat("không có")).toBeNull();
-  });
-});
-
-describe("xuatKhaoSat", () => {
-  it("tạo file docx", async () => {
-    const b = await xuatKhaoSat(mau());
-    expect(b.subarray(0, 2).toString()).toBe("PK");
   });
 });

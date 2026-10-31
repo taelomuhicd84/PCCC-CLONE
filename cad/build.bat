@@ -17,7 +17,7 @@ if exist "%OUT%\TKPCCC.Cad.dll" move /y "%OUT%\TKPCCC.Cad.dll" "%OUT%\TKPCCC.Cad
 "%FW%\csc.exe" /nologo /target:library /platform:x64 /codepage:65001 /optimize+ /out:"%OUT%\TKPCCC.Cad.dll" ^
   /r:"%ACAD%\acdbmgd.dll" /r:"%ACAD%\accoremgd.dll" ^
   /r:"%FW%\System.Web.Extensions.dll" /r:System.Core.dll ^
-  "%~dp0TKPCCC.Cad\Lenh.cs" || exit /b 1
+  "%~dp0src\Lenh.cs" || exit /b 1
 
 copy /y "%~dp0..\data\vat_tu.json" "%OUT%\vat_tu.json" >nul
 echo OK: %OUT%\TKPCCC.Cad.dll

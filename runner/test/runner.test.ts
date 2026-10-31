@@ -1,32 +1,13 @@
 import { describe, expect, it } from "vitest";
 import ExcelJS from "exceljs";
-import { lapBaoGia, type DanhMuc } from "./bao_gia";
-import { docDonGia, taoMauDonGia, xuatBaoGia } from "./excel";
-import { tenThuMuc } from "./server";
+import { lapBaoGia } from "../../shared/src/bao_gia";
+import { khaoSatTrong } from "../../shared/src/khao_sat";
+import { dm, kl } from "../../shared/test/mau";
+import { docDonGia, taoMauDonGia, xuatBaoGia } from "../src/xuat_xlsx";
+import { xuatKhaoSat } from "../src/xuat_docx";
+import { tenThuMuc } from "../src/server";
 
-const dm: DanhMuc = {
-  he: { BC: "Báo cháy tự động", ONG: "Đường ống" },
-  vat_tu: [
-    { ma: "BC_KHOI", ten: "Đầu báo khói", dvt: "cái", he: "BC", loai: "block" },
-    { ma: "BC_TT", ten: "Tủ trung tâm", dvt: "bộ", he: "BC", loai: "block" },
-    { ma: "ONG_DN50", ten: "Ống DN50", dvt: "m", he: "ONG", loai: "tuyen" },
-  ],
-};
-const kl = { du_an: "Thử", dong: [{ ma: "BC_KHOI", sl: 10 }, { ma: "BC_KHOI", sl: 2 }, { ma: "ONG_DN50", sl: 12.345 }, { ma: "BC_TT", sl: 1 }, { ma: "LA", sl: 3 }] };
-
-describe("lapBaoGia", () => {
-  it("cộng trùng mã, làm tròn tuyến, tính tiền + VAT, báo thiếu giá", () => {
-    const bg = lapBaoGia(kl, dm, { BC_KHOI: { vt: 300_000, nc: 50_000 }, ONG_DN50: { vt: 100_000, nc: null } });
-    expect(bg.nhom.map((n) => n.he)).toEqual(["BC", "ONG", "KHAC"]);
-    expect(bg.nhom[0].dong[0]).toMatchObject({ ma: "BC_KHOI", sl: 12, thanh_tien: 4_200_000 });
-    expect(bg.nhom[1].dong[0]).toMatchObject({ sl: 12.35, thanh_tien: 1_235_000 });
-    expect(bg.thieu_gia).toEqual(["BC_TT", "LA"]);
-    expect(bg.tong).toBe(5_435_000);
-    expect(bg.tong_cong).toBe(5_435_000 + 543_500);
-  });
-});
-
-describe("excel", () => {
+describe("xuat_xlsx", () => {
   it("mẫu đơn giá điền tay đọc lại đúng, báo giá có công thức", async () => {
     const wb = new ExcelJS.Workbook();
     await wb.xlsx.load(await taoMauDonGia(dm));
@@ -56,6 +37,13 @@ describe("excel", () => {
     const ws = out.getWorksheet("TheoKhuVuc")!;
     expect(ws.getRow(1).values).toEqual([, "Mã", "Hạng mục", "ĐVT", "Tầng 1", "Tầng 2", "Tổng"]);
     expect(ws.getRow(2).values).toEqual([, "BC_KHOI", "Đầu báo khói", "cái", 7, 5, 12]);
+  });
+});
+
+describe("xuat_docx", () => {
+  it("tạo file docx báo cáo khảo sát", async () => {
+    const b = await xuatKhaoSat(khaoSatTrong("Thử"));
+    expect(b.subarray(0, 2).toString()).toBe("PK");
   });
 });
 

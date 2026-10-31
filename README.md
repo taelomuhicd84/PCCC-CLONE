@@ -1,7 +1,8 @@
 # TKPCCC — Thiết kế, khảo sát, bóc khối lượng, báo giá PCCC
 
 Plugin AutoCAD 2021 + web nội bộ (LAN). Đã có: Pha 1 (thư viện block → vẽ → bóc khối lượng → báo giá Excel) và
-Pha 2 (hướng dẫn thiết kế B0–B7, báo cáo khảo sát Word, báo giá sơ bộ theo m²). Tiến độ: `TIEN_DO.md`.
+Pha 2 (hướng dẫn thiết kế B0–B7, báo cáo khảo sát Word, báo giá sơ bộ theo m²).
+Tiến độ: `TIEN_DO.md` · Cấu trúc thư mục: `STRUCTURE.md` · Các pha: `ROADMAP.md` · Nhật ký: `LICH_SU.md`.
 
 ## Cài đặt (1 lần)
 ```
@@ -15,7 +16,8 @@ claude                                  :: đăng nhập 1 lần (/login), rồi
 ```
 
 ## Sử dụng
-1. `npm start` → mở http://127.0.0.1:8787 (cho máy khác trong LAN: `npm start -- --host 0.0.0.0`).
+1. Bấm đúp `chay.bat` (bật runner + mở web), hoặc `npm start` → mở http://127.0.0.1:8787
+   (cho máy khác trong LAN: `npm start -- --host 0.0.0.0`). Kết quả từng công trình lưu ở `ket_qua/<dự án>/`.
 2. AutoCAD: `NETLOAD` → `cad\TKPCCC.bundle\Contents\TKPCCC.Cad.dll`
    (tự nạp mỗi lần mở: chép thư mục `cad\TKPCCC.bundle` vào `%APPDATA%\Autodesk\ApplicationPlugins`).
    Build lại khi AutoCAD đang mở vẫn được; tắt hẳn AutoCAD rồi mở lại để nạp bản mới.
@@ -47,5 +49,6 @@ powershell -ExecutionPolicy Bypass -File cad\test\chay_thu.ps1
 Cái thứ hai chạy plugin trong `accoreconsole` (AutoCAD không giao diện) với bản vẽ thử, không cần mở AutoCAD.
 
 ## Các pha tiếp theo
-- Pha 3: đọc PDF + thẩm định (lõi Python từ `D:\1_Claude\TestPCCC\PCCC`).
-- Pha 4: `PCCC_RAI` rải đầu phun/đầu báo tự động theo lưới, thủy lực TCVN 7336.
+Xem `ROADMAP.md` (Pha 3: đọc PDF + thẩm định; Pha 4: rải thiết bị tự động, thủy lực TCVN 7336).
+
+Mã nguồn: https://github.com/taelomuhicd84/PCCC-CLONE

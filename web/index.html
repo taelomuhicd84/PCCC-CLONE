@@ -204,7 +204,7 @@ function chonBuoc(i) {
     <ol>${b.viec.map((v) => `<li>${esc(v)}</li>`).join("")}</ol>
     ${b.lenh_cad.length ? `<p>Lệnh AutoCAD: ${b.lenh_cad.map((l) => `<span class="chip">${esc(l)}</span>`).join(" ")}</p>` : ""}
     <p>Tài liệu (nguyên văn quy chuẩn):</p>
-    <div class="row">${b.tai_lieu.map((f) => `<button data-f="${esc(f)}">${esc(f.replace(/\.md$/, ""))}</button>`).join("")}</div>
+    <div class="row">${b.tai_lieu.map((f) => `<button data-f="${esc(f)}" title="${esc(f)}">${esc(f.split("/").pop().replace(/\.md$/, ""))}</button>`).join("")}</div>
     <div class="muc-luc" id="mucLuc"></div><div class="tailieu" id="taiLieu"></div>`;
   $("chiTiet").querySelectorAll("button[data-f]").forEach((x) => (x.onclick = () => moTaiLieu(x.dataset.f)));
   moTaiLieu(b.tai_lieu[0]);

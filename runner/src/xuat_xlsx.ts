@@ -1,6 +1,6 @@
 // Excel: file đơn giá mẫu (người dùng điền), đọc lại đơn giá, xuất báo giá có công thức để sửa tiếp trong Excel.
 import ExcelJS from "exceljs";
-import { docSoVN, type BaoGia, type DanhMuc, type DonGia, type KhoiLuong } from "./bao_gia";
+import { docSoVN, type BaoGia, type DanhMuc, type DonGia, type KhoiLuong } from "../../shared/src/bao_gia";
 
 const COT_DON_GIA = ["MA_VT", "Tên vật tư", "ĐVT", "Hệ", "Đơn giá vật tư (VNĐ)", "Đơn giá nhân công (VNĐ)"];
 

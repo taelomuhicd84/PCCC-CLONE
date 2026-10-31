@@ -13,4 +13,7 @@
   ký hiệu lệch tâm (DBText → MText); bảng thống kê bị đếm như thiết bị (Table kế thừa BlockReference); tỉ lệ block theo INSUNITS;
   ô số của trình duyệt hiểu "1.200" là 1,2. Thêm `cad/test/chay_thu.ps1` (kiểm plugin trong accoreconsole), `docSoVN`, chuẩn hoá khảo sát.
 - Tạo lại `PCCC_Blocks.dwg` (bản do plugin cũ tạo bị lệch tâm, cất ở `PCCC_Blocks_cu_20261031_151400.dwg`).
-- git init (identity trantrongtien198), chưa có remote.
+- git init (identity trantrongtien198); đẩy lên https://github.com/taelomuhicd84/PCCC-CLONE (nhánh `main`).
+- Sắp xếp lại thư mục theo khung dự án mẫu PCCC_he_thong: `shared/src` (bao_gia, khao_sat) + `shared/test`, `runner/src`
+  (server, xuat_xlsx, xuat_docx, engines/claude) + `runner/test`, `cad/src/Lenh.cs` + `cad/test`, `skills/` (MOD_*, SKILL_*, PHU_LUC_G
+  chuyển từ knowledge/), `du_an/` → `ket_qua/`; thêm `STRUCTURE.md`, `ROADMAP.md`, `chay.bat`, `.claude/launch.json`.

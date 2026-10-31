@@ -1,6 +1,6 @@
 // Xuất báo cáo khảo sát PCCC ra .docx (8 mục theo knowledge/khao-sat-bao-gia.md).
 import { AlignmentType, Document, HeadingLevel, Packer, Paragraph, Table, TableCell, TableRow, TextRun, WidthType } from "docx";
-import type { KhaoSat } from "./khao_sat";
+import type { KhaoSat } from "../../shared/src/khao_sat";
 
 const p = (text: string, bold = false) => new Paragraph({ children: [new TextRun({ text, bold })] });
 const h = (text: string) => new Paragraph({ text, heading: HeadingLevel.HEADING_2 });

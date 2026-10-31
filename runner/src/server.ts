@@ -4,17 +4,17 @@ import { createServer, type IncomingMessage, type ServerResponse } from "node:ht
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { lapBaoGia, type DanhMuc, type DonGia, type KhoiLuong } from "./bao_gia";
-import { docDonGia, taoMauDonGia, xuatBaoGia } from "./excel";
-import { hoiClaude } from "./claude";
-import { chuanHoaKhaoSat, ghepGoiY, khoiLuongSoBo, tachJsonKhaoSat, HE_THONG, type KhaoSat } from "./khao_sat";
-import { xuatKhaoSat } from "./word";
+import { lapBaoGia, type DanhMuc, type DonGia, type KhoiLuong } from "../../shared/src/bao_gia";
+import { chuanHoaKhaoSat, ghepGoiY, khoiLuongSoBo, tachJsonKhaoSat, HE_THONG, type KhaoSat } from "../../shared/src/khao_sat";
+import { docDonGia, taoMauDonGia, xuatBaoGia } from "./xuat_xlsx";
+import { xuatKhaoSat } from "./xuat_docx";
+import { hoiClaude } from "./engines/claude";
 import { marked } from "marked";
 
-const GOC = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const DU_AN = path.join(GOC, "du_an");
+const GOC = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", ".."); // runner/src -> gốc dự án
+const KET_QUA = path.join(GOC, "ket_qua"); // ket_qua/<dự án>/: khoi_luong.json, khoi_luong_so_bo.json, khao_sat.json
 const FILE_DON_GIA = path.join(GOC, "data", "don_gia.json");
-const KNOWLEDGE = path.join(GOC, "knowledge");
+const THU_MUC_TAI_LIEU = ["knowledge", "skills"].map((d) => path.join(GOC, d));
 const DOCX = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 const XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 const arg = (k: string, d: string) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : d; };
@@ -35,8 +35,8 @@ export function tenThuMuc(ten: unknown): string {
 }
 
 // nguon: "cad" = bóc từ bản vẽ (PCCC_BOC), "so_bo" = ước theo khảo sát.
-const fileKL = (duAn: unknown, nguon: unknown = "cad") => path.join(DU_AN, tenThuMuc(duAn), nguon === "so_bo" ? "khoi_luong_so_bo.json" : "khoi_luong.json");
-const fileKS = (duAn: unknown) => path.join(DU_AN, tenThuMuc(duAn), "khao_sat.json");
+const fileKL = (duAn: unknown, nguon: unknown = "cad") => path.join(KET_QUA, tenThuMuc(duAn), nguon === "so_bo" ? "khoi_luong_so_bo.json" : "khoi_luong.json");
+const fileKS = (duAn: unknown) => path.join(KET_QUA, tenThuMuc(duAn), "khao_sat.json");
 function docKL(duAn: unknown, nguon: unknown = "cad"): KhoiLuong {
   const f = fileKL(duAn, nguon);
   if (!existsSync(f)) throw new LoiNguoiDung(nguon === "so_bo" ? "Chưa có khối lượng sơ bộ: lưu khảo sát rồi bấm Ước khối lượng" : "Dự án chưa có khối lượng: chạy PCCC_BOC trong AutoCAD");
@@ -44,7 +44,7 @@ function docKL(duAn: unknown, nguon: unknown = "cad"): KhoiLuong {
 }
 const docKS = (duAn: unknown): KhaoSat =>
   chuanHoaKhaoSat(existsSync(fileKS(duAn)) ? JSON.parse(readFileSync(fileKS(duAn), "utf8")) : {}, tenThuMuc(duAn));
-/** Thư mục trong du_an/ có dữ liệu (khối lượng CAD, sơ bộ hoặc khảo sát); bỏ qua thư mục tên lạ. */
+/** Thư mục trong ket_qua/ có dữ liệu (khối lượng CAD, sơ bộ hoặc khảo sát); bỏ qua thư mục tên lạ. */
 function coDuLieu(d: string) {
   try { return existsSync(fileKL(d)) || existsSync(fileKL(d, "so_bo")) || existsSync(fileKS(d)); } catch { return false; }
 }
@@ -52,10 +52,11 @@ function ghiJson(f: string, x: unknown) {
   mkdirSync(path.dirname(f), { recursive: true });
   writeFileSync(f, JSON.stringify(x, null, 1), "utf8");
 }
-/** Chỉ cho đọc file .md nằm trong knowledge/ (chặn ../). */
+/** Tài liệu ghi theo đường dẫn từ gốc dự án ("knowledge/x.md", "skills/MOD_x.md"); chỉ cho .md trong knowledge/ hoặc skills/ (chặn ../). */
 function fileTaiLieu(ten: unknown): string {
-  const f = path.resolve(KNOWLEDGE, String(ten ?? ""));
-  if (!f.startsWith(KNOWLEDGE + path.sep) || !f.endsWith(".md") || !existsSync(f)) throw new LoiNguoiDung("Không có tài liệu " + ten);
+  const f = path.resolve(GOC, String(ten ?? ""));
+  const trong = THU_MUC_TAI_LIEU.some((d) => f.startsWith(d + path.sep));
+  if (!trong || !f.endsWith(".md") || !existsSync(f)) throw new LoiNguoiDung("Không có tài liệu " + ten);
   return f;
 }
 
@@ -84,7 +85,7 @@ async function xuLy(req: IncomingMessage, res: ServerResponse) {
     return res.end(readFileSync(path.join(GOC, "web", "index.html")));
   }
   if (r === "GET /api/vat-tu") return json(res, danhMuc());
-  if (r === "GET /api/du-an") return json(res, existsSync(DU_AN) ? readdirSync(DU_AN).filter(coDuLieu) : []);
+  if (r === "GET /api/du-an") return json(res, existsSync(KET_QUA) ? readdirSync(KET_QUA).filter(coDuLieu) : []);
   if (r === "GET /api/huong-dan") return json(res, JSON.parse(readFileSync(path.join(GOC, "data", "huong_dan.json"), "utf8")));
   if (r === "GET /api/tai-lieu") {
     const html = await marked.parse(readFileSync(fileTaiLieu(q.get("f")), "utf8")); // tính xong mới gửi header: lỗi còn trả JSON được
@@ -102,7 +103,7 @@ async function xuLy(req: IncomingMessage, res: ServerResponse) {
     const vao = JSON.parse((await docBody(req)).toString("utf8"));
     const ks = chuanHoaKhaoSat(vao, tenThuMuc(vao?.du_an));
     const cauHoi = [
-      "Đọc knowledge/khao-sat-bao-gia.md và làm đúng hướng dẫn trong đó (8 mục, định dạng trả lời có một khối ```json {\"khao_sat\": …} ở cuối). Tri thức quy chuẩn nằm trong thư mục knowledge/ (QCVN 06, QCVN 10:2025, nghị định thẩm định, MOD_*, SKILL_thoat_nan); chỉ trích điều khoản có trong các file này. Trả lời tiếng Việt.",
+      "Đọc knowledge/khao-sat-bao-gia.md và làm đúng hướng dẫn trong đó (8 mục, định dạng trả lời có một khối ```json {\"khao_sat\": …} ở cuối). Tri thức quy chuẩn nằm trong knowledge/ (QCVN 06, QCVN 10:2025, nghị định thẩm định, định nghĩa) và skills/ (MOD_*, SKILL_thoat_nan: điều khoản thoát nạn theo chuyên đề); chỉ trích điều khoản có trong các file này. Trả lời tiếng Việt.",
       "Không có bản vẽ, chỉ có số liệu dưới đây (đầu vào loại 3). Số liệu đã có thì dùng nguyên, ô trống thì ước lượng có nhãn \"ước lượng\" hoặc ghi CẦN XÁC NHẬN.",
       "Mục he_thong trả đúng các tên sau, đúng thứ tự: " + HE_THONG.map((h) => h.ten).join("; ") + ".",
       "Số liệu hiện có (JSON): " + JSON.stringify(ks),

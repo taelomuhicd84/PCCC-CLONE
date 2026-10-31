@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "tsx runner/server.ts",
+    "start": "tsx runner/src/server.ts",
     "test": "vitest run"
   },
   "dependencies": {

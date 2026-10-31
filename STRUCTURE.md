@@ -1,0 +1,92 @@
+# Cấu trúc thư mục TKPCCC
+
+Theo khung của dự án mẫu `PCCC_he_thong` (`C:\Users\HP\Downloads\PCCC_he_thong_2026-10-17\PCCC_he_thong`): mỗi module tách
+`src/` (mã) và `test/` (kiểm thử), tri thức tách khỏi mã, kết quả từng công trình nằm riêng. Thêm/đổi/xoá thư mục thì **sửa file này**.
+
+```
+TKPCCC/
+├─ CLAUDE.md            quy tắc cho Claude Code (đọc trước mọi phiên)
+├─ README.md            giới thiệu, cài đặt, cách dùng
+├─ STRUCTURE.md         file này: cấu trúc thư mục, đặt cái gì ở đâu
+├─ ROADMAP.md           các pha, việc đã/chưa làm
+├─ TIEN_DO.md           việc đang làm, việc tiếp theo (cập nhật mỗi mốc, trước khi hết usage)
+├─ LICH_SU.md           nhật ký theo ngày
+├─ chay.bat             1 cú bấm: bật runner (ẩn) + mở web
+├─ package.json         1 gói Node chung (tsx, vitest, exceljs, docx, marked) — không dùng workspaces
+├─ .claude/launch.json  cấu hình xem trước web trong Claude Code (runner cổng 8787)
+│
+├─ shared/              LÕI NGHIỆP VỤ dùng chung, hàm thuần (không đọc/ghi file, không server)
+│  ├─ src/bao_gia.ts       khối lượng × danh mục × đơn giá -> báo giá theo hệ; docSoVN (đọc số kiểu Việt Nam)
+│  ├─ src/khao_sat.ts      khảo sát 8 mục: chuẩn hoá, ghép gợi ý Claude, ước khối lượng sơ bộ theo m²
+│  └─ test/                *.test.ts + mau.ts (dữ liệu mẫu dùng chung cho test)
+│
+├─ runner/              SERVER CỤC BỘ (Node, chạy `npm start`, cổng 8787)
+│  ├─ src/server.ts        API + phục vụ web/index.html; đọc/ghi data/ và ket_qua/
+│  ├─ src/xuat_xlsx.ts     Excel: đơn giá mẫu, đọc đơn giá, báo giá có công thức, sheet theo tầng/khu
+│  ├─ src/xuat_docx.ts     Word: báo cáo khảo sát
+│  ├─ src/engines/claude.ts  gọi `claude -p` bằng đăng nhập Claude Code (KHÔNG API key), chỉ công cụ đọc
+│  └─ test/
+│
+├─ web/                 GIAO DIỆN: 1 file index.html (HTML + JS thuần, không build); 3 tab Hướng dẫn · Khảo sát · Khối lượng & Báo giá
+│
+├─ cad/                 PLUGIN AUTOCAD 2021–2024 (C# .NET Framework 4.8, chỉ cú pháp C# 5)
+│  ├─ src/Lenh.cs          toàn bộ lệnh PCCC_* (LIB, DAT, ONG, GAN, BOC, BANG, VUNGBV, HELP)
+│  ├─ test/chay_thu.ps1    kiểm thử trong accoreconsole (AutoCAD không giao diện)
+│  ├─ build.bat            biên dịch bằng csc.exe có sẵn của Windows -> TKPCCC.bundle/Contents/
+│  └─ TKPCCC.bundle/       gói nạp tự động của AutoCAD (tên *.bundle là bắt buộc)
+│     ├─ PackageContents.xml
+│     └─ Contents/         TKPCCC.Cad.dll + vat_tu.json (do build tạo, không commit)
+│                          PCCC_Blocks.dwg (thư viện block, người dùng sửa hình) + block_alias.json (bảng gán block) — CÓ commit
+│
+├─ data/                DỮ LIỆU CẤU HÌNH
+│  ├─ vat_tu.json          danh mục vật tư: nguồn DUY NHẤT cho plugin + báo giá (loai: block / tuyen / khac)
+│  ├─ huong_dan.json       quy trình B0–B7: việc cần làm, tài liệu, lệnh CAD của từng bước
+│  └─ don_gia.json         đơn giá người dùng đã nhập (tự sinh, không commit)
+│
+├─ knowledge/           TRI THỨC: quy chuẩn chép nguyên văn + quy tắc nghiệp vụ (chép từ PCCC_he_thong/knowledge)
+│  ├─ dinh-nghia/          định nghĩa QCVN 06
+│  ├─ qcvn06-*.md, qcvn10-2025-*.md, tcvn7568-14-2025.md, nghi-dinh-*.md, cv-2360-*.md
+│  └─ khao-sat-bao-gia.md, bao-gia-pccc.md, so-bo-thiet-ke-pccc.md, chon-loai-dau-bao.md …
+│
+├─ skills/              ĐIỀU KHOẢN THEO CHUYÊN ĐỀ (chép từ PCCC_he_thong/skills): MOD_*.md, SKILL_*.md, PHU_LUC_G_QCVN06.md
+│
+└─ ket_qua/             KẾT QUẢ TỪNG CÔNG TRÌNH (tự sinh, không commit): ket_qua/<dự án>/
+                        khao_sat.json, khoi_luong.json (bóc từ CAD), khoi_luong_so_bo.json (ước theo khảo sát)
+```
+
+## Mỗi lớp một việc
+| Lớp | Thư mục | Ai sửa | Commit |
+|---|---|---|---|
+| Quy tắc, tiến độ | `CLAUDE.md`, `TIEN_DO.md`, `LICH_SU.md`, `ROADMAP.md`, `STRUCTURE.md` | Claude cập nhật mỗi mốc | có |
+| Nghiệp vụ (tính toán) | `shared/src` | Claude, kèm test trong `shared/test` | có |
+| Server, xuất file, gọi Claude | `runner/src` | Claude, kèm test trong `runner/test` | có |
+| Giao diện | `web/index.html` | Claude | có |
+| AutoCAD | `cad/src/Lenh.cs` | Claude, kiểm bằng `cad/test/chay_thu.ps1` | có |
+| Thư viện block, gán block | `cad/TKPCCC.bundle/Contents/PCCC_Blocks.dwg`, `block_alias.json` | người dùng (BEDIT, `PCCC_GAN`) | có |
+| Danh mục, quy trình | `data/vat_tu.json`, `data/huong_dan.json` | người dùng / Claude | có |
+| Tri thức, điều khoản | `knowledge/`, `skills/` | chép nguyên văn bằng script, không viết theo trí nhớ | có |
+| Đơn giá, kết quả công trình | `data/don_gia.json`, `ket_qua/` | tự sinh khi dùng | **không** |
+
+## Luồng dữ liệu
+```
+AutoCAD: PCCC_DAT / PCCC_ONG vẽ ─► PCCC_BOC ──POST /api/khoi-luong──► ket_qua/<dự án>/khoi_luong.json ─┐
+Web: tab Khảo sát ─► ket_qua/<dự án>/khao_sat.json ─► "Ước khối lượng" ─► khoi_luong_so_bo.json ────────┤
+                                                                                                     ▼
+data/vat_tu.json + data/don_gia.json ──► shared/src/bao_gia.ts ──► runner/src/xuat_xlsx.ts ──► báo giá .xlsx
+Claude ("Claude gợi ý", "Hỏi") ◄── runner/src/engines/claude.ts (`claude -p`, đọc knowledge/ + skills/)
+```
+
+## Thêm mới thì đặt ở đâu
+- Vật tư / thiết bị mới: 1 dòng trong `data/vat_tu.json` → `cad\build.bat` → `PCCC_LIB` (tự thêm block mặc định cho mã mới).
+- Phép tính nghiệp vụ mới (ước khối lượng, thủy lực…): file mới trong `shared/src/` + test trong `shared/test/`.
+- API mới: route trong `runner/src/server.ts`; xuất định dạng mới: `runner/src/xuat_<định dạng>.ts`; engine AI mới: `runner/src/engines/`.
+- Lệnh AutoCAD mới: `cad/src/Lenh.cs` (bọc `Chay(...)`), thêm dòng kiểm vào `cad/test/chay_thu.ps1`, khai báo trong `PackageContents.xml`.
+- Quy chuẩn mới: nguyên văn vào `knowledge/` (văn bản, bảng) hoặc `skills/` (điều khoản theo chuyên đề); nối vào bước trong `data/huong_dan.json`.
+- Bước thiết kế mới: 1 mục trong `data/huong_dan.json`.
+- Sau này nếu cần: `scripts/` (script tiện ích, py/ps1/mjs), `so_do/` (sơ đồ html), `bang_tinh/` (mẫu Excel) — giống dự án mẫu.
+
+## Quy ước đặt tên
+- Thư mục, file mã: tiếng Việt không dấu, chữ thường, `snake_case` (`khao_sat.ts`, `xuat_xlsx.ts`); tri thức `.md`: `kebab-case` như mẫu.
+- Tài liệu gốc dự án: CHỮ HOA (`TIEN_DO.md`, `LICH_SU.md`, `STRUCTURE.md`).
+- Đường dẫn tài liệu trong `data/huong_dan.json` ghi từ gốc dự án (`knowledge/…`, `skills/…`).
+- File `.bat`, `.ps1`: chỉ chữ ASCII (cmd và PowerShell 5.1 đọc sai UTF-8 không BOM).
