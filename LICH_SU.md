@@ -22,3 +22,5 @@
 - Pha 3 (bắt đầu): khảo sát lõi Python `D:\1_Claude\TestPCCC\PCCC` (chỉ đọc). Chốt đường chạy offline không API key: extract vector →
   rule engine YAML (26 luật QCVN 06:2022 + SĐ1:2023) → D/KD/XM (`consistency.py`) → PDF ghi chú; bỏ `info`/Gemini/DXF/Word.
   Danh sách file cần chép + kế hoạch 6 bước ghi ở cuối `TIEN_DO.md`. Dừng trước khi viết code vì usage 5 giờ chạm 85%.
+- Pha 3: chạy thử CLI gốc TestPCCC (offline, vector) trên 1 bản vẽ PDF thật → ra report + PDF ghi chú (để trong `ket_qua/`).
+  Xác nhận đường chạy dùng được; chưa chép code vào TKPCCC, web chưa có tab Thẩm định.

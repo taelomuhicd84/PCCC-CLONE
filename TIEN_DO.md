@@ -10,6 +10,9 @@ File này cập nhật sau mỗi mốc việc và trước khi hết usage. Phi�
 **Skill dự án** (`.claude/skills/`): `tkpccc-cad-console`, `tkpccc-xong-dau-muc`, `tkpccc-tra-quy-chuan`. Xong mỗi đầu mục chạy `tkpccc-xong-dau-muc`.
 **Pha 3 (thẩm định PDF): ĐÃ KHẢO SÁT lõi Python, CHƯA viết code** — dừng vì usage 5 giờ chạm 85% (15:36 ngày 2026-10-31).
 Làm tiếp theo mục "Kế hoạch Pha 3" ở cuối file này, bắt đầu từ bước 1.
+Đã chạy thử CLI gốc TestPCCC (đường offline `--extractor vector`) trên 1 bản vẽ PDF thật (16:06): chạy được, ra
+`findings.jsonl`, `report.md`, PDF ghi chú (0 lỗi, 1 cảnh báo, 5 thông tin; thiếu `height_pccc_m`, nhóm F tự suy ra). Kết quả để trong
+`ket_qua/` (không commit). Web CHƯA có tab "Thẩm định PDF" (runner cổng 8787 chỉ có 3 tab: Hướng dẫn, Khảo sát, Khối lượng & Báo giá).
 
 Việc người dùng cần làm:
 - 👤 Tắt hẳn AutoCAD rồi mở lại để nạp plugin mới (DLL đã build; bản cũ đổi tên `TKPCCC.Cad.dll.cu*`).
