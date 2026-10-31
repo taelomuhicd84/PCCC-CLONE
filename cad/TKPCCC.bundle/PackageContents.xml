@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ApplicationPackage SchemaVersion="1.0" AppVersion="0.1.0" Name="TKPCCC"
+  Description="Thiết kế PCCC: thư viện block, vẽ thiết bị/ống, bóc khối lượng"
+  ProductCode="{6B1C3E52-9A4D-4E8B-9F21-3C7A1D2E5F10}" UpgradeCode="{0D7F4A91-2B6C-4F3E-8A15-9E2C7B4D1A63}"
+  Author="TKPCCC">
+  <CompanyDetails Name="TKPCCC" />
+  <!-- AutoCAD 2021–2024 (R24.x, .NET Framework 4.8). AutoCAD 2025+ chạy .NET 8: cần build lại. -->
+  <RuntimeRequirements OS="Win64" Platform="AutoCAD*" SeriesMin="R24.0" SeriesMax="R24.3" />
+  <Components>
+    <ComponentEntry AppName="TKPCCC" ModuleName="./Contents/TKPCCC.Cad.dll" LoadOnAutoCADStartup="True">
+      <Commands GroupName="TKPCCC">
+        <Command Local="PCCC_LIB" Global="PCCC_LIB" />
+        <Command Local="PCCC_DAT" Global="PCCC_DAT" />
+        <Command Local="PCCC_ONG" Global="PCCC_ONG" />
+        <Command Local="PCCC_BOC" Global="PCCC_BOC" />
+      </Commands>
+    </ComponentEntry>
+  </Components>
+</ApplicationPackage>

@@ -1,0 +1,73 @@
+{
+  "_ghi_chu": "Danh mục vật tư PCCC — nguồn duy nhất cho plugin CAD, runner và báo giá. loai=block: đếm block có attribute MA_VT; loai=tuyen: cộng chiều dài đường trên layer PCCC_<ma> (m); loai=khac: không vẽ trong CAD, chỉ dùng cho báo giá sơ bộ. ky_hieu = chữ trong hình block mặc định (chỉ ASCII: font txt.shx không có dấu).",
+  "he": {
+    "BC": "Báo cháy tự động",
+    "SPR": "Chữa cháy sprinkler",
+    "HVT": "Họng nước vách tường",
+    "NUOC": "Cấp nước ngoài nhà, trạm bơm, bể",
+    "BINH": "Bình chữa cháy",
+    "DEN": "Chiếu sáng sự cố, chỉ dẫn thoát nạn",
+    "ONG": "Đường ống, dây cáp",
+    "KHAC": "Hạng mục khác"
+  },
+  "vat_tu": [
+    { "ma": "BC_TT", "ten": "Tủ trung tâm báo cháy", "dvt": "bộ", "he": "BC", "loai": "block", "ky_hieu": "TT" },
+    { "ma": "BC_KHOI", "ten": "Đầu báo khói", "dvt": "cái", "he": "BC", "loai": "block", "ky_hieu": "S" },
+    { "ma": "BC_NHIET", "ten": "Đầu báo nhiệt", "dvt": "cái", "he": "BC", "loai": "block", "ky_hieu": "H" },
+    { "ma": "BC_LUA", "ten": "Đầu báo lửa", "dvt": "cái", "he": "BC", "loai": "block", "ky_hieu": "F" },
+    { "ma": "BC_BEAM", "ten": "Đầu báo khói tia chiếu", "dvt": "bộ", "he": "BC", "loai": "block", "ky_hieu": "B" },
+    { "ma": "BC_TOHOP", "ten": "Tổ hợp nút ấn + chuông + đèn", "dvt": "bộ", "he": "BC", "loai": "block", "ky_hieu": "THB" },
+    { "ma": "BC_NUTAN", "ten": "Nút ấn báo cháy", "dvt": "cái", "he": "BC", "loai": "block", "ky_hieu": "N" },
+    { "ma": "BC_CHUONG", "ten": "Chuông báo cháy", "dvt": "cái", "he": "BC", "loai": "block", "ky_hieu": "C" },
+    { "ma": "BC_DEN", "ten": "Đèn báo cháy", "dvt": "cái", "he": "BC", "loai": "block", "ky_hieu": "DL" },
+    { "ma": "BC_MODULE", "ten": "Module giám sát/điều khiển", "dvt": "cái", "he": "BC", "loai": "block", "ky_hieu": "M" },
+
+    { "ma": "SPR_DAU_UP", "ten": "Đầu phun sprinkler hướng lên", "dvt": "cái", "he": "SPR", "loai": "block", "ky_hieu": "U" },
+    { "ma": "SPR_DAU_DOWN", "ten": "Đầu phun sprinkler hướng xuống", "dvt": "cái", "he": "SPR", "loai": "block", "ky_hieu": "D" },
+    { "ma": "SPR_DAU_SIDE", "ten": "Đầu phun sprinkler gắn tường", "dvt": "cái", "he": "SPR", "loai": "block", "ky_hieu": "W" },
+    { "ma": "SPR_VAN_BD", "ten": "Van báo động (van ướt)", "dvt": "bộ", "he": "SPR", "loai": "block", "ky_hieu": "AV" },
+    { "ma": "SPR_CTDC", "ten": "Công tắc dòng chảy", "dvt": "cái", "he": "SPR", "loai": "block", "ky_hieu": "FS" },
+    { "ma": "SPR_VAN_KT", "ten": "Van kiểm tra cuối tuyến", "dvt": "bộ", "he": "SPR", "loai": "block", "ky_hieu": "KT" },
+
+    { "ma": "HVT_TU", "ten": "Tủ họng nước vách tường (van, lăng, cuộn vòi)", "dvt": "bộ", "he": "HVT", "loai": "block", "ky_hieu": "HN" },
+    { "ma": "HVT_VAN_CHAN", "ten": "Van chặn", "dvt": "cái", "he": "HVT", "loai": "block", "ky_hieu": "V" },
+    { "ma": "HVT_VAN_1C", "ten": "Van một chiều", "dvt": "cái", "he": "HVT", "loai": "block", "ky_hieu": "1C" },
+
+    { "ma": "NUOC_TRU", "ten": "Trụ nước chữa cháy ngoài nhà", "dvt": "trụ", "he": "NUOC", "loai": "block", "ky_hieu": "TR" },
+    { "ma": "NUOC_TIEP", "ten": "Họng tiếp nước xe chữa cháy", "dvt": "bộ", "he": "NUOC", "loai": "block", "ky_hieu": "TN" },
+    { "ma": "NUOC_BOM_DIEN", "ten": "Bơm chữa cháy động cơ điện", "dvt": "bộ", "he": "NUOC", "loai": "block", "ky_hieu": "BE" },
+    { "ma": "NUOC_BOM_DIESEL", "ten": "Bơm chữa cháy động cơ diesel", "dvt": "bộ", "he": "NUOC", "loai": "block", "ky_hieu": "BD" },
+    { "ma": "NUOC_BOM_BU", "ten": "Bơm bù áp", "dvt": "bộ", "he": "NUOC", "loai": "block", "ky_hieu": "BB" },
+    { "ma": "NUOC_TU_DK", "ten": "Tủ điều khiển bơm chữa cháy", "dvt": "bộ", "he": "NUOC", "loai": "block", "ky_hieu": "TDK" },
+    { "ma": "NUOC_BINH_AP", "ten": "Bình tích áp", "dvt": "bộ", "he": "NUOC", "loai": "block", "ky_hieu": "TA" },
+
+    { "ma": "BINH_BOT", "ten": "Bình bột chữa cháy 4–8 kg", "dvt": "bình", "he": "BINH", "loai": "block", "ky_hieu": "BOT" },
+    { "ma": "BINH_CO2", "ten": "Bình khí CO2 chữa cháy", "dvt": "bình", "he": "BINH", "loai": "block", "ky_hieu": "CO2" },
+    { "ma": "BINH_KE", "ten": "Kệ/tủ đựng bình chữa cháy", "dvt": "cái", "he": "BINH", "loai": "block", "ky_hieu": "K" },
+
+    { "ma": "DEN_SUCO", "ten": "Đèn chiếu sáng sự cố", "dvt": "bộ", "he": "DEN", "loai": "block", "ky_hieu": "SC" },
+    { "ma": "DEN_EXIT", "ten": "Đèn chỉ dẫn thoát nạn EXIT", "dvt": "bộ", "he": "DEN", "loai": "block", "ky_hieu": "EX" },
+
+    { "ma": "ONG_DN25", "ten": "Ống thép tráng kẽm DN25", "dvt": "m", "he": "ONG", "loai": "tuyen" },
+    { "ma": "ONG_DN32", "ten": "Ống thép tráng kẽm DN32", "dvt": "m", "he": "ONG", "loai": "tuyen" },
+    { "ma": "ONG_DN40", "ten": "Ống thép tráng kẽm DN40", "dvt": "m", "he": "ONG", "loai": "tuyen" },
+    { "ma": "ONG_DN50", "ten": "Ống thép tráng kẽm DN50", "dvt": "m", "he": "ONG", "loai": "tuyen" },
+    { "ma": "ONG_DN65", "ten": "Ống thép tráng kẽm DN65", "dvt": "m", "he": "ONG", "loai": "tuyen" },
+    { "ma": "ONG_DN80", "ten": "Ống thép tráng kẽm DN80", "dvt": "m", "he": "ONG", "loai": "tuyen" },
+    { "ma": "ONG_DN100", "ten": "Ống thép tráng kẽm DN100", "dvt": "m", "he": "ONG", "loai": "tuyen" },
+    { "ma": "ONG_DN125", "ten": "Ống thép tráng kẽm DN125", "dvt": "m", "he": "ONG", "loai": "tuyen" },
+    { "ma": "ONG_DN150", "ten": "Ống thép tráng kẽm DN150", "dvt": "m", "he": "ONG", "loai": "tuyen" },
+    { "ma": "DAY_BC", "ten": "Dây tín hiệu báo cháy chống cháy 2x1.5", "dvt": "m", "he": "ONG", "loai": "tuyen" },
+    { "ma": "CAP_CC", "ten": "Cáp điện chống cháy cấp nguồn PCCC", "dvt": "m", "he": "ONG", "loai": "tuyen" },
+    { "ma": "ONG_LUON", "ten": "Ống luồn dây PVC/thép", "dvt": "m", "he": "ONG", "loai": "tuyen" },
+
+    { "ma": "QUAT_TANG_AP", "ten": "Quạt tăng áp buồng thang", "dvt": "bộ", "he": "KHAC", "loai": "khac" },
+    { "ma": "DIEN_TU_UT", "ten": "Tủ điện ưu tiên PCCC + ATS", "dvt": "bộ", "he": "KHAC", "loai": "khac" },
+    { "ma": "CHONG_SET", "ten": "Hệ thống chống sét (kim thu, dây thoát, cọc tiếp địa)", "dvt": "hệ", "he": "KHAC", "loai": "khac" },
+    { "ma": "CUA_CC", "ten": "Cửa chống cháy", "dvt": "bộ", "he": "KHAC", "loai": "khac" },
+    { "ma": "BE_NUOC", "ten": "Bể nước PCCC", "dvt": "m3", "he": "KHAC", "loai": "khac" },
+    { "ma": "HS_THIET_KE", "ten": "Thiết kế PCCC", "dvt": "gói", "he": "KHAC", "loai": "khac" },
+    { "ma": "HS_THAM_DUYET", "ten": "Thủ tục thẩm duyệt thiết kế PCCC", "dvt": "gói", "he": "KHAC", "loai": "khac" },
+    { "ma": "HS_NGHIEM_THU", "ten": "Thủ tục nghiệm thu PCCC", "dvt": "gói", "he": "KHAC", "loai": "khac" }
+  ]
+}

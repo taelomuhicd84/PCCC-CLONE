@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TKPCCC — Thiết kế PCCC</title>
+<style>
+  :root { --bg:#f6f7f9; --fg:#1d232b; --mute:#66707c; --line:#d8dde3; --card:#fff; --acc:#c62828; --warn:#b26a00; --ok:#2e7d32; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#16191d; --fg:#e6e9ec; --mute:#9aa4ae; --line:#2e343b; --card:#1f2328; --acc:#ef5350; --warn:#ffb74d; --ok:#81c784; } }
+  * { box-sizing:border-box; }
+  body { margin:0; font:14px/1.5 system-ui, "Segoe UI", sans-serif; background:var(--bg); color:var(--fg); }
+  header { padding:10px 16px; border-bottom:1px solid var(--line); background:var(--card); display:flex; flex-wrap:wrap; gap:8px 16px; align-items:center; position:sticky; top:0; z-index:2; }
+  header b { color:var(--acc); font-size:16px; }
+  nav { display:flex; gap:4px; }
+  nav button.on { background:var(--acc); color:#fff; border-color:var(--acc); }
+  .duan { margin-left:auto; display:flex; gap:6px; flex-wrap:wrap; }
+  main { max-width:1200px; margin:auto; padding:16px; }
+  section { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:16px; margin-bottom:16px; }
+  h2 { margin:0 0 8px; font-size:16px; } h3 { margin:12px 0 6px; font-size:14px; }
+  .row { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+  button, select, input, textarea { font:inherit; padding:6px 10px; border:1px solid var(--line); border-radius:6px; background:var(--card); color:var(--fg); }
+  button { cursor:pointer; } button.chinh { background:var(--acc); color:#fff; border-color:var(--acc); } button:disabled { opacity:.5; cursor:wait; }
+  table { width:100%; border-collapse:collapse; margin-top:8px; }
+  th, td { padding:4px 6px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+  td.so, th.so { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  tr.nhom td { font-weight:600; background:color-mix(in srgb, var(--acc) 8%, transparent); }
+  .mute { color:var(--mute); } .warn { color:var(--warn); } .ok { color:var(--ok); }
+  .cuon { overflow-x:auto; }
+  textarea { width:100%; min-height:60px; }
+  pre { white-space:pre-wrap; margin:8px 0 0; }
+  .an { display:none !important; }
+  /* Hướng dẫn */
+  .hd { display:grid; grid-template-columns:240px 1fr; gap:16px; align-items:start; }
+  .buoc button { display:block; width:100%; text-align:left; margin-bottom:4px; }
+  .buoc button.on { border-color:var(--acc); color:var(--acc); font-weight:600; }
+  .chip { display:inline-block; padding:1px 8px; border:1px solid var(--line); border-radius:12px; font-size:12px; font-family:ui-monospace, Consolas, monospace; }
+  .tailieu { max-height:70vh; overflow:auto; border-top:1px solid var(--line); margin-top:8px; padding-top:8px; }
+  .tailieu table { font-size:13px; } .tailieu h1 { font-size:18px; }
+  .muc-luc a { margin-right:10px; font-size:12px; white-space:nowrap; }
+  /* Khảo sát */
+  .luoi { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:8px 16px; }
+  .luoi label { display:flex; flex-direction:column; gap:2px; font-size:12px; color:var(--mute); }
+  .luoi label input, .luoi label select, .luoi label textarea { color:var(--fg); font-size:14px; }
+  .rong { grid-column:1 / -1; }
+  td input { width:100%; }
+  @media (max-width:760px) { .hd { grid-template-columns:1fr; } .duan { margin-left:0; } }
+</style>
+</head>
+<body>
+<header>
+  <b>TKPCCC</b>
+  <nav>
+    <button data-tab="hd" class="on">Hướng dẫn thiết kế</button>
+    <button data-tab="ks">Khảo sát</button>
+    <button data-tab="bg">Khối lượng &amp; Báo giá</button>
+  </nav>
+  <div class="duan">
+    <select id="duAn"><option value="">— dự án —</option></select>
+    <input id="duAnMoi" placeholder="Tên dự án mới" size="16">
+    <button id="taoDuAn">+ Tạo</button>
+  </div>
+</header>
+<main>
+  <!-- HƯỚNG DẪN -->
+  <div id="tab-hd" class="hd">
+    <section class="buoc" id="dsBuoc"></section>
+    <div>
+      <section id="chiTiet"></section>
+      <section>
+        <h2>Hỏi Claude về bước này</h2>
+        <p class="mute">Claude đọc tài liệu của bước trước khi trả lời, chạy qua Claude Code đã đăng nhập trên máy, không dùng API key.</p>
+        <textarea id="cauHoi" placeholder="VD: nhà xưởng 3.000 m², 1 tầng — có phải lắp báo cháy tự động không?"></textarea>
+        <div class="row"><button id="hoi">Hỏi</button><span id="dangHoi" class="mute"></span></div>
+        <pre id="traLoi"></pre>
+      </section>
+    </div>
+  </div>
+
+  <!-- KHẢO SÁT -->
+  <div id="tab-ks" class="an">
+    <section>
+      <h2>Báo cáo khảo sát PCCC</h2>
+      <p class="mute">Điền số liệu đã biết rồi bấm “Claude gợi ý” để điền phần còn lại theo QCVN (kết quả là gợi ý, kỹ sư kiểm lại).</p>
+      <form id="formKS" class="luoi" onsubmit="return false">
+        <label class="rong">1. Hạng mục<input name="hang_muc"></label>
+        <label class="rong">Công năng (nhóm F)<input name="cong_nang"></label>
+        <label>2. Tổng diện tích sàn (m²)<input name="dien_tich_m2" type="number" min="0"></label>
+        <label>Số tầng nổi<input name="so_tang" type="number" min="0"></label>
+        <label>Số tầng hầm<input name="so_tang_ham" type="number" min="0"></label>
+        <label>Chu vi nhà (m)<input name="chu_vi_m" type="number" min="0"></label>
+        <label>Chiều cao công trình (m)<input name="chieu_cao_m" type="number" min="0" step="0.1"></label>
+        <label class="rong">3. Chiều cao PCCC (ghi phép cộng)<input name="chieu_cao_pccc"></label>
+        <label class="rong">4. Khối tích<input name="khoi_tich"></label>
+        <label>5. Thuộc diện thẩm định<select name="dien_tham_dinh"><option></option><option>CÓ</option><option>KHÔNG</option><option>CẦN XÁC NHẬN</option></select></label>
+        <label class="rong">Căn cứ diện thẩm định<textarea name="dien_tham_dinh_can_cu"></textarea></label>
+        <label>6. Số lối thoát nạn<input name="so_loi_thoat_nan" type="number" min="0"></label>
+        <label>Đánh giá thoát nạn<select name="thoat_nan_danh_gia"><option></option><option>ĐẠT</option><option>CHƯA ĐẠT</option><option>CẦN XÁC NHẬN</option></select></label>
+        <label class="rong">Lối thoát nạn theo tầng<textarea name="loi_thoat_nan"></textarea></label>
+        <label class="rong">Ghi chú thoát nạn<textarea name="thoat_nan_ghi_chu"></textarea></label>
+        <div class="rong"><h3>7. Hệ thống PCCC phải lắp đặt</h3><div class="cuon"><table id="bangHT"></table></div></div>
+        <label class="rong">8. Bể nước PCCC<input name="be_nuoc_pccc"></label>
+        <label>Dung tích bể (m³, nếu đã tính)<input name="be_nuoc_m3" type="number" min="0"></label>
+      </form>
+      <div class="row" style="margin-top:12px">
+        <button id="luuKS" class="chinh">Lưu</button>
+        <button id="goiY">Claude gợi ý</button>
+        <a id="taiWord"><button>Tải Word (.docx)</button></a>
+        <button id="soBo">Ước khối lượng sơ bộ → Báo giá</button>
+        <span id="ksKq"></span>
+      </div>
+      <details class="mute"><summary>Trả lời đầy đủ của Claude</summary><pre id="ksTraLoi"></pre></details>
+    </section>
+  </div>
+
+  <!-- BÁO GIÁ -->
+  <div id="tab-bg" class="an">
+    <section>
+      <h2>Khối lượng</h2>
+      <div class="row">
+        <label><input type="radio" name="nguon" value="cad" checked> Bóc từ bản vẽ (PCCC_BOC)</label>
+        <label><input type="radio" name="nguon" value="so_bo"> Sơ bộ theo khảo sát</label>
+        <button id="taiLai">Tải lại</button>
+        <span id="kl" class="mute"></span>
+      </div>
+    </section>
+    <section>
+      <h2>Đơn giá</h2>
+      <div class="row">
+        <a href="/api/don-gia/mau"><button>Tải đơn giá mẫu (.xlsx)</button></a>
+        <span class="mute">Điền cột Đơn giá vật tư / nhân công, rồi:</span>
+        <input type="file" id="fileGia" accept=".xlsx">
+        <span id="giaKq"></span>
+      </div>
+    </section>
+    <section>
+      <h2>Báo giá</h2>
+      <div class="row">
+        <a id="xuat"><button class="chinh">Xuất báo giá (.xlsx)</button></a>
+        <span id="thieu" class="warn"></span>
+      </div>
+      <div class="cuon"><table id="bang"></table></div>
+    </section>
+  </div>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const so = (x) => x == null ? "" : Number(x).toLocaleString("vi-VN");
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const duAn = () => $("duAn").value;
+const qDuAn = () => "?du_an=" + encodeURIComponent(duAn());
+async function api(url, opt) {
+  const r = await fetch(url, opt);
+  const j = await r.json();
+  if (!r.ok) throw new Error(j.loi || r.statusText);
+  return j;
+}
+async function cho(nut, viec) { nut.disabled = true; try { await viec(); } finally { nut.disabled = false; } }
+const nho = (k, v) => { try { v === undefined ? (v = localStorage.getItem(k)) : localStorage.setItem(k, v); } catch {} return v; };
+
+// ---------- Tab, dự án ----------
+let tab = "hd";
+function moTab(t) {
+  tab = t;
+  document.querySelectorAll("nav button").forEach((b) => b.classList.toggle("on", b.dataset.tab === t));
+  ["hd", "ks", "bg"].forEach((x) => $("tab-" + x).classList.toggle("an", x !== t));
+  if (t === "ks") taiKS();
+  if (t === "bg") hienBaoGia();
+  nho("tab", t);
+}
+document.querySelectorAll("nav button").forEach((b) => (b.onclick = () => moTab(b.dataset.tab)));
+
+async function taiDuAn(chon) {
+  const ds = await api("/api/du-an");
+  if (chon && !ds.includes(chon)) ds.unshift(chon);
+  const cu = chon ?? duAn() ?? nho("duAn");
+  $("duAn").innerHTML = '<option value="">— dự án —</option>' + ds.map((d) => `<option>${esc(d)}</option>`).join("");
+  $("duAn").value = ds.includes(cu) ? cu : (ds.includes(nho("duAn")) ? nho("duAn") : (ds[0] ?? ""));
+}
+$("duAn").onchange = () => { nho("duAn", duAn()); moTab(tab); };
+$("taoDuAn").onclick = async () => {
+  const t = $("duAnMoi").value.trim(); if (!t) return;
+  $("duAnMoi").value = "";
+  await taiDuAn(t); nho("duAn", t); moTab("ks");
+};
+
+// ---------- Hướng dẫn ----------
+let buoc = [], buocChon = null;
+async function taiHuongDan() {
+  buoc = (await api("/api/huong-dan")).buoc;
+  $("dsBuoc").innerHTML = "<h2>Quy trình</h2>" + buoc.map((b, i) => `<button data-i="${i}"><b>${esc(b.ma)}</b> · ${esc(b.ten)}</button>`).join("");
+  $("dsBuoc").querySelectorAll("button").forEach((x) => (x.onclick = () => chonBuoc(+x.dataset.i)));
+  chonBuoc(Math.min(+(nho("buoc") ?? 0) || 0, buoc.length - 1));
+}
+function chonBuoc(i) {
+  buocChon = buoc[i]; nho("buoc", i);
+  $("dsBuoc").querySelectorAll("button").forEach((x) => x.classList.toggle("on", +x.dataset.i === i));
+  const b = buocChon;
+  $("chiTiet").innerHTML = `<h2>${esc(b.ma)} · ${esc(b.ten)}</h2>
+    <ol>${b.viec.map((v) => `<li>${esc(v)}</li>`).join("")}</ol>
+    ${b.lenh_cad.length ? `<p>Lệnh AutoCAD: ${b.lenh_cad.map((l) => `<span class="chip">${esc(l)}</span>`).join(" ")}</p>` : ""}
+    <p>Tài liệu (nguyên văn quy chuẩn):</p>
+    <div class="row">${b.tai_lieu.map((f) => `<button data-f="${esc(f)}">${esc(f.replace(/\.md$/, ""))}</button>`).join("")}</div>
+    <div class="muc-luc" id="mucLuc"></div><div class="tailieu" id="taiLieu"></div>`;
+  $("chiTiet").querySelectorAll("button[data-f]").forEach((x) => (x.onclick = () => moTaiLieu(x.dataset.f)));
+  moTaiLieu(b.tai_lieu[0]);
+}
+async function moTaiLieu(f) {
+  if (!f) return;
+  $("chiTiet").querySelectorAll("button[data-f]").forEach((x) => x.classList.toggle("chinh", x.dataset.f === f));
+  const r = await fetch("/api/tai-lieu?f=" + encodeURIComponent(f));
+  $("taiLieu").innerHTML = r.ok ? await r.text() : "Không mở được tài liệu.";
+  const h = [...$("taiLieu").querySelectorAll("h2, h3")];
+  h.forEach((x, i) => (x.id = "tl" + i));
+  $("mucLuc").innerHTML = h.map((x, i) => `<a href="#tl${i}">${esc(x.textContent.slice(0, 60))}</a>`).join("");
+  $("mucLuc").querySelectorAll("a").forEach((a) => (a.onclick = (e) => { e.preventDefault(); $(a.getAttribute("href").slice(1)).scrollIntoView({ block: "start" }); }));
+  $("taiLieu").scrollTop = 0;
+}
+$("hoi").onclick = () => cho($("hoi"), async () => {
+  const cau_hoi = $("cauHoi").value.trim(); if (!cau_hoi) return;
+  $("dangHoi").textContent = "Claude đang đọc tài liệu và trả lời…"; $("traLoi").textContent = "";
+  try { $("traLoi").textContent = (await api("/api/claude", { method: "POST", body: JSON.stringify({ cau_hoi, tai_lieu: buocChon?.tai_lieu ?? [] }) })).tra_loi; }
+  catch (e) { $("traLoi").textContent = "Lỗi: " + e.message; }
+  $("dangHoi").textContent = "";
+});
+
+// ---------- Khảo sát ----------
+const SO = ["dien_tich_m2", "so_tang", "so_tang_ham", "chu_vi_m", "chieu_cao_m", "so_loi_thoat_nan", "be_nuoc_m3"];
+let ks = null;
+function ksVaoForm(x) {
+  ks = x;
+  const f = $("formKS");
+  for (const el of f.elements) if (el.name && el.name in x) el.value = x[el.name] ?? "";
+  $("bangHT").innerHTML = "<tr><th>Hệ thống</th><th>Trang bị</th><th>Căn cứ</th><th>Ghi chú</th></tr>" + x.he_thong.map((h, i) => `<tr>
+    <td>${esc(h.ten)}</td>
+    <td><select data-i="${i}" data-k="co">${["", "CÓ", "KHÔNG", "CẦN XÁC NHẬN"].map((o) => `<option${o === h.co ? " selected" : ""}>${o}</option>`).join("")}</select></td>
+    <td><input data-i="${i}" data-k="can_cu" value="${esc(h.can_cu)}"></td>
+    <td><input data-i="${i}" data-k="ghi_chu" value="${esc(h.ghi_chu)}"></td></tr>`).join("");
+  $("taiWord").href = "/api/khao-sat.docx" + qDuAn();
+}
+function ksTuForm() {
+  const x = structuredClone(ks);
+  for (const el of $("formKS").elements) {
+    if (el.dataset.i != null) { x.he_thong[+el.dataset.i][el.dataset.k] = el.value; continue; }
+    if (!el.name) continue;
+    x[el.name] = SO.includes(el.name) ? (el.value === "" ? null : Number(el.value)) : el.value;
+  }
+  x.du_an = duAn();
+  return x;
+}
+async function taiKS() {
+  $("ksKq").textContent = "";
+  if (!duAn()) { $("ksKq").textContent = "Chọn hoặc tạo dự án trước."; return; }
+  ksVaoForm((await api("/api/khao-sat" + qDuAn())).khao_sat);
+}
+async function luuKS() {
+  if (!duAn()) throw new Error("Chọn hoặc tạo dự án trước");
+  await api("/api/khao-sat", { method: "POST", body: JSON.stringify(ksTuForm()) });
+}
+const bao = (el, viec) => async () => { try { await viec(); } catch (e) { el.textContent = "Lỗi: " + e.message; el.className = "warn"; } };
+$("luuKS").onclick = () => cho($("luuKS"), bao($("ksKq"), async () => { await luuKS(); $("ksKq").textContent = "Đã lưu."; $("ksKq").className = "ok"; }));
+$("goiY").onclick = () => cho($("goiY"), bao($("ksKq"), async () => {
+  $("ksKq").textContent = "Claude đang đọc quy chuẩn (có thể vài phút)…"; $("ksKq").className = "mute";
+  const j = await api("/api/khao-sat/goi-y", { method: "POST", body: JSON.stringify(ksTuForm()) });
+  ksVaoForm(j.khao_sat); $("ksTraLoi").textContent = j.tra_loi;
+  await luuKS();
+  $("ksKq").textContent = "Đã điền gợi ý và lưu — kiểm tra lại từng mục."; $("ksKq").className = "ok";
+}));
+$("taiWord").onclick = async (e) => { e.preventDefault(); try { await luuKS(); location.href = "/api/khao-sat.docx" + qDuAn(); } catch (err) { $("ksKq").textContent = "Lỗi: " + err.message; } };
+$("soBo").onclick = () => cho($("soBo"), bao($("ksKq"), async () => {
+  await luuKS();
+  await api("/api/khao-sat/so-bo" + qDuAn(), { method: "POST" });
+  document.querySelector('input[name=nguon][value=so_bo]').checked = true;
+  moTab("bg");
+}));
+
+// ---------- Báo giá ----------
+const nguon = () => document.querySelector("input[name=nguon]:checked").value;
+async function hienBaoGia() {
+  $("bang").innerHTML = ""; $("thieu").textContent = ""; $("kl").textContent = "";
+  $("xuat").removeAttribute("href");
+  if (!duAn()) { $("thieu").textContent = "Chọn dự án."; return; }
+  const q = qDuAn() + "&nguon=" + nguon();
+  try {
+    const [kl, bg] = await Promise.all([api("/api/khoi-luong" + q), api("/api/bao-gia" + q)]);
+    $("kl").textContent = `${kl.ban_ve ?? "?"} · ${new Date(kl.luc).toLocaleString("vi-VN")}` + (kl.khu_vuc?.length ? ` · ${kl.khu_vuc.length} tầng/khu: ${kl.khu_vuc.map((k) => k.ten).join(", ")}` : "");
+    $("xuat").href = "/api/bao-gia.xlsx" + q;
+    if (bg.thieu_gia.length) $("thieu").textContent = `${bg.thieu_gia.length} mã chưa có đơn giá: ${bg.thieu_gia.join(", ")}`;
+    let h = '<tr><th>Mã</th><th>Hạng mục</th><th>ĐVT</th><th class="so">KL</th><th class="so">Đơn giá VT</th><th class="so">Đơn giá NC</th><th class="so">Thành tiền</th><th>Ghi chú</th></tr>';
+    for (const n of bg.nhom) {
+      h += `<tr class="nhom"><td colspan="6">${esc(n.ten_he)}</td><td class="so">${so(n.cong)}</td><td></td></tr>`;
+      for (const x of n.dong) h += `<tr><td>${esc(x.ma)}</td><td>${esc(x.ten)}</td><td>${esc(x.dvt)}</td><td class="so">${so(x.sl)}</td><td class="so">${so(x.vt)}</td><td class="so">${so(x.nc)}</td><td class="so">${x.thanh_tien == null ? '<span class="warn">chưa giá</span>' : so(x.thanh_tien)}</td><td class="mute">${esc(x.ghi_chu)}</td></tr>`;
+    }
+    h += `<tr><td colspan="6"><b>Tổng trước thuế</b></td><td class="so"><b>${so(bg.tong)}</b></td><td></td></tr>`;
+    h += `<tr><td colspan="6">VAT ${bg.vat * 100}%</td><td class="so">${so(bg.thue)}</td><td></td></tr>`;
+    h += `<tr><td colspan="6"><b>Tổng cộng</b></td><td class="so"><b>${so(bg.tong_cong)}</b></td><td></td></tr>`;
+    $("bang").innerHTML = h;
+  } catch (e) { $("thieu").textContent = e.message; }
+}
+document.querySelectorAll("input[name=nguon]").forEach((r) => (r.onchange = hienBaoGia));
+$("taiLai").onclick = async () => { await taiDuAn(); hienBaoGia(); };
+$("fileGia").onchange = async (e) => {
+  const f = e.target.files[0]; if (!f) return;
+  try {
+    const j = await api("/api/don-gia", { method: "POST", body: f });
+    $("giaKq").textContent = `Đã nhận ${j.so_ma} mã.`;
+    await hienBaoGia();
+  } catch (err) { $("giaKq").textContent = err.message; }
+  e.target.value = "";
+};
+
+(async () => { await Promise.all([taiDuAn(), taiHuongDan()]); moTab(nho("tab") ?? "hd"); })();
+</script>
+</body>
+</html>
