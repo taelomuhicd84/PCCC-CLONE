@@ -3,6 +3,8 @@ du_an/
 data/don_gia.json
 # Ket qua build plugin; giu lai thu vien block va bang gan block do nguoi dung sua
 cad/TKPCCC.bundle/Contents/*.dll
+cad/TKPCCC.bundle/Contents/*.dll.cu*
+cad/TKPCCC.bundle/Contents/PCCC_Blocks_cu_*.dwg
 cad/TKPCCC.bundle/Contents/*.pdb
 cad/TKPCCC.bundle/Contents/vat_tu.json
 *.bak
