@@ -19,6 +19,15 @@ Mỗi module có `test/` cạnh `src/`. Thêm/đổi thư mục thì cập nhậ
 - Không commit `ket_qua/`, `data/don_gia.json`, DLL build. `PCCC_Blocks.dwg`, `block_alias.json` (người dùng sửa) ĐƯỢC commit.
 - File `.bat`/`.ps1` chỉ dùng chữ ASCII.
 
+## Skill dự án (`.claude/skills/`)
+- `tkpccc-cad-console` — build + kiểm thử plugin trong accoreconsole, in bản vẽ ra PNG, các bẫy API AutoCAD đã gặp.
+- `tkpccc-xong-dau-muc` — khép đầu mục: kiểm → TIEN_DO/LICH_SU → commit → push → ngữ cảnh mới làm tiếp.
+- `tkpccc-tra-quy-chuan` — chọn file quy chuẩn theo câu hỏi, nguyên tắc chỉ trích văn bản hiện hành.
+Quy trình nào lặp lại và hay thì gom thành skill mới ở đây (người dùng dặn 2026-10-31).
+
+## Nhịp làm việc (người dùng dặn 2026-10-31)
+**Xong mỗi đầu mục: chạy skill `tkpccc-xong-dau-muc`** (lưu tiến độ, push, rồi xoá ngữ cảnh và làm tiếp việc kế trong `TIEN_DO.md`).
+
 ## Git / GitHub
 - Remote: https://github.com/taelomuhicd84/PCCC-CLONE (nhánh `main`, repo **công khai**: không đưa hồ sơ khách, token, đơn giá vào repo).
 - Commit ở mỗi mốc việc. **Khi usage gần hết: cập nhật `TIEN_DO.md` + `LICH_SU.md`, commit, push** (người dùng dặn 2026-10-31).

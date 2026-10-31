@@ -7,6 +7,7 @@ File này cập nhật sau mỗi mốc việc và trước khi hết usage. Phi�
 6 test plugin trong accoreconsole, chạy thử web trên trình duyệt (tạo dự án, khảo sát, ước KL, báo giá, Word, màn hình điện thoại).
 **Đã sắp xếp lại thư mục theo khung PCCC_he_thong** (`shared/`, `runner/src`+`test`, `skills/`, `ket_qua/`…), mô tả ở `STRUCTURE.md`.
 **Code ở GitHub:** https://github.com/taelomuhicd84/PCCC-CLONE (công khai).
+**Skill dự án** (`.claude/skills/`): `tkpccc-cad-console`, `tkpccc-xong-dau-muc`, `tkpccc-tra-quy-chuan`. Xong mỗi đầu mục chạy `tkpccc-xong-dau-muc`.
 
 Việc người dùng cần làm:
 - 👤 Tắt hẳn AutoCAD rồi mở lại để nạp plugin mới (DLL đã build; bản cũ đổi tên `TKPCCC.Cad.dll.cu*`).

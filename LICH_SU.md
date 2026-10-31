@@ -17,3 +17,5 @@
 - Sắp xếp lại thư mục theo khung dự án mẫu PCCC_he_thong: `shared/src` (bao_gia, khao_sat) + `shared/test`, `runner/src`
   (server, xuat_xlsx, xuat_docx, engines/claude) + `runner/test`, `cad/src/Lenh.cs` + `cad/test`, `skills/` (MOD_*, SKILL_*, PHU_LUC_G
   chuyển từ knowledge/), `du_an/` → `ket_qua/`; thêm `STRUCTURE.md`, `ROADMAP.md`, `chay.bat`, `.claude/launch.json`.
+- Gom quy trình hay thành 3 skill dự án: `tkpccc-cad-console` (+ `scripts/in_png.ps1` in DWG ra PNG, đã chạy thử),
+  `tkpccc-xong-dau-muc`, `tkpccc-tra-quy-chuan`. Người dùng dặn: xong mỗi đầu mục thì lưu tiến độ, push, xoá ngữ cảnh rồi làm tiếp.

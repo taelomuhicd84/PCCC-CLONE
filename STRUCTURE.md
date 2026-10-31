@@ -13,7 +13,10 @@ TKPCCC/
 ├─ LICH_SU.md           nhật ký theo ngày
 ├─ chay.bat             1 cú bấm: bật runner (ẩn) + mở web
 ├─ package.json         1 gói Node chung (tsx, vitest, exceljs, docx, marked) — không dùng workspaces
-├─ .claude/launch.json  cấu hình xem trước web trong Claude Code (runner cổng 8787)
+├─ .claude/
+│  ├─ launch.json         cấu hình xem trước web trong Claude Code (runner cổng 8787)
+│  └─ skills/             skill dự án cho Claude: tkpccc-cad-console (kiểm thử CAD, kèm scripts/in_png.ps1),
+│                         tkpccc-xong-dau-muc (khép đầu mục), tkpccc-tra-quy-chuan (chọn file quy chuẩn)
 │
 ├─ shared/              LÕI NGHIỆP VỤ dùng chung, hàm thuần (không đọc/ghi file, không server)
 │  ├─ src/bao_gia.ts       khối lượng × danh mục × đơn giá -> báo giá theo hệ; docSoVN (đọc số kiểu Việt Nam)
@@ -58,6 +61,7 @@ TKPCCC/
 | Lớp | Thư mục | Ai sửa | Commit |
 |---|---|---|---|
 | Quy tắc, tiến độ | `CLAUDE.md`, `TIEN_DO.md`, `LICH_SU.md`, `ROADMAP.md`, `STRUCTURE.md` | Claude cập nhật mỗi mốc | có |
+| Quy trình lặp lại của Claude | `.claude/skills/<tên>/SKILL.md` (+ `scripts/`) | Claude gom việc hay thành skill | có |
 | Nghiệp vụ (tính toán) | `shared/src` | Claude, kèm test trong `shared/test` | có |
 | Server, xuất file, gọi Claude | `runner/src` | Claude, kèm test trong `runner/test` | có |
 | Giao diện | `web/index.html` | Claude | có |
