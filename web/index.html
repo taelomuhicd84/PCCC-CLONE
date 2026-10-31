@@ -84,22 +84,22 @@
       <form id="formKS" class="luoi" onsubmit="return false">
         <label class="rong">1. Hạng mục<input name="hang_muc"></label>
         <label class="rong">Công năng (nhóm F)<input name="cong_nang"></label>
-        <label>2. Tổng diện tích sàn (m²)<input name="dien_tich_m2" type="number" min="0"></label>
-        <label>Số tầng nổi<input name="so_tang" type="number" min="0"></label>
-        <label>Số tầng hầm<input name="so_tang_ham" type="number" min="0"></label>
-        <label>Chu vi nhà (m)<input name="chu_vi_m" type="number" min="0"></label>
-        <label>Chiều cao công trình (m)<input name="chieu_cao_m" type="number" min="0" step="0.1"></label>
+        <label>2. Tổng diện tích sàn (m²)<input name="dien_tich_m2" inputmode="decimal"></label>
+        <label>Số tầng nổi<input name="so_tang" inputmode="decimal"></label>
+        <label>Số tầng hầm<input name="so_tang_ham" inputmode="decimal"></label>
+        <label>Chu vi nhà (m)<input name="chu_vi_m" inputmode="decimal"></label>
+        <label>Chiều cao công trình (m)<input name="chieu_cao_m" inputmode="decimal"></label>
         <label class="rong">3. Chiều cao PCCC (ghi phép cộng)<input name="chieu_cao_pccc"></label>
         <label class="rong">4. Khối tích<input name="khoi_tich"></label>
         <label>5. Thuộc diện thẩm định<select name="dien_tham_dinh"><option></option><option>CÓ</option><option>KHÔNG</option><option>CẦN XÁC NHẬN</option></select></label>
         <label class="rong">Căn cứ diện thẩm định<textarea name="dien_tham_dinh_can_cu"></textarea></label>
-        <label>6. Số lối thoát nạn<input name="so_loi_thoat_nan" type="number" min="0"></label>
+        <label>6. Số lối thoát nạn<input name="so_loi_thoat_nan" inputmode="decimal"></label>
         <label>Đánh giá thoát nạn<select name="thoat_nan_danh_gia"><option></option><option>ĐẠT</option><option>CHƯA ĐẠT</option><option>CẦN XÁC NHẬN</option></select></label>
         <label class="rong">Lối thoát nạn theo tầng<textarea name="loi_thoat_nan"></textarea></label>
         <label class="rong">Ghi chú thoát nạn<textarea name="thoat_nan_ghi_chu"></textarea></label>
         <div class="rong"><h3>7. Hệ thống PCCC phải lắp đặt</h3><div class="cuon"><table id="bangHT"></table></div></div>
         <label class="rong">8. Bể nước PCCC<input name="be_nuoc_pccc"></label>
-        <label>Dung tích bể (m³, nếu đã tính)<input name="be_nuoc_m3" type="number" min="0"></label>
+        <label>Dung tích bể (m³, nếu đã tính)<input name="be_nuoc_m3" inputmode="decimal"></label>
       </form>
       <div class="row" style="margin-top:12px">
         <button id="luuKS" class="chinh">Lưu</button>
@@ -179,8 +179,13 @@ async function taiDuAn(chon) {
 $("duAn").onchange = () => { nho("duAn", duAn()); moTab(tab); };
 $("taoDuAn").onclick = async () => {
   const t = $("duAnMoi").value.trim(); if (!t) return;
-  $("duAnMoi").value = "";
-  await taiDuAn(t); nho("duAn", t); moTab("ks");
+  try {
+    // Lưu khảo sát trống ngay để dự án có thư mục (không mất khi đổi dự án); server trả tên đã làm sạch.
+    const { khao_sat } = await api("/api/khao-sat?du_an=" + encodeURIComponent(t));
+    const j = await api("/api/khao-sat", { method: "POST", body: JSON.stringify({ ...khao_sat, du_an: t }) });
+    $("duAnMoi").value = "";
+    await taiDuAn(j.du_an); nho("duAn", j.du_an); moTab("ks");
+  } catch (e) { alert("Không tạo được dự án: " + e.message); }
 };
 
 // ---------- Hướng dẫn ----------
@@ -204,11 +209,15 @@ function chonBuoc(i) {
   $("chiTiet").querySelectorAll("button[data-f]").forEach((x) => (x.onclick = () => moTaiLieu(x.dataset.f)));
   moTaiLieu(b.tai_lieu[0]);
 }
+let lanMo = 0;
 async function moTaiLieu(f) {
   if (!f) return;
+  const lan = ++lanMo; // bấm nhanh nhiều tài liệu: chỉ hiện cái bấm sau cùng
   $("chiTiet").querySelectorAll("button[data-f]").forEach((x) => x.classList.toggle("chinh", x.dataset.f === f));
   const r = await fetch("/api/tai-lieu?f=" + encodeURIComponent(f));
-  $("taiLieu").innerHTML = r.ok ? await r.text() : "Không mở được tài liệu.";
+  const html = r.ok ? await r.text() : "Không mở được tài liệu.";
+  if (lan !== lanMo || !$("taiLieu")) return;
+  $("taiLieu").innerHTML = html;
   const h = [...$("taiLieu").querySelectorAll("h2, h3")];
   h.forEach((x, i) => (x.id = "tl" + i));
   $("mucLuc").innerHTML = h.map((x, i) => `<a href="#tl${i}">${esc(x.textContent.slice(0, 60))}</a>`).join("");
@@ -229,7 +238,8 @@ let ks = null;
 function ksVaoForm(x) {
   ks = x;
   const f = $("formKS");
-  for (const el of f.elements) if (el.name && el.name in x) el.value = x[el.name] ?? "";
+  // Số hiện kiểu Việt Nam (1.200; 3,5); gửi lên nguyên chữ để server đọc đúng (ô number của trình duyệt hiểu "1.200" là 1,2).
+  for (const el of f.elements) if (el.name && el.name in x) el.value = SO.includes(el.name) && x[el.name] != null ? Number(x[el.name]).toLocaleString("vi-VN") : (x[el.name] ?? "");
   $("bangHT").innerHTML = "<tr><th>Hệ thống</th><th>Trang bị</th><th>Căn cứ</th><th>Ghi chú</th></tr>" + x.he_thong.map((h, i) => `<tr>
     <td>${esc(h.ten)}</td>
     <td><select data-i="${i}" data-k="co">${["", "CÓ", "KHÔNG", "CẦN XÁC NHẬN"].map((o) => `<option${o === h.co ? " selected" : ""}>${o}</option>`).join("")}</select></td>
@@ -238,11 +248,11 @@ function ksVaoForm(x) {
   $("taiWord").href = "/api/khao-sat.docx" + qDuAn();
 }
 function ksTuForm() {
-  const x = structuredClone(ks);
+  const x = structuredClone(ks ?? { he_thong: [] });
   for (const el of $("formKS").elements) {
     if (el.dataset.i != null) { x.he_thong[+el.dataset.i][el.dataset.k] = el.value; continue; }
     if (!el.name) continue;
-    x[el.name] = SO.includes(el.name) ? (el.value === "" ? null : Number(el.value)) : el.value;
+    x[el.name] = SO.includes(el.name) && el.value.trim() === "" ? null : el.value;
   }
   x.du_an = duAn();
   return x;
@@ -254,7 +264,8 @@ async function taiKS() {
 }
 async function luuKS() {
   if (!duAn()) throw new Error("Chọn hoặc tạo dự án trước");
-  await api("/api/khao-sat", { method: "POST", body: JSON.stringify(ksTuForm()) });
+  const j = await api("/api/khao-sat", { method: "POST", body: JSON.stringify(ksTuForm()) });
+  ksVaoForm(j.khao_sat); // server chuẩn hoá số ("1.200" -> 1200), trạng thái, thứ tự hệ thống
 }
 const bao = (el, viec) => async () => { try { await viec(); } catch (e) { el.textContent = "Lỗi: " + e.message; el.className = "warn"; } };
 $("luuKS").onclick = () => cho($("luuKS"), bao($("ksKq"), async () => { await luuKS(); $("ksKq").textContent = "Đã lưu."; $("ksKq").className = "ok"; }));

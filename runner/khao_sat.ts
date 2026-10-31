@@ -145,9 +145,10 @@ export function uocKhoiLuong(ks: KhaoSat): DongUoc[] {
   const tang = tangNoi + Math.max(0, ks.so_tang_ham ?? 0);
   const loi = Math.max(1, ks.so_loi_thoat_nan ?? 1);
   const H = ks.chieu_cao_m ?? tangNoi * 3.5;
-  const nhanH = ks.chieu_cao_m != null ? `cao nhà ${H} m` : `cao nhà ước ${tangNoi} tầng × 3,5 = ${H} m`;
+  const so = (x: number) => x.toLocaleString("vi-VN"); // 8,5 chứ không 8.5
+  const nhanH = ks.chieu_cao_m != null ? `cao nhà ${so(H)} m` : `cao nhà ước ${tangNoi} tầng × 3,5 = ${so(H)} m`;
   const sTang = S / tang;
-  const m2 = S.toLocaleString("vi-VN") + " m²";
+  const m2 = so(S) + " m²";
   const out: DongUoc[] = [];
   const dong = (ma: string, sl: number, cach: string, cho: boolean) => sl > 0 && out.push({ ma, sl: Math.ceil(sl), cach_uoc: cach, cho_xac_nhan: cho });
   const them = (he: string, ma: string, sl: number, cach: string) => {
@@ -168,7 +169,7 @@ export function uocKhoiLuong(ks: KhaoSat): DongUoc[] {
   them("sprinkler", "SPR_VAN_BD", 1, "1 van báo động / hệ");
 
   const chuVi = ks.chu_vi_m ?? 0;
-  them("nuoc_ngoai", "NUOC_TRU", Math.max(1, Math.ceil(chuVi / 150)), chuVi ? `chu vi ${chuVi} m / 150` : "tối thiểu 1 (chưa có chu vi)");
+  them("nuoc_ngoai", "NUOC_TRU", Math.max(1, Math.ceil(chuVi / 150)), chuVi ? `chu vi ${so(chuVi)} m / 150` : "tối thiểu 1 (chưa có chu vi)");
 
   them("tram_bom", "NUOC_BOM_DIEN", 1, "bơm điện chính");
   them("tram_bom", "NUOC_BOM_DIESEL", 1, "bơm dự phòng (diesel hoặc điện)");
