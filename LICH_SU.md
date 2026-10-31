@@ -19,3 +19,6 @@
   chuyển từ knowledge/), `du_an/` → `ket_qua/`; thêm `STRUCTURE.md`, `ROADMAP.md`, `chay.bat`, `.claude/launch.json`.
 - Gom quy trình hay thành 3 skill dự án: `tkpccc-cad-console` (+ `scripts/in_png.ps1` in DWG ra PNG, đã chạy thử),
   `tkpccc-xong-dau-muc`, `tkpccc-tra-quy-chuan`. Người dùng dặn: xong mỗi đầu mục thì lưu tiến độ, push, xoá ngữ cảnh rồi làm tiếp.
+- Pha 3 (bắt đầu): khảo sát lõi Python `D:\1_Claude\TestPCCC\PCCC` (chỉ đọc). Chốt đường chạy offline không API key: extract vector →
+  rule engine YAML (26 luật QCVN 06:2022 + SĐ1:2023) → D/KD/XM (`consistency.py`) → PDF ghi chú; bỏ `info`/Gemini/DXF/Word.
+  Danh sách file cần chép + kế hoạch 6 bước ghi ở cuối `TIEN_DO.md`. Dừng trước khi viết code vì usage 5 giờ chạm 85%.
