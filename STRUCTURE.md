@@ -27,10 +27,19 @@ TKPCCC/
 │  ├─ src/server.ts        API + phục vụ web/index.html; đọc/ghi data/ và ket_qua/
 │  ├─ src/xuat_xlsx.ts     Excel: đơn giá mẫu, đọc đơn giá, báo giá có công thức, sheet theo tầng/khu
 │  ├─ src/xuat_docx.ts     Word: báo cáo khảo sát
+│  ├─ src/thamdinh.ts      gọi lõi Python thamdinh/ (`python -m pccc_checker run`), đọc findings.jsonl, câu hỏi "Claude xét" dòng XM
 │  ├─ src/engines/claude.ts  gọi `claude -p` bằng đăng nhập Claude Code (KHÔNG API key), chỉ công cụ đọc
 │  └─ test/
 │
-├─ web/                 GIAO DIỆN: 1 file index.html (HTML + JS thuần, không build); 3 tab Hướng dẫn · Khảo sát · Khối lượng & Báo giá
+├─ web/                 GIAO DIỆN: 1 file index.html (HTML + JS thuần, không build);
+│                       4 tab Hướng dẫn · Khảo sát · Khối lượng & Báo giá · Thẩm định PDF
+│
+├─ thamdinh/            THẨM ĐỊNH PDF (Python 3 + pymupdf + pyyaml; offline, không API key) — nguồn, phần đã cắt: thamdinh/README.md
+│  ├─ pccc_checker/        gói Python chép từ repo PCCC (TestPCCC) ab546c7: đọc chữ vector, rule engine, ghi chú PDF; cli.py viết mới
+│  ├─ rules/               qcvn06_2022_sd01_2023.yaml (26 luật thoát nạn, verified)
+│  ├─ config/settings.yaml rule pack + mức ghi chú
+│  ├─ scripts/make_sample_pdf.py  PDF mẫu có lỗi cài sẵn
+│  └─ test/                pytest
 │
 ├─ cad/                 PLUGIN AUTOCAD 2021–2024 (C# .NET Framework 4.8, chỉ cú pháp C# 5)
 │  ├─ src/Lenh.cs          toàn bộ lệnh PCCC_* (LIB, DAT, ONG, GAN, BOC, BANG, VUNGBV, HELP)
@@ -54,7 +63,8 @@ TKPCCC/
 ├─ skills/              ĐIỀU KHOẢN THEO CHUYÊN ĐỀ (chép từ PCCC_he_thong/skills): MOD_*.md, SKILL_*.md, PHU_LUC_G_QCVN06.md
 │
 └─ ket_qua/             KẾT QUẢ TỪNG CÔNG TRÌNH (tự sinh, không commit): ket_qua/<dự án>/
-                        khao_sat.json, khoi_luong.json (bóc từ CAD), khoi_luong_so_bo.json (ước theo khảo sát)
+                        khao_sat.json, khoi_luong.json (bóc từ CAD), khoi_luong_so_bo.json (ước theo khảo sát),
+                        thamdinh/ (ban_ve.pdf, ban_ve_annotated.pdf, findings.jsonl, tom_tat.json, claude_xet.json)
 ```
 
 ## Mỗi lớp một việc
@@ -65,6 +75,7 @@ TKPCCC/
 | Nghiệp vụ (tính toán) | `shared/src` | Claude, kèm test trong `shared/test` | có |
 | Server, xuất file, gọi Claude | `runner/src` | Claude, kèm test trong `runner/test` | có |
 | Giao diện | `web/index.html` | Claude | có |
+| Thẩm định PDF (Python) | `thamdinh/` (luật: `thamdinh/rules/*.yaml`) | Claude, kèm test trong `thamdinh/test` | có |
 | AutoCAD | `cad/src/Lenh.cs` | Claude, kiểm bằng `cad/test/chay_thu.ps1` | có |
 | Thư viện block, gán block | `cad/TKPCCC.bundle/Contents/PCCC_Blocks.dwg`, `block_alias.json` | người dùng (BEDIT, `PCCC_GAN`) | có |
 | Danh mục, quy trình | `data/vat_tu.json`, `data/huong_dan.json` | người dùng / Claude | có |
@@ -78,6 +89,8 @@ Web: tab Khảo sát ─► ket_qua/<dự án>/khao_sat.json ─► "Ước kh�
                                                                                                      ▼
 data/vat_tu.json + data/don_gia.json ──► shared/src/bao_gia.ts ──► runner/src/xuat_xlsx.ts ──► báo giá .xlsx
 Claude ("Claude gợi ý", "Hỏi") ◄── runner/src/engines/claude.ts (`claude -p`, đọc knowledge/ + skills/)
+Web: tab Thẩm định PDF ─POST /api/tham-dinh─► ket_qua/<dự án>/thamdinh/ban_ve.pdf ─► runner/src/thamdinh.ts ─► python thamdinh/
+   ─► findings.jsonl (D/KD/XM) + PDF ghi chú ─► bảng kết luận; dòng XM ─"Claude xét"─► claude_xet.json
 ```
 
 ## Thêm mới thì đặt ở đâu
@@ -86,6 +99,8 @@ Claude ("Claude gợi ý", "Hỏi") ◄── runner/src/engines/claude.ts (`cla
 - API mới: route trong `runner/src/server.ts`; xuất định dạng mới: `runner/src/xuat_<định dạng>.ts`; engine AI mới: `runner/src/engines/`.
 - Lệnh AutoCAD mới: `cad/src/Lenh.cs` (bọc `Chay(...)`), thêm dòng kiểm vào `cad/test/chay_thu.ps1`, khai báo trong `PackageContents.xml`.
 - Quy chuẩn mới: nguyên văn vào `knowledge/` (văn bản, bảng) hoặc `skills/` (điều khoản theo chuyên đề); nối vào bước trong `data/huong_dan.json`.
+- Luật thẩm định PDF mới: thêm vào `thamdinh/rules/qcvn06_2022_sd01_2023.yaml` (check có sẵn) hoặc hàm `@register` trong
+  `thamdinh/pccc_checker/rules/checks.py`; thêm ca kiểm vào `thamdinh/test/`.
 - Bước thiết kế mới: 1 mục trong `data/huong_dan.json`.
 - Sau này nếu cần: `scripts/` (script tiện ích, py/ps1/mjs), `so_do/` (sơ đồ html), `bang_tinh/` (mẫu Excel) — giống dự án mẫu.
 

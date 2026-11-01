@@ -43,6 +43,10 @@
   .luoi label input, .luoi label select, .luoi label textarea { color:var(--fg); font-size:14px; }
   .rong { grid-column:1 / -1; }
   td input { width:100%; }
+  /* Thẩm định */
+  .kd { color:var(--acc); font-weight:600; } .xm { font-style:italic; }
+  tr.xet td { background:color-mix(in srgb, var(--warn) 6%, transparent); }
+  #bangTD { min-width:760px; } /* điện thoại: cuộn ngang trong khung bảng thay vì ép cột Nội dung */
   @media (max-width:760px) { .hd { grid-template-columns:1fr; } .duan { margin-left:0; } }
 </style>
 </head>
@@ -53,6 +57,7 @@
     <button data-tab="hd" class="on">Hướng dẫn thiết kế</button>
     <button data-tab="ks">Khảo sát</button>
     <button data-tab="bg">Khối lượng &amp; Báo giá</button>
+    <button data-tab="td">Thẩm định PDF</button>
   </nav>
   <div class="duan">
     <select id="duAn"><option value="">— dự án —</option></select>
@@ -141,6 +146,37 @@
       <div class="cuon"><table id="bang"></table></div>
     </section>
   </div>
+
+  <!-- THẨM ĐỊNH PDF -->
+  <div id="tab-td" class="an">
+    <section>
+      <h2>Thẩm định bản vẽ PDF theo QCVN 06:2022 (sửa đổi 1:2023)</h2>
+      <p class="mute">Máy đọc chữ vector trong PDF và kiểm 26 luật thoát nạn (lối ra, hành lang, thang bộ, cửa ngăn cháy), không tốn token, không cần mạng. Bản scan (ảnh) không đọc được. Kết quả là gợi ý, kỹ sư PCCC kiểm lại.</p>
+      <form id="formTD" class="luoi" onsubmit="return false">
+        <label class="rong">File PDF bản vẽ (bỏ trống = chạy lại file đã tải)<input type="file" id="fileTD" accept=".pdf,application/pdf"></label>
+        <label>Nhóm F (công năng)<input name="function_group" placeholder="VD F1.3"></label>
+        <label>Chiều cao PCCC (m)<input name="height_pccc_m" inputmode="decimal"></label>
+        <label>Bậc chịu lửa<select name="fire_resistance_level"><option></option><option>I</option><option>II</option><option>III</option><option>IV</option><option>V</option></select></label>
+        <label>Số tầng nổi<input name="floors_above" inputmode="decimal"></label>
+        <label>Số tầng hầm<input name="basements" inputmode="decimal"></label>
+        <label>Diện tích 1 tầng (m²)<input name="floor_area_m2" inputmode="decimal"></label>
+        <label>Số người lớn nhất/tầng<input name="max_occupants_per_floor" inputmode="decimal"></label>
+        <label>Sprinkler toàn nhà<select name="has_auto_sprinkler"><option value=""></option><option value="true">Có</option><option value="false">Không</option></select></label>
+        <label>Báo cháy tự động<select name="has_auto_fire_alarm"><option value=""></option><option value="true">Có</option><option value="false">Không</option></select></label>
+      </form>
+      <p class="mute">Ô trống thì máy tự đọc trên bản vẽ (khung tên, bảng quy mô); ô đã điền ghi đè số đọc được. Thiếu thông tin thì luật phụ thuộc thành “Cần xác minh”.</p>
+      <div class="row">
+        <button id="chayTD" class="chinh">Chạy thẩm định</button>
+        <a id="pdfTD" class="an" target="_blank"><button>Mở PDF ghi chú</button></a>
+        <span id="tdKq"></span>
+      </div>
+    </section>
+    <section>
+      <h2>Kết luận</h2>
+      <div id="tdTomTat" class="mute"></div>
+      <div class="cuon"><table id="bangTD"></table></div>
+    </section>
+  </div>
 </main>
 <script>
 const $ = (id) => document.getElementById(id);
@@ -162,9 +198,10 @@ let tab = "hd";
 function moTab(t) {
   tab = t;
   document.querySelectorAll("nav button").forEach((b) => b.classList.toggle("on", b.dataset.tab === t));
-  ["hd", "ks", "bg"].forEach((x) => $("tab-" + x).classList.toggle("an", x !== t));
+  ["hd", "ks", "bg", "td"].forEach((x) => $("tab-" + x).classList.toggle("an", x !== t));
   if (t === "ks") taiKS();
   if (t === "bg") hienBaoGia();
+  if (t === "td") taiTD();
   nho("tab", t);
 }
 document.querySelectorAll("nav button").forEach((b) => (b.onclick = () => moTab(b.dataset.tab)));
@@ -318,6 +355,59 @@ $("fileGia").onchange = async (e) => {
   } catch (err) { $("giaKq").textContent = err.message; }
   e.target.value = "";
 };
+
+// ---------- Thẩm định PDF ----------
+const TT_VI = { D: "Đạt", KD: "Không đạt", XM: "Cần xác minh", NA: "—" };
+const TT_LOP = { D: "ok", KD: "kd", XM: "warn xm", NA: "mute" };
+const TEN_TT = { function_group: "nhóm", height_pccc_m: "chiều cao PCCC (m)", fire_resistance_level: "bậc chịu lửa", structural_hazard_class: "cấp", floors_above: "tầng nổi",
+  basements: "tầng hầm", floor_area_m2: "diện tích tầng (m²)", max_occupants_per_floor: "người/tầng", has_auto_sprinkler: "sprinkler", has_auto_fire_alarm: "báo cháy tự động" };
+const giaTri = (v) => typeof v === "number" ? so(v) : typeof v === "boolean" ? (v ? "có" : "không") : (v ?? "");
+let td = null;
+function hienTD(j) {
+  td = j;
+  const t = j.tom_tat, tt = t.thong_tin ?? {};
+  for (const el of $("formTD").elements) if (el.name) el.value = t.thong_tin_nhap?.[el.name] ?? "";
+  $("pdfTD").href = "/api/tham-dinh/pdf" + qDuAn(); $("pdfTD").classList.remove("an");
+  const doc = Object.entries(TEN_TT).filter(([k]) => tt[k] != null).map(([k, ten]) => `${ten} ${esc(giaTri(tt[k]))}`).join(" · ");
+  $("tdTomTat").innerHTML = `<b>${esc(t.ten_file)}</b> · ${new Date(t.luc).toLocaleString("vi-VN")} · đọc ${t.trang_da_doc.length} trang (${t.trang_da_doc.join(", ")}) ·
+    <span class="kd">Không đạt ${t.dem.KD}</span> · <span class="warn xm">Cần xác minh ${t.dem.XM}</span> · <span class="ok">Đạt ${t.dem.D}</span>
+    <br>Thông tin công trình đã dùng: ${doc || "chưa có (nhập ở ô trên rồi chạy lại)"}
+    ${(tt.assumptions ?? []).map((a) => `<br><span class="warn">⚠ ${esc(a)}</span>`).join("")}`;
+  $("bangTD").innerHTML = '<tr><th class="so">#</th><th>Kết luận</th><th class="so">Trang</th><th>Điều khoản</th><th>Nội dung</th><th>Yêu cầu</th><th>Thực tế</th><th></th></tr>'
+    + j.dong.map(dongTD).join("");
+  $("bangTD").querySelectorAll("button[data-xet]").forEach((b) => (b.onclick = () => cho(b, bao($("tdKq"), () => xetTD(b.dataset.xet, b)))));
+}
+function dongTD(r) {
+  const x = td.claude_xet?.[r.id];
+  // #n = nhãn trên PDF ghi chú (dòng không có trang được ghi ở góc trang 1)
+  return `<tr><td class="so mute">${r.so ? "#" + r.so : ""}</td><td class="${TT_LOP[r.tt]}">${TT_VI[r.tt]}</td><td class="so">${r.trang ?? ""}</td>
+    <td>${esc(r.dieu_khoan)}</td><td>${esc(r.ly_do)}${r.evid ? `<div class="mute">${esc(r.evid)}</div>` : ""}</td>
+    <td>${esc(giaTri(r.yc))}</td><td>${esc(giaTri(r.ht))}</td>
+    <td>${r.tt === "XM" ? `<button data-xet="${esc(r.id)}">${x ? "Xét lại" : "Claude xét"}</button>` : ""}</td></tr>`
+    + (x ? `<tr class="xet"><td></td><td colspan="7">Claude đề xuất: <span class="${TT_LOP[x.de_xuat]}">${TT_VI[x.de_xuat]}</span><pre>${esc(x.tra_loi)}</pre></td></tr>` : "");
+}
+async function xetTD(id, nut) {
+  nut.textContent = "Claude đang xét (vài phút)…";
+  try { td.claude_xet = { ...td.claude_xet, [id]: await api("/api/tham-dinh/xet" + qDuAn(), { method: "POST", body: JSON.stringify({ id }) }) }; }
+  finally { hienTD(td); }
+}
+async function taiTD() {
+  $("tdTomTat").textContent = ""; $("bangTD").innerHTML = ""; $("tdKq").textContent = ""; $("pdfTD").classList.add("an");
+  if (!duAn()) { $("tdTomTat").textContent = "Chọn hoặc tạo dự án trước."; return; }
+  try { hienTD(await api("/api/tham-dinh" + qDuAn())); }
+  catch (e) { $("tdTomTat").textContent = e.message; for (const el of $("formTD").elements) if (el.name) el.value = ""; }
+}
+$("chayTD").onclick = () => cho($("chayTD"), bao($("tdKq"), async () => {
+  if (!duAn()) throw new Error("Chọn hoặc tạo dự án trước");
+  const f = $("fileTD").files[0];
+  const p = new URLSearchParams({ du_an: duAn() });
+  for (const el of $("formTD").elements) if (el.name && el.value.trim()) p.set(el.name, el.value.trim());
+  if (f) p.set("ten", f.name);
+  $("tdKq").textContent = f ? "Đang tải lên và đọc bản vẽ…" : "Đang chạy lại…"; $("tdKq").className = "mute";
+  hienTD(await api("/api/tham-dinh?" + p, { method: "POST", body: f ?? "" }));
+  $("fileTD").value = ""; $("tdKq").textContent = "Xong."; $("tdKq").className = "ok";
+  await taiDuAn(duAn());
+}));
 
 (async () => { await Promise.all([taiDuAn(), taiHuongDan()]); moTab(nho("tab") ?? "hd"); })();
 </script>

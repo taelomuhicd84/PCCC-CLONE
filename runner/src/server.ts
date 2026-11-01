@@ -1,7 +1,7 @@
 // Runner nội bộ: nhận khối lượng từ plugin AutoCAD, quản lý đơn giá, xuất báo giá, hỏi Claude; phục vụ web/.
 // Chạy: npm start  (mặc định chỉ máy này; LAN: npm start -- --host 0.0.0.0)
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
-import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { lapBaoGia, type DanhMuc, type DonGia, type KhoiLuong } from "../../shared/src/bao_gia";
@@ -9,6 +9,7 @@ import { chuanHoaKhaoSat, ghepGoiY, khoiLuongSoBo, tachJsonKhaoSat, HE_THONG, ty
 import { docDonGia, taoMauDonGia, xuatBaoGia } from "./xuat_xlsx";
 import { xuatKhaoSat } from "./xuat_docx";
 import { hoiClaude } from "./engines/claude";
+import { cauHoiXet, chayThamDinh, docKetLuan, KHOA_CHU, KHOA_CO_KHONG, KHOA_SO, tachDeXuat } from "./thamdinh";
 import { marked } from "marked";
 
 const GOC = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", ".."); // runner/src -> gốc dự án
@@ -44,9 +45,16 @@ function docKL(duAn: unknown, nguon: unknown = "cad"): KhoiLuong {
 }
 const docKS = (duAn: unknown): KhaoSat =>
   chuanHoaKhaoSat(existsSync(fileKS(duAn)) ? JSON.parse(readFileSync(fileKS(duAn), "utf8")) : {}, tenThuMuc(duAn));
-/** Thư mục trong ket_qua/ có dữ liệu (khối lượng CAD, sơ bộ hoặc khảo sát); bỏ qua thư mục tên lạ. */
+// ket_qua/<dự án>/thamdinh/: ban_ve.pdf, ban_ve_annotated.pdf, findings.jsonl, tom_tat.json, claude_xet.json (+ file trung gian của lõi Python)
+const dirTD = (duAn: unknown) => path.join(KET_QUA, tenThuMuc(duAn), "thamdinh");
+const docJson = (f: string, macDinh: unknown = null) => (existsSync(f) ? JSON.parse(readFileSync(f, "utf8")) : macDinh);
+function ketQuaTD(duAn: unknown) {
+  const d = dirTD(duAn);
+  return { tom_tat: docJson(path.join(d, "tom_tat.json")), dong: docKetLuan(path.join(d, "findings.jsonl")), claude_xet: docJson(path.join(d, "claude_xet.json"), {}) };
+}
+/** Thư mục trong ket_qua/ có dữ liệu (khối lượng CAD, sơ bộ, khảo sát hoặc thẩm định); bỏ qua thư mục tên lạ. */
 function coDuLieu(d: string) {
-  try { return existsSync(fileKL(d)) || existsSync(fileKL(d, "so_bo")) || existsSync(fileKS(d)); } catch { return false; }
+  try { return existsSync(fileKL(d)) || existsSync(fileKL(d, "so_bo")) || existsSync(fileKS(d)) || existsSync(path.join(dirTD(d), "tom_tat.json")); } catch { return false; }
 }
 function ghiJson(f: string, x: unknown) {
   mkdirSync(path.dirname(f), { recursive: true });
@@ -145,6 +153,46 @@ async function xuLy(req: IncomingMessage, res: ServerResponse) {
   if (r === "GET /api/bao-gia.xlsx") {
     const kl = docKL(q.get("du_an"), q.get("nguon"));
     return tai(res, await xuatBaoGia(lapBaoGia(kl, danhMuc(), donGia()), kl), `bao_gia_${tenThuMuc(kl.du_an)}.xlsx`);
+  }
+  if (r === "POST /api/tham-dinh") {
+    // thân = file PDF; thân rỗng = chạy lại PDF đã tải với thông tin công trình mới (query: function_group, height_pccc_m…)
+    const d = dirTD(q.get("du_an"));
+    const pdf = path.join(d, "ban_ve.pdf");
+    const buf = await docBody(req, 200 * 1024 * 1024);
+    if (buf.length) {
+      if (!buf.subarray(0, 1024).includes("%PDF-")) throw new LoiNguoiDung("File không phải PDF");
+      mkdirSync(d, { recursive: true });
+      writeFileSync(pdf, buf);
+    } else if (!existsSync(pdf)) throw new LoiNguoiDung("Chưa chọn file PDF");
+    const nhap = Object.fromEntries([...KHOA_CHU, ...KHOA_SO, ...KHOA_CO_KHONG].flatMap((k) => (q.get(k) ? [[k, q.get(k)]] : [])));
+    const tomTat = await chayThamDinh(GOC, pdf, d, nhap);
+    const cu = docJson(path.join(d, "tom_tat.json"), {});
+    ghiJson(path.join(d, "tom_tat.json"), { ...tomTat, ten_file: q.get("ten") || (buf.length ? "ban_ve.pdf" : cu.ten_file), thong_tin_nhap: nhap, luc: new Date().toISOString() });
+    rmSync(path.join(d, "claude_xet.json"), { force: true }); // mã dòng (PC-001…) đánh lại mỗi lần chạy
+    return json(res, ketQuaTD(q.get("du_an")));
+  }
+  if (r === "POST /api/tham-dinh/xet") {
+    const { id } = JSON.parse((await docBody(req, 10_000)).toString("utf8"));
+    const d = dirTD(q.get("du_an"));
+    const dong = docKetLuan(path.join(d, "findings.jsonl")).find((x) => x.id === id);
+    if (!dong) throw new LoiNguoiDung("Không có dòng " + id + ": chạy lại thẩm định rồi thử lại");
+    const thuMuc = path.relative(GOC, d).replace(/\\/g, "/");
+    const traLoi = await hoiClaude(cauHoiXet(dong, docJson(path.join(d, "tom_tat.json"), {}).thong_tin, thuMuc), GOC, 10 * 60_000);
+    const xet = { de_xuat: tachDeXuat(traLoi), tra_loi: traLoi, luc: new Date().toISOString() };
+    const f = path.join(d, "claude_xet.json");
+    ghiJson(f, { ...docJson(f, {}), [id]: xet });
+    return json(res, xet);
+  }
+  if (r === "GET /api/tham-dinh") {
+    const kq = ketQuaTD(q.get("du_an"));
+    if (!kq.tom_tat) throw new LoiNguoiDung("Dự án chưa thẩm định PDF");
+    return json(res, kq);
+  }
+  if (r === "GET /api/tham-dinh/pdf") {
+    const f = path.join(dirTD(q.get("du_an")), "ban_ve_annotated.pdf");
+    if (!existsSync(f)) throw new LoiNguoiDung("Chưa có PDF ghi chú: chạy thẩm định trước");
+    res.writeHead(200, { "content-type": "application/pdf", "content-disposition": `inline; filename*=UTF-8''${encodeURIComponent("tham_dinh_" + tenThuMuc(q.get("du_an")) + ".pdf")}` });
+    return res.end(readFileSync(f));
   }
   if (r === "POST /api/claude") {
     const { cau_hoi, tai_lieu } = JSON.parse((await docBody(req, 100_000)).toString("utf8"));

@@ -1,0 +1,5 @@
+rules:
+  packs:                      # các rule pack trong thamdinh/rules/
+    - qcvn06_2022_sd01_2023.yaml
+annotate:
+  min_severity: info          # error | warning | info

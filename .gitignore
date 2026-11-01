@@ -1,5 +1,7 @@
 node_modules/
 ket_qua/
+__pycache__/
+.pytest_cache/
 data/don_gia.json
 # Ket qua build plugin; giu lai thu vien block va bang gan block do nguoi dung sua
 cad/TKPCCC.bundle/Contents/*.dll

@@ -26,3 +26,11 @@
   Xác nhận đường chạy dùng được; chưa chép code vào TKPCCC, web chưa có tab Thẩm định.
 - Pha 3: chạy thử lõi TestPCCC (bản sao thư mục tạm) trên PDF mẫu `make_sample_pdf.py` (4 KD + 1 XM đúng lỗi cài sẵn, PDF ghi chú đúng vị trí)
   và hồ sơ KS Hoàng Hùng 18 trang (0 Đạt, 3 KD "không đọc được số liệu", 3 XM). Đề xuất hạ KD "không đọc được" xuống XM khi chép vào `thamdinh/`.
+
+## 2026-11-01
+- Clone dự án về máy mới `F:\1_ToolMMo\2_VibeCode\PCCCVIP`. Không có `D:\1_Claude\TestPCCC` → lấy lõi từ repo `taelomuhicd84/PCCC` (đúng commit ab546c7).
+- Người dùng đưa thêm repo tham khảo `SKILL-PCCC-NEW`, `PcccVipPro` rồi mở công khai cả ba (đã báo: SKILL-PCCC-NEW có hồ sơ khách trong `ket_qua/`).
+- Pha 3 xong: `thamdinh/` (lõi Python, CLI `run`, dòng Đạt, "không đọc được" → XM, thiếu thông tin công trình → XM theo luật, sửa lỗi chiều cao
+  ≥ 20 m bị coi là ước lượng, pytest), `runner/src/thamdinh.ts` + 4 route, web tab "Thẩm định PDF", "Claude xét" dòng XM (chạy thật 27 giây).
+  Kiểm: npm test 39, pytest 2, trình duyệt (cả màn hình điện thoại). Chưa thử hồ sơ thật trên máy này; chưa chạy test CAD (máy không có AutoCAD).
+- Người dùng dặn lại (ghi vào `CLAUDE.md` + bộ nhớ): gần hết usage thì dừng ngay, ghi `TIEN_DO.md` + `LICH_SU.md`, push — luôn tự làm.
