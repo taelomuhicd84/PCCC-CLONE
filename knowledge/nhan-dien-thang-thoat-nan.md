@@ -43,7 +43,7 @@ QCVN 06 3.4.4 (`knowledge/hoc/hop-nhat/qcvn-6.md` dòng 990): được dùng tha
 Cách kiểm trên bản vẽ: đếm bậc chéo; nếu > 3 thì tính vùng A: bậc xoay quanh tâm với góc θ mỗi bậc, bề rộng mặt bậc = r·θ, vùng A bắt đầu ở r = 250/θ (mm); bề rộng vùng A = bề rộng vế − r. Đạt điều kiện 1 khi vùng A ≥ 0,7/0,9 m. Thêm dải đánh dấu mép bậc (Hình A.12). Thang xoắn ốc tròn trụ giữa vẫn không tính.
 
 ## Quy trình đánh giá thang thoát nạn trong nhà và phương án (người dùng dạy 2026-11-02)
-Không chọn thang theo cảm tính, không tự quyết phương án. Làm đủ các bước dưới, mỗi kết luận kèm lý do và điều khoản. Chỗ luật không rõ, hoặc phương án phải chấp nhận điều luật không nói rõ, thì HỎI người dùng (người dùng sẽ train thêm).
+Không chọn thang theo cảm tính, không tự quyết phương án. Làm đủ các bước dưới, mỗi kết luận kèm lý do và điều khoản. Phương án vướng điều luật không nói rõ thì ghi vào báo cáo "cần người dùng xem xét", kèm căn cứ. Chấp nhận hay không là việc của người dùng; việc của mình là báo cáo, không hỏi người dùng chọn (dặn 2026-11-02). Thiếu kiến thức (vd thang loại 2) thì nhờ người dùng train.
 
 1. **Nhận diện từng thang** (bảng, mỗi thang một dòng):
    - Vị trí (thang giữa nhà, thang đầu trái…), chạy từ tầng nào tới tầng nào. Phân biệt thang hầm → trệt và thang các tầng trên → trệt; không chắc thì hỏi.
@@ -59,7 +59,7 @@ Không chọn thang theo cảm tính, không tự quyết phương án. Làm đ�
    - Thang máy nằm ngoài buồng thang: cửa giếng thang máy E 30 (4.23; bảng giới hạn chịu lửa của cửa: "Cửa giếng thang máy (khi có yêu cầu về giới hạn chịu lửa)" loại 2 = E 30). Thang máy trong buồng thang theo 3.4.6 (≤ 2 thang chở người, chỉ xuống tầng 1, giếng vật liệu không cháy) không theo 4.23.
    - Tách thang hầm → trệt: vách đặc ngăn cháy loại 1 + lối riêng ra ngoài (3.2.1, Hình I.2). Nhà F1.2, F1.3, F2–F4 cao < 28 m không bố trí được lối riêng thì vào buồng thang chung từ hầm qua khoang đệm bao che như khoang đệm ngăn cháy loại 1. Phải còn chỗ cho tường, cửa mở theo chiều thoát nạn và chiếu ≥ 0,9 m; nhà phố thường không đủ chỗ.
    - Ô lấy sáng KHÔNG phải lý do loại một thang. Không mở được ô ≥ 1,2 m²/tầng (nhà phố xây sát nhau) thì chiếu sáng nhân tạo theo 3.4.8b: cấp điện như chú thích 3.4.13 (duy trì liên tục khi cháy), đủ sáng, không lóa. Buồng thang thông thường thì thêm lỗ thoát khói trên tum thang ≥ 10 % diện tích phủ bì sàn buồng thang; miễn khi nhà có ≥ 2 thang thoát nạn hoặc 1 thang nhưng có lối thoát khẩn cấp theo 3.2.6.2. Ô kính lấy sáng trên mái (buồng thang L2) chỉ dùng khi đạt 3.4.12 (cao ≤ 9 m, tới 12 m nếu lỗ tự mở khi cháy), ít khi đạt.
-   - Căn hộ phải mở cửa thẳng vào buồng thang: QCVN 06 3.2.1b có liệt kê "trực tiếp vào buồng thang bộ" là lối ra thoát nạn (tầng 1: 3.2.1a "qua buồng thang bộ"), nhưng người dùng thấy bất hợp lý (đi qua buồng thang rồi ra sảnh). Gặp là HỎI người dùng, kèm căn cứ.
+   - Căn hộ phải mở cửa thẳng vào buồng thang: QCVN 06 3.2.1b có liệt kê "trực tiếp vào buồng thang bộ" là lối ra thoát nạn (tầng 1: 3.2.1a "qua buồng thang bộ"), nhưng người dùng thấy bất hợp lý (đi qua buồng thang rồi ra sảnh). Gặp thì ghi "cần người dùng xem xét", kèm căn cứ.
 4. **Không thang trong nhà nào cải tạo được** thì xét thang ngoài nhà (thường ở mặt tiền): tính thử bề rộng vế, bậc, chiếu nghỉ theo luật và các vướng ở tầng 1 (ram dốc, bậc tam cấp). Vẫn không được thì KẾT LUẬN "không có phương án khả thi, cần người dùng xem xét". Không tự chọn một phương án vi phạm.
 5. **Thang loại 2 (thang hở trong nhà)**: thỏa điều kiện thì trả lời "được dùng thang hở theo điều …". Điều kiện nhiều: 3.2.1b (hành lang bên, nhà < 28 m), 3.2.6 (thay buồng thang bằng thang loại 2 khi đồng thời đủ các điều kiện; đoạn này trong bản hợp nhất bị lỗi chữ), 3.4.15, 3.4.16. Chưa được train đủ: hỏi người dùng, không tự kết luận.
 
@@ -67,7 +67,7 @@ Không chọn thang theo cảm tính, không tự quyết phương án. Làm đ�
 | Thang | Nhận diện | Đánh giá | Phương án | Khả thi |
 |---|---|---|---|---|
 | Giữa nhà (trục 2–3, cạnh thang máy) | Rẽ quạt; vế phải ≥ 900 mm; chưa đóng kín bằng tường và cửa chống cháy | Không đạt: rẽ quạt ở nhà > 15 m (3.4.4), chưa đóng kín | PA1 (nét tím người dùng vẽ): tường sát thang | Không: chặn cửa căn hộ bên phải; mép bậc tới tường ~0,35 m < 0,9 m (đo sơ trên PDF) |
-| | | | PA2 (nét xanh lá): mở rộng buồng thang ra sảnh, thang máy ngoài buồng có cửa E 30, sửa rẽ quạt | Hỏi người dùng: căn hộ bên phải phải mở cửa thẳng vào buồng thang |
+| | | | PA2 (nét xanh lá): mở rộng buồng thang ra sảnh, thang máy ngoài buồng có cửa E 30, sửa rẽ quạt | Cần người dùng xem xét: căn hộ bên phải phải mở cửa thẳng vào buồng thang |
 | Đầu trái (trục 4–4a) | Rẽ quạt; vế phải ≥ 900 mm; đã có tường và cửa; chung buồng với thang hầm → trệt | Không đạt: rẽ quạt, chưa tách thang hầm | Sửa rẽ quạt, tách thang hầm bằng tường + cửa chống cháy riêng | Không: không còn chỗ cho tường, cửa mở ra hành lang và chiếu ≥ 0,9 m |
 | Thang ngoài nhà mặt tiền | Chưa có | | Làm thang mới | Không: thiếu chỗ cho vế, bậc, chiếu; vướng ram dốc 18 %, tam cấp |
 
