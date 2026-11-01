@@ -4,7 +4,7 @@ Không phải thẩm định. Từ bản vẽ (hoặc thông tin bằng chữ) l
 
 ## Các thông tin phải lấy (theo đúng thứ tự)
 1. **Hạng mục** (tên công trình/hạng mục khảo sát), **công năng** (F1.x–F5.x theo thuật ngữ trong `dinh-nghia`; nêu công năng thực tế bằng chữ kèm nhóm F nếu xác định được).
-2. **Diện tích** (tổng sàn; nêu cả diện tích từng tầng nếu bản vẽ có) và **số tầng** (nổi, hầm, tum/mái nếu có).
+2. **Diện tích** (tổng sàn; **bản vẽ cải tạo có 2 mặt bằng cùng tờ — trên "theo bản vẽ xin phép", dưới là cải tạo — thì xét theo mặt bằng CẢI TẠO phía dưới**, xem bài học `knowledge/hoc/du-an/so-bo-thiet-ke.md`; tum thang/mái che chỉ không tính tầng khi chưa xây kín và nằm trong mức cho phép; nêu cả diện tích từng tầng nếu bản vẽ có) và **số tầng** (nổi, hầm, tum/mái nếu có).
 3. **Chiều cao PCCC** (theo Điều 3 QCVN 06: từ mặt đường xe chữa cháy đến cao độ sàn tầng trên cùng có người, ghi phép cộng). Không có mặt đứng: ước lượng khoảng (xem mục "Ước lượng chiều cao").
 4. **Khối tích**: lấy trên bản vẽ nếu có; không có thì tự tính = diện tích x chiều cao, ghi rõ "tự tính" và phép tính (từng tầng nếu có diện tích và chiều cao từng tầng, không thì tổng diện tích x chiều cao công trình).
 5. **Có thuộc diện thẩm định thiết kế PCCC không**: đối chiếu Phụ lục III NĐ 105/2025 (đã sửa bởi NĐ 347/2026, file `nghi-dinh-tham-dinh-dieu-chinh.md`); nhà hỗn hợp, nhà có tầng chủ hộ ở, dự án nhiều hạng mục, cải tạo mở rộng: xét theo `cv-2360-cahn-1183-c07-dien-tham-dinh.md` (C07 thống nhất) theo loại công trình, chiều cao, diện tích, khối tích, số tầng. Trả CÓ / KHÔNG / CẦN XÁC NHẬN kèm căn cứ (mục, điểm của Phụ lục III). Thiếu số liệu quyết định thì CẦN XÁC NHẬN và nói thiếu gì.
