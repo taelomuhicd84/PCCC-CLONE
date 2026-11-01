@@ -23,8 +23,10 @@ ngay. Lý do: hết usage hoặc ngữ cảnh quá dài giữa chừng thì mấ
 ## 3. Commit + push
 - `git add -A`, xem `git status --short` (không có `ket_qua/`, `data/don_gia.json`, DLL, token), commit tiếng Việt có dòng cuối
   `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
-- Push: Bash của Claude không lấy được đăng nhập Git Credential Manager (`could not read Username`) ⇒ chạy `git -C D:\1_Claude\TKPCCC push`
-  trong tab Terminal của người dùng (`run_in_terminal`), đọc kết quả bằng `read_terminal`, rồi xác nhận `git status -sb` không còn "ahead".
+- Push: thử `git push origin main` từ Bash trước (máy `F:\1_ToolMMo\2_VibeCode\PCCCVIP` đẩy được từ Bash). Nếu báo `could not read Username`
+  (Bash không lấy được đăng nhập Git Credential Manager) ⇒ chạy `git -C <thư mục dự án> push` trong tab Terminal của người dùng
+  (`run_in_terminal`), đọc kết quả bằng `read_terminal`. Cuối cùng xác nhận `git status -sb` không còn "ahead".
+- Máy mới chưa có danh tính git: `git config user.name trantrongtien198`, `git config user.email trantrongtien198@gmail.com` (chỉ trong repo).
 - Repo https://github.com/taelomuhicd84/PCCC-CLONE là **công khai**: không đưa hồ sơ khách, đơn giá, token, cookie lên.
 
 ## 4. Usage
