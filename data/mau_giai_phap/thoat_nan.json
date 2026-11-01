@@ -307,7 +307,7 @@
     "Tầng 1 thang đổ ra sảnh chung, không ngăn cháy."
    ],
    "giai_phap": [
-    "Đưa buồng thang ra sát tường ngoài, mở ô >= 1,2 m2 mỗi tầng; không được thì L2 (nếu đạt) hoặc N2/N3.",
+    "Mở ô >= 1,2 m2 mỗi tầng trên tường ngoài nếu có; nhà xây sát nhau không trổ được thì chiếu sáng nhân tạo theo 3.4.8b (cấp điện như chú thích 3.4.13; buồng thang thường thêm lỗ thoát khói trên tum >= 10% diện tích phủ bì sàn buồng thang, miễn khi >= 2 thang hoặc 1 thang + lối thoát khẩn cấp 3.2.6.2); L2 chỉ khi đạt 3.4.12.",
     "Đổi cửa kho gầm thang mở ra hành lang, không mở vào buồng thang.",
     "Làm cửa ra ngoài trực tiếp ở chân thang hoặc tiền sảnh vách ngăn cháy loại 1."
    ],

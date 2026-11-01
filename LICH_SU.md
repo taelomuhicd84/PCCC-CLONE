@@ -41,3 +41,13 @@
 - Người dùng: tự sửa 2 lỗi Excel bên SKILL-PCCC-NEW; chốt luật họng "tối thiểu 2,5 (H.5/H.6), tính toán theo H.7 tra chiều cao tia đặc".
   Áp vào TKPCCC: Excel xuất D184 dùng I162 (H.7) thay H18; lõi `thuy_luc.ts` QBmin mặc định 2,5 (trước lấy lăng H.7) + cảnh báo lăng < tối thiểu;
   web thêm ô tối thiểu 1 tia; lỗi 14 trong sổ tri thức. Excel và web khớp (Q bơm 81,4816 / 81,4801). npm test 57.
+
+## 2026-11-02
+- Tư vấn thử hồ sơ thật (kết quả trong `ket_qua/`, không commit): KS Hoàng Hùng (thiếu tờ), rồi Căn hộ DV Lưu Xuân Lộc (kiến trúc + BCKS).
+  Người dùng chỉ ra lỗi: tư vấn chung chung, không ghi note lên PDF, cao PCCC sai (14,7 → 18,4 m), coi vùng cơi nới là 2 phương án, bỏ sót
+  chống sét, tủ phá dỡ, mặt nạ. Đổi form kết quả sang bảng. Người dùng dạy: tầng thượng đã xây kín tính 1 tầng; bản vẽ cải tạo (2 mặt bằng
+  cùng tờ) xét theo mặt bằng cải tạo phía dưới; khảo sát ghi "1 thang" khi chưa thang nào đạt.
+- Người dùng train quy trình đánh giá thang thoát nạn trong nhà (PDF có nét tím = PA1, xanh lá = PA2 đóng kín thang giữa, xanh dương = khoảng
+  mép bậc tới tường; ảnh mẫu cung chiếu nghỉ CT1/FD1). Tra luật theo yêu cầu: 3.4.8b cho chiếu sáng nhân tạo khi không trổ được ô lấy sáng;
+  3.4.3 chiếu ≥ bản thang, cánh cửa không làm giảm bề rộng tính toán; 4.23 + bảng cửa: cửa giếng thang máy E 30; 3.2.1b liệt kê "trực tiếp
+  vào buồng thang bộ" (người dùng muốn được hỏi); thang loại 2 chờ người dùng train. Ghi vào `knowledge/nhan-dien-thang-thoat-nan.md`.
