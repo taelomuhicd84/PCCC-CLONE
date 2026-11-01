@@ -1,7 +1,8 @@
 # TKPCCC — Thiết kế, khảo sát, bóc khối lượng, báo giá PCCC
 
 Plugin AutoCAD 2021 + web nội bộ (LAN). Đã có: Pha 1 (thư viện block → vẽ → bóc khối lượng → báo giá Excel),
-Pha 2 (hướng dẫn thiết kế B0–B7, báo cáo khảo sát Word, báo giá sơ bộ theo m²) và Pha 3 (thẩm định bản vẽ PDF theo QCVN 06).
+Pha 2 (hướng dẫn thiết kế B0–B7, báo cáo khảo sát Word, báo giá sơ bộ theo m²), Pha 3 (thẩm định bản vẽ PDF theo QCVN 06)
+và Pha 4a (thủy lực sprinkler TCVN 7336, xuất Excel mẫu).
 Tiến độ: `TIEN_DO.md` · Cấu trúc thư mục: `STRUCTURE.md` · Các pha: `ROADMAP.md` · Nhật ký: `LICH_SU.md`.
 
 ## Cài đặt (1 lần)
@@ -14,10 +15,11 @@ Claude (không cần API key — dùng tài khoản Claude đăng nhập trong C
 npm i -g @anthropic-ai/claude-code      :: nếu máy chưa có lệnh claude
 claude                                  :: đăng nhập 1 lần (/login), rồi thoát
 ```
-Thẩm định PDF cần Python 3 (python.org, tick "Add python.exe to PATH"):
+Thẩm định PDF và xuất Excel thủy lực cần Python 3 (python.org, tick "Add python.exe to PATH"):
 ```
 python -m pip install pymupdf pyyaml
 ```
+Bước hoàn thiện Excel thủy lực (ẩn dòng trống, chèn dòng hàng cuối thiếu đầu) cần Microsoft Excel trên máy chạy runner.
 
 ## Sử dụng
 1. Bấm đúp `chay.bat` (bật runner + mở web), hoặc `npm start` → mở http://127.0.0.1:8787
@@ -42,6 +44,9 @@ python -m pip install pymupdf pyyaml
      "Ước khối lượng sơ bộ" → báo giá sơ bộ.
    - **Khối lượng & Báo giá**: chọn nguồn (bóc từ CAD / sơ bộ), tải đơn giá mẫu, điền giá, tải lên, xuất báo giá `.xlsx`
      (có công thức; có sheet theo tầng/khu nếu bóc có tách khu).
+   - **Thủy lực**: sprinkler theo TCVN 7336:2021 Phụ lục B. "Tính sơ bộ" khi chỉ có mặt bằng (nhóm nguy cơ, cao phòng, chiều dài
+     ống về bơm, Z, họng vách tường) → q1, Q sprinkler, Q bơm, cột áp, bể, cảnh báo, so 4 phương án DN. Có bản vẽ thì sửa DN,
+     chiều dài từng đoạn trong ô số liệu (JSON) rồi "Tính theo số liệu". "Xuất Excel mẫu" điền vào `MAU_THUY_LUC_7336.xlsx`.
    - **Thẩm định PDF**: chọn PDF bản vẽ (vector, không phải bản scan), điền thông tin công trình nếu bản vẽ không ghi (nhóm F,
      chiều cao PCCC…), "Chạy thẩm định" → bảng Không đạt / Cần xác minh / Đạt kèm trang + điều khoản QCVN 06, "Mở PDF ghi chú"
      (khung đánh số #n khớp bảng). Dòng "Cần xác minh" có nút "Claude xét" (Claude tra `knowledge/`, `skills/`, xem đúng trang PDF).
@@ -58,6 +63,6 @@ powershell -ExecutionPolicy Bypass -File cad\test\chay_thu.ps1
 Cái cuối chạy plugin trong `accoreconsole` (AutoCAD không giao diện) với bản vẽ thử, không cần mở AutoCAD.
 
 ## Các pha tiếp theo
-Xem `ROADMAP.md` (Pha 4: rải thiết bị tự động, thủy lực TCVN 7336).
+Xem `ROADMAP.md` (Pha 4b: rải đầu phun/đầu báo tự động trong CAD).
 
 Mã nguồn: https://github.com/taelomuhicd84/PCCC-CLONE

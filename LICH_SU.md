@@ -34,3 +34,7 @@
   ≥ 20 m bị coi là ước lượng, pytest), `runner/src/thamdinh.ts` + 4 route, web tab "Thẩm định PDF", "Claude xét" dòng XM (chạy thật 27 giây).
   Kiểm: npm test 39, pytest 2, trình duyệt (cả màn hình điện thoại). Chưa thử hồ sơ thật trên máy này; chưa chạy test CAD (máy không có AutoCAD).
 - Người dùng dặn lại (ghi vào `CLAUDE.md` + bộ nhớ): gần hết usage thì dừng ngay, ghi `TIEN_DO.md` + `LICH_SU.md`, push — luôn tự làm.
+- Pha 4a xong (người dùng chọn: tab web + xuất Excel mẫu): chép lõi thủy lực TCVN 7336 + test + Excel mẫu + script xuất từ SKILL-PCCC-NEW;
+  `runner/src/thuy_luc.ts`, 4 route, tab web "Thủy lực". Đối chiếu Excel (Excel COM tính lại) với web phát hiện 2 lỗi của Excel mẫu/xuất:
+  F106 lưu lượng hàng II dùng áp nút a (TCVN 7336 B.2.10.12 là nút b) và bảng nhánh phải giữ số cũ khi đối xứng → sửa lúc xuất; sau sửa
+  Q sprinkler Excel 76,2816 / web 76,2801. Ghi lỗi 13 vào `knowledge/kiem-bang-tinh-thuy-luc-7336.md`. Kiểm: npm test 56, pytest 2.

@@ -2,12 +2,26 @@
 
 File này cập nhật sau mỗi mốc việc và trước khi hết usage. Phiên mới đọc mục "ĐANG LÀM / VIỆC TIẾP THEO" trước.
 
-## ĐANG LÀM / VIỆC TIẾP THEO (cập nhật 2026-11-01)
-**Xong Pha 1 (bóc KL + báo giá), Pha 2 (hướng dẫn B0–B7, khảo sát, báo giá sơ bộ), Pha 3 (thẩm định PDF).**
-Máy đang làm: `F:\1_ToolMMo\2_VibeCode\PCCCVIP` (Python 3.13 + pymupdf 1.28.2 + pyyaml, Node 24, Claude CLI đã đăng nhập, KHÔNG có AutoCAD).
-Đã kiểm 2026-11-01: `npm test` 39 test, `python -m pytest thamdinh/test -q` 2 test, trình duyệt (tab Thẩm định PDF: tải PDF mẫu,
-chạy lại với thông tin mới, PDF ghi chú #1–#6 khớp bảng, "Claude xét" 1 dòng XM chạy thật 27 giây, màn hình điện thoại).
-CHƯA chạy `cad\test\chay_thu.ps1` (máy không có AutoCAD; phiên này không sửa `cad/`).
+## ĐANG LÀM / VIỆC TIẾP THEO (cập nhật 2026-11-01 tối)
+**Xong Pha 1 (bóc KL + báo giá), Pha 2 (hướng dẫn B0–B7, khảo sát, báo giá sơ bộ), Pha 3 (thẩm định PDF), Pha 4a (thủy lực TCVN 7336).**
+Máy đang làm: `F:\1_ToolMMo\2_VibeCode\PCCCVIP` (Python 3.13 + pymupdf 1.28.2 + pyyaml, Node 24, Claude CLI đã đăng nhập, có Excel, KHÔNG có AutoCAD).
+Đã kiểm 2026-11-01: `npm test` 56 test, `python -m pytest thamdinh/test -q` 2 test, trình duyệt (tab Thẩm định PDF, tab Thủy lực: tính sơ bộ,
+tính theo số liệu, xuất Excel qua API có Excel COM hoàn thiện; số Excel tự tính khớp web: Q sprinkler 76,2816 / 76,2801).
+CHƯA chạy `cad\test\chay_thu.ps1` (máy không có AutoCAD; phiên này không sửa `cad/`). Chưa bấm nút tải Excel trong trình duyệt (chỉ gọi API).
+
+Pha 4a đã làm:
+- `shared/src/thuy_luc.ts` + 2 file test chép nguyên từ SKILL-PCCC-NEW (24743f9): 14 test khớp Excel người dùng. `thuy_luc.py` của PcccVipPro
+  dùng Hazen–Williams (gần đúng), không theo PL B → không dùng.
+- `bang_tinh/thuy_luc/` (Excel mẫu, `o_nhap.json`, `vi_du/`), `scripts/xuat_thuy_luc_excel.py` + 2 `.ps1` (Excel COM) chép từ SKILL-PCCC-NEW.
+  Sửa thêm: cờ `--khong-hoan-thien`; hoàn thiện lỗi chỉ cảnh báo; **F106 dùng áp nút b (N103)** theo B.2.10.12 (mẫu gốc dùng L101 = nút a).
+- `runner/src/thuy_luc.ts` (chuẩn hoá ô sơ bộ, số liệu → ô Excel: chặn vượt khung 5/4/7 dòng, đổi K → K_gpm, báo khóa không có ô như `P_van`,
+  đối xứng thì chép nhánh trái sang nhánh phải); route `GET /api/thuy-luc`, `POST /api/thuy-luc/so-bo`, `POST /api/thuy-luc/tinh`, `GET /api/thuy-luc.xlsx`.
+- Web tab "Thủy lực"; `data/huong_dan.json` B4, B5a trỏ tới tab; B5b thêm `knowledge/tcvn-4513-1988-muc-6-19.md` (chép từ SKILL-PCCC-NEW).
+
+Cần người dùng trả lời (thủy lực):
+- 👤 Lỗi F106 (lưu lượng hàng II dùng áp nút a) và lỗi bảng nhánh phải giữ số cũ khi đối xứng **cũng có trong SKILL-PCCC-NEW**: sửa luôn bên đó không?
+- 👤 Ống vòng/Qtt: Excel mẫu cộng họng theo H.6 (2,5 l/s/tia, ô H18) còn lõi web theo lăng H.7 (2,6 l/s/tia) → Q bơm lệch ~0,2 l/s,
+  PB lệch ~0,001 MPa. Theo luật bạn chốt 28/10 ("lưu lượng họng vào bơm, bể = số tia × lưu lượng lăng H.7") thì Excel cần sửa — chọn bên nào?
 
 Pha 3 đã làm (chi tiết, phần đã cắt/sửa: `thamdinh/README.md`):
 - `thamdinh/`: lõi Python chép từ repo `taelomuhicd84/PCCC` (TestPCCC) commit `ab546c7` (thư mục `D:\1_Claude\TestPCCC` không có trên máy này).
@@ -28,11 +42,12 @@ Việc người dùng cần làm:
 Việc tiếp theo (đề xuất):
 1. Thử thẩm định trên hồ sơ thật khi có PDF; so với lần chạy CLI gốc 31/10 trên Hoàng Hùng (Đạt 0, KD 3 đều "không đọc được số liệu", XM 3 →
    nay 3 dòng KD đó phải thành XM).
-2. Pha 3+ (hỏi người dùng trước): đọc bảng cửa/bảng thang để lấy kích thước (bớt XM); nối bảng đối chiếu A/B/KT như `SKILL-PCCC-NEW`
+2. Thủy lực: làm theo câu trả lời 2 câu hỏi trên; thử trên mặt bằng sprinkler thật; mở rộng (hỏi trước): kho nhóm 5–7 (Bảng 2), ô HCB2 cụm van
+   trong Excel mẫu, nút "chọn số đầu C07" (`chonSoDau` đã có trong lõi).
+3. Pha 3+ (hỏi người dùng trước): đọc bảng cửa/bảng thang để lấy kích thước (bớt XM); nối bảng đối chiếu A/B/KT như `SKILL-PCCC-NEW`
    (`data/bang/*.json`, `shared/src/chon_bang.ts`); xuất Word đối chiếu.
-3. Pha 4: `PCCC_RAI` rải đầu phun/đầu báo theo lưới trong polyline phòng; thủy lực TCVN 7336 — tham khảo `SKILL-PCCC-NEW/shared/src/thuy_luc.ts`
-   (có test khớp Excel người dùng) và `PcccVipPro/pccc/tools/thuy_luc.py`.
-4. Hỏi người dùng: kích thước/ký hiệu block chuẩn họ muốn (hiện là vòng tròn R200 + chữ), quy tắc ước khối lượng theo kinh nghiệm của họ.
+4. Pha 4b: `PCCC_RAI` rải đầu phun/đầu báo theo lưới trong polyline phòng (cần máy có AutoCAD để kiểm).
+5. Hỏi người dùng: kích thước/ký hiệu block chuẩn họ muốn (hiện là vòng tròn R200 + chữ), quy tắc ước khối lượng theo kinh nghiệm của họ.
 
 Vấn đề còn mở / giới hạn đã biết:
 - Plugin chỉ cho AutoCAD 2021–2024 (.NET Framework 4.8); 2025+ cần build .NET 8.

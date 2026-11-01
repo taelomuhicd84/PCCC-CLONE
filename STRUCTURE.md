@@ -21,6 +21,8 @@ TKPCCC/
 ├─ shared/              LÕI NGHIỆP VỤ dùng chung, hàm thuần (không đọc/ghi file, không server)
 │  ├─ src/bao_gia.ts       khối lượng × danh mục × đơn giá -> báo giá theo hệ; docSoVN (đọc số kiểu Việt Nam)
 │  ├─ src/khao_sat.ts      khảo sát 8 mục: chuẩn hoá, ghép gợi ý Claude, ước khối lượng sơ bộ theo m²
+│  ├─ src/thuy_luc.ts      thủy lực sprinkler TCVN 7336 PL B: tính/kiểm, sơ bộ từ mặt bằng, so phương án DN, chọn số đầu C07
+│  │                       (chép nguyên từ SKILL-PCCC-NEW 24743f9; test khớp Excel người dùng — sửa thì báo để đồng bộ)
 │  └─ test/                *.test.ts + mau.ts (dữ liệu mẫu dùng chung cho test)
 │
 ├─ runner/              SERVER CỤC BỘ (Node, chạy `npm start`, cổng 8787)
@@ -28,11 +30,16 @@ TKPCCC/
 │  ├─ src/xuat_xlsx.ts     Excel: đơn giá mẫu, đọc đơn giá, báo giá có công thức, sheet theo tầng/khu
 │  ├─ src/xuat_docx.ts     Word: báo cáo khảo sát
 │  ├─ src/thamdinh.ts      gọi lõi Python thamdinh/ (`python -m pccc_checker run`), đọc findings.jsonl, câu hỏi "Claude xét" dòng XM
+│  ├─ src/thuy_luc.ts      chuẩn hoá ô sơ bộ thủy lực; số liệu -> ô Excel mẫu + gọi scripts/xuat_thuy_luc_excel.py
 │  ├─ src/engines/claude.ts  gọi `claude -p` bằng đăng nhập Claude Code (KHÔNG API key), chỉ công cụ đọc
 │  └─ test/
 │
 ├─ web/                 GIAO DIỆN: 1 file index.html (HTML + JS thuần, không build);
-│                       4 tab Hướng dẫn · Khảo sát · Khối lượng & Báo giá · Thẩm định PDF
+│                       5 tab Hướng dẫn · Khảo sát · Khối lượng & Báo giá · Thủy lực · Thẩm định PDF
+│
+├─ bang_tinh/thuy_luc/  EXCEL MẪU THỦY LỰC (chép từ SKILL-PCCC-NEW): MAU_THUY_LUC_7336.xlsx, o_nhap.json (bản đồ ô nhập), vi_du/
+├─ scripts/             xuat_thuy_luc_excel.py (ghi ô Excel mẫu, giữ công thức; sửa F106 theo B.2.10.12),
+│                       chen_hang_cuoi.ps1, hoan_thien_excel.ps1 (Excel COM; UTF-8 có BOM vì có chữ Việt)
 │
 ├─ thamdinh/            THẨM ĐỊNH PDF (Python 3 + pymupdf + pyyaml; offline, không API key) — nguồn, phần đã cắt: thamdinh/README.md
 │  ├─ pccc_checker/        gói Python chép từ repo PCCC (TestPCCC) ab546c7: đọc chữ vector, rule engine, ghi chú PDF; cli.py viết mới
@@ -64,7 +71,8 @@ TKPCCC/
 │
 └─ ket_qua/             KẾT QUẢ TỪNG CÔNG TRÌNH (tự sinh, không commit): ket_qua/<dự án>/
                         khao_sat.json, khoi_luong.json (bóc từ CAD), khoi_luong_so_bo.json (ước theo khảo sát),
-                        thamdinh/ (ban_ve.pdf, ban_ve_annotated.pdf, findings.jsonl, tom_tat.json, claude_xet.json)
+                        thamdinh/ (ban_ve.pdf, ban_ve_annotated.pdf, findings.jsonl, tom_tat.json, claude_xet.json),
+                        thuy_luc/ (mat_bang.json, so_lieu.json, thuy_luc.xlsx)
 ```
 
 ## Mỗi lớp một việc
@@ -89,6 +97,8 @@ Web: tab Khảo sát ─► ket_qua/<dự án>/khao_sat.json ─► "Ước kh�
                                                                                                      ▼
 data/vat_tu.json + data/don_gia.json ──► shared/src/bao_gia.ts ──► runner/src/xuat_xlsx.ts ──► báo giá .xlsx
 Claude ("Claude gợi ý", "Hỏi") ◄── runner/src/engines/claude.ts (`claude -p`, đọc knowledge/ + skills/)
+Web: tab Thủy lực ─POST /api/thuy-luc/so-bo|tinh─► shared/src/thuy_luc.ts ─► ket_qua/<dự án>/thuy_luc/so_lieu.json
+   ─GET /api/thuy-luc.xlsx─► runner/src/thuy_luc.ts ─► scripts/xuat_thuy_luc_excel.py (+ Excel COM) ─► thuy_luc.xlsx
 Web: tab Thẩm định PDF ─POST /api/tham-dinh─► ket_qua/<dự án>/thamdinh/ban_ve.pdf ─► runner/src/thamdinh.ts ─► python thamdinh/
    ─► findings.jsonl (D/KD/XM) + PDF ghi chú ─► bảng kết luận; dòng XM ─"Claude xét"─► claude_xet.json
 ```
@@ -102,10 +112,11 @@ Web: tab Thẩm định PDF ─POST /api/tham-dinh─► ket_qua/<dự án>/tham
 - Luật thẩm định PDF mới: thêm vào `thamdinh/rules/qcvn06_2022_sd01_2023.yaml` (check có sẵn) hoặc hàm `@register` trong
   `thamdinh/pccc_checker/rules/checks.py`; thêm ca kiểm vào `thamdinh/test/`.
 - Bước thiết kế mới: 1 mục trong `data/huong_dan.json`.
-- Sau này nếu cần: `scripts/` (script tiện ích, py/ps1/mjs), `so_do/` (sơ đồ html), `bang_tinh/` (mẫu Excel) — giống dự án mẫu.
+- Script tiện ích (py/ps1/mjs): `scripts/`; mẫu Excel: `bang_tinh/`. Sau này nếu cần: `so_do/` (sơ đồ html) — giống dự án mẫu.
 
 ## Quy ước đặt tên
 - Thư mục, file mã: tiếng Việt không dấu, chữ thường, `snake_case` (`khao_sat.ts`, `xuat_xlsx.ts`); tri thức `.md`: `kebab-case` như mẫu.
 - Tài liệu gốc dự án: CHỮ HOA (`TIEN_DO.md`, `LICH_SU.md`, `STRUCTURE.md`).
 - Đường dẫn tài liệu trong `data/huong_dan.json` ghi từ gốc dự án (`knowledge/…`, `skills/…`).
-- File `.bat`, `.ps1`: chỉ chữ ASCII (cmd và PowerShell 5.1 đọc sai UTF-8 không BOM).
+- File `.bat`, `.ps1`: chỉ chữ ASCII (cmd và PowerShell 5.1 đọc sai UTF-8 không BOM). Ngoại lệ: `.ps1` cần chữ Việt (ghi vào Excel)
+  thì lưu UTF-8 **có BOM** (`scripts/chen_hang_cuoi.ps1`, `scripts/hoan_thien_excel.ps1`).

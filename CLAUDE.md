@@ -5,7 +5,8 @@ Bộ công cụ thiết kế PCCC: plugin AutoCAD 2021 + runner Node + web nội
 
 ## Cấu trúc (chi tiết: STRUCTURE.md, theo khung dự án mẫu PCCC_he_thong)
 `shared/src` nghiệp vụ thuần · `runner/src` server, xuất Excel/Word, `thamdinh.ts`, `engines/claude.ts` · `web/index.html` · `cad/src/Lenh.cs` plugin ·
-`thamdinh/` lõi Python thẩm định PDF · `data/` danh mục + quy trình · `knowledge/` tri thức · `skills/` điều khoản MOD_/SKILL_ ·
+`thamdinh/` lõi Python thẩm định PDF · `shared/src/thuy_luc.ts` + `bang_tinh/thuy_luc/` + `scripts/xuat_thuy_luc_excel.py` thủy lực TCVN 7336 ·
+`data/` danh mục + quy trình · `knowledge/` tri thức · `skills/` điều khoản MOD_/SKILL_ ·
 `ket_qua/<dự án>/` kết quả (không commit).
 Mỗi module có `test/` cạnh `src/`. Thêm/đổi thư mục thì cập nhật `STRUCTURE.md`.
 
@@ -23,7 +24,9 @@ Mỗi module có `test/` cạnh `src/`. Thêm/đổi thư mục thì cập nhậ
   thủy lực `shared/src/thuy_luc.ts`), `taelomuhicd84/PcccVipPro` (module `pccc`: agent thẩm định, `tools/thuy_luc.py`, `thoat_nan.py`),
   `taelomuhicd84/PCCC` (lõi Python gốc). Clone vào thư mục tạm khi cần, không sửa các repo đó.
 - Không commit `ket_qua/`, `data/don_gia.json`, DLL build. `PCCC_Blocks.dwg`, `block_alias.json` (người dùng sửa) ĐƯỢC commit.
-- File `.bat`/`.ps1` chỉ dùng chữ ASCII.
+- File `.bat`/`.ps1` chỉ dùng chữ ASCII; `.ps1` buộc có chữ Việt thì lưu UTF-8 có BOM (như `scripts/chen_hang_cuoi.ps1`).
+- `shared/src/thuy_luc.ts`, `bang_tinh/thuy_luc/`, script Excel chép từ SKILL-PCCC-NEW (người dùng phát triển ở đó): sửa ở TKPCCC thì
+  ghi vào `LICH_SU.md` và báo người dùng để đồng bộ hai repo.
 
 ## Skill dự án (`.claude/skills/`)
 - `tkpccc-cad-console` — build + kiểm thử plugin trong accoreconsole, in bản vẽ ra PNG, các bẫy API AutoCAD đã gặp.

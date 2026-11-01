@@ -10,6 +10,8 @@ import { docDonGia, taoMauDonGia, xuatBaoGia } from "./xuat_xlsx";
 import { xuatKhaoSat } from "./xuat_docx";
 import { hoiClaude } from "./engines/claude";
 import { cauHoiXet, chayThamDinh, docKetLuan, KHOA_CHU, KHOA_CO_KHONG, KHOA_SO, tachDeXuat } from "./thamdinh";
+import { soBoThuyLuc, tinhThuyLuc, toiUuThuyLuc, type SoLieuThuyLuc } from "../../shared/src/thuy_luc";
+import { chuanHoaMatBang, xuatThuyLucExcel } from "./thuy_luc";
 import { marked } from "marked";
 
 const GOC = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", ".."); // runner/src -> gốc dự án
@@ -52,9 +54,18 @@ function ketQuaTD(duAn: unknown) {
   const d = dirTD(duAn);
   return { tom_tat: docJson(path.join(d, "tom_tat.json")), dong: docKetLuan(path.join(d, "findings.jsonl")), claude_xet: docJson(path.join(d, "claude_xet.json"), {}) };
 }
-/** Thư mục trong ket_qua/ có dữ liệu (khối lượng CAD, sơ bộ, khảo sát hoặc thẩm định); bỏ qua thư mục tên lạ. */
+// ket_qua/<dự án>/thuy_luc/: mat_bang.json (ô sơ bộ), so_lieu.json (số liệu tính), thuy_luc.xlsx (Excel mẫu đã điền)
+const dirTL = (duAn: unknown) => path.join(KET_QUA, tenThuMuc(duAn), "thuy_luc");
+/** Lỗi do số liệu người nhập (thiếu KT, nhóm ngoài bảng…) trả 400 kèm lý do, không phải lỗi runner. */
+function soLieuHopLe<T>(f: () => T): T {
+  try { return f(); } catch (e) { throw new LoiNguoiDung("Số liệu thủy lực: " + (e instanceof Error ? e.message : String(e))); }
+}
+/** Thư mục trong ket_qua/ có dữ liệu (khối lượng CAD, sơ bộ, khảo sát, thẩm định hoặc thủy lực); bỏ qua thư mục tên lạ. */
 function coDuLieu(d: string) {
-  try { return existsSync(fileKL(d)) || existsSync(fileKL(d, "so_bo")) || existsSync(fileKS(d)) || existsSync(path.join(dirTD(d), "tom_tat.json")); } catch { return false; }
+  try {
+    return existsSync(fileKL(d)) || existsSync(fileKL(d, "so_bo")) || existsSync(fileKS(d)) || existsSync(path.join(dirTD(d), "tom_tat.json"))
+      || existsSync(path.join(dirTL(d), "so_lieu.json"));
+  } catch { return false; }
 }
 function ghiJson(f: string, x: unknown) {
   mkdirSync(path.dirname(f), { recursive: true });
@@ -193,6 +204,37 @@ async function xuLy(req: IncomingMessage, res: ServerResponse) {
     if (!existsSync(f)) throw new LoiNguoiDung("Chưa có PDF ghi chú: chạy thẩm định trước");
     res.writeHead(200, { "content-type": "application/pdf", "content-disposition": `inline; filename*=UTF-8''${encodeURIComponent("tham_dinh_" + tenThuMuc(q.get("du_an")) + ".pdf")}` });
     return res.end(readFileSync(f));
+  }
+  if (r === "GET /api/thuy-luc") {
+    const d = dirTL(q.get("du_an"));
+    return json(res, { mat_bang: docJson(path.join(d, "mat_bang.json")), so_lieu: docJson(path.join(d, "so_lieu.json")) });
+  }
+  if (r === "POST /api/thuy-luc/so-bo") {
+    const d = dirTL(q.get("du_an"));
+    const vao = JSON.parse((await docBody(req, 100_000)).toString("utf8"));
+    const mb = soLieuHopLe(() => chuanHoaMatBang(vao));
+    const sb = soLieuHopLe(() => soBoThuyLuc(mb));
+    const phuong_an = soLieuHopLe(() => toiUuThuyLuc(sb.so_lieu)).map(({ so_lieu, ...p }) => p);
+    ghiJson(path.join(d, "mat_bang.json"), mb);
+    ghiJson(path.join(d, "so_lieu.json"), sb.so_lieu);
+    return json(res, { gia_dinh: sb.gia_dinh, loi_bo_tri: sb.loi_bo_tri, ket_qua: sb.ket_qua, so_lieu: sb.so_lieu, phuong_an });
+  }
+  if (r === "POST /api/thuy-luc/tinh") {
+    const sl = JSON.parse((await docBody(req, 200_000)).toString("utf8")) as SoLieuThuyLuc;
+    if (!Array.isArray(sl?.nhanh_trai) || !sl.nhanh_trai.length || !Array.isArray(sl.ong_chinh)) throw new LoiNguoiDung("Số liệu cần nhanh_trai (ít nhất 1 đoạn) và ong_chinh (mảng, có thể rỗng)");
+    const ket_qua = soLieuHopLe(() => tinhThuyLuc(sl));
+    ghiJson(path.join(dirTL(q.get("du_an")), "so_lieu.json"), sl);
+    return json(res, { ket_qua, so_lieu: sl });
+  }
+  if (r === "GET /api/thuy-luc.xlsx") {
+    const d = dirTL(q.get("du_an"));
+    const sl = docJson(path.join(d, "so_lieu.json"));
+    if (!sl) throw new LoiNguoiDung("Chưa có số liệu: bấm Tính sơ bộ hoặc Tính theo số liệu trước");
+    const ra = path.join(d, "thuy_luc.xlsx");
+    const ghiChu = await xuatThuyLucExcel(GOC, sl, ra).catch((e) => { throw new LoiNguoiDung(e instanceof Error ? e.message : String(e)); });
+    res.writeHead(200, { "content-type": XLSX, "content-disposition": `attachment; filename*=UTF-8''${encodeURIComponent("thuy_luc_" + tenThuMuc(q.get("du_an")) + ".xlsx")}`,
+      "x-ghi-chu": encodeURIComponent(JSON.stringify(ghiChu)) }); // web đọc header này để hiện ghi chú (khóa bị bỏ, kết quả hoàn thiện)
+    return res.end(readFileSync(ra));
   }
   if (r === "POST /api/claude") {
     const { cau_hoi, tai_lieu } = JSON.parse((await docBody(req, 100_000)).toString("utf8"));

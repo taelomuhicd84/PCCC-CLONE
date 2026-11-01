@@ -47,6 +47,8 @@
   .kd { color:var(--acc); font-weight:600; } .xm { font-style:italic; }
   tr.xet td { background:color-mix(in srgb, var(--warn) 6%, transparent); }
   #bangTD { min-width:760px; } /* điện thoại: cuộn ngang trong khung bảng thay vì ép cột Nội dung */
+  #bangPA { min-width:640px; }
+  #slTL { min-height:220px; font:12px/1.4 ui-monospace, Consolas, monospace; }
   @media (max-width:760px) { .hd { grid-template-columns:1fr; } .duan { margin-left:0; } }
 </style>
 </head>
@@ -57,6 +59,7 @@
     <button data-tab="hd" class="on">Hướng dẫn thiết kế</button>
     <button data-tab="ks">Khảo sát</button>
     <button data-tab="bg">Khối lượng &amp; Báo giá</button>
+    <button data-tab="tl">Thủy lực</button>
     <button data-tab="td">Thẩm định PDF</button>
   </nav>
   <div class="duan">
@@ -147,6 +150,46 @@
     </section>
   </div>
 
+  <!-- THỦY LỰC -->
+  <div id="tab-tl" class="an">
+    <section>
+      <h2>Thủy lực sprinkler theo TCVN 7336:2021 (Phụ lục B)</h2>
+      <p class="mute">Sơ bộ khi chỉ có mặt bằng: tự bố trí lưới đầu phun, chọn DN theo Bảng B.3, tìm q1 đạt Qmin, so 4 phương án DN. Mọi số là ước lượng, kỹ sư kiểm lại. Kho nhóm 5–7 (Bảng 2) chưa có.</p>
+      <form id="formTL" class="luoi" onsubmit="return false">
+        <label>Nhóm nguy cơ phát sinh cháy (PL A)<select name="nhom"><option>1</option><option>2</option><option selected>3</option><option>4.1</option></select></label>
+        <label>Chiều cao phòng (m)<input name="cao_phong" inputmode="decimal"></label>
+        <label>K đầu phun (gpm/psi^0,5, trống = 8)<input name="K_gpm" inputmode="decimal"></label>
+        <label>Khoảng cách đầu phun (m, trống = tự chọn)<input name="khoang_cach" inputmode="decimal"></label>
+        <label>Số đầu mỗi nhánh (trống = 3)<input name="dau_moi_nhanh" inputmode="decimal"></label>
+        <label>Ống chính từ vùng tính về bơm (m)<input name="L_ong_chinh_den_bom" inputmode="decimal"></label>
+        <label>Chênh cao Z đầu chủ đạo – trục bơm (m)<input name="Z_m" inputmode="decimal"></label>
+        <label>Áp lực đầu vào PH (MPa, nếu có)<input name="PH" inputmode="decimal"></label>
+        <label>Ống về bơm<select name="vong"><option value="true">Mạch vòng (mỗi nửa ½ Q)</option><option value="">Mạch cụt (cả Q)</option></select></label>
+        <label>Họng vách tường chung bơm: số tia<input name="so_tia" inputmode="decimal" placeholder="trống = không có"></label>
+        <label>Lưu lượng 1 tia (l/s, QCVN 10 Bảng H.7)<input name="q_tia" inputmode="decimal"></label>
+        <label>Áp lăng phun (MPa, Bảng H.7)<input name="P_lang" inputmode="decimal"></label>
+        <label>Chiều dài cuộn vòi (m, trống = 20)<input name="L_voi" inputmode="decimal"></label>
+      </form>
+      <div class="row" style="margin-top:12px"><button id="soBoTL" class="chinh">Tính sơ bộ</button><span id="tlKq"></span></div>
+    </section>
+    <section>
+      <h2>Kết quả</h2>
+      <div id="tlKetQua" class="mute">Chưa tính.</div>
+      <div class="cuon"><table id="bangPA"></table></div>
+    </section>
+    <section>
+      <h2>Số liệu tính (theo bản vẽ)</h2>
+      <p class="mute">JSON khóa như <span class="chip">bang_tinh/thuy_luc/o_nhap.json</span>: <code>nhanh_trai</code>/<code>nhanh_phai</code> (đoạn từ đầu xa nhất tới nút: <code>{"dn": 32, "l": 3}</code>), <code>ong_chinh</code>, <code>vong</code>, <code>hong</code>, <code>q1</code>, <code>Q_min</code>, <code>Z</code> (MPa)… Tính sơ bộ tự điền ô này; có bản vẽ thì sửa DN, chiều dài theo bản vẽ rồi bấm Tính.</p>
+      <textarea id="slTL" spellcheck="false"></textarea>
+      <div class="row">
+        <button id="tinhTL">Tính theo số liệu</button>
+        <button id="excelTL">Xuất Excel mẫu (.xlsx)</button>
+        <span id="tlKq2"></span>
+      </div>
+      <pre id="tlGhiChu" class="mute"></pre>
+    </section>
+  </div>
+
   <!-- THẨM ĐỊNH PDF -->
   <div id="tab-td" class="an">
     <section>
@@ -198,9 +241,10 @@ let tab = "hd";
 function moTab(t) {
   tab = t;
   document.querySelectorAll("nav button").forEach((b) => b.classList.toggle("on", b.dataset.tab === t));
-  ["hd", "ks", "bg", "td"].forEach((x) => $("tab-" + x).classList.toggle("an", x !== t));
+  ["hd", "ks", "bg", "tl", "td"].forEach((x) => $("tab-" + x).classList.toggle("an", x !== t));
   if (t === "ks") taiKS();
   if (t === "bg") hienBaoGia();
+  if (t === "tl") taiTL();
   if (t === "td") taiTD();
   nho("tab", t);
 }
@@ -355,6 +399,68 @@ $("fileGia").onchange = async (e) => {
   } catch (err) { $("giaKq").textContent = err.message; }
   e.target.value = "";
 };
+
+// ---------- Thủy lực ----------
+const HONG = ["so_tia", "q_tia", "P_lang", "L_voi"];
+const sd = (x, d = 3) => x == null || !Number.isFinite(+x) ? "" : (+x).toLocaleString("vi-VN", { maximumFractionDigits: d });
+function hienKQTL(kq, them = "") {
+  const dong = [["q1 đầu chủ đạo", sd(kq.so_lieu.q1), "l/s"], ["P1 đầu chủ đạo", sd(kq.ketQua.P1, 4), "MPa"],
+    ["Q sprinkler vùng tính", sd(kq.ketQua.Qsp, 2), `l/s (Qmin ${sd(kq.so_lieu.Q_min)})`], ["Q họng vách tường", sd(kq.ketQua.QVT, 2), "l/s"],
+    ["Q bơm", sd(kq.ketQua.Qbom, 2), `l/s = ${sd(kq.ketQua.Qbom * 3.6, 1)} m³/h`], ["Cột áp bơm PB", sd(kq.ketQua.PB, 3), `MPa = ${sd(kq.ketQua.PB_m, 1)} m`],
+    ["Bể nước (60 phút)", sd(kq.ketQua.be_m3, 1), "m³"], ["Vận tốc lớn nhất", sd(kq.ketQua.vMax, 2), "m/s"],
+    ["Kiểm đường đặc tính bơm", `150% Q = ${sd(kq.ketQua.bom_kiem.Q_150_m3h, 1)} m³/h: H ≥ ${sd(kq.ketQua.bom_kiem.H_toi_thieu_tai_Q150_m, 1)} m; Q = 0: H ≤ ${sd(kq.ketQua.bom_kiem.H_toi_da_tai_Q0_m, 1)} m`, ""]];
+  $("tlKetQua").className = "";
+  $("tlKetQua").innerHTML = them + `<p><b class="${kq.ketQua.dat ? "ok" : "kd"}">${kq.ketQua.dat ? "Đạt Qmin và vận tốc ≤ 10 m/s" : "Chưa đạt"}</b>
+    · ${esc(kq.ketQua.nhan_dien.ly_do.join("; "))}</p>
+    <table>${dong.map(([a, b, c]) => `<tr><td>${esc(a)}</td><td class="so">${esc(b)}</td><td class="mute">${esc(c)}</td></tr>`).join("")}</table>
+    ${kq.ketQua.canhBao.map((c) => `<div class="warn">⚠ ${esc(c)}</div>`).join("")}`;
+}
+async function taiTL() {
+  $("tlKq").textContent = ""; $("tlKq2").textContent = ""; $("tlGhiChu").textContent = ""; $("bangPA").innerHTML = "";
+  $("tlKetQua").className = "mute"; $("tlKetQua").textContent = "Chưa tính.";
+  if (!duAn()) { $("tlKetQua").textContent = "Chọn hoặc tạo dự án trước."; return; }
+  const { mat_bang, so_lieu } = await api("/api/thuy-luc" + qDuAn());
+  for (const el of $("formTL").elements) {
+    if (!el.name) continue;
+    const v = HONG.includes(el.name) ? mat_bang?.hong?.[el.name] : mat_bang?.[el.name];
+    el.value = el.name === "vong" ? (mat_bang && !mat_bang.vong ? "" : "true") : el.name === "nhom" ? (v ?? "3") : (v == null || v === 0 ? "" : (+v).toLocaleString("vi-VN"));
+  }
+  $("slTL").value = so_lieu ? JSON.stringify(so_lieu, null, 1) : "";
+}
+$("soBoTL").onclick = () => cho($("soBoTL"), bao($("tlKq"), async () => {
+  if (!duAn()) throw new Error("Chọn hoặc tạo dự án trước");
+  const mb = { hong: {} };
+  for (const el of $("formTL").elements) if (el.name) (HONG.includes(el.name) ? mb.hong : mb)[el.name] = el.value.trim();
+  const j = await api("/api/thuy-luc/so-bo" + qDuAn(), { method: "POST", body: JSON.stringify(mb) });
+  $("slTL").value = JSON.stringify(j.so_lieu, null, 1);
+  hienKQTL({ ketQua: j.ket_qua, so_lieu: j.so_lieu }, `<ul class="mute">${[...j.gia_dinh, ...j.loi_bo_tri].map((x) => `<li>${esc(x)}</li>`).join("")}</ul>`);
+  $("bangPA").innerHTML = '<tr><th>Phương án (xếp theo cột áp bơm)</th><th class="so">q1 (l/s)</th><th class="so">Q sprinkler</th><th class="so">PB (m)</th><th class="so">Q bơm (l/s)</th><th class="so">Bể (m³)</th><th class="so">v max</th><th>Cảnh báo</th></tr>'
+    + j.phuong_an.map((p) => `<tr><td>${esc(p.mo_ta)}</td><td class="so">${sd(p.q1, 2)}</td><td class="so">${sd(p.Qsp, 2)}</td><td class="so">${sd(p.PB * 101.972, 1)}</td>
+      <td class="so">${sd(p.Qbom, 2)}</td><td class="so">${sd(p.be_m3, 1)}</td><td class="so">${sd(p.vMax, 2)}</td><td class="mute">${esc(p.canhBao.join("; "))}</td></tr>`).join("");
+  $("tlKq").textContent = "Đã tính và lưu."; $("tlKq").className = "ok";
+}));
+async function tinhTL() {
+  let sl;
+  try { sl = JSON.parse($("slTL").value); } catch (e) { throw new Error("Số liệu JSON sai cú pháp: " + e.message); }
+  const j = await api("/api/thuy-luc/tinh" + qDuAn(), { method: "POST", body: JSON.stringify(sl) });
+  hienKQTL({ ketQua: j.ket_qua, so_lieu: j.so_lieu }); $("bangPA").innerHTML = "";
+}
+$("tinhTL").onclick = () => cho($("tinhTL"), bao($("tlKq2"), async () => {
+  if (!duAn()) throw new Error("Chọn hoặc tạo dự án trước");
+  await tinhTL(); $("tlKq2").textContent = "Đã tính và lưu."; $("tlKq2").className = "ok";
+}));
+$("excelTL").onclick = () => cho($("excelTL"), bao($("tlKq2"), async () => {
+  if (!duAn()) throw new Error("Chọn hoặc tạo dự án trước");
+  await tinhTL(); // Excel lấy đúng số liệu đang hiện trong ô
+  $("tlKq2").textContent = "Đang xuất Excel (mở Excel ẩn để hoàn thiện, có thể vài chục giây)…"; $("tlKq2").className = "mute";
+  const r = await fetch("/api/thuy-luc.xlsx" + qDuAn());
+  if (!r.ok) throw new Error((await r.json()).loi || r.statusText);
+  $("tlGhiChu").textContent = JSON.parse(decodeURIComponent(r.headers.get("x-ghi-chu") || "%5B%5D")).join("\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(await r.blob()); a.download = `thuy_luc_${duAn()}.xlsx`; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 10_000);
+  $("tlKq2").textContent = "Đã xuất. Mở bằng Excel để tính lại."; $("tlKq2").className = "ok";
+}));
 
 // ---------- Thẩm định PDF ----------
 const TT_VI = { D: "Đạt", KD: "Không đạt", XM: "Cần xác minh", NA: "—" };
