@@ -74,3 +74,6 @@
 8. Máy này: `git push` chạy được ngay từ Bash (không cần tab Terminal). Kiểm `get_usage` sau mỗi việc lớn; ≥ 85% thì dừng, lưu, push.
 9. NHẮC NGƯỜI DÙNG đầu phiên sau (người dùng dặn): thang hở (loại 2) chỉ là kiến thức tư vấn, không phải dòng đối chiếu (bỏ dòng 14 bảng
    bản 6); vẫn chờ người dùng train điều kiện thang loại 2.
+10. Cửa thang máy E 30 CHỈ khi thang máy nằm NGOÀI buồng thang (PA1). Mở rộng buồng thang ra sảnh thang máy (PA2) thì thang máy nằm TRONG
+   buồng thang: xét 3.4.6 (≤ 2 thang chở người, chỉ xuống tới tầng 1; thang máy Lưu Xuân Lộc xuống hầm), không xét E 30 (người dùng sửa
+   2026-11-02; đã sửa bảng bản 6 dòng 11, PDF, `knowledge/nhan-dien-thang-thoat-nan.md`).
