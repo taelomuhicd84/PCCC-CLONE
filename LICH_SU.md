@@ -51,3 +51,6 @@
   mép bậc tới tường; ảnh mẫu cung chiếu nghỉ CT1/FD1). Tra luật theo yêu cầu: 3.4.8b cho chiếu sáng nhân tạo khi không trổ được ô lấy sáng;
   3.4.3 chiếu ≥ bản thang, cánh cửa không làm giảm bề rộng tính toán; 4.23 + bảng cửa: cửa giếng thang máy E 30; 3.2.1b liệt kê "trực tiếp
   vào buồng thang bộ" (người dùng muốn được hỏi); thang loại 2 chờ người dùng train. Ghi vào `knowledge/nhan-dien-thang-thoat-nan.md`.
+- Người dùng dặn (ghi vào `CLAUDE.md`): việc của Claude là báo cáo, chấp nhận hay không là việc người dùng (không hỏi chọn); kết quả tư vấn
+  theo khung bảng đối chiếu chính thức (TT, Nội dung đối chiếu, Nội dung thiết kế, Quy định, Khoản Điều, Kết luận). `tu_van_thiet_ke.md` bản 5
+  (27 dòng) và PDF sửa chữ thang đã gửi; khung PDF chưa đánh số theo TT. Dừng ở usage 5 giờ 86%.
