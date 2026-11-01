@@ -13,8 +13,8 @@ File này cập nhật sau mỗi mốc việc và trước khi hết usage. Phi�
   **Mục 4 Thoát nạn và PDF còn ghi "chọn thang trái cải tạo": SAI theo bài học mới.**
 
 Việc tiếp theo:
-1. Làm lại mục 4 `tu_van_thiet_ke.md` và chữ trên `ve_khoanh.py` (trang 1, 3, 4, tóm tắt) theo bảng ví dụ Lưu Xuân Lộc trong
-   `knowledge/nhan-dien-thang-thoat-nan.md`; kết luận "không có phương án khả thi, cần người dùng xem xét"; gửi lại 2 file.
+1. Xong 02/11: `tu_van_thiet_ke.md` bản 5 theo khung bảng đối chiếu chính thức (27 dòng), chữ thang trên PDF đã sửa và đã gửi.
+   CÒN: khung trên PDF chưa đánh số trùng cột TT của bảng (`ve_khoanh.py`).
 2. 👤 Chờ người dùng: (a) train điều kiện thang loại 2 (3.2.6, 3.4.15, 3.4.16; đoạn 3.2.6 trong bản hợp nhất bị lỗi chữ);
    (b) căn hộ mở cửa thẳng vào buồng thang: chỉ báo cáo kèm căn cứ 3.2.1b, người dùng tự quyết (dặn 2026-11-02: không hỏi chọn);
    (c) duyệt bài học "Đối chiếu BCKS Lưu Xuân Lộc" (đang `cho_nguoi_dung_duyet`).
