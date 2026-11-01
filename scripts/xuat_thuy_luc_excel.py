@@ -99,7 +99,10 @@ def o_tu_so_lieu(sl, ban_do):
     """Đổi số liệu theo tên (o_nhap.json) thành {ô: giá trị}."""
     # TCVN 7336:2021 B.2.10.12 "QII=√Bp1Pb": lưu lượng hàng II theo áp nút b (N103 = D107), như F114, F122… của mẫu.
     # Mẫu gốc ghi nhầm áp nút a (L101): lệch khi đoạn a-b tổn thất lớn (TKPCCC sửa 2026-11-01).
-    o = {'F106': '=IF(D98="Đối xứng với nhánh phải",ROUND(SQRT(G100*N103),2),ROUND(SQRT(G96*N103),2))'}
+    # Họng vách tường (người dùng chốt 2026-11-01): Bảng H.5/H.6 chỉ là yêu cầu tối thiểu (H18 = QBmin, so ở H20/I203);
+    # lưu lượng tính toán chạy trong ống vòng/cụt về bơm theo lăng tra Bảng H.7 (I162 = I160 × I161). Mẫu gốc D184 cộng H18.
+    o = {'F106': '=IF(D98="Đối xứng với nhánh phải",ROUND(SQRT(G100*N103),2),ROUND(SQRT(G96*N103),2))',
+         'D184': '=IF($D$182="Mạch cụt",F158+IF($H$182<>"SP và VT riêng",I162,0),(F158+IF($H$182<>"SP và VT riêng",I162,0))/2)'}
     for k, v in sl.items():
         if k == 'o':
             o.update(v)

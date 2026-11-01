@@ -18,6 +18,7 @@ describe("thủy lực trên web", () => {
     expect(mb).toMatchObject({ nhom: "3", cao_phong: 8, L_ong_chinh_den_bom: 120, Z_m: 15.5, vong: true, hong: undefined });
     expect(chuanHoaMatBang({ nhom: "2", cao_phong: 4, L_ong_chinh_den_bom: 60, Z_m: 8, hong: { so_tia: 2, q_tia: "2,6", P_lang: "0,21" } }).hong)
       .toEqual({ so_tia: 2, q_tia: 2.6, P_lang: 0.21, L_voi: 0, Kp: 0 });
+    expect(chuanHoaMatBang({ nhom: "2", cao_phong: 4, L_ong_chinh_den_bom: 60, Z_m: 8, hong: { so_tia: 2, q_tia: "5,2", P_lang: "0,24", q_tia_h6: "5" } }).hong?.q_tia_h6).toBe(5);
     expect(() => chuanHoaMatBang({ nhom: "5", cao_phong: 8, L_ong_chinh_den_bom: 1, Z_m: 1 })).toThrow(/4.1/);
     expect(() => chuanHoaMatBang({ nhom: "1", cao_phong: "", L_ong_chinh_den_bom: 1, Z_m: 1 })).toThrow(/chiều cao phòng/);
   });
@@ -53,5 +54,7 @@ describe("thủy lực trên web", () => {
     expect(ws.getCell("F125").value).toBe(null); // ví dụ có 3 đoạn ống chính: dòng thứ 4 bỏ trống để chuỗi dừng
     expect(ws.getCell("D62").formula).toBeTruthy();
     expect(ws.getCell("F106").formula).toMatch(/SQRT\(G100\*N103\)/); // TCVN 7336 B.2.10.12: QII theo áp nút b, không phải nút a (L101)
+    expect(ws.getCell("D184").formula).toMatch(/I162/); // ống vòng mang lưu lượng họng tính toán H.7 (I162), không phải tối thiểu H.6 (H18)
+    expect(ws.getCell("D184").formula).not.toMatch(/H18/);
   }, 60_000);
 });

@@ -166,7 +166,8 @@
         <label>Áp lực đầu vào PH (MPa, nếu có)<input name="PH" inputmode="decimal"></label>
         <label>Ống về bơm<select name="vong"><option value="true">Mạch vòng (mỗi nửa ½ Q)</option><option value="">Mạch cụt (cả Q)</option></select></label>
         <label>Họng vách tường chung bơm: số tia<input name="so_tia" inputmode="decimal" placeholder="trống = không có"></label>
-        <label>Lưu lượng 1 tia (l/s, QCVN 10 Bảng H.7)<input name="q_tia" inputmode="decimal"></label>
+        <label>Tối thiểu 1 tia (l/s, Bảng H.5/H.6, trống = 2,5)<input name="q_tia_h6" inputmode="decimal"></label>
+        <label>Lưu lượng 1 tia tính toán (l/s, Bảng H.7 theo chiều cao tia đặc)<input name="q_tia" inputmode="decimal"></label>
         <label>Áp lăng phun (MPa, Bảng H.7)<input name="P_lang" inputmode="decimal"></label>
         <label>Chiều dài cuộn vòi (m, trống = 20)<input name="L_voi" inputmode="decimal"></label>
       </form>
@@ -401,7 +402,7 @@ $("fileGia").onchange = async (e) => {
 };
 
 // ---------- Thủy lực ----------
-const HONG = ["so_tia", "q_tia", "P_lang", "L_voi"];
+const HONG = ["so_tia", "q_tia_h6", "q_tia", "P_lang", "L_voi"];
 const sd = (x, d = 3) => x == null || !Number.isFinite(+x) ? "" : (+x).toLocaleString("vi-VN", { maximumFractionDigits: d });
 function hienKQTL(kq, them = "") {
   const dong = [["q1 đầu chủ đạo", sd(kq.so_lieu.q1), "l/s"], ["P1 đầu chủ đạo", sd(kq.ketQua.P1, 4), "MPa"],

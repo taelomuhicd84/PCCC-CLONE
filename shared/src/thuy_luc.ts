@@ -4,7 +4,7 @@
 // Đơn vị: Q l/s, P MPa, L m, DN mm, KT l6/s2. Ba việc: tinhThuyLuc (kiểm/tính theo bản vẽ), soBoThuyLuc (chỉ có mặt bằng), toiUuThuyLuc (so phương án).
 
 export interface Doan { dn: number; l: number; kt?: number; ca?: boolean; nut?: string } // nut: nhãn nút theo bản vẽ (vd "1-2"), bỏ trống thì Excel tự đánh; kt: ghi đè KT (vd ống hàn điện); ca: đoạn vòng mang cả lưu lượng (không chia đôi)
-export interface HongNuoc { so_tia: number; q_tia: number; q_tia_h6?: number; // q_tia: Bảng H.7 (bơm, bể); q_tia_h6: Bảng H.6 (QBmin)
+export interface HongNuoc { so_tia: number; q_tia: number; q_tia_h6?: number; // q_tia: lăng tra Bảng H.7 theo chiều cao tia đặc (tính ống vòng, bơm, bể); q_tia_h6: tối thiểu 1 tia Bảng H.5/H.6 (QBmin, trống = 2,5)
   P_lang: number; L_voi: number; Kp: number; L_1?: number; A_1?: number; L_2?: number; A_2?: number }
 export interface SoLieuThuyLuc {
   K_gpm?: number; K?: number; // K đầu phun: gpm/psi^0,5 hoặc l/(s·MPa^0,5) dạng q = K√P (= 10·K của B.2.2)
@@ -133,7 +133,9 @@ export function tinhThuyLuc(sl: SoLieuThuyLuc) {
   if (!sl.vong?.length && !sl.vt_rieng) P = Math.max(P, PVT);
   const PJ = P;
   const PB = PJ + 0.2 * (PJ - P1) + (sl.P_van ?? 0) + sl.Z - (sl.PH ?? 0); // B.3.9, cục bộ 20% tổn thất dọc đường (B.3.13), HCB2 cụm van (C07)
-  const QHR6 = h ? h.so_tia * (h.q_tia_h6 ?? h.q_tia) : 0; // QBmin theo H.6 (Excel H18)
+  // QBmin: số tia × lưu lượng tối thiểu 1 tia Bảng H.5/H.6 (Excel H18, mặc định 2,5); tính toán dùng H.7 (QVT) — người dùng chốt 2026-11-01
+  const qMin1 = h ? h.q_tia_h6 ?? 2.5 : 0;
+  const QHR6 = h ? h.so_tia * qMin1 : 0;
   const Qbom = Math.max(Qsp + QVT, sl.Q_min + QHR6 + (sl.Q_ngoai_nha ?? 0));
   const doan = [...sl.nhanh_trai.map((d, i) => ({ ten: `trái ${i + 1}`, d, Q: trai.q.slice(0, i + 1).reduce((a, b) => a + b, 0) })),
     ...sl.ong_chinh.map((d, i) => ({ ten: `ống chính ${i + 1}`, d, Q: hang[i].Q })),
@@ -142,6 +144,7 @@ export function tinhThuyLuc(sl: SoLieuThuyLuc) {
   const canhBao: string[] = [];
   if (Qsp < sl.Q_min) canhBao.push(`KHÔNG ĐẠT: Q sprinkler ${Qsp.toFixed(2)} < Qmin ${sl.Q_min} (B.3.1)`);
   if (sl.vt_rieng && QVT) canhBao.push("Mạch họng vách tường riêng: kiểm riêng cột áp bơm cho mạch họng (PVT + tổn thất mạch họng + Z)");
+  if (h && h.q_tia + 1e-9 < qMin1) canhBao.push(`Lăng phun ${h.q_tia} l/s (Bảng H.7) < tối thiểu ${qMin1} l/s/tia (Bảng H.5/H.6): chọn đường kính lăng hoặc chiều cao tia đặc lớn hơn`);
   if (sl.P_van === undefined) canhBao.push("Chưa cộng tổn thất cụm van báo động HCB2 (catalogue van, tập huấn C07): ghi P_van");
   if (vMax > 10) canhBao.push(`Vận tốc ${vMax.toFixed(2)} m/s > 10 m/s (B.1.9)`);
   if (PB > 1) canhBao.push(`PB ${PB.toFixed(3)} MPa > 1 MPa: kiểm áp tại bộ điều khiển (B.3.14)`);

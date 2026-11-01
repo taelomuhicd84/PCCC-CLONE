@@ -75,6 +75,14 @@ describe("thủy lực TCVN 7336", () => {
     expect(mot.QI).toBeCloseTo(hai.QI / 2, 6);
     expect(mot.nhan_dien.mot_phia).toBe(true);
   });
+  it("họng: QBmin theo tối thiểu H.5/H.6 (mặc định 2,5 l/s/tia), tính toán theo lăng H.7 (TKPCCC, người dùng chốt 2026-11-01)", () => {
+    const toiThieu = tinhThuyLuc({ ...mau, Q_min: 200 }); // nhánh Qmin + QBmin lớn hơn Qsp + QVT
+    expect(toiThieu.Qbom).toBeCloseTo(200 + 2 * 2.5, 9);
+    expect(tinhThuyLuc({ ...mau, Q_min: 200, hong: { ...mau.hong!, q_tia_h6: 5 } }).Qbom).toBeCloseTo(200 + 2 * 5, 9);
+    expect(tinhThuyLuc(mau).QVT).toBeCloseTo(2 * 2.6, 9); // ống vòng, bơm, bể: số tia × lăng H.7
+    expect(tinhThuyLuc({ ...mau, hong: { ...mau.hong!, q_tia_h6: 5 } }).canhBao.join()).toMatch(/H\.5\/H\.6/);
+    expect(tinhThuyLuc(mau).canhBao.join()).not.toMatch(/H\.5\/H\.6/);
+  });
   it("họng vách tường mạch riêng: ống vòng chỉ mang Q sprinkler, QVT cộng ở bơm", () => {
     const chung = tinhThuyLuc(mau), rieng = tinhThuyLuc({ ...mau, vt_rieng: true });
     expect(rieng.Qsp).toBeCloseTo(chung.Qsp, 9);

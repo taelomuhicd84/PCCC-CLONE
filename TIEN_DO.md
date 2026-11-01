@@ -21,8 +21,10 @@ Pha 4a đã làm:
 Cần người dùng trả lời (thủy lực):
 - Lỗi F106 (lưu lượng hàng II dùng áp nút a) và lỗi bảng nhánh phải giữ số cũ khi đối xứng cũng có trong SKILL-PCCC-NEW:
   **người dùng tự sửa bên đó** (trả lời 2026-11-01), TKPCCC không đụng repo đó.
-- 👤 Ống vòng/Qtt: Excel mẫu cộng họng theo H.6 (2,5 l/s/tia, ô H18) còn lõi web theo lăng H.7 (2,6 l/s/tia) → Q bơm lệch ~0,2 l/s,
-  PB lệch ~0,001 MPa. Theo luật bạn chốt 28/10 ("lưu lượng họng vào bơm, bể = số tia × lưu lượng lăng H.7") thì Excel cần sửa — chọn bên nào?
+- Họng (người dùng chốt 2026-11-01): H.5/H.6 (2,5 hoặc 5 l/s/tia) chỉ là yêu cầu tối thiểu (QBmin); tính toán ống vòng, bơm, bể theo lăng H.7
+  tra theo chiều cao tia đặc. Đã sửa: Excel xuất ghi đè D184 dùng I162 (H.7); lõi QBmin mặc định 2,5, cảnh báo khi lăng H.7 < tối thiểu; web
+  thêm ô "Tối thiểu 1 tia (H.5/H.6)". Excel và web khớp: Q bơm 81,4816 / 81,4801, PB 0,978 (Excel làm tròn lên) / 0,9773.
+  SKILL-PCCC-NEW (D184, `q_tia_h6 ?? q_tia`) người dùng tự sửa.
 
 Pha 3 đã làm (chi tiết, phần đã cắt/sửa: `thamdinh/README.md`):
 - `thamdinh/`: lõi Python chép từ repo `taelomuhicd84/PCCC` (TestPCCC) commit `ab546c7` (thư mục `D:\1_Claude\TestPCCC` không có trên máy này).

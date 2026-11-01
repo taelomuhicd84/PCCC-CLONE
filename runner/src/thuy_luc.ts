@@ -23,8 +23,9 @@ export function chuanHoaMatBang(x: Record<string, unknown>): MatBang {
     nhom, cao_phong: can(x.cao_phong, "chiều cao phòng"), K_gpm: tuy(x.K_gpm), khoang_cach: tuy(x.khoang_cach),
     dau_moi_nhanh: tuy(x.dau_moi_nhanh), L_ong_chinh_den_bom: can(x.L_ong_chinh_den_bom, "chiều dài ống chính về bơm"),
     Z_m: can(x.Z_m, "chênh cao Z"), PH: tuy(x.PH), vong: !!x.vong,
-    hong: soTia ? { so_tia: soTia, q_tia: can(h.q_tia, "lưu lượng 1 tia (QCVN 10 Bảng H.7)"), P_lang: can(h.P_lang, "áp lăng phun (QCVN 10 Bảng H.7)"),
-      L_voi: tuy(h.L_voi) ?? 0, Kp: tuy(h.Kp) ?? 0 } : undefined, // 0 = lấy mặc định 20 m, 0,012 (hongMacDinh)
+    hong: soTia ? { so_tia: soTia, q_tia: can(h.q_tia, "lưu lượng 1 tia tính toán (QCVN 10 Bảng H.7)"), P_lang: can(h.P_lang, "áp lăng phun (QCVN 10 Bảng H.7)"),
+      L_voi: tuy(h.L_voi) ?? 0, Kp: tuy(h.Kp) ?? 0, // 0 = lấy mặc định 20 m, 0,012 (hongMacDinh)
+      ...(tuy(h.q_tia_h6) ? { q_tia_h6: tuy(h.q_tia_h6) } : {}) } : undefined, // trống = 2,5 l/s/tia (Bảng H.5/H.6)
   };
 }
 

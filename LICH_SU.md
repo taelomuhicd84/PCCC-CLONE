@@ -38,3 +38,6 @@
   `runner/src/thuy_luc.ts`, 4 route, tab web "Thủy lực". Đối chiếu Excel (Excel COM tính lại) với web phát hiện 2 lỗi của Excel mẫu/xuất:
   F106 lưu lượng hàng II dùng áp nút a (TCVN 7336 B.2.10.12 là nút b) và bảng nhánh phải giữ số cũ khi đối xứng → sửa lúc xuất; sau sửa
   Q sprinkler Excel 76,2816 / web 76,2801. Ghi lỗi 13 vào `knowledge/kiem-bang-tinh-thuy-luc-7336.md`. Kiểm: npm test 56, pytest 2.
+- Người dùng: tự sửa 2 lỗi Excel bên SKILL-PCCC-NEW; chốt luật họng "tối thiểu 2,5 (H.5/H.6), tính toán theo H.7 tra chiều cao tia đặc".
+  Áp vào TKPCCC: Excel xuất D184 dùng I162 (H.7) thay H18; lõi `thuy_luc.ts` QBmin mặc định 2,5 (trước lấy lăng H.7) + cảnh báo lăng < tối thiểu;
+  web thêm ô tối thiểu 1 tia; lỗi 14 trong sổ tri thức. Excel và web khớp (Q bơm 81,4816 / 81,4801). npm test 57.
