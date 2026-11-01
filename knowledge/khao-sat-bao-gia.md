@@ -41,6 +41,9 @@ Bổ sung thêm khi thiếu mục nào trong bảng đối chiếu: bậc chịu
 (Thứ tự theo lời người dùng nói lại 31/10/2026; bản ghi 30/10 xếp "ngăn cháy" thành hai mục 4–5 và gộp thoát nạn, khoảng cách vào mục 7. Lệch thì theo người dùng.)
 Trước khi viết: chạy `python -I -X utf8 scripts/mau_giai_phap.py loc …`, tra thẻ bản vẽ mẫu cùng công năng (`knowledge/ban-ve-mau.md`), bài học `knowledge/hoc/du-an/so-bo-thiet-ke.md`. Mẫu văn phong: `ket_qua/hoang_hung_so_bo2/tu_van_thiet_ke_v3.md` (nếu máy có).
 
+## Dạng trình bày kết quả tư vấn (người dùng chốt 2026-11-02): BẢNG
+Mọi báo cáo tư vấn/khảo sát trình bày bằng bảng, không dùng đoạn văn dài: bảng thông tin (Hạng mục | Nội dung | Ghi chú), bảng diện thẩm định (Căn cứ | Kết luận), bảng giao thông/khoảng cách, bảng thoát nạn (Hạng mục | Hiện trạng | Đánh giá | Giải pháp), bảng hệ thống PCCC (Hệ thống | Kết luận | Ghi chú), bảng việc ghi trên bản vẽ. Mẫu: `ket_qua/luu_xuan_loc_thu/tu_van_thiet_ke.md`. Báo cáo Excel của người dùng cũng là bảng 3 cột HẠNG MỤC | NỘI DUNG | GHI CHÚ (ghi chú kèm ảnh khoanh).
+
 ## Định dạng trả lời
 Phần chữ ngắn (tóm tắt từng mục 1–8, mục nào là ước lượng thì ghi "ước lượng"), rồi thêm đúng MỘT khối ```json ở cuối để điền Excel:
 ```json
