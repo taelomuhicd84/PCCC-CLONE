@@ -2,7 +2,8 @@
 
 File này cập nhật sau mỗi mốc việc và trước khi hết usage. Phiên mới đọc mục "ĐANG LÀM / VIỆC TIẾP THEO" trước.
 
-## ĐANG LÀM / VIỆC TIẾP THEO (cập nhật 2026-11-02, dừng vì usage 5 giờ 80%)
+## ĐANG LÀM / VIỆC TIẾP THEO (cập nhật 2026-11-02 cuối phiên, dừng vì usage 5 giờ > 85%)
+**Đọc thêm `LICH_SU.md` mục 2026-11-02 "Lưu ý cho phiên sau" trước khi làm.**
 **Phiên 2026-11-02: tư vấn thử hồ sơ thật, người dùng đang train phần thang thoát nạn.**
 - Đã ghi tri thức: quy trình đánh giá thang thoát nạn trong nhà (`knowledge/nhan-dien-thang-thoat-nan.md`, mục cuối): nhận diện từng thang →
   đạt/không → phương án từng thang → kiểm khả thi (chặn cửa căn hộ, mép bậc tới tường ≥ bản thang 3.4.3, cung mở cửa, cửa giếng thang máy
@@ -13,8 +14,8 @@ File này cập nhật sau mỗi mốc việc và trước khi hết usage. Phi�
   **Mục 4 Thoát nạn và PDF còn ghi "chọn thang trái cải tạo": SAI theo bài học mới.**
 
 Việc tiếp theo:
-1. Xong 02/11: `tu_van_thiet_ke.md` bản 5 theo khung bảng đối chiếu chính thức (27 dòng), chữ thang trên PDF đã sửa và đã gửi.
-   CÒN: khung trên PDF chưa đánh số trùng cột TT của bảng (`ve_khoanh.py`).
+1. Xong 02/11: `tu_van_thiet_ke.md` bản 6 theo khung bảng đối chiếu chính thức (23 dòng; phương án nằm trong cột Kết luận),
+   chữ thang trên PDF đã sửa. VIỆC ĐẦU TIÊN PHIÊN SAU: đánh số khung trên PDF trùng cột TT của bảng (`ve_khoanh.py`), gửi lại PDF + bảng.
 2. 👤 Chờ người dùng: (a) train điều kiện thang loại 2 (3.2.6, 3.4.15, 3.4.16; đoạn 3.2.6 trong bản hợp nhất bị lỗi chữ);
    (b) căn hộ mở cửa thẳng vào buồng thang: chỉ báo cáo kèm căn cứ 3.2.1b, người dùng tự quyết (dặn 2026-11-02: không hỏi chọn);
    (c) duyệt bài học "Đối chiếu BCKS Lưu Xuân Lộc" (đang `cho_nguoi_dung_duyet`).

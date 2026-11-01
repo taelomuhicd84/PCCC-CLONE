@@ -32,7 +32,8 @@ Mỗi module có `test/` cạnh `src/`. Thêm/đổi thư mục thì cập nhậ
 Trước khi viết: đọc `knowledge/hoc/du-an/so-bo-thiet-ke.md` (bài học đã duyệt: thang bậc chéo, thang ngoài nhà loại 3,
 sân thượng, số người…), `knowledge/nhan-dien-thang-thoat-nan.md` (phóng to từng thang xem chiếu nghỉ; quy trình nhận diện → đạt/không → phương án từng thang → kiểm khả thi → không có thì báo cần người dùng xem xét), lọc `data/mau_giai_phap/thoat_nan.json` theo F, cao PCCC, số tầng, diện tích, người
 (không chạy được script repo ngoài: lọc tay theo trường `loc`). Bản vẽ cải tạo (2 mặt bằng cùng tờ: trên = xin phép, dưới = cải tạo) thì xét theo mặt bằng CẢI TẠO phía dưới. Kết quả trình bày bằng MỘT bảng theo khung bảng đối chiếu chính thức (người dùng dặn 2026-11-02, gốc: SKILL-PCCC-NEW `skills/SKILL_quy_trinh_tham_dinh.md`):
-TT | Nội dung đối chiếu | Nội dung thiết kế | Quy định | Khoản Điều | Kết luận (ĐẠT / CHƯA ĐẠT / CẦN XÁC NHẬN / KHÔNG ÁP DỤNG + lý do có số + giải pháp),
+TT | Nội dung đối chiếu | Nội dung thiết kế | Quy định | Khoản Điều | Kết luận (ĐẠT / CHƯA ĐẠT / CẦN XÁC NHẬN / KHÔNG ÁP DỤNG + lý do có số + giải pháp).
+Mỗi dòng là hạng mục CÓ trên bản vẽ; phương án mình đề xuất (PA1, PA2, thang ngoài nhà…) ghi trong cột Kết luận của dòng liên quan, không thành dòng riêng;
 mẫu `ket_qua/luu_xuan_loc_thu/tu_van_thiet_ke.md`; gửi bảng ngay trong tin nhắn. Rồi **khoanh và ghi chú lên chính PDF bản vẽ** (khung đánh số trùng TT) (PyMuPDF; trang PDF có `/Rotate`
 thì vẽ bằng `page.derotation_matrix` và `insert_textbox(rotate=…)`, mẫu `ket_qua/luu_xuan_loc_thu/ve_khoanh.py` nếu máy có; kiểm bằng ảnh render). Không chỉ trả văn bản chung chung.
 Việc của Claude là BÁO CÁO (nhận diện, đánh giá, phương án, khả thi, căn cứ); chấp nhận hay không là việc người dùng (dặn 2026-11-02): không hỏi người dùng chọn,

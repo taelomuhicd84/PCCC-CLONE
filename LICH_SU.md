@@ -54,3 +54,19 @@
 - Người dùng dặn (ghi vào `CLAUDE.md`): việc của Claude là báo cáo, chấp nhận hay không là việc người dùng (không hỏi chọn); kết quả tư vấn
   theo khung bảng đối chiếu chính thức (TT, Nội dung đối chiếu, Nội dung thiết kế, Quy định, Khoản Điều, Kết luận). `tu_van_thiet_ke.md` bản 5
   (27 dòng) và PDF sửa chữ thang đã gửi; khung PDF chưa đánh số theo TT. Dừng ở usage 5 giờ 86%.
+- Người dùng sửa: thang ngoài nhà ở mặt tiền là PHƯƠNG ÁN 3 do mình đề xuất, không phải hạng mục đối chiếu. `tu_van_thiet_ke.md` bản 6
+  (23 dòng): PA1, PA2, PA3 chuyển vào cột Kết luận; luật ghi vào `CLAUDE.md` và `knowledge/nhan-dien-thang-thoat-nan.md`.
+
+### Lưu ý cho phiên sau (người dùng dặn ghi, 2026-11-02)
+1. Kết quả tư vấn: MỘT bảng theo khung bảng đối chiếu chính thức (TT | Nội dung đối chiếu | Nội dung thiết kế | Quy định | Khoản Điều |
+   Kết luận), gửi ĐẦY ĐỦ trong tin nhắn, không cắt dòng (người dùng phàn nàn khi thiếu dòng 1–7 thông tin công trình). Mẫu:
+   `ket_qua/luu_xuan_loc_thu/tu_van_thiet_ke.md` (chỉ có trên máy này, không commit).
+2. Mỗi dòng là hạng mục CÓ trên bản vẽ. Phương án mình đề xuất (PA1, PA2, PA3 thang ngoài nhà…) ghi trong cột Kết luận, không thành dòng.
+3. Chỉ báo cáo; chấp nhận hay không là việc người dùng: không hỏi chọn, không đặt nút "chấp nhận / không". Thiếu kiến thức thì nhờ train.
+4. Thang thoát nạn: làm đủ quy trình `knowledge/nhan-dien-thang-thoat-nan.md` (nhận diện từng thang → đạt/không → phương án từng thang →
+   kiểm khả thi trên mặt bằng → thang ngoài nhà → không có thì báo người dùng xem xét). Không loại thang vì thiếu ô lấy sáng (3.4.8b).
+   Không có số trên bản vẽ thì ghi "phải đảm bảo ≥ …". Chỉ ghi "cửa chống cháy" khi bản vẽ có ký hiệu.
+5. Bản vẽ cải tạo (2 mặt bằng cùng tờ) xét theo mặt bằng cải tạo phía dưới; tầng thượng xây kín hoặc vượt diện tích tum thì tính 1 tầng.
+6. Đang chờ người dùng: train điều kiện thang loại 2 (3.2.6, 3.4.15, 3.4.16); duyệt bài học "Đối chiếu BCKS Lưu Xuân Lộc".
+7. Việc kế: đánh số khung PDF trùng TT (`ve_khoanh.py`), gửi lại; dòng 16 (khoang đệm thang máy xuống hầm) còn "cần tra" điều khoản.
+8. Máy này: `git push` chạy được ngay từ Bash (không cần tab Terminal). Kiểm `get_usage` sau mỗi việc lớn; ≥ 85% thì dừng, lưu, push.

@@ -69,6 +69,8 @@ Không chọn thang theo cảm tính, không tự quyết phương án. Làm đ�
 | Giữa nhà (trục 2–3, cạnh thang máy) | Rẽ quạt; vế phải ≥ 900 mm; chưa đóng kín bằng tường và cửa chống cháy | Không đạt: rẽ quạt ở nhà > 15 m (3.4.4), chưa đóng kín | PA1 (nét tím người dùng vẽ): tường sát thang | Không: chặn cửa căn hộ bên phải; mép bậc tới tường ~0,35 m < 0,9 m (đo sơ trên PDF) |
 | | | | PA2 (nét xanh lá): mở rộng buồng thang ra sảnh, thang máy ngoài buồng có cửa E 30, sửa rẽ quạt | Cần người dùng xem xét: căn hộ bên phải phải mở cửa thẳng vào buồng thang |
 | Đầu trái (trục 4–4a) | Rẽ quạt; vế phải ≥ 900 mm; đã có tường và cửa; chung buồng với thang hầm → trệt | Không đạt: rẽ quạt, chưa tách thang hầm | Sửa rẽ quạt, tách thang hầm bằng tường + cửa chống cháy riêng | Không: không còn chỗ cho tường, cửa mở ra hành lang và chiếu ≥ 0,9 m |
-| Thang ngoài nhà mặt tiền | Chưa có | | Làm thang mới | Không: thiếu chỗ cho vế, bậc, chiếu; vướng ram dốc 18 %, tam cấp |
+| (Cả hai thang không cải tạo được) | | | PA3: làm thang ngoài nhà ở mặt tiền | Không: thiếu chỗ cho vế, bậc, chiếu; vướng ram dốc 18 %, tam cấp |
+
+Trong bảng đối chiếu, thang ngoài nhà là PHƯƠNG ÁN do mình đề xuất, không phải hạng mục đối chiếu: ghi trong cột Kết luận của dòng "Số lối thoát nạn" (người dùng sửa 2026-11-02).
 
 Kết luận đúng: không có phương án khả thi, cần người dùng xem xét. Lỗi mình đã mắc: chọn thang trái vì "có tường ngoài để lấy sáng" (sai, 3.4.8b cho chiếu sáng nhân tạo) và không kiểm khả thi việc tách thang hầm.
