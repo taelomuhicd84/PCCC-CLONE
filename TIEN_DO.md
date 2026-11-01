@@ -44,7 +44,8 @@ Việc người dùng cần làm:
 
 - Thẩm định thử KS Hoàng Hùng (người dùng giao 2026-11-01, PDF kiến trúc 10/27 tờ, `Downloads\23-10-2026-...kien truc KS Hoàng Hùng 25-06.pdf`): báo cáo `ket_qua/ks_hoang_hung_thu/bao_cao.md` (không commit). Máy 0 Đạt/0 KD/13 XM; đọc bằng mắt: nghi KD buồng thang N1 (3.4.13, nhà ~34 m), lối ra BTB1 qua bếp (3.4.7), sảnh ngăn khói hầm; thiếu mặt bằng T3–10 và bản vẽ PCCC. Chờ người dùng bổ sung hồ sơ.
 - Người dùng đổi hồ sơ thử sang Căn hộ DV Lưu Xuân Lộc (Huy Phát, 6 tờ kiến trúc): báo cáo `ket_qua/luu_xuan_loc_thu/bao_cao.md` (không commit). Nghi KD: 2 thang cách ≈ 9,7 m < ½ đường chéo ≈ 10,8 m (bản điều chỉnh); cao PCCC sát 15 m; hầm xe chỉ 1 thang.
-- Tư vấn thiết kế Lưu Xuân Lộc đã viết: `ket_qua/luu_xuan_loc_thu/tu_van_thiet_ke.md` (form 7 mục; KHÔNG thuộc diện thẩm định; 2 lối: buồng thang L1 trái + thang ngoài phải; báo cháy + họng + bể ≥ 12 m³, không sprinkler). Sửa nhận định cũ: hầm 160 m² chỉ cần 1 lối (3.2.6.1e).
+- (bản 2, 2026-11-01 tối) Người dùng nhắc: phải áp phần đã train và ghi note lên PDF. Đã chép `data/mau_giai_phap/thoat_nan.json`, `knowledge/hoc/du-an/so-bo-thiet-ke.md`, `knowledge/nhan-dien-thang-thoat-nan.md`; viết lại `ket_qua/luu_xuan_loc_thu/tu_van_thiet_ke.md` và khoanh PDF `tu_van_khoanh.pdf` (`ve_khoanh.py`). Bắt được lỗi bản 1: cả 2 thang có bậc chéo (3.4.4), ≤ 15 người/tầng. CÒN: thẻ `data/ban_ve_mau` (36 MB) chưa chép; chưa tích hợp tạo khoanh PDF vào tab web.
+- Tư vấn thiết kế Lưu Xuân Lộc bản 1 (đã thay bằng bản 2): `ket_qua/luu_xuan_loc_thu/tu_van_thiet_ke.md` (form 7 mục; KHÔNG thuộc diện thẩm định; 2 lối: buồng thang L1 trái + thang ngoài phải; báo cháy + họng + bể ≥ 12 m³, không sprinkler). Sửa nhận định cũ: hầm 160 m² chỉ cần 1 lối (3.2.6.1e).
 
 Việc tiếp theo (đề xuất):
 1. Thử thẩm định trên hồ sơ thật khi có PDF; so với lần chạy CLI gốc 31/10 trên Hoàng Hùng (Đạt 0, KD 3 đều "không đọc được số liệu", XM 3 →

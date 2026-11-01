@@ -67,6 +67,8 @@ TKPCCC/
 │  ├─ qcvn06-*.md, qcvn10-2025-*.md, tcvn7568-14-2025.md, nghi-dinh-*.md, cv-2360-*.md
 │  └─ khao-sat-bao-gia.md, bao-gia-pccc.md, so-bo-thiet-ke-pccc.md, chon-loai-dau-bao.md …
 │
+├─ data/mau_giai_phap/  thư viện mẫu giải pháp thoát nạn (17 mẫu: điều kiện lọc, điều khoản, lỗi hay gặp, giải pháp); chép từ SKILL-PCCC-NEW
+│
 ├─ skills/              ĐIỀU KHOẢN THEO CHUYÊN ĐỀ (chép từ PCCC_he_thong/skills): MOD_*.md, SKILL_*.md, PHU_LUC_G_QCVN06.md
 │
 └─ ket_qua/             KẾT QUẢ TỪNG CÔNG TRÌNH (tự sinh, không commit): ket_qua/<dự án>/

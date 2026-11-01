@@ -1,0 +1,749 @@
+{
+ "nhom": "thoat-nan",
+ "ten": "Mẫu giải pháp thoát nạn",
+ "cap_nhat": "2026-10-30",
+ "cach_loc": "Mỗi mẫu có 'loc': F (tiền tố nhóm F), cao_min/cao_max (chiều cao PCCC, m; min là 'lớn hơn', max là 'không quá'), tang_min/tang_max (số tầng), dt_tang_max (m2/tầng), nguoi_tang_max, nguoi_min (người/tầng hoặc gian), ham (true = chỉ khi có tầng hầm), tu_khoa (công năng chứa chữ này), luon (true = mọi công trình). Thiếu số liệu công trình thì không loại mẫu, ghi CẦN XÁC NHẬN. Lọc bằng scripts/mau_giai_phap.py loc.",
+ "mau": [
+  {
+   "id": "tn-cua-thoat-nan",
+   "ten": "Cửa trên lối ra và đường thoát nạn",
+   "muc": "Cửa",
+   "loc": {
+    "luon": true
+   },
+   "dung_khi": "Mọi cửa của lối ra thoát nạn và cửa trên đường thoát nạn.",
+   "yeu_cau": [
+    {
+     "y": "Thông thủy cao >= 1,9 m; rộng >= 0,8 m, >= 1,2 m khi phòng/nhà có > 50 người thoát (F1.1 > 15 người; trừ F1.3).",
+     "dieu": "3.2.9"
+    },
+    {
+     "y": "Cửa hai cánh: chỉ tính bề rộng cánh mở, không tính cánh cố định.",
+     "dieu": "3.2.9"
+    },
+    {
+     "y": "Cửa cuốn, cửa quay không được tính là lối ra thoát nạn. Cửa trượt/xếp chỉ dùng khi cửa không yêu cầu GHCL, không yêu cầu tự đóng, không ở F1.3/mầm non/tiểu học; phải có biển ghi loại cửa và chiều mở.",
+     "dieu": "3.2.3"
+    },
+    {
+     "y": "Mở theo chiều thoát ra ngoài. Không quy định với: gian F1.3, F1.4; gian <= 15 người (trừ hạng A, B); kho <= 200 m2 không người thường xuyên; buồng vệ sinh; lối vào chiếu thang loại 3.",
+     "dieu": "3.2.10"
+    },
+    {
+     "y": "Mở tự do từ bên trong, không cần chìa. Cửa buồng thang tự đóng, chèn kín khe; cửa ngăn cháy loại 1 (bậc I, II), loại 2 (III, IV), loại 3 (V).",
+     "dieu": "3.2.11"
+    }
+   ],
+   "nhan_dien": {
+    "mat_bang": "Khe trên dải tường có cung quay cánh: cung phía nào thì cánh mở phía đó. Khe không cung, có ray = cửa trượt/xếp; khe có ghi ký hiệu cuốn = cửa cuốn.",
+    "mat_dung": "Ô có tay nắm = cửa đi. Nét ngang dày dưới cánh = lam louver. Tam giác nét mảnh trong cánh = chiều mở."
+   },
+   "loi_hay_gap": [
+    "Cửa cuốn mặt tiền (karaoke, cửa hàng) bị đếm là lối thoát nạn.",
+    "Cửa hai cánh 1,6 m nhưng một cánh cố định, cánh mở < 0,8 m.",
+    "Cung mở vào trong ở phòng > 15 người."
+   ],
+   "giai_phap": [
+    "Thay cửa cuốn bằng cửa bản lề mở ra ngoài, hoặc thêm cửa bản lề cạnh cửa cuốn làm lối ra.",
+    "Đổi cánh cố định thành cánh mở hoặc mở rộng ô cửa đủ 0,8/1,2 m thông thủy.",
+    "Đảo chiều bản lề cho cánh mở theo hướng thoát."
+   ],
+   "nguon": [
+    "skills/MOD_loi_ra_va_cua.md"
+   ],
+   "the": [
+    "loi-ra-thoat-nan"
+   ]
+  },
+  {
+   "id": "tn-hai-loi-tang",
+   "ten": "Tầng phải có từ 2 lối ra thoát nạn",
+   "muc": "Số lối ra",
+   "loc": {
+    "luon": true
+   },
+   "dung_khi": "Tầng của nhà F1.1, F1.2, F2.1, F2.2, F3, F4; tầng >= 50 người; F1.3 tổng diện tích căn hộ > 500 m2; F5 hạng A, B > 5 người, hạng C > 25 người; hầm > 300 m2 hoặc > 15 người. Không đạt điều kiện 1 lối (mẫu tn-mot-loi-*) thì cũng cần 2 lối.",
+   "yeu_cau": [
+    {
+     "y": "Tầng có gian phòng cần >= 2 lối thì tầng phải >= 2 lối; số lối của nhà không ít hơn số lối của tầng bất kỳ.",
+     "dieu": "3.2.6.1, 3.2.7"
+    },
+    {
+     "y": "Phân tán: khoảng cách 2 lối L >= 1/2 D (D = đường chéo lớn nhất); toàn nhà có sprinkler thì L >= 1/3 D. Hai buồng thang nối bằng hành lang bảo vệ theo 3.3.5 thì đo dọc đường đi.",
+     "dieu": "3.2.8"
+    },
+    {
+     "y": "Tầng 2 trở lên: số lối = số buồng thang đạt yêu cầu mà tầng vào được. Tầng 1: số lối ra ngoài nhà. Hầm: số thang từ hầm lên.",
+     "dieu": "Bài học 26"
+    }
+   ],
+   "nhan_dien": {
+    "mat_bang": "Đếm buồng thang/thang loại 3 có cửa vào từ tầng; đo đường thẳng giữa 2 cạnh xa nhất của 2 lối, so 1/2 D. Phóng to từng chiếu nghỉ: nét chéo tỏa từ đầu tường giữa hai vế = bậc chéo (rẽ quạt); nhà cao > 15 m thì thang đó không tính lối thoát nạn (3.4.4).",
+    "mat_dung": "Thang thép zigzag ngoài tường = thang loại 3, có thể là lối thứ hai."
+   },
+   "loi_hay_gap": [
+    "Đếm 2 buồng thang nhưng một thang rẽ quạt/bậc chéo không đạt 3.4.4.",
+    "Hai thang đặt sát nhau, L < 1/2 D."
+   ],
+   "giai_phap": [
+    "Thêm thang thoát nạn ngoài nhà loại 3 ở đầu đối diện (tính theo Phụ lục G).",
+    "Dời một thang ra đầu hồi để đạt L >= 1/2 D (1/3 D nếu có sprinkler toàn nhà)."
+   ],
+   "nguon": [
+    "skills/MOD_so_luong_loi_ra.md",
+    "skills/MOD_tinh_toan_khoang_cach.md"
+   ],
+   "the": [
+    "so-loi-ra-thoat-nan"
+   ]
+  },
+  {
+   "id": "tn-hai-loi-gian-phong",
+   "ten": "Gian phòng phải có từ 2 lối ra",
+   "muc": "Số lối ra",
+   "loc": {
+    "luon": true
+   },
+   "dung_khi": "Gian >= 50 người; F1.1 > 15 người; gian ở hầm/nửa hầm > 15 người; gian < 50 người (trừ F5) nhưng đường từ chỗ xa nhất tới lối ra > 25 m; tổng người gian + gian liền kề chỉ thoát qua nó >= 50.",
+   "yeu_cau": [
+    {
+     "y": "Được phép tối đa 50% số lối đi qua gian liền kề có lối ra hợp lệ.",
+     "dieu": "3.2.5"
+    }
+   ],
+   "nhan_dien": {
+    "mat_bang": "Gian lớn (sảnh, phòng hát lớn, nhà hàng): đếm cửa, đo từ góc xa nhất tới cửa theo tuyến góc vuông (Bài học 24).",
+    "mat_dung": ""
+   },
+   "loi_hay_gap": [
+    "Phòng hát/sảnh lớn >= 50 người chỉ có 1 cửa."
+   ],
+   "giai_phap": [
+    "Mở thêm cửa thứ hai ra hành lang ở đầu xa, cách cửa thứ nhất >= 1/2 đường chéo phòng.",
+    "Gian đông người (hội trường, nhà hàng): đề xuất trước hết ghi SỨC CHỨA THIẾT KẾ trên mặt bằng; số người lấy theo thiết kế, Bảng G.9 chỉ dùng khi thiết kế không ghi (G.3 chú thích 1). Chỉ mở rộng thang/cửa khi sức chứa chủ đầu tư cần vượt ngưỡng."
+   ],
+   "nguon": [
+    "skills/MOD_so_luong_loi_ra.md"
+   ],
+   "the": []
+  },
+  {
+   "id": "tn-mot-loi-15m",
+   "ten": "Cho phép 1 lối ra – nhà cao PCCC đến 15 m",
+   "muc": "Số lối ra",
+   "loc": {
+    "F": [
+     "F1.2",
+     "F2",
+     "F3",
+     "F4.2",
+     "F4.3",
+     "F4.4"
+    ],
+    "cao_max": 15,
+    "dt_tang_max": 300,
+    "nguoi_tang_max": 20
+   },
+   "dung_khi": "Nhà nhỏ, ít người muốn chỉ làm 1 thang (trừ bậc chịu lửa V).",
+   "yeu_cau": [
+    {
+     "y": "Diện tích tầng <= 300 m2; <= 20 người/tầng; không để xe cơ giới, không kho hạng A, B, C tại tầng có lối ra ngoài (trừ khi ngăn cách theo quy chuẩn).",
+     "dieu": "3.2.6.2 a"
+    },
+    {
+     "y": "Nhà <= 3 tầng hoặc <= 9 m: được dùng thang loại 2 nếu người thoát được ra ban công/lô gia thoáng, cửa sổ (lối khẩn cấp) hoặc sân thượng thoáng; thang loại 2 ngăn với hầm bằng vách ngăn cháy loại 2. Nhà > 3 tầng hoặc > 9 m: lối ra của phòng và tầng theo quy chuẩn, cửa ngăn cháy loại 2 vào buồng thang ở mỗi tầng.",
+     "dieu": "3.2.6.2 a, Sửa đổi 1:2023"
+    }
+   ],
+   "nhan_dien": {
+    "mat_bang": "Một thang duy nhất; xem ban công, sân thượng có hở ra ngoài trời không.",
+    "mat_dung": "Ban công có lan can thoáng, không bịt kín."
+   },
+   "loi_hay_gap": [
+    "Karaoke, nhà hàng > 20 người/tầng vẫn làm 1 thang.",
+    "Ban công bịt lam/kính kín nên không còn là ban công thoáng."
+   ],
+   "giai_phap": [
+    "Vượt ngưỡng người/diện tích thì thêm lối thứ hai (xem tn-hai-loi-tang).",
+    "Mở ban công thành thoáng: bỏ bao che kín, lan can không cản cứu nạn."
+   ],
+   "nguon": [
+    "skills/MOD_so_luong_loi_ra.md"
+   ],
+   "the": [
+    "cho-phep-bo-tri-mot-loi-ra-thoat-nan",
+    "ban-cong-thoang"
+   ]
+  },
+  {
+   "id": "tn-mot-loi-21m",
+   "ten": "Cho phép 1 lối ra – nhà cao PCCC trên 15 đến 21 m",
+   "muc": "Số lối ra",
+   "loc": {
+    "F": [
+     "F1.2",
+     "F2",
+     "F3",
+     "F4.2",
+     "F4.3",
+     "F4.4"
+    ],
+    "cao_min": 15,
+    "cao_max": 21,
+    "dt_tang_max": 200,
+    "nguoi_tang_max": 20
+   },
+   "dung_khi": "Nhà ống cao tầng diện tích nhỏ.",
+   "yeu_cau": [
+    {
+     "y": "Tầng <= 200 m2; <= 20 người/tầng; điều kiện xe/kho như mẫu 15 m; chữa cháy tự động (không thể thì báo cháy tự động toàn nhà, ưu tiên đầu khói); có lối thoát khẩn cấp với thiết bị hỗ trợ (thang P1, P2, thang ngoài nhà, thang dây, ống tụt) hoặc lên sân thượng thoáng.",
+     "dieu": "3.2.6.2 a"
+    }
+   ],
+   "nhan_dien": {
+    "mat_bang": "Một buồng thang; tìm ban công có thiết bị hỗ trợ hoặc thang lên sân thượng.",
+    "mat_dung": "Thang thép ngoài nhà, thang leo."
+   },
+   "loi_hay_gap": [
+    "Thiếu thiết bị hỗ trợ thoát nạn khẩn cấp."
+   ],
+   "giai_phap": [
+    "Thêm thang dây/thang kim loại ở ban công mỗi tầng hoặc bảo đảm lên sân thượng thoáng."
+   ],
+   "nguon": [
+    "skills/MOD_so_luong_loi_ra.md"
+   ],
+   "the": [
+    "cho-phep-bo-tri-mot-loi-ra-thoat-nan"
+   ]
+  },
+  {
+   "id": "tn-mot-loi-25m",
+   "ten": "Cho phép 1 lối ra – nhà cao PCCC trên 21 đến 25 m",
+   "muc": "Số lối ra",
+   "loc": {
+    "F": [
+     "F1.2",
+     "F2",
+     "F3",
+     "F4.2",
+     "F4.3",
+     "F4.4"
+    ],
+    "cao_min": 21,
+    "cao_max": 25,
+    "dt_tang_max": 150,
+    "nguoi_tang_max": 15
+   },
+   "dung_khi": "Nhà ống rất nhỏ, cao trên 21 m.",
+   "yeu_cau": [
+    {
+     "y": "Tầng <= 150 m2; <= 15 người/tầng; điều kiện xe/kho; báo cháy và chữa cháy tự động; lối khẩn cấp có thiết bị hỗ trợ hoặc lên sân thượng thoáng.",
+     "dieu": "3.2.6.2 a"
+    }
+   ],
+   "nhan_dien": {
+    "mat_bang": "",
+    "mat_dung": ""
+   },
+   "loi_hay_gap": [
+    "Không có chữa cháy tự động."
+   ],
+   "giai_phap": [
+    "Bổ sung sprinkler toàn nhà và báo cháy tự động, hoặc làm lối thứ hai."
+   ],
+   "nguon": [
+    "skills/MOD_so_luong_loi_ra.md"
+   ],
+   "the": [
+    "cho-phep-bo-tri-mot-loi-ra-thoat-nan"
+   ]
+  },
+  {
+   "id": "tn-buong-thang-L1",
+   "ten": "Buồng thang bộ thông thường L1 (cầu thang loại 1)",
+   "muc": "Cầu thang",
+   "loc": {
+    "cao_max": 28
+   },
+   "dung_khi": "Phương án mặc định cho nhà cao PCCC <= 28 m (mọi nhóm F; F5 hạng A, B thêm khoang đệm áp suất dương).",
+   "yeu_cau": [
+    {
+     "y": "Cho phép trong nhà cao PCCC <= 28 m.",
+     "dieu": "3.4.11"
+    },
+    {
+     "y": "Lỗ lấy sáng >= 1,2 m2 trên tường ngoài ở mỗi tầng.",
+     "dieu": "3.4.8 a"
+    },
+    {
+     "y": "Lối ra ngoài trực tiếp, hoặc qua tiền sảnh ngăn với hành lang bằng vách ngăn cháy loại 1, cửa tự đóng.",
+     "dieu": "3.4.7"
+    },
+    {
+     "y": "Bản thang >= bề rộng tính toán, >= cửa thoát nạn trên thang, >= 0,9 m (1,2 m khi F1.1 > 15 người/tầng hoặc tầng bất kỳ trừ tầng 1 > 200 người).",
+     "dieu": "3.4.1"
+    },
+    {
+     "y": "Dốc <= 1:1; mặt bậc >= 25 cm; cao bậc 5–22 cm; chiếu thang rộng >= bản thang, chiếu nghỉ trung gian dài >= 1,0 m.",
+     "dieu": "3.4.2, 3.4.3"
+    },
+    {
+     "y": "Cấm trong buồng thang: ống khí/chất lỏng cháy, tủ tường (trừ tủ thông tin, họng nước), cáp hở, lối ra kho/phòng kỹ thuật.",
+     "dieu": "3.4.5"
+    },
+    {
+     "y": "Cửa buồng thang ngăn cháy, tự đóng, chèn kín khe.",
+     "dieu": "3.2.11"
+    }
+   ],
+   "nhan_dien": {
+    "mat_bang": "Thang nằm trong khung tường kín 4 phía, cửa có cung mở vào buồng; có ô cửa sổ trên tường ngoài của buồng.",
+    "mat_dung": "Cột ô cửa sổ xếp so le theo chiếu nghỉ, mỗi tầng một ô."
+   },
+   "loi_hay_gap": [
+    "Buồng thang không có ô lấy sáng trên tường ngoài (nằm giữa nhà).",
+    "Phòng kỹ thuật/kho dưới gầm thang mở cửa vào buồng thang.",
+    "Tầng 1 thang đổ ra sảnh chung, không ngăn cháy."
+   ],
+   "giai_phap": [
+    "Đưa buồng thang ra sát tường ngoài, mở ô >= 1,2 m2 mỗi tầng; không được thì L2 (nếu đạt) hoặc N2/N3.",
+    "Đổi cửa kho gầm thang mở ra hành lang, không mở vào buồng thang.",
+    "Làm cửa ra ngoài trực tiếp ở chân thang hoặc tiền sảnh vách ngăn cháy loại 1."
+   ],
+   "nguon": [
+    "skills/MOD_cau_thang_buong_thang.md",
+    "skills/MOD_hinh_Phu_luc_I_cau_thang.md"
+   ],
+   "the": [
+    "cau-thang-bo-loai-1",
+    "buong-thang-bo-thong-thuong"
+   ]
+  },
+  {
+   "id": "tn-buong-thang-L2",
+   "ten": "Buồng thang L2 (lấy sáng trên mái)",
+   "muc": "Cầu thang",
+   "loc": {
+    "F": [
+     "F1",
+     "F2",
+     "F3",
+     "F4"
+    ],
+    "cao_max": 12
+   },
+   "dung_khi": "Buồng thang nằm giữa nhà, không mở được ô trên tường ngoài; nhà bậc I, II, III, cấp S0, S1.",
+   "yeu_cau": [
+    {
+     "y": "Cao PCCC <= 9 m (đến 12 m, trừ y tế nội trú, nếu lỗ lấy sáng trên cao mở tự động khi cháy); tối đa 50% số buồng thang (trừ F1.3, F1.4).",
+     "dieu": "3.4.12"
+    },
+    {
+     "y": "Lỗ lấy sáng trên mái >= 4 m2 và khe hở giữa các vế >= 0,7 m, hoặc giếng lấy sáng suốt chiều cao mặt cắt >= 2 m2.",
+     "dieu": "3.4.8 a"
+    }
+   ],
+   "nhan_dien": {
+    "mat_bang": "Buồng thang kín không giáp tường ngoài; mặt bằng mái có ô kính/giếng trời trên buồng.",
+    "mat_dung": "Hộp kính/mái lấy sáng nhô trên tum thang."
+   },
+   "loi_hay_gap": [
+    "Nhà > 12 m vẫn dùng L2.",
+    "Khe giữa các vế < 0,7 m."
+   ],
+   "giai_phap": [
+    "Nhà cao hơn: chuyển sang L1 hoặc N2/N3.",
+    "Mở rộng giếng thang đủ 0,7 m."
+   ],
+   "nguon": [
+    "skills/MOD_cau_thang_buong_thang.md"
+   ],
+   "the": [
+    "buong-thang-bo-thong-thuong"
+   ]
+  },
+  {
+   "id": "tn-buong-thang-N1",
+   "ten": "Buồng thang không nhiễm khói N1 (hoặc N2/N3 thay thế)",
+   "muc": "Cầu thang",
+   "loc": {
+    "cao_min": 28
+   },
+   "dung_khi": "Nhà cao PCCC > 28 m (trừ F5 hạng C, E không người thường xuyên); nhà F5 hạng A, B ở mọi chiều cao.",
+   "yeu_cau": [
+    {
+     "y": "Phải có buồng thang không nhiễm khói, trong đó có N1. Thay N1 bằng buồng có khoang đệm, cả khoang đệm và buồng áp suất dương khi cháy, cấp khí độc lập, điện ưu tiên 2 nguồn (lưới + máy phát).",
+     "dieu": "3.4.13"
+    },
+    {
+     "y": "N1: khoảng đệm hở thông gió tự nhiên; ở góc trong nhà < 135° thì cửa gần nhất cách đỉnh góc >= 4 m.",
+     "dieu": "3.4.10"
+    },
+    {
+     "y": "N3: khoang đệm >= 3,0 m2 (>= 6,0 m2 nếu là sảnh thang máy chữa cháy). N2: cửa sổ không mở được. Chống khói theo Phụ lục D.",
+     "dieu": "3.4.9"
+    },
+    {
+     "y": "Bảo vệ chống khói hành lang chung, sảnh theo Phụ lục D.",
+     "dieu": "3.4.14"
+    }
+   ],
+   "nhan_dien": {
+    "mat_bang": "N1: cửa từ hành lang ra ban công/lô gia hở rồi mới vào buồng thang. N3: phòng nhỏ (khoang đệm) có 2 cửa trước buồng thang.",
+    "mat_dung": "N1: ô hở (không kính) ở khoảng đệm mỗi tầng."
+   },
+   "loi_hay_gap": [
+    "Nhà > 28 m chỉ làm L1.",
+    "Khoang đệm N3 < 3 m2."
+   ],
+   "giai_phap": [
+    "Làm khoang đệm >= 3 m2 có tăng áp + điện 2 nguồn (thay N1), hoặc khoảng đệm hở ra ngoài trời.",
+    "Nhà có sẵn 2 buồng thang thường (bài học thiết kế thật, khách sạn 10 tầng): chỉ định một thang là \"thang di chuyển nội bộ, không thoát nạn\" (vẫn trong buồng thang ngăn cháy), thang kia thêm buồng đệm; xây buồng thang mới ở đất trống sát nhà (sân sau, góc lô) có buồng đệm dùng chung với thang máy chữa cháy mới (>= 6 m2). Ít đục phá hơn đổi cả hai thang sang N2/N3."
+   ],
+   "nguon": [
+    "skills/MOD_cau_thang_buong_thang.md",
+    "skills/MOD_chong_khoi_PL_D.md"
+   ],
+   "the": [
+    "buong-thang-bo-khong-nhiem-khoi-loai-n1",
+    "buong-thang-bo-loai-n2-va-n3"
+   ]
+  },
+  {
+   "id": "tn-ham-hai-tang",
+   "ten": "Thang thoát nạn từ 2 tầng hầm trở lên",
+   "muc": "Cầu thang",
+   "loc": {
+    "ham": true
+   },
+   "dung_khi": "Nhà có tầng hầm (xét kỹ khi >= 2 tầng hầm).",
+   "yeu_cau": [
+    {
+     "y": "Từ 2 tầng hầm trở lên: thoát theo buồng thang N3, hoặc N2 có lối vào qua khoang đệm bao che như khoang đệm ngăn cháy loại 1.",
+     "dieu": "3.4.13 b"
+    },
+    {
+     "y": "Tầng hầm > 300 m2 hoặc > 15 người: >= 2 lối ra; gian hầm > 15 người: >= 2 lối.",
+     "dieu": "3.2.6.1 e, 3.2.5 b"
+    },
+    {
+     "y": "Thang loại 2 phải ngăn với hầm bằng vách ngăn cháy loại 2.",
+     "dieu": "Sửa đổi 1:2023"
+    }
+   ],
+   "nhan_dien": {
+    "mat_bang": "Thang từ hầm lên: có tách khỏi thang các tầng trên ở cao độ tầng 1 không.",
+    "mat_dung": "Ô cửa sát cos +-0.000 chỉ thấy một phần khung = cửa hầm."
+   },
+   "loi_hay_gap": [
+    "Thang hầm thông thẳng lên các tầng trên không ngăn."
+   ],
+   "giai_phap": [
+    "Ngăn thang hầm ở tầng 1 bằng vách và cửa ngăn cháy, cho ra ngoài trực tiếp."
+   ],
+   "nguon": [
+    "skills/MOD_cau_thang_buong_thang.md",
+    "skills/MOD_loi_ra_va_cua.md"
+   ],
+   "the": []
+  },
+  {
+   "id": "tn-thang-loai-3",
+   "ten": "Cầu thang bộ loại 3 (ngoài nhà, để hở)",
+   "muc": "Cầu thang",
+   "loc": {
+    "cao_max": 50
+   },
+   "dung_khi": "Cần thêm lối thứ hai mà trong nhà không còn chỗ; cải tạo nhà cũ.",
+   "yeu_cau": [
+    {
+     "y": "Cho phép ở mọi nhóm F cao PCCC <= 28 m; 28–50 m khi phần thang trên 28 m chống rơi ngã toàn bộ.",
+     "dieu": "3.4.11"
+    },
+    {
+     "y": "Lối dẫn tới thang loại 3 là lối ra thoát nạn; BẮT BUỘC tính thoát nạn theo Phụ lục G.",
+     "dieu": "3.2.1 b và chú thích"
+    },
+    {
+     "y": "Lối ra vào chiếu thang loại 3 không quy định chiều mở cửa; mặt bậc >= 25 cm không áp dụng cho thang ngoài nhà; dốc <= 1:1.",
+     "dieu": "3.2.10, 3.4.2"
+    }
+   ],
+   "nhan_dien": {
+    "mat_bang": "Thang nằm ngoài đường bao tường ngoài, nối với cửa ở mỗi tầng bằng chiếu nghỉ.",
+    "mat_dung": "Vế thang thép zigzag ốp theo tường ngoài (đã gặp ở Karaoke SV - Gia Đình, Hoàng Anh 2)."
+   },
+   "loi_hay_gap": [
+    "Thiếu bảng tính Phụ lục G cho thang loại 3.",
+    "Cửa ra thang nằm sát ô cửa sổ, khói phả ra thang."
+   ],
+   "giai_phap": [
+    "Lập bảng tính G (số người, bề rộng, thời gian).",
+    "Tường cạnh thang đặc, không mở cửa sổ sát vế thang."
+   ],
+   "nguon": [
+    "skills/MOD_cau_thang_buong_thang.md",
+    "skills/PHU_LUC_G_QCVN06.md"
+   ],
+   "the": [
+    "cau-thang-bo-loai-3"
+   ]
+  },
+  {
+   "id": "tn-thang-loai-2",
+   "ten": "Cầu thang bộ loại 2 (trong nhà, để hở)",
+   "muc": "Cầu thang",
+   "loc": {
+    "F": [
+     "F1.2",
+     "F2",
+     "F3",
+     "F4"
+    ],
+    "cao_max": 28
+   },
+   "dung_khi": "Thang sảnh, thang thông tầng; nhà bậc I, II, cấp S0.",
+   "yeu_cau": [
+    {
+     "y": "Được đi từ tiền sảnh lên tầng 2 (F3.1, F3.2 kể cả khi không có tiền sảnh).",
+     "dieu": "3.4.15"
+    },
+    {
+     "y": "Thang loại 2 nối thông từ 3 tầng trở lên không được tính thoát nạn, trừ 3.2.1, 3.2.2, 3.2.6.",
+     "dieu": "3.4.16"
+    },
+    {
+     "y": "Chỉ là lối ra thoát nạn khi đi từ hành lang bên (nhà cao PCCC < 28 m) dẫn trực tiếp vào thang.",
+     "dieu": "3.2.1 b"
+    },
+    {
+     "y": "Khu vực thang loại 2 ngăn với hành lang/phòng khác bằng vách ngăn cháy loại 1; miễn GHCL khi cao <= 9 m và tầng <= 300 m2 hoặc có chữa cháy tự động.",
+     "dieu": "4.26"
+    }
+   ],
+   "nhan_dien": {
+    "mat_bang": "Thang đứng giữa sảnh, không có tường bao, có lan can thông tầng.",
+    "mat_dung": ""
+   },
+   "loi_hay_gap": [
+    "Đếm thang sảnh thông 3 tầng là lối thoát nạn."
+   ],
+   "giai_phap": [
+    "Bao thang thành buồng L1, hoặc bổ sung buồng thang khác làm lối thoát."
+   ],
+   "nguon": [
+    "skills/MOD_cau_thang_buong_thang.md"
+   ],
+   "the": [
+    "cau-thang-bo-loai-2",
+    "cau-thang-bo-loai-2-bao-che-ngan-cach"
+   ]
+  },
+  {
+   "id": "tn-hanh-lang-ben",
+   "ten": "Hành lang bên (hở một phía)",
+   "muc": "Hành lang",
+   "loc": {
+    "luon": true
+   },
+   "dung_khi": "Hành lang một phía hở ra ngoài trời (nhà trọ, trường, nhà xưởng).",
+   "yeu_cau": [
+    {
+     "y": "Chiều cao thông thủy từ đỉnh tường chắn lên >= 1,2 m. Lỗ mở >= 15% diện tích sàn hành lang (ngăn cháy với phòng) hoặc >= 50% (không ngăn cháy); mọi điểm cách lỗ mở <= 9 m.",
+     "dieu": "1.4.23"
+    },
+    {
+     "y": "Hành lang bên dẫn thẳng vào thang loại 2 được tính lối ra khi nhà cao PCCC < 28 m.",
+     "dieu": "3.2.1 b"
+    }
+   ],
+   "nhan_dien": {
+    "mat_bang": "Hành lang chạy dọc tường ngoài, phía ngoài chỉ là lan can.",
+    "mat_dung": "Dải lan can liên tục mỗi tầng, phía trên để trống."
+   },
+   "loi_hay_gap": [
+    "Bịt kính hoặc lam kín phía ngoài nên mất tính hở."
+   ],
+   "giai_phap": [
+    "Giữ lỗ mở đủ tỉ lệ, lam thưa hoặc cửa mở được bằng tay."
+   ],
+   "nguon": [],
+   "the": [
+    "hanh-lang-ben"
+   ]
+  },
+  {
+   "id": "tn-hanh-lang-karaoke",
+   "ten": "Hành lang karaoke, vũ trường",
+   "muc": "Hành lang",
+   "loc": {
+    "tu_khoa": [
+     "karaoke",
+     "vũ trường",
+     "bar",
+     "hộp đêm"
+    ]
+   },
+   "dung_khi": "Công trình karaoke, vũ trường, bar.",
+   "yeu_cau": [
+    {
+     "y": "Mọi cửa mở vào hành lang trên đường thoát nạn phải là cửa ngăn cháy, kể cả cửa WC, kho, phòng kỹ thuật.",
+     "dieu": "3.3.5 (Bài học 1)"
+    },
+    {
+     "y": "Chiều dài thoát nạn đo từ cửa phòng karaoke tới lối ra gần nhất; có sprinkler toàn nhà thì phân tán 2 lối >= 1/3 D.",
+     "dieu": "G.1.2.1, 3.2.8 (Bài học 6)"
+    },
+    {
+     "y": "Cửa phòng hát <= 15 người không quy định chiều mở.",
+     "dieu": "3.2.10"
+    }
+   ],
+   "nhan_dien": {
+    "mat_bang": "Hành lang giữa hai dãy phòng hát; xem bảng ký hiệu cửa có GHCL.",
+    "mat_dung": ""
+   },
+   "loi_hay_gap": [
+    "Cửa WC/kho mở vào hành lang ghi GHCL '-'."
+   ],
+   "giai_phap": [
+    "Đổi các cửa đó sang cửa ngăn cháy EI theo 3.3.5, hoặc đổi hướng cửa không mở vào hành lang."
+   ],
+   "nguon": [
+    "knowledge/bai-hoc.md",
+    "skills/MOD_hanh_lang_bao_che.md"
+   ],
+   "the": []
+  },
+  {
+   "id": "tn-loi-ra-khan-cap",
+   "ten": "Lối ra khẩn cấp (không tính vào thoát nạn)",
+   "muc": "Lối ra khẩn cấp",
+   "loc": {
+    "luon": true
+   },
+   "dung_khi": "Tăng an toàn khi không đủ lối ra thoát nạn; điều kiện kèm theo của phương án 1 lối.",
+   "yeu_cau": [
+    {
+     "y": "Lối ra khẩn cấp không đưa vào tính toán thoát nạn.",
+     "dieu": "3.2.12"
+    },
+    {
+     "y": "Gồm: ban công/lô gia có khoảng tường đặc >= 1,2 m từ mép ban công tới ô kính (>= 1,6 m giữa các ô kính), rộng >= 0,6 m; cầu nối hở >= 0,6 m sang khoang cháy kế bên; ban công có thang ngoài hoặc cửa nắp sàn >= 0,6 x 0,8 m; cửa sổ/cửa đi >= 0,75 x 1,5 m ra ngoài từ sàn -4,5 đến +5,0 m có thang leo; lối ra mái qua cửa như trên.",
+     "dieu": "3.2.13"
+    }
+   ],
+   "nhan_dien": {
+    "mat_bang": "Ban công có cửa nắp sàn hoặc thang leo.",
+    "mat_dung": "Thang leo thép thẳng đứng dọc ban công."
+   },
+   "loi_hay_gap": [
+    "Đếm lối khẩn cấp thành lối thoát nạn."
+   ],
+   "giai_phap": [
+    "Chỉ dùng làm điều kiện bổ sung; số lối thoát nạn vẫn phải đủ."
+   ],
+   "nguon": [
+    "skills/MOD_loi_ra_va_cua.md"
+   ],
+   "the": [
+    "loi-ra-khan-cap",
+    "loi-thoat-nan-khan-cap"
+   ]
+  },
+  {
+   "id": "tn-loi-ra-mai",
+   "ten": "Lối ra mái",
+   "muc": "Lối ra mái",
+   "loc": {
+    "tang_min": 2,
+    "cao_min": 10
+   },
+   "dung_khi": "Nhà >= 2 tầng mái bằng hoặc dốc < 25%, cao >= 10 m đến diềm mái hoặc mép trên tường chắn mái.",
+   "yeu_cau": [
+    {
+     "y": "Lối ra mái trực tiếp từ buồng thang, qua tầng áp mái, theo thang loại 3 hoặc thang chữa cháy ngoài nhà; F1–F4: ít nhất 1 lối cho mỗi 9 300 m2 mái.",
+     "dieu": "6.6"
+    },
+    {
+     "y": "Từ buồng thang: qua chiếu thang và cửa ngăn cháy loại 2 >= 0,75 x 1,5 m; F1–F4 cao đến 15 m được qua cửa nắp ngăn cháy loại 2 0,6 x 0,8 m với thang thép cố định.",
+     "dieu": "6.7"
+    }
+   ],
+   "nhan_dien": {
+    "mat_bang": "Mặt bằng mái: tum thang có cửa ra sân thượng.",
+    "mat_dung": "Tum thang có cửa đi trên cao độ sân thượng."
+   },
+   "loi_hay_gap": [
+    "Buồng thang dừng ở tầng trên cùng, không lên mái."
+   ],
+   "giai_phap": [
+    "Kéo buồng thang lên tum có cửa ra mái, hoặc thang chữa cháy ngoài nhà P1/P2.",
+    "Sân thượng chỉ có một thang lên: ghi \"không có người có mặt thường xuyên (không quá 6 giờ liên tục)\" để không tính là tầng sử dụng; nếu khai thác thường xuyên thì kéo thang thứ hai lên."
+   ],
+   "nguon": [],
+   "the": [
+    "loi-ra-mai",
+    "thang-chua-chay-ngoai-nha"
+   ]
+  },
+  {
+   "id": "tn-loi-vao-tren-cao",
+   "ten": "Lối vào từ trên cao (cứu nạn)",
+   "muc": "Lối vào từ trên cao",
+   "loc": {
+    "F": [
+     "F1.1",
+     "F1.2",
+     "F2",
+     "F3",
+     "F4",
+     "F5"
+    ],
+    "cao_min": 15,
+    "cao_max": 50
+   },
+   "dung_khi": "Nhà F1.1, F1.2, F2, F3, F4 cao PCCC > 15 đến 50 m: mọi tầng trừ tầng 1, đối diện bãi đỗ xe chữa cháy; F5 phía trên bãi đỗ. Không áp dụng F1.3.",
+   "yeu_cau": [
+    {
+     "y": "Rộng >= 850, cao >= 1000; mép dưới <= 1100, mép trên >= 1800 mm từ sàn trong.",
+     "dieu": "6.3.4"
+    },
+    {
+     "y": "Tam giác đỏ/vàng cạnh >= 150 mm mặt ngoài; chữ 'LỐI VÀO TỪ TRÊN CAO - KHÔNG ĐƯỢC GÂY CẢN TRỞ' cao >= 25 mm mặt trong.",
+     "dieu": "6.3.3"
+    },
+    {
+     "y": "Đối diện không gian sử dụng; không ở kho, phòng máy, buồng thang, sảnh, điểm cụt; không đồ đạc trong 1 m phía trong.",
+     "dieu": "6.3.1, 6.3.2"
+    },
+    {
+     "y": "Mỗi 20 m (đủ hoặc không đủ) chiều dài bãi đỗ một vị trí; tâm hai lối liên tiếp cách nhau <= 20 m.",
+     "dieu": "6.3.5"
+    }
+   ],
+   "nhan_dien": {
+    "mat_bang": "Ô cửa sổ/cửa ban công ở tường đối diện bãi đỗ.",
+    "mat_dung": "Ô không có tay nắm cửa đi, có tam giác ▼, mép dưới thấp. Ô có tay nắm = cửa đi; nét ngang dưới cánh = louver (knowledge/loi-vao-tren-cao.md)."
+   },
+   "loi_hay_gap": [
+    "Không ký hiệu, ghi chú trên mặt đứng.",
+    "Lan can cao, lam, biển quảng cáo chắn trước ô."
+   ],
+   "giai_phap": [
+    "Tận dụng cửa sổ/cửa ban công có sẵn nếu đủ 6.3.1–6.3.4, bổ sung tam giác và chữ.",
+    "Không có ô thì mở ô mới mỗi tầng theo 6.3.5.",
+    "Lan can chắn: làm cánh mở trên lan can hoặc bỏ vật cản.",
+    "Cửa sổ phòng vệ sinh, phòng ngủ cũng dùng được nếu đủ 6.3.4: 6.3.2 chỉ cấm kho, phòng máy, buồng thang thoát nạn, sảnh không nhiễm khói, sảnh thang máy chữa cháy, không gian dẫn tới điểm cụt. Ưu tiên ô không có lan can chắn hơn cửa ban công có lan can. Thể hiện: tam giác trên mặt đứng + bảng ký hiệu (kích thước, quy cách) + ghi chú 1 m trống trên mặt bằng."
+   ],
+   "nguon": [
+    "knowledge/loi-vao-tren-cao.md",
+    "knowledge/qcvn06-dieu-6.md"
+   ],
+   "the": [
+    "loi-vao-tu-tren-cao"
+   ]
+  }
+ ]
+}

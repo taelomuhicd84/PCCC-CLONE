@@ -28,6 +28,13 @@ Mỗi module có `test/` cạnh `src/`. Thêm/đổi thư mục thì cập nhậ
 - `shared/src/thuy_luc.ts`, `bang_tinh/thuy_luc/`, script Excel chép từ SKILL-PCCC-NEW (người dùng phát triển ở đó): sửa ở TKPCCC thì
   ghi vào `LICH_SU.md` và báo người dùng để đồng bộ hai repo.
 
+## Tư vấn / sơ bộ thiết kế PCCC từ bản vẽ (người dùng nhắc 2026-11-01: phải áp phần đã train, và GHI NOTE LÊN PDF)
+Trước khi viết: đọc `knowledge/hoc/du-an/so-bo-thiet-ke.md` (bài học đã duyệt: thang bậc chéo, buồng thang giữa nhà không có ô lấy sáng, thang ngoài nhà loại 3,
+sân thượng, số người…), `knowledge/nhan-dien-thang-thoat-nan.md` (phóng to từng thang xem chiếu nghỉ), lọc `data/mau_giai_phap/thoat_nan.json` theo F, cao PCCC, số tầng, diện tích, người
+(không chạy được script repo ngoài: lọc tay theo trường `loc`). Mỗi mục viết Hiện trạng / Đánh giá / Giải pháp, rồi **khoanh và ghi chú lên chính PDF bản vẽ** (PyMuPDF; trang PDF có `/Rotate`
+thì vẽ bằng `page.derotation_matrix` và `insert_textbox(rotate=…)`, mẫu `ket_qua/luu_xuan_loc_thu/ve_khoanh.py` nếu máy có; kiểm bằng ảnh render). Không chỉ trả văn bản chung chung.
+Thẻ bản vẽ mẫu đã thẩm duyệt (`data/ban_ve_mau`, 36 MB, repo SKILL-PCCC-NEW) chưa chép sang đây: clone repo đó vào thư mục tạm khi cần tra.
+
 ## Skill dự án (`.claude/skills/`)
 - `tkpccc-cad-console` — build + kiểm thử plugin trong accoreconsole, in bản vẽ ra PNG, các bẫy API AutoCAD đã gặp.
 - `tkpccc-xong-dau-muc` — khép đầu mục: kiểm → TIEN_DO/LICH_SU → commit → push → ngữ cảnh mới làm tiếp.
