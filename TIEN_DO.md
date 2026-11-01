@@ -19,7 +19,8 @@ Pha 4a đã làm:
 - Web tab "Thủy lực"; `data/huong_dan.json` B4, B5a trỏ tới tab; B5b thêm `knowledge/tcvn-4513-1988-muc-6-19.md` (chép từ SKILL-PCCC-NEW).
 
 Cần người dùng trả lời (thủy lực):
-- 👤 Lỗi F106 (lưu lượng hàng II dùng áp nút a) và lỗi bảng nhánh phải giữ số cũ khi đối xứng **cũng có trong SKILL-PCCC-NEW**: sửa luôn bên đó không?
+- Lỗi F106 (lưu lượng hàng II dùng áp nút a) và lỗi bảng nhánh phải giữ số cũ khi đối xứng cũng có trong SKILL-PCCC-NEW:
+  **người dùng tự sửa bên đó** (trả lời 2026-11-01), TKPCCC không đụng repo đó.
 - 👤 Ống vòng/Qtt: Excel mẫu cộng họng theo H.6 (2,5 l/s/tia, ô H18) còn lõi web theo lăng H.7 (2,6 l/s/tia) → Q bơm lệch ~0,2 l/s,
   PB lệch ~0,001 MPa. Theo luật bạn chốt 28/10 ("lưu lượng họng vào bơm, bể = số tia × lưu lượng lăng H.7") thì Excel cần sửa — chọn bên nào?
 
