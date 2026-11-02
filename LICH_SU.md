@@ -79,6 +79,12 @@
 - Người dùng sửa: ghi chú chiều cao PCCC phải đặt NGAY TẠI mép dưới cửa sổ tầng trên cùng (không trỏ cao độ sàn). Ghi quy tắc vào
   `tkpccc-ghi-chu-ban-ve` (quy tắc 1). Hồ sơ Lưu Xuân Lộc: nét xanh tại mép dưới cửa sổ tầng thượng (đo vector ≈ +18.200 = sàn
   +17.200 + 1,0 m), giữ 18,4 m theo BCKS; `ket_qua/canho/ban_ve_ghi_chu_moi_tang_2.pdf` (167 annotation, file trước đang mở).
+- Khảo sát thử BV layout Q.4 (căn hộ dịch vụ F1.2, 3 tầng + tum, bản scan không có chữ): bảng KS 33 dòng, 46 annotation (`ket_qua/q4/`, không commit),
+  điền thử form BCKS của người dùng (Hoàng Quân Phát; sheet NOTE F10–F16, I10–I16). Kết quả: 1 CHƯA ĐẠT, 16 CẦN XÁC NHẬN, 8 KHÔNG ÁP DỤNG.
+- Người dùng sửa: (a) tum đủ tiêu chí 1.4.24 (≤ 30% sàn mái, chỉ che thang) thì KHÔNG tính tầng, không hỏi xác nhận; chỉ hỏi khi thiếu số liệu thật;
+  (b) khoảng cách thoát nạn L = L1 + 3H + L3 vượt Bảng G.1 (hoặc tính toán) ⇒ CHƯA ĐẠT (không đảm bảo), kèm phương án; Q.4 ≈ 34 m > 25 m.
+  Đã ghi hai quy tắc vào skill `tkpccc-khao-sat-tu-van`.
+- Còn thiếu: lệnh điền mẫu BCKS vào `tkpccc-bang-doi-chieu` (ROADMAP 5b; hiện dùng script tạm); chưa kiểm bản in form (máy không có LibreOffice).
 
 ### Lưu ý cho phiên sau (người dùng dặn ghi, 2026-11-02)
 1. Kết quả tư vấn: MỘT bảng theo khung bảng đối chiếu chính thức (TT | Nội dung đối chiếu | Nội dung thiết kế | Quy định | Khoản Điều |

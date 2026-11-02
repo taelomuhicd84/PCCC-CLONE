@@ -18,6 +18,9 @@ Việc tiếp theo của luồng mới:
    Đã vẽ buồng thang nét liền khép kín + cung vế ở mọi tầng, chiều cao PCCC ghi ngay tại mép dưới cửa sổ tầng thượng:
    `ket_qua/canho/ban_ve_ghi_chu_moi_tang_2.pdf` (167 annotation, bản mới nhất).
    CHỜ người dùng xem bản 7 và sửa.
+1b. ✅ 02/11 tối: khảo sát thử BV layout Q.4 (F1.2) + điền form BCKS (`ket_qua/q4/`, không commit): 1 CHƯA ĐẠT (khoảng cách thoát nạn ≈ 34 m > 25 m),
+   16 CẦN XÁC NHẬN, 8 KHÔNG ÁP DỤNG. 👤 chờ người dùng xem `ban_ve_ghi_chu_5.pdf`, `BCKS_can_ho_dich_vu_Q4_v4.xlsx`. Việc kế: lệnh điền mẫu BCKS
+   vào `tkpccc-bang-doi-chieu`; kiểm bản in form.
 2. Thử luồng thẩm định trên một hồ sơ (vd KT7.1 + A5 + B…): đo độ dài job, chỉnh số dòng mỗi job, xem agent điền có đúng định dạng.
 3. Pha 5b (ROADMAP): web chạy luồng, Word theo mẫu A/B, điền mẫu báo cáo khảo sát của người dùng (chờ người dùng gửi mẫu).
 
