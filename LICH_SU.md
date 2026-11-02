@@ -56,6 +56,10 @@
   (27 dòng) và PDF sửa chữ thang đã gửi; khung PDF chưa đánh số theo TT. Dừng ở usage 5 giờ 86%.
 - Người dùng sửa: thang ngoài nhà ở mặt tiền là PHƯƠNG ÁN 3 do mình đề xuất, không phải hạng mục đối chiếu. `tu_van_thiet_ke.md` bản 6
   (23 dòng): PA1, PA2, PA3 chuyển vào cột Kết luận; luật ghi vào `CLAUDE.md` và `knowledge/nhan-dien-thang-thoat-nan.md`.
+- Người dùng train thang loại 2, phần đường thoát nạn: 3.3.2 bản sửa đổi (chép nguyên văn từ ảnh bản hợp nhất) đo trên tầng tới mép
+  bậc đầu tiên của thang loại 2, đoạn trên thang lấy 3H. Người dùng xác nhận PHẢI CỘNG L1 + 3H + L3 rồi so Phụ lục G (ví dụ vẽ mặt bằng
+  + mặt cắt: 19,0 + 10,8 + 3,0 = 32,8 m > 30 m). Ghi vào `skills/MOD_tinh_toan_khoang_cach.md`, trỏ từ `knowledge/nhan-dien-thang-thoat-nan.md`
+  bước 5 và `skills/MOD_cau_thang_buong_thang.md`.
 
 ### Lưu ý cho phiên sau (người dùng dặn ghi, 2026-11-02)
 1. Kết quả tư vấn: MỘT bảng theo khung bảng đối chiếu chính thức (TT | Nội dung đối chiếu | Nội dung thiết kế | Quy định | Khoản Điều |

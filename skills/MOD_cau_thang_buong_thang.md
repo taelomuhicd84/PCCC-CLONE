@@ -39,7 +39,7 @@ Làm theo thứ tự:
 | Tầng 1 | Không cần thang | Cửa từ phòng ra ngoài: trực tiếp, qua hành lang, tiền sảnh, hoặc qua buồng thang (3.2.1a) | Tính tới cửa ra ngoài là xong |
 | Tầng khác | **Loại 1** (trong buồng thang) | Cửa từ phòng vào buồng thang, hoặc vào hành lang/phòng chung dẫn **trực tiếp** vào buồng thang (3.2.1b) | Cửa vào buồng thang là cửa ngăn cháy; xét N1 theo 3.4.13 nếu cao > 28 m hoặc F5 hạng A/B |
 | Tầng khác | **Loại 3** (ngoài nhà, hở) | Lối dẫn tới cầu thang loại 3: trực tiếp, qua hành lang, hoặc qua phòng chung/phòng chờ có lối ra trực tiếp tới thang (3.2.1b); ra mái dùng được dẫn tới thang loại 3 | **Bắt buộc có tính toán thoát nạn theo Phụ lục G** (chú thích 3.2.1) |
-| Tầng khác | **Loại 2** (trong nhà, hở) | Chỉ khi vào **hành lang bên** của nhà **cao PCCC < 28 m** dẫn trực tiếp vào thang loại 2 (3.2.1b). Ngoài trường hợp này thang loại 2 không được liệt kê là lối ra thoát nạn | G.1.2.1 chỉ nhắc "cầu thang bộ loại 2 mà quy chuẩn cho phép thoát nạn"; các điều kiện khác cho phép loại 2 chưa nạp, hỏi user khi gặp |
+| Tầng khác | **Loại 2** (trong nhà, hở) | Chỉ khi vào **hành lang bên** của nhà **cao PCCC < 28 m** dẫn trực tiếp vào thang loại 2 (3.2.1b). Ngoài trường hợp này thang loại 2 không được liệt kê là lối ra thoát nạn | G.1.2.1 chỉ nhắc "cầu thang bộ loại 2 mà quy chuẩn cho phép thoát nạn"; các điều kiện khác cho phép loại 2 chưa nạp, hỏi user khi gặp. Đường thoát nạn qua thang loại 2 phải thỏa 3.3.2: L1 + 3H + L3 ≤ Phụ lục G (MOD_tinh_toan_khoang_cach.md) |
 | Cùng tầng | Phòng liền kề | Lối ra dẫn vào gian phòng liền kề (trừ F5 hạng A/B) mà từ đó có lối ra đúng như hai dòng trên (3.2.1c) | |
 
 Lưu ý khi áp dụng:

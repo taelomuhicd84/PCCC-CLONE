@@ -11,6 +11,27 @@
 - Hai buồng thang thoát nạn nối nhau bằng hành lang trong/hành lang bên **được bảo vệ theo 3.3.5** (xem MOD_hanh_lang_bao_che.md) → đo L **dọc theo đường di chuyển trên hành lang** (Hình I.5). Không rõ/không bảo vệ → đo đường thẳng. Thang hở (không phải buồng thang) → coi như không áp dụng, ghi nghi vấn.
 - Có Sprinkler hay không lấy từ skill khác (xem [DU_LIEU_TU_SKILL_KHAC.md](DU_LIEU_TU_SKILL_KHAC.md)). Chưa có dữ liệu → tạm dùng ½D.
 
+## 3.3.2 – Cách đo khoảng cách thoát nạn; đường thoát nạn qua cầu thang bộ loại 2
+Nguyên văn QCVN 06:2022/BXD sửa đổi 01:2023, chép từ ảnh bản hợp nhất người dùng gửi 2026-11-02. Câu cũ "Khoảng cách giới hạn cho phép từ vị trí xa nhất của gian phòng, hoặc từ chỗ làm việc xa nhất tới lối ra thoát nạn gần nhất, được đo theo trục của đường thoát nạn, phải được hạn chế tùy thuộc vào:" đã bị gạch bỏ.
+
+> **3.3.2** Khoảng cách thoát nạn giới hạn cho phép (Phụ lục G) trên mỗi tầng được đo dọc theo tâm đường thoát nạn, bắt đầu từ tâm của cửa các gian phòng hoặc từ chỗ xa nhất có thể có người trong phòng (tùy thuộc vào việc có ngăn cháy giữa gian phòng và đường thoát nạn hay không) đến tâm của lối ra thoát nạn gần nhất của mỗi tầng (ví dụ: cửa ra ngoài nhà, cửa vào buồng thang bộ hoặc cửa ra cầu thang bộ loại 3, mép bậc đầu tiên của cầu thang bộ loại 2 trên tầng đó nếu cầu thang loại 2 là cầu thang thoát nạn, cửa vào khoang cháy lân cận, hoặc đến lối ra thoát nạn khác). Khoảng cách này phải được hạn chế tùy thuộc vào:
+> - Nhóm nguy hiểm cháy theo công năng và hạng nguy hiểm cháy nổ (xem Phụ lục C) của gian phòng và nhà;
+> - Số lượng người thoát nạn;
+> - Các thông số hình học của gian phòng và đường thoát nạn;
+> - Cấp nguy hiểm cháy kết cấu và bậc chịu lửa của nhà.
+>
+> Chiều dài của đường thoát nạn theo cầu thang bộ loại 2 lấy bằng ba lần chiều cao của thang đó.
+>
+> CHÚ THÍCH: Các yêu cầu cụ thể về khoảng cách giới hạn cho phép từ vị trí xa nhất đến lối ra thoát nạn gần nhất được nêu trong các quy chuẩn cho từng loại công trình. Một số quy định cụ thể cho các nhóm nhà thường gặp nêu tại Phụ lục G.
+
+**Cách tính khi đường thoát nạn đi qua cầu thang bộ loại 2** (người dùng dạy và xác nhận 2026-11-02):
+- Thang loại 2 chỉ dùng thoát nạn được khi đủ HAI nhóm điều kiện: điều khoản về loại thang, buồng thang (3.2.1b, 3.2.6, 3.4.15, 3.4.16; xem `knowledge/nhan-dien-thang-thoat-nan.md` bước 5) VÀ điều khoản đường thoát nạn (3.3.2 + Phụ lục G) dưới đây.
+- **L = L1 + 3H + L3 ≤ khoảng cách giới hạn Phụ lục G** (tra [PHU_LUC_G_QCVN06.md](PHU_LUC_G_QCVN06.md) theo nhóm nhà). PHẢI CỘNG CẢ ba đoạn; không dừng ở L1 dù 3.3.2 cho đo tới mép bậc đầu tiên.
+  - **L1** (tầng có người): đo dọc tâm đường thoát nạn, từ tâm cửa phòng (phòng có ngăn cháy với đường thoát nạn) hoặc từ chỗ xa nhất có người trong phòng (không ngăn cháy), tới mép bậc đầu tiên của thang loại 2 trên tầng đó.
+  - **3H**: H = chiều cao của thang (chênh cao hai sàn mà thang nối). Không dùng chiều dài nghiêng thực. Đi qua nhiều thang loại 2 thì cộng 3H của từng thang.
+  - **L3** (tầng dưới): từ chân thang (mép bậc cuối) tới tâm lối ra thoát nạn thật (cửa ra ngoài nhà, cửa vào buồng thang bộ…).
+- Ví dụ (số giả định; hình mặt bằng + mặt cắt đã vẽ cho người dùng 2026-11-02): nhà công cộng bậc II, S0, 2 tầng; thang loại 2 từ sảnh tầng 1 lên tầng 2 (3.4.15); tầng 2 chỉ có thang này nên cửa phòng mở ra hành lang cụt; mật độ ≤ 2 người/m² → Bảng G.2a: 30 m. L1 = 1,0 (tâm cửa tới tim hành lang) + 18,0 = 19,0 m; H = 3,6 m → 3H = 10,8 m (đi thực chỉ ~7,2 m: 2 vế 3,0 m + chiếu nghỉ 1,2 m); L3 = 3,0 m. L = 32,8 m > 30 m → KHÔNG ĐẠT, dù riêng L1 = 19 m < 30 m.
+
 ## 11. Phụ lục G (nạp đầy đủ)
 Toàn bộ Phụ lục G (G.1–G.3, Bảng G.1–G.9) nằm ở [PHU_LUC_G_QCVN06.md](PHU_LUC_G_QCVN06.md), chép từ `QCVN 06 SỬA ĐỔI BỔ SUNG 10.2023.pdf`. Khi đo khoảng cách, tính mật độ, bề rộng, số người: tra file này, không dùng trị số nhớ.
 Điểm cần nhớ nhất:
