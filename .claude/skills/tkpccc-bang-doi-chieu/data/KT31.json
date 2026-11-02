@@ -1,0 +1,153 @@
+{
+"ma": "KT31",
+"ten": "Kiến trúc – Phương tiện tàu biển",
+"file_goc": "B31 . Bảng đối chiếu Phương tiện tàu biển.docx",
+"so_dong": 11,
+"nguon": "kien_truc",
+"dau_bang": [
+"1. Tên phương tiện: Tàu biển vỏ thép",
+"2. Địa điểm xây dựng:",
+"3. Chủ đầu tư:",
+"Địa chỉ của Chủ đầu tư:",
+"4. Cơ quan thiết kế:",
+"5. Cán bộ thẩm duyệt:",
+"6. Danh mục các Quy chuẩn, tiêu chuẩn, quy định áp dụng để đối chiếu thẩm duyệt",
+"- Nghị định 136/2020/NĐ-CP ngày 24/11/2020: Nghị định quy định chi tiết một số điều và biện pháp thi hành luật phòng cháy và chữa cháy và luật sửa đổi, bổ sung một số điều của Luật phòng cháy và chữa cháy;",
+"- QCVN 21:2015/BGTVT “Quy chuẩn kỹ thuật quốc gia về phân cấp và đóng tàu biển vỏ thép”.",
+"- QCVN 42:2015/BGTVT “Quy chuẩn kỹ thuật quốc gia về trang bị an toàn tàu biển”.",
+"- TCVN 5740: 2009 “Phương tiện phòng cháy chữa cháy - vòi đẩy chữa cháy - vòi đẩy bằng sợi tổng hợp tráng cao su”.",
+"* Lưu ý: Chỉ thống kê tên các tiêu chuẩn, quy chuẩn cần áp dụng để thiết kế phù hợp với tính chất, quy mô của công trình. Đối với các tiêu chuẩn quy chuẩn không sử dụng để thiết kế thì xóa khỏi Phần 6.",
+"7. Quy mô, sự phù hợp của các tiêu chuẩn, quy chuẩn áp dụng để thiết kế và danh mục bản vẽ",
+"7.1. Quy mô của phương tiện: Cần mô tả quy mô chi tiết của phương tiện …",
+"7.2. Sự phù hợp của các tiêu chuẩn, quy chuẩn áp dụng để thiết kế: Cần so sánh sự phù hợp giữa các tiêu chuẩn, quy chuẩn Chủ phương tiện nêu tại Thuyết minh, bản vẽ thiết kế có phù hợp với các tiêu chuẩn, quy chuẩn hiện hành về PCCC hay không. Trường hợp sử dụng tiêu chuẩn nước ngoài về hệ thống PCCC phải thực hiện việc chấp thuận theo quy định tại khoản 5, Điều 8 Luật Phòng cháy và chữa cháy năm 2013; trường hợp sử dụng tiêu chuẩn nước ngoài khác về xây dựng thì thực hiện theo quy định tại Điều 8 Nghị định số 15/2021/NĐ-CP ngày 03/3/2021 của Chính phủ.",
+"Kết luận: Đã bảo đảm hay chưa.",
+"7.3. Danh mục bản vẽ: Thống kê chi tiết danh mục bản vẽ thiết kế Chủ đầu tư gửi kèm.",
+"Kết luận: Đã bảo đảm đầy đủ để đối chiếu hay chưa. Trường hợp còn thiếu cần kiến nghị bổ sung bản vẽ thiết kế.",
+"8. Nội dung kiểm tra đối chiếu theo tiêu chuẩn quy định:",
+"*Chú thích: (+) - Đạt; KN - Kiến nghị.",
+"Ghi chú: (1) Tên cơ quan chủ quản trực tiếp;(2) Tên đơn vị thực hiện thẩm duyệt; (3) Họ tên và chữ ký của cán bộ thực hiện; (4) Ghi quyền hạn, chức vụ của người lãnh đạo, chỉ huy đơn vị thẩm duyệt, nếu người ký văn bản là cấp phó của người đứng đầu cơ quan thì ghi chữ viết tắt “KT.” vào trước chức vụ của người đứng đầu, bên dưới ghi chức vụ của người ký văn bản;"
+],
+"dong": [
+{
+"idx": 2,
+"tt": "1",
+"noi_dung": "Ngăn cháy lan",
+"goi_y": "",
+"quy_dinh": "",
+"khoan_dieu": "",
+"ket_luan_mau": "",
+"tra_o": "",
+"so_o": 6
+},
+{
+"idx": 3,
+"tt": "Kết cấu phòng chống cháy và phương tiện thoát nạn",
+"noi_dung": "",
+"goi_y": "",
+"quy_dinh": "",
+"khoan_dieu": "",
+"ket_luan_mau": "",
+"tra_o": "",
+"so_o": 6
+},
+{
+"idx": 4,
+"tt": "1.1",
+"noi_dung": "Bố trí và phân chia khoang hàng",
+"goi_y": "",
+"quy_dinh": "1. Trong các khoang dầu hàng, các vách dọc, vách ngang kín dầu và vách chặn phải được bố trí thích hợp. / 2. Các khoang cách ly phải được bố trí thỏa mãn các quy định từ (1) đến (3) sau đây: (1) Tại phần đầu và phần cuối của các vùng dầu hàng và vùng nằm giữa khu vực dầu hàng và khu vực sinh hoạt của thuyền viên phải bố trí khoang cách ly kín khí có đủ chiều rộng để đi lại. (2) Các khoang cách ly nêu ở (1) có thể được sử dụng làm buồng bơm. (3) Các khoang dầu đốt hoặc khoang nước dằn có thể được dùng đồng thời làm khoang cách ly giữa các khoang dầu hàng và dầu đốt hoặc các khoang nước dằn nếu được Đăng kiểm chấp thuận. / 3. Tất cả các khu vực bố trí bơm dầu hàng và hệ thống đường ống dầu hàng phải được cách ly bằng vách kín khí với khu vực lò sưởi, nồi hơi, động cơ lai chân vịt, thiết bị điện kiểu dễ gây cháy nổ hoặc máy móc thường xuyên phát tia lửa điện. / 4 Các lỗ vào và lỗ ra của hệ thống thông gió phải được bố trí sao cho giảm đến mức tối đa khả năng tụ hơi dầu trong khoang kín có chứa các tác nhân gây cháy, hoặc gần khu vực có trang thiết bị máy móc trên boong có thể gây cháy. Đặc biệt, các lỗ thông gió của buồng máy phải cố gắng bố trí càng xa về phía sau của khu vực hàng hóa càng tốt. / 5 Lỗ khoét để kiểm tra khoảng trống còn lại khi có hàng trong khoang, lỗ đo mức dầu và các cửa để vệ sinh khoang dầu hàng không được bố trí trong các không gian kín.",
+"khoan_dieu": "Điều 22.1.2 QCVN 21:2015/BGTVT",
+"ket_luan_mau": "",
+"tra_o": "chưa nạp: đọc cột quy định của bảng",
+"so_o": 6
+},
+{
+"idx": 5,
+"tt": "1.2",
+"noi_dung": "Ngăn cách các két hàng",
+"goi_y": "",
+"quy_dinh": "1 Các buồng bơm dầu hàng, các két hàng, két lắng và khoang cách ly phải được bố trí phía trước buồng máy / 2 Các trạm điều khiển hàng chính, trạm điều khiển, buồng sinh hoạt và buồng phục vụ (trừ các khoang cách ly chứa các thiết bị làm hàng) phải được bố trí phía sau tất cả các két hàng / 3. Nếu các buồng máy này có chứa động cơ đốt trong, ngoài bình chữa cháy xách tay, phải trang bị một bình chữa cháy bằng bọt loại được duyệt có dung tích 45 lít hoặc tương đương. Nếu việc sử dụng bình chữa cháy loại bán di động là không thực tế thì có thể thay bình chữa cháy này bằng hai bình chữa cháy xách tay. / 6 Phải có phương tiện để tránh không cho dầu tràn trên boong lọt vào buồng sinh hoạt và buồng phục vụ. Điều này có thể được thực hiện bằng cách lắp đặt thành quây liên tục cố định có chiều cao tối thiểu 300 mm kéo tới hai bên mạn. Phải đặc biệt lưu ý đến các thiết bị của hệ thống nạp hàng ở đuôi tàu. / 7 Để bảo vệ các két hàng chở dầu thô và các sản phẩm dầu có điểm chớp cháy không vượt quá 60 oC, không được sử dụng các vật liệu dễ bị hỏng do nhiệt và lan lửa đến hàng để chế tạo các van, phụ tùng, nắp đậy miệng két, ống thông hơi hàng và ống hàng.",
+"khoan_dieu": "Điều 4.5.1 / Chương 4 / Phần 5 / QCVN 21:2015/BGTVT",
+"ket_luan_mau": "+",
+"tra_o": "SKILL_ngan_chay",
+"so_o": 6
+},
+{
+"idx": 6,
+"tt": "1.3",
+"noi_dung": "Kết cấu",
+"goi_y": "",
+"quy_dinh": "- Thân tàu, thượng tầng, vách kết cấu, boong và lầu boong phải được chế tạo bằng thép hoặc vật liệu tương đương. Giới hạn chịu lửa của vách, boong phải phù hợp với các tiêu chuẩn về tính nguyên vẹn và cách nhiệt nêu trong Bảng 5/9.1 đến Bảng 5/9.4. / - Chiều dày của các cơ cấu trong khoang dầu hàng và các két sâu phải thỏa mãn các quy định ở (1) và (2) sau đây: (1) Chiều dày của các sống dọc, sống ngang, sống đứng, sống nằm, thanh chống, các mã mút của chúng và tôn vách phải không nhỏ hơn 8 mm. (2) Trong mọi trường hợp chiều dày của các cơ cấu phải không nhỏ hơn 7 mm. / - Phân chia tàu thành các khu vực thẳng đứng chính và các khu vực nằm ngang chính bằng các mặt bao kết cấu và chịu nhiệt. / - Cách ly các buồng sinh hoạt với phần còn lại của tàu bằng các mặt bao kết cấu và chịu nhiệt. / - Diện tích của buồng sinh hoạt được ngăn cách bởi kết cấu cấp “A” hoặc “B” trong bất kỳ trường hợp nào không được vượt quá 50 m2.",
+"khoan_dieu": "Điều 11.1.1 QCVN 21:2015/BGTVT / Điều 22.2 QCVN 21:2015/BGTVT / Điều 2.2.1 QCVN 21:2015/BGTVT / Điều 9.2.2 QCVN 21:2015/BGTVT",
+"ket_luan_mau": "+",
+"tra_o": "chưa nạp: đọc cột quy định của bảng",
+"so_o": 6
+},
+{
+"idx": 7,
+"tt": "2",
+"noi_dung": "Thoát nạn",
+"goi_y": "",
+"quy_dinh": "",
+"khoan_dieu": "",
+"ket_luan_mau": "",
+"tra_o": "",
+"so_o": 6
+},
+{
+"idx": 8,
+"tt": "2.1",
+"noi_dung": "Yêu cầu chung",
+"goi_y": "",
+"quy_dinh": "",
+"khoan_dieu": "",
+"ket_luan_mau": "",
+"tra_o": "",
+"so_o": 6
+},
+{
+"idx": 9,
+"tt": "-",
+"noi_dung": "Bố trí chung",
+"goi_y": "",
+"quy_dinh": "- Phải bố trí các cầu thang và thang đỉa làm phương tiện để thoát đến boong lên xuồng cứu sinh và bè cứu sinh từ tất cả các buồng sinh hoạt của thủy thủ và hành khách và từ các buồng, không phải là buồng máy, mà trong đó thuyền viên thường làm việc. / - Các cầu thang và hành lang được dùng làm phương tiện thoát nạn từ trạm điều khiển, từ buồng sinh hoạt và từ các buồng phục vụ phải có chiều rộng thông thủy không nhỏ hơn 700 mm, và phải có tay vịn ở một bên. Các cầu thang và hành lang với chiều rộng thông thủy1800 mm trở lên phải có tay vịn ở hai bên. Độ dốc của cầu thang nói chung phải bằng 45o nhưng không được lớn hơn 50o, trong buồng máy và các buồng nhỏ không được lớn hơn 60o. Lối đi dẫn tới cầu thang cũng phải có kích thước như đối với cầu thang. / - Chiều rộng và tính liên tục của phương tiện thoát nạn phải thỏa mãn các yêu cầu tối thiểu sau: / (1) Chiều rộng của các cầu thang và hành lang khác: 600 mm / (2) Các lỗ người chui, bao gồm cả các cửa sổ là lối thoát nạn phải tối thiểu có kích thước 600 mm x 400 mm / (3) Các nắp hầm nhỏ: 600 mm x 600 mm đối với nắp hầm hình chữ nhật; đối với nắp hầm hình tròn, đường kính: 600 mm. / Phương tiện tiếp cận tới các không gian / 1. Lối đi an toàn tới các két mũi/két đuôi, két sâu, khoang cách ly, khoang dầu hàng, khoang hàng và các không gian kín tương tự khác, nói chung phải đến trực tiếp từ boong hở và phải có ít nhất một miệng cửa vào hoặc lỗ người chui và cầu thang. / 2. Không phụ thuộc vào các quy định ở -1, lối đi an toàn tới các không gian bên dưới của các khoang được ngăn chia theo phương đứng, có thể đến từ các không gian khác, nhưng phải quan tâm vấn đề thông gió. / 3. Không phụ thuộc vào các quy định ở -1, không yêu cầu đặt cầu thang cố định đối với mỗi không gian của các tàu có tổng dung tích nhỏ hơn 300 và các không gian có chiều cao từ đáy đôi đến đỉnh của boong hở không lớn hơn 1,5 mét.",
+"khoan_dieu": "Điều 13.3.1 / QCVN 21:2010/BGTVT / Điều 33.2.1 / QCVN 21:2010/BGTVT / Điều 24.1.2 QCVN 21:2010/BGTVT",
+"ket_luan_mau": "+",
+"tra_o": "MOD_loi_ra_va_cua",
+"so_o": 6
+},
+{
+"idx": 10,
+"tt": "-",
+"noi_dung": "Cửa thoát nạn",
+"goi_y": "",
+"quy_dinh": "5 Các cửa đi trong các đường thoát nạn nói chung phải mở theo hướng thoát, trừ khi: (1) Các cửa đi của buồng riêng lẻ có thể mở vào trong các buồng để tránh va chạm vào người đi trong hành lang khi cửa mở; và (2) Các cửa đi trong giếng thoát sự cố thẳng đứng có thể mở ra ngoài giếng để có thể vừa sử dụng giếng để thoát ra và vừa sử dụng để đi vào.",
+"khoan_dieu": "Điều 13.3.1 / Chương 13 / Phần 5 / QCVN 21:2015/BGTVT",
+"ket_luan_mau": "+",
+"tra_o": "MOD_loi_ra_va_cua",
+"so_o": 6
+},
+{
+"idx": 11,
+"tt": "-",
+"noi_dung": "Khoảng cách thoát nạn",
+"goi_y": "",
+"quy_dinh": "1 Quy định chung: Trên tất cả các tầng của khu vực buồng sinh hoạt phải bố trí ít nhất hai phương tiện thoát nạn đặt cách xa nhau từ một khoang hoặc nhóm khoang giới hạn. / 2 Lối thoát từ các khoang nằm dưới boong hở thấp nhất: Phía dưới boong hở thấp nhất, các phương tiện thoát nạn chính là cầu thang và lối thoát thứ hai có thể là giếng thoát hoặc cầu thang. / 3 Lối thoát từ các khoang nằm phía trên boong hở thấp nhất: Phía trên boong hở thấp nhất, các phương tiện thoát nạn phải là cầu thang hoặc cửa đi đến boong hở hoặc một tổ hợp trên đó. / 4 Hành lang cụt: Không được bố trí hành lang cụt có chiều dài trên 7 m.",
+"khoan_dieu": "Điều 13.3.2 / Chương 13 / Phần 5 / QCVN 21:2015/BGTVT",
+"ket_luan_mau": "+",
+"tra_o": "MOD_loi_ra_va_cua",
+"so_o": 6
+},
+{
+"idx": 12,
+"tt": "2.2",
+"noi_dung": "Đặc biệt với tàu dầu",
+"goi_y": "",
+"quy_dinh": "Phương tiện tiếp cận tới các không gian / 1. Lối đi an toàn tới từng không gian trong vùng hàng hoá và két mũi phải đi trực tiếp từ boong hở và phải phù hợp với các quy định (1) hoặc (2) dưới đây, phụ thuộc vào loại không gian. (1) Các két, khoang cách ly và các vách ngăn của các két. Khoang cách ly, có chiều dài bằng và lớn hơn 35 m, phải đặt tối thiểu hai miệng cửa vào hoặc lỗ người chui và cầu thang, càng riêng biệt càng tốt; (2) Các két, khoang cách ly có chiều dài nhỏ hơn 35 m phải có ít nhất một miệng cửa vào hoặc lỗ người chui và cầu thang. / 3 Đoạn cửa vào cao nhất từ boong của lối vào có đặt cầu thang tới một két theo phương thẳng đứng phải không nhỏ hơn 2,5 m, nhưng không cần vượt quá 3,0 m, đo cả các vật cản bên trên của lối vào két, bao gồm cả cầu thang sàn nối bị chiếm chỗ tới một mặt của cầu thang thẳng đứng. Tuy nhiên, đoạn cao nhất của cầu thang thẳng đứng có thể được giảm đến 1,6 m ở dưới đỉnh boong, nếu cầu thang thẳng đứng tiếp nối vào một phương tiện cố định ngang hoặc dọc của lối đi đặt trong vùng 1,6 m và 3,0 m ở dưới đỉnh boong. / 4 Đối với các tàu dầu, cầu thang đi đến các khoang hàng và các không gian khác trong vùng hàng hoá (ngoại trừ két mũi) phải thoả mãn các yêu cầu sau đây: (1) Sử dụng cầu thang nghiêng hoặc cầu thang đứng; (2) Nếu khi quy định ở (1) nói trên, đối với các cầu thang không yêu cầu phải là cầu thang nghiêng, thì có thể sử dụng cầu thang đứng. Trong trường hợp đó, nếu khoảng cách theo phương thẳng đứng lớn hơn 6 m, thì cầu thang đứng phải có một hoặc hai sàn nối cầu thang đặt cách nhau không xa quá 6 m theo phương thẳng đứng và kéo tới một mặt của cầu thang;",
+"khoan_dieu": "Điều 24.2.3 QCVN 21:2010/BGTVT",
+"ket_luan_mau": "+",
+"tra_o": "chưa nạp: đọc cột quy định của bảng",
+"so_o": 6
+}
+]
+}

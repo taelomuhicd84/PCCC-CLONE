@@ -1,0 +1,353 @@
+{
+"ma": "B4",
+"ten": "Bảng đối chiếu Cấp nước chữa cháy ngoài nhà",
+"file_goc": "B4. Bảng đối chiếu  Cấp nước chữa cháy ngoài nhà.docx",
+"so_dong": 31,
+"nguon": "docx",
+"dau_bang": [
+"BẢNG ĐỐI CHIẾU HỆ THỐNG CẤP NƯỚC CHỮA CHÁY NGOÀI NHÀ"
+],
+"dong": [
+{
+"idx": 0,
+"tt": "1",
+"noi_dung": "Đối tượng trang bị",
+"goi_y": "",
+"quy_dinh": "Việc trang bị cấp nước chữa cháy ngoài nhà phải được thực hiện khi đầu tư xây dựng hạ tầng kỹ thuật của các khu dân cư, đô thị, khu công nghiệp, khu chế xuất, khu công nghệ cao, cụm công nghiệp và các khu có đặc điểm tương tự. / Đối với các nhà khi nằm trong phạm vi phục vụ của các nguồn cấp nước chữa cháy ngoài nhà (bồn, bể, trụ nước chữa cháy ngoài nhà, hồ nước chữa cháy tự nhiên và nhân tạo và các nguồn nước tương tự khác) thì không yêu cầu bắt buộc phải trang bị cấp nước chữa cháy ngoài nhà. / CHÚ THÍCH: Việc trang bị cấp nước chữa cháy ngoài nhà có thể tham khảo QCVN 10:2025/BCA (tra điều tương ứng)",
+"khoan_dieu": "Điều 5.1.1.1 Sửa đổi 1:2023 QCVN 06:2023",
+"ket_luan_mau": "",
+"tra_o": "chưa nạp: đọc cột quy định của bảng",
+"so_o": 6
+},
+{
+"idx": 1,
+"tt": "2",
+"noi_dung": "Số đám cháy tính toán đồng thời",
+"goi_y": "Lưu ý: Diện tích của cơ sở để tính toán cho hệ thống cấp nước chữa cháy ngoài nhà là diện tích khu đất của cơ sở (không bao gồm khu đất rừng, khu đất công viên cây xanh, khu đất trồng cây nông nghiệp hay các khu đất tương tự mà trên đó không có công trình xây dựng).",
+"quy_dinh": "5.1.3.1 Số đám cháy tính toán đồng thời cho một cơ sở công nghiệp hoặc nông nghiệp phải được lấy theo diện tích của cơ sở đó, cụ thể như sau: / - Nếu diện tích đến 150 ha lấy là 1 đám cháy; / - Nếu diện tích trên 150 ha lấy là 2 đám cháy. / Số đám cháy tính toán đồng thời tại một khu vực kho dạng hở hoặc kín chứa vật liệu từ gỗ, lấy như sau: diện tích kho đến 50 ha lấy là 1 đám cháy; diện tích trên 50 ha lấy là 2 đám cháy. / CHÚ THÍCH: Diện tích của cơ sở để tính toán cho hệ thống cấp nước chữa cháy ngoài nhà là diện tích khu đất của cơ sở (không bao gồm khu đất rừng, khu đất công viên cây xanh, khu đất trồng cây nông nghiệp hay các khu đất tương tự mà trên đó không có công trình xây dựng). / 5.1.3.2 Khi kết hợp đường ống chữa cháy của khu dân cư và cơ sở công nghiệp nằm ngoài khu dân cư thì số đám cháy tính toán đồng thời tính như sau: / - Khi diện tích của cơ sở công nghiệp đến 150 ha và dân số của khu dân cư đến 10 000 người, lấy là 1 đám cháy (lấy lưu lượng nước theo bên lớn hơn); tương tự với số dân từ 10 000 đến 25 000 người lấy là 2 đám cháy (1 đám cháy cho cơ sở công nghiệp và 1 đám cháy cho khu dân cư); / - Khi diện tích của cơ sở công nghiệp trên 150 ha và số dân đến 25 000 người, lấy là 2 đám cháy (2 đám cháy tính cho khu vực cơ sở công nghiệp hoặc 2 đám cháy tính cho khu dân cư, lấy theo lưu lượng nước yêu cầu của bên lớn hơn); / - Khi số dân trong khu dân cư lớn hơn 25 000 người, lấy là 2 đám cháy, trong đó lưu lượng nước của 1 đám cháy được xác định bằng tổng của lưu lượng yêu cầu lớn hơn (tính cho cơ sở công nghiệp hoặc khu dân cư) và 50 % lưu lượng yêu cầu nhỏ hơn (tính cho cơ sở công nghiệp hoặc khu dân cư).",
+"khoan_dieu": "Điều 5.1.3.1, 5.1.3.2 QCVN 06:2022/BXD",
+"ket_luan_mau": "",
+"tra_o": "MOD_loi_ra_va_cua",
+"so_o": 6
+},
+{
+"idx": 2,
+"tt": "3",
+"noi_dung": "Lưu lượng cấp nước chữa cháy ngoài nhà",
+"goi_y": "Lưu ý: / - Lưu lượng nước cho chữa cháy ngoài nhà cho nhà được ngăn chia bằng tường ngăn cháy thì lấy theo phần của nhà, nơi yêu cầu lưu lượng lớn nhất. / - Lưu lượng nước cho chữa cháy ngoài nhà cho nhà được ngăn cách bằng vách ngăn cháy / được xác định theo khối tích chung của nhà và theo hạng cao nhất của hạng nguy hiểm cháy và cháy nổ.",
+"quy_dinh": "",
+"khoan_dieu": "",
+"ket_luan_mau": "",
+"tra_o": "",
+"so_o": 6
+},
+{
+"idx": 3,
+"tt": "-",
+"noi_dung": "Khu dân cư",
+"goi_y": "Áp dụng đối với công trình hạ tầng kỹ thuật của đô thị, khu nhà ở. Lưu lượng nước cho chữa cháy ngoài nhà trong khu phải không nhỏ hơn lưu lượng nước chữa cháy cho các nhà F1 đến F4 theo Bảng 8.",
+"quy_dinh": "Bảng 7 – Lưu lượng nước từ mạng đường ống cho chữa cháy ngoài nhà / trong các khu dân cư / Dân số,\nx 1 000 người / Số đám cháy đồng thời / Lưu lượng nước cho chữa cháy ngoài nhà cho 1 đám cháy, L/s / Xây dựng nhà không quá 2 tầng không phụ thuộc bậc chịu lửa / Xây dựng nhà từ 3 tầng trở lên không phụ thuộc bậc chịu lửa / (1) / (2) / (3) / (4) / ≤ 1 / 1 / 5 / 10 / > 1 và ≤ 5 / 1 / 10 / 10 / > 5 và ≤ 10 / 1 / 10 / 15 / > 10 và ≤ 25 / 2 / 10 / 15 / > 25 và ≤ 50 / 2 / 20 / 25 / > 50 và ≤ 100 / 2 / 25 / 35 / > 100 và ≤ 200 / 3 / 40 / 40 / > 200 và ≤ 300 / 3 / 55 / > 300 và ≤ 400 / 3 / 70 / > 400 và ≤ 500 / 3 / 80 / > 500 và ≤ 600 / 3 / 85 / > 600 và ≤ 700 / 3 / 90 / > 700 và ≤ 800 / 3 / 95 / > 800 và ≤ 1 000 / 3 / 100 / > 1 000 / 5 / 110 / CHÚ THÍCH 1: Lưu lượng nước cho chữa cháy ngoài nhà trong khu dân cư phải không nhỏ hơn lưu lượng nước chữa cháy cho nhà theo Bảng 8. / CHÚ THÍCH 2: Khi thực hiện cấp nước theo vùng, lưu lượng nước cho chữa cháy ngoài nhà và số đám cháy đồng thời theo từng vùng được lấy phụ thuộc vào số dân sống trong vùng. / CHÚ THÍCH 3: Đối với hệ thống các cụm đường ống nhóm (chung) số đám cháy đồng thời lấy phụ thuộc vào tổng số dân trong các cụm có kết nối với hệ thống đường ống. Lưu lượng nước để hồi phục lượng nước chữa cháy theo cụm đường ống nhóm được xác định bằng tổng lượng nước cho khu dân cư (tương ứng với số đám cháy đồng thời) tối đa để chữa cháy tuân theo quy định tại 5.1.3.3 và 5.1.3.4. / CHÚ THÍCH 4: Số đám cháy tính toán đồng thời trong khu dân cư phải bao gồm cả các đám cháy của nhà sản xuất và nhà kho trong khu dân cư đó. Khi đó lưu lượng nước tính toán bao gồm cả lưu lượng nước để chữa cháy tương ứng cho các nhà đó, nhưng không nhỏ hơn giá trị trong Bảng 7.",
+"khoan_dieu": "Điều 5.1.2.1, Bảng 7, 8 Sửa đổi 1:2023 QCVN 06:2022/BXD",
+"ket_luan_mau": "",
+"tra_o": "chưa nạp: đọc cột quy định của bảng",
+"so_o": 6
+},
+{
+"idx": 4,
+"tt": "-",
+"noi_dung": "Nhà thuộc nhóm F1, F2, F3, F4",
+"goi_y": "",
+"quy_dinh": "Bảng 8 – Lưu lượng nước cho chữa cháy ngoài nhà của nhà thuộc nhóm nguy hiểm cháy theo công năng F1, F2, F3, F4 / Loại nhà / Lưu lượng nước cho chữa cháy ngoài nhà không phụ thuộc bậc chịu lửa tính cho 1 đám cháy, L/s, theo khối tích nhà, 1 000 m3 / ≤ 1 / > 1 và ≤ 5 / > 5 và ≤ 25 / > 25 và ≤ 50 / > 50 / (1) / (2) / (3) / (4) / (5) / (6) / 1. Nhà nhóm F1.3, F1.4 có một hoặc nhiều đơn nguyên với số tầng: / ≤ 3 / 10 1) / 10 1) / 15 / 15 / 20 / > 3 và ≤ 12 / 10 / 15 / 15 / 20 / 20 / > 12 và ≤ 16 / – / 20 / 20 / 25 / 25 / > 16 / – / 20 / 25 / 25 / 30 / 2. Nhà nhóm F1.1, F1.2, F2, F3 và F4 với số tầng: / ≤ 3 / 10 1) / 10 1) / 15 / 20 / 25 / > 3 và ≤ 12 / 10 / 15 / 20 / 25 / 30 / > 12 và ≤ 16 / – / 20 / 25 / 30 / 35 / > 16 / – / 25 / 30 / 30 / 35 / 1) Đối với nhà thuộc khu vực làng, xã (nông thôn) lấy lưu lượng nước cho 1 đám cháy là 5 L/s. / CHÚ THÍCH 1: Nếu hiệu suất của mạng đường ống ngoài nhà không đủ để truyền lưu lượng nước tính toán cho chữa cháy hoặc khi liên kết ống vào với mạng đường ống cụt thì cần phải xem xét lắp đặt bồn, bể, với thể tích phải bảo đảm lưu lượng nước cho chữa cháy ngoài nhà trong 3 giờ. / CHÚ THÍCH 2: Trong khu dân cư không có đường ống nước chữa cháy thì phải có bồn, bể nước bảo đảm chữa cháy trong 3 giờ.",
+"khoan_dieu": "Điều 5.1.2.2, Bảng 8 QCVN 06:2022/BXD",
+"ket_luan_mau": "",
+"tra_o": "chưa nạp: đọc cột quy định của bảng",
+"so_o": 6
+},
+{
+"idx": 5,
+"tt": "-",
+"noi_dung": "Công trình công nghiệp",
+"goi_y": "Lưu ý: Các nhà bậc chịu lửa III, IV, V có chiều rộng trên 60 m bắt buộc phải thiết kế lỗ mở trên mái (các lỗ mở để thông gió đặt trên kết cấu mái của nhà (nóc gió) có diện tích không nhỏ hơn 2,5 % diện tích xây dựng của nhà đó)",
+"quy_dinh": "Lưu lượng nước cho chữa cháy ngoài nhà cho nhà có nhóm nguy hiểm cháy theo công năng F5, tính cho 1 đám cháy, lấy theo nhà có yêu cầu giá trị lớn nhất như Bảng 9 và Bảng 10. / CHÚ THÍCH 1: Khi tính toán lưu lượng nước chữa cháy cho 2 đám cháy thì lấy giá trị bằng cho 2 nhà có yêu cầu lưu lượng lớn nhất. / CHÚ THÍCH 2: Lưu lượng nước cho chữa cháy ngoài nhà cho các nhà phụ trợ nằm độc lập lấy theo Bảng 8 giống như cho nhà có nhóm nguy hiểm cháy theo công năng F2, F3, F4, còn nếu nằm trong các nhà sản xuất thì tính theo khối tích chung của nhà sản xuất và lấy theo Bảng 9. / CHÚ THÍCH 3: Lưu lượng nước cho chữa cháy ngoài nhà cho nhà phục vụ nông nghiệp và phát triển nông thôn có bậc chịu lửa I, II với khối tích không lớn hơn 5 000 m3 hạng nguy hiểm cháy và cháy nổ D, E lấy bằng 5 L/s. / CHÚ THÍCH 4: Lưu lượng nước cho chữa cháy ngoài nhà cho trạm truyền thanh, truyền hình không phụ thuộc khối tích của trạm và số lượng người sống trong khu vực đặt các trạm này, phải lấy không nhỏ hơn 15 L/s, ngay cả khi Bảng 9 và Bảng 10 quy định lưu lượng thấp hơn giá trị này. / CHÚ THÍCH 5: Lưu lượng nước cho chữa cháy ngoài nhà cho nhà có khối tích lớn hơn trong Bảng 9 và Bảng 10 phải tuân theo các yêu cầu đặc biệt. / CHÚ THÍCH 6: Đối với nhà có bậc chịu lửa II làm bằng kết cấu gỗ thì lưu lượng nước cho chữa cháy ngoài nhà lấy lớn hơn 5 L/s so với Bảng 9 và Bảng 10. / CHÚ THÍCH 7: Lưu lượng nước cho chữa cháy ngoài nhà cho nhà và khu vực kho lạnh bảo quản thực phẩm thì lấy giống nhà có hạng nguy hiểm cháy C. / CHÚ THÍCH 8: Lưu lượng nước cho chữa cháy ngoài nhà cho cơ sở lưu trữ công-ten-nơ có hàng hóa phụ thuộc vào số lượng công-ten-nơ, được lấy như sau: / − Từ 30 đến 50 công-ten-nơ: lấy 15 L/s; / − Từ 51 đến 100 công-ten-nơ: lấy 20 L/s; / − Từ 101 đến 300 công-ten-nơ: lấy 25 L/s; / − Từ 301 đến 1 000 công-ten-nơ: lấy 40 L/s; / − Từ 1 001 đến 1 500 công-ten-nơ: lấy 60 L/s; / − Từ 1 501 đến 2 000 công-ten-nơ: lấy 80 L/s; / − Nhiều hơn 2 000 công-ten-nơ: lấy 100 L/s; / Bảng 9 – Lưu lượng nước cho chữa cháy ngoài nhà / cho nhà nhóm F5 / Bậc chịu lửa của nhà / Cấp nguy hiểm cháy kết cấu của nhà / Hạng nguy hiểm cháy và cháy nổ của nhà / Lưu lượng nước cho chữa cháy ngoài nhà đối với nhà có lỗ mở trên mái không phụ thuộc vào chiều rộng của nhà, cũng như nhà không có lỗ mở trên mái có chiều rộng không lớn hơn 60 m, tính cho 1 đám cháy, L/s, theo khối tích nhà, 1 000 m3 / ≤ 3 / > 3 và\n≤ 5 / > 5 và\n≤ 20 / > 20 và \n≤ 50 / > 50 và \n≤ 200 / > 200 và \n≤ 400 / > 400 và \n≤ 600 / > 600 / (1) / (2) / (3) / (4) / (5) / (6) / (7) / (8) / (9) / (10) / (11) / I và II / S0, S1 / D, E / 10 / 10 / 10 / 10 / 15 / 20 / 25 / 35 / I và II / S0, S1 / A, B, C / 10 / 10 / 15 / 20 / 30 / 35 / 40 / 50 / III / S0, S1 / D, E / 10 / 10 / 15 / 25 / 35 / 40 / 45 / - / III / S0 / A, B, C / 10 / 15 / 20 / 30 / 45 / 60 / 75 / - / IV / S0, S1 / D, E / 10 / 15 / 20 / 30 / 40 / 50 / 60 / - / IV / S0, S1 / A, B, C / 15 / 20 / 25 / 40 / 60 / 80 / 100 / - / IV / S2, S3 / E / 10 / 15 / 20 / 30 / 45 / - / - / - / IV / S2, S3 / A, B, C / 15 / 20 / 25 / 40 / 65 / - / - / - / V / - / E / 10 / 15 / 20 / 30 / 55 / - / - / - / V / - / C / 15 / 20 / 25 / 40 / 70 / - / - / - / Bảng 10 – Lưu lượng nước cho chữa cháy ngoài nhà\ncho nhà nhóm F5 không có lỗ mở trên mái có chiều rộng trên 60 m / Bậc chịu lửa của nhà / Cấp nguy hiểm cháy kết cấu của nhà / Hạng nguy hiểm cháy và cháy nổ của nhà / Lưu lượng nước chữa cháy ngoài nhà đối với nhà không có lỗ mở trên mái có chiều rộng từ 60 m trở lên, tính cho 1 đám cháy, L/s, theo khối tích nhà, 1 000 m3 / ≤ 50 / > 50 và\n≤ 100 / > 100 và \n≤ 200 / > 200 và \n≤ 300 / > 300 và \n≤ 400 / > 400 và \n≤ 500 / > 500 và \n≤ 600 / > 600 và \n≤ 700 / > 700 / I và II / S0, S1 / A, B, C / 20 / 30 / 40 / 50 / 60 / 70 / 80 / 90 / 100 / I và II / S0 / D, E / 10 / 15 / 20 / 25 / 30 / 35 / 40 / 45 / 50 / III / S0, S1 / A, B, C / 40 / 50 / 60 / 60 / 70 / 80 / 90 / 100 / 110 / III / S0, S1 / D, E / 20 / 35 / 40 / 40 / 45 / 45 / 50 / 50 / 60 / IV / S0, S1 / A, B, C / 50 / 60 / 65 / 70 / 80 / 90 / – / – / – / IV / S0, S1 / D, E / 35 / 45 / 55 / 60 / 65 / 70 / 75 / 80 / 90 / IV / S2, S3 / E / 40 / 50 / 60 / – / – / – / – / – / – / CHÚ THÍCH: Lỗ mở trên mái là các lỗ mở để thông gió hoặc lấy sáng đặt trên kết cấu mái của nhà (nóc gió (cửa trời); lỗ thường xuyên mở; lỗ mở khi có cháy; ô kính; tấm lợp lấy sáng, hoặc các lỗ mở tương tự) có diện tích không nhỏ hơn 2,5 % diện tích xây dựng của nhà đó.",
+"khoan_dieu": "Điều 5.1.2.3, Bảng 9, 10 Sửa đổi 1:2023 QCVN 06:2022/BXD",
+"ket_luan_mau": "",
+"tra_o": "chưa nạp: đọc cột quy định của bảng",
+"so_o": 6
+},
+{
+"idx": 6,
+"tt": "-",
+"noi_dung": "Gara ô-tô",
+"goi_y": "",
+"quy_dinh": "Lượng nước tiêu thụ tính toán cho việc chữa cháy bên ngoài của các tòa nhà dùng làm gara ô-tô trên mặt đất dạng kín và dạng hở lấy theo Bảng 7. / Lượng nước tiêu thụ tính toán cho việc chữa cháy bên ngoài của các dạng gara ô-tô khác lấy như sau: / - Gara ô-tô ngầm 2 tầng trở lên: 20 l/s. / - Các gara ô-tô dạng ngăn có lối ra ngoài trời trực tiếp từ từng ngăn với số lượng các ngăn từ 50 đến 200: 5 l/s, lớn hơn 200: 10 l/s. / - Gara ô-tô cơ khí: 10 l/s. / - Bãi đỗ xe hở với số lượng xe đến 200: 5 l/s, lớn hơn 200: 10 l/s. / Bảng 7. Lưu lượng nước cho chữa cháy ngoài nhà đối với gara ô-tô trên mặt đất dạng kín hoặc hở / Bậc chịu lửa của nhà / Cấp nguy hiểm cháy kết cấu của nhà / Lượng nước tiêu thụ cho việc chữa cháy bên ngoài gara ô-tô cho một đám cháy, l/s, với khối tích của nhà (khoang cháy), nghìn m3 / Tới / 5 / Cao hơn / 5 đến 20 / Cao hơn / 20 đến 50 / Cao hơn / 50 / I, II, III / S0, S1 / 10 / 15 / 20 / 30 / IV / S0, S1 / 10 / 15 / 20 / - / S2, S3 / 20 / 25 / - / - / V / Không quy định / 20 / - / - / -",
+"khoan_dieu": "Điều 2.3.2.5 QCVN 13:2018/BXD",
+"ket_luan_mau": "",
+"tra_o": "MOD_so_luong_loi_ra",
+"so_o": 6
+},
+{
+"idx": 7,
+"tt": "-",
+"noi_dung": "Trường hợp cấp nước cho nhiều mục đích sử dụng",
+"goi_y": "",
+"quy_dinh": "Lưu lượng nước chữa cháy phải được bảo đảm ngay cả khi lưu lượng cho các nhu cầu khác là lớn nhất, cụ thể phải tính đến: / - Nước sinh hoạt; / - Hộ kinh doanh cá thể; / - Cơ sở sản xuất công nghiệp và nông nghiệp, nơi mà yêu cầu chất lượng nước uống hoặc mục đích kinh tế không phù hợp để làm đường ống riêng; / - Trạm xử lý nước, mạng đường ống và kênh dẫn và tương tự; / - Trong trường hợp điều kiện công nghệ cho phép, có thể sử dụng một phần nước sản xuất để chữa cháy, khi đó cần kết nối trụ nước trên mạng đường ống sản xuất với trụ nước trên mạng đường ống chữa cháy bảo đảm lưu lượng nước chữa cháy cần thiết.",
+"khoan_dieu": "Điều 5.1.2.6 QCVN 06:2022/BXD",
+"ket_luan_mau": "",
+"tra_o": "chưa nạp: đọc cột quy định của bảng",
+"so_o": 6
+},
+{
+"idx": 8,
+"tt": "4",
+"noi_dung": "Thời gian chữa cháy",
+"goi_y": "",
+"quy_dinh": "5Thời gian chữa cháy phải lấy là 3 giờ, ngoại trừ những quy định riêng nêu dưới đây: / - Đối với nhà bậc chịu lửa I, II với kết cấu và lớp cách nhiệt làm từ vật liệu không cháy có các khu vực thuộc hạng nguy hiểm cháy nổ D và E lấy là 2 giờ; / - Đối với công trình nhà trẻ, trường mẫu giáo, mầm non, nhà thuộc nhóm nguy hiểm cháy theo công năng F4.1, F4.3 ở khu vực nông thôn, có bậc chịu lửa I, II với kết cấu và lớp cách nhiệt làm từ vật liệu không cháy cao không quá 3 tầng, diện tích xây dựng đến 500 m2 lấy là 1 giờ; / - Đối với công trình nhà trẻ, trường mẫu giáo, mầm non, nhà thuộc nhóm nguy hiểm cháy theo công năng F4.1, F4.3 ở khu vực nông thôn, có bậc chịu lửa I, II với kết cấu và lớp cách nhiệt làm từ vật liệu không cháy cao không quá 3 tầng, diện tích xây dựng đến 500 m2 thì cho phép sử dụng hệ thống họng nước chữa cháy bên trong để thay thế cho hệ thống cấp nước chữa cháy ngoài nhà; / - Đối với kho dạng hở chứa vật liệu từ gỗ - không nhỏ hơn 5 giờ.",
+"khoan_dieu": "Điều 5.1.3.3 QCVN 06:2022/BXD",
+"ket_luan_mau": "",
+"tra_o": "chưa nạp: đọc cột quy định của bảng",
+"so_o": 6
+},
+{
+"idx": 9,
+"tt": "5",
+"noi_dung": "Thời gian phục hồi nước chữa cháy",
+"goi_y": "",
+"quy_dinh": "Thời gian lớn nhất để phục hồi nước dự trữ chữa cháy không lớn hơn: / 24 giờ - đối với khu dân cư trên 5 000 người hoặc cơ sở công nghiệp có các nhà thuộc hạng nguy hiểm cháy nổ A, B, C; / 36 giờ - đối với cơ sở công nghiệp có các nhà thuộc hạng nguy hiểm cháy nổ D và E; / 72 giờ - đối với các khu dân cư đến 5 000 người hoặc cơ sở nông nghiệp. / CHÚ THÍCH 1: Đối với cơ sở công nghiệp có yêu cầu về lưu lượng nước cho chữa cháy ngoài nhà đến 20 L/s thì cho phép tăng thời gian phục hồi nước chữa cháy lên đến: / 48 giờ - đối với các nhà thuộc hạng nguy hiểm cháy D và E; / 36 giờ - đối với các nhà thuộc hạng nguy hiểm cháy C. / CHÚ THÍCH 2: Khi không thể bảo đảm phục hồi lượng nước dự trữ cho chữa cháy theo thời gian quy định thì cần cung cấp thêm lượng nước bổ sung dự trữ cho chữa cháy ΔW, tính theo công thức: / trong đó: / ΔW là lượng nước dự trữ bổ sung, tính bằng mét khối (m3); / W là lượng nước dự trữ cho chữa cháy, tính bằng mét khối (m3); / K là tỷ số giữa thời gian phục hồi lượng nước chữa cháy theo thực tế và thời gian phục hồi lượng nước chữa cháy theo yêu cầu quy định tại 5.1.3.4.”.",
+"khoan_dieu": "Điều 5.1.3.4 Sửa đổi 1:2023 QCVN 06:2022/BXD",
+"ket_luan_mau": "",
+"tra_o": "chưa nạp: đọc cột quy định của bảng",
+"so_o": 6
+},
+{
+"idx": 10,
+"tt": "6",
+"noi_dung": "Yêu cầu đối với mạng đường ống",
+"goi_y": "",
+"quy_dinh": "",
+"khoan_dieu": "",
+"ket_luan_mau": "",
+"tra_o": "",
+"so_o": 6
+},
+{
+"idx": 11,
+"tt": "-",
+"noi_dung": "Yêu cầu mạng vòng",
+"goi_y": "",
+"quy_dinh": "Mạng đường ống dẫn nước chữa cháy phải là mạch vòng. Cho phép làm các đường ống cụt khi: cấp nước cho chữa cháy hoặc sinh hoạt - chữa cháy khi chiều dài đường ống không lớn hơn 200 m mà không phụ thuộc vào lưu lượng nước chữa cháy yêu cầu. / Không cho phép nối vòng mạng đường ống ngoài nhà bằng mạng đường ống bên trong nhà và công trình. / Ở các khu dân cư đến 5 000 người và yêu cầu về lưu lượng nước cho chữa cháy ngoài nhà đến 10 L/s hoặc số họng nước chữa cháy trong nhà cho mỗi nhà đến 12 họng thì cho phép dùng mạng cụt chiều dài trên 200 m nếu có xây dựng bồn bể, tháp nước áp lực hoặc bể điều tiết dành cho mạng cụt, trong đó có chứa toàn bộ lượng nước cho chữa cháy.",
+"khoan_dieu": "Điều 5.1.4.2 Sửa đổi 1:2023 QCVN 06:2022/BXD",
+"ket_luan_mau": "",
+"tra_o": "dinh-nghia",
+"so_o": 6
+},
+{
+"idx": 12,
+"tt": "-",
+"noi_dung": "Bố trí van khóa",
+"goi_y": "",
+"quy_dinh": "",
+"khoan_dieu": "",
+"ket_luan_mau": "",
+"tra_o": "",
+"so_o": 6
+},
+{
+"idx": 13,
+"tt": "",
+"noi_dung": "Van chuyển đổi cho 02 đường cấp",
+"goi_y": "",
+"quy_dinh": "Khi lắp đặt từ 2 đường ống cấp trở lên phải lắp đặt van chuyển đổi giữa chúng khi đó trong trường hợp ngắt 1 đường cấp hoặc 1 phần của nó thì việc chữa cháy vẫn bảo đảm 100 %.",
+"khoan_dieu": "Điều 5.1.4.1 QCVN 06:2022/BXD",
+"ket_luan_mau": "",
+"tra_o": "dinh-nghia",
+"so_o": 6
+},
+{
+"idx": 14,
+"tt": "",
+"noi_dung": "Van ngăn chia",
+"goi_y": "",
+"quy_dinh": "Đường ống phải được phân chia thành các đoạn bằng các van khóa bảo đảm để khi sửa chữa sẽ không ngắt nhiều hơn 05 trụ cấp nước chữa cháy",
+"khoan_dieu": "Điều 5.1.4.3 QCVN 06:2022/BXD",
+"ket_luan_mau": "",
+"tra_o": "dinh-nghia",
+"so_o": 6
+},
+{
+"idx": 15,
+"tt": "",
+"noi_dung": "Yêu cầu kỹ thuật với van",
+"goi_y": "",
+"quy_dinh": "Các van trên các đường ống với mọi đường kính khi điều khiển từ xa hoặc tự động phải là loại van điều khiển bằng điện. / Cho phép sử dụng van khí nén, thủy lực hoặc điện từ. / Khi không điều khiển từ xa hoặc tự động thì van khóa đường kính đến 400 mm có thể là loại khóa bằng tay, với đường kính lớn hơn 400 mm là khóa điện hoặc thủy lực; trong các trường hợp luận chứng riêng cho phép lắp van đường kính trên 400 mm khóa bằng tay. / Trong mọi trường hợp đều phải cho phép mở và đóng được bằng tay.",
+"khoan_dieu": "Điều 5.1.4.4 QCVN 06:2022/BXD",
+"ket_luan_mau": "",
+"tra_o": "dinh-nghia",
+"so_o": 6
+},
+{
+"idx": 16,
+"tt": "-",
+"noi_dung": "Đường kính ống",
+"goi_y": "",
+"quy_dinh": "Đường kính của đường ống cấp và mạng sau đường ống cấp phải được tính toán trên cơ sở sau: / - Theo yếu tố kỹ thuật, kinh tế; / - Các điều kiện làm việc khi ngắt sự cố từng đoạn riêng. / Đường kính ống dẫn nước chữa cháy ngoài nhà cho khu dân cư và cơ sở sản xuất không được nhỏ hơn 100 mm, đối với khu vực nông thôn – không được nhỏ hơn 75 mm.",
+"khoan_dieu": "Điều 5.1.4.5 QCVN 06:2020/BXD",
+"ket_luan_mau": "",
+"tra_o": "SKILL_ngan_chay",
+"so_o": 6
+},
+{
+"idx": 17,
+"tt": "-",
+"noi_dung": "Áp suất trong đường ống",
+"goi_y": "",
+"quy_dinh": "Hệ thống đường ống nước chữa cháy thường có áp suất thấp, khi duy trì áp suất cao thì phải tính toán bảo đảm áp suất làm việc của hệ thống đường ống. Đối với đường ống áp suất cao, các máy bơm chữa cháy phải bảo đảm hoạt động không trễ hơn 5 phút sau khi có tín hiệu báo cháy. / Áp suất tự do tối thiểu trong đường ống nước chữa cháy áp suất thấp đo ở vị trí cao độ bằng với mặt đất) khi chữa cháy phải không nhỏ hơn 10 m cột nước. Áp suất tự do tối thiểu trong mạng đường ống chữa cháy áp suất cao phải bảo đảm độ cao tia nước đặc không nhỏ hơn 10 m khi lưu lượng yêu cầu chữa cháy tối đa và lăng chữa cháy ở điểm cao nhất của tòa nhà. Áp suất tự do trong mạng đường ống kết hợp sinh hoạt hoặc sản xuất không nhỏ hơn 10 m cột nước và không lớn hơn 60 m cột nước.",
+"khoan_dieu": "Điều 5.1.1.3, 5.1.1.4 Sửa đổi 1:2023 QCVN 06:2022/BXD",
+"ket_luan_mau": "",
+"tra_o": "chưa nạp: đọc cột quy định của bảng",
+"so_o": 6
+},
+{
+"idx": 18,
+"tt": "7",
+"noi_dung": "Trụ nước chữa cháy",
+"goi_y": "",
+"quy_dinh": "",
+"khoan_dieu": "",
+"ket_luan_mau": "",
+"tra_o": "",
+"so_o": 6
+},
+{
+"idx": 19,
+"tt": "-",
+"noi_dung": "Khoảng cách bố trí đến đường và tường nhà",
+"goi_y": "",
+"quy_dinh": "Các trụ cấp nước chữa cháy phải được bố trí ở khoảng cách không lớn hơn 2,5 m đến mép đường, nhưng không gần hơn 1 m đến tường ngôi nhà; cho phép bố trí trụ nước (trụ ngầm) nằm ở đường giao thông.",
+"khoan_dieu": "Điều 5.1.4.6 QCVN 06:2022/BXD",
+"ket_luan_mau": "",
+"tra_o": "SKILL_ngan_chay",
+"so_o": 6
+},
+{
+"idx": 20,
+"tt": "-",
+"noi_dung": "Bán kính phục vụ",
+"goi_y": "",
+"quy_dinh": "Các trụ cấp nước chữa cháy phải được bố trí trên mạng đường ống sao cho tối thiểu 02 trụ khi lưu lượng yêu cầu từ 15 L/s trở lên, tối thiểu 01 trụ khi lưu lượng yêu cầu thấp hơn 15 L/s phục vụ đến mọi điểm của nhà xét theo phương ngang và bán kính phục vụ của mỗi trụ nước không lớn 400 m tính theo đường di chuyển của vòi chữa cháy đi bên ngoài nhà. / CHÚ THÍCH: Trên mạng đường ống cho các điểm dân cư đến 500 người cho phép thay thế các trụ cấp nước chữa cháy loại 3 cửa bằng đoạn đường ống đứng DN 80 mm có lắp họng nước.",
+"khoan_dieu": "Điều 5.1.4.7 Sửa đổi 1:2023 QCVN 06:2022/BXD",
+"ket_luan_mau": "",
+"tra_o": "dinh-nghia",
+"so_o": 6
+},
+{
+"idx": 21,
+"tt": "-",
+"noi_dung": "Trụ kết nối hệ thống chữa cháy trong nhà",
+"goi_y": "",
+"quy_dinh": "Các công trình thuộc diện trang bị hệ thống họng nước chữa cháy cũng như hệ thống chữa cháy sprinkler tự động phải có đường ống kết nối từ trạm bơm cấp nước chữa cháy của công trình đến tối thiểu 01 trụ cấp nước chữa cháy loại 03 cửa hoặc loại 02 cửa DN65 đặt ở vị trí mặt bên ngoài tường công trình về phía có đường giao thông.",
+"khoan_dieu": "Điều 5.1.4.8 QCVN 06:2022/BXD",
+"ket_luan_mau": "",
+"tra_o": "dinh-nghia",
+"so_o": 6
+},
+{
+"idx": 22,
+"tt": "-",
+"noi_dung": "Lắp đặt trụ nước chữa cháy",
+"goi_y": "",
+"quy_dinh": "Khi lắp trụ nổi trên vỉa hè, họng lớn của trụ phải quay ra phía lòng đường, khoảng cách từ mặt đất đến đỉnh trụ nước là 700mm",
+"khoan_dieu": "Điều A4, Phụ lục A TCVN 6379-1998",
+"ket_luan_mau": "",
+"tra_o": "bảng hệ thống B34–B50",
+"so_o": 6
+},
+{
+"idx": 23,
+"tt": "-",
+"noi_dung": "Loại trụ",
+"goi_y": "",
+"quy_dinh": "Phù hợp theo TCVN 6379:1998",
+"khoan_dieu": "TCVN 6379:1998",
+"ket_luan_mau": "",
+"tra_o": "bảng hệ thống B34–B50",
+"so_o": 6
+},
+{
+"idx": 24,
+"tt": "8",
+"noi_dung": "Bồn, bể trữ nước chữa cháy ngoài nhà",
+"goi_y": "",
+"quy_dinh": "",
+"khoan_dieu": "",
+"ket_luan_mau": "",
+"tra_o": "",
+"so_o": 6
+},
+{
+"idx": 25,
+"tt": "-",
+"noi_dung": "Yêu cầu đối với hồ ao cho xe chữa cháy",
+"goi_y": "",
+"quy_dinh": "Các hồ ao để cho xe chữa cháy hút nước phải có lối tiếp cận và có bãi lấy nước với bề mặt bảo đảm tải trọng dành cho xe chữa cháy.",
+"khoan_dieu": "Điều 5.1.5.4 Sửa đổi 1:2023 QCVN 06:2022/BXD",
+"ket_luan_mau": "",
+"tra_o": "chưa nạp: đọc cột quy định của bảng",
+"so_o": 6
+},
+{
+"idx": 26,
+"tt": "",
+"noi_dung": "",
+"goi_y": "",
+"quy_dinh": "Khi không thể hút nước chữa cháy trực tiếp từ bồn, bể hoặc hồ bằng xe máy bơm hoặc máy bơm di động, thì phải cung cấp các hố thu với thể tích không nhỏ hơn 3 m3. Đường kính ống kết nối bồn, bể hoặc hồ với các hố thu lấy theo các điều kiện tính toán lưu lượng nước cho chữa cháy ngoài nhà, nhưng không nhỏ hơn 200 mm. Trên đoạn ống kết nối phải có hộp van để khóa sự lưu thông nước, việc đóng mở van phải thực hiện được từ bên ngoài hộp. Đầu đoạn ống kết nối ở phía hồ nhân tạo phải có lưới chắn.",
+"khoan_dieu": "Điều 5.1.5.10 Sửa đổi 1:2023 QCVN 06:2022/BXD",
+"ket_luan_mau": "",
+"tra_o": "chưa nạp: đọc cột quy định của bảng",
+"so_o": 6
+},
+{
+"idx": 27,
+"tt": "-",
+"noi_dung": "Bán kính bảo vệ",
+"goi_y": "",
+"quy_dinh": "Bồn, bể, trụ nước chữa cháy ngoài nhà, hồ nước chữa cháy tự nhiên và nhân tạo phải đặt tại vị trí bảo đảm bán kính phục vụ: / - Khi có máy bơm của xe chữa cháy - là 400 m; / - Khi có máy bơm di động - đến 300 m trong phạm vi hoạt động kỹ thuật của máy bơm; / - Để tăng bán kính phục vụ, cho phép lắp đặt các đường ống cụt có chiều dài không quá 200 m từ bồn, bể và hồ nhân tạo đến các bể trung gian (hố thu nước) bảo đảm theo quy định tại 5.1.5.8.”.",
+"khoan_dieu": "Điều 5.1.5.9 Sửa đổi 1:2023 QCVN 06:2022/BXD",
+"ket_luan_mau": "",
+"tra_o": "chưa nạp: đọc cột quy định của bảng",
+"so_o": 6
+},
+{
+"idx": 28,
+"tt": "-",
+"noi_dung": "Lượng nước chữa cháy",
+"goi_y": "",
+"quy_dinh": "Thể tích nước chữa cháy trong bồn, bể phải được tính toán để bảo đảm: / - Thực hiện việc cấp nước chữa cháy từ trụ nước ngoài nhà và các hệ thống chữa cháy khác; / - Cung cấp cho các thiết bị chữa cháy chuyên dụng (sprinkler, drencher và tương tự) không có bể riêng; / - Lượng nước tối đa cho sinh hoạt và sản xuất trong suốt quá trình chữa cháy.",
+"khoan_dieu": "Điều 5.1.5.3 QCVN 06:2022/BXD",
+"ket_luan_mau": "",
+"tra_o": "chưa nạp: đọc cột quy định của bảng",
+"so_o": 6
+},
+{
+"idx": 29,
+"tt": "",
+"noi_dung": "",
+"goi_y": "",
+"quy_dinh": "Lượng nước chữa cháy của bồn, bể và hồ nước nhân tạo xác định trên cơ sở tính toán lượng nước tiêu thụ và thời gian chữa cháy theo quy định tại 5.1.2.2, 5.1.2.3, 5.1.2.4, 5.1.2.5, 5.1.2.6 và 5.1.3.3. / CHÚ THÍCH 1: Tính toán thể tích nước chữa cháy của hồ nhân tạo hở phải tính đến khả năng bốc hơi và đóng băng của nước. Mực nước tối thiểu không được nhỏ hơn 0,5 m. / CHÚ THÍCH 2: Phải bảo đảm lối vào cho xe chữa cháy tiếp cận bể, hồ và những điểm lấy nước tương tự.",
+"khoan_dieu": "Điều 5.1.5.8 QCVN 06:2022/BXD",
+"ket_luan_mau": "",
+"tra_o": "chưa nạp: đọc cột quy định của bảng",
+"so_o": 6
+},
+{
+"idx": 30,
+"tt": "-",
+"noi_dung": "Số bồn bể",
+"goi_y": "",
+"quy_dinh": "Tổng số bồn, bể cho chữa cháy trong một mạng ống phải không nhỏ hơn 2 (không áp dụng đối với bồn, bể dành cho cấp nước ngoài nhà của công trình độc lập). / Giữa các bồn, bể trong mạng ống, mực nước thấp nhất và cao nhất của nước chữa cháy phải tương ứng như nhau. / Khi ngắt một bồn, bể thì lượng nước trữ để chữa cháy trong các bồn, bể còn lại phải không nhỏ hơn 50 % của lượng nước yêu cầu cho chữa cháy.",
+"khoan_dieu": "Điều 5.1.5.6 Sửa đổi 1:2023 QCVN 06:2022/BXD",
+"ket_luan_mau": "",
+"tra_o": "chưa nạp: đọc cột quy định của bảng",
+"so_o": 6
+}
+]
+}

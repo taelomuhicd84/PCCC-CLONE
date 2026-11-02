@@ -1,0 +1,23 @@
+{
+"ma": "KT25",
+"ten": "Kiến trúc – Kho chứa LNG",
+"file_goc": "B25. Bảng đối chiếu  Kho chứa LNG.docx",
+"so_dong": 1,
+"nguon": "kien_truc",
+"dau_bang": [
+"Ghi chú: (1) Tên cơ quan chủ quản trực tiếp;(2) Tên đơn vị thực hiện thẩm duyệt; (3) Họ tên và chữ ký của cán bộ thực hiện; (4) Ghi quyền hạn, chức vụ của người lãnh đạo, chỉ huy đơn vị thẩm duyệt, nếu người ký văn bản là cấp phó của người đứng đầu cơ quan thì ghi chữ viết tắt “KT.” vào trước chức vụ của người đứng đầu, bên dưới ghi chức vụ của người ký văn bản"
+],
+"dong": [
+{
+"idx": 2,
+"tt": "3",
+"noi_dung": "Bậc chịu lửa của các hạng mục trong kho",
+"goi_y": "",
+"quy_dinh": "Lưu ý: Việc thiết kế bậc chịu lửa phải phù hợp với quy mô, tính chất, hạng nguy hiểm cháy, nổ vào chiều cao của công trình. / Bậc I: / - Tường chịu lực, cột chịu lực và các bộ phận chịu lực khác: R 120; / - Tường ngoài không chịu lực: E 30; / - Sàn giữa các tầng (bao gồm cả sàn tầng áp mái và sàn trên tầng hầm): REI 60; / - Tấm lợp (kể cả tấm lợp có lớp các nhiệt): RE 30; / - Giàn, dầm, xà gồ: R 30; / - Tường trong buồng thang: REI 120; / - Bản thang và chiếu thang: R60. / Bậc II: / - Tường chịu lực, cột chịu lực và các bộ phận chịu lực khác: R 90; / - Tường ngoài không chịu lực: E 15; / - Sàn giữa các tầng (bao gồm cả sàn tầng áp mái và sàn trên tầng hầm): REI 45; / - Tấm lợp (kể cả tấm lợp có lớp các nhiệt): RE 15; / - Giàn, dầm, xà gồ: R 15; / - Tường trong buồng thang: REI 90; / - Bản thang và chiếu thang: R60. / Bậc III: / - Tường chịu lực, cột chịu lực và các bộ phận chịu lực khác: R 45; / - Tường ngoài không chịu lực: E 15; / - Sàn giữa các tầng (bao gồm cả sàn tầng áp mái và sàn trên tầng hầm): REI 45; / - Tấm lợp (kể cả tấm lợp có lớp các nhiệt): RE 15; / - Giàn, dầm, xà gồ: R 15; / - Tường trong buồng thang: REI 60; / - Bản thang và chiếu thang: R45. / Bậc IV: / - Tường chịu lực, cột chịu lực và các bộ phận chịu lực khác: R 15; / - Tường ngoài không chịu lực: E 15; / - Sàn giữa các tầng (bao gồm cả sàn tầng áp mái và sàn trên tầng hầm): REI 15; / - Tấm lợp (kể cả tấm lợp có lớp các nhiệt): RE 15; / - Giàn, dầm, xà gồ: R 15; / - Tường trong buồng thang: REI 45; / - Bản thang và chiếu thang: R15. / Bậc V không quy định.",
+"khoan_dieu": "Bảng 2 / Bảng 4 / QCVN / 06:2022/BXD",
+"ket_luan_mau": "",
+"tra_o": "chưa nạp: đọc cột quy định của bảng",
+"so_o": 6
+}
+]
+}

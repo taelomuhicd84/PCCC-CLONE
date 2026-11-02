@@ -1,0 +1,45 @@
+{
+"ma": "KT21",
+"ten": "Kiến trúc – mẫu Cửa hàng kinh doanh khí đốt",
+"file_goc": "B21. Bảng đối chiếu mẫu Cửa hàng kinh doanh khí đốt.docx",
+"so_dong": 3,
+"nguon": "kien_truc",
+"dau_bang": [
+"Ghi chú: (1) Tên cơ quan chủ quản trực tiếp;(2) Tên đơn vị thực hiện thẩm duyệt; (3) Họ tên và chữ ký của cán bộ thực hiện; (4) Ghi quyền hạn, chức vụ của người lãnh đạo, chỉ huy đơn vị thẩm duyệt, nếu người ký văn bản là cấp phó của người đứng đầu cơ quan thì ghi chữ viết tắt “KT.” vào trước chức vụ của người đứng đầu, bên dưới ghi chức vụ của người ký văn bả"
+],
+"dong": [
+{
+"idx": 9,
+"tt": "6",
+"noi_dung": "Bậc chịu lửa",
+"goi_y": "Đối với các cấu kiện được bọc bảo vệ bằng vật liệu chống cháy thì cần có thuyết minh, tính toán kết cấu chịu lửa do chủ đầu tư và đơn vị thiết kế thể hiện, chịu trách nhiệm / - Lưu ý tại chú thích 6 sửa đổi 1:2023 không yêu cầu giới hạn chịu lửa của tường ngoài nhà trừ các quy định đối với các mảng tường sử dụng làm đai hoặc dải ngăn cháy theo phương đứng hoặc phương ngang theo quy định tại điều 4.32 và 4.33. Khi đó giới hạn chịu lửa của tường ngoài nhà còn phải đối chiếu với phụ lục E về khoảng cách phòng cháy chống cháy.",
+"quy_dinh": "Theo bảng 4 QCVN 06:2022/BXD / - Bộ phận chịu lực; / - Tường buồng thang, bản thang / - Sàn các tầng / - Tường ngoài không chịu lực / Trong đó lưu ý tại sửa đổi bảng 4 như sau: / “CHÚ THÍCH 2: Không quy định giới hạn chịu lửa của các tấm lợp (kể cả các tấm lợp có cách nhiệt) nếu chúng được làm từ vật liệu không cháy, hoặc cháy yếu (Ch1) và lan truyền yếu (LT2) (trừ nhà F5 hạng A, B). / Không quy định giới hạn chịu lửa của các xà gồ đỡ tấm lợp (trừ xà gồ của các nhà, khoang cháy, gian phòng nhóm F3.1, F3.2; nhà nhóm F5.1, F5.2 hạng A, B và các nhà, gian phòng, khoang cháy khác thuộc hạng A, B) khi thỏa mãn đồng thời các điều kiện sau: / - Mặt dưới xà gồ nằm cách sàn ngay dưới chúng một khoảng cách tối thiểu 10 m đối với nhà hạng C và 6,1 m đối với các nhà còn lại; / - Xà gồ được làm từ các vật liệu không cháy đối với nhà hạng C hoặc tối thiểu là cháy yếu (Ch1) đối với các nhà còn lại. / - Riêng đối với nhà hạng C phải tuân thủ thêm các điều kiện sau: 1) được trang bị chữa cháy tự động; 2) xà gồ chỉ được mang thêm phụ tải như đường ống chữa cháy, máng điện, dây điện hoặc các phụ tải khác với tổng tải trọng phụ thêm (trừ trọng lượng bản thân xà gồ và tấm lợp) không quá 10 kg/m2, tính trên phần diện tích mái được đỡ bởi xà gồ đang xét.”. / “CHÚ THÍCH 6: Giới hạn chịu lửa của tường ngoài không chịu lực trong Bảng 4 chỉ áp dụng đối với các mảng tường sử dụng làm đai hoặc dải ngăn cháy theo phương đứng hoặc phương ngang quy định tại 4.32 và 4.33.”. / “CHÚ THÍCH 7: Trường hợp áp dụng mô phỏng cháy căn cứ trên các điều kiện cụ thể về tải trọng cháy trong gian phòng, phần nhà hoặc toàn nhà, cho phép xác định giới hạn chịu lửa của các bộ phận, cấu kiện quy định trong Bảng 4 dựa trên nhiệt độ từ mô phỏng cháy. Các thông số của tải trọng cháy (khối lượng, phân bố, nhiệt lượng cháy thấp, tốc độ lan truyền lửa, mô hình lan truyền lửa và các thông số tương tự) được xác định căn cứ trên hồ sơ thiết kế và tài liệu chuẩn được áp dụng.”. / “CHÚ THÍCH 8: Không quy định giới hạn chịu lửa của bản thang và chiếu thang trong buồng thang bộ được bảo vệ bởi các tường trong có giới hạn chịu lửa đáp ứng yêu cầu của Bảng 4 tương ứng với bậc chịu lửa của nhà. Khi đó các bản thang và chiếu thang, cũng như vật liệu hoàn thiện bên trong buồng thang (nếu có) phải là vật liệu không cháy hoặc bảo đảm Ch1, BC1.”.",
+"khoan_dieu": "Bảng 2, Bảng 4, / Phụ lục H / QCVN 06:2022 và Sửa đổi 1: 2023",
+"ket_luan_mau": "",
+"tra_o": "chưa nạp: đọc cột quy định của bảng",
+"so_o": 6
+},
+{
+"idx": 13,
+"tt": "9",
+"noi_dung": "Lối ra thoát nạn của mỗi tầng nhà",
+"goi_y": "",
+"quy_dinh": "",
+"khoan_dieu": "",
+"ket_luan_mau": "",
+"tra_o": "",
+"so_o": 6
+},
+{
+"idx": 14,
+"tt": "",
+"noi_dung": "Cho phép bố trí 01 lối ra thoát nạn tại các tầng",
+"goi_y": "",
+"quy_dinh": "a) Từ mỗi tầng (hoặc từ một phần của tầng được ngăn cách khỏi các phần khác của tầng bằng các bộ phận ngăn cháy) có nhóm nguy hiểm cháy theo công năng F1.2, F2, F3, F4.2, F4.3 và F4.4, khi thỏa mãn đồng thời các điều kiện sau: / 1) Đối với nhà có chiều cao PCCC không quá 15 m: / - Diện tích mỗi tầng đang xét không được lớn hơn 300 m2; / - Số người lớn nhất trên mỗi tầng không vượt quá 20 người; / - Không được để xe cơ giới, không được bố trí kho hạng A, B, C tại tầng có lối thoát nạn ra ngoài nhà, trừ khi các khu vực này được ngăn cách theo các quy định của quy chuẩn này; / - Đối với nhà trên 3 tầng hoặc có chiều cao PCCC lớn hơn 9 m: các lối ra thoát nạn của các gian phòng và từ mỗi tầng phải tuân thủ yêu cầu của quy chuẩn này; / - Đối với nhà từ 3 tầng trở xuống hoặc có chiều cao PCCC từ 9 m trở xuống: được sử dụng cầu thang bộ loại 2 để thoát nạn khi bảo đảm điều kiện người trong nhà có thể thoát ra lối thoát nạn khẩn cấp (ra ban công, lô gia thoáng, qua cửa sổ hoặc lối thoát nạn khẩn cấp tương tự) hoặc lên được sân thượng thoáng khi có cháy, và thang bộ loại 2 phải được ngăn cách với khu vực tầng hầm (nếu có) bằng vách ngăn cháy loại 2; / CHÚ THÍCH: Ban công thoáng hoặc sân thượng thoáng nghĩa là hở ra ngoài trời và bộ phận bao che (nếu có) phải bảo đảm cho việc thoát nạn, cứu nạn dễ dàng khi lực lượng chữa cháy tiếp cận. / 2) Đối với nhà có chiều cao PCCC từ trên 15 m đến 21 m: / - Diện tích mỗi tầng đang xét không được lớn hơn 200 m2; / - Số người lớn nhất trên mỗi tầng không vượt quá 20 người; / - Không được để xe cơ giới, không được bố trí kho hạng A, B, C tại tầng có lối thoát nạn ra ngoài nhà, trừ khi các khu vực này được ngăn cách theo các quy định của quy chuẩn này; / - Các khu vực có công năng đang xét được bảo vệ bằng chữa cháy tự động. Trường hợp không thể trang bị chữa cháy tự động thì thay thế bằng hệ thống báo cháy tự động cho toàn bộ nhà (ưu tiên sử dụng đầu báo cháy khói); / - Người trong nhà có thể thoát ra ngoài nhà qua lối thoát nạn khẩn cấp (ra ban công, lô gia thoáng, qua cửa sổ hoặc lối thoát nạn khẩn cấp tương tự) với các thiết bị hỗ trợ thoát nạn (ví dụ thang P1, P2, thang ngoài nhà, thang dây, ống tụt và các thiết bị hỗ trợ thoát nạn khác); hoặc lên được sân thượng thoáng khi có cháy; / - Các lối ra thoát nạn của các gian phòng và từ mỗi tầng phải tuân thủ yêu cầu của quy chuẩn này; / 3) Đối với nhà có chiều cao PCCC từ trên 21 m đến 25 m: / - Diện tích mỗi tầng đang xét không được lớn hơn 150 m2; / - Số người lớn nhất trên mỗi tầng không vượt quá 15 người; / - Không được để xe cơ giới, không được bố trí kho hạng A, B, C tại tầng có lối thoát nạn ra ngoài nhà, trừ khi các khu vực này được ngăn cách theo các quy định của quy chuẩn này; / - Nhà được bảo vệ bằng hệ thống báo cháy và chữa cháy tự động; / - Người trong nhà có thể thoát ra ngoài nhà qua lối thoát nạn khẩn cấp (ra ban công, lô gia thoáng, qua cửa sổ và các lối thoát nạn khẩn cấp tương tự) với các thiết bị hỗ trợ thoát nạn (ví dụ thang P1, P2, thang ngoài nhà, thang dây, ống tụt và các thiết bị hỗ trợ thoát nạn khác); hoặc lên được sân thượng thoáng khi có cháy; / - Các lối ra thoát nạn của các gian phòng và từ mỗi tầng phải tuân thủ yêu cầu của quy chuẩn này.”. / “d) Từ các tầng (hoặc một phần của tầng được ngăn cách khỏi các phần khác của tầng bằng các bộ phận ngăn cháy) thuộc nhóm nguy hiểm cháy theo công năng F4.1, khi thỏa mãn các điều kiện tại đoạn a) điểm 3.2.6.2, hoặc thỏa mãn đồng thời các điều kiện sau: / - Đối với cấp tiểu học và tương đương: Nhà có chiều cao PCCC không quá 9 m, diện tích tầng đang xét không quá 300 m2; Đối với các nhà còn lại thuộc nhóm F4.1: Nhà có chiều cao PCCC không quá 15 m, diện tích tầng đang xét không quá 500 m2; / - Không được để xe cơ giới, không được bố trí kho hạng A, B, C tại tầng có lối thoát nạn ra ngoài nhà, trừ khi các khu vực này được ngăn cách theo các quy định của quy chuẩn này.”.",
+"khoan_dieu": "Điều 3.2.6.2 / QCVN06:2022 và Sửa đổi 1: 2023",
+"ket_luan_mau": "",
+"tra_o": "MOD_so_luong_loi_ra",
+"so_o": 6
+}
+]
+}

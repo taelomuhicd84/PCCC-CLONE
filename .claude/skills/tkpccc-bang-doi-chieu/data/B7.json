@@ -1,0 +1,265 @@
+{
+"ma": "B7",
+"ten": "Bảng đối chiếu Hệ thống chữa cháy bằng bọt cố định",
+"file_goc": "B7.  Bảng đối chiếu Hệ thống chữa cháy bằng bọt cố định.docx",
+"so_dong": 23,
+"nguon": "doc_converted",
+"dau_bang": [
+"BẢNG ĐỐI CHIẾU HỆ THỐNG CHỮA CHÁY BẰNG BỌT CỐ ĐỊNH"
+],
+"dong": [
+{
+"idx": 0,
+"tt": "1",
+"noi_dung": "Yêu cầu trang bị",
+"goi_y": "",
+"quy_dinh": "",
+"khoan_dieu": "",
+"ket_luan_mau": "",
+"tra_o": "",
+"so_o": 6
+},
+{
+"idx": 1,
+"tt": "-",
+"noi_dung": "Quy định trang bị hệ thống chữa cháy cố định",
+"goi_y": "",
+"quy_dinh": "- Các bể nổi có đường kính bằng hoặc lớn hơn 18 m; / - Các bể nổi có dung tích bằng hoặc lớn hơn 2 000 m3; / - Các bể nổi có chiều cao bằng hoặc lớn hơn 15 m. / Chú thích - Khi khu bể chứa được phép bố trí ba dãy bể phải thoả mãn điều 5.2.8 của tiêu chuẩn này.",
+"khoan_dieu": "Điều 5.9.5.1 / TCVN 5307:2009",
+"ket_luan_mau": "",
+"tra_o": "bảng hệ thống B34–B50",
+"so_o": 6
+},
+{
+"idx": 2,
+"tt": "-",
+"noi_dung": "Quy định trang bị hệ thống chữa cháy bán cố định",
+"goi_y": "",
+"quy_dinh": "- Các bể nổi có đường kính nhỏ hơn 18 m; / - Các bể nổi có dung tích từ 400 m3 đến dưới 2 000 m3; / - Các bể nổi có chiều cao từ 6m đến dưới 15 m; / - Các bể ngầm có dung tích bằng hoặc lớn hơn 1 000 m3. / Đối với kho chứa dầu mazut, bố trí một đến hai dãy (không phụ thuộc vào dung tích và kích thước bể chứa) có thể trang bị hệ thống chữa cháy bán cố định khi có sự chấp thuận của cơ quan quản lý về phòng cháy chữa cháy. / - Các thiết bị sau phải lắp cố định: / + Đối với bể nổi : Lăng tạo bọt, ống dẫn dung dịch chất tạo bọt, ống tưới mát thành bể lắp cố định vào thành bể và kéo dài tối thiểu tới họng chờ đặt ngoài đê bao ngăn cháy; / + Đối với bể ngầm : máy bơm, cụm van bể chứa dung dịch chất tạo bọt (thiết bị chứa chất tạo bọt) thiết bị trộn bọt, đường ống dẫn dung dịch chất tạo bọt, đường ống dẫn nước đến họng chờ.",
+"khoan_dieu": "Điều 5.9.5.2 / TCVN 5307:2009 / Điều 5.9.6 / TCVN 5307:2009",
+"ket_luan_mau": "",
+"tra_o": "bảng hệ thống B34–B50",
+"so_o": 6
+},
+{
+"idx": 3,
+"tt": "2",
+"noi_dung": "Yêu cầu kỹ thuật",
+"goi_y": "",
+"quy_dinh": "",
+"khoan_dieu": "",
+"ket_luan_mau": "",
+"tra_o": "",
+"so_o": 6
+},
+{
+"idx": 4,
+"tt": "-",
+"noi_dung": "Cường độ, thời gian phun chất tạo bọt bể mái cố định",
+"goi_y": "",
+"quy_dinh": "Bọt bội số nở trung bình: / Loại DM&SPDM / Cường độ phun dung dịch chất tạo bọt (I), l/s.m2 / Thời gian phun (T), phút / Đối với DM&SPDM có nhiệt độ chớp cháy nhỏ hơn và bằng 37,8 oC / 0,08 / 10 / Đối với DM&SPDM có nhiệt độ chớp cháy lớn hơn 37,8 oC / 0,05 / 10 / Bọt bội số nở thấp / Loại DM&SPDM / Cường độ phun dung dịch chất tạo bọt (I), l/s.m2 / Thời gian phun tối thiểu (T), phút / DM&SPDM có nhiệt độ chớp cháy nhỏ hơn và bằng 37,8 oC / 0,068 / 55 / DM&SPDM có nhiệt độ chớp cháy lớn hơn 37,8 oC đến 93,3 oC / 0,068 / 30 / Dầu thô / 0,068 / 55 / Chú thích - Lăng tạo bọt áp dụng trong điều khoản này là loại lăng lắp tại thành bể có tấm chắn để hướng bọt hoặc lăng lắp trên mái nổi.",
+"khoan_dieu": "Bảng 9 / TCVN 5307:2009 / Bảng 10 / TCVN 5307:2009",
+"ket_luan_mau": "",
+"tra_o": "bảng hệ thống B34–B50",
+"so_o": 6
+},
+{
+"idx": 5,
+"tt": "-",
+"noi_dung": "Xác định số lăng phun bọt bể mái cố định",
+"goi_y": "",
+"quy_dinh": "Đường kính bể, m / Số lượng lăng phun tối thiểu, cái (n) / Đến 24 / 1 / Lớn hơn 24 đến 36 / 2 / Lớn hơn 36 đến 42 / 3 / Lớn hơn 42 đến 48 / 4 / Lớn hơn 48 đến 54 / 5 / Lớn hơn 54 đến 60 / 6",
+"khoan_dieu": "Bảng 10 / TCVN 5307:2009",
+"ket_luan_mau": "",
+"tra_o": "bảng hệ thống B34–B50",
+"so_o": 6
+},
+{
+"idx": 6,
+"tt": "-",
+"noi_dung": "Cường độ thời gian phun, đối với bể Đối với bể mái nổi, khi mái chế tạo theo dạng đĩa kép bằng kim loại hoặc dạng đĩa đơn gắn trên phao kim loại; bể có phao bên trong",
+"goi_y": "",
+"quy_dinh": "Đối với bọt độ nở thấp : / - Cường độ phun dung dịch chất tạo bọt: 0,2 l/s.m2 / - Thời gian phun bọt tối thiểu: 20 phút / - Khoảng cách giữa các lăng phun bố trí theo chu vi bể phụ thuộc vào độ cao của gờ chắn bọt. / - Diện tích mặt thoáng phun bọt lấy bằng diện tích vành khuyên giữa thành bể và gờ chắn bọt. / Đối với bọt độ nở trung bình : / - Cường độ phun dung dịch chất tạo bọt : 0,25 l/s.m2 / - Thời gian phun bọt tối thiểu : 10 phút / - Khoảng cách giữa các lăng phun bọt theo chu vi bể phụ thuộc vào độ cao của gờ chắn bọt. / - Diện tích mặt thoáng phun bọt lấy bằng diện tích vành khuyên giữa thành bể và gờ chắn bọt. / Chú thích : / 1) Cách đưa bọt vào bể mái nổi và bể mái nổi bên trong xem phụ lục D. / 2) Dạng mái nổi đĩa kép, đĩa đơn và gờ chắn bọt xem phụ lục E. Các mái nổi khác với hai dạng mái nổi nêu trên không thuộc điều khoản này.",
+"khoan_dieu": "Điều 5.9.11 / TCVN 5307:2009",
+"ket_luan_mau": "",
+"tra_o": "bảng hệ thống B34–B50",
+"so_o": 6
+},
+{
+"idx": 7,
+"tt": "-",
+"noi_dung": "Dự trữ chất tạo bọt",
+"goi_y": "",
+"quy_dinh": "Hệ số dự trữ chất tạo bọt (K) để chữa cháy cho khu vực bể chứa DM&SPDM được quy định như sau: / - Đối với chất tạo bọt có độ nở trung bình K = 3 / - Đối với chất tạo bọt có độ nở thấp K = 2.",
+"khoan_dieu": "Điều 5.9.15 / TCVN 5307:2009",
+"ket_luan_mau": "",
+"tra_o": "bảng hệ thống B34–B50",
+"so_o": 6
+},
+{
+"idx": 8,
+"tt": "-",
+"noi_dung": "Tính toán dung dịch dung dịch bọt cho hệ thống chữa cháy cố định, số lăng phun bọt",
+"goi_y": "",
+"quy_dinh": "- Tính toán Lưu lượng dung dịch chất tạo bọt cần thiết để chữa cháy bể cháy: / Qct = Sc.Jct (l/s) / Trong đó : / Sc là diện tích bề mặt bể cháy (m2). / Jct là cường độ phun dung dịch chất tạo bọt, (1/s.m2). / - Tính toán số lượng lăng phun bọt cần thiết (so sánh với số lượng lăng tối thiểu tại bảng 10). / Trong đó : / Qct là lưu lượng dung dịch chất tạo bọt cần thiết để chứa bể cháy, tính bằng l/s; / qL là lưu lượng phun dung dịch chất tạo bọt của lăng, tính bằng l/s / Chú thích - Trường hợp chữa cháy vùng đệm kín để mái nổi hoặc bể có phao bên trong, lựa chọn qL cần phải tính đến khoảng cách bố trí lăng phun để bọt không bị tràn qua gờ chắn bọt.",
+"khoan_dieu": "Phụ lục B / TCVN 5307:2009",
+"ket_luan_mau": "",
+"tra_o": "MOD_vat_lieu",
+"so_o": 6
+},
+{
+"idx": 9,
+"tt": "-",
+"noi_dung": "Hệ thống trụ phun bọt bổ trợ ngoài đê",
+"goi_y": "",
+"quy_dinh": "",
+"khoan_dieu": "",
+"ket_luan_mau": "",
+"tra_o": "",
+"so_o": 6
+},
+{
+"idx": 10,
+"tt": "+",
+"noi_dung": "Yêu cầu trang bị",
+"goi_y": "",
+"quy_dinh": "Ngoài thiết bị phun bọt lắp cố định ở bể chứa phải bố trí trụ cấp dung dịch chất tạo bọt bổ trợ phía ngoài đê ngăn cháy để dập tắt đám cháy trong khu đê do sản phẩm bị tràn từ bể chứa. Lưu lượng dung dịch chất tạo bọt cho mỗi trụ ít nhất là 189 l/phút",
+"khoan_dieu": "Điều 5.9.14 / TCVN 5307:2009",
+"ket_luan_mau": "",
+"tra_o": "bảng hệ thống B34–B50",
+"so_o": 6
+},
+{
+"idx": 11,
+"tt": "+",
+"noi_dung": "Số lượng",
+"goi_y": "",
+"quy_dinh": "Đường kính bể lớn nhất, m / Số lượng trụ bổ trợ, cái / Nhỏ hơn 19,5 / 1 / Từ 19,5 đến 36 / 2 / Lớn hơn 36 / 3",
+"khoan_dieu": "Bảng 12 / TCVN 5307:2009",
+"ket_luan_mau": "",
+"tra_o": "bảng hệ thống B34–B50",
+"so_o": 6
+},
+{
+"idx": 12,
+"tt": "+",
+"noi_dung": "Thời gian phun",
+"goi_y": "",
+"quy_dinh": "Đường kính bể lớn nhất, m / Thời gian hoạt động tối thiểu, phút / Nhỏ hơn 10,5 / 10 / Từ 10,5 đến 28,5 / 20 / Lớn hơn 28,5 / 30",
+"khoan_dieu": "Bảng 13 / TCVN 5307:2009",
+"ket_luan_mau": "",
+"tra_o": "bảng hệ thống B34–B50",
+"so_o": 6
+},
+{
+"idx": 13,
+"tt": "+",
+"noi_dung": "Tính toán lượng dung dịch bọt chữa cháy cho hệ thống phun bọt bổ trợ",
+"goi_y": "",
+"quy_dinh": "Lượng dung dịch chất tạo bọt cho hệ thống phun bọt bổ trợ được tính toán như sau: / Wdd = . NLTB.qL.t / Trong đó: NL là số lượng lăng phun bọt / QL là lưu lượng của lăng phun bọt bôt trợ ≥189 l/ph / T là thời gian phun",
+"khoan_dieu": "",
+"ket_luan_mau": "",
+"tra_o": "",
+"so_o": 6
+},
+{
+"idx": 14,
+"tt": "-",
+"noi_dung": "Tính toán lượng dung dịch chất tạo bọt cần thiết để chữa cháy bể cháy",
+"goi_y": "",
+"quy_dinh": "Lượng dung dịch chất tạo bọt dự trữ cần thiết, Wdd, tính bằng lít, được xác định theo công thức : / Wdd = K. NLTB.qL.t + Wd + WBT (B.3) / Trong đó : / - NLTB là số lượng lăng tạo bọt, tính bằng chiếc; / - qL là lưu lượng phun dung dịch chất tạo bọt của lăng, tính bằng l/s; / - t là thời gian phun dung dịch, tính bằng giây - Lấy theo điều 5.9.10 (hoặc 5.9.11) / - WBT là lượng dung dịch chất tạo bọt chữa cháy trong khu vực đê bao ngăn cháy xác định theo điều 5.9.14, tính bằng lít; / - K là hệ số dự trữ (lấy theo điều 5.9.15); / - Wd là lượng dung dịch chất tạo bọt ứ đọng trong đường ống, tính bằng lít. Trong trường hợp sử dụng hệ thống chữa cháy cố định, Wd được tính như sau: / Wd = (0,785 ∑i=1n d2i.li). 1000 / Trong đó : / di là đường kính của từng loại ống dẫn, tính bằng mét; / li là độ dài của từng loại ống dẫn, tính bằng mét. / Nếu lượng dung dịch chất tạo bọt ứ đọng trong đường ống tính được nhỏ hơn hoặc bằng 5% lượng dung dịch chất tạo bọt cần thiết để chữa cháy thì không cộng thêm vào. Nếu lượng dung dịch chất tạo bọt ứ đọng trong đường ống tính được lớn hơn hoặc bằng 5% lượng dung dịch chất tạo cần thiết để chữa cháy thì phải cộng thêm vào.",
+"khoan_dieu": "Phụ lục B / TCVN 5307:2009",
+"ket_luan_mau": "",
+"tra_o": "MOD_vat_lieu",
+"so_o": 6
+},
+{
+"idx": 15,
+"tt": "-",
+"noi_dung": "Tính toán lượng chất tạo bọt",
+"goi_y": "",
+"quy_dinh": "Lượng chất tạo bọt cần thiết dự trữ trong kho để chữa cháy WCTB, tính bằng lít, được xác định theo công thức : / Trong đó : / Wdd là lượng dung dịch chất tạo bọt dự trữ cần thiết, tính bằng lít; / CB là nồng độ chất tạo bọt trong dung dịch để chữa cháy, tính bằng phần trăm.",
+"khoan_dieu": "",
+"ket_luan_mau": "",
+"tra_o": "",
+"so_o": 6
+},
+{
+"idx": 16,
+"tt": "-",
+"noi_dung": "Tính toán lượng nước cần thiết",
+"goi_y": "",
+"quy_dinh": "Lượng nước cần thiết để pha chất tạo bọt thành dung dịch WN, tính bằng lít, được xác định theo công thức : / Trong đó : / Wdd là lượng dung dịch chất tạo bọt dự trữ cần thiết, tính bằng lít; / CN là nồng độ nước trong dung dịch chất tạo bọt, tính bằng phần trăm.",
+"khoan_dieu": "",
+"ket_luan_mau": "",
+"tra_o": "",
+"so_o": 6
+},
+{
+"idx": 17,
+"tt": "3",
+"noi_dung": "Trạm bơm và bể nước",
+"goi_y": "",
+"quy_dinh": "",
+"khoan_dieu": "",
+"ket_luan_mau": "",
+"tra_o": "",
+"so_o": 6
+},
+{
+"idx": 18,
+"tt": "-",
+"noi_dung": "Máy bơm bọt (nếu hệ thống sử dụng trộn bọt bằng bơm bọt)",
+"goi_y": "",
+"quy_dinh": "Đối với hệ thống chữa cháy cố định bằng bọt có sử dụng thiết bị định lượng bằng máy bơm độc lập với máy bơm nước thì cần phải bố trí máy bơm bọt dự phòng có tính năng tương đương với máy bơm bọt chính.",
+"khoan_dieu": "Điều 5.9.20 / TCVN 5307:2009",
+"ket_luan_mau": "",
+"tra_o": "bảng hệ thống B34–B50",
+"so_o": 6
+},
+{
+"idx": 19,
+"tt": "-",
+"noi_dung": "Bể nước",
+"goi_y": "",
+"quy_dinh": "",
+"khoan_dieu": "",
+"ket_luan_mau": "",
+"tra_o": "",
+"so_o": 6
+},
+{
+"idx": 20,
+"tt": "+",
+"noi_dung": "Khối tích bể",
+"goi_y": "",
+"quy_dinh": "Tính toán: / W = WTM+WN",
+"khoan_dieu": "Tính toán",
+"ket_luan_mau": "",
+"tra_o": "chưa nạp: đọc cột quy định của bảng",
+"so_o": 6
+},
+{
+"idx": 21,
+"tt": "+",
+"noi_dung": "Nguồn nước",
+"goi_y": "",
+"quy_dinh": "Nguồn nước chữa cháy cho kho trong mọi thời điểm có thể lấy từ sông, hồ, ao và từ nguồn nước sạch công cộng",
+"khoan_dieu": "Điều 5.9.21 / TCVN 5307:2009",
+"ket_luan_mau": "",
+"tra_o": "bảng hệ thống B34–B50",
+"so_o": 6
+},
+{
+"idx": 22,
+"tt": "+",
+"noi_dung": "Thời gian phục hồi nước chữa cháy, tưới mát và lượng chất tạo bọt",
+"goi_y": "",
+"quy_dinh": "Thời gian bổ sung đủ lượng nước dự trữ chậm nhất là 48 giờ, trường hợp ở những nơi hiếm nước cho phép kéo dài hơn nhưng không quá 96 giờ. Thời gian bổ sung đủ lượng chất tạo bọt dự trữ chậm nhất là 48 giờ.",
+"khoan_dieu": "Điều 5.9.17 / TCVN 5307:2009",
+"ket_luan_mau": "",
+"tra_o": "bảng hệ thống B34–B50",
+"so_o": 6
+}
+]
+}

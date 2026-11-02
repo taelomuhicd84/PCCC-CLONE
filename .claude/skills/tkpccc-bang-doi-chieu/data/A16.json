@@ -1,0 +1,145 @@
+{
+"ma": "A16",
+"ten": "Cửa hàng xăng dầu",
+"file_goc": "A16. Cửa hàng xăng dầu.docx",
+"so_dong": 12,
+"nguon": "docx",
+"dau_bang": [
+"..........(3)....................             ..........(4)..............",
+"Ghi chú: (1) Tên cơ quan chủ quản trực tiếp;(2) Tên đơn vị thực hiện thẩm định; (3) Họ tên và chữ ký của cán bộ thực hiện; (4) Ghi quyền hạn, chức vụ của người lãnh đạo, chỉ huy đơn vị thẩm định, nếu người ký văn bản là cấp phó của người đứng đầu cơ quan thì ghi chữ viết tắt “KT.” vào trước chức vụ của người đứng đầu, bên dưới ghi chức vụ của người ký văn bản;"
+],
+"dong": [
+{
+"idx": 0,
+"tt": "1",
+"noi_dung": "Quy mô / công trình:",
+"goi_y": "",
+"quy_dinh": "",
+"khoan_dieu": "",
+"ket_luan_mau": "",
+"tra_o": "",
+"so_o": 6
+},
+{
+"idx": 1,
+"tt": "-",
+"noi_dung": "Đối tượng thuộc diện thẩm duyệt, phân cấp thẩm duyệt",
+"goi_y": "- Nêu các thông tin chính của công trình để xác định đối tượng thuộc diện thẩm định (số cột bơm) / - Nêu các thông tin cần thiết của công trình để xác định phân cấp thẩm định",
+"quy_dinh": "- Đối tượng thuộc diện thẩm định Phụ lục III Nghị định số 105/2025/NĐ-CP / - Thẩm quyền theo điều 9",
+"khoan_dieu": "Phụ lục III, / Nghị định số 105/2025/NĐ-CP / Điều 9 Thông tư 36/2025/TT-BCA",
+"ket_luan_mau": "",
+"tra_o": "chưa nạp: đọc cột quy định của bảng",
+"so_o": 6
+},
+{
+"idx": 2,
+"tt": "-",
+"noi_dung": "Phân cấp cửa hàng xăng dầu",
+"goi_y": "",
+"quy_dinh": "- Từ 151 m3 đến 210 m3: cấp 1 / - Từ 101 m3 đến 150 m3: cấp 2 / - ≤ 100 m3: Cấp 3",
+"khoan_dieu": "Điều 5 / QCVN 01:2020/BCT",
+"ket_luan_mau": "",
+"tra_o": "bảng hệ thống B34–B50",
+"so_o": 6
+},
+{
+"idx": 3,
+"tt": "2",
+"noi_dung": "Trang bị phương tiện, hệ thống phòng cháy và chữa cháy",
+"goi_y": "",
+"quy_dinh": "",
+"khoan_dieu": "",
+"ket_luan_mau": "",
+"tra_o": "",
+"so_o": 6
+},
+{
+"idx": 4,
+"tt": "-",
+"noi_dung": "Nội quy PCCC, biển cấm lửa, tiêu lệnh báo cháy",
+"goi_y": "",
+"quy_dinh": "Phải niêm yết ở các vị trí / dễ thấy",
+"khoan_dieu": "K1, Đ12 / QCVN 01:2020/ / BCT",
+"ket_luan_mau": "",
+"tra_o": "chưa nạp: đọc cột quy định của bảng",
+"so_o": 6
+},
+{
+"idx": 5,
+"tt": "-",
+"noi_dung": "Trang bị phương tiện chữa cháy tại các vị trí",
+"goi_y": "",
+"quy_dinh": "- Cột bơm xăng dầu / - Vị trí nhập xăng dầu vào bể / - Gian bán dầu nhờn và các sản phẩm khác / - Nơi rửa xe, bảo dưỡng xe. / - Phòng giao dịch bán hàng, trực bảo vệ. / - Máy phát điện, trạm biến áp",
+"khoan_dieu": "K4, Đ12 / QCVN 01:2020/ / BCT",
+"ket_luan_mau": "",
+"tra_o": "chưa nạp: đọc cột quy định của bảng",
+"so_o": 6
+},
+{
+"idx": 6,
+"tt": "-",
+"noi_dung": "Trang bị phương tiện chữa cháy tại gian bán khí dầu mỏ hóa lỏng",
+"goi_y": "",
+"quy_dinh": "Theo TCVN 6223:2011",
+"khoan_dieu": "K5, Đ12 / QCVN 01:2020/ / BCT",
+"ket_luan_mau": "",
+"tra_o": "chưa nạp: đọc cột quy định của bảng",
+"so_o": 6
+},
+{
+"idx": 7,
+"tt": "-",
+"noi_dung": "Số lượng phương tiện, dụng cụ chữa cháy",
+"goi_y": "",
+"quy_dinh": "* Cụm bể chứa cửa hàng cấp 3: / + Bình bột (≥25kg): 2 cái. / + Bình bột ( ≥4kg): 2 cái / + Chăn sợi: 4 cái. / * Cột bơm xăng dầu và vị trí nhập xăng dầu vào bể chứa: / + Bình bột (≥4kg): 2 cái. / * Phòng điều hành: Bình bột: (≥4kg): 2 cái.",
+"khoan_dieu": "K6, Đ12 / Bảng 5 / QCVN 01:2020/ / BCT",
+"ket_luan_mau": "",
+"tra_o": "chưa nạp: đọc cột quy định của bảng",
+"so_o": 6
+},
+{
+"idx": 8,
+"tt": "-",
+"noi_dung": "Trang bị hệ thống cấp nước chữa cháy ngoài nhà",
+"goi_y": "",
+"quy_dinh": "Mọi quy mô phải trang bị",
+"khoan_dieu": "Mục 25, 26 Bảng C.1 Phục lục C QCVN 10:2025/BCA (tra điều tương ứng)",
+"ket_luan_mau": "",
+"tra_o": "bảng hệ thống B34–B50",
+"so_o": 6
+},
+{
+"idx": 9,
+"tt": "3",
+"noi_dung": "Giải pháp cấp điện cho hệ thống PCCC và hệ thống kỹ thuật có liên quan về PCCC",
+"goi_y": "",
+"quy_dinh": "",
+"khoan_dieu": "",
+"ket_luan_mau": "",
+"tra_o": "",
+"so_o": 6
+},
+{
+"idx": 10,
+"tt": "",
+"noi_dung": "Các yêu cầu kỹ thuật",
+"goi_y": "Thực hiện theo bảng đối chiếu số B14",
+"quy_dinh": "",
+"khoan_dieu": "",
+"ket_luan_mau": "",
+"tra_o": "",
+"so_o": 6
+},
+{
+"idx": 11,
+"tt": "Lưu ý: Đối với các hạng mục phụ trợ của công trình cần căn cứ theo công năng và tính chất sử dụng để lựa chọn bảng đối chiếu theo loại hình công trình cho phù hợp.",
+"noi_dung": "",
+"goi_y": "",
+"quy_dinh": "",
+"khoan_dieu": "",
+"ket_luan_mau": "",
+"tra_o": "",
+"so_o": 6
+}
+]
+}

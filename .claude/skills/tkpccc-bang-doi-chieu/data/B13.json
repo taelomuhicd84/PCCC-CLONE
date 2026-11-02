@@ -1,0 +1,300 @@
+{
+"ma": "B13",
+"ten": "Bảng đối chiếu Phương tiện chiếu sáng sự cố và chỉ dẫn thoát nạn và hệ thống loa thông báo và hướng dẫn thoát nạn",
+"file_goc": "B13. Bảng đối chiếu Phương tiện chiếu sáng sự cố và chỉ dẫn thoát nạn và hệ thống loa thông báo và hướng dẫn thoát nạn.docx",
+"so_dong": 26,
+"nguon": "docx",
+"dau_bang": [
+"BẢNG ĐỐI CHIẾU PHƯƠNG TIỆN CHIẾU SÁNG SỰ CỐ VÀ CHỈ DẪN THOÁT NẠN VÀ HỆ THỐNG LOA THÔNG BÁO",
+"HƯỚNG DẪN THOÁT NẠN",
+"*Chú thích: (+) - Đạt; (KN) - Kiến nghị"
+],
+"dong": [
+{
+"idx": 0,
+"tt": "I",
+"noi_dung": "Phương tiện chiếu sáng sự cố và chỉ dẫn thoát nạn",
+"goi_y": "",
+"quy_dinh": "",
+"khoan_dieu": "",
+"ket_luan_mau": "",
+"tra_o": "",
+"so_o": 6
+},
+{
+"idx": 1,
+"tt": "1",
+"noi_dung": "Đối tượng trang bị",
+"goi_y": "",
+"quy_dinh": "Phương tiện chiếu sáng sự cố và chỉ dẫn thoát nạn được trang bị cho tất cả các nhà, công trình (trừ nhà ở riêng lẻ)",
+"khoan_dieu": "QCVN 10:2025/BCA (tra điều tương ứng)",
+"ket_luan_mau": "",
+"tra_o": "bảng hệ thống B34–B50",
+"so_o": 6
+},
+{
+"idx": 2,
+"tt": "2",
+"noi_dung": "Quy định chung",
+"goi_y": "",
+"quy_dinh": "",
+"khoan_dieu": "",
+"ket_luan_mau": "",
+"tra_o": "",
+"so_o": 6
+},
+{
+"idx": 3,
+"tt": "2.1",
+"noi_dung": "Nguồn điện dự phòng",
+"goi_y": "",
+"quy_dinh": "Đèn chiếu sáng sự cố và biển báo an toàn có nguồn điện dự phòng phải đảm bảo thời gian hoạt động ổn định liên tục tối thiểu là 120 min khi có sự cố cháy, nổ / Nguồn điện sử dụng cho chiếu sáng khẩn cấp phải được kiểm soát tại tủ phân phối. Quy định này không áp dụng cho pin, ắc qui tự nạp.",
+"khoan_dieu": "Điều 4.5 / TCVN 13456:2022 / Điều 2.3.8.12 / QCVN 12:2014/BXD",
+"ket_luan_mau": "",
+"tra_o": "SKILL_ngan_chay",
+"so_o": 6
+},
+{
+"idx": 4,
+"tt": "2.2",
+"noi_dung": "Phương tiện chiếu sáng sự cố",
+"goi_y": "",
+"quy_dinh": "",
+"khoan_dieu": "",
+"ket_luan_mau": "",
+"tra_o": "",
+"so_o": 6
+},
+{
+"idx": 5,
+"tt": "2.2.1",
+"noi_dung": "Yêu cầu trang bị",
+"goi_y": "",
+"quy_dinh": "a) Cầu thang bộ thoát nạn; / b) Đường thoát nạn và vị trí chuyển hướng thoát nạn, nút giao của hành lang; / c) Vị trí trên đường thoát nạn có thay đổi về cao độ; / d) Cửa, lối ra thoát nạn; / e) Gara để xe; / f) Trong gian phòng có người làm việc và khoảng cách từ điểm xa nhất của gian phòng đến lối ra thoát nạn gần nhất lớn hơn 13 m. Trường hợp các gian phòng này có bố trí đường thoát nạn thì có thể chỉ lắp đặt đèn chiếu sáng sự cố tại đường thoát nạn đó; / g) Trong phòng đặt trạm biến áp, phòng máy phát điện, phòng kỹ thuật thang máy, gian lánh nạn; / h) Trong phòng trực điều khiển chống cháy, phòng bơm chữa cháy và tại các vị trí trang bị phương tiện phòng cháy và chữa cháy khác. / Có thể không cần bố trí trong các trường hợp sau: / - Sân vườn, khu vực sân thượng không có mái che; / - Toà nhà cao 01 tầng có diện tích sàn không quá 200 m2 và diện tích lỗ hở trên tường ngoài nhà đạt tối thiểu 80%.",
+"khoan_dieu": "Điều 5.1.1 / TCVN TCVN 13456:2022",
+"ket_luan_mau": "",
+"tra_o": "bảng hệ thống B34–B50",
+"so_o": 6
+},
+{
+"idx": 6,
+"tt": "2.2.2",
+"noi_dung": "Độ rọi",
+"goi_y": "",
+"quy_dinh": "",
+"khoan_dieu": "",
+"ket_luan_mau": "",
+"tra_o": "",
+"so_o": 6
+},
+{
+"idx": 7,
+"tt": "-",
+"noi_dung": "Chiếu sáng sự cố đường thoát nạn",
+"goi_y": "",
+"quy_dinh": "Đối với những đường thoát nạn có chiều rộng đến 2 m, thì độ rọi trung bình theo phương nằm ngang trên mặt sàn dọc theo tâm của đường thoát nạn phải lớn hơn hoặc bằng 1 lux và dải ở giữa với chiều rộng lớn hơn hoặc bằng một nửa chiều rộng của đường thoát nạn phải có được chiếu sáng tối thiểu 50 % giá trị đó / Chú thích: Các đường thoát nạn rộng hơn có thể được xem là một số dải rộng 2m hoặc được xử lý như chiếu sáng khoảng trống (chống hoảng loạn).",
+"khoan_dieu": "Điều 5.1.2 / TCVN TCVN 13456:2022",
+"ket_luan_mau": "",
+"tra_o": "bảng hệ thống B34–B50",
+"so_o": 6
+},
+{
+"idx": 8,
+"tt": "-",
+"noi_dung": "Chiếu sáng sự cố gian phòng",
+"goi_y": "",
+"quy_dinh": "Độ rọi trung bình theo phương nằm ngang không được nhỏ hơn 0,5 lux tại mặt sàn tại mọi điểm lõi của khoảng trống, không bao gồm đường viền 0,5 m theo chu vi khu vực",
+"khoan_dieu": "Điều 5.1.3 / TCVN TCVN 13456:2022",
+"ket_luan_mau": "",
+"tra_o": "bảng hệ thống B34–B50",
+"so_o": 6
+},
+{
+"idx": 9,
+"tt": "2.2.3",
+"noi_dung": "Chiếu sáng phương tiện PCCC",
+"goi_y": "",
+"quy_dinh": "Các tủ trung tâm báo cháy, nút ấn báo cháy và các phương tiện chữa cháy phải luôn được chiếu sáng đầy đủ để có thể dễ dàng xác định vị trí và nếu không nằm trên đường thoát nạn hoặc không nằm trong một phạm vi khoảng trống thì phải được chiếu sáng tối thiểu 5 lux tại mặt sàn",
+"khoan_dieu": "Điều 5.1.6 / TCVN TCVN 13456:2022",
+"ket_luan_mau": "",
+"tra_o": "bảng hệ thống B34–B50",
+"so_o": 6
+},
+{
+"idx": 10,
+"tt": "2.3",
+"noi_dung": "Chỉ dẫn thoát nạn",
+"goi_y": "",
+"quy_dinh": "",
+"khoan_dieu": "",
+"ket_luan_mau": "",
+"tra_o": "",
+"so_o": 6
+},
+{
+"idx": 11,
+"tt": "2.3.1",
+"noi_dung": "Yêu cầu trang bị",
+"goi_y": "",
+"quy_dinh": "",
+"khoan_dieu": "",
+"ket_luan_mau": "",
+"tra_o": "",
+"so_o": 6
+},
+{
+"idx": 12,
+"tt": "-",
+"noi_dung": "Biển báo chỉ dẫn lối ra thoát nạn",
+"goi_y": "",
+"quy_dinh": "Lắp đặt biển báo chỉ dẫn lối ra thoát nạn ở tất cả các lối ra vào của cầu thang bộ thoát nạn, các đường thoát nạn trên tầng nhà và tất cả các lối ra của gian phòng có từ 02 lối ra thoát nạn trở lên; / Có thể không cần bố trí trong các trường hợp sau: / - Đối với gian phòng có trang bị chiếu sáng sự cố phải đảm bảo một trong các điều kiện sau: / + Chỉ có 01 lối ra vào hoặc; / + Có lối ra trực tiếp ra hành lang bên hoặc không gian ngoài nhà. / - Đối với gian phòng không trang bị chiếu sáng sự cố phải đảm bảo một trong các điều kiện sau: / + Chỉ có 01 lối ra vào và khoảng cách từ điểm bất kỳ của gian phòng đến lối ra thoát nạn gần nhất không lớn hơn 7 m; / + Khoảng cách từ điểm bất kỳ của gian phòng đến cửa ra vào không lớn hơn 13 m và diện tích tối thiểu phần tường tiếp giáp hành lang đạt 50 % là kính đồng thời đảm bảo một trong các điều kiện sau: / Cửa mở vào hành lang có bố trí chiếu sáng sự cố; / Cửa mở hành lang bên hoặc mở trực tiếp ra ngoài nhà. / - Đối với nhà 1 tầng có diện tích sàn không quá 200 m2 và diện tích lỗ hở trên tường ngoài nhà đạt tối thiểu 80%.",
+"khoan_dieu": "Điều 5.2.1 / TCVN TCVN 13456:2022",
+"ket_luan_mau": "",
+"tra_o": "bảng hệ thống B34–B50",
+"so_o": 6
+},
+{
+"idx": 13,
+"tt": "-",
+"noi_dung": "Biển báo chỉ hướng thoát nạn",
+"goi_y": "",
+"quy_dinh": "Lắp đặt biển báo chỉ hướng thoát nạn trên đường thoát nạn, ở trong gian phòng và tất cả các vị trí mà tầm nhìn bị che khuất không thể phát hiện được các lối ra thoát nạn. / Có thể không cần bố trí biển chỉ hướng thoát nạn, trong các trường hợp sau: / - Sân vườn, khu vực sân thượng không có mái che. / - Nhà 1 tầng chỉ có mái che (không có tường bao quanh), với diện tích sàn không quá 200 m2 và diện tích lỗ hở chiếm tổi thiểu 80% diện tích tường ngoài của nhà.",
+"khoan_dieu": "Điều 5.2.2 / TCVN TCVN 13456:2022",
+"ket_luan_mau": "",
+"tra_o": "bảng hệ thống B34–B50",
+"so_o": 6
+},
+{
+"idx": 14,
+"tt": "-",
+"noi_dung": "Biển báo an toàn tầm thấp",
+"goi_y": "",
+"quy_dinh": "Lắp đặt các biển báo chỉ dẫn lối ra thoát nạn và biển báo chỉ hướng thoát nạn tầm thấp ở các tầng nhà có bố trí phòng nghỉ của khách sạn cao từ 07 tầng hoặc tổng khối tích 5.000 m3 trở lên có hành lang thoát nạn lớn hơn 10 m.",
+"khoan_dieu": "Điều 5.2.3 / TCVN TCVN 13456:2022",
+"ket_luan_mau": "",
+"tra_o": "bảng hệ thống B34–B50",
+"so_o": 6
+},
+{
+"idx": 15,
+"tt": "-",
+"noi_dung": "Sơ đồ chỉ dẫn thoát nạn",
+"goi_y": "",
+"quy_dinh": "- Tại các tầng có diện tích lớn hơn 1000 m2 hoặc có từ hai lối ra thoát nạn trở lên phải có sơ đồ chỉ dẫn thoát nạn / - Trong các phòng nghỉ của của khách sạn và các cơ sở lưu trú, cho thuê phòng ở phải có sơ đồ chỉ dẫn thoát nạn",
+"khoan_dieu": "Điều 5.2.9 / TCVN TCVN 13456:2022",
+"ket_luan_mau": "",
+"tra_o": "bảng hệ thống B34–B50",
+"so_o": 6
+},
+{
+"idx": 16,
+"tt": "2.3.2",
+"noi_dung": "Vị trí lắp đặt",
+"goi_y": "",
+"quy_dinh": "",
+"khoan_dieu": "",
+"ket_luan_mau": "",
+"tra_o": "",
+"so_o": 6
+},
+{
+"idx": 17,
+"tt": "-",
+"noi_dung": "Biển báo an toàn",
+"goi_y": "",
+"quy_dinh": "- Vị trí lắp đặt giữa các biển báo an toàn (không bao gồm biển báo an toàn tầm thấp) phải đảm bảo khoảng cách không lớn hơn 25 m. / - Biển báo an toàn bố trí dọc theo đường thoát nạn phải đáp ứng TCVN 8092:2009 (ISO 7010:2003); TCVN 5053:1990; ISO 3864-1.",
+"khoan_dieu": "Điều 5.2.6 / TCVN TCVN 13456:2022",
+"ket_luan_mau": "",
+"tra_o": "bảng hệ thống B34–B50",
+"so_o": 6
+},
+{
+"idx": 18,
+"tt": "-",
+"noi_dung": "Biển báo an toàn tầm thấp",
+"goi_y": "",
+"quy_dinh": "Đáy của biển báo tầm thấp phải lắp cách sàn một khoảng từ 150 mm đến 200 mm. Khoảng cách giữa các biển báo phải được đặt cách nhau không quá 10 m. Đối với cửa thoát hiểm, biển báo phải ở trên cửa hoặc giáp cửa với mép gần nhất của biển báo trong phạm vi 100 mm tính từ khung cửa",
+"khoan_dieu": "Điều 5.2.3 / TCVN TCVN 13456:2022",
+"ket_luan_mau": "",
+"tra_o": "bảng hệ thống B34–B50",
+"so_o": 6
+},
+{
+"idx": 19,
+"tt": "-",
+"noi_dung": "Chiều cao của biển báo tương ứng với khoảng cách nhìn",
+"goi_y": "",
+"quy_dinh": "Chiều cao nhỏ nhất của biển báo an toàn được xác định theo công thức sau: / trong đó: / – chiều cao nhỏ nhất của biển báo an toàn (m); / – khoảng cách quan sát (m); / – hằng số, trong đó bằng 100 cho các biển báo an toàn được chiếu sáng từ bên ngoài và bằng 200 cho các biển báo an toàn chiếu sáng từ bên trong.",
+"khoan_dieu": "Điều 5.2.7 / TCVN TCVN 13456:2022",
+"ket_luan_mau": "",
+"tra_o": "bảng hệ thống B34–B50",
+"so_o": 6
+},
+{
+"idx": 20,
+"tt": "-",
+"noi_dung": "Chiều cao lắp đặt của biển báo an toàn",
+"goi_y": "",
+"quy_dinh": "Biển báo an toàn (không bao gồm biển báo an toàn tầm thấp) phải lắp đặt ở độ cao từ 2 m đến 2,7 m so với mặt sàn, hoặc ngay trên cửa nếu cửa có chiều cao lớn hơn 2,7 m. Các khu vực không được bảo vệ chống khói khiến khói tích tụ có thể che khuất thì biển báo an toàn nên được gắn thấp hơn trần nhà tối thiểu 0,5 m để tránh bị ngập khói và không được lắp đặt biển báo an toàn được chiếu sáng từ bên ngoài.",
+"khoan_dieu": "Điều 5.2.8 / TCVN TCVN 13456:2022",
+"ket_luan_mau": "",
+"tra_o": "bảng hệ thống B34–B50",
+"so_o": 6
+},
+{
+"idx": 21,
+"tt": "-",
+"noi_dung": "Sơ đồ chỉ dẫn thoát nạn",
+"goi_y": "",
+"quy_dinh": "- Sơ đồ chỉ dẫn thoát nạn gồm hai phần: phần chỉ dẫn bằng chữ và phần ký hiệu hình học. Sơ đồ chỉ dẫn thoát nạn phải được niêm yết ở các vị trí dễ nhận biết, dễ thấy và vị trí có người thường xuyên qua lại. / + Phần ký hiệu hình học bao gồm mặt bằng của tầng; lối ra và chỉ hướng đường thoát nạn; cầu thang bộ; vị trí của sơ đồ tại tầng; vị trí đặt phương tiện, thiết bị chữa cháy và cứu nạn, cứu hộ (ký hiệu phù hợp với quy định tại TCVN 4879:1989 và TCVN 5053 : 1990). / + Phần chỉ dẫn bằng chữ gồm nội dung và trình tự xử lý khi có cháy. / - Kích thước của sơ đồ chỉ dẫn thoát nạn phụ thuộc vào đặc tính, tính chất hoạt động; diện tích của tầng, phòng; phương án thoát nạn nhưng không được nhỏ hơn: / + 600x400 mm - đối với sơ đồ chỉ dẫn tại tầng; / + 400x300 mm – đối với sơ đồ chỉ dẫn tại phòng. / - Sơ đồ chỉ dẫn thoát nạn được gắn sao cho mép dưới của sơ đồ chỉ dẫn thoát nạn nằm ở độ cao 1,5 m ± 0,2 m so với mặt sàn.",
+"khoan_dieu": "Điều 5.2.9 / TCVN TCVN 13456:2022",
+"ket_luan_mau": "",
+"tra_o": "bảng hệ thống B34–B50",
+"so_o": 6
+},
+{
+"idx": 22,
+"tt": "II",
+"noi_dung": "Hệ thống loa thông báo và hướng dẫn thoát nạn",
+"goi_y": "",
+"quy_dinh": "",
+"khoan_dieu": "",
+"ket_luan_mau": "",
+"tra_o": "",
+"so_o": 6
+},
+{
+"idx": 23,
+"tt": "1",
+"noi_dung": "Đối tượng trang bị",
+"goi_y": "",
+"quy_dinh": "Nhà, công trình phải trang bị hệ thống loa thông báo và hướng dẫn thoát nạn được quy định tại Phụ lục G. / STT / Đối tượng / Quy mô / 1. / Nhà và công trình công cộng / Cao trên 10 tầng hoặc có từ 2 tầng hầm trở lên / 2. / Công trình công cộng tập trung đông người: Nhà hát, rạp chiếu phim, nhà kinh doanh dịch vụ karaoke, vũ trường, quán bar, hộp đêm, bệnh viện, viện dưỡng lão và các công trình có công năng tương tự. / Từ 50 người trên 1 tầng trở lên / 3. / Gara ô tô, xe máy dạng kín (bao gồm cả gara độc lập và trong nhà có chức năng khác) / Diện tích từ 18 000 m2 trở lên / 4. / Nhà sản xuất, kho / Diện tích từ 18 000 m2 trở lên và có từ 50 người trên 1 tầng trở lên",
+"khoan_dieu": "QCVN 10:2025/BCA (tra điều tương ứng)",
+"ket_luan_mau": "",
+"tra_o": "bảng hệ thống B34–B50",
+"so_o": 6
+},
+{
+"idx": 24,
+"tt": "2",
+"noi_dung": "Số nguồn cấp",
+"goi_y": "",
+"quy_dinh": "Các thiết bị điện của hệ thống bảo vệ chống cháy của nhà phải được cấp điện ưu tiên từ hai nguồn độc lập (một nguồn điện lưới và một nguồn máy phát điện dự phòng). / CHÚ THÍCH: Đối với các thiết bị điện có nguồn dự phòng riêng (ví dụ bơm diezen, tủ chống cháy có ắc quy dự phòng) thì chỉ cần một nguồn điện lưới, nhưng nguồn dự phòng riêng này phải đảm bảo hoạt động bình thường khi có cháy.",
+"khoan_dieu": "Điều 3.1.10 / QCVN 06:2022",
+"ket_luan_mau": "",
+"tra_o": "MOD_loi_ra_va_cua",
+"so_o": 6
+},
+{
+"idx": 25,
+"tt": "3",
+"noi_dung": "Yêu cầu về mức âm thanh",
+"goi_y": "",
+"quy_dinh": "Tín hiệu âm thanh của hệ thống loa thông báo và hướng dẫn thoát nạn phải đảm bảo mức âm thanh tổng thể (mức âm thanh của tiếng ồn thường xuyên cùng với âm thanh từ các tín hiệu cảnh báo tạo ra) không thấp hơn 75 dBA ở khoảng cách 3 m từ tín hiệu cảnh báo, nhưng không quá 120 dBA ở bất kỳ vị trí nào. / Tín hiệu âm thanh của hệ thống loa thông báo và hướng dẫn thoát nạn phải tạo ra mức âm thanh cao hơn ít nhất 15 dBA so với mức âm thanh của tiếng ồn thường xuyên tại gian phòng. Việc đo mức âm thanh được thực hiện ở độ cao 1,5 m tính từ sàn nhà. / Trong phòng ngủ, tín hiệu âm thanh của hệ thống loa thông báo và hướng dẫn thoát nạn phải có mức âm thanh cao hơn ít nhất 15 dBA so với mức âm thanh của tiếng ồn thường xuyên trong phòng, nhưng mức âm thanh tổng thể không nhỏ hơn 70 dBA và không quá 120 dBA. Việc đo mức âm thanh được thực hiện ở vị trí ngang với đầu của người đang ngủ. / Thiết bị loa cảnh báo cháy và điều khiển thoát nạn gắn trên tường phải được bố trí sao cho phần trên của chúng cách mặt sàn ít nhất 2,3 m và cách trần tối thiểu phải là 0,15 m. / Trong các phòng được bảo vệ, nơi có người ở trong các thiết bị chống ồn, cũng như trong các phòng có mức ồn trên 95 dBA, hệ thống loa thông báo và hướng dẫn thoát nạn phải kết hợp với cảnh báo bằng ánh sáng. Việc sử dụng thiết bị cảnh báo nhấp nháy bằng ánh sáng được cho phép. / Thiết bị loa cảnh báo và chỉ dẫn thoát nạn bằng giọng nói phải phát ra âm thanh có tần số trong dải từ 200 Hz đến 5 000 Hz.",
+"khoan_dieu": "QCVN 10:2025/BCA (tra điều tương ứng)",
+"ket_luan_mau": "",
+"tra_o": "bảng hệ thống B34–B50",
+"so_o": 6
+}
+]
+}

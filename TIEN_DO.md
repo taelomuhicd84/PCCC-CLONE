@@ -2,7 +2,20 @@
 
 File này cập nhật sau mỗi mốc việc và trước khi hết usage. Phiên mới đọc mục "ĐANG LÀM / VIỆC TIẾP THEO" trước.
 
-## ĐANG LÀM / VIỆC TIẾP THEO (cập nhật 2026-11-02 cuối phiên, dừng vì usage 5 giờ > 85%)
+## ĐANG LÀM / VIỆC TIẾP THEO (cập nhật 2026-11-02 chiều)
+**Phiên 2026-11-02 chiều: Pha 5a xong (người dùng giao Claude tự quyết).** Hai luồng: KHẢO SÁT – TƯ VẤN (skill `tkpccc-khao-sat-tu-van`)
+và THẨM ĐỊNH xây dựng + hệ thống (skill `tkpccc-tham-dinh`, agent `pccc-xay-dung`, `pccc-he-thong`). Nền: module `tkpccc-bang-doi-chieu`
+(bảng A/B/KT chép SKILL-PCCC-NEW 24743f9 + khung KS) và `tkpccc-ghi-chu-ban-ve` (annotation PDF thật: khung, callout, leader, nét, tường,
+cửa, chữ). Sắp xếp lại: mỗi module một skill (bảng module ↔ skill ở `CLAUDE.md`; quy tắc tư vấn chuyển từ CLAUDE.md vào skill khảo sát).
+Chừa đường thiết kế CAD qua MCP (ROADMAP Pha 6, chưa làm). Đã kiểm: npm test 57, pytest 9 (thamdinh 2 + ghi chú 4 + bảng 3),
+CAD TAT CA DAT; chạy thử ghi chú trang 3 hồ sơ `ket_qua/canho` (trang xoay 270°): khung, callout đúng chỗ.
+Việc tiếp theo của luồng mới:
+1. Chạy trọn luồng khảo sát trên `ket_qua/canho` (Lưu Xuân Lộc; máy kia là `ket_qua/luu_xuan_loc_thu/`): chuyển bảng bản 6 sang
+   `doi_chieu.json` khung KS (bỏ dòng 14 thang hở, đưa vào Kết luận dòng thang kèm điều kiện 3.3.2 L1 + 3H + L3), comment + PA1/PA2 vẽ
+   bằng `tuong`, `cua`, khung số = TT; gửi bảng + `ban_ve_ghi_chu.pdf` + `doi_chieu.xlsx`. Việc này thay việc "đánh số khung trùng TT" cũ.
+2. Thử luồng thẩm định trên một hồ sơ (vd KT7.1 + A5 + B…): đo độ dài job, chỉnh số dòng mỗi job, xem agent điền có đúng định dạng.
+3. Pha 5b (ROADMAP): web chạy luồng, Word theo mẫu A/B, điền mẫu báo cáo khảo sát của người dùng (chờ người dùng gửi mẫu).
+
 **Đọc thêm `LICH_SU.md` mục 2026-11-02 "Lưu ý cho phiên sau" trước khi làm.**
 **NHẮC NGƯỜI DÙNG ĐẦU PHIÊN (người dùng dặn):** thang hở (loại 2) chỉ là kiến thức dùng để tư vấn, không phải dòng đối chiếu: bảng
 Lưu Xuân Lộc bản 6 còn dòng 14 "Thang hở (loại 2)" phải bỏ, ghi vào cột Kết luận của dòng thang; vẫn chờ người dùng train điều kiện thang loại 2.
@@ -17,7 +30,7 @@ Lưu Xuân Lộc bản 6 còn dòng 14 "Thang hở (loại 2)" phải bỏ, ghi 
 
 Việc tiếp theo:
 1. Xong 02/11: `tu_van_thiet_ke.md` bản 6 theo khung bảng đối chiếu chính thức (23 dòng; phương án nằm trong cột Kết luận),
-   chữ thang trên PDF đã sửa. VIỆC ĐẦU TIÊN PHIÊN SAU: đánh số khung trên PDF trùng cột TT của bảng (`ve_khoanh.py`), gửi lại PDF + bảng.
+   chữ thang trên PDF đã sửa. Đánh số khung trùng TT: nay làm bằng luồng mới (việc 1 ở đầu mục này).
 2. 👤 Chờ người dùng: (a) train tiếp điều kiện thang loại 2 (3.2.6, 3.4.15, 3.4.16; đoạn 3.2.6 trong bản hợp nhất bị lỗi chữ); đã train 02/11 phần
    đường thoát nạn 3.3.2: L1 + 3H + L3 ≤ Phụ lục G (`skills/MOD_tinh_toan_khoang_cach.md`);
    (b) căn hộ mở cửa thẳng vào buồng thang: chỉ báo cáo kèm căn cứ 3.2.1b, người dùng tự quyết (dặn 2026-11-02: không hỏi chọn);

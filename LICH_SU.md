@@ -60,6 +60,13 @@
   bậc đầu tiên của thang loại 2, đoạn trên thang lấy 3H. Người dùng xác nhận PHẢI CỘNG L1 + 3H + L3 rồi so Phụ lục G (ví dụ vẽ mặt bằng
   + mặt cắt: 19,0 + 10,8 + 3,0 = 32,8 m > 30 m). Ghi vào `skills/MOD_tinh_toan_khoang_cach.md`, trỏ từ `knowledge/nhan-dien-thang-thoat-nan.md`
   bước 5 và `skills/MOD_cau_thang_buong_thang.md`.
+- Pha 5a (người dùng giao Claude tự quyết; dặn thêm giữa chừng: chừa đường thiết kế CAD qua MCP, mỗi module một skill để sửa đỡ tốn token):
+  module `tkpccc-bang-doi-chieu` (chép 76 bảng A/B/KT từ SKILL-PCCC-NEW 24743f9 + khung KS; CLI chon, khung, dong, tim, lamviec, job, gop,
+  kiem, xlsx, md), `tkpccc-ghi-chu-ban-ve` (annotation PDF thật: khung, callout, leader, nét, tường, cửa, chữ; trang xoay; neo theo chữ;
+  ảnh lưới tọa độ), skill điều phối `tkpccc-khao-sat-tu-van`, `tkpccc-tham-dinh`, agent `pccc-xay-dung`, `pccc-he-thong`; thẻ skill cho
+  module cũ (`tkpccc-thuy-luc`, `tkpccc-kiem-luat-pdf`, `tkpccc-bao-gia`, `tkpccc-huong-dan`, CAD trong `tkpccc-cad-console`); CLAUDE.md
+  gọn lại (bảng module ↔ skill; quy tắc tư vấn chuyển vào skill). ROADMAP thêm Pha 5a, 5b, 6 (CAD qua MCP). Cài pytest trên máy này.
+  Kiểm: npm test 57, pytest 9, CAD TAT CA DAT.
 
 ### Lưu ý cho phiên sau (người dùng dặn ghi, 2026-11-02)
 1. Kết quả tư vấn: MỘT bảng theo khung bảng đối chiếu chính thức (TT | Nội dung đối chiếu | Nội dung thiết kế | Quy định | Khoản Điều |

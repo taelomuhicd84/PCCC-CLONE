@@ -15,8 +15,16 @@ TKPCCC/
 ├─ package.json         1 gói Node chung (tsx, vitest, exceljs, docx, marked) — không dùng workspaces
 ├─ .claude/
 │  ├─ launch.json         cấu hình xem trước web trong Claude Code (runner cổng 8787)
-│  └─ skills/             skill dự án cho Claude: tkpccc-cad-console (kiểm thử CAD, kèm scripts/in_png.ps1),
-│                         tkpccc-xong-dau-muc (khép đầu mục), tkpccc-tra-quy-chuan (chọn file quy chuẩn)
+│  ├─ agents/             pccc-xay-dung (bảng KT), pccc-he-thong (bảng A, B): agent nhận job thẩm định, ghi file phần
+│  └─ skills/             MỖI MODULE MỘT SKILL (bảng module ↔ skill ở CLAUDE.md); SKILL.md liệt kê mọi file của module
+│     ├─ tkpccc-khao-sat-tu-van/  điều phối báo cáo khảo sát – tư vấn (bảng KS + ghi chú PDF)
+│     ├─ tkpccc-tham-dinh/        điều phối thẩm định xây dựng (KT) + hệ thống (A, B)
+│     ├─ tkpccc-bang-doi-chieu/   data/ (A1–A26, B1–B14, KT*, KS, index.json; A/B/KT chép SKILL-PCCC-NEW 24743f9),
+│     │                           scripts/bang_doi_chieu.py (chon, khung, dong, tim, lamviec, job, gop, kiem, xlsx, md), test/
+│     ├─ tkpccc-ghi-chu-ban-ve/   scripts/ghi_chu_pdf.py (ve, luoi, tim: annotation khung/callout/leader/nét/tường/cửa), test/
+│     ├─ tkpccc-kiem-luat-pdf/ · tkpccc-thuy-luc/ · tkpccc-bao-gia/ · tkpccc-huong-dan/   thẻ module (code ở shared/ runner/ thamdinh/ web/)
+│     ├─ tkpccc-cad-console/      module CAD: build + kiểm thử plugin (scripts/in_png.ps1), đường CAD qua MCP (Pha 6)
+│     └─ tkpccc-tra-quy-chuan/ · tkpccc-xong-dau-muc/   quy trình chung
 │
 ├─ shared/              LÕI NGHIỆP VỤ dùng chung, hàm thuần (không đọc/ghi file, không server)
 │  ├─ src/bao_gia.ts       khối lượng × danh mục × đơn giá -> báo giá theo hệ; docSoVN (đọc số kiểu Việt Nam)
@@ -74,7 +82,9 @@ TKPCCC/
 └─ ket_qua/             KẾT QUẢ TỪNG CÔNG TRÌNH (tự sinh, không commit): ket_qua/<dự án>/
                         khao_sat.json, khoi_luong.json (bóc từ CAD), khoi_luong_so_bo.json (ước theo khảo sát),
                         thamdinh/ (ban_ve.pdf, ban_ve_annotated.pdf, findings.jsonl, tom_tat.json, claude_xet.json),
-                        thuy_luc/ (mat_bang.json, so_lieu.json, thuy_luc.xlsx)
+                        thuy_luc/ (mat_bang.json, so_lieu.json, thuy_luc.xlsx),
+                        khảo sát – tư vấn / thẩm định theo bảng đối chiếu: ban_ve.pdf, doi_chieu.json (bảng + ghi_chu),
+                        doi_chieu.xlsx, ban_ve_ghi_chu.pdf, anh/ (luoi_<trang>.png, ra/), jobs/ + phan/ (job và phần của agent)
 ```
 
 ## Mỗi lớp một việc
@@ -106,6 +116,8 @@ Web: tab Thẩm định PDF ─POST /api/tham-dinh─► ket_qua/<dự án>/tham
 ```
 
 ## Thêm mới thì đặt ở đâu
+- Module mới (người dùng dặn 2026-11-02): `.claude/skills/tkpccc-<tên>/SKILL.md`; module chỉ Claude dùng thì để luôn `scripts/`, `data/`,
+  `test/` trong thư mục skill; thêm 1 dòng vào bảng module ↔ skill trong `CLAUDE.md`. Agent con: `.claude/agents/pccc-<việc>.md`.
 - Vật tư / thiết bị mới: 1 dòng trong `data/vat_tu.json` → `cad\build.bat` → `PCCC_LIB` (tự thêm block mặc định cho mã mới).
 - Phép tính nghiệp vụ mới (ước khối lượng, thủy lực…): file mới trong `shared/src/` + test trong `shared/test/`.
 - API mới: route trong `runner/src/server.ts`; xuất định dạng mới: `runner/src/xuat_<định dạng>.ts`; engine AI mới: `runner/src/engines/`.
