@@ -52,11 +52,17 @@ def test_lamviec_gop_kiem_xuat(tmp_path):
     assert not k["ok"] and any("thiếu lý do" in x for x in k["loi"])
     assert k["dem"]["KT7.1"]["CHUA_DAT"] == 1 and k["dem"]["KS"]["chua_xet"] == 26
     ks[2]["ly_do"] = "chưa có mặt cắt"
+    ks[1].update(ly_do="6 tầng nổi + 1 hầm")                    # dòng thông tin (ks[0] là dòng nhóm I): giá trị là kết luận
+    assert ks[1]["thong_tin"] and bdc.o_ket_luan(ks[1]) == "6 tầng nổi + 1 hầm"
+    dc["ghi_chu"].append({"khung": [3, "11a"], "trang": 1, "kieu": "chu", "hop": [0, 0, 9, 9]})   # một ghi chú cho nhiều dòng
+    ks[7].update(ket_luan="CHUA_DAT", ly_do="x", phuong_an=["y"], khung=[3])   # dòng thường (ks[3] là dòng thông tin)
     ks[3]["ket_luan"] = "SAI"
     assert any("không hợp lệ" in x for x in bdc.kiem(dc)["loi"])
     ks[3]["ket_luan"] = ""
     k = bdc.kiem(dc)
     assert k["ok"] and any("chưa có khung" in x for x in k["canh_bao"])
+    assert k["dem"]["KS"]["xac_dinh"] == 1 and not any("khung 3" in x for x in k["canh_bao"])
+    assert any("khung 11a: có trên PDF" in x for x in k["canh_bao"])
 
     m = bdc.md(dc, None, True, 0)
     assert "CHƯA ĐẠT: cao 18,4 m > 15 m · PA1: sửa vế thẳng" in m and "CẦN XÁC NHẬN" in m

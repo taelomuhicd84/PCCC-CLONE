@@ -138,7 +138,7 @@ def lamviec(mas: list[str], ra: Path, loai: str) -> dict:
             continue
         dong = [{"idx": r["idx"], "tt": r.get("tt", ""), "noi_dung": r.get("noi_dung", ""), "quy_dinh": r.get("quy_dinh", ""),
                  "khoan_dieu": r.get("khoan_dieu", ""), "goi_y": r.get("goi_y", ""), "tra_o": r.get("tra_o", ""),
-                 "nhom": bool(r.get("nhom")), "xet": can_xet(b["ma"], r), "thiet_ke": "", "ket_luan": "", "ly_do": "",
+                 "nhom": bool(r.get("nhom")), "thong_tin": bool(r.get("thong_tin")), "xet": can_xet(b["ma"], r), "thiet_ke": "", "ket_luan": "", "ly_do": "",
                  "phuong_an": [], "khung": [], "nguon": ""}
                 for r in b["dong"] if not la_so_cot(r)]
         dc["bang"].append({"ma": b["ma"], "ten": b["ten"], "phan": phan_cua(b["ma"]), "dau_bang": b.get("dau_bang", []),
@@ -147,11 +147,17 @@ def lamviec(mas: list[str], ra: Path, loai: str) -> dict:
     return {"ok": True, "file": str(ra), "bang": [(b["ma"], sum(r["xet"] for r in b["dong"])) for b in dc["bang"]]}
 
 
+def _ds(k) -> list:
+    """Số khung của một mục ghi chú: một số hoặc danh sách (một ghi chú chung cho nhiều dòng)."""
+    return list(k) if isinstance(k, list) else ([] if k is None else [k])
+
+
 def gop(ra: Path, phan: list[Path], giu_so: bool) -> dict:
     """Gộp file phần (agent điền) vào doi_chieu.json theo idx; số khung đánh lại nối tiếp (trừ --giu-so)."""
     dc = doc_json(ra)
     bang = {b["ma"]: b for b in dc["bang"]}
-    tiep = max([k for b in dc["bang"] for r in b["dong"] for k in r["khung"]] + [g.get("khung") or 0 for g in dc["ghi_chu"]] + [0]) + 1
+    so = [k for b in dc["bang"] for r in b["dong"] for k in r["khung"]] + [k for g in dc["ghi_chu"] for k in _ds(g.get("khung"))]
+    tiep = max([k for k in so if isinstance(k, int)] + [0]) + 1
     dem = 0
     for f in phan:
         p = doc_json(f)
@@ -159,7 +165,7 @@ def gop(ra: Path, phan: list[Path], giu_so: bool) -> dict:
             raise SystemExit(f"{f}: bảng {p.get('ma')!r} chưa có trong {ra.name} (chạy lamviec trước)")
         doi = {}
         if not giu_so:
-            for k in sorted({k for r in p.get("dong", []) for k in r.get("khung", [])} | {g["khung"] for g in p.get("ghi_chu", []) if g.get("khung") is not None}):
+            for k in sorted({k for r in p.get("dong", []) for k in r.get("khung", [])} | {k for g in p.get("ghi_chu", []) for k in _ds(g.get("khung"))}, key=str):
                 doi[k], tiep = tiep, tiep + 1
         theo_idx = {r["idx"]: r for r in bang[p["ma"]]["dong"]}
         for r in p.get("dong", []):
@@ -170,7 +176,8 @@ def gop(ra: Path, phan: list[Path], giu_so: bool) -> dict:
                     theo_idx[r["idx"]][k] = [doi.get(x, x) for x in r[k]] if k == "khung" else r[k]
             dem += 1
         for g in p.get("ghi_chu", []):
-            dc["ghi_chu"].append({**g, "khung": doi.get(g.get("khung"), g.get("khung"))})
+            k = g.get("khung")
+            dc["ghi_chu"].append({**g, "khung": [doi.get(x, x) for x in k] if isinstance(k, list) else doi.get(k, k)})
         for k, v in p.get("cong_trinh", {}).items():          # agent bổ sung thông tin công trình còn trống
             if dc["cong_trinh"].get(k) in (None, "", [], {}):
                 dc["cong_trinh"][k] = v
@@ -203,10 +210,10 @@ def job(f: Path, ma: str, tu: int, den: int, ra: Path, phan: Path) -> dict:
 
 def kiem(dc: dict) -> dict:
     loi, canh_bao, dem = [], [], {}
-    khung_ve = {g.get("khung") for g in dc.get("ghi_chu", []) if g.get("khung") is not None}
+    khung_ve = {k for g in dc.get("ghi_chu", []) for k in _ds(g.get("khung"))}
     khung_dong = set()
     for b in dc["bang"]:
-        d = dem.setdefault(b["ma"], {k: 0 for k in list(KET_LUAN) + ["chua_xet"]})
+        d = dem.setdefault(b["ma"], {k: 0 for k in list(KET_LUAN) + ["xac_dinh", "chua_xet"]})
         for r in b["dong"]:
             ten = f"{b['ma']} #{r['idx']} (TT {r['tt'] or '-'})"
             kl = r.get("ket_luan", "")
@@ -216,8 +223,8 @@ def kiem(dc: dict) -> dict:
             khung_dong |= set(r.get("khung", []))
             if not r.get("xet") and not kl:
                 continue
-            if not kl:
-                d["chua_xet"] += 1
+            if not kl:                       # dòng thông tin (số tầng, chiều cao…): ghi giá trị ở ly_do là đã xác định
+                d["xac_dinh" if r.get("thong_tin") and str(r.get("ly_do", "")).strip() else "chua_xet"] += 1
                 continue
             d[kl] += 1
             if kl != "DAT" and not str(r.get("ly_do", "")).strip():
@@ -226,15 +233,17 @@ def kiem(dc: dict) -> dict:
                 canh_bao.append(f"{ten}: {KET_LUAN[kl]} chưa có khung trên bản vẽ")
             if kl == "CHUA_DAT" and not r.get("phuong_an"):
                 canh_bao.append(f"{ten}: CHƯA ĐẠT chưa có phương án điều chỉnh")
-    for k in sorted(khung_dong - khung_ve):
+    for k in sorted(khung_dong - khung_ve, key=str):
         canh_bao.append(f"khung {k}: dòng có ghi nhưng chưa vẽ trên PDF (ghi_chu)")
-    for k in sorted(khung_ve - khung_dong):
+    for k in sorted(khung_ve - khung_dong, key=str):
         canh_bao.append(f"khung {k}: có trên PDF nhưng không dòng nào ghi")
     return {"ok": not loi, "dem": dem, "loi": loi, "canh_bao": canh_bao}
 
 
 def o_ket_luan(r: dict) -> str:
     if not r.get("ket_luan"):
+        if r.get("thong_tin") and r.get("ly_do"):
+            return str(r["ly_do"])
         return "" if not r.get("xet") else "(chưa xét)"
     t = KET_LUAN[r["ket_luan"]] + (f": {r['ly_do']}" if r.get("ly_do") else "")
     return "\n".join([t] + [str(x) for x in r.get("phuong_an", [])])
@@ -280,10 +289,10 @@ def xlsx(dc: dict, ra: Path) -> dict:
         if v not in (None, "", [], {}):
             ws.append([k, json.dumps(v, ensure_ascii=False) if isinstance(v, (dict, list)) else v])
     ws.append([])
-    ws.append(["Bảng", "Tên"] + list(KET_LUAN.values()) + ["Chưa xét"])
+    ws.append(["Bảng", "Tên"] + list(KET_LUAN.values()) + ["Xác định", "Chưa xét"])
     dem = kiem(dc)["dem"]
     for b in dc["bang"]:
-        ws.append([b["ma"], b["ten"]] + [dem[b["ma"]][k] for k in list(KET_LUAN) + ["chua_xet"]])
+        ws.append([b["ma"], b["ten"]] + [dem[b["ma"]][k] for k in list(KET_LUAN) + ["xac_dinh", "chua_xet"]])
     ws.column_dimensions["A"].width, ws.column_dimensions["B"].width = 22, 60
     for b in dc["bang"]:
         s = wb.create_sheet(b["ma"][:31])

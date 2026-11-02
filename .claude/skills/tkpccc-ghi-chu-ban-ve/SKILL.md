@@ -22,12 +22,12 @@ python -X utf8 $S ve   ket_qua/<da>/ban_ve.pdf ket_qua/<da>/doi_chieu.json -o ke
 
 ## Đặc tả mục ghi chú
 Tọa độ = px trên ảnh `luoi` ở `zoom` (khoá `zoom` gốc file, mặc định 1 = point PDF), đúng chiều NHÌN THẤY; trang có /Rotate tự đổi.
-Trường chung: `trang` (từ 1), `kieu`, `mau`, `khung` (số = TT của bảng KS hoặc cột Khung khi thẩm định), `noi_dung` (comment),
+Trường chung: `trang` (từ 1), `kieu`, `mau`, `khung` (số = TT của bảng KS hoặc cột Khung khi thẩm định; danh sách = một ghi chú chung cho nhiều dòng), `noi_dung` (comment),
 `phuong_an` ("PA1"), `nhan` (chữ ngắn hiện trên bản vẽ), `nhan_lech` [dx, dy], `zoom` (ghi đè cho riêng mục).
 
 | kieu | Trường riêng | Vẽ ra |
 |---|---|---|
-| `khung` | `hop` [x0,y0,x1,y1] hoặc `neo` {"chu": "CT1", "thu": 1, "le": 6}; `net_dut`; `may` (viền mây) | khung chữ nhật + số khung; comment ở khung |
+| `khung` | `hop` [x0,y0,x1,y1] hoặc `neo` {"chu": "CT1", "thu": 1, "le": 6}; `net_dut`; `may` (viền mây) | khung chữ nhật + số khung (khung có `phuong_an` chỉ hiện `nhan`); comment ở khung |
 | `callout` | `hop` (ô chữ), `den` [x,y] (chỗ chỉ tới), `khuyu` (tuỳ chọn), `co` (cỡ chữ) | ô chữ "[khung] PA: nội dung" + đường chỉ có mũi tên |
 | `leader` | `tu` (đuôi, chỗ ghi nhãn), `den` (mũi tên) | đường dẫn mũi tên + nhãn (mặc định "[khung]"); comment ở đường |
 | `net` | `diem` [[x,y],…], `net_dut`, `mui_ten`, `day` | đường nét + comment: đường thoát nạn, kích thước đo, ranh giới |

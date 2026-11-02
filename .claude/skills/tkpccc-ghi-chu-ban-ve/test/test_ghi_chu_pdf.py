@@ -39,7 +39,8 @@ MUC = [
      "phuong_an": "PA1", "noi_dung": "Cửa ngăn cháy tự đóng"},
     {"trang": 2, "kieu": "khung", "khung": 3, "hop": [40, 50, 140, 120], "mau": "cam", "may": True,
      "noi_dung": "Nghi vấn trên trang xoay"},
-    {"trang": 2, "kieu": "chu", "hop": [20, 400, 380, 440], "mau": "xanh", "noi_dung": "TƯ VẤN SƠ BỘ PCCC"},
+    {"trang": 2, "kieu": "chu", "hop": [20, 400, 380, 440], "mau": "xanh", "khung": [19, 20], "noi_dung": "TƯ VẤN SƠ BỘ PCCC"},
+    {"trang": 2, "kieu": "khung", "khung": 3, "hop": [200, 50, 300, 120], "mau": "xanh_la", "phuong_an": "PA2", "noi_dung": "Buồng thang mở rộng"},
 ]
 
 
@@ -68,6 +69,9 @@ def test_ve_du_kieu(ban_ve, tmp_path):
     v = [a for a in p2.annots() if a.type[1] == "Square"][0].rect * p2.rotation_matrix
     tam = (v.tl + v.br) / 2                     # viền mây làm khung to ra vài pt: so tâm
     assert abs(tam.x - 90) < 2 and abs(tam.y - 85) < 2 and v.width < 100 + 16
+    assert sum(a.type[1] == "FreeText" for a in p2.annots()) == 2      # khung phương án không có thẻ số
+    chu = [a for a in p2.annots() if a.info["title"] == "PCCC [19,20]"]
+    assert chu and chu[0].info["content"].startswith("[19,20] TƯ VẤN")
     assert (tmp_path / "anh" / "trang_1.png").exists() and (tmp_path / "anh" / "trang_2.png").exists()
 
 

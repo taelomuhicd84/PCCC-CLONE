@@ -28,6 +28,12 @@ class Loi(Exception):
     pass
 
 
+def _so_khung(muc: dict) -> str | None:
+    """Số khung hiện trên bản vẽ; danh sách = một ghi chú chung cho nhiều dòng bảng."""
+    k = muc.get("khung")
+    return None if k is None else ",".join(map(str, k)) if isinstance(k, list) else str(k)
+
+
 def _diem(v, k: float) -> pymupdf.Point:
     if not (isinstance(v, (list, tuple)) and len(v) == 2):
         raise Loi(f"điểm phải là [x, y], nhận {v!r}")
@@ -73,7 +79,8 @@ class But:
         self.m = page.derotation_matrix
 
     def _info(self, a, muc: dict, kieu: str):
-        tieu_de = "PCCC" + (f" [{muc['khung']}]" if muc.get("khung") is not None else "")
+        so = _so_khung(muc)
+        tieu_de = "PCCC" + (f" [{so}]" if so is not None else "")
         nd = str(muc.get("noi_dung", ""))
         if muc.get("phuong_an"):
             nd = f"{muc['phuong_an']}: {nd}"
@@ -130,14 +137,14 @@ def ve_muc(page: pymupdf.Page, muc: dict, k: float) -> list:
     but = But(page)
     rect = _neo(page, muc["neo"]) if muc.get("neo") else (_hop(muc["hop"], k) if "hop" in muc else None)
     nd = str(muc.get("noi_dung", ""))
-    so = muc.get("khung")
+    so = _so_khung(muc)
     tao = []
     if kieu == "khung":
         if rect is None:
             raise Loi("khung cần 'hop' hoặc 'neo'")
         tao.append(but.khung(rect, mau, muc.get("net_dut", True), muc.get("may", False)))
-        if so is not None:
-            t = str(so)
+        if so is not None and not muc.get("phuong_an"):     # khung phương án: chỉ hiện nhãn PA, không hiện số
+            t = so
             tao.append(but.chu(pymupdf.Rect(rect.x0, rect.y0 - 12, rect.x0 + 8 + 5 * len(t), rect.y0), t, mau, co=8))
         tao += _nhan(but, muc, rect.tl, mau, k)
     elif kieu in ("callout", "chu"):

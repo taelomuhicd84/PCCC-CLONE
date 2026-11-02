@@ -50,7 +50,10 @@ Không mở cả file JSON bảng gốc (tới 160 KB): đọc bằng `khung`, `
   CHƯA ĐẠT, CẦN XÁC NHẬN phải có `khung` và mục `ghi_chu` cùng số (lệnh `kiem` kiểm cả hai chiều).
 - Ô Kết luận khi xuất = nhãn + lý do + từng phương án một dòng. Phương án và kiến thức dùng để tư vấn (vd thang hở loại 2) nằm trong
   ô Kết luận của dòng liên quan, không thành dòng riêng.
-- KS: thang thoát nạn mỗi thang một dòng: chép dòng TT 11, `idx` mới = lớn nhất + 1, `tt` "11a", "11b"…; dòng không có trên bản vẽ thì KHÔNG ÁP DỤNG hoặc xoá.
+- KS: thang thoát nạn mỗi thang một hoặc vài dòng: chép dòng TT 11, `idx` mới = lớn nhất + 1, `tt` "11a", "11b"…; dòng không có trên bản vẽ thì KHÔNG ÁP DỤNG hoặc xoá.
+- Dòng thông tin (`thong_tin`: số tầng, chiều cao PCCC, công năng, khối tích, diện thẩm định của KS): ghi giá trị vào `ly_do`, để trống
+  `ket_luan` (ô Kết luận hiện giá trị, `kiem` đếm là "xac_dinh"); số liệu chưa chắc thì dùng CẦN XÁC NHẬN.
+- Ghi chú chung cho nhiều dòng (vd hệ thống chưa thể hiện trên bản vẽ): `"khung": [19, 20, 21]` trong một mục `ghi_chu`.
 
 ## Cột "Tra ở" → file TKPCCC
 | Ghi trong bảng | Mở |

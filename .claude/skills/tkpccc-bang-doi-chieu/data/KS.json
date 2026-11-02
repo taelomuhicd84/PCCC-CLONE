@@ -9,38 +9,230 @@
     "Cột Quy định và Khoản Điều chỉ điền sau khi tra file ở cột Tra ở (chép nguyên văn, không viết theo trí nhớ)."
   ],
   "dong": [
-    {"idx": 0, "tt": "I", "noi_dung": "THÔNG TIN CÔNG TRÌNH", "nhom": true},
-    {"idx": 1, "tt": "1", "noi_dung": "Số tầng (nổi, hầm, tum, tầng thượng)", "goi_y": "Đếm mặt bằng, mặt cắt; tầng thượng xây kín hoặc vượt diện tích tum thì tính 1 tầng; bản vẽ cải tạo xét mặt bằng cải tạo", "tra_o": "knowledge/khao-sat-bao-gia.md mục 2; knowledge/hoc/du-an/so-bo-thiet-ke.md"},
-    {"idx": 2, "tt": "2", "noi_dung": "Chiều cao PCCC", "goi_y": "Cao độ sàn tầng trên cùng có người so với mặt đường xe chữa cháy; ghi phép cộng; không có mặt đứng thì ước lượng có nhãn", "tra_o": "knowledge/dinh-nghia/dinh-nghia.md; knowledge/khao-sat-bao-gia.md mục 3, Ước lượng chiều cao"},
-    {"idx": 3, "tt": "3", "noi_dung": "Công năng, nhóm nhà F, diện tích sàn", "goi_y": "Công năng thực tế bằng chữ + nhóm F; diện tích từng tầng và tổng", "tra_o": "knowledge/dinh-nghia/dinh-nghia.md; knowledge/thuat-ngu-chuan.md"},
-    {"idx": 4, "tt": "4", "noi_dung": "Khối tích, bậc chịu lửa, cấp nguy hiểm cháy kết cấu", "goi_y": "Khối tích lấy trên bản vẽ hoặc tự tính (ghi 'tự tính' + phép tính)", "tra_o": "knowledge/qcvn06-phu-luc-h.md; knowledge/khao-sat-bao-gia.md mục 4"},
-    {"idx": 5, "tt": "5", "noi_dung": "Diện thẩm định thiết kế PCCC", "goi_y": "CÓ / KHÔNG / CẦN XÁC NHẬN + mục, điểm Phụ lục III", "tra_o": "knowledge/nghi-dinh-tham-dinh-dieu-chinh.md; knowledge/cv-2360-cahn-1183-c07-dien-tham-dinh.md"},
-    {"idx": 6, "tt": "II", "noi_dung": "GIAO THÔNG, KHOẢNG CÁCH", "nhom": true},
-    {"idx": 7, "tt": "6", "noi_dung": "Khoảng cách PCCC, giáp ranh", "goi_y": "Tường giáp ranh, cửa sổ trổ ra ranh, khoảng cách tới nhà bên", "tra_o": "knowledge/giap-ranh-khoang-cach-pccc.md; knowledge/qcvn06-dieu-4.md"},
-    {"idx": 8, "tt": "7", "noi_dung": "Đường, bãi đỗ xe chữa cháy", "goi_y": "Bề rộng đường, bãi đỗ theo chiều cao PCCC, khoảng cách tới nhà", "tra_o": "knowledge/qcvn06-dieu-6.md; knowledge/so-bo-thiet-ke-pccc.md"},
-    {"idx": 9, "tt": "8", "noi_dung": "Lối vào từ trên cao", "goi_y": "Ban công, cửa sổ mặt tiền: kích thước, cao mép dưới, số lượng", "tra_o": "knowledge/qcvn06-dieu-6.md"},
-    {"idx": 10, "tt": "III", "noi_dung": "THOÁT NẠN", "nhom": true},
-    {"idx": 11, "tt": "9", "noi_dung": "Số lối thoát nạn mỗi tầng (tầng trên, tầng 1, hầm)", "goi_y": "Chỉ đếm thang ĐẠT; ghi 'x lối đạt + y lối chờ xác nhận'", "tra_o": "skills/MOD_so_luong_loi_ra.md; knowledge/khao-sat-bao-gia.md mục 6"},
-    {"idx": 12, "tt": "10", "noi_dung": "Phân tán lối ra", "goi_y": "Khoảng cách 2 lối so với ½D (⅓D khi có sprinkler toàn nhà)", "tra_o": "skills/MOD_tinh_toan_khoang_cach.md mục 4"},
-    {"idx": 13, "tt": "11", "noi_dung": "Thang thoát nạn (mỗi thang một dòng 11a, 11b…): loại, hình dạng, vế, bậc, chiếu nghỉ, đóng kín, lối ra tầng 1", "goi_y": "Phóng to từng chiếu nghỉ; làm đủ quy trình nhận diện → đạt/không → phương án từng thang → kiểm khả thi; phương án ghi trong Kết luận", "tra_o": "knowledge/nhan-dien-thang-thoat-nan.md; skills/MOD_cau_thang_buong_thang.md"},
-    {"idx": 14, "tt": "12", "noi_dung": "Khoảng cách thoát nạn (từ cửa phòng / chỗ xa nhất tới lối ra)", "goi_y": "Qua thang loại 2: L1 + 3H + L3 ≤ giới hạn Phụ lục G", "tra_o": "skills/MOD_tinh_toan_khoang_cach.md (3.3.2); skills/PHU_LUC_G_QCVN06.md"},
-    {"idx": 15, "tt": "13", "noi_dung": "Hành lang, cửa thoát nạn (bề rộng, chiều mở, bao che)", "goi_y": "Bản vẽ không có kích thước thì ghi yêu cầu 'phải đảm bảo ≥ …', không kết luận bề rộng", "tra_o": "skills/MOD_loi_ra_va_cua.md; skills/MOD_hanh_lang_bao_che.md"},
-    {"idx": 16, "tt": "14", "noi_dung": "Lối thoát khẩn cấp, lối ra mái", "goi_y": "Ban công thoáng, tường đặc, thang leo/cửa nắp; lối ra mái từ buồng thang", "tra_o": "skills/MOD_so_luong_loi_ra.md; knowledge/qcvn06-dieu-6.md"},
-    {"idx": 17, "tt": "15", "noi_dung": "Tầng hầm: lối ra, tách thang hầm khỏi thang các tầng trên, thang máy xuống hầm", "goi_y": "Thang hầm → trệt chung buồng với thang trên; khoang đệm thang máy ở hầm", "tra_o": "knowledge/nhan-dien-thang-thoat-nan.md; skills/MOD_cau_thang_buong_thang.md"},
-    {"idx": 18, "tt": "IV", "noi_dung": "NGĂN CHÁY, CHỐNG KHÓI", "nhom": true},
-    {"idx": 19, "tt": "16", "noi_dung": "Ngăn cháy theo công năng (kho, bếp, phòng kỹ thuật, công năng công cộng với phòng ở)", "goi_y": "Tầng có công năng chính ≥ 90 % thì phụ trợ không phải ngăn", "tra_o": "skills/SKILL_ngan_chay_cong_nang.md; knowledge/qcvn06-dieu-4.md"},
-    {"idx": 20, "tt": "17", "noi_dung": "Ngăn cháy phương đứng: buồng thang, giếng thang máy, hộp kỹ thuật", "goi_y": "Cửa giếng thang máy khi thang máy nằm ngoài buồng thang", "tra_o": "knowledge/qcvn06-dieu-4.md; knowledge/nhan-dien-thang-thoat-nan.md"},
-    {"idx": 21, "tt": "18", "noi_dung": "Vật liệu hoàn thiện trên đường thoát nạn", "goi_y": "", "tra_o": "skills/MOD_vat_lieu_hoan_thien.md"},
-    {"idx": 22, "tt": "19", "noi_dung": "Chống khói: hút khói hành lang, tăng áp buồng thang", "goi_y": "", "tra_o": "skills/MOD_chong_khoi_PL_D.md"},
-    {"idx": 23, "tt": "V", "noi_dung": "HỆ THỐNG PCCC", "nhom": true},
-    {"idx": 24, "tt": "20", "noi_dung": "Báo cháy tự động", "goi_y": "Có bắt buộc không + loại đầu báo", "tra_o": "knowledge/qcvn10-2025-bao-chay-chua-chay-tu-dong.md (Phụ lục A); knowledge/chon-loai-dau-bao.md"},
-    {"idx": 25, "tt": "21", "noi_dung": "Chữa cháy tự động (sprinkler, drencher, khí)", "goi_y": "Theo chiều cao, diện tích, công năng; tầng hầm để xe", "tra_o": "knowledge/qcvn10-2025-bao-chay-chua-chay-tu-dong.md"},
-    {"idx": 26, "tt": "22", "noi_dung": "Họng nước chữa cháy trong nhà, trạm bơm", "goi_y": "", "tra_o": "knowledge/qcvn10-2025-nuoc-chua-chay.md; knowledge/qcvn10-2025-phu-luc-h.md"},
-    {"idx": 27, "tt": "23", "noi_dung": "Cấp nước chữa cháy ngoài nhà, bể nước PCCC", "goi_y": "Có hệ thống dùng nước thì ghi 'CẦN TÍNH BỂ NƯỚC PCCC' + hệ thống dùng nước", "tra_o": "knowledge/qcvn10-2025-nuoc-chua-chay.md; knowledge/khao-sat-bao-gia.md mục 8"},
-    {"idx": 28, "tt": "24", "noi_dung": "Chiếu sáng sự cố, chỉ dẫn thoát nạn, loa", "goi_y": "", "tra_o": "knowledge/qcvn10-2025-den-loa.md"},
-    {"idx": 29, "tt": "25", "noi_dung": "Bình chữa cháy, dụng cụ phá dỡ, mặt nạ", "goi_y": "", "tra_o": "knowledge/qcvn10-2025-binh-dung-cu-co-gioi.md"},
-    {"idx": 30, "tt": "26", "noi_dung": "Thang máy chữa cháy", "goi_y": "", "tra_o": "knowledge/qcvn06-dieu-6.md"},
-    {"idx": 31, "tt": "27", "noi_dung": "Cấp điện cho PCCC, chống sét", "goi_y": "Chưa nạp tiêu chuẩn: ghi 'cần tra'", "tra_o": "chưa nạp"}
+    {
+      "idx": 0,
+      "tt": "I",
+      "noi_dung": "THÔNG TIN CÔNG TRÌNH",
+      "nhom": true
+    },
+    {
+      "idx": 1,
+      "tt": "1",
+      "noi_dung": "Số tầng (nổi, hầm, tum, tầng thượng)",
+      "goi_y": "Đếm mặt bằng, mặt cắt; tầng thượng xây kín hoặc vượt diện tích tum thì tính 1 tầng; bản vẽ cải tạo xét mặt bằng cải tạo",
+      "tra_o": "knowledge/khao-sat-bao-gia.md mục 2; knowledge/hoc/du-an/so-bo-thiet-ke.md",
+      "thong_tin": true
+    },
+    {
+      "idx": 2,
+      "tt": "2",
+      "noi_dung": "Chiều cao PCCC",
+      "goi_y": "Cao độ sàn tầng trên cùng có người so với mặt đường xe chữa cháy; ghi phép cộng; không có mặt đứng thì ước lượng có nhãn",
+      "tra_o": "knowledge/dinh-nghia/dinh-nghia.md; knowledge/khao-sat-bao-gia.md mục 3, Ước lượng chiều cao",
+      "thong_tin": true
+    },
+    {
+      "idx": 3,
+      "tt": "3",
+      "noi_dung": "Công năng, nhóm nhà F, diện tích sàn",
+      "goi_y": "Công năng thực tế bằng chữ + nhóm F; diện tích từng tầng và tổng",
+      "tra_o": "knowledge/dinh-nghia/dinh-nghia.md; knowledge/thuat-ngu-chuan.md",
+      "thong_tin": true
+    },
+    {
+      "idx": 4,
+      "tt": "4",
+      "noi_dung": "Khối tích, bậc chịu lửa, cấp nguy hiểm cháy kết cấu",
+      "goi_y": "Khối tích lấy trên bản vẽ hoặc tự tính (ghi 'tự tính' + phép tính)",
+      "tra_o": "knowledge/qcvn06-phu-luc-h.md; knowledge/khao-sat-bao-gia.md mục 4",
+      "thong_tin": true
+    },
+    {
+      "idx": 5,
+      "tt": "5",
+      "noi_dung": "Diện thẩm định thiết kế PCCC",
+      "goi_y": "CÓ / KHÔNG / CẦN XÁC NHẬN + mục, điểm Phụ lục III",
+      "tra_o": "knowledge/nghi-dinh-tham-dinh-dieu-chinh.md; knowledge/cv-2360-cahn-1183-c07-dien-tham-dinh.md",
+      "thong_tin": true
+    },
+    {
+      "idx": 6,
+      "tt": "II",
+      "noi_dung": "GIAO THÔNG, KHOẢNG CÁCH",
+      "nhom": true
+    },
+    {
+      "idx": 7,
+      "tt": "6",
+      "noi_dung": "Khoảng cách PCCC, giáp ranh",
+      "goi_y": "Tường giáp ranh, cửa sổ trổ ra ranh, khoảng cách tới nhà bên",
+      "tra_o": "knowledge/giap-ranh-khoang-cach-pccc.md; knowledge/qcvn06-dieu-4.md"
+    },
+    {
+      "idx": 8,
+      "tt": "7",
+      "noi_dung": "Đường, bãi đỗ xe chữa cháy",
+      "goi_y": "Bề rộng đường, bãi đỗ theo chiều cao PCCC, khoảng cách tới nhà",
+      "tra_o": "knowledge/qcvn06-dieu-6.md; knowledge/so-bo-thiet-ke-pccc.md"
+    },
+    {
+      "idx": 9,
+      "tt": "8",
+      "noi_dung": "Lối vào từ trên cao",
+      "goi_y": "Ban công, cửa sổ mặt tiền: kích thước, cao mép dưới, số lượng",
+      "tra_o": "knowledge/qcvn06-dieu-6.md"
+    },
+    {
+      "idx": 10,
+      "tt": "III",
+      "noi_dung": "THOÁT NẠN",
+      "nhom": true
+    },
+    {
+      "idx": 11,
+      "tt": "9",
+      "noi_dung": "Số lối thoát nạn mỗi tầng (tầng trên, tầng 1, hầm)",
+      "goi_y": "Chỉ đếm thang ĐẠT; ghi 'x lối đạt + y lối chờ xác nhận'",
+      "tra_o": "skills/MOD_so_luong_loi_ra.md; knowledge/khao-sat-bao-gia.md mục 6"
+    },
+    {
+      "idx": 12,
+      "tt": "10",
+      "noi_dung": "Phân tán lối ra",
+      "goi_y": "Khoảng cách 2 lối so với ½D (⅓D khi có sprinkler toàn nhà)",
+      "tra_o": "skills/MOD_tinh_toan_khoang_cach.md mục 4"
+    },
+    {
+      "idx": 13,
+      "tt": "11",
+      "noi_dung": "Thang thoát nạn (mỗi thang một hoặc vài dòng 11a, 11b…: loại, hình dạng, vế, bậc, chiếu nghỉ, đóng kín, lối ra tầng 1)",
+      "goi_y": "Phóng to từng chiếu nghỉ; làm đủ quy trình nhận diện → đạt/không → phương án từng thang → kiểm khả thi; phương án ghi trong Kết luận",
+      "tra_o": "knowledge/nhan-dien-thang-thoat-nan.md; skills/MOD_cau_thang_buong_thang.md"
+    },
+    {
+      "idx": 14,
+      "tt": "12",
+      "noi_dung": "Khoảng cách thoát nạn (từ cửa phòng / chỗ xa nhất tới lối ra)",
+      "goi_y": "Qua thang loại 2: L1 + 3H + L3 ≤ giới hạn Phụ lục G",
+      "tra_o": "skills/MOD_tinh_toan_khoang_cach.md (3.3.2); skills/PHU_LUC_G_QCVN06.md"
+    },
+    {
+      "idx": 15,
+      "tt": "13",
+      "noi_dung": "Hành lang, cửa thoát nạn (bề rộng, chiều mở, bao che)",
+      "goi_y": "Bản vẽ không có kích thước thì ghi yêu cầu 'phải đảm bảo ≥ …', không kết luận bề rộng",
+      "tra_o": "skills/MOD_loi_ra_va_cua.md; skills/MOD_hanh_lang_bao_che.md"
+    },
+    {
+      "idx": 16,
+      "tt": "14",
+      "noi_dung": "Lối thoát khẩn cấp, lối ra mái",
+      "goi_y": "Ban công thoáng, tường đặc, thang leo/cửa nắp; lối ra mái từ buồng thang",
+      "tra_o": "skills/MOD_so_luong_loi_ra.md; knowledge/qcvn06-dieu-6.md"
+    },
+    {
+      "idx": 17,
+      "tt": "15",
+      "noi_dung": "Tầng hầm: lối ra, tách thang hầm khỏi thang các tầng trên, thang máy xuống hầm",
+      "goi_y": "Thang hầm → trệt chung buồng với thang trên; khoang đệm thang máy ở hầm",
+      "tra_o": "knowledge/nhan-dien-thang-thoat-nan.md; skills/MOD_cau_thang_buong_thang.md"
+    },
+    {
+      "idx": 18,
+      "tt": "IV",
+      "noi_dung": "NGĂN CHÁY, CHỐNG KHÓI",
+      "nhom": true
+    },
+    {
+      "idx": 19,
+      "tt": "16",
+      "noi_dung": "Ngăn cháy theo công năng (kho, bếp, phòng kỹ thuật, công năng công cộng với phòng ở)",
+      "goi_y": "Tầng có công năng chính ≥ 90 % thì phụ trợ không phải ngăn",
+      "tra_o": "skills/SKILL_ngan_chay_cong_nang.md; knowledge/qcvn06-dieu-4.md"
+    },
+    {
+      "idx": 20,
+      "tt": "17",
+      "noi_dung": "Ngăn cháy phương đứng: buồng thang, giếng thang máy, hộp kỹ thuật",
+      "goi_y": "Cửa giếng thang máy khi thang máy nằm ngoài buồng thang",
+      "tra_o": "knowledge/qcvn06-dieu-4.md; knowledge/nhan-dien-thang-thoat-nan.md"
+    },
+    {
+      "idx": 21,
+      "tt": "18",
+      "noi_dung": "Vật liệu hoàn thiện trên đường thoát nạn",
+      "goi_y": "",
+      "tra_o": "skills/MOD_vat_lieu_hoan_thien.md"
+    },
+    {
+      "idx": 22,
+      "tt": "19",
+      "noi_dung": "Chống khói: hút khói hành lang, tăng áp buồng thang",
+      "goi_y": "",
+      "tra_o": "skills/MOD_chong_khoi_PL_D.md"
+    },
+    {
+      "idx": 23,
+      "tt": "V",
+      "noi_dung": "HỆ THỐNG PCCC",
+      "nhom": true
+    },
+    {
+      "idx": 24,
+      "tt": "20",
+      "noi_dung": "Báo cháy tự động",
+      "goi_y": "Có bắt buộc không + loại đầu báo",
+      "tra_o": "knowledge/qcvn10-2025-bao-chay-chua-chay-tu-dong.md (Phụ lục A); knowledge/chon-loai-dau-bao.md"
+    },
+    {
+      "idx": 25,
+      "tt": "21",
+      "noi_dung": "Chữa cháy tự động (sprinkler, drencher, khí)",
+      "goi_y": "Theo chiều cao, diện tích, công năng; tầng hầm để xe",
+      "tra_o": "knowledge/qcvn10-2025-bao-chay-chua-chay-tu-dong.md"
+    },
+    {
+      "idx": 26,
+      "tt": "22",
+      "noi_dung": "Họng nước chữa cháy trong nhà, trạm bơm",
+      "goi_y": "",
+      "tra_o": "knowledge/qcvn10-2025-nuoc-chua-chay.md; knowledge/qcvn10-2025-phu-luc-h.md"
+    },
+    {
+      "idx": 27,
+      "tt": "23",
+      "noi_dung": "Cấp nước chữa cháy ngoài nhà, bể nước PCCC",
+      "goi_y": "Có hệ thống dùng nước thì ghi 'CẦN TÍNH BỂ NƯỚC PCCC' + hệ thống dùng nước",
+      "tra_o": "knowledge/qcvn10-2025-nuoc-chua-chay.md; knowledge/khao-sat-bao-gia.md mục 8"
+    },
+    {
+      "idx": 28,
+      "tt": "24",
+      "noi_dung": "Chiếu sáng sự cố, chỉ dẫn thoát nạn, loa",
+      "goi_y": "",
+      "tra_o": "knowledge/qcvn10-2025-den-loa.md"
+    },
+    {
+      "idx": 29,
+      "tt": "25",
+      "noi_dung": "Bình chữa cháy, dụng cụ phá dỡ, mặt nạ",
+      "goi_y": "",
+      "tra_o": "knowledge/qcvn10-2025-binh-dung-cu-co-gioi.md"
+    },
+    {
+      "idx": 30,
+      "tt": "26",
+      "noi_dung": "Thang máy chữa cháy",
+      "goi_y": "",
+      "tra_o": "knowledge/qcvn06-dieu-6.md"
+    },
+    {
+      "idx": 31,
+      "tt": "27",
+      "noi_dung": "Cấp điện cho PCCC, chống sét",
+      "goi_y": "Chưa nạp tiêu chuẩn: ghi 'cần tra'",
+      "tra_o": "chưa nạp"
+    }
   ],
   "so_dong": 32
 }

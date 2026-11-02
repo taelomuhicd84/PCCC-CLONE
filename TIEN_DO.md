@@ -10,9 +10,12 @@ cửa, chữ). Sắp xếp lại: mỗi module một skill (bảng module ↔ sk
 Chừa đường thiết kế CAD qua MCP (ROADMAP Pha 6, chưa làm). Đã kiểm: npm test 57, pytest 9 (thamdinh 2 + ghi chú 4 + bảng 3),
 CAD TAT CA DAT; chạy thử ghi chú trang 3 hồ sơ `ket_qua/canho` (trang xoay 270°): khung, callout đúng chỗ.
 Việc tiếp theo của luồng mới:
-1. Chạy trọn luồng khảo sát trên `ket_qua/canho` (Lưu Xuân Lộc; máy kia là `ket_qua/luu_xuan_loc_thu/`): chuyển bảng bản 6 sang
-   `doi_chieu.json` khung KS (bỏ dòng 14 thang hở, đưa vào Kết luận dòng thang kèm điều kiện 3.3.2 L1 + 3H + L3), comment + PA1/PA2 vẽ
-   bằng `tuong`, `cua`, khung số = TT; gửi bảng + `ban_ve_ghi_chu.pdf` + `doi_chieu.xlsx`. Việc này thay việc "đánh số khung trùng TT" cũ.
+1. ✅ 02/11 chiều: chạy trọn luồng khảo sát trên `ket_qua/canho` (Lưu Xuân Lộc) → bản 7: `doi_chieu.json` khung KS (26 dòng + 11a–11e;
+   thang hở loại 2 đưa vào Kết luận dòng 11c kèm 3.4.16, 3.3.2), `ban_ve_ghi_chu.pdf` (68 annotation, PA1 tím, PA2 xanh lá, PA3 xanh),
+   `doi_chieu.xlsx`, `bang_doi_chieu_ban7.md` (không commit). Điểm mới so bản 6: vế thang giữa đo sơ ≈ 0,84–0,89 m (< 0,9 m?);
+   bãi đỗ xe được miễn theo chú thích 1) Bảng 14 nếu họng tiếp nước cách đường ≤ 18 m; thang máy xuống hầm cần khoang đệm ngăn cháy
+   loại 1 áp suất dương (4.28); thang máy chữa cháy không áp dụng (6.13); hầm gara kín phải thoát khói (D.2h); lối ra mái (6.6, 6.7).
+   CHỜ người dùng xem bản 7 và sửa.
 2. Thử luồng thẩm định trên một hồ sơ (vd KT7.1 + A5 + B…): đo độ dài job, chỉnh số dòng mỗi job, xem agent điền có đúng định dạng.
 3. Pha 5b (ROADMAP): web chạy luồng, Word theo mẫu A/B, điền mẫu báo cáo khảo sát của người dùng (chờ người dùng gửi mẫu).
 

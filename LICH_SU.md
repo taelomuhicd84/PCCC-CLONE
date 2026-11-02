@@ -67,6 +67,9 @@
   module cũ (`tkpccc-thuy-luc`, `tkpccc-kiem-luat-pdf`, `tkpccc-bao-gia`, `tkpccc-huong-dan`, CAD trong `tkpccc-cad-console`); CLAUDE.md
   gọn lại (bảng module ↔ skill; quy tắc tư vấn chuyển vào skill). ROADMAP thêm Pha 5a, 5b, 6 (CAD qua MCP). Cài pytest trên máy này.
   Kiểm: npm test 57, pytest 9, CAD TAT CA DAT.
+- Chạy trọn luồng khảo sát – tư vấn mới trên hồ sơ Lưu Xuân Lộc (bản 7, kết quả trong `ket_qua/canho`, không commit): bảng KS 26 dòng
+  + 11a–11e, 68 annotation trên 5 trang, Excel. Sửa công cụ: dòng thông tin (`thong_tin`) lấy giá trị làm kết luận; một ghi chú cho nhiều
+  dòng (`khung` là danh sách); khung phương án chỉ hiện nhãn PA. Tra thêm 4.28, 6.13, Bảng 14 chú thích 1), 3.3.6, 6.6, 6.7, D.2.
 
 ### Lưu ý cho phiên sau (người dùng dặn ghi, 2026-11-02)
 1. Kết quả tư vấn: MỘT bảng theo khung bảng đối chiếu chính thức (TT | Nội dung đối chiếu | Nội dung thiết kế | Quy định | Khoản Điều |
