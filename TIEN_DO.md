@@ -15,7 +15,8 @@ Việc tiếp theo của luồng mới:
    `doi_chieu.xlsx`, `bang_doi_chieu_ban7.md` (không commit). Điểm mới so bản 6: vế thang giữa đo sơ ≈ 0,84–0,89 m (< 0,9 m?);
    bãi đỗ xe được miễn theo chú thích 1) Bảng 14 nếu họng tiếp nước cách đường ≤ 18 m; thang máy xuống hầm cần khoang đệm ngăn cháy
    loại 1 áp suất dương (4.28); thang máy chữa cháy không áp dụng (6.13); hầm gara kín phải thoát khói (D.2h); lối ra mái (6.6, 6.7).
-   Đã vẽ buồng thang nét liền khép kín + cung vế ở mọi tầng: `ket_qua/canho/ban_ve_ghi_chu_moi_tang.pdf` (165 annotation).
+   Đã vẽ buồng thang nét liền khép kín + cung vế ở mọi tầng, chiều cao PCCC ghi ngay tại mép dưới cửa sổ tầng thượng:
+   `ket_qua/canho/ban_ve_ghi_chu_moi_tang_2.pdf` (167 annotation, bản mới nhất).
    CHỜ người dùng xem bản 7 và sửa.
 2. Thử luồng thẩm định trên một hồ sơ (vd KT7.1 + A5 + B…): đo độ dài job, chỉnh số dòng mỗi job, xem agent điền có đúng định dạng.
 3. Pha 5b (ROADMAP): web chạy luồng, Word theo mẫu A/B, điền mẫu báo cáo khảo sát của người dùng (chờ người dùng gửi mẫu).

@@ -40,6 +40,8 @@ Màu `mau`: `do` = CHƯA ĐẠT · `cam` = CẦN XÁC NHẬN, thiếu số liệ
 
 ## Quy tắc ghi (người dùng dặn 2026-11-02)
 1. Mỗi dòng CHƯA ĐẠT / CẦN XÁC NHẬN của bảng có ít nhất một mục cùng số `khung` đặt đúng chỗ trên bản vẽ.
+   Ghi chú đặt NGAY TẠI đối tượng nó nói tới, mũi tên trỏ đúng đối tượng đó. Chiều cao PCCC (người dùng dặn 2026-11-02): trên mặt đứng
+   hoặc mặt cắt vẽ `net` ngang tại MÉP DƯỚI CỬA SỔ tầng trên cùng + nhãn cao độ đo được, callout trỏ vào nét đó; không trỏ cao độ sàn.
 2. Thiếu số liệu đầu vào: callout hoặc leader màu cam, ghi "Thiếu <số liệu>: phải đảm bảo ≥ … (điều)", đặt ở chỗ lẽ ra có số liệu
    (thang, cửa, mặt đứng, bảng thống kê). Nghi vấn: khung cam, comment nêu điều nghi và cần xác nhận gì.
 3. Phương án điều chỉnh: vẽ bằng kiểu có nghĩa (`tuong`, `cua`, `net` đường thoát nạn), mỗi mục có `phuong_an` + `nhan`;

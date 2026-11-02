@@ -76,6 +76,9 @@
   2–4, thượng; thang trái hiện có + cung; hầm: đóng kín buồng thang hầm + khoang đệm thang máy (4.28). Phát hiện thêm: cửa thang trái mở ra
   hành lang, ngược chiều thoát (3.2.10), đổi chiều thì quét vào cung vế; tầng 1 PA2 phải có lối ra theo 3.4.7. File mới
   `ket_qua/canho/ban_ve_ghi_chu_moi_tang.pdf` (165 annotation; file cũ đang mở nên không ghi đè được).
+- Người dùng sửa: ghi chú chiều cao PCCC phải đặt NGAY TẠI mép dưới cửa sổ tầng trên cùng (không trỏ cao độ sàn). Ghi quy tắc vào
+  `tkpccc-ghi-chu-ban-ve` (quy tắc 1). Hồ sơ Lưu Xuân Lộc: nét xanh tại mép dưới cửa sổ tầng thượng (đo vector ≈ +18.200 = sàn
+  +17.200 + 1,0 m), giữ 18,4 m theo BCKS; `ket_qua/canho/ban_ve_ghi_chu_moi_tang_2.pdf` (167 annotation, file trước đang mở).
 
 ### Lưu ý cho phiên sau (người dùng dặn ghi, 2026-11-02)
 1. Kết quả tư vấn: MỘT bảng theo khung bảng đối chiếu chính thức (TT | Nội dung đối chiếu | Nội dung thiết kế | Quy định | Khoản Điều |
