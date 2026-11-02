@@ -76,6 +76,8 @@ TKPCCC/
 │  └─ khao-sat-bao-gia.md, bao-gia-pccc.md, so-bo-thiet-ke-pccc.md, chon-loai-dau-bao.md …
 │
 ├─ data/mau_giai_phap/  thư viện mẫu giải pháp thoát nạn (17 mẫu: điều kiện lọc, điều khoản, lỗi hay gặp, giải pháp); chép từ SKILL-PCCC-NEW
+├─ data/mau_bao_cao/    BCKS_mau.xlsx: mẫu báo cáo khảo sát MẶC ĐỊNH của người dùng (chốt 2026-11-02; mẫu trắng, đã xoá nội dung khách),
+│                       điền bằng `bang_doi_chieu.py bcks`
 │
 ├─ skills/              ĐIỀU KHOẢN THEO CHUYÊN ĐỀ (chép từ PCCC_he_thong/skills): MOD_*.md, SKILL_*.md, PHU_LUC_G_QCVN06.md
 │
@@ -84,7 +86,8 @@ TKPCCC/
                         thamdinh/ (ban_ve.pdf, ban_ve_annotated.pdf, findings.jsonl, tom_tat.json, claude_xet.json),
                         thuy_luc/ (mat_bang.json, so_lieu.json, thuy_luc.xlsx),
                         khảo sát – tư vấn / thẩm định theo bảng đối chiếu: ban_ve.pdf, doi_chieu.json (bảng + ghi_chu),
-                        doi_chieu.xlsx, ban_ve_ghi_chu.pdf, anh/ (luoi_<trang>.png, ra/), jobs/ + phan/ (job và phần của agent)
+                        doi_chieu.xlsx, ban_ve_ghi_chu.pdf, BCKS_<tên>.xlsx + anh_bcks/ (báo cáo theo mẫu), anh/ (luoi_<trang>.png, ra/),
+                        jobs/ + phan/ (job và phần của agent)
 ```
 
 ## Mỗi lớp một việc

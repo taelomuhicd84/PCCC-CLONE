@@ -77,6 +77,26 @@ def test_lamviec_gop_kiem_xuat(tmp_path):
     assert hang[5].fill.fgColor.rgb.endswith("F8CBAD") and hang[6].value == "1"
 
 
+def test_bcks_dien_mau(tmp_path):
+    import pymupdf
+    from openpyxl import load_workbook
+
+    doc = pymupdf.open()
+    doc.new_page(width=100, height=300)                                    # trang dọc: ảnh cắt rất cao -> phải thu nhỏ
+    doc.save(tmp_path / "ban_ve.pdf")
+    dc = {"ban_ve": "ban_ve.pdf", "zoom": 1,
+          "bcks": {"tieu_de": {"ten_cong_trinh": "Nhà A", "khach_hang": "Ông B", "dia_diem": "Q.4"},
+                   "muc": {"thong_tin": "Quy mô: 3 tầng", "thoat_nan": "- dòng\n" * 30},
+                   "ghi_chu": {"thoat_nan": {"chu": "- ảnh", "anh": [{"trang": 1, "hop": [0, 0, 100, 300]}]}}}}
+    kq = bdc.bcks(dc, tmp_path / "doi_chieu.json", tmp_path / "BCKS.xlsx")
+    ws = load_workbook(tmp_path / "BCKS.xlsx").worksheets[0]
+    assert "Nhà A" in ws["A8"].value and "Ông B" in ws["A8"].value and ws["F10"].value == "Quy mô: 3 tầng"
+    assert ws["A2"].value.startswith("CÔNG TY") and kq["anh"] == 1 and len(ws._images) == 2   # logo của mẫu + 1 ảnh
+    assert ws.row_dimensions[15].height == 409                             # chữ dài: chạm giới hạn hàng của Excel
+    a = next(i.anchor for i in ws._images if i.anchor._from.row == 14)
+    assert a._from.col == 8 and a._from.rowOff / 12700 + a.ext.height / 9525 * bdc.PT_ANH <= 409   # ảnh nằm gọn trong ô I15
+
+
 def test_gop_bao_loi_idx(tmp_path):
     f = tmp_path / "dc.json"
     bdc.lamviec(["KS"], f, "khao_sat")

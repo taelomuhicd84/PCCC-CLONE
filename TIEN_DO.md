@@ -2,7 +2,7 @@
 
 File này cập nhật sau mỗi mốc việc và trước khi hết usage. Phiên mới đọc mục "ĐANG LÀM / VIỆC TIẾP THEO" trước.
 
-## ĐANG LÀM / VIỆC TIẾP THEO (cập nhật 2026-11-02 chiều)
+## ĐANG LÀM / VIỆC TIẾP THEO (cập nhật 2026-11-02 khuya)
 **Phiên 2026-11-02 chiều: Pha 5a xong (người dùng giao Claude tự quyết).** Hai luồng: KHẢO SÁT – TƯ VẤN (skill `tkpccc-khao-sat-tu-van`)
 và THẨM ĐỊNH xây dựng + hệ thống (skill `tkpccc-tham-dinh`, agent `pccc-xay-dung`, `pccc-he-thong`). Nền: module `tkpccc-bang-doi-chieu`
 (bảng A/B/KT chép SKILL-PCCC-NEW 24743f9 + khung KS) và `tkpccc-ghi-chu-ban-ve` (annotation PDF thật: khung, callout, leader, nét, tường,
@@ -18,9 +18,14 @@ Việc tiếp theo của luồng mới:
    Đã vẽ buồng thang nét liền khép kín + cung vế ở mọi tầng, chiều cao PCCC ghi ngay tại mép dưới cửa sổ tầng thượng:
    `ket_qua/canho/ban_ve_ghi_chu_moi_tang_2.pdf` (167 annotation, bản mới nhất).
    CHỜ người dùng xem bản 7 và sửa.
-1b. ✅ 02/11 tối: khảo sát thử BV layout Q.4 (F1.2) + điền form BCKS (`ket_qua/q4/`, không commit): 1 CHƯA ĐẠT (khoảng cách thoát nạn ≈ 34 m > 25 m),
-   16 CẦN XÁC NHẬN, 8 KHÔNG ÁP DỤNG. 👤 chờ người dùng xem `ban_ve_ghi_chu_5.pdf`, `BCKS_can_ho_dich_vu_Q4_v4.xlsx`. Việc kế: lệnh điền mẫu BCKS
-   vào `tkpccc-bang-doi-chieu`; kiểm bản in form.
+1b. ✅ 02/11 khuya (máy F:\…\PCCCVIP): MẪU BÁO CÁO KHẢO SÁT MẶC ĐỊNH = BCKS Excel của người dùng (người dùng dặn: luôn dùng nếu không gửi mẫu
+   khác). Mẫu trắng `data/mau_bao_cao/BCKS_mau.xlsx` (giữ logo, tiêu đề công ty; xoá nội dung Lưu Xuân Lộc; sửa chữ "HỒ HƠ PHÁP LÍ").
+   Lệnh mới `bang_doi_chieu.py bcks` điền khoá `bcks` của `doi_chieu.json` + ảnh cắt từ `ban_ve_ghi_chu.pdf` vào cột GHI CHÚ (tự thu nhỏ
+   ảnh cho vừa 409 pt/hàng; Excel in hàng thấp hơn ảnh ≈ 7 % nên tính 0,81 pt/px). Đã kiểm bản in bằng Excel (ExportAsFixedFormat): 1 trang.
+   Làm lại khảo sát Q.4 trên máy này (`ket_qua/q4/`, không commit): 7 CHƯA ĐẠT, 8 CẦN XÁC NHẬN, 9 KHÔNG ÁP DỤNG; tum có WC-07 nên tính
+   1 tầng (QCVN 10 1.4.24 CT1) → 4 tầng, cao ≈ 11,6 m; thang hở L ≈ 33 m > 25 m; xe máy trong sảnh chân thang; mặt bậc đo sơ ≈ 235 mm.
+   👤 Chờ người dùng xem `BCKS_CHDV_Doan_Nhu_Hai_Q4.xlsx/.pdf`, `ban_ve_ghi_chu.pdf` (66 annotation, PA1 tím) và cho biết có coi WC nhỏ trên tum
+   là tum không tính tầng không (nếu có: 3 tầng, cao ≈ 8,2 m, nhưng vẫn phải đóng kín thang vì L ≈ 33 m).
 2. Thử luồng thẩm định trên một hồ sơ (vd KT7.1 + A5 + B…): đo độ dài job, chỉnh số dòng mỗi job, xem agent điền có đúng định dạng.
 3. Pha 5b (ROADMAP): web chạy luồng, Word theo mẫu A/B, điền mẫu báo cáo khảo sát của người dùng (chờ người dùng gửi mẫu).
 

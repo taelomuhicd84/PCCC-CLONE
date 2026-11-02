@@ -43,9 +43,13 @@ G=.claude/skills/tkpccc-ghi-chu-ban-ve/scripts/ghi_chu_pdf.py
 3. Ghi chú lên PDF: thêm mục vào `ghi_chu` của cùng file theo quy tắc của skill `tkpccc-ghi-chu-ban-ve` (khung số = TT; thiếu số liệu màu cam;
    phương án vẽ bằng `tuong`, `cua`, `net`; trang 1 có ô tiêu đề "TƯ VẤN SƠ BỘ PCCC…").
 4. Kiểm và xuất: `kiem` (0 lỗi; xử lý cảnh báo), `xlsx`, `ve … --anh`, XEM ảnh và sửa tọa độ.
-5. Trả lời: bảng `md --ma KS` đầy đủ trong tin nhắn + đường dẫn `doi_chieu.xlsx` và `ban_ve_ghi_chu.pdf`; tóm tắt 3–5 dòng các điểm CHƯA ĐẠT,
-   phương án, số liệu cần khách bổ sung.
+5. BÁO CÁO KHẢO SÁT theo mẫu MẶC ĐỊNH `data/mau_bao_cao/BCKS_mau.xlsx` (người dùng dặn 2026-11-02: luôn dùng mẫu này nếu không gửi mẫu
+   khác; gửi mẫu khác thì `--mau`): viết khoá `bcks` trong `doi_chieu.json` (tóm tắt bảng KS theo 7 mục của mẫu, văn phong như mẫu:
+   "- …", "=> CĐT cần …", "(chưa đảm bảo)"; ảnh cắt từ `ban_ve_ghi_chu.pdf` vào cột GHI CHÚ), chạy `bcks … -o ket_qua/<dự án>/BCKS_<tên>.xlsx`,
+   xuất PDF bằng Excel (ExportAsFixedFormat) và XEM ảnh bản in. Cách viết khoá: skill `tkpccc-bang-doi-chieu` mục `bcks`.
+6. Trả lời: bảng `md --ma KS` đầy đủ trong tin nhắn + đường dẫn `BCKS_<tên>.xlsx`, `doi_chieu.xlsx` và `ban_ve_ghi_chu.pdf`; tóm tắt 3–5 dòng
+   các điểm CHƯA ĐẠT, phương án, số liệu cần khách bổ sung.
 
 ## Sau này
-- Người dùng gửi file MẪU báo cáo khảo sát (Excel/Word): thêm lệnh điền trường từ `doi_chieu.json` vào mẫu (ROADMAP Pha 5b).
+- Mẫu Word hoặc mẫu Excel bố cục khác: thêm cách điền khi người dùng gửi (ROADMAP Pha 5b).
 - Vẽ phương án trực tiếp trong AutoCAD qua MCP từ cùng `ghi_chu` (ROADMAP Pha 6).

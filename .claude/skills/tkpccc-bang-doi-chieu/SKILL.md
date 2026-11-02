@@ -9,7 +9,8 @@ Phát triển module này: chỉ sửa trong thư mục này.
 |---|---|
 | `data/A*.json`, `data/B*.json`, `data/KT*.json`, `data/index.json` | bảng gốc chép từ SKILL-PCCC-NEW 24743f9 (`data/bang`): A, B theo mẫu chính thức Đồng Nai; KT dựng từ bộ bảng cũ theo công năng + chiều cao |
 | `data/KS.json` | khung khảo sát – tư vấn của TKPCCC (người dùng chốt 2026-11-02) |
-| `scripts/bang_doi_chieu.py` | CLI: danhmuc, chon, khung, dong, tim, lamviec, job, gop, kiem, xlsx, md |
+| `scripts/bang_doi_chieu.py` | CLI: danhmuc, chon, khung, dong, tim, lamviec, job, gop, kiem, xlsx, md, bcks |
+| `data/mau_bao_cao/BCKS_mau.xlsx` (gốc repo) | mẫu báo cáo khảo sát MẶC ĐỊNH của người dùng (chốt 2026-11-02): sheet NOTE, HẠNG MỤC – NỘI DUNG – GHI CHÚ |
 | `test/test_bang_doi_chieu.py` | `python -m pytest .claude/skills/tkpccc-bang-doi-chieu/test -q` |
 
 ## Chọn bảng
@@ -31,7 +32,21 @@ python -X utf8 $B gop ket_qua/<da>/doi_chieu.json ket_qua/<da>/phan/*.json   # s
 python -X utf8 $B kiem ket_qua/<da>/doi_chieu.json      # lỗi (thoát 1) + cảnh báo + đếm theo kết luận
 python -X utf8 $B xlsx ket_qua/<da>/doi_chieu.json      # -> doi_chieu.xlsx: sheet Tóm tắt + mỗi bảng một sheet
 python -X utf8 $B md ket_qua/<da>/doi_chieu.json --ma KS [--chi-loi] [--cat 300]   # bảng markdown để gửi trong tin nhắn
+python -X utf8 $B bcks ket_qua/<da>/doi_chieu.json -o ket_qua/<da>/BCKS_<tên>.xlsx [--mau <mẫu khác>.xlsx]   # báo cáo khảo sát theo mẫu
 ```
+
+## Báo cáo khảo sát theo mẫu (`bcks`)
+Mặc định điền `data/mau_bao_cao/BCKS_mau.xlsx`; người dùng gửi mẫu khác thì truyền `--mau` (mẫu khác bố cục thì sửa `BCKS_HANG` trong script).
+Nội dung lấy từ khoá `bcks` của `doi_chieu.json`, viết theo văn phong mẫu (gạch đầu dòng "- …", kết luận "=> …", số có đơn vị):
+```json
+"bcks": {"tieu_de": {"ten_cong_trinh": "", "khach_hang": "", "dia_diem": ""},
+         "muc": {"thong_tin": "Quy mô: … \n- Công năng: …", "phap_ly": "", "khoang_cach": "", "giao_thong": "", "thoat_nan": "",
+                 "he_thong": "", "tu_van": ""},
+         "ghi_chu": {"thoat_nan": {"chu": "- Tầng trệt: …", "anh": [{"trang": 1, "hop": [x0, y0, x1, y1], "rong": 620}]}}}
+```
+- `ghi_chu.<mục>.anh`: vùng cắt từ `ban_ve_ghi_chu.pdf` (chưa có thì `ban_ve.pdf`), tọa độ như mục ghi chú PDF (px ảnh lưới ở `zoom`);
+  `rong` px (mặc định 620 khi 1 ảnh, 305 khi nhiều ảnh). Ảnh tự thu nhỏ cho vừa ô (Excel tối đa 409 pt mỗi hàng).
+- Chiều cao hàng ước theo số dòng chữ; luôn xuất PDF bằng Excel (ExportAsFixedFormat) rồi XEM ảnh trước khi gửi.
 Không mở cả file JSON bảng gốc (tới 160 KB): đọc bằng `khung`, `dong`, `tim`.
 
 ## doi_chieu.json (file kết quả, `ket_qua/<dự án>/`, không commit)

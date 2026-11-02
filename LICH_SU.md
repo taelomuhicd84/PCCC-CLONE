@@ -85,6 +85,15 @@
   (b) khoảng cách thoát nạn L = L1 + 3H + L3 vượt Bảng G.1 (hoặc tính toán) ⇒ CHƯA ĐẠT (không đảm bảo), kèm phương án; Q.4 ≈ 34 m > 25 m.
   Đã ghi hai quy tắc vào skill `tkpccc-khao-sat-tu-van`.
 - Còn thiếu: lệnh điền mẫu BCKS vào `tkpccc-bang-doi-chieu` (ROADMAP 5b; hiện dùng script tạm); chưa kiểm bản in form (máy không có LibreOffice).
+- (khuya, máy PCCCVIP) Kéo các skill mới từ GitHub. Người dùng gửi BCKS Lưu Xuân Lộc làm MẪU MẶC ĐỊNH cho báo cáo khảo sát ("sau này cứ mặc định
+  cái này nếu không có up mẫu khác"): lưu mẫu trắng `data/mau_bao_cao/BCKS_mau.xlsx` (giữ logo + tiêu đề công ty, xoá nội dung và ảnh của
+  khách, sửa "HỒ HƠ PHÁP LÍ" → "HỒ SƠ PHÁP LÝ"); thêm lệnh `bcks` (+ test) vào `tkpccc-bang-doi-chieu`, bước 5 trong `tkpccc-khao-sat-tu-van`.
+  Bản in kiểm bằng Excel COM: Excel in hàng thấp hơn ≈ 7 % còn ảnh giữ cỡ, nên xếp ảnh theo 0,81 pt/px và tự thu nhỏ cho vừa 409 pt/hàng.
+- Làm lại khảo sát Q.4 trên máy này (kết quả lần trước ở máy khác, không có ở đây): theo chữ QCVN 10:2025 1.4.24 CT1, tum có WC-07 không chỉ bao
+  che thang nên tính 1 tầng (4 tầng, cao ≈ 11,6 m ước lượng) → nhà 1 lối (3.2.6.2a) phải dùng buồng thang; nếu bỏ WC tum (3 tầng, ≈ 8,2 m) được
+  thang hở nhưng L ≈ 33 m > 25 m vẫn không đạt. Thang T1 một vế mỗi tầng, mặt bậc đo sơ ≈ 235 mm < 250; thang xoắn T2 không tính; T3 lên tum
+  5 bậc chéo. Hệ thống: báo cháy (cho phép độc lập, Bảng A.1 mục 18), EX–EM, bình + phá dỡ + mặt nạ (Phụ lục E, F), chống sét; không bắt buộc
+  họng nước, bể, sprinkler (Bảng B.1 mục 1.2).
 
 ### Lưu ý cho phiên sau (người dùng dặn ghi, 2026-11-02)
 1. Kết quả tư vấn: MỘT bảng theo khung bảng đối chiếu chính thức (TT | Nội dung đối chiếu | Nội dung thiết kế | Quy định | Khoản Điều |

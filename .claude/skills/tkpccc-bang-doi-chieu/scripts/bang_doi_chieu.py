@@ -11,6 +11,7 @@
   python -X utf8 bang_doi_chieu.py kiem ket_qua/<dự án>/doi_chieu.json
   python -X utf8 bang_doi_chieu.py xlsx ket_qua/<dự án>/doi_chieu.json [-o ra.xlsx]
   python -X utf8 bang_doi_chieu.py md ket_qua/<dự án>/doi_chieu.json [--ma KS] [--chi-loi] [--cat 300]
+  python -X utf8 bang_doi_chieu.py bcks ket_qua/<dự án>/doi_chieu.json [-o BCKS_<tên>.xlsx] [--mau mẫu_khác.xlsx]
 
 Bảng A1–A26 (hệ thống theo công năng), B1–B14 (theo hệ thống), KT (kiến trúc theo công năng + chiều cao) chép từ
 SKILL-PCCC-NEW 24743f9 (data/bang); KS là khung khảo sát – tư vấn của TKPCCC. Cách dùng: SKILL.md thư mục cha.
@@ -318,6 +319,106 @@ def xlsx(dc: dict, ra: Path) -> dict:
     return {"ok": True, "xlsx": str(ra), "sheet": len(wb.sheetnames)}
 
 
+# Mẫu báo cáo khảo sát mặc định của người dùng (chốt 2026-11-02): sheet NOTE, cột F:H nội dung, cột I ghi chú + ảnh.
+MAU_BCKS = Path(__file__).resolve().parents[4] / "data" / "mau_bao_cao" / "BCKS_mau.xlsx"
+BCKS_HANG = {"thong_tin": (10, 11), "phap_ly": (12,), "khoang_cach": (13,), "giao_thong": (14,), "thoat_nan": (15,),
+             "he_thong": (16,), "tu_van": (17,)}
+
+
+# Cột I của mẫu ≈ 650 px. Excel in hàng thấp hơn ≈ 7 % còn ảnh giữ cỡ, nên 1 px ảnh chiếm ≈ 0,81 pt chiều cao hàng
+# (đo trên bản PDF xuất từ Excel, 2026-11-02).
+COT_I_PX, PT_ANH = 640, 0.81
+
+
+def _so_dong(s, ky_tu_dong: int) -> int:
+    return sum(max(1, -(-len(x) // ky_tu_dong)) for x in str(s).split("\n")) if s else 0
+
+
+def _xep_anh(kt: list, tren: float) -> tuple[list, float]:
+    """Xếp ảnh (rộng, cao px) trái sang phải, hết cột I thì xuống hàng: vị trí (x px, y pt từ đỉnh ô), chiều cao cần (pt)."""
+    vt, cx, cy, hmax = [], 0, tren, 0
+    for w, h in kt:
+        if cx and cx + w > COT_I_PX:
+            cx, cy, hmax = 0, cy + hmax * PT_ANH + 4, 0
+        vt.append((cx, cy))
+        cx, hmax = cx + w + 6, max(hmax, h)
+    return vt, cy + hmax * PT_ANH + 4
+
+
+def _cat_anh(pdf: Path, a: dict, zoom: float, ra: Path) -> Path:
+    """Cắt vùng `hop` (px ảnh lưới ở `zoom`, chiều nhìn thấy) của trang `trang`, kèm annotation."""
+    import pymupdf
+    from PIL import Image
+
+    z = 2.0
+    with pymupdf.open(pdf) as doc:
+        pix = doc[a["trang"] - 1].get_pixmap(matrix=pymupdf.Matrix(z, z))
+        im = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
+    k = z / a.get("zoom", zoom)
+    im.crop(tuple(round(v * k) for v in a["hop"])).save(ra)
+    return ra
+
+
+def bcks(dc: dict, f: Path, ra: Path, mau: Path = MAU_BCKS) -> dict:
+    """Điền mẫu BCKS từ khoá `bcks` của doi_chieu.json; ảnh ghi chú cắt từ ban_ve_ghi_chu.pdf (chưa có thì ban_ve.pdf)."""
+    from openpyxl import load_workbook
+    from openpyxl.drawing.image import Image as XLImage
+    from openpyxl.styles import Alignment
+    from openpyxl.drawing.spreadsheet_drawing import AnchorMarker, OneCellAnchor
+    from openpyxl.drawing.xdr import XDRPositiveSize2D
+    from openpyxl.utils.units import pixels_to_EMU
+
+    b = dc.get("bcks")
+    if not b:
+        sys.exit("doi_chieu.json chưa có khoá 'bcks' (xem SKILL.md)")
+    pdf = f.parent / "ban_ve_ghi_chu.pdf"
+    pdf = pdf if pdf.exists() else f.parent / dc.get("ban_ve", "ban_ve.pdf")
+    wb = load_workbook(mau)
+    ws = wb.worksheets[0]
+    td = b.get("tieu_de", {})
+    ws["A8"] = (f"Tên công trình:  {td.get('ten_cong_trinh', '')}\nTên khách hàng:  {td.get('khach_hang', '')}\n"
+                f"Địa điểm : {td.get('dia_diem', '')}")
+    anh_ra = ra.parent / "anh_bcks"
+    so_anh = 0
+    for khoa, hang in BCKS_HANG.items():
+        chu, gc = b.get("muc", {}).get(khoa, ""), b.get("ghi_chu", {}).get(khoa, {})
+        ws.cell(hang[0], 6).value = chu or None
+        ws.cell(hang[0], 9).value = gc.get("chu") or None
+        if gc.get("chu"):
+            ws.cell(hang[0], 9).alignment = Alignment(horizontal="left", vertical="top", wrap_text=True)   # chữ trên, ảnh dưới
+        # Excel không tự giãn ô gộp: ước số dòng chữ (TNR 12 ≈ 64 ký tự trong F:H, TNR 11 ≈ 85 trong I), 1 dòng ≈ 16 pt.
+        tren_anh = _so_dong(gc.get("chu"), 85) * 15 + 6
+        anh = []
+        for i, a in enumerate(gc.get("anh", [])):
+            anh_ra.mkdir(parents=True, exist_ok=True)
+            x = XLImage(str(_cat_anh(pdf, a, dc.get("zoom", 1), anh_ra / f"{khoa}_{i + 1}.png")))
+            rong = a.get("rong", 620 if len(gc["anh"]) == 1 else 305)
+            x.width, x.height = rong, round(x.height * rong / x.width)
+            anh.append(x)
+        vt, cao_anh = _xep_anh([(x.width, x.height) for x in anh], tren_anh)
+        toi_da = 409 * len(hang)                                  # Excel giới hạn 409 pt mỗi hàng: thu nhỏ đều cho vừa
+        if cao_anh > toi_da:
+            s = (toi_da - tren_anh - 8) / (cao_anh - tren_anh)
+            for x in anh:
+                x.width, x.height = round(x.width * s), round(x.height * s)
+            vt, cao_anh = _xep_anh([(x.width, x.height) for x in anh], tren_anh)
+        cao = max(_so_dong(chu, 64) * 16 + 10, cao_anh if anh else tren_anh, 30)
+        for h in hang:
+            ws.row_dimensions[h].height = min(409, cao / len(hang))
+        for x, (cx, y) in zip(anh, vt):                          # y: pt tính từ đỉnh ô; đổi sang hàng chứa điểm neo
+            h, du = hang[0], y
+            while h < hang[-1] and du >= ws.row_dimensions[h].height:
+                du -= ws.row_dimensions[h].height
+                h += 1
+            m = AnchorMarker(col=8, colOff=pixels_to_EMU(4 + cx), row=h - 1, rowOff=pixels_to_EMU(round(du / 0.75)))
+            x.anchor = OneCellAnchor(_from=m, ext=XDRPositiveSize2D(pixels_to_EMU(x.width), pixels_to_EMU(x.height)))
+            ws.add_image(x)
+            so_anh += 1
+    ra.parent.mkdir(parents=True, exist_ok=True)
+    wb.save(ra)
+    return {"ok": True, "xlsx": str(ra), "mau": str(mau), "anh": so_anh, "pdf_anh": str(pdf)}
+
+
 def main(argv=None):
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
@@ -354,6 +455,10 @@ def main(argv=None):
     x = sub.add_parser("xlsx")
     x.add_argument("file")
     x.add_argument("-o", "--ra")
+    bk = sub.add_parser("bcks")
+    bk.add_argument("file")
+    bk.add_argument("-o", "--ra")
+    bk.add_argument("--mau", default=str(MAU_BCKS))
     m = sub.add_parser("md")
     m.add_argument("file")
     m.add_argument("--ma")
@@ -398,6 +503,8 @@ def main(argv=None):
             sys.exit(1)
     elif a.lenh == "xlsx":
         print(json.dumps(xlsx(doc_json(f), Path(a.ra) if a.ra else f.with_suffix(".xlsx")), ensure_ascii=False))
+    elif a.lenh == "bcks":
+        print(json.dumps(bcks(doc_json(f), f, Path(a.ra) if a.ra else f.parent / "BCKS.xlsx", Path(a.mau)), ensure_ascii=False))
     else:
         print(md(doc_json(f), a.ma, a.chi_loi, a.cat))
 
