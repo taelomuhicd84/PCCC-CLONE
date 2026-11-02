@@ -52,7 +52,9 @@ Không chọn thang theo cảm tính, không tự quyết phương án. Làm đ�
    - Đóng kín: có tường bao và cửa chưa. Chỉ ghi "cửa chống cháy" khi bản vẽ có ký hiệu (FD, EI…); không có thì ghi "cửa".
    - Chung buồng với thang khác (thang hầm → trệt) không; thang máy nằm trong hay ngoài buồng thang.
 2. **Đạt / không đạt từng tiêu chí**: hình dạng (3.3.7, 3.4.4), vế và bậc (3.4.1, 3.4.2), chiếu nghỉ (3.4.3), đóng kín, tách thang hầm (3.2.1, Hình I.2), lối ra ở tầng 1 (3.4.7).
-3. **Phương án cho TỪNG thang không đạt, rồi kiểm khả thi trên mặt bằng.** Phần khó nhất là đóng kín buồng thang và tách thang hầm → trệt khỏi thang các tầng trên → trệt. Vẽ thử vị trí tường, cửa rồi kiểm:
+3. **Phương án cho TỪNG thang không đạt, rồi kiểm khả thi trên mặt bằng.** Phần khó nhất là đóng kín buồng thang và tách thang hầm → trệt khỏi thang các tầng trên → trệt. Vẽ thử vị trí tường, cửa rồi kiểm.
+   Vẽ ở TẤT CẢ các tầng có thang (hầm, tầng 1, lửng, tầng điển hình, tầng thượng), buồng thang bằng nét liền khép kín, kèm cung vế ở mọi
+   đầu vế giáp chiếu tầng (người dùng dặn 2026-11-02; công cụ: skill `tkpccc-ghi-chu-ban-ve`, kiểu `tuong`, `cua`, `cung`). Kiểm:
    - Tường bao mới có chặn cửa căn hộ, phòng bên cạnh không. Chặn thì không hợp lý.
    - Khoảng cách từ mép bậc đầu/cuối vế tới tường ≥ bề rộng bản thang (≥ 0,9 m): chiếu thang rộng ≥ bản thang (3.4.3).
    - Cung mở cửa không lấn vùng chiếu nghỉ: lấy đầu mép bậc phía trong (sát giếng thang) làm tâm, bán kính tới đầu mép bậc còn lại (= bề rộng vế), vẽ cung 1/4. Cánh cửa quét không được cắt vào cung đó (3.4.3: cánh cửa mở vào buồng thang không làm giảm bề rộng tính toán của chiếu và bản thang). Mẫu người dùng gửi: thang CT1, cửa FD1, cung bán kính 900.

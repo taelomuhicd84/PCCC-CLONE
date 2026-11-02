@@ -70,6 +70,12 @@
 - Chạy trọn luồng khảo sát – tư vấn mới trên hồ sơ Lưu Xuân Lộc (bản 7, kết quả trong `ket_qua/canho`, không commit): bảng KS 26 dòng
   + 11a–11e, 68 annotation trên 5 trang, Excel. Sửa công cụ: dòng thông tin (`thong_tin`) lấy giá trị làm kết luận; một ghi chú cho nhiều
   dòng (`khung` là danh sách); khung phương án chỉ hiện nhãn PA. Tra thêm 4.28, 6.13, Bảng 14 chú thích 1), 3.3.6, 6.6, 6.7, D.2.
+- Người dùng dặn: vẽ buồng thang bằng NÉT LIỀN KHÉP KÍN và vẽ ở TẤT CẢ các tầng (không chỉ tầng điển hình); hỏi lại cung vế thang (đã train,
+  lần trước bỏ sót). Thêm kiểu `cung` vào `tkpccc-ghi-chu-ban-ve` (1/4 tròn tô nhạt, tâm đầu mép bậc sát giếng thang, R = bề rộng vế);
+  ghi quy tắc vào SKILL.md và `knowledge/nhan-dien-thang-thoat-nan.md`. Hồ sơ Lưu Xuân Lộc: vẽ PA1/PA2 thang giữa + cung ở tầng 1, lửng,
+  2–4, thượng; thang trái hiện có + cung; hầm: đóng kín buồng thang hầm + khoang đệm thang máy (4.28). Phát hiện thêm: cửa thang trái mở ra
+  hành lang, ngược chiều thoát (3.2.10), đổi chiều thì quét vào cung vế; tầng 1 PA2 phải có lối ra theo 3.4.7. File mới
+  `ket_qua/canho/ban_ve_ghi_chu_moi_tang.pdf` (165 annotation; file cũ đang mở nên không ghi đè được).
 
 ### Lưu ý cho phiên sau (người dùng dặn ghi, 2026-11-02)
 1. Kết quả tư vấn: MỘT bảng theo khung bảng đối chiếu chính thức (TT | Nội dung đối chiếu | Nội dung thiết kế | Quy định | Khoản Điều |

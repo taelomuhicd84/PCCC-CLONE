@@ -20,7 +20,7 @@ import pymupdf
 
 MAU = {"do": (0.85, 0.1, 0.1), "cam": (0.95, 0.5, 0.0), "xanh": (0.1, 0.3, 0.85),
        "tim": (0.5, 0.15, 0.7), "xanh_la": (0.05, 0.6, 0.2), "den": (0.0, 0.0, 0.0)}
-KIEU = ("khung", "callout", "leader", "net", "tuong", "cua", "chu")
+KIEU = ("khung", "callout", "leader", "net", "tuong", "cua", "cung", "chu")
 MUI_TEN = pymupdf.PDF_ANNOT_LE_OPEN_ARROW
 
 
@@ -178,6 +178,23 @@ def ve_muc(page: pymupdf.Page, muc: dict, k: float) -> list:
             tao.append(but.net(diem, mau, day=float(muc.get("day", 1.5)), net_dut=muc.get("net_dut", False),
                                mui_ten=muc.get("mui_ten", False)))
         tao += _nhan(but, muc, diem[0], mau, k)
+    elif kieu == "cung":
+        # cung vế thang (người dùng train 2026-11-02): tâm = đầu mép bậc sát giếng thang, bán kính = bề rộng vế;
+        # vùng 1/4 tròn này là chiếu nghỉ phải trống, cánh cửa không được quét vào
+        if "tam" not in muc or "den" not in muc:
+            raise Loi("cung cần 'tam' (đầu mép bậc sát giếng thang) và 'den' (đầu mép bậc phía tường)")
+        tam, den = _diem(muc["tam"], k), _diem(muc["den"], k)
+        v = den - tam
+        r, g0 = math.hypot(v.x, v.y), math.atan2(v.y, v.x)
+        goc = math.radians(float(muc.get("goc", 90))) * (1 if muc.get("chieu", 1) >= 0 else -1)
+        cung = [tam + (r * math.cos(g0 + goc * i / 12), r * math.sin(g0 + goc * i / 12)) for i in range(13)]
+        a = but.p.add_polygon_annot([p * but.m for p in [tam] + cung])
+        a.set_colors(stroke=mau, fill=mau)
+        a.set_border(width=0.8)
+        a.set_opacity(0.3)
+        tao.append(a)
+        tao.append(but.net([tam, den], mau, day=0.8, net_dut=True))     # bán kính = bề rộng vế
+        tao += _nhan(but, muc, cung[6], mau, k)
     elif kieu == "cua":
         if "tam" not in muc or "den" not in muc:
             raise Loi("cua cần 'tam' (bản lề) và 'den' (mép cánh khi đóng)")
@@ -222,7 +239,10 @@ def ve(pdf_vao: Path, muc_list: list, pdf_ra: Path, zoom: float = 1.0, anh: Path
     if loi:
         raise SystemExit("\n".join(loi))
     pdf_ra.parent.mkdir(parents=True, exist_ok=True)
-    doc.save(pdf_ra, garbage=3, deflate=True)
+    try:
+        doc.save(pdf_ra, garbage=3, deflate=True)
+    except Exception as e:              # hay gặp: file đích đang mở trong trình xem PDF
+        raise SystemExit(f"không ghi được {pdf_ra}: {e}. File đang mở thì đóng lại hoặc dùng -o tên khác")
     if anh:
         anh.mkdir(parents=True, exist_ok=True)
         ra = pymupdf.open(pdf_ra)

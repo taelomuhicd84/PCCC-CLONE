@@ -33,6 +33,7 @@ Trường chung: `trang` (từ 1), `kieu`, `mau`, `khung` (số = TT của bản
 | `net` | `diem` [[x,y],…], `net_dut`, `mui_ten`, `day` | đường nét + comment: đường thoát nạn, kích thước đo, ranh giới |
 | `tuong` | `diem`, `day` (mặc định 3,5) | tường mới của phương án (nét đậm) |
 | `cua` | `tam` (bản lề), `den` (mép cánh khi đóng), `chieu` (1 hoặc -1), `loai` ("EI 60") | cánh mở 90° + cung quét + nhãn loại cửa |
+| `cung` | `tam` (đầu mép bậc sát giếng thang), `den` (đầu mép bậc phía tường), `chieu` (1/-1, quay về phía chiếu nghỉ), `goc` (90) | cung vế thang: 1/4 tròn tô nhạt bán kính = bề rộng vế + đường bán kính; chiếu nghỉ phải chứa trọn cung, cánh cửa không quét vào (`knowledge/nhan-dien-thang-thoat-nan.md` bước 3) |
 | `chu` | `hop`, `vien` | ô chữ tự do: tiêu đề trang, ghi chú chung |
 
 Màu `mau`: `do` = CHƯA ĐẠT · `cam` = CẦN XÁC NHẬN, thiếu số liệu, nghi vấn · `xanh` = thông tin, yêu cầu · `tim` = PA1 · `xanh_la` = PA2, giải pháp đạt · `den`.
@@ -43,6 +44,9 @@ Màu `mau`: `do` = CHƯA ĐẠT · `cam` = CẦN XÁC NHẬN, thiếu số liệ
    (thang, cửa, mặt đứng, bảng thống kê). Nghi vấn: khung cam, comment nêu điều nghi và cần xác nhận gì.
 3. Phương án điều chỉnh: vẽ bằng kiểu có nghĩa (`tuong`, `cua`, `net` đường thoát nạn), mỗi mục có `phuong_an` + `nhan`;
    mỗi phương án một màu (PA1 tím, PA2 xanh lá); comment ghi khả thi hay không và vì sao.
+   Đóng kín buồng thang (người dùng dặn 2026-11-02): vẽ buồng thang bằng `tuong` NÉT LIỀN KHÉP KÍN (cả tường có sẵn lẫn tường mới) +
+   `cua` + `cung` vế thang ở mọi đầu vế giáp chiếu tầng, cho TẤT CẢ các tầng có thang (hầm, tầng 1, lửng, tầng điển hình, tầng thượng),
+   không chỉ tầng điển hình.
 4. Trang đầu có mục `chu`: "TƯ VẤN SƠ BỘ PCCC (ngày) – tham khảo, không phải kết luận thẩm định" hoặc "THẨM ĐỊNH SƠ BỘ PCCC (ngày)".
 5. Luôn chạy `ve --anh` rồi XEM ảnh, sửa tọa độ tới khi khung trùng hạng mục và chữ không đè nét chính của bản vẽ.
 6. Chỉ dùng annotation, không vẽ vào nội dung trang (draw_*, insert_text), để người dùng sửa, xoá được.

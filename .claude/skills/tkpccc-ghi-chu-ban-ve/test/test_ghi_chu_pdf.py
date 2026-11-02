@@ -37,6 +37,8 @@ MUC = [
      "nhan": "PA1 tường REI 150", "noi_dung": "Tường gạch đặc 220"},
     {"trang": 1, "kieu": "cua", "tam": [80, 180], "den": [80, 210], "chieu": 1, "loai": "EI 60", "mau": "tim",
      "phuong_an": "PA1", "noi_dung": "Cửa ngăn cháy tự đóng"},
+    {"trang": 1, "kieu": "cung", "tam": [150, 250], "den": [118, 250], "chieu": 1, "mau": "den", "khung": 11, "nhan": "R = vế",
+     "noi_dung": "Cung vế thang: chiếu nghỉ phải chứa trọn cung"},
     {"trang": 2, "kieu": "khung", "khung": 3, "hop": [40, 50, 140, 120], "mau": "cam", "may": True,
      "noi_dung": "Nghi vấn trên trang xoay"},
     {"trang": 2, "kieu": "chu", "hop": [20, 400, 380, 440], "mau": "xanh", "khung": [19, 20], "noi_dung": "TƯ VẤN SƠ BỘ PCCC"},
@@ -55,10 +57,12 @@ def test_ve_du_kieu(ban_ve, tmp_path):
     kieu = [a.type[1] for a in a1]
     # khung = Square + số; callout = FreeText; leader = Line + nhãn; net 3 điểm = PolyLine; tường 2 điểm = Line + nhãn;
     # cửa = Line (cánh) + PolyLine (cung) + nhãn
-    assert kieu.count("Square") == 1 and kieu.count("Line") == 3 and kieu.count("PolyLine") == 2
-    assert kieu.count("FreeText") == 5
+    assert kieu.count("Square") == 1 and kieu.count("Line") == 4 and kieu.count("PolyLine") == 2
+    assert kieu.count("FreeText") == 6 and kieu.count("Polygon") == 1          # cung vế: vùng 1/4 tròn + bán kính + nhãn
     tieu_de = [a.info["title"] for a in a1]
-    assert tieu_de.count("PCCC [11]") == 3 and "PCCC [12]" in tieu_de
+    assert tieu_de.count("PCCC [11]") == 6 and "PCCC [12]" in tieu_de
+    cung = next(a for a in a1 if a.type[1] == "Polygon")
+    assert abs(cung.rect.width - 32) < 3 and abs(cung.rect.height - 32) < 3 and cung.opacity < 0.5
     nd = " ".join(a.info["content"] for a in a1)
     assert "PA1: Tường gạch đặc 220" in nd and "KHÔNG ĐẠT (3.4.4)" in nd
     # neo theo chữ: khung bao chữ CT1
