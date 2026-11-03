@@ -67,11 +67,15 @@ G=.claude/skills/tkpccc-ghi-chu-ban-ve/scripts/ghi_chu_pdf.py
 |---|---|---|---|---|---|---|
 | A5 | 29 | 16 phút | 324 nghìn | 61 | 29/29 | tự tạo `phan/` (nay `job` tạo); không có Edit nên sửa JSON bằng Python |
 | KT7.1 idx 6–80 | 55 | 31 phút | 536 nghìn | 104 | 55/55 | lệnh bash quá dài lỗi ENAMETOOLONG → ghi script ra file rồi chạy |
-| KT7.1 idx 81–151 | 52 | — | — | — | — | chết giữa job: hết cửa sổ 5 giờ (429), chưa ghi file phần |
-| B1; B12 + B13 (1 agent); B14 | 48; 42; 44 | chưa đo | | | | |
-- ≈ 10 nghìn token, ≈ 35 giây mỗi dòng; agent xét đủ dòng, JSON đúng định dạng (agent tự chạy `kiem` trên bản trộn: 0 lỗi).
-- Gói Pro: lượt 3 agent song song (≈ 1,2 triệu token) đưa cửa sổ 5 giờ từ 42 % lên hết, tuần +8 %. Cả hồ sơ (≈ 270 dòng) ≈ 2,7 triệu
-  token ≈ 1,3 cửa sổ 5 giờ: chia 2 phiên, mỗi lượt ≤ 2 agent.
+| KT7.1 idx 81–151 | 52 | 34 phút | 478 nghìn | 100 | 52/52 | lần đầu chết giữa job (429), chạy lại từ đầu; vẽ PA1 đóng kín buồng thang 4 trang (36 ghi chú) |
+| B1 | 48 | 18 phút | 298 nghìn | 59 | 48/48 | |
+| B12 + B13 (1 agent) | 24 + 18 | 14 phút | 250 nghìn | 56 | 42/42 | gộp 2 job ngắn được: đọc thông tin công trình một lần |
+| B14 | 44 | chưa đo | | | | |
+- KT ≈ 9–10 nghìn token, ≈ 35–40 giây một dòng; A5 ≈ 11 nghìn; bảng B ≈ 6 nghìn token, ≈ 20 giây một dòng. Agent xét đủ dòng, JSON đúng
+  định dạng (agent tự kiểm: idx đủ, khung hai chiều, tọa độ trong trang).
+- Gói Pro: lượt 3 agent song song (≈ 1,2 triệu token) đưa cửa sổ 5 giờ từ 42 % lên hết, tuần +8 %. 03/11: KT 81–151 + B1 + B12/B13
+  (≈ 1 triệu token, phiên chính Opus) đưa cửa sổ 5 giờ 28 % → 85 %, tuần 60 % → 67 %. Một cửa sổ 5 giờ chạy được ≈ 1–1,2 triệu token agent:
+  cả hồ sơ (≈ 270 dòng ≈ 2,1 triệu token) chia 2 cửa sổ, mỗi lượt ≤ 2 agent, mở agent tiếp ngay khi một agent xong nếu usage còn dưới ≈ 60 %.
 
 ## Sau này
 Web: tab thẩm định chạy quy trình này qua runner (`claude -p`), xuất Word theo mẫu bảng A/B chính thức (ROADMAP Pha 5b). Vẽ phương án vào

@@ -131,3 +131,8 @@
   agent `pccc-xay-dung`, `pccc-he-thong` thêm cách tiết kiệm token (đọc 8–10 dòng một lệnh, ghi JSON một lần bằng script); lệnh `job` tự tạo
   thư mục `phan/`; sửa `knowledge/chon-loai-dau-bao.md` (trần giả, sàn nâng là Bảng A.2 mục 7 QCVN 10:2025, không phải A.3); ghi lỗi cột
   Tra ở và ngưỡng khối tích cũ của bảng A5 vào skill `tkpccc-bang-doi-chieu`.
+- (03/11 sáng, máy D:/1_Claude/TKPCCC, người dùng chép `ket_qua/q4`, `ket_qua/q4_tham_dinh` sang) Làm tiếp thẩm định Q.4: chạy lại KT7.1 idx
+  81–151 từ đầu (52/52, 34 phút, 478 nghìn token, 100 lệnh; 9 CHƯA ĐẠT; vẽ PA1 đóng kín buồng thang T1 ở Trệt, Lầu 1, Lầu 2 và buồng T3 + cửa
+  ra sân thượng ở tum; thấy mặt tiền Trệt có 2 ô cửa chứ không phải 1), B1 (48/48, 18 phút, 298 nghìn), B12 + B13 gộp một agent (42/42,
+  14 phút, 250 nghìn). Cửa sổ 5 giờ 28 % → 85 % nên dừng, lưu, push; B14 và bước gộp, vẽ, báo cáo làm sau khi reset. Bảng "Đo cỡ job" của
+  skill `tkpccc-tham-dinh` đã điền (bảng B ≈ 6 nghìn token một dòng, KT ≈ 9–10 nghìn).
