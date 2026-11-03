@@ -19,7 +19,9 @@ File này cập nhật sau mỗi mốc việc và trước khi hết usage. Phi�
 3. ✅ Model + effort trong frontmatter (CLAUDE.md mục module): agent `pccc-xay-dung` opus/high, `pccc-he-thong` sonnet/medium; skill khảo sát,
    thẩm định, thủy lực, kiểm luật opus/high; báo giá, hướng dẫn, CAD sonnet/medium; xong-dau-muc sonnet/low; skill phụ trợ không đặt.
 4. ✅ CLAUDE.md "QUY TẮC SỐ 1, ÁP DỤNG MÃI MÃI": gần hết usage thì lưu TIEN_DO, LICH_SU, commit, push.
-5. ⏳ Phiên riêng đang làm sơ đồ node công việc (Artifact, thêm nút, nối, xem nội dung): xem phiên "Sơ đồ node công việc TKPCCC".
+5. ✅ Luật xét tầng thượng/tum (người dùng sửa BCKS Q.4): có công năng sử dụng không (WC/kho trong tum là phụ trợ), có thì chiếm bao nhiêu %
+   sàn mái, > 30% mới tính 1 tầng. Ghi vào skill khảo sát + `KS.json` dòng 1. Ô Quy mô Excel BCKS Q.4 (vẫn ghi "4 tầng nếu có WC") chưa sửa.
+6. ⏳ Phiên riêng đang làm sơ đồ node công việc (Artifact, thêm nút, nối, xem nội dung): xem phiên "Sơ đồ node công việc TKPCCC".
 Việc tiếp theo:
 1. 👤 Người dùng train skill VẼ HỆ THỐNG PCCC (sau khi kết luận "không có hệ thống"): báo cháy độc lập, đèn sự cố + EXIT, bình, dụng cụ phá dỡ,
    mặt nạ cho Q4 (tư liệu: `ket_qua/q4_tham_dinh/phan/B1.json`, `B12.json`, `B13.json`).

@@ -156,3 +156,5 @@
   (THÔNG TIN, PHÁP LÝ, HỆ THỐNG, TƯ VẤN; mẫu 7 mục cũ giữ ở `BCKS_mau_7muc.xlsx`); lệnh `bcks` đọc hàng theo nhãn cột A của mẫu; Tư vấn là
   danh sách "+" việc CĐT phải làm, GHI CHÚ để trống. Ghi "LOGIC BCKS" vào skill `tkpccc-bang-doi-chieu`. Làm lại BCKS Q4 (`ket_qua/q4/
   BCKS_CHDV_Doan_Nhu_Hai_Q4_v2.xlsx/.pdf`, 1 trang). Cài Pillow trên máy này: test bcks chạy được.
+- Người dùng sửa cách xét tầng thượng/tum: WC trong tum là phụ trợ, không làm tum thành tầng; xét có công năng không, có thì
+  chiếm bao nhiêu % sàn mái, > 30% mới tính 1 tầng. Ghi vào skill `tkpccc-khao-sat-tu-van`, `KS.json` dòng 1, memory.

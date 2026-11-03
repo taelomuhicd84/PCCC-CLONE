@@ -24,6 +24,9 @@ Không đọc cả `knowledge/`: mở file theo cột "Tra ở" của từng dò
 - Việc của Claude là BÁO CÁO (nhận diện, đánh giá, phương án, khả thi, căn cứ); chấp nhận hay không là việc người dùng: không hỏi người dùng
   chọn, kể cả câu hỏi cuối lượt; điểm luật không rõ thì ghi "cần người dùng xem xét". Thiếu kiến thức thì nhờ người dùng train.
 - Chỉ CẦN XÁC NHẬN khi thiếu số liệu thật (người dùng dặn 2026-11-02). Tum đủ tiêu chí 1.4.24 (≤ 30% sàn mái, chỉ che thang) không tính tầng: ghi thông tin, không hỏi.
+  Cách xét tầng thượng/tum (người dùng dặn 2026-11-03): (1) có công năng sử dụng không (WC, kho nhỏ trong tum là phụ trợ, không phải
+  công năng); (2) có thì phần công năng chiếm bao nhiêu % sàn mái; (3) > 30% ⇒ tính 1 tầng, ≤ 30% ⇒ không tính. Không viết "có WC nên
+  tính 1 tầng", không đưa 2 phương án chiều cao.
   Khoảng cách thoát nạn tính ra (hoặc Bảng G) vượt giới hạn ⇒ CHƯA ĐẠT + phương án, không để CẦN XÁC NHẬN.
 - Không có số trên bản vẽ thì ghi "phải đảm bảo ≥ …". Chỉ ghi "cửa chống cháy" khi bản vẽ có ký hiệu.
 - Thẻ bản vẽ mẫu đã thẩm duyệt (`data/ban_ve_mau`, 36 MB, repo SKILL-PCCC-NEW) chưa chép sang: clone repo đó vào thư mục tạm khi cần tra.

@@ -19,7 +19,7 @@
       "idx": 1,
       "tt": "1",
       "noi_dung": "Số tầng (nổi, hầm, tum, tầng thượng)",
-      "goi_y": "Đếm mặt bằng, mặt cắt; tầng thượng xây kín hoặc vượt diện tích tum thì tính 1 tầng; bản vẽ cải tạo xét mặt bằng cải tạo",
+      "goi_y": "Đếm mặt bằng, mặt cắt; tầng thượng xây kín hoặc vượt diện tích tum thì tính 1 tầng; tầng thượng: xét có công năng sử dụng không (WC/kho nhỏ trong tum là phụ trợ), có thì chiếm bao nhiêu % sàn mái, > 30% mới tính 1 tầng; bản vẽ cải tạo xét mặt bằng cải tạo",
       "tra_o": "knowledge/khao-sat-bao-gia.md mục 2; knowledge/hoc/du-an/so-bo-thiet-ke.md",
       "thong_tin": true
     },
