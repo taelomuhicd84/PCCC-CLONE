@@ -80,6 +80,9 @@ Kết luận đúng: không có phương án khả thi, cần người dùng xem
 ## Đường thoát nạn: đo từ VỊ TRÍ XA NHẤT TRONG PHÒNG (người dùng train 2026-11-03, hồ sơ Q.4)
 - Chiều dài đường thoát nạn L1 đo từ ĐIỂM XA NHẤT BÊN TRONG PHÒNG (chỗ xa cửa nhất có người ở: đầu giường, góc phòng), đi theo lối đi
   thật (vòng qua giường, tủ, bàn) ra cửa phòng rồi tới lối ra thoát nạn (cửa buồng thang). KHÔNG đo từ cửa phòng.
+- Đường chỉ đi qua SÀN TRỐNG: né giường, bàn ghế, sofa, tủ, bếp, thiết bị trên mặt bằng nội thất (người dùng vẽ nét xanh men theo
+  giường, qua khoảng trống giữa WC và bàn ăn, lách giữa ghế và sofa). Không vẽ, không đo đường thẳng chéo qua đồ đạc; đường vòng nào
+  dài hơn thì L1 tính theo đường vòng. Phải XEM ảnh mặt bằng nội thất trước khi vẽ, và chạy `cat` phóng vùng để thấy lối đi.
 - Vẽ đường này bằng `net` có mũi tên, màu xanh, đầu đường nằm TRONG phòng (người dùng vẽ tay bằng nét xanh dương dày), nhãn "L1 ≈ … m".
 - Lỗi đã mắc: Q.4 Lầu 2 đo L1 từ cửa P. ngủ 06 = 7,9 m. Đường người dùng vẽ (từ góc xa trong P. ngủ 06 lên rồi sang trái tới cửa
   buồng thang cạnh P. ăn) đo trên PDF ≈ 2,2 + 5,5 + 1,5 ≈ 9,2 m (tỉ lệ 76,65 px/m ở zoom 1.6). Tính lại L = L1 + 3H + L3 với L1 ≈ 9,2 m
