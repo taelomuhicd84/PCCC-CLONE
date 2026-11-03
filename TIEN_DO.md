@@ -3,6 +3,15 @@
 File này cập nhật sau mỗi mốc việc và trước khi hết usage. Phiên mới đọc mục "ĐANG LÀM / VIỆC TIẾP THEO" trước.
 
 ## ĐANG LÀM / VIỆC TIẾP THEO (cập nhật 2026-11-03 chiều)
+**DỞ (03/11, dừng vì usage 5 giờ 99 %; reset ≈ 12:10 UTC+7, tuần 82 %): sửa Q.4 theo bài train "đường thoát nạn đo từ vị trí xa nhất
+TRONG PHÒNG" (`knowledge/nhan-dien-thang-thoat-nan.md`).** File người dùng gửi: `C:\Users\HP\Downloads\ban_ve_ghi_chu.pdf` (trang 5 Lầu 2, 3 nét
+xanh dương: từ góc P. ngủ 06 (757, 623) → (757, 456) → (333, 457) → (330, 339) px@1.6; dài ≈ 9,2 m). Việc làm tiếp, theo thứ tự:
+1. Q.4 khảo sát (`ket_qua/q4/doi_chieu.json`) và thẩm định (`ket_qua/q4_tham_dinh/doi_chieu.json`): đổi L1 7,9 m → ≈ 9,2 m ở KS dòng 12, 15,
+   KT7.1 #96, các ô Kết luận có "7,9 m"; sửa `ghi_chu` trang 5: nét "L1 ≈ 7,9 m" thành nét xanh từ góc xa trong P. ngủ 06 như người dùng vẽ
+   (tọa độ trên), nhãn "L1 ≈ 9,2 m"; chạy `kiem`, `ve --anh`, XEM ảnh, `xlsx`, `md`.
+2. BCKS Q.4 v2 (`ket_qua/q4/BCKS_CHDV_Doan_Nhu_Hai_Q4_v2.xlsx`): thêm ảnh ghi chú ở cột GHI CHÚ (người dùng dặn: phải có ảnh như bản cũ):
+   `bcks.ghi_chu.tu_van.anh` (thang Trệt + xe máy trang 1; đường thoát nạn Lầu 2 trang 5), chạy lại `bcks`, xuất PDF bằng Excel, XEM ảnh.
+3. Cửa chống cháy "ngay cửa phòng": người dùng chưa nói rõ cách áp dụng cho PA1; đang vẽ cửa ở lối vào buồng thang. Ghi "cần người dùng xem xét".
 **Xong 03/11 chiều (máy D:/1_Claude/TKPCCC):**
 1. ✅ Thẩm định thử Q.4 (`ket_qua/q4_tham_dinh/`, không commit) theo quy tắc mới: chưa có bản vẽ hệ thống = không có hệ thống, không lập
    bảng B. Kết quả gồm KT7.1 + A5 (B1, B12, B13 bỏ khỏi kết quả, giữ `phan/` làm tư liệu khi vẽ hệ thống; B14 không chạy).

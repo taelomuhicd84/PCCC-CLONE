@@ -76,3 +76,15 @@ Không chọn thang theo cảm tính, không tự quyết phương án. Làm đ�
 Trong bảng đối chiếu, thang ngoài nhà là PHƯƠNG ÁN do mình đề xuất, không phải hạng mục đối chiếu: ghi trong cột Kết luận của dòng "Số lối thoát nạn" (người dùng sửa 2026-11-02).
 
 Kết luận đúng: không có phương án khả thi, cần người dùng xem xét. Lỗi mình đã mắc: chọn thang trái vì "có tường ngoài để lấy sáng" (sai, 3.4.8b cho chiếu sáng nhân tạo) và không kiểm khả thi việc tách thang hầm.
+
+## Đường thoát nạn: đo từ VỊ TRÍ XA NHẤT TRONG PHÒNG (người dùng train 2026-11-03, hồ sơ Q.4)
+- Chiều dài đường thoát nạn L1 đo từ ĐIỂM XA NHẤT BÊN TRONG PHÒNG (chỗ xa cửa nhất có người ở: đầu giường, góc phòng), đi theo lối đi
+  thật (vòng qua giường, tủ, bàn) ra cửa phòng rồi tới lối ra thoát nạn (cửa buồng thang). KHÔNG đo từ cửa phòng.
+- Vẽ đường này bằng `net` có mũi tên, màu xanh, đầu đường nằm TRONG phòng (người dùng vẽ tay bằng nét xanh dương dày), nhãn "L1 ≈ … m".
+- Lỗi đã mắc: Q.4 Lầu 2 đo L1 từ cửa P. ngủ 06 = 7,9 m. Đường người dùng vẽ (từ góc xa trong P. ngủ 06 lên rồi sang trái tới cửa
+  buồng thang cạnh P. ăn) đo trên PDF ≈ 2,2 + 5,5 + 1,5 ≈ 9,2 m (tỉ lệ 76,65 px/m ở zoom 1.6). Tính lại L = L1 + 3H + L3 với L1 ≈ 9,2 m
+  (PA1 đóng kín buồng thang: L = L1 ≈ 9,2 m ≤ 25 m vẫn ĐẠT; thang hở: L ≈ 34–35 m > 25 m vẫn CHƯA ĐẠT). Mọi bảng, ghi chú, BCKS Q.4 ghi
+  7,9 m phải đổi: dòng KS 12, 15; KT7.1 #96; ghi chú "L1 · 7,9 m" trang 5.
+- Cửa chống cháy: người dùng dặn "cửa chống cháy là ngay cửa phòng" (đặt ngay tại cửa phòng, không đặt xa ở chỗ khác). Cách áp dụng
+  với PA1 đóng kín buồng thang chưa được người dùng nói rõ: khi gặp, ghi vị trí cửa chống cháy tại cửa phòng và "cần người dùng xem xét".
+

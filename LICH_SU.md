@@ -161,3 +161,6 @@
 - Người dùng sửa: BCKS 4 mục vẫn PHẢI có ảnh ghi chú cắt từ PDF ở cột GHI CHÚ như bản cũ (đã ghi skill `tkpccc-bang-doi-chieu`,
   `tkpccc-khao-sat-tu-van`). Chưa làm lại BCKS Q4 v2 vì hết usage: việc kế tiếp, thêm `bcks.ghi_chu.tu_van.anh` (thang Trệt + xe máy,
   đường thoát nạn Lầu 2) rồi chạy lại `bcks`.
+- Người dùng gửi `ban_ve_ghi_chu.pdf` Q.4 có vẽ tay đường thoát nạn nét xanh dương và train: đường thoát nạn đo từ vị trí xa nhất TRONG PHÒNG
+  (không từ cửa phòng); cửa chống cháy ngay cửa phòng. Ghi vào `knowledge/nhan-dien-thang-thoat-nan.md`, skill khảo sát, `MOD_tinh_toan_khoang_cach.md`.
+  L1 Q.4 Lầu 2 đúng ≈ 9,2 m (trước ghi 7,9 m đo từ cửa phòng). Chưa sửa hồ sơ Q.4 vì usage 99 %: việc làm tiếp ở TIEN_DO.

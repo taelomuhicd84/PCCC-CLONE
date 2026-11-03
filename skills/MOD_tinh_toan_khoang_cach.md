@@ -60,3 +60,6 @@ Toàn bộ Phụ lục G (G.1–G.3, Bảng G.1–G.9) nằm ở [PHU_LUC_G_QCVN
 8. **Bao che hành lang** (3.3.5): tường gạch 200 mm REI150, cửa phòng EI60, sàn BTCT REI150, trần không cháy; chứng minh bằng tỉ lệ diện tích cửa/tường < 25% (xem SKILL_ngan_chay_cong_nang.md mục 9). Kết luận "không yêu cầu giải pháp ngăn cháy hành lang bổ sung".
 9. **Vật liệu hoàn thiện** (3.5.10 sửa đổi 01): gian phòng karaoke xem là gian phòng chung + có Sprinkler → không yêu cầu cấp nguy hiểm cháy cho vật liệu trang trí, ốp lát.
 10. Ghi chú chung: hành lang rộng ≥ 1,2 m, cao > 2,1 m, không đặt vật cản trên đường thoát nạn.
+
+
+> Người dùng train 2026-11-03: L1 đo từ điểm xa nhất TRONG PHÒNG theo lối đi thật, không từ cửa phòng (`knowledge/nhan-dien-thang-thoat-nan.md`, mục "Đường thoát nạn: đo từ vị trí xa nhất").

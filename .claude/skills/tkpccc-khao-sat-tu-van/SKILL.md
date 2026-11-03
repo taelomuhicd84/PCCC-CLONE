@@ -28,6 +28,8 @@ Không đọc cả `knowledge/`: mở file theo cột "Tra ở" của từng dò
   công năng); (2) có thì phần công năng chiếm bao nhiêu % sàn mái; (3) > 30% ⇒ tính 1 tầng, ≤ 30% ⇒ không tính. Không viết "có WC nên
   tính 1 tầng", không đưa 2 phương án chiều cao.
   Khoảng cách thoát nạn tính ra (hoặc Bảng G) vượt giới hạn ⇒ CHƯA ĐẠT + phương án, không để CẦN XÁC NHẬN.
+- Đường thoát nạn đo từ ĐIỂM XA NHẤT TRONG PHÒNG (không từ cửa phòng), vẽ nét xanh có mũi tên đầu trong phòng; cửa chống cháy đặt ngay cửa
+  phòng (người dùng dặn 2026-11-03; chi tiết và lỗi Q.4 7,9 m → ≈ 9,2 m: `knowledge/nhan-dien-thang-thoat-nan.md`).
 - Không có số trên bản vẽ thì ghi "phải đảm bảo ≥ …". Chỉ ghi "cửa chống cháy" khi bản vẽ có ký hiệu.
 - Thẻ bản vẽ mẫu đã thẩm duyệt (`data/ban_ve_mau`, 36 MB, repo SKILL-PCCC-NEW) chưa chép sang: clone repo đó vào thư mục tạm khi cần tra.
 
