@@ -33,8 +33,9 @@ Làm module nào: đọc `.claude/skills/<skill>/SKILL.md` của module đó và
 - Quy trình nào lặp lại và hay thì gom thành skill (người dùng dặn 2026-10-31).
 
 ## Quy tắc chung
-- Đối chiếu (khảo sát, thẩm định) LUÔN ra BẢNG ĐỐI CHIẾU (người dùng dặn 2026-11-03): file `bang_doi_chieu.md` + Excel đủ dòng, và bảng
-  trong tin nhắn (cách gửi: bước cuối skill `tkpccc-khao-sat-tu-van`, `tkpccc-tham-dinh`); không thay bảng bằng bản tóm tắt.
+- Đối chiếu (khảo sát, thẩm định) LUÔN ra BẢNG ĐỐI CHIẾU (người dùng dặn 2026-11-03): file `bang_doi_chieu.md` + Excel ĐỦ dòng, gửi bằng
+  SendUserFile; KHÔNG dán bảng vào chat (tốn token output, người dùng dặn 2026-11-03, thay luật 2026-11-02). Chat chỉ: đường dẫn file,
+  đếm theo kết luận, điểm cần người dùng xem xét, số liệu cần bổ sung.
 - Tư vấn, thẩm định: Claude chỉ BÁO CÁO (nhận diện, đánh giá, phương án, khả thi, căn cứ), không hỏi người dùng chọn; luôn ghi chú lên PDF.
   Chi tiết và các bài học đã train nằm trong skill `tkpccc-khao-sat-tu-van`, `tkpccc-tham-dinh`.
 - Không trùng lắp, không làm việc thừa (người dùng dặn 2026-11-03): một số liệu một chỗ rồi link tới; chỉ làm, chỉ tra phần công việc

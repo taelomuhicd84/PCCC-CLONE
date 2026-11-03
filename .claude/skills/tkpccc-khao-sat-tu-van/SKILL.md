@@ -18,7 +18,8 @@ Không đọc cả `knowledge/`: mở file theo cột "Tra ở" của từng dò
   TT | Nội dung đối chiếu | Nội dung thiết kế | Quy định | Khoản Điều | Kết luận (ĐẠT / CHƯA ĐẠT / CẦN XÁC NHẬN / KHÔNG ÁP DỤNG + lý do có số + giải pháp).
   Mỗi dòng là hạng mục CÓ trên bản vẽ; phương án mình đề xuất (PA1, PA2, thang ngoài nhà…) và kiến thức dùng để tư vấn (vd thang hở loại 2)
   ghi trong ô Kết luận của dòng liên quan, không thành dòng riêng. Mẫu: `ket_qua/canho/tu_van_thiet_ke.md` (bản 6, chỉ có trên máy người dùng).
-- Gửi bảng ĐẦY ĐỦ ngay trong tin nhắn, không cắt dòng (người dùng phàn nàn khi thiếu dòng 1–7 thông tin công trình).
+- Bảng ĐẦY ĐỦ ra FILE (`bang_doi_chieu.md` + Excel), không dán vào chat (người dùng dặn 2026-11-03; trước đó 02/11 dặn gửi đủ dòng trong tin nhắn,
+  vì từng thiếu dòng 1–7 thông tin công trình: file phải đủ dòng).
 - Khoanh và ghi chú lên CHÍNH PDF bản vẽ, khung đánh số trùng TT. Không chỉ trả văn bản chung chung.
 - Việc của Claude là BÁO CÁO (nhận diện, đánh giá, phương án, khả thi, căn cứ); chấp nhận hay không là việc người dùng: không hỏi người dùng
   chọn, kể cả câu hỏi cuối lượt; điểm luật không rõ thì ghi "cần người dùng xem xét". Thiếu kiến thức thì nhờ người dùng train.
@@ -49,7 +50,7 @@ G=.claude/skills/tkpccc-ghi-chu-ban-ve/scripts/ghi_chu_pdf.py
    khác; gửi mẫu khác thì `--mau`): viết khoá `bcks` trong `doi_chieu.json` (tóm tắt bảng KS theo 7 mục của mẫu, văn phong như mẫu:
    "- …", "=> CĐT cần …", "(chưa đảm bảo)"; ảnh cắt từ `ban_ve_ghi_chu.pdf` vào cột GHI CHÚ), chạy `bcks … -o ket_qua/<dự án>/BCKS_<tên>.xlsx`,
    xuất PDF bằng Excel (ExportAsFixedFormat) và XEM ảnh bản in. Cách viết khoá: skill `tkpccc-bang-doi-chieu` mục `bcks`.
-6. Trả lời: bảng `md --ma KS` đầy đủ trong tin nhắn + đường dẫn `BCKS_<tên>.xlsx`, `doi_chieu.xlsx` và `ban_ve_ghi_chu.pdf`; tóm tắt 3–5 dòng
+6. Trả lời: gửi file `bang_doi_chieu.md` (`md --ma KS`, đủ dòng) + đường dẫn `BCKS_<tên>.xlsx`, `doi_chieu.xlsx` và `ban_ve_ghi_chu.pdf`; tóm tắt 3–5 dòng
    các điểm CHƯA ĐẠT, phương án, số liệu cần khách bổ sung.
 
 ## Sau này

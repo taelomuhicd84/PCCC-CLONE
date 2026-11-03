@@ -31,7 +31,7 @@ python -X utf8 $B job ket_qua/<da>/doi_chieu.json KT7.1 --tu 0 --den 70      # -
 python -X utf8 $B gop ket_qua/<da>/doi_chieu.json ket_qua/<da>/phan/*.json   # số khung đánh lại nối tiếp; KS dùng --giu-so
 python -X utf8 $B kiem ket_qua/<da>/doi_chieu.json      # lỗi (thoát 1) + cảnh báo + đếm theo kết luận
 python -X utf8 $B xlsx ket_qua/<da>/doi_chieu.json      # -> doi_chieu.xlsx: sheet Tóm tắt + mỗi bảng một sheet
-python -X utf8 $B md ket_qua/<da>/doi_chieu.json --ma KS [--chi-loi] [--cat 300]   # bảng markdown để gửi trong tin nhắn
+python -X utf8 $B md ket_qua/<da>/doi_chieu.json --ma KS [--chi-loi] [--cat 300]   # bảng markdown ra file, gửi file (không dán vào chat)
 python -X utf8 $B bcks ket_qua/<da>/doi_chieu.json -o ket_qua/<da>/BCKS_<tên>.xlsx [--mau <mẫu khác>.xlsx]   # báo cáo khảo sát theo mẫu
 ```
 
