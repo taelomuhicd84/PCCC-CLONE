@@ -158,3 +158,6 @@
   BCKS_CHDV_Doan_Nhu_Hai_Q4_v2.xlsx/.pdf`, 1 trang). Cài Pillow trên máy này: test bcks chạy được.
 - Người dùng sửa cách xét tầng thượng/tum: WC trong tum là phụ trợ, không làm tum thành tầng; xét có công năng không, có thì
   chiếm bao nhiêu % sàn mái, > 30% mới tính 1 tầng. Ghi vào skill `tkpccc-khao-sat-tu-van`, `KS.json` dòng 1, memory.
+- Người dùng sửa: BCKS 4 mục vẫn PHẢI có ảnh ghi chú cắt từ PDF ở cột GHI CHÚ như bản cũ (đã ghi skill `tkpccc-bang-doi-chieu`,
+  `tkpccc-khao-sat-tu-van`). Chưa làm lại BCKS Q4 v2 vì hết usage: việc kế tiếp, thêm `bcks.ghi_chu.tu_van.anh` (thang Trệt + xe máy,
+  đường thoát nạn Lầu 2) rồi chạy lại `bcks`.

@@ -44,7 +44,9 @@ LOGIC BCKS (người dùng dặn 2026-11-03, theo BCKS kho hoá chất): 4 mục
 - HỆ THỐNG PCCC: "Các hệ thống PCCC cần trang bị:" + "- …" từng hệ thống; số liệu chính có cách tính (vd "* Bể nước PCCC 288m3 …").
 - TƯ VẤN: "+ …" từng việc CĐT phải làm: hồ sơ cần cung cấp "Để đơn vị TVTK tư vấn chính xác về PCCC", hạng mục phải xây, sửa
   (thoát nạn, giáp ranh, giao thông đưa vào đây, kèm số ngắn gọn); không viết chung chung "lưu ý như trên".
-- Cột GHI CHÚ để trống (không ảnh, không số khung): chi tiết nằm ở bảng đối chiếu và PDF ghi chú.
+- Cột GHI CHÚ PHẢI CÓ ẢNH GHI CHÚ như bản cũ (người dùng dặn 2026-11-03): ảnh cắt từ `ban_ve_ghi_chu.pdf` đúng chỗ có vấn đề
+  (thang, sảnh để xe, đường thoát nạn, tum…) kèm chữ ngắn "- Tầng trệt: …", khoá `bcks.ghi_chu.<mục>.anh`; mẫu 4 mục thì gắn ảnh vào
+  mục Tư vấn (hoặc Thông tin cho tum, Hệ thống). Logic 4 mục chỉ thay cột NỘI DUNG, không bỏ ảnh.
 Nội dung lấy từ khoá `bcks` của `doi_chieu.json`, viết theo văn phong mẫu (gạch đầu dòng "- …", kết luận "=> …", số có đơn vị):
 ```json
 "bcks": {"tieu_de": {"ten_cong_trinh": "", "khach_hang": "", "dia_diem": ""},
