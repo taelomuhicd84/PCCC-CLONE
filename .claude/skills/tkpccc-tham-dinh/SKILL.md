@@ -81,7 +81,7 @@ G=.claude/skills/tkpccc-ghi-chu-ban-ve/scripts/ghi_chu_pdf.py
 | KT7.1 idx 81–151 | 52 | 34 phút | 478 nghìn | 100 | 52/52 | lần đầu chết giữa job (429), chạy lại từ đầu; vẽ PA1 đóng kín buồng thang 4 trang (36 ghi chú) |
 | B1 | 48 | 18 phút | 298 nghìn | 59 | 48/48 | |
 | B12 + B13 (1 agent) | 24 + 18 | 14 phút | 250 nghìn | 56 | 42/42 | gộp 2 job ngắn được: đọc thông tin công trình một lần |
-| B14 | 44 | chưa đo | | | | |
+| B14 | 44 | không chạy | | | | quy tắc 03/11: không lập bảng B khi hồ sơ không có bản vẽ hệ thống |
 - Đo transcript (03/11, lọc trùng theo id phản hồi): KT 81–151 92 lượt, đọc lại ngữ cảnh 23 triệu token (≈ 258 nghìn/lượt), viết ra 281 nghìn.
   Tốn nhất là SỐ LƯỢT × CỠ NGỮ CẢNH, không phải tra cứu. Vì vậy (03/11): `job` gắn toàn văn dòng + điều khoản nguyên văn (KT Q4 tìm được
   37/49 và 29/40 điều), `quy_tac_agent.md` thay 3 SKILL.md (≈ 9,5 nghìn ký tự thay ≈ 60 nghìn), xem ảnh bằng `cat` vùng; chưa đo lại.

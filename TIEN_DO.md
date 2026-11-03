@@ -2,75 +2,29 @@
 
 File này cập nhật sau mỗi mốc việc và trước khi hết usage. Phiên mới đọc mục "ĐANG LÀM / VIỆC TIẾP THEO" trước.
 
-## ĐANG LÀM / VIỆC TIẾP THEO (cập nhật 2026-11-03 trưa)
-**ĐANG DỞ A (03/11 10:55, dừng vì usage 5 giờ 95 %; reset 12:10): người dùng duyệt "làm 3 cách giảm token". CHƯA sửa code.**
-Đo transcript 3 agent Q4 (lọc trùng theo id phản hồi; script đo ở thư mục tạm, viết lại nếu cần): KT 81–151 92 lượt, đọc lại ngữ cảnh 23 triệu
-token (≈ 258 nghìn/lượt), viết ra 281 nghìn; B1 50 lượt, 7,4 triệu; B12+B13 49 lượt, 6,3 triệu. Phần chữ kết quả lệnh: tra knowledge 28–39 %,
-3 SKILL.md đọc đầu job 20–30 % (≈ 55–63 nghìn ký tự, đọc lại mọi lượt); KT xem 29 ảnh + 19 lệnh tự cắt ảnh. Kết luận: tốn nhất là SỐ LƯỢT ×
-CỠ NGỮ CẢNH, không phải tra cứu (vì vậy không dùng NotebookLM: thêm lượt, diễn đạt lại không nguyên văn). Làm:
-1. `job` (bang_doi_chieu.py): bỏ bảng rút gọn, ghi TOÀN VĂN từng dòng (noi_dung, quy_dinh, khoan_dieu, goi_y) để agent khỏi gọi `dong`; thêm
-   mục "Điều khoản nguyên văn", MỖI ĐIỀU MỘT LẦN: số điều lấy từ khoan_dieu (regex `(?:[A-Z]\.)?\d+(?:\.\d+)+[a-z]?`; tách "/", gán văn bản
-   ở phần kế: QCVN 06 → `skills/*.md` + `knowledge/qcvn06-*.md`, QCVN 10 → `knowledge/qcvn10-2025-*.md`, 7568 → `knowledge/tcvn7568-14-2025.md`);
-   file theo cột tra_o tìm trước (tiền tố tên: MOD_cau_thang → MOD_cau_thang_buong_thang.md, PHU_LUC_G → PHU_LUC_G_QCVN06.md…); dòng bắt đầu
-   điều `^\s*(#+\s*|[-*]\s*)?(\*\*)?(Bảng\s+)?<số>(?![\d.])`, cắt tới điều kế không phải điều con, ≤ ≈ 2.500 ký tự, ghi `file:dòng`;
-   không thấy thì "không tìm thấy: tra theo cột Tra ở".
-2. `job` ghi thêm `quy_tac_agent.md` cạnh `cong_trinh.md`, TRÍCH NGUYÊN (không chép tay) các mục: tham-dinh "Nguyên tắc", "Ba loại đầu vào",
-   "Không trùng lắp…", "File phần"; bang-doi-chieu `Cột "Tra ở" → file TKPCCC`; ghi-chu-ban-ve "Đặc tả mục ghi chú", "Quy tắc ghi". Agent đọc file
-   này thay 3 SKILL.md.
-3. `ghi_chu_pdf.py cat <pdf> --trang N --vung x0,y0,x1,y1 [--phong 2] [--buoc 50]`: render trang ở zoom × phong lên trang tạm như `luoi`, lưới
-   nhãn theo tọa độ zoom 1.6, cắt `clip` = vùng × phong (đúng chiều nhìn). Agent xem ảnh cắt ≤ 800×800 px thay ảnh cả trang (rõ hơn, ít token).
-4. Agent `pccc-xay-dung`, `pccc-he-thong`: bước 1 đọc job + `cong_trinh.md` + `quy_tac_agent.md` trong MỘT lượt (song song); điều khoản đã trích,
-   chỉ mở knowledge khi "không tìm thấy" hoặc đọc tiếp theo `file:dòng`; ảnh bằng `cat`; ghi JSON một lần. Skill tham-dinh: ghi số đo trên.
-5. Test (job có mục điều khoản + `quy_tac_agent.md`; `cat` ra ảnh đúng cỡ), chạy `job` thử trên Q4 đếm số điều tìm thấy; commit, push.
-**ĐANG DỞ B (người dùng yêu cầu 03/11 10:55): phân công model + effort cho từng agent, skill** (việc phức tạp cần tỉ mỉ, chính xác cực cao:
-Opus effort high/max; việc nhẹ: Sonnet effort low). Trước khi sửa: KIỂM tài liệu Claude Code khoá frontmatter (agent: `model`, có `effort`?;
-SKILL.md có nhận `model`/`effort` không), không đoán. Nháp phân công: `pccc-xay-dung` (thang, thoát nạn, phương án vẽ) Opus high;
-`pccc-he-thong` Sonnet medium (đối tượng trang bị theo bảng, ít suy luận hình học); điền hàng loạt, gộp, kiểm, xuất Excel/BCKS, xong-dau-muc:
-Sonnet low; khảo sát – tư vấn, thẩm định điều phối, ghi chú phương án lên PDF: Opus high; tra quy chuẩn: Sonnet medium; CAD build: Sonnet low.
-**ĐANG DỞ (03/11 trưa, máy D:/1_Claude/TKPCCC): thử trọn luồng THẨM ĐỊNH trên hồ sơ Q.4 (việc 2 bên dưới), đo cỡ job. Dừng 10:40 vì usage
-5 giờ chạm 85 % (reset 12:10 ngày 03/11).**
-Hồ sơ Q.4 KHÔNG có trong repo (repo công khai): `ket_qua/q4/` (khảo sát) và `ket_qua/q4_tham_dinh/` (`ban_ve.pdf` 7 trang vector không có lớp chữ,
-`anh/luoi_1..7.png` zoom 1.6, `doi_chieu.json`, `jobs/`, `phan/`) nằm trên máy D:/1_Claude/TKPCCC (người dùng chép từ máy PCCCVIP sáng 03/11).
-Trang: 1 nội thất Trệt, 2 tường xây Trệt, 3 nội thất Lầu 1, 4 tường Lầu 1, 5 nội thất Lầu 2, 6 tường Lầu 2, 7 tum.
-- File phần xong, đã kiểm đủ dòng (6/7 job):
-  `A5` 29/29 (12 CẦN XÁC NHẬN, 17 KHÔNG ÁP DỤNG) · `KT7.1_6-80` 55/55 (6 CHƯA ĐẠT #8 #9 #45 #50 #61 #76, 16 CXN, 4 ĐẠT, 29 KAD)
-  · `KT7.1_81-151` 52/52 (9 CHƯA ĐẠT #82 #87 #96 #99 #107 #116 #117 #118 #124, 11 CXN, 8 ĐẠT, 24 KAD; 36 ghi chú: PA1 tím đóng kín buồng
-  thang T1 trang 1, 3, 5 + buồng T3 và cửa ra sân thượng trang 7; ô chữ chung trang 3 y 40–238)
-  · `B1` 48/48 (37 CXN, 11 KAD; ô chữ trang 2; khung cam bếp tr.1, tr.5, cửa ra tr.1, lối đi tr.3)
-  · `B12` 24/24 (16 CXN, 8 KAD) · `B13` 18/18 (13 CXN, 5 KAD) (hai ô chữ trang 4).
-- Việc còn lại, theo thứ tự (gói Pro: kiểm `get_usage` giữa các lượt; ≥ 85 % thì dừng, lưu, push):
-  1. Theo quy tắc mới (người dùng dặn 03/11 trưa: chưa có bản vẽ hệ thống = không có hệ thống; không lập bảng B cho hệ thống không có
-     bản vẽ; không trùng lắp): KHÔNG chạy B14; B1, B12, B13 KHÔNG gộp vào kết quả (giữ `phan/` làm tư liệu cho bước vẽ hệ thống sau này: số
-     bình, mặt nạ, loại đầu báo…); A5 dòng PHẢI CÓ (#6, #44, #52, #58 …) đổi CẦN XÁC NHẬN → CHƯA ĐẠT "không có <hệ thống>" + phương án
-     "thiết kế <hệ thống>" bằng script trước khi `gop`. Chỉ làm tiếp khi người dùng nói "làm tiếp Q4". (Lời giao agent mẫu, khi cần:)
-     Lời giao mẫu: "Đọc <job>, làm theo, ghi ĐÚNG MỘT JSON vào <phan/….json>. Ngày thẩm định …. Chỉ xét các dòng trong job, mọi dòng có
-     ket_luan; số liệu theo `da_biet`; dòng PHẢI CÓ khi chưa có bản vẽ hệ thống …; ô chữ chung chỉ trong vùng …; không chạy gop/kiem/ve,
-     không sửa file khác; lệnh bash dài thì ghi script ra file; trả lời ngắn: số dòng đã xét, đếm theo kết luận, điểm cần người dùng xem xét,
-     lỗi định dạng gặp phải."
-  2. `gop` → `kiem` (0 lỗi, xử lý cảnh báo) → rà chéo (mục dưới) với nhau và với bảng KS (`ket_qua/q4/doi_chieu.json`) → trang 1 ô `chu`
-     "THẨM ĐỊNH SƠ BỘ PCCC (ngày) – phần xây dựng + hệ thống; tham khảo" ở [60, 40, 980, 72] → `ve --anh`, XEM ảnh, sửa tọa độ → `xlsx` →
-     báo cáo người dùng (đếm XÂY DỰNG / HỆ THỐNG, `md --chi-loi`, phương án chính, số liệu cần bổ sung, đường dẫn PDF + Excel, kết quả đo job).
-  3. Điền hàng B14 của bảng "Đo cỡ job" (`.claude/skills/tkpccc-tham-dinh/SKILL.md`); TIEN_DO, LICH_SU; commit, push (không đưa `ket_qua/`).
-- Rà chéo (agent báo, xử lý ở bước 2):
-  - Trang 1 cửa ra mặt tiền: khung cam B1 [1262, 440, 1420, 612] trùm 2 ô cửa, chồng PA1 (cửa mở ra ngoài) của KT 81–151: thu nhỏ hoặc dời.
-  - Mặt tiền Trệt có 2 ô cửa ≈ 0,9–1,0 m (một vào sảnh T1; một vào P.khách qua ô đệm ≈ 1,3 m, ngăn bằng vách kính trượt), cả hai mở vào
-    trong; `da_biet`, KS dòng 9, 13 ghi 1 cửa 0,9 m. KT #84 ĐẠT (số lối ra của nhà ≥ số lối ra mỗi tầng); ô thứ hai không bù cho tầng trên (#82).
-  - Số bình chữa cháy: B12 #6 ≥ 2 bình/tầng (tầng ≈ 102 m² ≥ 100 m², đo sơ) + tum 1 = 7 bình; A5 #53 ghi ≥ 1 bình/tầng, A5 #54 dự trữ theo
-    4–5 bình: thống nhất. B12 #3 mức nguy hiểm Thấp/Trung bình chưa chốt (≈ 310 m² sát 300 m², ≈ 12 người sát 15).
-  - KT #124 lối ra mái CHƯA ĐẠT (sân thượng +10.400 ≥ 10 m, 6.6) còn KS ghi CXN; KT #107 mặt bậc T1 ≈ 235 mm < 250 mm CHƯA ĐẠT (sai số ± 5 mm).
-  - KT #96 dùng Bảng G.1 (Lầu 2 ≈ 33 m > 25 m); nếu xếp khách sạn Bảng G.2a cột 4 (20 m) thì Lầu 1 ≈ 19,8 m sát ngưỡng.
-  - Đã thấy trước: KT #8 #9 CHƯA ĐẠT còn KS dòng 6 CXN (đúng Bài học 30). A5 #6, #44, #52, #58 PHẢI CÓ ghi CXN còn KS 20, 24, 25 CHƯA ĐẠT
-    (nhà hiện trạng chưa lắp). A5 #1: không thuộc diện thẩm định (4 tầng < 7, ≈ 310 m² < 3.000 m², Phụ lục III NĐ 105/2025).
-- Điểm cần người dùng xem xét (đưa vào báo cáo, không hỏi chọn): kiểu báo cháy trung tâm hay độc lập, nhà không có phòng trực 24/24 (B1 #17);
-  bếp mở thông phòng ăn, khách: loại đầu báo, ranh giới (B1 #6, #7); phòng ngủ cho thuê có là "phần nhà sở hữu riêng" (Đ 5.8.2.9.2; B1 #13,
-  #58); PA1 Lầu 1, Lầu 2: cánh cửa quét vào cung chiếu thang (3.4.3), tường mới ở mép ô thông tầng Lầu 1 cần dầm đỡ, sảnh Lầu 2 lấy chỗ P.ăn;
-  T3 5 bậc chéo quay 180° (#122, 3.4.4); cửa mở vào trong khi ≈ 12 người ≤ 15 (#88, ngoại lệ 3.2.10); buồng thang T1 sát tường giáp ranh nên
-  không có lỗ lấy sáng ≥ 1,2 m²/tầng (#114, #115); B13 #1 F1.2 hay F1.4 (cột Quy định loại trừ nhà ở riêng lẻ).
-- Thiếu tri thức (nhờ người dùng nạp): TCVN 13456:2022 (B13 #8, #19), TCVN 7435-1 (B12), Bảng 1 Đ 5.9.1.1.5 TCVN 7568-14 (B1); dự trữ 10 %
-  số bình (B12 #13) không có trong QCVN 10 mục 2.6 đã nạp. Cột "Tra ở" trỏ file không liên quan: B1 (MOD_loi_ra_va_cua, MOD_cau_thang,
-  SKILL_ngan_chay), B12 #3 #7 #15 #17, B13 #3: ghi vào skill `tkpccc-bang-doi-chieu`.
-- ✅ Người dùng trả lời 03/11: chưa có bản vẽ hệ thống thì kết luận KHÔNG CÓ (CHƯA ĐẠT + phương án thiết kế), rồi Claude vẽ hệ thống PCCC
-  (👤 người dùng sẽ train skill vẽ hệ thống sau). Đã ghi vào skill `tkpccc-tham-dinh`, agent `pccc-he-thong`.
+## ĐANG LÀM / VIỆC TIẾP THEO (cập nhật 2026-11-03 chiều)
+**Xong 03/11 chiều (máy D:/1_Claude/TKPCCC):**
+1. ✅ Thẩm định thử Q.4 (`ket_qua/q4_tham_dinh/`, không commit) theo quy tắc mới: chưa có bản vẽ hệ thống = không có hệ thống, không lập
+   bảng B. Kết quả gồm KT7.1 + A5 (B1, B12, B13 bỏ khỏi kết quả, giữ `phan/` làm tư liệu khi vẽ hệ thống; B14 không chạy).
+   XÂY DỰNG (KT7.1, 107 dòng): 12 ĐẠT, 15 CHƯA ĐẠT, 27 CẦN XÁC NHẬN, 53 KHÔNG ÁP DỤNG. HỆ THỐNG (A5, 29 dòng): 8 CHƯA ĐẠT (không có báo cháy,
+   đèn sự cố + EXIT, bình, dụng cụ phá dỡ + mặt nạ; dòng chi tiết ghi "như #…"), 4 CẦN XÁC NHẬN, 17 KHÔNG ÁP DỤNG. `kiem` 0 lỗi, 0 cảnh báo.
+   File: `ban_ve_ghi_chu.pdf` (89 annotation, trang 1, 3, 5, 7; PA1 tím đóng kín buồng thang T1 + T3), `doi_chieu.xlsx`, `doi_chieu.json`
+   (bản trước gộp: `doi_chieu_truoc_gop.json`; A5 đã đổi: `phan/A5_v2.json`). 👤 Chờ người dùng xem.
+   Cần người dùng xem xét (đã ghi trong ô Kết luận): KT #96 Bảng G.1 (nhà ở, 25 m) hay G.2a (khách sạn, 20 m; Lầu 1 ≈ 19,8 m sát ngưỡng);
+   #122 T3 5 bậc chéo quay 180°; #88 cửa mở vào trong khi ≈ 12 người; #111 cánh cửa PA1 quét vào chiếu thang; A5 #59 không có nơi thường trực
+   để dụng cụ phá dỡ; mặt tiền Trệt có 2 ô cửa ≈ 1,0 m (ảnh `cat` xác nhận) trong khi bảng khảo sát `ket_qua/q4` ghi 1 cửa 0,9 m.
+2. ✅ 3 cách giảm token (người dùng duyệt): `job` ghi toàn văn dòng + "Điều khoản nguyên văn" trích từ knowledge/, skills/ (KT Q4 tìm được
+   37/49, 29/40 điều) + `quy_tac_agent.md` trích mục SKILL.md; lệnh `ghi_chu_pdf.py cat` ảnh vùng phóng 2; agent đọc 3 file một lượt.
+   CHƯA ĐO LẠI token với job mới: đo ở hồ sơ thẩm định kế tiếp (script đo transcript: đếm theo id phản hồi, xem mục "Đo cỡ job").
+3. ✅ Model + effort trong frontmatter (CLAUDE.md mục module): agent `pccc-xay-dung` opus/high, `pccc-he-thong` sonnet/medium; skill khảo sát,
+   thẩm định, thủy lực, kiểm luật opus/high; báo giá, hướng dẫn, CAD sonnet/medium; xong-dau-muc sonnet/low; skill phụ trợ không đặt.
+4. ✅ CLAUDE.md "QUY TẮC SỐ 1, ÁP DỤNG MÃI MÃI": gần hết usage thì lưu TIEN_DO, LICH_SU, commit, push.
+5. ⏳ Phiên riêng đang làm sơ đồ node công việc (Artifact, thêm nút, nối, xem nội dung): xem phiên "Sơ đồ node công việc TKPCCC".
+Việc tiếp theo:
+1. 👤 Người dùng train skill VẼ HỆ THỐNG PCCC (sau khi kết luận "không có hệ thống"): báo cháy độc lập, đèn sự cố + EXIT, bình, dụng cụ phá dỡ,
+   mặt nạ cho Q4 (tư liệu: `ket_qua/q4_tham_dinh/phan/B1.json`, `B12.json`, `B13.json`).
+2. Hồ sơ thẩm định kế tiếp: chạy agent với job mới, đo lại token (so với KT 81–151: 92 lượt, 23 triệu token đọc lại ngữ cảnh).
+3. Máy này thiếu Pillow: `test_bcks_dien_mau` lỗi ModuleNotFoundError PIL (không do thay đổi 03/11); cài `pip install pillow` nếu cần chạy bcks.
 
 **Phiên 2026-11-02 chiều: Pha 5a xong (người dùng giao Claude tự quyết).** Hai luồng: KHẢO SÁT – TƯ VẤN (skill `tkpccc-khao-sat-tu-van`)
 và THẨM ĐỊNH xây dựng + hệ thống (skill `tkpccc-tham-dinh`, agent `pccc-xay-dung`, `pccc-he-thong`). Nền: module `tkpccc-bang-doi-chieu`

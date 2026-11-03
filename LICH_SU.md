@@ -145,3 +145,10 @@
   NotebookLM thêm lượt và diễn đạt lại (không nguyên văn) nên không dùng. Người dùng duyệt 3 cách: job gắn toàn văn dòng + điều khoản nguyên văn,
   brief `quy_tac_agent.md` trích từ skill, lệnh cắt ảnh vùng. Người dùng giao thêm: phân model + effort theo độ khó. Dừng 10:55 vì usage 5 giờ
   95 %: kế hoạch chi tiết ở TIEN_DO "ĐANG DỞ A, B".
+- (03/11 chiều, sau khi cửa sổ 5 giờ reset) Làm 3 cách giảm token: `job` gắn toàn văn dòng + điều khoản nguyên văn (mỗi điều một lần,
+  kèm file:dòng; ưu tiên dòng tiêu đề, chữ đậm trước gạch đầu dòng tóm tắt; không rõ văn bản thì không đoán), `quy_tac_agent.md`, lệnh `cat`.
+  Tra tài liệu Claude Code: agent và SKILL.md đều có khoá `model`, `effort`; model của skill áp cho cả phần còn lại của lượt nên skill phụ trợ
+  không đặt. Đặt model + effort theo độ khó. Người dùng dặn ghi nhớ mãi: gần hết usage thì lưu + push (đưa lên đầu CLAUDE.md).
+  Sửa lỗi: heredoc của Bash đổi "\\" thành "\" làm script Python ghi ký tự backspace vào `bang_doi_chieu.py` (đã sửa; viết script bằng Write).
+- Q4 thẩm định xong theo quy tắc mới (không có bản vẽ hệ thống = không có; bỏ bảng B): gộp KT7.1 + A5, `kiem` 0 lỗi, PDF 89 annotation, Excel.
+  Người dùng mở phiên riêng làm sơ đồ node công việc.
