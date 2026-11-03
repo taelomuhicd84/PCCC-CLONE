@@ -56,8 +56,10 @@ G=.claude/skills/tkpccc-ghi-chu-ban-ve/scripts/ghi_chu_pdf.py
 4. `gop` rồi `kiem` (0 lỗi; xử lý cảnh báo: CHƯA ĐẠT thiếu phương án, khung chưa vẽ).
 5. Rà soát chéo: số liệu lệch giữa các bảng (chiều cao, diện tích, số tầng), kết luận mâu thuẫn giữa KT và A/B, comment trùng chỗ.
 6. Trang 1 thêm ô `chu` "THẨM ĐỊNH SƠ BỘ PCCC (ngày) – phần xây dựng + hệ thống; tham khảo"; `ve … --anh`, XEM ảnh, sửa tọa độ.
-7. `xlsx`; trả lời ngắn: đếm theo kết luận cho từng phần (XÂY DỰNG, HỆ THỐNG), các dòng CHƯA ĐẠT và CẦN XÁC NHẬN (`md --chi-loi`),
-   phương án chính, số liệu cần bên thiết kế bổ sung, đường dẫn `ban_ve_ghi_chu.pdf` và `doi_chieu.xlsx`.
+7. KẾT QUẢ ĐỐI CHIẾU LÀ BẢNG ĐỐI CHIẾU (người dùng dặn 2026-11-03), không phải bản tóm tắt: `xlsx` + `md > bang_doi_chieu.md`
+   (đủ mọi dòng: TT | Nội dung đối chiếu | Nội dung thiết kế | Quy định | Khoản Điều | Kết luận), gửi cả hai file. Trong tin nhắn: BẢNG các
+   dòng CHƯA ĐẠT và CẦN XÁC NHẬN, đủ dòng, mỗi phần một bảng (XÂY DỰNG, HỆ THỐNG; cột TT | Nội dung | Kết luận + lý do có số + phương án |
+   Khoản Điều, ô viết gọn); bảng ≤ ≈ 40 dòng thì gửi đủ mọi dòng. Sau bảng: đếm theo kết luận, số liệu cần bổ sung, đường dẫn PDF.
 
 ## File phần (agent ghi, lệnh `gop` đọc)
 ```json
