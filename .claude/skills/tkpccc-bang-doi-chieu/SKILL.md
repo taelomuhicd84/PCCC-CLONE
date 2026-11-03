@@ -27,7 +27,7 @@ python -X utf8 $B khung KT7.1 --tu 60 --den 90          # danh sách dòng ngắ
 python -X utf8 $B dong KT7.1 "#85"                      # toàn văn một dòng (Quy định, gợi ý, tra ở)
 python -X utf8 $B tim KT7.1 "hành lang"
 python -X utf8 $B lamviec KT7.1,A5,B1,B12 -o ket_qua/<da>/doi_chieu.json     # tạo/bổ sung file kết quả
-python -X utf8 $B job ket_qua/<da>/doi_chieu.json KT7.1 --tu 0 --den 70      # -> jobs/KT7.1_0-70.md + đường file phần
+python -X utf8 $B job ket_qua/<da>/doi_chieu.json KT7.1 --tu 0 --den 70      # -> jobs/KT7.1_0-70.md (link cong_trinh.md chung) + đường file phần
 python -X utf8 $B gop ket_qua/<da>/doi_chieu.json ket_qua/<da>/phan/*.json   # số khung đánh lại nối tiếp; KS dùng --giu-so
 python -X utf8 $B kiem ket_qua/<da>/doi_chieu.json      # lỗi (thoát 1) + cảnh báo + đếm theo kết luận
 python -X utf8 $B xlsx ket_qua/<da>/doi_chieu.json      # -> doi_chieu.xlsx: sheet Tóm tắt + mỗi bảng một sheet

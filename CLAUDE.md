@@ -25,6 +25,8 @@ Làm module nào: đọc `.claude/skills/<skill>/SKILL.md` của module đó và
 ## Quy tắc chung
 - Tư vấn, thẩm định: Claude chỉ BÁO CÁO (nhận diện, đánh giá, phương án, khả thi, căn cứ), không hỏi người dùng chọn; luôn ghi chú lên PDF.
   Chi tiết và các bài học đã train nằm trong skill `tkpccc-khao-sat-tu-van`, `tkpccc-tham-dinh`.
+- Không trùng lắp, không làm việc thừa (người dùng dặn 2026-11-03): một số liệu một chỗ rồi link tới; chỉ làm, chỉ tra phần công việc
+  yêu cầu và đối tượng có thật (không có hệ thống thì không tra chi tiết hệ thống đó); kết luận biết trước thì điền hàng loạt, không giao agent.
 - Tri thức/điều khoản chép nguyên văn vào `knowledge/` hoặc `skills/`, không viết theo trí nhớ.
 - Gọi Claude **không dùng API key**: `runner/src/engines/claude.ts` spawn `claude -p` bằng đăng nhập CLI, chỉ công cụ đọc, không nạp hook/plugin cá nhân.
 - `data/vat_tu.json` là nguồn DUY NHẤT của danh mục vật tư (plugin + báo giá).

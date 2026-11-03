@@ -33,6 +33,8 @@ def test_lamviec_gop_kiem_xuat(tmp_path):
     bdc.main(["job", str(f), "KT7.1", "--tu", "0", "--den", "70"])
     jb = (tmp_path / "jobs" / "KT7.1_0-70.md").read_text(encoding="utf-8")
     assert "phần XÂY DỰNG" in jb and f"| {idx} |" in jb and str(tmp_path / "phan" / "KT7.1_0-70.json") in jb
+    assert str(tmp_path / "cong_trinh.md") in jb and '"cong_nang"' not in jb      # thông tin công trình chỉ ở file chung
+    assert '"cong_nang"' in (tmp_path / "cong_trinh.md").read_text(encoding="utf-8")
 
     phan = tmp_path / "phan_kt.json"
     phan.write_text(json.dumps({"ma": "KT7.1", "cong_trinh": {"nhom_f": "F1.2"},

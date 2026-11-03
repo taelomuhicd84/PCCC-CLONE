@@ -136,3 +136,8 @@
   ra sân thượng ở tum; thấy mặt tiền Trệt có 2 ô cửa chứ không phải 1), B1 (48/48, 18 phút, 298 nghìn), B12 + B13 gộp một agent (42/42,
   14 phút, 250 nghìn). Cửa sổ 5 giờ 28 % → 85 % nên dừng, lưu, push; B14 và bước gộp, vẽ, báo cáo làm sau khi reset. Bảng "Đo cỡ job" của
   skill `tkpccc-tham-dinh` đã điền (bảng B ≈ 6 nghìn token một dòng, KT ≈ 9–10 nghìn).
+- Người dùng train (03/11 trưa): (1) trỏ đúng việc yêu cầu, có hệ thống mới tra chi tiết; thông tin công trình một file `.md` rồi link tới
+  (lệnh `job` nay ghi `cong_trinh.md` chung, job chỉ link; tác dụng chính là sửa một chỗ, agent nhiều job đọc một lần); (2) chưa có bản vẽ
+  hệ thống = không có hệ thống: dòng PHẢI CÓ là CHƯA ĐẠT + phương án thiết kế, không lập bảng B cho hệ thống không có bản vẽ, rồi Claude vẽ
+  hệ thống PCCC (skill vẽ người dùng train sau); (3) không trùng lắp, không làm việc thừa. Ghi vào `CLAUDE.md`, skill `tkpccc-tham-dinh`,
+  agent `pccc-he-thong`, `pccc-xay-dung`. "Làm tiếp Q4" = làm tiếp thẩm định Q.4, chỉ chạy khi người dùng nói (bỏ hẹn giờ 12:10).

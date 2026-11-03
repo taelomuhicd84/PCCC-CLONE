@@ -15,7 +15,10 @@ Trang: 1 nội thất Trệt, 2 tường xây Trệt, 3 nội thất Lầu 1, 4 
   · `B1` 48/48 (37 CXN, 11 KAD; ô chữ trang 2; khung cam bếp tr.1, tr.5, cửa ra tr.1, lối đi tr.3)
   · `B12` 24/24 (16 CXN, 8 KAD) · `B13` 18/18 (13 CXN, 5 KAD) (hai ô chữ trang 4).
 - Việc còn lại, theo thứ tự (gói Pro: kiểm `get_usage` giữa các lượt; ≥ 85 % thì dừng, lưu, push):
-  1. Sau 12:10 ngày 03/11: agent `pccc-he-thong` job `jobs/B14.md` (điện phục vụ PCCC, 44 dòng; ô chữ chung trang 6 [60, 40, 1640, 230]).
+  1. Theo quy tắc mới (người dùng dặn 03/11 trưa: chưa có bản vẽ hệ thống = không có hệ thống; không lập bảng B cho hệ thống không có
+     bản vẽ; không trùng lắp): KHÔNG chạy B14; B1, B12, B13 KHÔNG gộp vào kết quả (giữ `phan/` làm tư liệu cho bước vẽ hệ thống sau này: số
+     bình, mặt nạ, loại đầu báo…); A5 dòng PHẢI CÓ (#6, #44, #52, #58 …) đổi CẦN XÁC NHẬN → CHƯA ĐẠT "không có <hệ thống>" + phương án
+     "thiết kế <hệ thống>" bằng script trước khi `gop`. Chỉ làm tiếp khi người dùng nói "làm tiếp Q4". (Lời giao agent mẫu, khi cần:)
      Lời giao mẫu: "Đọc <job>, làm theo, ghi ĐÚNG MỘT JSON vào <phan/….json>. Ngày thẩm định …. Chỉ xét các dòng trong job, mọi dòng có
      ket_luan; số liệu theo `da_biet`; dòng PHẢI CÓ khi chưa có bản vẽ hệ thống …; ô chữ chung chỉ trong vùng …; không chạy gop/kiem/ve,
      không sửa file khác; lệnh bash dài thì ghi script ra file; trả lời ngắn: số dòng đã xét, đếm theo kết luận, điểm cần người dùng xem xét,
@@ -42,8 +45,8 @@ Trang: 1 nội thất Trệt, 2 tường xây Trệt, 3 nội thất Lầu 1, 4 
 - Thiếu tri thức (nhờ người dùng nạp): TCVN 13456:2022 (B13 #8, #19), TCVN 7435-1 (B12), Bảng 1 Đ 5.9.1.1.5 TCVN 7568-14 (B1); dự trữ 10 %
   số bình (B12 #13) không có trong QCVN 10 mục 2.6 đã nạp. Cột "Tra ở" trỏ file không liên quan: B1 (MOD_loi_ra_va_cua, MOD_cau_thang,
   SKILL_ngan_chay), B12 #3 #7 #15 #17, B13 #3: ghi vào skill `tkpccc-bang-doi-chieu`.
-- 👤 Người dùng xác nhận: thẩm định khi CHƯA có bản vẽ hệ thống, dòng "PHẢI CÓ" ghi CẦN XÁC NHẬN ("PHẢI CÓ: …; cần bổ sung bản vẽ") hay
-  CHƯA ĐẠT như khảo sát? (đang dùng CẦN XÁC NHẬN, ghi ở skill `tkpccc-tham-dinh` mục "Ba loại đầu vào").
+- ✅ Người dùng trả lời 03/11: chưa có bản vẽ hệ thống thì kết luận KHÔNG CÓ (CHƯA ĐẠT + phương án thiết kế), rồi Claude vẽ hệ thống PCCC
+  (👤 người dùng sẽ train skill vẽ hệ thống sau). Đã ghi vào skill `tkpccc-tham-dinh`, agent `pccc-he-thong`.
 
 **Phiên 2026-11-02 chiều: Pha 5a xong (người dùng giao Claude tự quyết).** Hai luồng: KHẢO SÁT – TƯ VẤN (skill `tkpccc-khao-sat-tu-van`)
 và THẨM ĐỊNH xây dựng + hệ thống (skill `tkpccc-tham-dinh`, agent `pccc-xay-dung`, `pccc-he-thong`). Nền: module `tkpccc-bang-doi-chieu`

@@ -20,11 +20,19 @@ dùng làm bước sàng lọc). Agent: `pccc-xay-dung` (bảng KT), `pccc-he-th
 1. Kiến trúc chỉ có mặt bằng: chiều cao PCCC ước lượng (`knowledge/khao-sat-bao-gia.md`); mọi kết luận phụ thuộc chiều cao nằm hai bên ngưỡng
    (15, 21, 28, 50 m) là CẦN XÁC NHẬN; comment cam "thiếu mặt đứng, mặt cắt".
 2. Có mặt đứng, mặt cắt: đọc cao độ, số tầng, chiều cao PCCC (ghi phép cộng).
-3. Hồ sơ gần đầy đủ (có bản vẽ hệ thống): phần hệ thống xét đủ bảng B theo thiết kế; không có bản vẽ hệ thống thì bảng B chỉ kết luận
-   "đối tượng phải trang bị" (QCVN 10:2025) còn các dòng chi tiết là CẦN XÁC NHẬN. Dòng đối tượng PHẢI CÓ mà hồ sơ chưa có bản vẽ hệ thống:
-   CẦN XÁC NHẬN, `ly_do` mở đầu "PHẢI CÓ: …(căn cứ); hồ sơ chưa có bản vẽ hệ thống, cần bổ sung" (khảo sát nhà hiện trạng chưa lắp thì
-   CHƯA ĐẠT + phương án; chọn 03/11/2026, chờ người dùng xác nhận). Giáp ranh không ghi khoảng cách PCCC: CHƯA ĐẠT
-   (`knowledge/giap-ranh-khoang-cach-pccc.md`, Bài học 30; khảo sát sơ bộ thì chỉ khoanh + hướng dẫn).
+3. Hồ sơ gần đầy đủ (có bản vẽ hệ thống): phần hệ thống xét đủ bảng B theo thiết kế.
+   CHƯA CÓ BẢN VẼ HỆ THỐNG = KHÔNG CÓ HỆ THỐNG (người dùng dặn 2026-11-03): dòng đối tượng PHẢI CÓ của bảng A là CHƯA ĐẠT, `ly_do`
+   "không có <hệ thống>; phải trang bị (căn cứ có số)", `phuong_an` "thiết kế <hệ thống>" (bước sau: Claude vẽ hệ thống PCCC, skill người
+   dùng sẽ train). KHÔNG lập bảng B cho hệ thống không có bản vẽ: bảng B chỉ đối chiếu hệ thống có trên bản vẽ (hoặc do Claude vẽ).
+   Giáp ranh không ghi khoảng cách PCCC: CHƯA ĐẠT (`knowledge/giap-ranh-khoang-cach-pccc.md`, Bài học 30; khảo sát sơ bộ thì chỉ khoanh + hướng dẫn).
+
+## Không trùng lắp, không làm thừa (người dùng dặn 2026-11-03)
+- Một số liệu một chỗ: thông tin công trình nằm trong `cong_trinh` của `doi_chieu.json`, lệnh `job` ghi ra `cong_trinh.md` một file, job chỉ
+  link tới. Số sai thì sửa `cong_trinh` rồi chạy lại `job`, không sửa từng file job.
+- Chỉ giao agent dòng cần suy luận. Không lập job cho bảng hoặc dòng có kết luận biết trước (hệ thống không có bản vẽ, hạng mục không có
+  trên bản vẽ như hầm, gara, thang máy chữa cháy): phiên chính điền hàng loạt bằng script, kèm căn cứ.
+- Mỗi kết luận ghi một lần ở dòng gốc (vd đối tượng trang bị ở bảng A); dòng khác cùng ý ghi ngắn "như A5 #…", không chép lại lý do.
+- Agent không vẽ thử, không chạy gop/kiem/ve (phiên chính làm một lần); phiên chính không đọc lại cả file phần, chỉ kiểm bằng script.
 
 ## Quy trình
 ```
@@ -35,10 +43,11 @@ G=.claude/skills/tkpccc-ghi-chu-ban-ve/scripts/ghi_chu_pdf.py
    mặt đứng, mặt cắt, bảng thống kê cửa/thang, ghi chú chung, bản vẽ hệ thống). Tuỳ chọn: chạy máy kiểm luật (skill `tkpccc-kiem-luat-pdf`)
    lấy `findings.jsonl` làm gợi ý chỗ cần xem.
 1. Thông tin công trình → `cong_trinh` (công năng + nhóm F, số tầng, chiều cao PCCC, diện tích, khối tích, bậc chịu lửa, cờ hệ thống).
-2. `python -X utf8 $B chon --cong-nang "…" --cao … --co …` rồi `lamviec <chuỗi in ra> -o ket_qua/<dự án>/doi_chieu.json`.
+2. `python -X utf8 $B chon --cong-nang "…" --cao … --co …` rồi `lamviec <chuỗi in ra> -o ket_qua/<dự án>/doi_chieu.json`; bỏ bảng B
+   của hệ thống không có bản vẽ (mục "Ba loại đầu vào").
 3. Giao việc: `job` cho từng bảng (bảng dài thì chia khoảng idx, ≤ 55 dòng một job) → subagent `pccc-xay-dung` cho KT, `pccc-he-thong`
    cho A, B: "Đọc <jobs/…md>, làm theo, ghi JSON vào <phan/…json>". Phần đã có file phan hợp lệ thì bỏ qua. Trước khi giao, thêm
-   `cong_trinh.da_biet` (danh sách câu: số liệu đã biết, vd từ khảo sát; `job` in kèm) để các agent không lệch số. Lời giao ghi thêm:
+   `cong_trinh.da_biet` (danh sách câu: số liệu đã biết, vd từ khảo sát; `job` ghi vào `cong_trinh.md`) để các agent không lệch số. Lời giao ghi thêm:
    vùng ô chữ chung RIÊNG cho từng job (nhiều job vẽ chung một PDF, vd mỗi bảng B một dải trên của một trang), job nào vẽ phương án
    dùng chung (vd đóng kín buồng thang), "không chạy gop/kiem/ve". Gói Pro: tối đa 2 agent một lượt, kiểm `get_usage` giữa các lượt
    (≥ 85 % thì dừng, lưu, push); agent chết vì hết hạn mức (429) thì `SendMessage` cho nó làm tiếp, không mở agent mới.

@@ -195,8 +195,12 @@ def job(f: Path, ma: str, tu: int, den: int, ra: Path, phan: Path) -> dict:
     dong = [r for r in b["dong"] if r["xet"] and not r["ket_luan"] and tu <= r["idx"] <= den]
     phan_ten = {"xay_dung": "XÂY DỰNG", "he_thong": "HỆ THỐNG PCCC", "khao_sat": "KHẢO SÁT"}[b["phan"]]
     cmd = ".claude/skills/tkpccc-bang-doi-chieu/scripts/bang_doi_chieu.py"
+    # thông tin công trình một file chung cho mọi job (sửa một chỗ, agent nhiều job đọc một lần); nguồn vẫn là doi_chieu.json
+    ct = f.parent / "cong_trinh.md"
+    ct.write_text("# Thông tin công trình đã biết\n```json\n" + json.dumps(dc["cong_trinh"], ensure_ascii=False, indent=1) + "\n```\n",
+                  encoding="utf-8")
     t = [f"# Job {b['ma']} – {b['ten']} – phần {phan_ten} (idx {tu}–{min(den, b['dong'][-1]['idx'])})", "",
-         "## Thông tin công trình đã biết", "```json", json.dumps(dc["cong_trinh"], ensure_ascii=False, indent=1), "```",
+         f"Thông tin công trình: đọc `{ct}` (một lần, dùng chung mọi job; không chép lại vào ly_do).",
          f"Bản vẽ: `{f.parent / dc.get('ban_ve', 'ban_ve.pdf')}`. Ảnh trang có lưới: `{f.parent / 'anh'}/luoi_<trang>.png` "
          f"(zoom {dc.get('zoom', 1.6)}; thiếu thì tạo bằng lệnh `luoi` của skill tkpccc-ghi-chu-ban-ve).", "",
          f"## Dòng cần xét ({len(dong)}) — toàn văn từng dòng: `python -X utf8 {cmd} dong {b['ma']} \"#<idx>\"`", "",
