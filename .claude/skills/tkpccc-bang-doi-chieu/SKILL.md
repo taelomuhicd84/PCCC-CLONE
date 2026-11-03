@@ -10,7 +10,7 @@ Phát triển module này: chỉ sửa trong thư mục này.
 | `data/A*.json`, `data/B*.json`, `data/KT*.json`, `data/index.json` | bảng gốc chép từ SKILL-PCCC-NEW 24743f9 (`data/bang`): A, B theo mẫu chính thức Đồng Nai; KT dựng từ bộ bảng cũ theo công năng + chiều cao |
 | `data/KS.json` | khung khảo sát – tư vấn của TKPCCC (người dùng chốt 2026-11-02) |
 | `scripts/bang_doi_chieu.py` | CLI: danhmuc, chon, khung, dong, tim, lamviec, job, gop, kiem, xlsx, md, bcks |
-| `data/mau_bao_cao/BCKS_mau.xlsx` (gốc repo) | mẫu báo cáo khảo sát MẶC ĐỊNH của người dùng (chốt 2026-11-02): sheet NOTE, HẠNG MỤC – NỘI DUNG – GHI CHÚ |
+| `data/mau_bao_cao/BCKS_mau.xlsx` (gốc repo) | mẫu báo cáo khảo sát MẶC ĐỊNH (từ BCKS kho hoá chất, chốt 2026-11-03): 4 mục THÔNG TIN, PHÁP LÝ, HỆ THỐNG, TƯ VẤN; `BCKS_mau_7muc.xlsx` mẫu cũ 7 mục |
 | `test/test_bang_doi_chieu.py` | `python -m pytest .claude/skills/tkpccc-bang-doi-chieu/test -q` |
 
 ## Chọn bảng
@@ -36,7 +36,15 @@ python -X utf8 $B bcks ket_qua/<da>/doi_chieu.json -o ket_qua/<da>/BCKS_<tên>.x
 ```
 
 ## Báo cáo khảo sát theo mẫu (`bcks`)
-Mặc định điền `data/mau_bao_cao/BCKS_mau.xlsx`; người dùng gửi mẫu khác thì truyền `--mau` (mẫu khác bố cục thì sửa `BCKS_HANG` trong script).
+Mặc định điền `data/mau_bao_cao/BCKS_mau.xlsx`; người dùng gửi mẫu khác thì truyền `--mau`. Hàng của từng mục đọc theo nhãn cột A của mẫu
+(`BCKS_NHAN`); mục có nội dung mà mẫu không có thì lệnh trả về `muc_mau_khong_co` (đưa ý đó vào Tư vấn).
+LOGIC BCKS (người dùng dặn 2026-11-03, theo BCKS kho hoá chất): 4 mục, ngắn, việc của CĐT rõ ràng.
+- THÔNG TIN CÔNG TRÌNH: "Quy mô: …", "- Công năng", "- Diện tích sàn điển hình", "- Chiều cao công trình" (chưa có thì ghi "Chưa có"/ước lượng).
+- HỒ SƠ PHÁP LÝ: một dòng so ngưỡng có số "=> Công trình cần / không thuộc diện thẩm định".
+- HỆ THỐNG PCCC: "Các hệ thống PCCC cần trang bị:" + "- …" từng hệ thống; số liệu chính có cách tính (vd "* Bể nước PCCC 288m3 …").
+- TƯ VẤN: "+ …" từng việc CĐT phải làm: hồ sơ cần cung cấp "Để đơn vị TVTK tư vấn chính xác về PCCC", hạng mục phải xây, sửa
+  (thoát nạn, giáp ranh, giao thông đưa vào đây, kèm số ngắn gọn); không viết chung chung "lưu ý như trên".
+- Cột GHI CHÚ để trống (không ảnh, không số khung): chi tiết nằm ở bảng đối chiếu và PDF ghi chú.
 Nội dung lấy từ khoá `bcks` của `doi_chieu.json`, viết theo văn phong mẫu (gạch đầu dòng "- …", kết luận "=> …", số có đơn vị):
 ```json
 "bcks": {"tieu_de": {"ten_cong_trinh": "", "khach_hang": "", "dia_diem": ""},

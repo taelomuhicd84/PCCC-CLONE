@@ -92,7 +92,8 @@ def test_bcks_dien_mau(tmp_path):
           "bcks": {"tieu_de": {"ten_cong_trinh": "Nhà A", "khach_hang": "Ông B", "dia_diem": "Q.4"},
                    "muc": {"thong_tin": "Quy mô: 3 tầng", "thoat_nan": "- dòng\n" * 30},
                    "ghi_chu": {"thoat_nan": {"chu": "- ảnh", "anh": [{"trang": 1, "hop": [0, 0, 100, 300]}]}}}}
-    kq = bdc.bcks(dc, tmp_path / "doi_chieu.json", tmp_path / "BCKS.xlsx")
+    mau7 = bdc.MAU_BCKS.parent / "BCKS_mau_7muc.xlsx"                     # mẫu 7 mục có hàng THOÁT NẠN để thử ảnh
+    kq = bdc.bcks(dc, tmp_path / "doi_chieu.json", tmp_path / "BCKS.xlsx", mau7)
     ws = load_workbook(tmp_path / "BCKS.xlsx").worksheets[0]
     assert "Nhà A" in ws["A8"].value and "Ông B" in ws["A8"].value and ws["F10"].value == "Quy mô: 3 tầng"
     assert ws["A2"].value.startswith("CÔNG TY") and kq["anh"] == 1 and len(ws._images) == 2   # logo của mẫu + 1 ảnh
@@ -115,3 +116,14 @@ def test_trich_dieu_nguyen_van():
     assert bdc._dieu_trong("Bảng B.1 mục 1.2 / QCVN 10:2025") == [("B.1", "QCVN 10")]   # "mục 1.2" là dòng của bảng, không phải điều
     noi, doan = bdc._trich_dieu("6.2.1.1", bdc._file_tim("", "QCVN 06"))
     assert noi.startswith("knowledge/qcvn06-dieu-6.md") and doan.startswith("6.2.1.1 ") and "6.2.1.2" not in doan
+
+
+def test_bcks_mau_4_muc(tmp_path):
+    from openpyxl import load_workbook
+    dc = {"bcks": {"tieu_de": {"ten_cong_trinh": "Kho A"},
+                   "muc": {"thong_tin": "Quy mô: kho", "phap_ly": "- => cần thẩm định", "he_thong": "- Báo cháy",
+                           "tu_van": "+ Cung cấp mặt cắt", "thoat_nan": "- dòng"}}}
+    kq = bdc.bcks(dc, tmp_path / "doi_chieu.json", tmp_path / "BCKS.xlsx")       # mẫu mặc định: 4 mục như BCKS kho hoá chất
+    ws = load_workbook(tmp_path / "BCKS.xlsx").worksheets[0]
+    assert [ws[f"F{r}"].value for r in (10, 11, 12, 13)] == ["Quy mô: kho", "- => cần thẩm định", "- Báo cháy", "+ Cung cấp mặt cắt"]
+    assert kq["muc_mau_khong_co"] == ["thoat_nan"]

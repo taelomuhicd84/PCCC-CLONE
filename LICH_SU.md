@@ -152,3 +152,7 @@
   Sửa lỗi: heredoc của Bash đổi "\\" thành "\" làm script Python ghi ký tự backspace vào `bang_doi_chieu.py` (đã sửa; viết script bằng Write).
 - Q4 thẩm định xong theo quy tắc mới (không có bản vẽ hệ thống = không có; bỏ bảng B): gộp KT7.1 + A5, `kiem` 0 lỗi, PDF 89 annotation, Excel.
   Người dùng mở phiên riêng làm sơ đồ node công việc.
+- Người dùng gửi BCKS kho hoá chất làm chuẩn logic báo cáo khảo sát (BCKS Q4 trước đó "chưa được như tôi muốn"): mẫu mặc định nay 4 mục
+  (THÔNG TIN, PHÁP LÝ, HỆ THỐNG, TƯ VẤN; mẫu 7 mục cũ giữ ở `BCKS_mau_7muc.xlsx`); lệnh `bcks` đọc hàng theo nhãn cột A của mẫu; Tư vấn là
+  danh sách "+" việc CĐT phải làm, GHI CHÚ để trống. Ghi "LOGIC BCKS" vào skill `tkpccc-bang-doi-chieu`. Làm lại BCKS Q4 (`ket_qua/q4/
+  BCKS_CHDV_Doan_Nhu_Hai_Q4_v2.xlsx/.pdf`, 1 trang). Cài Pillow trên máy này: test bcks chạy được.

@@ -427,8 +427,20 @@ def xlsx(dc: dict, ra: Path) -> dict:
 
 # Mẫu báo cáo khảo sát mặc định của người dùng (chốt 2026-11-02): sheet NOTE, cột F:H nội dung, cột I ghi chú + ảnh.
 MAU_BCKS = Path(__file__).resolve().parents[4] / "data" / "mau_bao_cao" / "BCKS_mau.xlsx"
-BCKS_HANG = {"thong_tin": (10, 11), "phap_ly": (12,), "khoang_cach": (13,), "giao_thong": (14,), "thoat_nan": (15,),
-             "he_thong": (16,), "tu_van": (17,)}
+BCKS_NHAN = {"THÔNG TIN": "thong_tin", "PHÁP L": "phap_ly", "KHOẢNG CÁCH": "khoang_cach", "GIAO THÔNG": "giao_thong",
+             "THOÁT NẠN": "thoat_nan", "HỆ THỐNG": "he_thong", "TƯ VẤN": "tu_van"}
+
+
+def _hang_bcks(ws) -> dict:
+    """Hạng mục → các hàng của nó, đọc theo nhãn cột A của mẫu (mẫu 4 mục hay 7 mục đều được)."""
+    gop = {m.min_row: m.max_row for m in ws.merged_cells.ranges if m.min_col == 1 and m.min_row >= 10}
+    ra = {}
+    for r in range(10, 40):
+        nhan = str(ws.cell(r, 1).value or "").upper()
+        k = next((v for n, v in BCKS_NHAN.items() if n in nhan), None)
+        if k:
+            ra[k] = tuple(range(r, gop.get(r, r) + 1))
+    return ra
 
 
 # Cột I của mẫu ≈ 650 px. Excel in hàng thấp hơn ≈ 7 % còn ảnh giữ cỡ, nên 1 px ảnh chiếm ≈ 0,81 pt chiều cao hàng
@@ -486,7 +498,9 @@ def bcks(dc: dict, f: Path, ra: Path, mau: Path = MAU_BCKS) -> dict:
                 f"Địa điểm : {td.get('dia_diem', '')}")
     anh_ra = ra.parent / "anh_bcks"
     so_anh = 0
-    for khoa, hang in BCKS_HANG.items():
+    hang_mau = _hang_bcks(ws)
+    bo_qua = [k for k, v in b.get("muc", {}).items() if v and k not in hang_mau]   # mẫu không có mục này: báo để đưa vào Tư vấn
+    for khoa, hang in hang_mau.items():
         chu, gc = b.get("muc", {}).get(khoa, ""), b.get("ghi_chu", {}).get(khoa, {})
         ws.cell(hang[0], 6).value = chu or None
         ws.cell(hang[0], 9).value = gc.get("chu") or None
@@ -522,7 +536,7 @@ def bcks(dc: dict, f: Path, ra: Path, mau: Path = MAU_BCKS) -> dict:
             so_anh += 1
     ra.parent.mkdir(parents=True, exist_ok=True)
     wb.save(ra)
-    return {"ok": True, "xlsx": str(ra), "mau": str(mau), "anh": so_anh, "pdf_anh": str(pdf)}
+    return {"ok": True, "xlsx": str(ra), "mau": str(mau), "anh": so_anh, "pdf_anh": str(pdf), "muc_mau_khong_co": bo_qua}
 
 
 def main(argv=None):

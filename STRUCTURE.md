@@ -76,7 +76,7 @@ TKPCCC/
 │  └─ khao-sat-bao-gia.md, bao-gia-pccc.md, so-bo-thiet-ke-pccc.md, chon-loai-dau-bao.md …
 │
 ├─ data/mau_giai_phap/  thư viện mẫu giải pháp thoát nạn (17 mẫu: điều kiện lọc, điều khoản, lỗi hay gặp, giải pháp); chép từ SKILL-PCCC-NEW
-├─ data/mau_bao_cao/    BCKS_mau.xlsx: mẫu báo cáo khảo sát MẶC ĐỊNH của người dùng (chốt 2026-11-02; mẫu trắng, đã xoá nội dung khách),
+├─ data/mau_bao_cao/    BCKS_mau.xlsx: mẫu báo cáo khảo sát MẶC ĐỊNH 4 mục (từ BCKS kho hoá chất, 2026-11-03; BCKS_mau_7muc.xlsx mẫu cũ; mẫu trắng, đã xoá nội dung khách),
 │                       điền bằng `bang_doi_chieu.py bcks`
 │
 ├─ skills/              ĐIỀU KHOẢN THEO CHUYÊN ĐỀ (chép từ PCCC_he_thong/skills): MOD_*.md, SKILL_*.md, PHU_LUC_G_QCVN06.md
