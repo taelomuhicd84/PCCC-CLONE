@@ -141,3 +141,7 @@
   hệ thống = không có hệ thống: dòng PHẢI CÓ là CHƯA ĐẠT + phương án thiết kế, không lập bảng B cho hệ thống không có bản vẽ, rồi Claude vẽ
   hệ thống PCCC (skill vẽ người dùng train sau); (3) không trùng lắp, không làm việc thừa. Ghi vào `CLAUDE.md`, skill `tkpccc-tham-dinh`,
   agent `pccc-he-thong`, `pccc-xay-dung`. "Làm tiếp Q4" = làm tiếp thẩm định Q.4, chỉ chạy khi người dùng nói (bỏ hẹn giờ 12:10).
+- Người dùng hỏi nạp knowledge vào NotebookLM rồi tra qua MCP: đo transcript agent thấy tốn nhất là số lượt × cỡ ngữ cảnh, không phải tra cứu;
+  NotebookLM thêm lượt và diễn đạt lại (không nguyên văn) nên không dùng. Người dùng duyệt 3 cách: job gắn toàn văn dòng + điều khoản nguyên văn,
+  brief `quy_tac_agent.md` trích từ skill, lệnh cắt ảnh vùng. Người dùng giao thêm: phân model + effort theo độ khó. Dừng 10:55 vì usage 5 giờ
+  95 %: kế hoạch chi tiết ở TIEN_DO "ĐANG DỞ A, B".

@@ -3,6 +3,30 @@
 File này cập nhật sau mỗi mốc việc và trước khi hết usage. Phiên mới đọc mục "ĐANG LÀM / VIỆC TIẾP THEO" trước.
 
 ## ĐANG LÀM / VIỆC TIẾP THEO (cập nhật 2026-11-03 trưa)
+**ĐANG DỞ A (03/11 10:55, dừng vì usage 5 giờ 95 %; reset 12:10): người dùng duyệt "làm 3 cách giảm token". CHƯA sửa code.**
+Đo transcript 3 agent Q4 (lọc trùng theo id phản hồi; script đo ở thư mục tạm, viết lại nếu cần): KT 81–151 92 lượt, đọc lại ngữ cảnh 23 triệu
+token (≈ 258 nghìn/lượt), viết ra 281 nghìn; B1 50 lượt, 7,4 triệu; B12+B13 49 lượt, 6,3 triệu. Phần chữ kết quả lệnh: tra knowledge 28–39 %,
+3 SKILL.md đọc đầu job 20–30 % (≈ 55–63 nghìn ký tự, đọc lại mọi lượt); KT xem 29 ảnh + 19 lệnh tự cắt ảnh. Kết luận: tốn nhất là SỐ LƯỢT ×
+CỠ NGỮ CẢNH, không phải tra cứu (vì vậy không dùng NotebookLM: thêm lượt, diễn đạt lại không nguyên văn). Làm:
+1. `job` (bang_doi_chieu.py): bỏ bảng rút gọn, ghi TOÀN VĂN từng dòng (noi_dung, quy_dinh, khoan_dieu, goi_y) để agent khỏi gọi `dong`; thêm
+   mục "Điều khoản nguyên văn", MỖI ĐIỀU MỘT LẦN: số điều lấy từ khoan_dieu (regex `(?:[A-Z]\.)?\d+(?:\.\d+)+[a-z]?`; tách "/", gán văn bản
+   ở phần kế: QCVN 06 → `skills/*.md` + `knowledge/qcvn06-*.md`, QCVN 10 → `knowledge/qcvn10-2025-*.md`, 7568 → `knowledge/tcvn7568-14-2025.md`);
+   file theo cột tra_o tìm trước (tiền tố tên: MOD_cau_thang → MOD_cau_thang_buong_thang.md, PHU_LUC_G → PHU_LUC_G_QCVN06.md…); dòng bắt đầu
+   điều `^\s*(#+\s*|[-*]\s*)?(\*\*)?(Bảng\s+)?<số>(?![\d.])`, cắt tới điều kế không phải điều con, ≤ ≈ 2.500 ký tự, ghi `file:dòng`;
+   không thấy thì "không tìm thấy: tra theo cột Tra ở".
+2. `job` ghi thêm `quy_tac_agent.md` cạnh `cong_trinh.md`, TRÍCH NGUYÊN (không chép tay) các mục: tham-dinh "Nguyên tắc", "Ba loại đầu vào",
+   "Không trùng lắp…", "File phần"; bang-doi-chieu `Cột "Tra ở" → file TKPCCC`; ghi-chu-ban-ve "Đặc tả mục ghi chú", "Quy tắc ghi". Agent đọc file
+   này thay 3 SKILL.md.
+3. `ghi_chu_pdf.py cat <pdf> --trang N --vung x0,y0,x1,y1 [--phong 2] [--buoc 50]`: render trang ở zoom × phong lên trang tạm như `luoi`, lưới
+   nhãn theo tọa độ zoom 1.6, cắt `clip` = vùng × phong (đúng chiều nhìn). Agent xem ảnh cắt ≤ 800×800 px thay ảnh cả trang (rõ hơn, ít token).
+4. Agent `pccc-xay-dung`, `pccc-he-thong`: bước 1 đọc job + `cong_trinh.md` + `quy_tac_agent.md` trong MỘT lượt (song song); điều khoản đã trích,
+   chỉ mở knowledge khi "không tìm thấy" hoặc đọc tiếp theo `file:dòng`; ảnh bằng `cat`; ghi JSON một lần. Skill tham-dinh: ghi số đo trên.
+5. Test (job có mục điều khoản + `quy_tac_agent.md`; `cat` ra ảnh đúng cỡ), chạy `job` thử trên Q4 đếm số điều tìm thấy; commit, push.
+**ĐANG DỞ B (người dùng yêu cầu 03/11 10:55): phân công model + effort cho từng agent, skill** (việc phức tạp cần tỉ mỉ, chính xác cực cao:
+Opus effort high/max; việc nhẹ: Sonnet effort low). Trước khi sửa: KIỂM tài liệu Claude Code khoá frontmatter (agent: `model`, có `effort`?;
+SKILL.md có nhận `model`/`effort` không), không đoán. Nháp phân công: `pccc-xay-dung` (thang, thoát nạn, phương án vẽ) Opus high;
+`pccc-he-thong` Sonnet medium (đối tượng trang bị theo bảng, ít suy luận hình học); điền hàng loạt, gộp, kiểm, xuất Excel/BCKS, xong-dau-muc:
+Sonnet low; khảo sát – tư vấn, thẩm định điều phối, ghi chú phương án lên PDF: Opus high; tra quy chuẩn: Sonnet medium; CAD build: Sonnet low.
 **ĐANG DỞ (03/11 trưa, máy D:/1_Claude/TKPCCC): thử trọn luồng THẨM ĐỊNH trên hồ sơ Q.4 (việc 2 bên dưới), đo cỡ job. Dừng 10:40 vì usage
 5 giờ chạm 85 % (reset 12:10 ngày 03/11).**
 Hồ sơ Q.4 KHÔNG có trong repo (repo công khai): `ket_qua/q4/` (khảo sát) và `ket_qua/q4_tham_dinh/` (`ban_ve.pdf` 7 trang vector không có lớp chữ,
