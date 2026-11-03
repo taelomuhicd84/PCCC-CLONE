@@ -115,3 +115,19 @@
 10. Cửa thang máy E 30 CHỈ khi thang máy nằm NGOÀI buồng thang (PA1). Mở rộng buồng thang ra sảnh thang máy (PA2) thì thang máy nằm TRONG
    buồng thang: xét 3.4.6 (≤ 2 thang chở người, chỉ xuống tới tầng 1; thang máy Lưu Xuân Lộc xuống hầm), không xét E 30 (người dùng sửa
    2026-11-02; đã sửa bảng bản 6 dòng 11, PDF, `knowledge/nhan-dien-thang-thoat-nan.md`).
+
+## 2026-11-03
+- (02/11 khuya → 03/11 sáng, máy PCCCVIP) Thử luồng THẨM ĐỊNH (skill `tkpccc-tham-dinh`) trên hồ sơ Q.4 để đo cỡ job: `cong_trinh` chép từ
+  khảo sát + khoá mới `da_biet` (tóm tắt số liệu đã biết; `job` in kèm vào file giao việc nên các agent không lệch số với khảo sát); 7 job.
+  Lượt 1 chạy 3 agent song song: A5 xong 29/29 dòng (16 phút, ≈ 324 nghìn token, 61 lệnh), KT7.1 idx 6–80 xong 55/55 (31 phút, ≈ 536 nghìn
+  token, 104 lệnh), KT7.1 idx 81–151 chết giữa job vì hết hạn mức 5 giờ (gói Pro: 42 % → 100 %; tuần 48 % → 56 %). Sáng 03/11 cho agent đó
+  làm tiếp (SendMessage) và giao B1, rồi người dùng dừng để làm tiếp ở máy khác: cả hai chưa ghi file phần. Kết quả dở ở `ket_qua/q4_tham_dinh/`.
+- Người dùng cho phép đưa `ket_qua/q4`, `ket_qua/q4_tham_dinh` lên repo (công khai) để làm tiếp ở máy khác ("up gì thì up, miễn sao chạy
+  tiếp"), nhưng bộ lọc an toàn của Claude Code chặn lệnh đẩy hồ sơ khách lên repo công khai: chỉ đẩy skill, agent, tri thức, tiến độ;
+  hai thư mục hồ sơ người dùng tự mang sang máy khác hoặc tự `git add -f` rồi đẩy.
+- Ghi tư duy (người dùng dặn "update tư duy vào skill, agent, knowledge"): skill `tkpccc-tham-dinh` thêm bảng "Đo cỡ job", nhịp gói Pro
+  (≤ 2 agent một lượt, kiểm usage giữa lượt, agent chết vì 429 thì SendMessage làm tiếp), ≤ 55 dòng một job, `da_biet`, chia vùng ô chữ
+  chung theo job, quy tắc PHẢI CÓ khi chưa có bản vẽ hệ thống (CẦN XÁC NHẬN, chờ người dùng xác nhận), giáp ranh theo Bài học 30;
+  agent `pccc-xay-dung`, `pccc-he-thong` thêm cách tiết kiệm token (đọc 8–10 dòng một lệnh, ghi JSON một lần bằng script); lệnh `job` tự tạo
+  thư mục `phan/`; sửa `knowledge/chon-loai-dau-bao.md` (trần giả, sàn nâng là Bảng A.2 mục 7 QCVN 10:2025, không phải A.3); ghi lỗi cột
+  Tra ở và ngưỡng khối tích cũ của bảng A5 vào skill `tkpccc-bang-doi-chieu`.

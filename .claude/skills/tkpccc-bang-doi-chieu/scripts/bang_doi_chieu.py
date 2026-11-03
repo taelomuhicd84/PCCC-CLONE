@@ -205,6 +205,7 @@ def job(f: Path, ma: str, tu: int, den: int, ra: Path, phan: Path) -> dict:
     t += ["", "## Trả lời", f"Ghi ĐÚNG MỘT JSON vào `{phan}` theo mục \"File phần\" của `.claude/skills/tkpccc-tham-dinh/SKILL.md` "
           f"(\"ma\": \"{b['ma']}\"; số khung đánh từ 1 trong file này, lệnh gop tự đánh lại)."]
     ra.parent.mkdir(parents=True, exist_ok=True)
+    phan.parent.mkdir(parents=True, exist_ok=True)
     ra.write_text("\n".join(t) + "\n", encoding="utf-8")
     return {"ok": True, "job": str(ra), "phan": str(phan), "so_dong": len(dong)}
 

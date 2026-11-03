@@ -81,5 +81,7 @@ Không mở cả file JSON bảng gốc (tới 160 KB): đọc bằng `khung`, `
 
 ## Lưu ý dữ liệu
 - Bảng KT dựng từ bộ bảng cũ: đầu bảng còn liệt kê NĐ 136/2020, TCVN cũ. Khi trích căn cứ chỉ dùng văn bản hiện hành (skill `tkpccc-tra-quy-chuan`).
+- A5 (thấy khi thẩm định Q.4, 02/11): cột Tra ở lệch nội dung ở dòng idx 15, 21, 38 (ghi MOD_loi_ra_va_cua) và 27 (MOD_vat_lieu); cột Quy định
+  còn ngưỡng khối tích cũ (báo cháy 2.500/5.000 m³) khác QCVN 10:2025 Bảng A.1 mục 18 (≥ 3 tầng hoặc ≥ 700 m² sàn): xét theo QCVN 10:2025.
 - Sửa bảng gốc: sửa `data/<mã>.json`, giữ nguyên `idx`, ghi `LICH_SU.md`; muốn đồng bộ về SKILL-PCCC-NEW thì báo người dùng.
 - Mẫu Word chính thức của bảng A, B (`data/mau/*.docx` ở SKILL-PCCC-NEW) chưa chép: xuất Word theo mẫu là việc sau (ROADMAP Pha 5b).

@@ -21,7 +21,10 @@ dùng làm bước sàng lọc). Agent: `pccc-xay-dung` (bảng KT), `pccc-he-th
    (15, 21, 28, 50 m) là CẦN XÁC NHẬN; comment cam "thiếu mặt đứng, mặt cắt".
 2. Có mặt đứng, mặt cắt: đọc cao độ, số tầng, chiều cao PCCC (ghi phép cộng).
 3. Hồ sơ gần đầy đủ (có bản vẽ hệ thống): phần hệ thống xét đủ bảng B theo thiết kế; không có bản vẽ hệ thống thì bảng B chỉ kết luận
-   "đối tượng phải trang bị" (QCVN 10:2025) còn các dòng chi tiết là CẦN XÁC NHẬN.
+   "đối tượng phải trang bị" (QCVN 10:2025) còn các dòng chi tiết là CẦN XÁC NHẬN. Dòng đối tượng PHẢI CÓ mà hồ sơ chưa có bản vẽ hệ thống:
+   CẦN XÁC NHẬN, `ly_do` mở đầu "PHẢI CÓ: …(căn cứ); hồ sơ chưa có bản vẽ hệ thống, cần bổ sung" (khảo sát nhà hiện trạng chưa lắp thì
+   CHƯA ĐẠT + phương án; chọn 03/11/2026, chờ người dùng xác nhận). Giáp ranh không ghi khoảng cách PCCC: CHƯA ĐẠT
+   (`knowledge/giap-ranh-khoang-cach-pccc.md`, Bài học 30; khảo sát sơ bộ thì chỉ khoanh + hướng dẫn).
 
 ## Quy trình
 ```
@@ -33,8 +36,12 @@ G=.claude/skills/tkpccc-ghi-chu-ban-ve/scripts/ghi_chu_pdf.py
    lấy `findings.jsonl` làm gợi ý chỗ cần xem.
 1. Thông tin công trình → `cong_trinh` (công năng + nhóm F, số tầng, chiều cao PCCC, diện tích, khối tích, bậc chịu lửa, cờ hệ thống).
 2. `python -X utf8 $B chon --cong-nang "…" --cao … --co …` rồi `lamviec <chuỗi in ra> -o ket_qua/<dự án>/doi_chieu.json`.
-3. Giao việc: `job` cho từng bảng (bảng KT dài thì chia khoảng idx, ~70 dòng một job) → subagent `pccc-xay-dung` cho KT, `pccc-he-thong`
-   cho A, B: "Đọc <jobs/…md>, làm theo, ghi JSON vào <phan/…json>". Tối đa 3 subagent một lượt. Phần đã có file phan hợp lệ thì bỏ qua.
+3. Giao việc: `job` cho từng bảng (bảng dài thì chia khoảng idx, ≤ 55 dòng một job) → subagent `pccc-xay-dung` cho KT, `pccc-he-thong`
+   cho A, B: "Đọc <jobs/…md>, làm theo, ghi JSON vào <phan/…json>". Phần đã có file phan hợp lệ thì bỏ qua. Trước khi giao, thêm
+   `cong_trinh.da_biet` (danh sách câu: số liệu đã biết, vd từ khảo sát; `job` in kèm) để các agent không lệch số. Lời giao ghi thêm:
+   vùng ô chữ chung RIÊNG cho từng job (nhiều job vẽ chung một PDF, vd mỗi bảng B một dải trên của một trang), job nào vẽ phương án
+   dùng chung (vd đóng kín buồng thang), "không chạy gop/kiem/ve". Gói Pro: tối đa 2 agent một lượt, kiểm `get_usage` giữa các lượt
+   (≥ 85 % thì dừng, lưu, push); agent chết vì hết hạn mức (429) thì `SendMessage` cho nó làm tiếp, không mở agent mới.
 4. `gop` rồi `kiem` (0 lỗi; xử lý cảnh báo: CHƯA ĐẠT thiếu phương án, khung chưa vẽ).
 5. Rà soát chéo: số liệu lệch giữa các bảng (chiều cao, diện tích, số tầng), kết luận mâu thuẫn giữa KT và A/B, comment trùng chỗ.
 6. Trang 1 thêm ô `chu` "THẨM ĐỊNH SƠ BỘ PCCC (ngày) – phần xây dựng + hệ thống; tham khảo"; `ve … --anh`, XEM ảnh, sửa tọa độ.
@@ -54,6 +61,17 @@ G=.claude/skills/tkpccc-ghi-chu-ban-ve/scripts/ghi_chu_pdf.py
 ```
 - Chỉ ghi dòng đã xét (theo `idx` của job). `cong_trinh` chỉ ghi trường mới tìm được. Tọa độ px theo zoom của ảnh `luoi` (1.6).
 - Số khung đánh từ 1 trong mỗi file phần; `gop` đánh lại nối tiếp toàn hồ sơ.
+
+## Đo cỡ job (hồ sơ Q.4 F1.2 4 tầng, đầu vào loại 1, agent sonnet, 02–03/11/2026)
+| Job | Dòng | Thời gian | Token | Lệnh | Đủ dòng | Ghi chú |
+|---|---|---|---|---|---|---|
+| A5 | 29 | 16 phút | 324 nghìn | 61 | 29/29 | tự tạo `phan/` (nay `job` tạo); không có Edit nên sửa JSON bằng Python |
+| KT7.1 idx 6–80 | 55 | 31 phút | 536 nghìn | 104 | 55/55 | lệnh bash quá dài lỗi ENAMETOOLONG → ghi script ra file rồi chạy |
+| KT7.1 idx 81–151 | 52 | — | — | — | — | chết giữa job: hết cửa sổ 5 giờ (429), chưa ghi file phần |
+| B1; B12 + B13 (1 agent); B14 | 48; 42; 44 | chưa đo | | | | |
+- ≈ 10 nghìn token, ≈ 35 giây mỗi dòng; agent xét đủ dòng, JSON đúng định dạng (agent tự chạy `kiem` trên bản trộn: 0 lỗi).
+- Gói Pro: lượt 3 agent song song (≈ 1,2 triệu token) đưa cửa sổ 5 giờ từ 42 % lên hết, tuần +8 %. Cả hồ sơ (≈ 270 dòng) ≈ 2,7 triệu
+  token ≈ 1,3 cửa sổ 5 giờ: chia 2 phiên, mỗi lượt ≤ 2 agent.
 
 ## Sau này
 Web: tab thẩm định chạy quy trình này qua runner (`claude -p`), xuất Word theo mẫu bảng A/B chính thức (ROADMAP Pha 5b). Vẽ phương án vào

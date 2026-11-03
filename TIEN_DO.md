@@ -2,7 +2,40 @@
 
 File này cập nhật sau mỗi mốc việc và trước khi hết usage. Phiên mới đọc mục "ĐANG LÀM / VIỆC TIẾP THEO" trước.
 
-## ĐANG LÀM / VIỆC TIẾP THEO (cập nhật 2026-11-02 khuya)
+## ĐANG LÀM / VIỆC TIẾP THEO (cập nhật 2026-11-03 sáng)
+**ĐANG DỞ (03/11 sáng, người dùng dừng để làm tiếp ở máy khác): thử trọn luồng THẨM ĐỊNH trên hồ sơ Q.4 (việc 2 bên dưới), đo cỡ job.**
+Hồ sơ Q.4 KHÔNG có trong repo (repo công khai; người dùng cho phép đẩy nhưng bộ lọc an toàn của Claude Code chặn lệnh đẩy hồ sơ khách):
+`ket_qua/q4/` (khảo sát: bảng KS, BCKS, `ban_ve_ghi_chu.pdf`) và `ket_qua/q4_tham_dinh/` (`ban_ve.pdf` 7 trang vector không có lớp chữ,
+`anh/luoi_1..7.png` zoom 1.6, `anh/cat_*.png`, `doi_chieu.json`, `jobs/`, `phan/`), ≈ 15 MB. Máy khác: chép hai thư mục này vào `ket_qua/`
+(USB, Drive), hoặc người dùng tự chạy `git add -f ket_qua/q4 ket_qua/q4_tham_dinh`, commit, push ở máy cũ rồi `git pull` ở máy mới.
+Trang: 1 nội thất Trệt, 2 tường xây Trệt, 3 nội thất Lầu 1, 4 tường Lầu 1, 5 nội thất Lầu 2, 6 tường Lầu 2, 7 tum.
+- Đã xong: `doi_chieu.json` có KT7.1 + A5 + B1, B12, B13, B14; `cong_trinh` chép từ khảo sát + khoá `da_biet` (số liệu đã biết, `job` in kèm).
+  7 file job: KT7.1_6-80 (55 dòng), KT7.1_81-151 (52), A5 (29), B1 (48), B12 (24), B13 (18), B14 (44).
+  File phần xong, đã kiểm đủ dòng: `phan/A5.json` (29/29: 12 CẦN XÁC NHẬN, 17 KHÔNG ÁP DỤNG; một ô `chu` trang 1 [1000, 40, 1650, 230]),
+  `phan/KT7.1_6-80.json` (55/55: 6 CHƯA ĐẠT #8 #9 giáp ranh, #45 xe máy chung sảnh thang, #50 #61 cửa thang không tự đóng, #76 lối ra tầng
+  trên vào thang hở; 16 CẦN XÁC NHẬN; 4 ĐẠT; 29 KHÔNG ÁP DỤNG; 13 ghi chú, ô chữ chung trang 1 [60, 80, 980, 230] và dải dưới trang 3).
+  Agent KT 81–151 và B1 bị dừng giữa chừng, CHƯA có file phần: chạy lại từ đầu.
+- Việc còn lại, theo thứ tự (gói Pro: mỗi lượt ≤ 2 agent, kiểm `get_usage` giữa các lượt; ≥ 85 % thì dừng, lưu, push):
+  1. Lượt A: `pccc-xay-dung` job `jobs/KT7.1_81-151.md` (vẽ PA1 đóng kín buồng thang T1 ở Trệt, Lầu 1, Lầu 2 + lối ra mái/T3, tọa độ lấy lại
+     từ `ghi_chu` của `ket_qua/q4/doi_chieu.json`; ô chữ chung chỉ ở dải trên trang 3, 5, 7 y 40–240, tránh callout K6 của job 6–80 ở trang 3
+     [600, 120, 1020, 200]) + `pccc-he-thong` job `jobs/B1.md` (ô chữ chung trang 2 [60, 40, 1640, 230]).
+  2. Lượt B: MỘT agent `pccc-he-thong` nhận cả `jobs/B12.md` + `jobs/B13.md` (thử gộp job ngắn; ô chữ trang 4: B12 [60, 40, 800, 230],
+     B13 [820, 40, 1640, 230]) + agent `jobs/B14.md` (ô chữ trang 6 [60, 40, 1640, 230]).
+     Lời giao mẫu: "Đọc <job>, làm theo, ghi ĐÚNG MỘT JSON vào <phan/….json>. Ngày thẩm định …. Chỉ xét các dòng trong job, mọi dòng có ket_luan;
+     số liệu theo `da_biet`; ô chữ chung chỉ trong vùng …; không chạy gop/kiem/ve, không sửa file khác; trả lời ngắn: số dòng đã xét, đếm theo
+     kết luận, điểm cần người dùng xem xét, lỗi định dạng gặp phải." Ghi giờ bắt đầu; thông báo xong của agent có token, số lệnh, thời gian.
+  3. `gop` → `kiem` (0 lỗi, xử lý cảnh báo) → rà chéo với bảng KS (`ket_qua/q4/doi_chieu.json`) → trang 1 ô `chu` "THẨM ĐỊNH SƠ BỘ PCCC (ngày) –
+     phần xây dựng + hệ thống; tham khảo" ở [60, 40, 980, 72] → `ve --anh`, XEM ảnh, sửa tọa độ → `xlsx` → báo cáo người dùng (đếm XÂY DỰNG /
+     HỆ THỐNG, `md --chi-loi`, phương án chính, số liệu cần bổ sung, đường dẫn PDF + Excel, kết quả đo job).
+  4. Điền các hàng "chưa đo" của bảng "Đo cỡ job" trong `.claude/skills/tkpccc-tham-dinh/SKILL.md`; TIEN_DO, LICH_SU; commit, push
+     (không đưa `ket_qua/` lên repo công khai).
+- Rà chéo đã thấy (đưa vào báo cáo): KT #8 #9 CHƯA ĐẠT còn KS dòng 6 CẦN XÁC NHẬN: đúng Bài học 30 (thẩm định CHƯA ĐẠT, sơ bộ chỉ khoanh +
+  hướng dẫn). A5 #6, #44, #52, #58 PHẢI CÓ ghi CẦN XÁC NHẬN (chưa có bản vẽ hệ thống) còn KS 20, 24, 25 CHƯA ĐẠT (nhà hiện trạng chưa lắp).
+  Agent KT 6–80 thấy mặt tiền Trệt có thể có 2 ô cửa ≈ 1,0 m (một vào sảnh T1, một vào P.khách) trong khi `da_biet` chỉ ghi 1 cửa 0,9 m:
+  xem lại khi xét #84 (số lối ra từ ngôi nhà). A5 #1: không thuộc diện thẩm định (4 tầng < 7, ≈ 310 m² < 3.000 m², Phụ lục III NĐ 105/2025).
+- 👤 Người dùng xác nhận: thẩm định khi CHƯA có bản vẽ hệ thống, dòng "PHẢI CÓ" ghi CẦN XÁC NHẬN ("PHẢI CÓ: …; cần bổ sung bản vẽ") hay
+  CHƯA ĐẠT như khảo sát? (đang dùng CẦN XÁC NHẬN, ghi ở skill `tkpccc-tham-dinh` mục "Ba loại đầu vào").
+
 **Phiên 2026-11-02 chiều: Pha 5a xong (người dùng giao Claude tự quyết).** Hai luồng: KHẢO SÁT – TƯ VẤN (skill `tkpccc-khao-sat-tu-van`)
 và THẨM ĐỊNH xây dựng + hệ thống (skill `tkpccc-tham-dinh`, agent `pccc-xay-dung`, `pccc-he-thong`). Nền: module `tkpccc-bang-doi-chieu`
 (bảng A/B/KT chép SKILL-PCCC-NEW 24743f9 + khung KS) và `tkpccc-ghi-chu-ban-ve` (annotation PDF thật: khung, callout, leader, nét, tường,
@@ -26,7 +59,7 @@ Việc tiếp theo của luồng mới:
    1 tầng (QCVN 10 1.4.24 CT1) → 4 tầng, cao ≈ 11,6 m; thang hở L ≈ 33 m > 25 m; xe máy trong sảnh chân thang; mặt bậc đo sơ ≈ 235 mm.
    👤 Chờ người dùng xem `BCKS_CHDV_Doan_Nhu_Hai_Q4.xlsx/.pdf`, `ban_ve_ghi_chu.pdf` (66 annotation, PA1 tím) và cho biết có coi WC nhỏ trên tum
    là tum không tính tầng không (nếu có: 3 tầng, cao ≈ 8,2 m, nhưng vẫn phải đóng kín thang vì L ≈ 33 m).
-2. Thử luồng thẩm định trên một hồ sơ (vd KT7.1 + A5 + B…): đo độ dài job, chỉnh số dòng mỗi job, xem agent điền có đúng định dạng.
+2. ⏳ ĐANG DỞ (03/11): thử luồng thẩm định trên hồ sơ Q.4 (KT7.1 + A5 + B1, B12, B13, B14): trạng thái và bước tiếp ở khối đầu mục này.
 3. Pha 5b (ROADMAP): web chạy luồng, Word theo mẫu A/B, điền mẫu báo cáo khảo sát của người dùng (chờ người dùng gửi mẫu).
 
 **Đọc thêm `LICH_SU.md` mục 2026-11-02 "Lưu ý cho phiên sau" trước khi làm.**

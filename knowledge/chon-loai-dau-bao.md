@@ -23,7 +23,7 @@ Dùng cho: m11-bao-chay, huong-dan. Chỉ giữ QUYẾT ĐỊNH và con trỏ đ
 | Phòng điện, phòng biến thế, bảng điện, cáp | **Nhiệt hoặc khói** | Phụ lục A mục B.1 |
 | Gara, xưởng sửa chữa xe | **Nhiệt, khói hoặc lửa** | Phụ lục A mục B.3 |
 | Không gian thông tầng, sảnh lớn, kho lớn, nhà ga, thi đấu | **Khói** (trần đến 40 m có thể dùng **tia chiếu**) | Phụ lục A mục D.1; 5.9.1.3 |
-| Không gian trên trần giả, dưới sàn nâng (≥ 0,35 m) có ống bọc vật liệu cháy hoặc máng cáp ≥ 220 V | **Khói**, trong khoảng không | QCVN 10 Bảng A.3 mục 7.1, 7.2 (áp cho hành lang thoát nạn, hội trường, tiền sảnh, gian phòng ≥ 50 người, F1.1, F4.1, karaoke, vũ trường); TCVN 5.8.2.4; Phụ lục A mục C.1 |
+| Không gian trên trần giả, dưới sàn nâng (≥ 0,35 m) có ống bọc vật liệu cháy hoặc máng cáp ≥ 220 V | **Khói**, trong khoảng không | QCVN 10 Bảng A.2 mục 7.1, 7.2 (áp cho hành lang thoát nạn, hội trường, tiền sảnh, gian phòng ≥ 50 người, F1.1, F4.1, karaoke, vũ trường); TCVN 5.8.2.4; Phụ lục A mục C.1 |
 | Tủ > 3 m³, tủ điện tử > 1 m³ | Lắp đầu báo trong tủ lớn; tủ nhỏ hơn không | TCVN 5.8.2.5.1, 5.8.2.5.2 |
 
 ## Nghi vấn báo giả: chuyển sang NHIỆT (người dùng dạy 2026-10-30)
