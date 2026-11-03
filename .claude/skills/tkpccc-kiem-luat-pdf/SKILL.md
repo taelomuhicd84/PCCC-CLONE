@@ -1,6 +1,8 @@
 ---
 name: tkpccc-kiem-luat-pdf
 description: Module máy kiểm luật PDF (thư mục thamdinh/) — đọc chữ vector bản vẽ, chạy 26 luật thoát nạn QCVN 06 viết bằng YAML, ra kết luận D/KD/XM + PDF ghi chú, tab web "Thẩm định PDF", "Claude xét" dòng XM. Dùng khi sửa hoặc thêm luật, sửa lõi Python thamdinh/, sửa tab Thẩm định PDF, hoặc cần chạy máy sàng lọc trước khi thẩm định theo bảng đối chiếu.
+model: opus
+effort: high
 ---
 # Module: máy kiểm luật PDF (thamdinh/)
 Phát triển module này: chỉ đọc file trong bảng dưới. Thẩm định đầy đủ theo bảng đối chiếu là skill `tkpccc-tham-dinh` (dùng module này làm bước sàng lọc).

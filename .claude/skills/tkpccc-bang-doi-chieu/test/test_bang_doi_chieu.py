@@ -35,6 +35,8 @@ def test_lamviec_gop_kiem_xuat(tmp_path):
     assert "phần XÂY DỰNG" in jb and f"| {idx} |" in jb and str(tmp_path / "phan" / "KT7.1_0-70.json") in jb
     assert str(tmp_path / "cong_trinh.md") in jb and '"cong_nang"' not in jb      # thông tin công trình chỉ ở file chung
     assert '"cong_nang"' in (tmp_path / "cong_trinh.md").read_text(encoding="utf-8")
+    assert "## Điều khoản nguyên văn" in jb and "\n> " in jb                      # điều khoản trích sẵn, agent khỏi tra
+    assert (tmp_path / "quy_tac_agent.md").read_text(encoding="utf-8").count("\n## ") >= 6
 
     phan = tmp_path / "phan_kt.json"
     phan.write_text(json.dumps({"ma": "KT7.1", "cong_trinh": {"nhom_f": "F1.2"},
@@ -106,3 +108,10 @@ def test_gop_bao_loi_idx(tmp_path):
     phan.write_text(json.dumps({"ma": "KS", "dong": [{"idx": 999, "ket_luan": "DAT"}]}), encoding="utf-8")
     with pytest.raises(SystemExit):
         bdc.gop(f, [phan], True)
+
+
+def test_trich_dieu_nguyen_van():
+    assert bdc._dieu_trong("Mục G.1 QCVN 06:2022 / Mục G.2a / QCVN 06:2022") == [("G.1", "QCVN 06"), ("G.2a", "QCVN 06")]
+    assert bdc._dieu_trong("Bảng B.1 mục 1.2 / QCVN 10:2025") == [("B.1", "QCVN 10")]   # "mục 1.2" là dòng của bảng, không phải điều
+    noi, doan = bdc._trich_dieu("6.2.1.1", bdc._file_tim("", "QCVN 06"))
+    assert noi.startswith("knowledge/qcvn06-dieu-6.md") and doan.startswith("6.2.1.1 ") and "6.2.1.2" not in doan

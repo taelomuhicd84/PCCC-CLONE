@@ -1,6 +1,8 @@
 ---
 name: tkpccc-thuy-luc
 description: Module thủy lực chữa cháy TCVN 7336 (sprinkler, họng nước) — lõi tính, tab web Thủy lực, xuất Excel mẫu MAU_THUY_LUC_7336.xlsx. Dùng khi sửa hoặc phát triển phần thủy lực, tính thủy lực, kiểm bảng tính Excel thủy lực, hoặc người dùng nói "thủy lực", "lưu lượng sprinkler", "bơm chữa cháy", "Excel thủy lực".
+model: opus
+effort: high
 ---
 # Module: thủy lực TCVN 7336
 Phát triển module này: chỉ đọc file trong bảng dưới.

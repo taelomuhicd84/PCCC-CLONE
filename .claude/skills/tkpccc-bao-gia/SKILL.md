@@ -1,6 +1,8 @@
 ---
 name: tkpccc-bao-gia
 description: Module khối lượng – báo giá – khảo sát trên web — danh mục vật tư, khối lượng bóc từ CAD, đơn giá mẫu, báo giá Excel có công thức, tab Khảo sát 8 mục (Word, Claude gợi ý, ước khối lượng sơ bộ theo m²). Dùng khi sửa hoặc phát triển báo giá, đơn giá, vật tư, khối lượng, tab Khảo sát hay tab Khối lượng & Báo giá trên web.
+model: sonnet
+effort: medium
 ---
 # Module: khối lượng, báo giá, khảo sát web
 Phát triển module này: chỉ đọc file trong bảng dưới. Báo cáo khảo sát – tư vấn theo bảng đối chiếu (có ghi chú PDF) là skill `tkpccc-khao-sat-tu-van`.

@@ -1,6 +1,8 @@
 ---
 name: tkpccc-tham-dinh
 description: THẨM ĐỊNH thiết kế PCCC từ bản vẽ PDF (kiến trúc chỉ có mặt bằng, có mặt đứng/mặt cắt, hoặc hồ sơ thiết kế gần đầy đủ), tách 2 phần XÂY DỰNG (bảng KT) và HỆ THỐNG PCCC (bảng A + B) — kết luận từng dòng trong ô Kết luận của bảng đối chiếu, comment callout/leader/khung/nét cho thiếu số liệu và nghi vấn, phương án điều chỉnh vẽ lên PDF, xuất PDF ghi chú + Excel. Dùng khi người dùng nói thẩm định, thẩm duyệt, đối chiếu hồ sơ PCCC, kiểm tra hồ sơ thiết kế PCCC.
+model: opus
+effort: high
 ---
 # Thẩm định PCCC: xây dựng + hệ thống (điều phối)
 Module dùng: `tkpccc-bang-doi-chieu`, `tkpccc-ghi-chu-ban-ve`, `tkpccc-tra-quy-chuan`, `tkpccc-kiem-luat-pdf` (máy đọc chữ + 26 luật thoát nạn,
@@ -80,6 +82,9 @@ G=.claude/skills/tkpccc-ghi-chu-ban-ve/scripts/ghi_chu_pdf.py
 | B1 | 48 | 18 phút | 298 nghìn | 59 | 48/48 | |
 | B12 + B13 (1 agent) | 24 + 18 | 14 phút | 250 nghìn | 56 | 42/42 | gộp 2 job ngắn được: đọc thông tin công trình một lần |
 | B14 | 44 | chưa đo | | | | |
+- Đo transcript (03/11, lọc trùng theo id phản hồi): KT 81–151 92 lượt, đọc lại ngữ cảnh 23 triệu token (≈ 258 nghìn/lượt), viết ra 281 nghìn.
+  Tốn nhất là SỐ LƯỢT × CỠ NGỮ CẢNH, không phải tra cứu. Vì vậy (03/11): `job` gắn toàn văn dòng + điều khoản nguyên văn (KT Q4 tìm được
+  37/49 và 29/40 điều), `quy_tac_agent.md` thay 3 SKILL.md (≈ 9,5 nghìn ký tự thay ≈ 60 nghìn), xem ảnh bằng `cat` vùng; chưa đo lại.
 - KT ≈ 9–10 nghìn token, ≈ 35–40 giây một dòng; A5 ≈ 11 nghìn; bảng B ≈ 6 nghìn token, ≈ 20 giây một dòng. Agent xét đủ dòng, JSON đúng
   định dạng (agent tự kiểm: idx đủ, khung hai chiều, tọa độ trong trang).
 - Gói Pro: lượt 3 agent song song (≈ 1,2 triệu token) đưa cửa sổ 5 giờ từ 42 % lên hết, tuần +8 %. 03/11: KT 81–151 + B1 + B12/B13

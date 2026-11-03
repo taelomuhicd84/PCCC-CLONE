@@ -3,6 +3,13 @@
 Bộ công cụ thiết kế PCCC: plugin AutoCAD 2021 + runner Node + web nội bộ + skill Claude. Người dùng là kỹ sư PCCC, giao tiếp **tiếng Việt**.
 **Phiên mới: đọc `TIEN_DO.md` trước** (việc đang làm, việc tiếp theo). Cấu trúc thư mục: `STRUCTURE.md`. Các pha: `ROADMAP.md`. Nhật ký: `LICH_SU.md`.
 
+## QUY TẮC SỐ 1, ÁP DỤNG MÃI MÃI: gần hết usage thì lưu và đẩy GitHub, không chờ nhắc
+(người dùng dặn 2026-10-31, nhắc lại 2026-11-01 và 2026-11-03 "ghi nhớ mãi mãi")
+- Kiểm `get_usage` (ccd_session_mgmt) đầu phiên, sau mỗi việc lớn, trước khi mở agent và giữa các lượt agent.
+- Cửa sổ 5 giờ (hoặc tuần) ≥ 85 % ⇒ **dừng ngay ở việc đang làm**: ghi `TIEN_DO.md` (dở ở đâu, bước tiếp theo cụ thể, đủ để phiên mới
+  làm tiếp không cần hội thoại này) + `LICH_SU.md`, commit, push (skill `tkpccc-xong-dau-muc`); báo người dùng giờ reset.
+- Dự tính trước: việc sắp làm có thể đẩy usage qua 85 % (vd mở agent ≈ 10–25 % mỗi agent) thì lưu + push TRƯỚC khi làm.
+
 ## Mỗi module là một skill (người dùng dặn 2026-11-02: sửa module nào thì chỉ vào đó, đỡ tốn token)
 Làm module nào: đọc `.claude/skills/<skill>/SKILL.md` của module đó và các file nó liệt kê; không đọc cả repo.
 | Module | Skill | Agent |
@@ -18,6 +25,9 @@ Làm module nào: đọc `.claude/skills/<skill>/SKILL.md` của module đó và
 | Plugin AutoCAD (+ đường thiết kế CAD qua MCP, Pha 6) | `tkpccc-cad-console` | |
 | Tra quy chuẩn (chọn file, chỉ văn bản hiện hành) | `tkpccc-tra-quy-chuan` | |
 | Khép đầu mục: kiểm → TIEN_DO/LICH_SU → commit → push | `tkpccc-xong-dau-muc` | |
+- Model + effort (người dùng dặn 2026-11-03: việc phức tạp cần tỉ mỉ, chính xác cực cao → Opus effort high; việc nhẹ → Sonnet effort thấp)
+  ghi trong frontmatter `model:`, `effort:` của SKILL.md và agent; nguồn duy nhất là frontmatter. Skill phụ trợ gọi giữa luồng
+  (`tkpccc-bang-doi-chieu`, `tkpccc-ghi-chu-ban-ve`, `tkpccc-tra-quy-chuan`) KHÔNG đặt: model của skill áp cho cả phần còn lại của lượt.
 - Module mới: tạo `.claude/skills/tkpccc-<tên>/` (`SKILL.md`; module chỉ Claude dùng thì để luôn `scripts/`, `data/`, `test/` trong đó), thêm 1 dòng
   vào bảng trên và `STRUCTURE.md`. Code chạy trong web/runner vẫn ở `shared/`, `runner/`, `thamdinh/`, `cad/` nhưng `SKILL.md` của module phải liệt kê.
 - Quy trình nào lặp lại và hay thì gom thành skill (người dùng dặn 2026-10-31).
@@ -46,7 +56,4 @@ Làm module nào: đọc `.claude/skills/<skill>/SKILL.md` của module đó và
 ## Git / GitHub
 - Remote: https://github.com/taelomuhicd84/PCCC-CLONE (nhánh `main`, repo **công khai**: không đưa hồ sơ khách, token, đơn giá vào repo).
 - Commit ở mỗi mốc việc.
-- **Gần hết usage: LUÔN tự làm, không chờ nhắc** (người dùng dặn 2026-10-31, nhắc lại 2026-11-01): kiểm bằng công cụ `get_usage`
-  (ccd_session_mgmt) sau mỗi việc lớn; cửa sổ 5 giờ hoặc tuần ≥ 85% thì **dừng ngay ở việc đang làm**, ghi `TIEN_DO.md` (dở ở đâu,
-  bước tiếp theo cụ thể) + `LICH_SU.md`, commit, push (skill `tkpccc-xong-dau-muc`).
 - Push từ Bash của Claude có thể không lấy được đăng nhập Git Credential Manager: chạy `git push` trong tab Terminal của người dùng.

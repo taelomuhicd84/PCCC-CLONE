@@ -1,6 +1,8 @@
 ---
 name: tkpccc-huong-dan
 description: Module hướng dẫn thiết kế B0–B7 trên web — quy trình từng bước (data/huong_dan.json), hiện tài liệu nguyên văn, hỏi Claude theo tài liệu của bước qua `claude -p` không API key. Dùng khi sửa hoặc thêm bước thiết kế, tài liệu gắn với bước, tab Hướng dẫn, hoặc cách runner gọi Claude.
+model: sonnet
+effort: medium
 ---
 # Module: hướng dẫn thiết kế B0–B7
 Phát triển module này: chỉ đọc file trong bảng dưới.

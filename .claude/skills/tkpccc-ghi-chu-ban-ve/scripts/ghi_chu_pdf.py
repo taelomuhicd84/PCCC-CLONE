@@ -251,23 +251,26 @@ def ve(pdf_vao: Path, muc_list: list, pdf_ra: Path, zoom: float = 1.0, anh: Path
     return {"ok": True, "pdf": str(pdf_ra), "annotation": dem, "trang": sorted(trang)}
 
 
-def luoi(pdf: Path, trang: int, zoom: float, buoc: int, ra: Path) -> dict:
-    """Ảnh trang kèm lưới tọa độ px (ở zoom) để đọc vị trí đặt ghi chú."""
+def luoi(pdf: Path, trang: int, zoom: float, buoc: int, ra: Path, vung: list | None = None, phong: float = 1.0) -> dict:
+    """Ảnh trang kèm lưới tọa độ px (ở zoom) để đọc vị trí đặt ghi chú. `vung` [x0,y0,x1,y1] (px ở zoom): chỉ cắt vùng đó,
+    phóng `phong` lần cho rõ; nhãn lưới vẫn là tọa độ ở zoom nên dùng thẳng cho ghi chú."""
     page = pymupdf.open(pdf)[trang - 1]
-    pix = page.get_pixmap(matrix=pymupdf.Matrix(zoom, zoom))
+    pix = page.get_pixmap(matrix=pymupdf.Matrix(zoom * phong, zoom * phong))
     w, h = pix.width, pix.height
     tam = pymupdf.open()
-    p = tam.new_page(width=w, height=h)
+    p = tam.new_page(width=w, height=h)     # trang tạm đúng chiều nhìn: cắt theo px, khỏi lo /Rotate
     p.insert_image(p.rect, pixmap=pix)
-    for x in range(0, w, buoc):
-        p.draw_line((x, 0), (x, h), color=(1, 0, 0), width=0.4, stroke_opacity=0.5)
-        p.insert_text((x + 2, 10), str(x), fontsize=9, color=(1, 0, 0))
-    for y in range(0, h, buoc):
-        p.draw_line((0, y), (w, y), color=(0, 0, 1), width=0.4, stroke_opacity=0.5)
-        p.insert_text((2, y - 2 if y else 20), str(y), fontsize=9, color=(0, 0, 1))
+    x0, y0, x1, y1 = vung or (0, 0, w / phong, h / phong)
+    for x in range(-(-int(x0) // buoc) * buoc, int(x1) + 1, buoc):
+        p.draw_line((x * phong, y0 * phong), (x * phong, y1 * phong), color=(1, 0, 0), width=0.4, stroke_opacity=0.5)
+        p.insert_text((x * phong + 2, y0 * phong + 10), str(x), fontsize=9, color=(1, 0, 0))
+    for y in range(-(-int(y0) // buoc) * buoc, int(y1) + 1, buoc):
+        p.draw_line((x0 * phong, y * phong), (x1 * phong, y * phong), color=(0, 0, 1), width=0.4, stroke_opacity=0.5)
+        p.insert_text((x0 * phong + 2, max(y * phong - 2, y0 * phong + 20)), str(y), fontsize=9, color=(0, 0, 1))
     ra.parent.mkdir(parents=True, exist_ok=True)
-    p.get_pixmap().save(ra)
-    return {"png": str(ra), "rong_px": w, "cao_px": h, "zoom": zoom, "xoay": page.rotation}
+    anh = p.get_pixmap(clip=pymupdf.Rect(x0 * phong, y0 * phong, x1 * phong, y1 * phong) if vung else None)
+    anh.save(ra)
+    return {"png": str(ra), "rong_px": anh.width, "cao_px": anh.height, "zoom": zoom, "phong": phong, "xoay": page.rotation}
 
 
 def tim(pdf: Path, chu: str, trang: int | None, zoom: float) -> list:
@@ -297,6 +300,14 @@ def main(argv=None):
     b.add_argument("--zoom", type=float, default=1.6)
     b.add_argument("--buoc", type=int, default=100)
     b.add_argument("-o", "--ra")
+    d = sub.add_parser("cat")       # ảnh một vùng, phóng to, lưới theo tọa độ zoom: xem chi tiết rẻ hơn ảnh cả trang
+    d.add_argument("pdf")
+    d.add_argument("--trang", type=int, required=True)
+    d.add_argument("--vung", required=True, help="x0,y0,x1,y1 px ở zoom")
+    d.add_argument("--zoom", type=float, default=1.6)
+    d.add_argument("--phong", type=float, default=2.0)
+    d.add_argument("--buoc", type=int, default=50)
+    d.add_argument("-o", "--ra")
     c = sub.add_parser("tim")
     c.add_argument("pdf")
     c.add_argument("chu")
@@ -311,6 +322,12 @@ def main(argv=None):
         kq = ve(pdf, muc, ra, zoom, Path(x.anh) if x.anh else None)
     elif x.lenh == "luoi":
         kq = luoi(pdf, x.trang, x.zoom, x.buoc, Path(x.ra) if x.ra else pdf.parent / f"luoi_trang_{x.trang}.png")
+    elif x.lenh == "cat":
+        v = [float(s) for s in x.vung.split(",")]
+        if len(v) != 4 or v[0] >= v[2] or v[1] >= v[3]:
+            raise SystemExit("--vung phải là x0,y0,x1,y1 với x0 < x1, y0 < y1")
+        ra = Path(x.ra) if x.ra else pdf.parent / "anh" / f"cat_{x.trang}_{int(v[0])}_{int(v[1])}.png"
+        kq = luoi(pdf, x.trang, x.zoom, x.buoc, ra, v, x.phong)
     else:
         kq = tim(pdf, x.chu, x.trang, x.zoom)
     print(json.dumps(kq, ensure_ascii=False))

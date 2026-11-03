@@ -186,32 +186,133 @@ def gop(ra: Path, phan: list[Path], giu_so: bool) -> dict:
     return {"ok": True, "dong_da_gop": dem, "ghi_chu": len(dc["ghi_chu"])}
 
 
+GOC = Path(__file__).resolve().parents[4]          # thư mục dự án TKPCCC
+# Văn bản nêu ở cột Khoản Điều → file tri thức chép nguyên văn (tìm điều trong các file này)
+VAN_BAN = {"QCVN 06": (r"QCVN\s*0?6\b", ["skills/*.md", "knowledge/qcvn06-*.md"]),
+           "QCVN 10": (r"QCVN\s*10\b", ["knowledge/qcvn10-2025-*.md"]),
+           "TCVN 7568-14": (r"7568", ["knowledge/tcvn7568-14-2025.md"]),
+           "NĐ 105/2025": (r"105/2025|347/2026", ["knowledge/nghi-dinh-tham-dinh-dieu-chinh.md"])}
+SO = r"((?:[A-Z]\.\d{1,2}|\d{1,2}\.\d{1,2})(?:\.\d{1,2})*[a-z]?)(?![\w.])"    # 3.2.6.1, G.1.2, G.2a; không bắt 1.500, 10.2023
+SO_DIEU = re.compile(r"(?<![\w.])" + SO)
+DAU = r"^\s*(?:#+\s*|[-*]\s*)?(?:\*\*)?"
+DAU_DIEU = re.compile(DAU + r"(?:Điều\s+|Mục\s+)?" + SO)   # "Bảng …" không cắt điều
+# Mục của các SKILL.md mà agent cần (trích nguyên vào quy_tac_agent.md, agent khỏi đọc cả 3 file)
+QUY_TAC = [("tkpccc-tham-dinh", ["Nguyên tắc", "Ba loại đầu vào", "Không trùng lắp", "File phần"]),
+           ("tkpccc-bang-doi-chieu", ['Cột "Tra ở"']), ("tkpccc-ghi-chu-ban-ve", ["Đặc tả mục ghi chú", "Quy tắc ghi"])]
+_dong_file: dict = {}
+
+
+def _doc_dong(p: Path) -> list:
+    if p not in _dong_file:
+        _dong_file[p] = p.read_text(encoding="utf-8").splitlines()
+    return _dong_file[p]
+
+
+def _dieu_trong(khoan_dieu: str) -> list:
+    """[(số điều, mẫu văn bản)] từ cột Khoản Điều; văn bản gán theo phần "/" chứa nó hoặc phần kế sau (vd "Đ 3.2.6 / QCVN 06:2022")."""
+    ra, cho, vb_cuoi = [], [], None
+    for phan in str(khoan_dieu or "").split("/"):
+        vb = next((ten for ten, (m, _) in VAN_BAN.items() if re.search(m, phan, re.I)), None)
+        if re.search(r"Bảng\s+\S+", phan, re.I):         # "Bảng B.1 mục 1.2": số sau "mục" là dòng của bảng, không phải điều
+            phan = re.sub(r"mục\s+[\d.]+", "", phan, flags=re.I)
+        cho += SO_DIEU.findall(phan)
+        if vb:
+            ra += [(s, vb) for s in cho]
+            cho, vb_cuoi = [], vb
+    return ra + [(s, vb_cuoi) for s in cho]
+
+
+def _file_tim(tra_o: str, vb: str | None) -> list:
+    """File tìm điều: theo cột Tra ở trước (tiền tố tên file), rồi theo văn bản."""
+    ds = []
+    for t in re.split(r"[,;+]\s*|\s+\+\s+", str(tra_o or "")):
+        t = t.strip().split(" ")[0].removesuffix(".md")
+        if re.fullmatch(r"[\w-]{4,}", t):
+            ds += sorted(GOC.glob(f"skills/{t}*.md")) + sorted(GOC.glob(f"knowledge/{t}*.md")) + sorted(GOC.glob(f"knowledge/*/{t}*.md"))
+    for g in VAN_BAN[vb][1] if vb else []:
+        ds += sorted(GOC.glob(g))
+    return list(dict.fromkeys(ds))
+
+
+def _trich_dieu(so: str, files: list, toi_da: int = 2500) -> tuple[str, str] | None:
+    """Đoạn nguyên văn của điều `so`: từ dòng mở đầu điều tới điều kế không phải điều con (hoặc tiêu đề cùng cấp).
+    Tìm dòng mở đầu là tiêu đề, chữ đậm hoặc đầu dòng trước; dòng gạch đầu dòng (thường là tóm tắt) chỉ dùng khi không có."""
+    duoi = r"(?:Bảng\s+|Điều\s+|Mục\s+)?" + re.escape(so) + r"(?![\w.])"
+    tim = [(p, i) for mo in (re.compile(r"^\s*(?:#+\s*)?(?:\*\*)?" + duoi), re.compile(DAU + duoi)) for p in files
+           for i, d in enumerate(_doc_dong(p)) if mo.match(d)]
+    for p, i in tim[:1]:
+        ds = _doc_dong(p)
+        cap = len(re.match(r"#*", ds[i].strip()).group())
+        j = i + 1
+        while j < len(ds):
+            d = ds[j]
+            m = DAU_DIEU.match(d)
+            if (m and m.group(1) != so and not m.group(1).startswith(so + ".")) or \
+                    (cap and re.match(r"#{1,%d}\s" % cap, d.strip())):
+                break
+            j += 1
+        doan = "\n".join(ds[i:j]).strip()
+        if len(doan) > toi_da:
+            doan = doan[:toi_da].rsplit("\n", 1)[0] + f"\n… (đọc tiếp: {p.relative_to(GOC).as_posix()} từ dòng {i + 1})"
+        return f"{p.relative_to(GOC).as_posix()}:{i + 1}", doan
+    return None
+
+
+def _muc_skill(ten: str, dau: str) -> str:
+    ds = (GOC / ".claude" / "skills" / ten / "SKILL.md").read_text(encoding="utf-8").splitlines()
+    i = next((i for i, d in enumerate(ds) if d.startswith("## " + dau)), None)
+    if i is None:
+        raise SystemExit(f"skill {ten} không còn mục '## {dau}': sửa QUY_TAC trong bang_doi_chieu.py")
+    j = next((j for j in range(i + 1, len(ds)) if ds[j].startswith("## ")), len(ds))
+    return "\n".join(ds[i:j]).strip()
+
+
 def job(f: Path, ma: str, tu: int, den: int, ra: Path, phan: Path) -> dict:
-    """File giao việc cho agent: thông tin công trình + các dòng chưa kết luận của một bảng (khoảng idx)."""
+    """File giao việc cho agent: toàn văn các dòng chưa kết luận của một bảng (khoảng idx) + điều khoản nguyên văn trích sẵn.
+    Ghi kèm cong_trinh.md, quy_tac_agent.md dùng chung mọi job (agent đọc một lần, không mở các SKILL.md)."""
     dc = doc_json(f)
     b = next((b for b in dc["bang"] if b["ma"].lower() == ma.lower()), None)
     if not b:
         raise SystemExit(f"{f.name} chưa có bảng {ma} (chạy lamviec trước)")
     dong = [r for r in b["dong"] if r["xet"] and not r["ket_luan"] and tu <= r["idx"] <= den]
     phan_ten = {"xay_dung": "XÂY DỰNG", "he_thong": "HỆ THỐNG PCCC", "khao_sat": "KHẢO SÁT"}[b["phan"]]
-    cmd = ".claude/skills/tkpccc-bang-doi-chieu/scripts/bang_doi_chieu.py"
     # thông tin công trình một file chung cho mọi job (sửa một chỗ, agent nhiều job đọc một lần); nguồn vẫn là doi_chieu.json
     ct = f.parent / "cong_trinh.md"
     ct.write_text("# Thông tin công trình đã biết\n```json\n" + json.dumps(dc["cong_trinh"], ensure_ascii=False, indent=1) + "\n```\n",
                   encoding="utf-8")
+    qt = f.parent / "quy_tac_agent.md"
+    qt.write_text("# Quy tắc cho agent (trích nguyên từ SKILL.md lúc chạy job)\n\n"
+                  + "\n\n".join(_muc_skill(ten, d) for ten, ds in QUY_TAC for d in ds) + "\n", encoding="utf-8")
     t = [f"# Job {b['ma']} – {b['ten']} – phần {phan_ten} (idx {tu}–{min(den, b['dong'][-1]['idx'])})", "",
-         f"Thông tin công trình: đọc `{ct}` (một lần, dùng chung mọi job; không chép lại vào ly_do).",
+         f"Đọc cùng một lượt: `{ct}` (thông tin công trình) và `{qt}` (quy tắc); không mở các SKILL.md, không chép thông tin công trình vào ly_do.",
          f"Bản vẽ: `{f.parent / dc.get('ban_ve', 'ban_ve.pdf')}`. Ảnh trang có lưới: `{f.parent / 'anh'}/luoi_<trang>.png` "
-         f"(zoom {dc.get('zoom', 1.6)}; thiếu thì tạo bằng lệnh `luoi` của skill tkpccc-ghi-chu-ban-ve).", "",
-         f"## Dòng cần xét ({len(dong)}) — toàn văn từng dòng: `python -X utf8 {cmd} dong {b['ma']} \"#<idx>\"`", "",
-         "| idx | TT | Nội dung đối chiếu | Khoản Điều | Tra ở |", "|---|---|---|---|---|"]
-    t += [f"| {r['idx']} | {r['tt']} | {_ngan(r['noi_dung'], 70)} | {_ngan(r['khoan_dieu'], 35)} | {_ngan(r['tra_o'], 35)} |" for r in dong]
-    t += ["", "## Trả lời", f"Ghi ĐÚNG MỘT JSON vào `{phan}` theo mục \"File phần\" của `.claude/skills/tkpccc-tham-dinh/SKILL.md` "
+         f"(zoom {dc.get('zoom', 1.6)}). Xem chi tiết: lệnh `cat` của skill tkpccc-ghi-chu-ban-ve (vùng quanh đối tượng, phóng 2).", "",
+         f"## Dòng cần xét ({len(dong)}), toàn văn", ""]
+    dieu = {}                                       # (số, văn bản) → các idx dùng; mỗi điều trích một lần
+    for r in dong:
+        t.append(f"### #{r['idx']} · TT {r['tt'] or '-'} · {' '.join(str(r['noi_dung']).split())}")
+        for k, ten in (("quy_dinh", "Quy định"), ("khoan_dieu", "Khoản Điều"), ("goi_y", "Gợi ý"), ("tra_o", "Tra ở")):
+            if str(r.get(k) or "").strip():
+                t.append(f"- {ten}: {' '.join(str(r[k]).split())}")
+        for so, vb in _dieu_trong(r.get("khoan_dieu")):
+            dieu.setdefault((so, vb), {"idx": [], "tra_o": r.get("tra_o")})["idx"].append(r["idx"])
+    t += ["", "## Điều khoản nguyên văn (trích tự động, mỗi điều một lần; cần thêm thì mở đúng file:dòng)", ""]
+    khong = []
+    for (so, vb), v in dieu.items():
+        kq = _trich_dieu(so, _file_tim(v["tra_o"], vb)) if vb else None      # không rõ văn bản thì không đoán file
+        if kq:
+            t += [f"### {so} — {kq[0]} (dòng #{', #'.join(map(str, v['idx']))})", *("> " + d for d in kq[1].splitlines()), ""]
+        else:
+            khong.append(f"{so} ({vb})" if vb else so)
+    if khong:
+        t += [f"Không tìm thấy nguyên văn: {', '.join(khong)}. Chỉ dùng cột Quy định của dòng; cần trị số khác thì ghi \"cần tra <văn bản>\".", ""]
+    t += ["## Trả lời", f"Ghi ĐÚNG MỘT JSON vào `{phan}` theo mục \"File phần\" trong `{qt.name}` "
           f"(\"ma\": \"{b['ma']}\"; số khung đánh từ 1 trong file này, lệnh gop tự đánh lại)."]
     ra.parent.mkdir(parents=True, exist_ok=True)
     phan.parent.mkdir(parents=True, exist_ok=True)
     ra.write_text("\n".join(t) + "\n", encoding="utf-8")
-    return {"ok": True, "job": str(ra), "phan": str(phan), "so_dong": len(dong)}
+    return {"ok": True, "job": str(ra), "phan": str(phan), "so_dong": len(dong), "dieu_trich": len(dieu) - len(khong),
+            "dieu_khong_thay": len(khong)}
 
 
 def kiem(dc: dict) -> dict:

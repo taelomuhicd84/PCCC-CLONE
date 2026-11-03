@@ -1,6 +1,8 @@
 ---
 name: tkpccc-cad-console
 description: Build và kiểm thử plugin AutoCAD của TKPCCC (cad/src/Lenh.cs) KHÔNG cần mở AutoCAD — biên dịch bằng csc.exe (C# 5), chạy kịch bản lệnh trong accoreconsole, đọc kết quả dòng lệnh, in bản vẽ ra PNG để xem bằng mắt. Dùng mỗi khi sửa/thêm lệnh PCCC_*, gặp lỗi plugin (eWrongDatabase, đếm sai, chữ lệch), cần chạy thử bản vẽ mẫu, hoặc người dùng nói "chạy thử plugin", "test CAD", "kiểm tra lệnh AutoCAD", kể cả khi AutoCAD đang mở trên máy.
+model: sonnet
+effort: medium
 ---
 
 # Kiểm thử plugin AutoCAD bằng accoreconsole

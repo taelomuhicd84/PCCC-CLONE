@@ -15,6 +15,7 @@ Phát triển module này: chỉ sửa trong thư mục này.
 ```
 S=.claude/skills/tkpccc-ghi-chu-ban-ve/scripts/ghi_chu_pdf.py
 python -X utf8 $S luoi ket_qua/<da>/ban_ve.pdf --trang 3 --zoom 1.6 -o ket_qua/<da>/anh/luoi_3.png
+python -X utf8 $S cat  ket_qua/<da>/ban_ve.pdf --trang 3 --vung 400,300,900,700   # vùng px@1.6, phóng 2, lưới nhãn theo tọa độ 1.6
 python -X utf8 $S tim  ket_qua/<da>/ban_ve.pdf "CT1" --zoom 1.6
 python -X utf8 $S ve   ket_qua/<da>/ban_ve.pdf ket_qua/<da>/doi_chieu.json -o ket_qua/<da>/ban_ve_ghi_chu.pdf --anh ket_qua/<da>/anh/ra
 ```

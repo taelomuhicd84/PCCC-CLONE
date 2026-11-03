@@ -1,6 +1,8 @@
 ---
 name: tkpccc-xong-dau-muc
 description: Quy trình khép một đầu mục việc trong TKPCCC — kiểm tra, cập nhật TIEN_DO.md / LICH_SU.md / STRUCTURE.md, commit, push GitHub, rồi xoá ngữ cảnh và làm tiếp việc kế trong TIEN_DO.md. Dùng khi xong một pha hoặc một việc lớn, khi người dùng nói "xong rồi", "lưu tiến độ", "đẩy github", "clear rồi làm tiếp", và BẮT BUỘC khi usage gói Claude gần hết (cửa sổ 5 giờ hoặc tuần từ khoảng 85%).
+model: sonnet
+effort: low
 ---
 
 # Khép đầu mục: kiểm → ghi tiến độ → commit → push → ngữ cảnh mới làm tiếp

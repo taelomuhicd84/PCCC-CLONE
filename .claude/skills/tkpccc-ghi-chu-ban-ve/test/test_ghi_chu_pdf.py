@@ -105,3 +105,5 @@ def test_tim_va_luoi(ban_ve, tmp_path):
     assert abs(kq[0]["hop"][0] - v.x0 * 2) <= 1
     info = gc.luoi(ban_ve, 2, 1.0, 100, tmp_path / "luoi.png")
     assert (tmp_path / "luoi.png").exists() and info["rong_px"] == 400 and info["xoay"] == 270
+    cat = gc.luoi(ban_ve, 2, 1.0, 50, tmp_path / "cat.png", [100, 300, 250, 420], 2.0)   # vùng trên trang xoay, phóng 2
+    assert (cat["rong_px"], cat["cao_px"]) == (300, 240)

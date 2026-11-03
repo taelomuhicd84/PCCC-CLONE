@@ -1,6 +1,8 @@
 ---
 name: tkpccc-khao-sat-tu-van
 description: Lập BÁO CÁO KHẢO SÁT – TƯ VẤN PCCC khi khách gửi bản vẽ PDF hoặc thông tin bằng chữ — bảng đối chiếu KS có ô Kết luận và phương án, comment + vẽ phương án lên chính PDF (đóng kín buồng thang, cửa chống cháy, tường mới…), xuất Excel, gửi bảng đầy đủ trong tin nhắn. Dùng khi người dùng nói khảo sát, tư vấn, sơ bộ thiết kế PCCC, đánh giá nhanh công trình, hoặc gửi bản vẽ hỏi "có đạt không, sửa thế nào" mà không yêu cầu thẩm định đầy đủ.
+model: opus
+effort: high
 ---
 # Khảo sát – tư vấn PCCC (điều phối)
 Dùng các module: `tkpccc-bang-doi-chieu` (bảng KS, xuất), `tkpccc-ghi-chu-ban-ve` (PDF), `tkpccc-tra-quy-chuan` (trích điều khoản).
