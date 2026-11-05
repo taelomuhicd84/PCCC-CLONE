@@ -25,7 +25,7 @@ Phát triển module này: chỉ đọc file trong bảng dưới.
 - Số người dùng nhập kiểu Việt Nam: đọc bằng `docSoVN` (`shared/src/bao_gia.ts`).
 - Tư duy tính theo Excel mẫu MỚI (người dùng cập nhật 2026-11-05; chi tiết `knowledge/kiem-bang-tinh-thuy-luc-7336.md` mục "Khối dữ liệu thiết kế … MỚI"):
   Smin (Bảng 1) ≠ Stt (diện tích thực tế trên bản vẽ); Qtt = Stt × imin; ntt,tk đếm từ bản vẽ; Ω = Stt/ntt,tk (kết quả, ≤ 12 hoặc 9 m²);
-  q1min = Ω × imin; q1 chỉnh được; P1 = (q1/K)². Đừng dùng cách cũ (n nhập, Ω = 12/9 cố định).
+  Qsp = Qmintt (chốt 05/11, Qtt chỉ tham chiếu); q1min = Ω × imin; q1 chỉnh được; P1 = (q1/K)². Đừng dùng cách cũ (n nhập, Ω = 12/9 cố định).
 - Đã đồng bộ `o_nhap.json` + script xuất với mẫu mới (05/11): khóa mới `S_tt` (H9); lõi cảnh báo Ω = Stt/n vượt 12/9 m².
 
 ## Kiểm

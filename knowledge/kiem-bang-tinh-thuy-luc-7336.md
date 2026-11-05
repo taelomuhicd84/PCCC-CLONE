@@ -12,7 +12,7 @@ Sheet 'SP chung voi HR', cột H. Từ nay tính theo đúng thứ tự và ý n
 - H10 imin; H11 **Qmintt** = lưu lượng phun tối thiểu (Bảng 1, nhập); H12 **Qtt = Stt × imin** (công thức).
 - H14 **ntt,tk** = số đầu hoạt động đồng thời THEO THIẾT KẾ (đếm trên bản vẽ, nhập); H13 **Ω = Stt / ntt,tk** (công thức, diện tích bảo vệ thực tế của 1 đầu), phải ≤ 12 m² (nhóm 1–3) hoặc ≤ 9 m² (nhóm 4–7) và khoảng cách đầu theo Bảng 1; vượt thì tăng số đầu.
 - H15 **q1min = Ω × imin**; H16 **q1** (mặc định =H15, chỉnh để tối ưu lưu lượng, vận tốc, DN); H17 K gpm (K17 = đổi sang l/(s·MPa^0,5)); H18 **P1 = (q1/K)²**.
-- H20 Qsp, H21 QHR (=I159 × 2,5), H22 QNN, H23 QBmin = tổng. Đạt khi Q_CT (F157 / QF-J) ≥ Qsp (Bảng 1).
+- H20 Qsp, H21 QHR (=I159 × 2,5), H22 QNN, H23 QBmin = tổng. Đạt khi Q_CT (F157 / QF-J) ≥ Qsp (Bảng 1). **Qsp = Qmintt (H11)** (người dùng chốt 2026-11-05); Qtt = Stt × imin chỉ để tham chiếu, không dùng so đạt.
 - Hệ quả khi tính: (1) lấy Stt từ bản vẽ, không lấy Smin thay Stt; (2) Ω là KẾT QUẢ (Stt/n), không gõ 12 hay 9; (3) q1 gốc = Ω·imin, không phải 12·imin; (4) họng vách tường: so_tia I159, lưu lượng lăng H.7 I160, áp lăng I162…
 - Toàn bộ hàng dưới khối này của mẫu mới dịch LÊN 1 dòng so với bản 2026-11-04 (bảng nhánh trái bắt đầu dòng 61, Q59/Q60 số đầu, D97 đối xứng, O76 số nhánh, D181 mạng, H181 mạch họng, họng I159–I179, vòng D183…, Z L199, PB L200). `o_nhap.json`, `xuat_thuy_luc_excel.py`, `hoan_thien_excel.ps1`, `chen_hang_cuoi.ps1` đã đồng bộ với mẫu mới (05/11); khóa `S_tt` ghi H9 (bỏ trống = S). Các ô trong mục dưới có số dòng THEO MẪU CŨ (H13, H18, L200, D182…): trừ 1 dòng với phần bảng, đổi theo khối H8–H23 ở trên.
 
