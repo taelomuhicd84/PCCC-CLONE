@@ -46,15 +46,15 @@ describe("thủy lực trên web", () => {
     const wb = new ExcelJS.Workbook();
     await wb.xlsx.readFile(ra);
     const ws = wb.getWorksheet("SP chung voi HR")!;
-    expect(ws.getCell("H14").value).toBe(8);
-    expect([ws.getCell("F62").value, ws.getCell("I62").value]).toEqual([32, 3]);
-    expect(ws.getCell("D98").value).toBe("Không đối xứng với nhánh phải");
-    expect(ws.getCell("F101").value).toBe(125);
-    expect(ws.getCell("F117").value).toBe(125);
-    expect(ws.getCell("F125").value).toBe(null); // ví dụ có 3 đoạn ống chính: dòng thứ 4 bỏ trống để chuỗi dừng
-    expect(ws.getCell("D62").formula).toBeTruthy();
-    expect(ws.getCell("F106").formula).toMatch(/SQRT\(G100\*N103\)/); // TCVN 7336 B.2.10.12: QII theo áp nút b, không phải nút a (L101)
-    expect(ws.getCell("D184").formula).toMatch(/I162/); // ống vòng mang lưu lượng họng tính toán H.7 (I162), không phải tối thiểu H.6 (H18)
-    expect(ws.getCell("D184").formula).not.toMatch(/H18/);
+    expect(ws.getCell("H17").value).toBe(8);
+    expect([ws.getCell("F61").value, ws.getCell("I61").value]).toEqual([32, 3]);
+    expect(ws.getCell("D97").value).toBe("Không đối xứng với nhánh phải");
+    expect(ws.getCell("F100").value).toBe(125);
+    expect(ws.getCell("F116").value).toBe(125);
+    expect(ws.getCell("F124").value).toBe(null); // ví dụ có 3 đoạn ống chính: dòng thứ 4 bỏ trống để chuỗi dừng
+    expect(ws.getCell("D61").formula).toBeTruthy();
+    expect(ws.getCell("F105").formula).toMatch(/SQRT\(G99\*N102\)/); // TCVN 7336 B.2.10.12: QII theo áp nút b, không phải nút a (L100)
+    expect(ws.getCell("D183").formula).toMatch(/I161/); // ống vòng mang lưu lượng họng tính toán H.7 (I161), không phải tối thiểu H.6 (H21)
+    expect(ws.getCell("D183").formula).not.toMatch(/H21/);
   }, 60_000);
 });

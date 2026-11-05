@@ -12,9 +12,10 @@ export interface SoLieuThuyLuc {
   hang_cuoi?: { nhanh_trai: Doan[]; nhanh_phai?: Doan[] }; // hàng cuối của vùng tính chỉ lấy một phần đầu (các đầu gần nút nhất), xem chonSoDau
   hang_rieng?: { chi_so: number; nhanh_trai: Doan[]; nhanh_phai?: Doan[] }[]; // hàng có cấu trúc khác hàng I (chi_so = chỉ số đoạn ống chính dẫn tới hàng đó: 0 = hàng II), vd hàng I thiếu đầu vì vướng ram dốc
   P_van?: number; // HCB2 (tập huấn C07): tổn thất cụm van báo động/van tín hiệu/van cổng theo catalogue, MPa
-  vt_rieng?: boolean; // Excel H182 "SP và VT riêng": họng vách tường mạch riêng, ống sprinkler chỉ mang Q sprinkler, QVT cộng ở bơm
+  vt_rieng?: boolean; // Excel H181 "SP và VT riêng": họng vách tường mạch riêng, ống sprinkler chỉ mang Q sprinkler, QVT cộng ở bơm
   nhom?: string; // Excel H6 "Nhóm 1"…"Nhóm 7": diện tích bảo vệ 1 đầu 12 m2 (nhóm 1–3) hoặc 9 m2
-  S?: number; i_min?: number; // diện tích tính toán (m2), cường độ tối thiểu (l/s.m2), dùng cho chonSoDau
+  S?: number; i_min?: number; // Smin Bảng 1 (m2, Excel H8), cường độ tối thiểu (l/s.m2), dùng cho chonSoDau
+  S_tt?: number; n?: number; // Stt thực tế trên bản vẽ (H9, bỏ trống = S) và số đầu theo thiết kế (H14): Ω = Stt/n (H13) phải ≤ 12 m2 (nhóm 1–3) hoặc 9 m2
   doi_xung?: boolean | string; // bỏ trống: tự nhận diện (nhanDienMang)
   mot_phia?: boolean;          // đầu phun chỉ ở một phía ống phân phối (không có nhánh phải): QI = Q nhánh trái
   mang?: "vong" | "cut";       // ống từ vùng tính toán về bơm: vòng (mỗi nửa ½ lưu lượng, B.2.12) hay cụt (cả lưu lượng); bỏ trống = vòng
@@ -133,7 +134,7 @@ export function tinhThuyLuc(sl: SoLieuThuyLuc) {
   if (!sl.vong?.length && !sl.vt_rieng) P = Math.max(P, PVT);
   const PJ = P;
   const PB = PJ + 0.2 * (PJ - P1) + (sl.P_van ?? 0) + sl.Z - (sl.PH ?? 0); // B.3.9, cục bộ 20% tổn thất dọc đường (B.3.13), HCB2 cụm van (C07)
-  // QBmin: số tia × lưu lượng tối thiểu 1 tia Bảng H.5/H.6 (Excel H18, mặc định 2,5); tính toán dùng H.7 (QVT) — người dùng chốt 2026-11-01
+  // QBmin: số tia × lưu lượng tối thiểu 1 tia Bảng H.5/H.6 (Excel H21, mặc định 2,5); tính toán dùng H.7 (QVT) — người dùng chốt 2026-11-01
   const qMin1 = h ? h.q_tia_h6 ?? 2.5 : 0;
   const QHR6 = h ? h.so_tia * qMin1 : 0;
   const Qbom = Math.max(Qsp + QVT, sl.Q_min + QHR6 + (sl.Q_ngoai_nha ?? 0));
@@ -143,6 +144,8 @@ export function tinhThuyLuc(sl: SoLieuThuyLuc) {
   const vMax = Math.max(...doan.map((x) => vanToc(x.Q, x.d.dn)));
   const canhBao: string[] = [];
   if (Qsp < sl.Q_min) canhBao.push(`KHÔNG ĐẠT: Q sprinkler ${Qsp.toFixed(2)} < Qmin ${sl.Q_min} (B.3.1)`);
+  const omMax = /nhóm\s*[123](?!\d)/i.test(sl.nhom ?? "") ? 12 : 9, Stt = sl.S_tt ?? sl.S;
+  if (Stt && sl.n && Stt / sl.n > omMax + 1e-9) canhBao.push(`Ω = Stt/n = ${(Stt / sl.n).toFixed(2)} m2 > ${omMax} m2 (TCVN 7336 Bảng 1): tăng số đầu`);
   if (sl.vt_rieng && QVT) canhBao.push("Mạch họng vách tường riêng: kiểm riêng cột áp bơm cho mạch họng (PVT + tổn thất mạch họng + Z)");
   if (h && h.q_tia + 1e-9 < qMin1) canhBao.push(`Lăng phun ${h.q_tia} l/s (Bảng H.7) < tối thiểu ${qMin1} l/s/tia (Bảng H.5/H.6): chọn đường kính lăng hoặc chiều cao tia đặc lớn hơn`);
   if (sl.P_van === undefined) canhBao.push("Chưa cộng tổn thất cụm van báo động HCB2 (catalogue van, tập huấn C07): ghi P_van");

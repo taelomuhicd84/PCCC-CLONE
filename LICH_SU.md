@@ -164,3 +164,6 @@
 - Người dùng gửi `ban_ve_ghi_chu.pdf` Q.4 có vẽ tay đường thoát nạn nét xanh dương và train: đường thoát nạn đo từ vị trí xa nhất TRONG PHÒNG
   (không từ cửa phòng); cửa chống cháy ngay cửa phòng. Ghi vào `knowledge/nhan-dien-thang-thoat-nan.md`, skill khảo sát, `MOD_tinh_toan_khoang_cach.md`.
   L1 Q.4 Lầu 2 đúng ≈ 9,2 m (trước ghi 7,9 m đo từ cửa phòng). Chưa sửa hồ sơ Q.4 vì usage 99 %: việc làm tiếp ở TIEN_DO.
+
+## 2026-11-05
+- Người dùng cập nhật Excel thủy lực mới (Smin/Stt, Qtt, Ω = Stt/ntt,tk, q1min). Ghi tư duy tính vào `tkpccc-thuy-luc/SKILL.md` và `knowledge/kiem-bang-tinh-thuy-luc-7336.md`; script/bản đồ ô chưa đồng bộ (xem TIEN_DO).

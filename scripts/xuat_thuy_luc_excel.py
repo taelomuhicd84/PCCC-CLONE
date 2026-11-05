@@ -2,7 +2,7 @@
 Sửa trực tiếp XML của ô nhập nên giữ nguyên công thức, định dạng, ảnh, ghi chú; Excel tự tính lại khi mở.
 Dùng: python scripts/xuat_thuy_luc_excel.py <so_lieu.json> <ra.xlsx> [--mau bang_tinh/thuy_luc/MAU_THUY_LUC_7336.xlsx] [--khong-hoan-thien]
 so_lieu.json: khóa theo bang_tinh/thuy_luc/o_nhap.json (vd "K_gpm", "nhanh_trai": [{"dn": 32, "l": 3}, ...]),
-và/hoặc "o": {"B7": "chữ", "L200": 0.15} để ghi thẳng vào ô. Giá trị null = xóa ô (đoạn ống bỏ trống thì chuỗi dừng, ra #N/A là chủ ý).
+và/hoặc "o": {"B7": "chữ", "L199": 0.15} để ghi thẳng vào ô. Giá trị null = xóa ô (đoạn ống bỏ trống thì chuỗi dừng, ra #N/A là chủ ý).
 Chép từ repo SKILL-PCCC-NEW (scripts/xuat_thuy_luc_excel.py); TKPCCC thêm --khong-hoan-thien (bỏ bước Excel COM) và
 bước hoàn thiện lỗi chỉ cảnh báo (số liệu đã ghi đúng, chỉ chưa ẩn dòng trống).
 """
@@ -47,17 +47,17 @@ def nhan_nut(nl, nr):
         rq = r + 2
         o[f'C{rq}'] = [('Q', False), (ten_q, True), (' = ', False)]
         o[f'K{r + 2 if dau in ("trai1", "phai1") else r + 1}'] = [('P', False), (ten_p, True), (' = ', False)]
-    for i in range(1, 6):  # trái: đầu i ở dòng 62 + 3(i-1)
-        r = 62 + 3 * (i - 1)
+    for i in range(1, 6):  # trái: đầu i ở dòng 61 + 3(i-1)
+        r = 61 + 3 * (i - 1)
         t = f'{i}-A' if i == nl else f'{i}-{i + 1}'
         hang('C', 'K', r, i, i, t, t, i == nl, 'trai1' if i == 1 else 'trai')
-    for e in range(1, 5):  # phải: đầu e ở dòng 77 + 3(e-1), nút a = nl + nr - e + 1
-        r = 77 + 3 * (e - 1)
+    for e in range(1, 5):  # phải: đầu e ở dòng 76 + 3(e-1), nút a = nl + nr - e + 1
+        r = 76 + 3 * (e - 1)
         a = nl + max(nr, e) - e + 1
         t = f'{a}-A' if e == nr else f'{a}-{a - 1}'
         hang('C', 'K', r, a, a, t, t, e == nr, 'phai1' if e == 1 else 'phai')
-    # hàng I đối xứng: chữ 'QI = 2 * Q5-A' (B99) theo nút cuối nhánh trái, mẫu ghi cứng 5
-    o['B99'] = [('Lưu lượng tại hàng I:         Q', False), ('I', True), ('= 2 * Q', False), (f'{nl}-A', True), (' =', False)]
+    # hàng I đối xứng: chữ 'QI = 2 * Q5-A' (B98) theo nút cuối nhánh trái, mẫu ghi cứng 5
+    o['B98'] = [('Lưu lượng tại hàng I:         Q', False), ('I', True), ('= 2 * Q', False), (f'{nl}-A', True), (' =', False)]
     return o
 
 
@@ -97,19 +97,19 @@ def set_cell(xml, ref, val):
 
 def o_tu_so_lieu(sl, ban_do):
     """Đổi số liệu theo tên (o_nhap.json) thành {ô: giá trị}."""
-    # TCVN 7336:2021 B.2.10.12 "QII=√Bp1Pb": lưu lượng hàng II theo áp nút b (N103 = D107), như F114, F122… của mẫu.
-    # Mẫu gốc ghi nhầm áp nút a (L101): lệch khi đoạn a-b tổn thất lớn (TKPCCC sửa 2026-11-01).
-    # Họng vách tường (người dùng chốt 2026-11-01): Bảng H.5/H.6 chỉ là yêu cầu tối thiểu (H18 = QBmin, so ở H20/I203);
-    # lưu lượng tính toán chạy trong ống vòng/cụt về bơm theo lăng tra Bảng H.7 (I162 = I160 × I161). Mẫu gốc D184 cộng H18.
-    o = {'F106': '=IF(D98="Đối xứng với nhánh phải",ROUND(SQRT(G100*N103),2),ROUND(SQRT(G96*N103),2))',
-         'D184': '=IF($D$182="Mạch cụt",F158+IF($H$182<>"SP và VT riêng",I162,0),(F158+IF($H$182<>"SP và VT riêng",I162,0))/2)'}
+    # TCVN 7336:2021 B.2.10.12 "QII=√Bp1Pb": lưu lượng hàng II theo áp nút b (N102 = D106), như F114, F122… của mẫu.
+    # Mẫu gốc ghi nhầm áp nút a (L100): lệch khi đoạn a-b tổn thất lớn (TKPCCC sửa 2026-11-01).
+    # Họng vách tường (người dùng chốt 2026-11-01): Bảng H.5/H.6 chỉ là yêu cầu tối thiểu (H21 = QHR, QBmin ở H23, so ở I202);
+    # lưu lượng tính toán chạy trong ống vòng/cụt về bơm theo lăng tra Bảng H.7 (I161 = I159 × I160). Mẫu gốc D183 cộng H21.
+    o = {'F105': '=IF(D97="Đối xứng với nhánh phải",ROUND(SQRT(G99*N102),2),ROUND(SQRT(G95*N102),2))',
+         'D183': '=IF($D$181="Mạch cụt",F157+IF($H$181<>"SP và VT riêng",I161,0),(F157+IF($H$181<>"SP và VT riêng",I161,0))/2)'}
     for k, v in sl.items():
         if k == 'o':
             o.update(v)
             continue
-        if k in ('hang_cuoi_bp', 'hang_rieng_bp'):  # hàng có cấu trúc riêng: chèn dòng tính sau khi ghi (chen_hang_cuoi.ps1); hàng II thì F106 dùng Bp J105
+        if k in ('hang_cuoi_bp', 'hang_rieng_bp'):  # hàng có cấu trúc riêng: chèn dòng tính sau khi ghi (chen_hang_cuoi.ps1); hàng II thì F105 dùng Bp J104
             if any(h['chi_so'] == 0 for h in (v if isinstance(v, list) else [v])):
-                o['F106'] = '=ROUND(SQRT(J105*N103),2)'
+                o['F105'] = '=ROUND(SQRT(J104*N102),2)'
             continue
         if k not in ban_do or k.startswith('_'):
             raise SystemExit(f'Không có khóa "{k}" trong o_nhap.json')
@@ -125,7 +125,7 @@ def o_tu_so_lieu(sl, ban_do):
                 o[hang['dn']] = d['dn'] if d else None
                 o[hang['l']] = d['l'] if d else None
         elif isinstance(bd, dict):  # nhóm ô (vd họng nước)
-            if k == 'hong':  # cuộn vòi: thiếu thì mặc định DN50, 20 m; Kp để công thức I166 tra theo DN (TCVN 4513-1988 mục 6.19: 50 mm 0,012; 66 mm 0,00385), chỉ ghi Kp khi số liệu có sẵn
+            if k == 'hong':  # cuộn vòi: thiếu thì mặc định DN50, 20 m; Kp để công thức I165 tra theo DN (TCVN 4513-1988 mục 6.19: 50 mm 0,012; 66 mm 0,00385), chỉ ghi Kp khi số liệu có sẵn
                 v = {**v, 'DN_voi': v.get('DN_voi') or 50, 'L_voi': v.get('L_voi') or 20}
                 if not v.get('Kp'):
                     v.pop('Kp', None)
@@ -151,7 +151,7 @@ def doi_so_nut(xml, drawing, nl, nr):
     """Đổi toàn bộ số nút cứng của mẫu: nhãn q/P/Q ở cột C, K (nhánh trái và phải), chữ M 'Q3-A2', và hình equation 'Q5-A', 'Q6-A'."""
     for ref, parts in nhan_nut(nl, nr).items():
         xml = set_cell(xml, ref, parts)
-    xml = xml.replace('Q3-A2/Paitrái', 'Q"&amp;$Q$60&amp;"-A2/Paitrái').replace('Q5-A2/Paiphai', 'Q"&amp;($Q$60+1)&amp;"-A2/Paiphai')
+    xml = xml.replace('Q3-A2/Paitrái', 'Q"&amp;$Q$59&amp;"-A2/Paitrái').replace('Q5-A2/Paiphai', 'Q"&amp;($Q$59+1)&amp;"-A2/Paiphai')
     if drawing:  # hình equation: nút cuối nhánh trái = nl, nút cuối nhánh phải = nl + 1 (mẫu ghi cứng 5 và 6)
         so = lambda m: str(nl if m.group(1) == '5' else nl + 1)
         drawing = re.sub(r'(?<=<m:t>)([56])(?=−</m:t>)', so, drawing)  # equation: số nút và "−" nằm trong m:t riêng, chữ A ở m:t kế tiếp
@@ -214,7 +214,7 @@ if __name__ == '__main__':
     if hr and not hoan_thien:
         raise SystemExit('Số liệu có hàng thiếu đầu: cần Excel trên máy để chèn dòng tính (bỏ --khong-hoan-thien)')
     for hc in sorted(hr, key=lambda h: -h['chi_so']):  # chèn từ dưới lên: dòng phía trên không bị dời
-        if not ps('chen_hang_cuoi.ps1', str(105 + 8 * hc['chi_so'] if hc['chi_so'] < 6 else 154), ds(hc['trai']), ds(hc.get('phai'))):
+        if not ps('chen_hang_cuoi.ps1', str(104 + 8 * hc['chi_so'] if hc['chi_so'] < 6 else 153), ds(hc['trai']), ds(hc.get('phai'))):
             raise SystemExit('chen_hang_cuoi.ps1 lỗi (cần Excel trên máy): hàng thiếu đầu chưa được tính đúng trong file')
     if hoan_thien and not ps('hoan_thien_excel.ps1'):  # hiện dòng có số liệu, ẩn dòng trống/#N/A
         print('CẢNH BÁO: chưa ẩn được dòng trống (cần Excel trên máy); số liệu trong file vẫn đúng')

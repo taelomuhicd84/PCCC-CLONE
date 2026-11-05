@@ -57,12 +57,13 @@ export function soLieuExcel(soLieu: SoLieuThuyLuc, khoa: string[]): { json: Reco
   const json: Record<string, unknown> = { ...x, nhanh_trai: sach(x.nhanh_trai), nhanh_phai: sach(x.nhanh_phai), ong_chinh: sach(x.ong_chinh), vong: vongMau(x.vong ?? [], ghi_chu) };
   if (K) { // lõi tính theo K khi có, nên Excel cũng phải dùng đúng K đó
     json.K_gpm = +((K * Math.sqrt(0.00689476)) / 0.0630902).toFixed(3);
-    ghi_chu.push(`K = ${K} l/(s·MPa^0,5) đổi thành K = ${json.K_gpm} gpm/psi^0,5 (ô H14).`);
+    ghi_chu.push(`K = ${K} l/(s·MPa^0,5) đổi thành K = ${json.K_gpm} gpm/psi^0,5 (ô H17).`);
   }
   if (PH) ghi_chu.push(`Excel mẫu chưa có ô áp lực đầu vào PH = ${PH} MPa: cột áp bơm trong Excel chưa trừ PH.`);
   if ([...x.nhanh_trai, ...(x.nhanh_phai ?? []), ...x.ong_chinh, ...(x.vong ?? [])].some((d) => d.kt)) {
     ghi_chu.push("Có đoạn ghi KT riêng: Excel mẫu tra KT theo DN (TCVN 7336 Bảng B.2), số có thể lệch kết quả trên web.");
   }
+  if (json.S !== undefined && json.S_tt === undefined) json.S_tt = json.S; // mẫu mới có Stt (H9) riêng, không để số cũ của file mẫu
   const nd = nhanDienMang(soLieu);
   json.doi_xung = nd.doi_xung && !nd.mot_phia ? "Đối xứng với nhánh phải" : "Không đối xứng với nhánh phải";
   json.so_nhanh = nd.mot_phia ? "1 nhánh" : "2 nhánh";

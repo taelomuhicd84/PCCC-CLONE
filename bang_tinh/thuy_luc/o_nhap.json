@@ -1,48 +1,49 @@
 {
   "_ghi_chu": "Bản đồ ô nhập của MAU_THUY_LUC_7336.xlsx, sheet 'SP chung voi HR'. Đơn vị: Q l/s, P MPa, L m, DN mm. Dãy đoạn ống: phần tử thứ i là đoạn từ đầu phun i tới đầu i+1 (đoạn cuối tới nút nhánh); bỏ trống thì chuỗi dừng (ra #N/A là chủ ý). Mẫu hỗ trợ tối đa 5 đầu/nhánh, 7 đoạn ống chính (8 hàng). Vòng: đúng 4 dòng nối cứng (3 dòng chia đôi lưu lượng, dòng cuối F-J cả lưu lượng), không bỏ trống, đoạn thiếu ghi L = 0; scripts/thuy_luc.ts tự xếp.",
-  "nhom": {"o": "H6", "ghi": "'Nhóm 1'…'Nhóm 7' (TCVN 7336 Phụ lục A); quyết định diện tích bảo vệ 1 đầu H12 = 12 m2 (nhóm 1–3) hoặc 9 m2"},
+  "nhom": {"o": "H6", "ghi": "'Nhóm 1'…'Nhóm 7' (TCVN 7336 Phụ lục A); chỉ để kiểm Ω H13 = S_tt / n ≤ 12 m2 (nhóm 1–3) hoặc 9 m2"},
   "mo_ta": {"o": "B7", "ghi": "Công trình, nhóm nguy cơ phát sinh cháy (TCVN 7336 Phụ lục A)"},
   "S": {"o": "H8", "dv": "m2", "ghi": "Diện tích tính toán tối thiểu (Bảng 1/3)"},
-  "i_min": {"o": "H9", "dv": "l/s.m2", "ghi": "Cường độ phun tối thiểu"},
-  "Q_min": {"o": ["H10", "H17"], "dv": "l/s", "ghi": "Lưu lượng tối thiểu sprinkler (Bảng 1/2/3)"},
-  "n": {"o": "H11", "dv": "đầu", "ghi": "Số đầu phun hoạt động đồng thời"},
-  "q1": {"o": "H13", "dv": "l/s", "ghi": "Lưu lượng đầu chủ đạo; mặc định =H12*H9 (diện tích bảo vệ 1 đầu × cường độ), ghi số để đổi (vd tăng để đạt Qmin)"},
-  "K_gpm": {"o": "H14", "dv": "gpm/psi^0,5", "ghi": "Hệ số K đầu phun (tài liệu hãng)"},
-  "Q_ngoai_nha": {"o": "H19", "dv": "l/s", "ghi": "Chữa cháy ngoài nhà nếu chung bơm, 0 nếu không"},
-  "doi_xung": {"o": "D98", "ghi": "'Đối xứng với nhánh phải' hoặc 'Không đối xứng với nhánh phải'"},
-  "so_nhanh": {"o": "O77", "ghi": "'2 nhánh' hoặc '1 nhánh' (chỉ nhánh trái: q4…q5 nhánh phải = 0, QI = Q nhánh trái, không nhân đôi)"},
-  "mang": {"o": "D182", "ghi": "'Mạch vòng' (mỗi nửa vòng ½ lưu lượng) hoặc 'Mạch cụt' (cả lưu lượng), TCVN 7336 B.2.12"},
-  "mach_vt": {"o": "H182", "ghi": "'SP + VT chung' (họng vách tường đi chung ống sprinkler: QVT cộng vào ống vòng/cụt, so áp PVT tại nút) hoặc 'SP và VT riêng' (ống sprinkler chỉ mang Q sprinkler, QVT cộng ở bơm I203)"},
-  "Z": {"o": "L200", "dv": "MPa", "ghi": "Chênh cao đầu phun chủ đạo so với trục bơm, H/100"},
+  "S_tt": {"o": "H9", "dv": "m2", "ghi": "Diện tích tính toán thực tế (mặc định =H8); Qtt H12 = S_tt × i_min"},
+  "i_min": {"o": "H10", "dv": "l/s.m2", "ghi": "Cường độ phun tối thiểu"},
+  "Q_min": {"o": ["H11", "H20"], "dv": "l/s", "ghi": "Lưu lượng tối thiểu sprinkler (Bảng 1/2/3)"},
+  "n": {"o": "H14", "dv": "đầu", "ghi": "Số đầu phun hoạt động đồng thời theo thiết kế (bản vẽ); Ω H13 = S_tt / n (công thức)"},
+  "q1": {"o": "H16", "dv": "l/s", "ghi": "Lưu lượng đầu chủ đạo thực tế; mặc định =H15 (q1min = Ω × cường độ), ghi số để đổi (vd tăng để đạt Qmin)"},
+  "K_gpm": {"o": "H17", "dv": "gpm/psi^0,5", "ghi": "Hệ số K đầu phun (tài liệu hãng)"},
+  "Q_ngoai_nha": {"o": "H22", "dv": "l/s", "ghi": "Chữa cháy ngoài nhà nếu chung bơm, 0 nếu không"},
+  "doi_xung": {"o": "D97", "ghi": "'Đối xứng với nhánh phải' hoặc 'Không đối xứng với nhánh phải'"},
+  "so_nhanh": {"o": "O76", "ghi": "'2 nhánh' hoặc '1 nhánh' (chỉ nhánh trái: q4…q5 nhánh phải = 0, QI = Q nhánh trái, không nhân đôi)"},
+  "mang": {"o": "D181", "ghi": "'Mạch vòng' (mỗi nửa vòng ½ lưu lượng) hoặc 'Mạch cụt' (cả lưu lượng), TCVN 7336 B.2.12"},
+  "mach_vt": {"o": "H181", "ghi": "'SP + VT chung' (họng vách tường đi chung ống sprinkler: QVT cộng vào ống vòng/cụt, so áp PVT tại nút) hoặc 'SP và VT riêng' (ống sprinkler chỉ mang Q sprinkler, QVT cộng ở bơm I203)"},
+  "Z": {"o": "L199", "dv": "MPa", "ghi": "Chênh cao đầu phun chủ đạo so với trục bơm, H/100"},
   "nhanh_trai": [
-    {"b": "B62", "dn": "F62", "l": "I62"}, {"b": "B65", "dn": "F65", "l": "I65"}, {"b": "B68", "dn": "F68", "l": "I68"},
-    {"b": "B71", "dn": "F71", "l": "I71"}, {"b": "B74", "dn": "F74", "l": "I74"}
+    {"b": "B61", "dn": "F61", "l": "I61"}, {"b": "B64", "dn": "F64", "l": "I64"}, {"b": "B67", "dn": "F67", "l": "I67"},
+    {"b": "B70", "dn": "F70", "l": "I70"}, {"b": "B73", "dn": "F73", "l": "I73"}
   ],
   "nhanh_phai": [
-    {"b": "B77", "dn": "F77", "l": "I77"}, {"b": "B80", "dn": "F80", "l": "I80"}, {"b": "B83", "dn": "F83", "l": "I83"},
-    {"b": "B86", "dn": "F86", "l": "I86"}
+    {"b": "B76", "dn": "F76", "l": "I76"}, {"b": "B79", "dn": "F79", "l": "I79"}, {"b": "B82", "dn": "F82", "l": "I82"},
+    {"b": "B85", "dn": "F85", "l": "I85"}
   ],
   "ong_chinh": [
-    {"dn": "F101", "l": "I101"}, {"dn": "F109", "l": "I109"}, {"dn": "F117", "l": "I117"}, {"dn": "F125", "l": "I125"},
-    {"dn": "F133", "l": "I133"}, {"dn": "F141", "l": "I141"}, {"dn": "F150", "l": "I150"}
+    {"dn": "F100", "l": "I100"}, {"dn": "F108", "l": "I108"}, {"dn": "F116", "l": "I116"}, {"dn": "F124", "l": "I124"},
+    {"dn": "F132", "l": "I132"}, {"dn": "F140", "l": "I140"}, {"dn": "F149", "l": "I149"}
   ],
   "hong": {
-    "so_tia": {"o": "I160", "ghi": "QCVN 10:2025 Bảng H.5/H.6"},
-    "q_tia_h6": {"o": "H18", "cong_thuc": "=I160*{}", "dv": "l/s", "ghi": "Lưu lượng 1 tia theo Bảng H.6 (thường 2,5): ghi vào công thức QBmin H18 = I160 × q_tia_h6"},
-    "q_tia": {"o": "I161", "dv": "l/s", "ghi": "Lưu lượng lăng tra Bảng H.7 theo chiều cao tia đặc cần (thường 2,6), dùng cho bơm và bể; số tia theo H.5/H.6"},
-    "P_lang": {"o": "I163", "dv": "MPa", "ghi": "Áp lăng phun (Bảng H.7, đã gồm cuộn vòi 10/15/20 m)"},
-    "DN_voi": {"o": "I164", "dv": "mm"},
-    "L_voi": {"o": "I165", "dv": "m"},
-    "Kp": {"o": "I166", "ghi": "Hệ số sức cản cuộn vòi"},
-    "DN_1": {"o": "I170", "dv": "mm", "ghi": "Ống nhánh 1 (họng tới ống chính)"},
-    "L_1": {"o": "I171", "dv": "m"},
-    "A_1": {"o": "I173", "dv": "s2/l6", "ghi": "TCVN 7336 Bảng B.1"},
-    "DN_2": {"o": "I176", "dv": "mm"},
-    "L_2": {"o": "I177", "dv": "m"},
-    "A_2": {"o": "I179", "dv": "s2/l6"}
+    "so_tia": {"o": "I159", "ghi": "QCVN 10:2025 Bảng H.5/H.6"},
+    "q_tia_h6": {"o": "H21", "cong_thuc": "=I159*{}", "dv": "l/s", "ghi": "Lưu lượng 1 tia theo Bảng H.6 (thường 2,5): ghi vào công thức QHR H21 = I159 × q_tia_h6"},
+    "q_tia": {"o": "I160", "dv": "l/s", "ghi": "Lưu lượng lăng tra Bảng H.7 theo chiều cao tia đặc cần (thường 2,6), dùng cho bơm và bể; số tia theo H.5/H.6"},
+    "P_lang": {"o": "I162", "dv": "MPa", "ghi": "Áp lăng phun (Bảng H.7, đã gồm cuộn vòi 10/15/20 m)"},
+    "DN_voi": {"o": "I163", "dv": "mm"},
+    "L_voi": {"o": "I164", "dv": "m"},
+    "Kp": {"o": "I165", "ghi": "Hệ số sức cản cuộn vòi"},
+    "DN_1": {"o": "I169", "dv": "mm", "ghi": "Ống nhánh 1 (họng tới ống chính)"},
+    "L_1": {"o": "I170", "dv": "m"},
+    "A_1": {"o": "I172", "dv": "s2/l6", "ghi": "TCVN 7336 Bảng B.1"},
+    "DN_2": {"o": "I175", "dv": "mm"},
+    "L_2": {"o": "I176", "dv": "m"},
+    "A_2": {"o": "I178", "dv": "s2/l6"}
   },
   "_hang_cuoi_ghi": "Hàng cuối thiếu đầu (C07): khóa hang_cuoi_bp {chi_so, trai, phai} trong so_lieu; xuat_thuy_luc_excel.py gọi scripts/chen_hang_cuoi.ps1 (Excel COM) chèn dòng tính ngay tại nút hàng cuối, Bp1 của nút trỏ về các dòng đó",
   "vong": [
-    {"dn": "F184", "l": "I184"}, {"dn": "F187", "l": "I187"}, {"dn": "F190", "l": "I190"}, {"dn": "F193", "l": "I193"}
+    {"dn": "F183", "l": "I183"}, {"dn": "F186", "l": "I186"}, {"dn": "F189", "l": "I189"}, {"dn": "F192", "l": "I192"}
   ]
 }
