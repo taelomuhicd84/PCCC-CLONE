@@ -32,7 +32,7 @@ xanh dương: từ góc P. ngủ 06 (757, 623) → (757, 456) → (333, 457) →
    sàn mái, > 30% mới tính 1 tầng. Ghi vào skill khảo sát + `KS.json` dòng 1. Ô Quy mô Excel BCKS Q.4 (vẫn ghi "4 tầng nếu có WC") chưa sửa.
 6. ⏳ Phiên riêng đang làm sơ đồ node công việc (Artifact, thêm nút, nối, xem nội dung): xem phiên "Sơ đồ node công việc TKPCCC".
 Việc tiếp theo:
-0. (05/11) Excel thủy lực MỚI của người dùng: đã ghi tư duy vào skill + knowledge. ĐÃ đồng bộ code (o_nhap, 3 script, test, lõi thêm S_tt + cảnh báo Ω); npm test 57 đạt, xuất vi_du qua Excel COM không lỗi. Qsp = Qmintt (người dùng chốt 05/11). CÒN: xem lại ảnh Excel xuất (hàng ẩn/hiện) bằng mắt; ô L196/N196 mẫu còn nhắc "H13".
+0. (05/11) Excel thủy lực MỚI của người dùng: đã ghi tư duy vào skill + knowledge. ĐÃ đồng bộ code (o_nhap, 3 script, test, lõi thêm S_tt + cảnh báo Ω); npm test 57 đạt, xuất vi_du qua Excel COM không lỗi. Qsp = Qmintt (người dùng chốt 05/11). CÒN: xem lại ảnh Excel xuất (hàng ẩn/hiện) bằng mắt; (đã sửa N196).
 1. 👤 Người dùng train skill VẼ HỆ THỐNG PCCC (sau khi kết luận "không có hệ thống"): báo cháy độc lập, đèn sự cố + EXIT, bình, dụng cụ phá dỡ,
    mặt nạ cho Q4 (tư liệu: `ket_qua/q4_tham_dinh/phan/B1.json`, `B12.json`, `B13.json`).
 2. Hồ sơ thẩm định kế tiếp: chạy agent với job mới, đo lại token (so với KT 81–151: 92 lượt, 23 triệu token đọc lại ngữ cảnh).
