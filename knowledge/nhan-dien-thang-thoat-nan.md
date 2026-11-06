@@ -91,3 +91,32 @@ Kết luận đúng: không có phương án khả thi, cần người dùng xem
 - Cửa chống cháy: người dùng dặn "cửa chống cháy là ngay cửa phòng" (đặt ngay tại cửa phòng, không đặt xa ở chỗ khác). Cách áp dụng
   với PA1 đóng kín buồng thang chưa được người dùng nói rõ: khi gặp, ghi vị trí cửa chống cháy tại cửa phòng và "cần người dùng xem xét".
 
+## Tách thang hầm → tầng 1 khỏi thang các tầng trên → tầng 1 (người dùng train 2026-11-05, hồ sơ Nguyễn Viết Thanh)
+Ảnh mẫu người dùng vẽ: `knowledge/hinh/tach_thang_ham_tret_PA_tang1.png` (tầng 1), `knowledge/hinh/tach_thang_ham_tret_PA_ham.png` (hầm).
+Hình QCVN 06 tham khảo: `knowledge/hinh/qcvn06_hinh_I1_loi_ra_ham_truc_tiep.png` (Hình I.1: lối ra từ hầm trực tiếp ra ngoài), `knowledge/hinh/qcvn06_hinh_I2_loi_ra_ham_qua_sanh.png` (Hình I.2: từ hầm lên sảnh tầng 1 rồi có lối đi riêng ra ngoài).
+- MÀU ĐỎ = tường quây kín buồng thang (hầm và tầng 1; ở tầng 1 có thêm vách ngăn cháy loại 1 chia buồng thang làm hai phần: phần thang hầm lên và phần thang các tầng trên xuống).
+- MÀU XANH LÁ = cửa đi từ hầm lên tầng 1 (lối ra riêng của thang hầm). MÀU XANH DƯƠNG = cửa đi từ các tầng trên xuống tầng 1. Mỗi cửa có mũi tên ghi "≥ 900 mm".
+- Thang hầm chỉ lên tới sàn tầng 1; thang các tầng trên chỉ xuống tới sàn tầng 1; hai phần ngăn bằng vách ngăn cháy loại 1, mỗi phần có cửa riêng ra tầng 1/ngoài nhà (Hình I.1, I.2).
+- Vẽ lên PDF: tường ngăn, vách ngăn, cửa chống cháy mỗi thứ có CHÚ THÍCH KÉO MŨI TÊN THẲNG RA ghi rõ "Tường ngăn cháy …", "Cửa chống cháy EI … (từ hầm lên T1)", "(từ các tầng xuống T1)"; ảnh cắt các chỗ đó đưa vào cột GHI CHÚ của BCKS.
+- HƯỚNG CỬA VÀ CHIẾU TRỐNG (người dùng sửa 2026-11-05, lỗi: tường đặt sát mép bậc, cửa quét vào vế): tường quây buồng thang đặt CÁCH mép bậc
+  đầu vế ≥ 900 mm (≥ bề rộng bản thang) để có chiếu trống mở cửa; không đặt tường sát mép bậc. Cửa ≥ 900 mm mở theo chiều thoát nạn:
+  tầng trên và hầm mở VÀO buồng thang, tầng 1 (lối ra) mở RA ngoài buồng thang; cánh cửa quét trong chiếu trống, không chạm vế, không
+  lấn chiếu (3.4.3). Chỗ đặt cửa: tường có khoảng trống 900 mm phía trước (thường tường đầu vế phía sảnh, hoặc tường bên ở đầu chiếu);
+  phía ngoài cửa mở ra cũng phải còn ≥ 900 mm (vd khe giữa thang máy và buồng thang). Mẫu Nguyễn Viết Thanh: tầng 1 cửa xanh dương ở tường
+  trên mở ra sảnh, cửa xanh lá ở tường trái mở ra phía thang máy (khe ≈ 0,92 m); hầm cửa ở tường trái mở vào buồng thang.
+- TỰ KIỂM SAU KHI VẼ (lỗi 2026-11-05, Nguyễn Viết Thanh lửng, T2+3, T4): đo CHIẾU TẦNG = khoảng từ tường mới tới mép bậc đầu vế. Phải
+  ≥ bề rộng bản thang VÀ cánh cửa mở vào không quét vào phần đó (3.4.3), tức cửa không được nằm ngay đầu vế. Ở đây thang máy nằm sát
+  đầu vế nên tường mới chỉ cách mép bậc ≈ 0,8 m, cửa ở tường trên đặt ngay đầu vế trên: mở ra là chạm bậc, không có chỗ đứng. Tầng 1
+  (≈ 1,6 m) và hầm (≈ 1,7 m) thì đủ. Khi khe trước đầu vế không đủ: mở rộng buồng thang sang phía sảnh (có thể đưa thang máy vào trong
+  buồng thang, xét 3.4.6) hoặc báo "cần người dùng xem xét"; không vẽ cửa ở chỗ không có chiếu trống.
+- VẼ ĐÚNG MẪU NGƯỜI DÙNG (lỗi 2026-11-06): khi người dùng đã vẽ mẫu phương án thì vẽ theo đúng mẫu đó (màu: tường quây ĐỎ, cửa từ hầm lên
+  XANH LÁ, cửa từ các tầng xuống XANH DƯƠNG; mũi tên ghi ">= 900 mm"; tường quây sát buồng thang, cửa ở tường trên đầu vế mở ra phía sảnh),
+  áp cho mọi tầng có thang; không tự nghĩ phương án khác (đã tự mở rộng buồng thang bao thang máy: sai). Chữ trên bản vẽ dùng ">=" thay "≥"
+  vì font annotation không có ký tự ≥ (hiện thành "·").
+- ĐỌC MẪU KỸ (lỗi 2026-11-06: đọc ảnh mẫu ở độ phân giải thấp, đặt sai cửa): phóng to ảnh mẫu (PIL crop + resize x4) trước khi chép, đổi tọa độ
+  ảnh mẫu → px bản vẽ bằng 2 trục lưới. Mẫu Nguyễn Viết Thanh đọc đúng: TẦNG 1 hộp đỏ quanh thang; vách ngăn cháy loại 1 chạy từ mặt giếng
+  thang máy theo tay vịn; phần trên có tường trái riêng, cửa xanh dương ở tường TRÊN đầu trái mở ra sảnh; phần dưới kéo sang tới thang máy,
+  cửa xanh lá nằm TRONG đoạn vách giữa thang máy và buồng thang, mở lên phía sảnh (đi qua khe thang máy – buồng thang); chiếu trước mỗi cửa
+  ≥ 900 mm (hai mũi tên ">=900mm"). HẦM hộp đỏ dạng bậc: đoạn trái thấp (tường trên theo tay vịn), đoạn phải cao tới mép trên thang; cửa xanh
+  lá ở tường trên đoạn trái, giữa thang máy và đầu vế, chiếu ≈ 1,0 m. Tầng trên: chiếu từ mặt giếng thang máy tới mép bậc ≈ 0,96 m (đo từ
+  mặt ngoài tường giếng, không đo từ tường mới vẽ lệch).

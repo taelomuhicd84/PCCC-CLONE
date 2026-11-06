@@ -2,7 +2,29 @@
 
 File này cập nhật sau mỗi mốc việc và trước khi hết usage. Phiên mới đọc mục "ĐANG LÀM / VIỆC TIẾP THEO" trước.
 
-## ĐANG LÀM / VIỆC TIẾP THEO (cập nhật 2026-11-03 chiều)
+## ĐANG LÀM / VIỆC TIẾP THEO (cập nhật 2026-11-06)
+**CHỜ (06/11): người dùng giao lập BCKS từ `C:\Users\HP\Downloads\ĐƯỜNG PHAM NGÕ1 LÀO 7,5 mét.pdf`** (đường/ngõ 1 Lào 7,5 m; chưa đọc, chưa làm).
+Dừng vì usage tuần 91 % (reset 06/11 21:59 UTC ≈ 04:59 07/11 UTC+7); cửa sổ 5 giờ 16 %. Máy không có pdftoppm nên Read PDF lỗi: render bằng
+`ghi_chu_pdf.py luoi … --trang N --zoom 1.6`. Việc kế: chạy skill `tkpccc-khao-sat-tu-van` từ bước 0 (`ket_qua/<tên>/`).
+**XONG 05/11 (người dùng bảo làm tiếp): BCKS "BVXP ĐIỀU CHỈNH - NGUYỄN VIẾT THANH"** đã ra đủ file ở `ket_qua/nguyen_viet_thanh/` (BCKS xlsx + pdf, ban_ve_ghi_chu.pdf, bang_doi_chieu.md, doi_chieu.xlsx; 27 dòng KS: 2 ĐẠT, 14 CẦN XÁC NHẬN, 7 KHÔNG ÁP DỤNG, 4 thông tin). Còn 👤 người dùng xem; TCVN 13967:2024 (nhà ở riêng lẻ) chưa nạp nên thang/số lối để CẦN XÁC NHẬN. Phần dưới là ghi chú lúc dừng.
+Cập nhật 05/11 chiều: người dùng sửa BCKS kinh doanh, đã học và áp cho 3 bản (kết quả cuối ở `.../v4/`): công năng chỉ ghi người dùng cấp (kinh doanh: hầm để xe, T1 dạy tiếng Anh, T2 văn phòng, T3–4 ở) và ghi 1 góc bản vẽ; BCKS không ngoặc giải thích, không khuyến nghị, thêm chống sét; bỏ ngăn cháy KD/ở và lối ra thứ hai; thêm tách thang hầm–T1 (tường quây + vách ngăn + 2 cửa EI 60, ghi chú mũi tên) xem `knowledge/nhan-dien-thang-thoat-nan.md`, ảnh mẫu ở `knowledge/hinh/`. Bài học ghi `knowledge/hoc/du-an/so-bo-thiet-ke.md`. Còn lại: xác nhận số 126 m³ bể hầm; vị trí tường/cửa trên PDF cần người dùng xem; cho_thue còn cảnh báo kiem "khung 9 chưa vẽ".
+Thêm 05/11: 2 biến thể công năng cho cùng bản vẽ: `ket_qua/nguyen_viet_thanh/kinh_doanh/` (nhà ở kết hợp kinh doanh, giả định kinh doanh T1 ≈ 19 % sàn: không bắt buộc hệ thống, hầm xe máy CẦN XÁC NHẬN) và `cho_thue/` (căn hộ cho thuê F1.2, lửng tính tầng ⇒ 5 tầng nổi: CHƯA ĐẠT thang hở 3.4.16, báo cháy tự động, họng nước + bơm, bình/dụng cụ/mặt nạ; cần bể nước). Sinh bằng `ket_qua/nguyen_viet_thanh/bien_the.py` từ `doi_chieu.json` gốc.
+Người dùng giao lập báo cáo khảo sát từ `C:\Users\HP\Downloads\BVXP ĐIỀU CHỈNH - NGUYỄN VIẾT THANH-KQ-signed(1)-signed(1)-signed(1)-signed(1).pdf`
+(đã chép `ket_qua/nguyen_viet_thanh/ban_ve.pdf`, 2 trang; `doi_chieu.json` mới `lamviec KS`, CHƯA điền; `anh/` có luoi_1/2.png và ảnh cắt thang t_*.png).
+Chạy skill `tkpccc-khao-sat-tu-van` từ bước 1. Đã nhận diện (chưa ghi vào JSON):
+- Trang 1: tổng mặt bằng, MB tầng 1, MB hầm, mặt đứng, mặt cắt A-A, khung tên. Trang 2: MB lửng, 2+3, 4, mái che cầu thang, mái, móng, HTH.
+  Nhà ở RIÊNG LẺ (F1.4) ông Nguyễn Viết Thanh, bà Trần Thị Tuyết Như; 12 Đường số 11, KP3, P. Linh Trung (nay P. Linh Xuân), TP.HCM;
+  thửa 542, tờ 105, 261,8 m²; GPXD 212/GPXD 25/06/2026, điều chỉnh lần 1 số 280/PLGPXD 29/07/2026; thiết kế Phú Thiện Phát.
+- Cao độ: hầm -1,650 (đỗ xe máy, ram dốc i = 18 %, có ram cong), T1 +0,700, lửng +3,250, T2 +5,800, T3 +8,800, T4 +11,800, sân thượng +14,800,
+  mái che thang +17,800, đỉnh +19,000. Hầm cao 2,6 m, sâu 1,65 m (> 1/2 nên là tầng hầm). 8 trục, dài 24 m, rộng 8,43 m (đầu trái) → 4,55 m (đầu phải);
+  mỗi tầng ≈ 170 m² (TỰ TÍNH thô, tính lại bằng đa giác). Lửng có ô thông tầng lớn bên trái nên ≈ 50 % T1 (≤ 65 % thì không tính tầng, kiểm lại).
+  Tum chỉ che thang + thang máy ≈ 16,5 m² so với sân thượng ≈ 190 m² (≈ 9 % < 30 %) ⇒ không tính tầng (luật tầng thượng 03/11).
+  Sơ bộ 4 tầng nổi + hầm 1; chiều cao PCCC ≈ +11,8 m + mép dưới cửa sổ (chốt theo 3.5 QCVN 06); nhãn công năng: PHÒNG NGỦ khoảng 9, P. SHC, WC, bếp, phòng khách.
+- Thang: MỘT thang bộ + MỘT thang máy cạnh nhau ở giữa nhà (trục 3–5); thang 2 vế thẳng + chiếu nghỉ phẳng, không bậc chéo, vế ≈ 0,95–1,1 m (đo sơ);
+  KHÔNG có buồng thang đóng kín (hở vào P. SHC mọi tầng, không cửa); thang máy ngoài buồng. Hầm: ram dốc + thang nhỏ cạnh thang máy. Chưa xem mặt cắt (hầm → T1).
+  Cần xét: đóng kín buồng thang, tách thang hầm, số lối (1 thang) theo 3.2.6.2, lối ra mái, báo cháy, hầm xe máy (bài học Lưu Xuân Lộc: sprinkler hầm + bể 126 m³).
+Việc kế: đọc `knowledge/hoc/du-an/so-bo-thiet-ke.md`, `knowledge/nhan-dien-thang-thoat-nan.md`; điền 27 dòng KS; ghi chú PDF (PA đóng kín buồng thang); `kiem`, `xlsx`, `md`, `bcks`; XEM ảnh; gửi file.
+
 **DỞ (03/11, dừng vì usage 5 giờ 99 %; reset ≈ 12:10 UTC+7, tuần 82 %): sửa Q.4 theo bài train "đường thoát nạn đo từ vị trí xa nhất
 TRONG PHÒNG" (`knowledge/nhan-dien-thang-thoat-nan.md`).** File người dùng gửi: `C:\Users\HP\Downloads\ban_ve_ghi_chu.pdf` (trang 5 Lầu 2, 3 nét
 xanh dương: từ góc P. ngủ 06 (757, 623) → (757, 456) → (333, 457) → (330, 339) px@1.6; dài ≈ 9,2 m). Việc làm tiếp, theo thứ tự:

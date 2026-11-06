@@ -206,8 +206,9 @@ def ve_muc(page: pymupdf.Page, muc: dict, k: float) -> list:
                 for i in range(13)]
         tao.append(but.net([tam, cung[-1]], mau, day=1.5))          # cánh mở 90°
         tao.append(but.net(cung, mau, day=0.8, net_dut=True))       # cung quét
-        muc = {**muc, "nhan": muc.get("nhan") or muc.get("loai")}
-        tao += _nhan(but, muc, cung[6], mau, k)
+        if muc.get("nhan") is not False:      # "nhan": false = không hiện nhãn (ô nhãn nền trắng che nét khi vẽ chật)
+            muc = {**muc, "nhan": muc.get("nhan") or muc.get("loai")}
+            tao += _nhan(but, muc, cung[6], mau, k)
     for a in tao:
         but._info(a, muc, kieu)
         a.update()
