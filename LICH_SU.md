@@ -167,3 +167,6 @@
 
 ## 2026-11-05
 - Người dùng cập nhật Excel thủy lực mới (Smin/Stt, Qtt, Ω = Stt/ntt,tk, q1min). Ghi tư duy tính vào `tkpccc-thuy-luc/SKILL.md` và `knowledge/kiem-bang-tinh-thuy-luc-7336.md`; script/bản đồ ô chưa đồng bộ (xem TIEN_DO).
+
+## 2026-11-06 (toi)
+- BCKS "Nha pho - Can ho dich vu 8m": doc xong 8 trang ban ve, nhan dien ghi trong TIEN_DO.md; dung vi usage tuan 95 %, chua lap doi_chieu.json.
