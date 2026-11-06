@@ -48,7 +48,7 @@ Màu `mau`: `do` = CHƯA ĐẠT · `cam` = CẦN XÁC NHẬN, thiếu số liệ
 3. Phương án điều chỉnh: vẽ bằng kiểu có nghĩa (`tuong`, `cua`, `net` đường thoát nạn), mỗi mục có `phuong_an` + `nhan`;
    mỗi phương án một màu (PA1 tím, PA2 xanh lá); comment ghi khả thi hay không và vì sao.
    Đóng kín buồng thang (người dùng dặn 2026-11-02): vẽ buồng thang bằng `tuong` NÉT LIỀN KHÉP KÍN (cả tường có sẵn lẫn tường mới) +
-   `cua` + `cung` vế thang ở mọi đầu vế giáp chiếu tầng, cho TẤT CẢ các tầng có thang (hầm, tầng 1, lửng, tầng điển hình, tầng thượng),
+   `cua` (KHÔNG vẽ `cung` vế thang trừ khi người dùng bảo, 2026-11-06; chỉ note, xem `knowledge/nhan-dien-thang-thoat-nan.md`) ở mọi đầu vế giáp chiếu tầng, cho TẤT CẢ các tầng có thang (hầm, tầng 1, lửng, tầng điển hình, tầng thượng),
    không chỉ tầng điển hình.
 4. Trang đầu có mục `chu`: "TƯ VẤN SƠ BỘ PCCC (ngày) – tham khảo, không phải kết luận thẩm định" hoặc "THẨM ĐỊNH SƠ BỘ PCCC (ngày)".
 5. Luôn chạy `ve --anh` rồi XEM ảnh, sửa tọa độ tới khi khung trùng hạng mục và chữ không đè nét chính của bản vẽ.

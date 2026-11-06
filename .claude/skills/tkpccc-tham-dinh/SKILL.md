@@ -13,7 +13,7 @@ dùng làm bước sàng lọc). Agent: `pccc-xay-dung` (bảng KT), `pccc-he-th
    thiếu thì ghi `cong_trinh.thieu` VÀ comment cam trên bản vẽ ở chỗ lẽ ra có số liệu.
 2. Bốn kết luận: ĐẠT · CHƯA ĐẠT · CẦN XÁC NHẬN · KHÔNG ÁP DỤNG, lý do có số. Thiếu dữ liệu thì CẦN XÁC NHẬN, nêu cần gì; không đoán.
 3. CHƯA ĐẠT phải có phương án điều chỉnh: ưu tiên ít thay đổi kiến trúc; nêu khả thi hay không trên mặt bằng, ảnh hưởng hệ thống kèm theo
-   (tăng áp, sprinkler…); vẽ phương án lên PDF. Thang thoát nạn làm đủ quy trình `knowledge/nhan-dien-thang-thoat-nan.md`.
+   (tăng áp, sprinkler…); vẽ phương án lên PDF. Cung vế thang và cánh cửa: kiểm không giao nhau, chỉ note, không vẽ cung trừ khi người dùng bảo (2026-11-06, `knowledge/nhan-dien-thang-thoat-nan.md` bước 3). Thang thoát nạn làm đủ quy trình `knowledge/nhan-dien-thang-thoat-nan.md`.
 4. Chỉ trích điều khoản có trong `knowledge/`, `skills/` hoặc cột Quy định của bảng chính thức; văn bản hết hiệu lực không làm căn cứ.
 5. Chỉ báo cáo; không hỏi người dùng chọn phương án. Điểm luật không rõ: "cần người dùng xem xét" kèm căn cứ. Thiếu kiến thức: nhờ người dùng train.
 6. Hồ sơ khách nằm trong `ket_qua/<dự án>/`, không commit.
