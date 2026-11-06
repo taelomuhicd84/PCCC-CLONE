@@ -38,4 +38,16 @@ hút xả khói chung, hút đồng thời các tầng thông nhau (PL D, D.1.5)
 - Bảng thuyết minh điểm e) chỉ chép lại câu luật "cho phép tự nhiên nếu có luận cứ" rồi ghi ĐẢM BẢO (dẫn KT-36); mặt bằng không thấy cửa
   thoát khói trên cao; điểm f) ghi không có tấm lấy sáng → nguồn thoát khói tự nhiên chưa thấy. → ghi "cần bổ sung bản tính + KT-36".
 - Không nhắc hút đồng thời tầng 1 và tầng 2 (D.1.5). Khoang 1 125 m² < 3 000 m² nên một vùng khói, không phải chia vùng (D.7).
-- Điểm c) thiếu bản tính chiều dày lớp khói và chiều cao màn; chi tiết ghi 2×2 500 trong khi sàn +0,5 → +4,3 chỉ 3,8 m: hỏi lại thiết kế.
+- Điểm c) thiếu bản tính chiều dày lớp khói; chiều cao màn đọc từ chi tiết ở mục 6 (ghi "2500" là cao độ ĐÁY màn so với sàn từng tầng, KHÔNG cộng thành 5 m).
+
+## 6. Chi tiết mẫu: cao độ và chiều cao màn ngăn khói cố định (mặt cắt KT-21/22, người dùng gửi 2026-11-06)
+Ảnh: `knowledge/hinh/man-ngan-khoi-mat-cat-1.png` (cắt qua thang + lan can), `knowledge/hinh/man-ngan-khoi-mat-cat-2.png` (cắt dọc ranh sảnh, có cửa EI60).
+- Cách đọc: mỗi tầng một dải màn gạch chéo "màn ngăn khói cố định GHCL E45"; con số 2500 là khoảng từ MẶT SÀN của tầng đó tới ĐÁY màn;
+  phần dưới đáy màn là tường gạch 200 REI150 (có cửa EI60). Đáy màn = biên dưới lớp khói ≥ 2,5 m (4.35 c).
+- Số đo (tỷ lệ theo ảnh, ước lượng): sàn T1 +0,5, sàn T2 +4,3 (cao 3,8 m); mái cao ≈ 3,4 m trên sàn T2.
+  - Tầng 1: màn từ +2,5 m tới đáy sàn T2, cao ≈ 1,3 m.
+  - Tầng 2: màn từ +2,5 m (so sàn T2) tới mái, cao ≈ 0,9 m.
+- Còn phải kiểm: chiều cao màn ≥ chiều dày lớp khói tính toán (4.35 c). Tầng 2 màn chỉ ≈ 0,9 m nên hệ hút khói phải giữ lớp khói không dày quá mức đó:
+  cần bản tính lưu lượng hút (D.4) khớp hai con số này.
+- Ảnh 2 còn một ô lam đen ngay trên lan can (chưa rõ là cửa hút khói/thông gió hay chi tiết khác): hỏi thiết kế, không tự khẳng định.
+- Dùng làm hình mẫu khi hướng dẫn: đáy màn ghi bằng cao độ từ sàn, chiều cao màn ghi riêng, cửa EI60 nằm dưới đáy màn.
