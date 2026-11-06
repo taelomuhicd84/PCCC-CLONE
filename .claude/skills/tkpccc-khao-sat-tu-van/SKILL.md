@@ -54,7 +54,7 @@ G=.claude/skills/tkpccc-ghi-chu-ban-ve/scripts/ghi_chu_pdf.py
 4. Kiểm và xuất: `kiem` (0 lỗi; xử lý cảnh báo), `xlsx`, `ve … --anh`, XEM ảnh và sửa tọa độ.
 5. BÁO CÁO KHẢO SÁT theo mẫu MẶC ĐỊNH `data/mau_bao_cao/BCKS_mau.xlsx` (người dùng dặn 2026-11-02: luôn dùng mẫu này nếu không gửi mẫu
    khác; gửi mẫu khác thì `--mau`): viết khoá `bcks` trong `doi_chieu.json` theo "LOGIC BCKS" của skill `tkpccc-bang-doi-chieu`
-   (4 mục như BCKS kho hoá chất, Tư vấn là danh sách "+" việc CĐT phải làm, GHI CHÚ có ảnh cắt từ PDF ghi chú như bản cũ), chạy `bcks … -o ket_qua/<dự án>/BCKS_<tên>.xlsx`,
+   (8 hạng mục TÓM GỌN, kết luận trước, không dẫn điều khoản, người dùng sửa 2026-11-06; nội dung đầy đủ ghi chú lên bản vẽ và bảng đối chiếu; GHI CHÚ có ảnh cắt từ PDF ghi chú), chạy `bcks … -o ket_qua/<dự án>/BCKS_<tên>.xlsx`,
    xuất PDF bằng Excel (ExportAsFixedFormat) và XEM ảnh bản in. Cách viết khoá: skill `tkpccc-bang-doi-chieu` mục `bcks`.
 6. Trả lời: gửi file `bang_doi_chieu.md` (`md --ma KS`, đủ dòng) + đường dẫn `BCKS_<tên>.xlsx`, `doi_chieu.xlsx` và `ban_ve_ghi_chu.pdf`; tóm tắt 3–5 dòng
    các điểm CHƯA ĐẠT, phương án, số liệu cần khách bổ sung.

@@ -38,15 +38,19 @@ python -X utf8 $B bcks ket_qua/<da>/doi_chieu.json -o ket_qua/<da>/BCKS_<tên>.x
 ## Báo cáo khảo sát theo mẫu (`bcks`)
 Mặc định điền `data/mau_bao_cao/BCKS_mau.xlsx`; người dùng gửi mẫu khác thì truyền `--mau`. Hàng của từng mục đọc theo nhãn cột A của mẫu
 (`BCKS_NHAN`); mục có nội dung mà mẫu không có thì lệnh trả về `muc_mau_khong_co` (đưa ý đó vào Tư vấn).
-LOGIC BCKS (người dùng dặn 2026-11-03, theo BCKS kho hoá chất): 4 mục, ngắn, việc của CĐT rõ ràng.
-- THÔNG TIN CÔNG TRÌNH: "Quy mô: …", "- Công năng", "- Diện tích sàn điển hình", "- Chiều cao công trình" (chưa có thì ghi "Chưa có"/ước lượng).
-- HỒ SƠ PHÁP LÝ: một dòng so ngưỡng có số "=> Công trình cần / không thuộc diện thẩm định".
-- HỆ THỐNG PCCC: "Các hệ thống PCCC cần trang bị:" + "- …" từng hệ thống; số liệu chính có cách tính (vd "* Bể nước PCCC 288m3 …").
-- TƯ VẤN: "+ …" từng việc CĐT phải làm: hồ sơ cần cung cấp "Để đơn vị TVTK tư vấn chính xác về PCCC", hạng mục phải xây, sửa
-  (thoát nạn, giáp ranh, giao thông đưa vào đây, kèm số ngắn gọn); không viết chung chung "lưu ý như trên".
-- Cột GHI CHÚ PHẢI CÓ ẢNH GHI CHÚ như bản cũ (người dùng dặn 2026-11-03): ảnh cắt từ `ban_ve_ghi_chu.pdf` đúng chỗ có vấn đề
-  (thang, sảnh để xe, đường thoát nạn, tum…) kèm chữ ngắn "- Tầng trệt: …", khoá `bcks.ghi_chu.<mục>.anh`; mẫu 4 mục thì gắn ảnh vào
-  mục Tư vấn (hoặc Thông tin cho tum, Hệ thống). Logic 4 mục chỉ thay cột NỘI DUNG, không bỏ ảnh.
+LOGIC BCKS (người dùng sửa 2026-11-06, thay logic 4 mục 2026-11-03): mẫu MẶC ĐỊNH `BCKS_mau.xlsx` có 8 hạng mục (THÔNG TIN, HỒ SƠ PHÁP LÝ,
+KHOẢNG CÁCH PCCC, GIAO THÔNG, THOÁT NẠN, NGĂN CHÁY, HỆ THỐNG PCCC, TƯ VẤN; mẫu 4 mục cũ: `BCKS_mau_4muc.xlsx`). BCKS là bản TÓM GỌN: mỗi mục 1–3 câu,
+KẾT LUẬN TRƯỚC, không dẫn điều khoản, không giải thích dài; nội dung đầy đủ (lý do, số đo, phương án, căn cứ) để ở GHI CHÚ TRÊN BẢN VẼ và bảng đối chiếu.
+- THÔNG TIN CÔNG TRÌNH: "Quy mô: …", "- Công năng", "- Diện tích sàn điển hình", "- Chiều cao PCCC", "- Chiều cao". Tên khách "Quý khách", địa điểm chung
+  ("TP.HCM") khi người dùng chưa cung cấp; không ghi địa chỉ, tên chủ trên bản vẽ.
+- HỒ SƠ PHÁP LÝ: một dòng so ngưỡng có số "=> … thuộc / không thuộc diện thẩm định".
+- KHOẢNG CÁCH PCCC: "- Các mặt công trình giáp với ranh đất <3m cần xây tường cao tới mái và không trổ ô cửa sổ".
+- GIAO THÔNG: "-Đảm bảo" (hoặc việc phải làm, ngắn).
+- THOÁT NẠN: "Công trình có N thang. Tuy nhiên <lỗi chính> => Chưa đảm bảo làm thang thoát nạn. Cần cải tạo lại thang (<số tối thiểu>), thang phải được đóng kín bằng tường gạch và cửa chống cháy." Ví dụ lỗi chính: thang rẽ quạt.
+- NGĂN CHÁY: "Công trình có <lỗ giếng trời lấy sáng (lỗ thông tầng)> => Cần đóng kín bằng tường hoặc kính chống cháy hoặc kính cường lực dày 6mm có trang bị đai Sprinkler".
+- HỆ THỐNG PCCC: "Các hệ thống PCCC cần trang bị:" + "- …" chỉ tên hệ thống, không ngoặc, không số căn cứ.
+- TƯ VẤN: "+ …" 4–6 việc ngắn của CĐT (đóng kín buồng thang, cửa chống cháy các gian phòng tiếp giáp sảnh, số người ≤ 20/tầng nếu 1 thang, lắp hệ thống như đã yêu cầu, tường giáp ranh).
+- Cột GHI CHÚ có ảnh cắt từ `ban_ve_ghi_chu.pdf` ở hàng liên quan (thoát nạn, ngăn cháy) như bản cũ (người dùng dặn 2026-11-03); khoá `bcks.ghi_chu.<mục>.anh`.
 Nội dung lấy từ khoá `bcks` của `doi_chieu.json`, viết theo văn phong mẫu (gạch đầu dòng "- …", kết luận "=> …", số có đơn vị):
 ```json
 "bcks": {"tieu_de": {"ten_cong_trinh": "", "khach_hang": "", "dia_diem": ""},

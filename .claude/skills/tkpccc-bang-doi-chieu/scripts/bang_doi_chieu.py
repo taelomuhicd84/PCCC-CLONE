@@ -428,7 +428,7 @@ def xlsx(dc: dict, ra: Path) -> dict:
 # Mẫu báo cáo khảo sát mặc định của người dùng (chốt 2026-11-02): sheet NOTE, cột F:H nội dung, cột I ghi chú + ảnh.
 MAU_BCKS = Path(__file__).resolve().parents[4] / "data" / "mau_bao_cao" / "BCKS_mau.xlsx"
 BCKS_NHAN = {"THÔNG TIN": "thong_tin", "PHÁP L": "phap_ly", "KHOẢNG CÁCH": "khoang_cach", "GIAO THÔNG": "giao_thong",
-             "THOÁT NẠN": "thoat_nan", "HỆ THỐNG": "he_thong", "TƯ VẤN": "tu_van"}
+             "THOÁT NẠN": "thoat_nan", "NGĂN CHÁY": "ngan_chay", "HỆ THỐNG": "he_thong", "TƯ VẤN": "tu_van"}
 
 
 def _hang_bcks(ws) -> dict:

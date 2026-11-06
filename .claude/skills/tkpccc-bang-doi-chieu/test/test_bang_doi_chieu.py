@@ -123,7 +123,15 @@ def test_bcks_mau_4_muc(tmp_path):
     dc = {"bcks": {"tieu_de": {"ten_cong_trinh": "Kho A"},
                    "muc": {"thong_tin": "Quy mô: kho", "phap_ly": "- => cần thẩm định", "he_thong": "- Báo cháy",
                            "tu_van": "+ Cung cấp mặt cắt", "thoat_nan": "- dòng"}}}
-    kq = bdc.bcks(dc, tmp_path / "doi_chieu.json", tmp_path / "BCKS.xlsx")       # mẫu mặc định: 4 mục như BCKS kho hoá chất
+    kq = bdc.bcks(dc, tmp_path / "doi_chieu.json", tmp_path / "BCKS.xlsx", bdc.MAU_BCKS.parent / "BCKS_mau_4muc.xlsx")   # mẫu 4 mục cũ (kho hoá chất)
     ws = load_workbook(tmp_path / "BCKS.xlsx").worksheets[0]
     assert [ws[f"F{r}"].value for r in (10, 11, 12, 13)] == ["Quy mô: kho", "- => cần thẩm định", "- Báo cháy", "+ Cung cấp mặt cắt"]
     assert kq["muc_mau_khong_co"] == ["thoat_nan"]
+
+
+def test_bcks_mau_mac_dinh_8_muc(tmp_path):
+    from openpyxl import load_workbook
+    dc = {"bcks": {"muc": {"thong_tin": "a", "khoang_cach": "b", "giao_thong": "c", "thoat_nan": "d", "ngan_chay": "e", "he_thong": "f", "tu_van": "g"}}}
+    kq = bdc.bcks(dc, tmp_path / "doi_chieu.json", tmp_path / "BCKS.xlsx")
+    ws = load_workbook(tmp_path / "BCKS.xlsx").worksheets[0]
+    assert [ws[f"F{r}"].value for r in (10, 12, 13, 14, 15, 16, 17)] == list("abcdefg") and kq["muc_mau_khong_co"] == []
