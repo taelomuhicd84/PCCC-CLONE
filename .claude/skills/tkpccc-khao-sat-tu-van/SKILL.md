@@ -17,7 +17,7 @@ Không đọc cả `knowledge/`: mở file theo cột "Tra ở" của từng dò
 - Kết quả là MỘT bảng theo khung bảng đối chiếu chính thức (người dùng dặn 2026-11-02, gốc SKILL-PCCC-NEW `skills/SKILL_quy_trinh_tham_dinh.md`):
   TT | Nội dung đối chiếu | Nội dung thiết kế | Quy định | Khoản Điều | Kết luận (ĐẠT / CHƯA ĐẠT / CẦN XÁC NHẬN / KHÔNG ÁP DỤNG + lý do có số + giải pháp).
   Mỗi dòng là hạng mục CÓ trên bản vẽ; phương án mình đề xuất (PA1, PA2, thang ngoài nhà…) và kiến thức dùng để tư vấn (vd thang hở loại 2)
-  ghi trong ô Kết luận của dòng liên quan, không thành dòng riêng. Mẫu: `ket_qua/canho/tu_van_thiet_ke.md` (bản 6, chỉ có trên máy người dùng).
+  ghi thành NOTE TRÊN BẢN VẼ (khung số = TT), không thành dòng riêng và không nhồi vào ô Kết luận: ô Kết luận chỉ một câu ngắn kiểu "không đảm bảo <mục>" (người dùng dặn 2026-11-06, chi tiết skill `tkpccc-bang-doi-chieu`). Mẫu: `ket_qua/canho/tu_van_thiet_ke.md` (bản 6, chỉ có trên máy người dùng).
 - Bảng ĐẦY ĐỦ ra FILE (`bang_doi_chieu.md` + Excel), không dán vào chat (người dùng dặn 2026-11-03; trước đó 02/11 dặn gửi đủ dòng trong tin nhắn,
   vì từng thiếu dòng 1–7 thông tin công trình: file phải đủ dòng).
 - Khoanh và ghi chú lên CHÍNH PDF bản vẽ, khung đánh số trùng TT. Không chỉ trả văn bản chung chung.

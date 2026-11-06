@@ -77,9 +77,11 @@ Không mở cả file JSON bảng gốc (tới 160 KB): đọc bằng `khung`, `
 ```
 - `ket_luan`: `DAT` · `CHUA_DAT` · `CAN_XAC_NHAN` · `KHONG_AP_DUNG` (rỗng = chưa xét). Khác ĐẠT phải có `ly_do` có số; CHƯA ĐẠT phải có `phuong_an`;
   CHƯA ĐẠT, CẦN XÁC NHẬN phải có `khung` và mục `ghi_chu` cùng số (lệnh `kiem` kiểm cả hai chiều).
-- Ô Kết luận khi xuất = nhãn + lý do + từng phương án một dòng. Phương án và kiến thức dùng để tư vấn (vd thang hở loại 2) nằm trong
-  ô Kết luận của dòng liên quan, không thành dòng riêng.
-- KS: thang thoát nạn mỗi thang một hoặc vài dòng: chép dòng TT 11, `idx` mới = lớn nhất + 1, `tt` "11a", "11b"…; dòng không có trên bản vẽ thì KHÔNG ÁP DỤNG hoặc xoá.
+- NGẮN GỌN (người dùng dặn 2026-11-06): bảng đối chiếu chỉ đối chiếu những mục CẦN, mỗi ô Kết luận một câu ngắn đủ hiểu, kiểu "không đảm bảo
+  <mục abc>" hoặc "thang rẽ quạt, chưa đóng kín"; `ly_do` ≤ 1 câu, không chép điều khoản, không số đo dài. TOÀN BỘ nội dung chi tiết (số đo, lý do đầy đủ,
+  phương án PA1/PA2, khả thi, căn cứ, kiến thức tư vấn như thang hở loại 2) ghi thành NOTE TRÊN BẢN VẼ (mục `ghi_chu`, khung số = TT), không nhồi vào ô Kết luận.
+  `phuong_an` trong JSON để rỗng hoặc chỉ "xem ghi chú khung N"; dòng CHƯA ĐẠT/CẦN XÁC NHẬN vẫn phải có `khung` và mục `ghi_chu` cùng số (`kiem` kiểm hai chiều).
+  Ô Kết luận khi xuất = nhãn + lý do ngắn. Phương án, kiến thức tư vấn không thành dòng riêng.
 - Dòng thông tin (`thong_tin`: số tầng, chiều cao PCCC, công năng, khối tích, diện thẩm định của KS): ghi giá trị vào `ly_do`, để trống
   `ket_luan` (ô Kết luận hiện giá trị, `kiem` đếm là "xac_dinh"); số liệu chưa chắc thì dùng CẦN XÁC NHẬN.
 - Ghi chú chung cho nhiều dòng (vd hệ thống chưa thể hiện trên bản vẽ): `"khung": [19, 20, 21]` trong một mục `ghi_chu`.
