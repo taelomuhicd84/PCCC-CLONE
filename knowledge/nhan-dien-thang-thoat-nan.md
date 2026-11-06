@@ -122,3 +122,22 @@ Hình QCVN 06 tham khảo: `knowledge/hinh/qcvn06_hinh_I1_loi_ra_ham_truc_tiep.p
   ≥ 900 mm (hai mũi tên ">=900mm"). HẦM hộp đỏ dạng bậc: đoạn trái thấp (tường trên theo tay vịn), đoạn phải cao tới mép trên thang; cửa xanh
   lá ở tường trên đoạn trái, giữa thang máy và đầu vế, chiếu ≈ 1,0 m. Tầng trên: chiếu từ mặt giếng thang máy tới mép bậc ≈ 0,96 m (đo từ
   mặt ngoài tường giếng, không đo từ tường mới vẽ lệch).
+
+### Mẫu nhận diện đúng: hầm vào thang chung qua BUỒNG ĐỆM có quạt tăng áp (người dùng xác nhận 2026-11-06, hồ sơ karaoke 32,8 × 10,55 m, ST1)
+Hình: `knowledge/hinh/st1_ham_buong_dem_quat_tang_ap.png` (hầm), `knowledge/hinh/st1_tang1_sanh_hai_cua.png` (tầng 1).
+Đây là cách thứ hai của 3.2.1 (nhà < 28 m không có lối riêng ra ngoài cho thang hầm: vào buồng thang chung từ hầm qua khoang đệm),
+khác mẫu Nguyễn Viết Thanh (vách ngăn chia buồng thang ở tầng 1). Gặp bản vẽ kiểu này thì nhận diện và ghi chú như sau:
+- **Dấu hiệu ở hầm**: thang 2 vế nằm trong một gian riêng, trước gian thang có phòng ghi "BUỒNG ĐỆM" (≈ 10,9 m²) bao tường TG2 (REI 90);
+  luồng đi hành lang hầm → cửa D1 → buồng đệm → cửa D1 → buồng thang. Ngay cạnh có "P. ĐẶT QUẠT TĂNG ÁP" (≈ 21 m²) → buồng đệm có áp
+  suất dương khi cháy. Đọc ra: hầm KHÔNG có lối riêng lên ngoài, dùng khoang đệm có áp để vào thang chung.
+- **Dấu hiệu ở tầng 1**: thang nằm trong "SẢNH" (≈ 13,3 m²) bao TG2; buồng thang có HAI cửa D1 ra sảnh ở chiếu đầu vế (chiếu ghi
+  900 + 100 + 900 = hai vế + tay vịn): một cửa cho luồng từ hầm lên, một cửa cho luồng từ các tầng trên xuống (tách luồng tại tầng 1).
+  Từ sảnh: khe 900 ra hành lang → gian trục 7–8 → cửa D1 ở tường ngoài → thang ngoài nhà ST4 (cốt +1.600 xuống đất) → hành lang 1,7 m
+  dọc nhà dân hiện hữu ra đường. Phải lần hết đường này tới lối ra thật, không dừng ở cửa buồng thang.
+- **Lối ra thứ hai của hầm** ở mẫu này là bậc cấp thẳng ST3 ra ngoài trời, cũng là lối ra riêng của phòng bơm PCCC (cửa phòng bơm
+  mở về phía ST3).
+- **Cách ghi chú (callout kéo mũi tên thẳng ra)**: "Buồng đệm (khoang đệm) có tăng áp – hầm vào thang chung ST1 (3.2.1)", "P. quạt tăng
+  áp cấp cho buồng đệm", ở tầng 1: "Cửa từ hầm lên", "Cửa từ các tầng xuống", và nét đường thoát nạn sảnh → D1 trục 8 → ST4 → hành lang.
+- **Còn phải kiểm, ghi "cần người dùng xem xét" nếu thiếu số liệu**: buồng đệm đạt yêu cầu khoang đệm ngăn cháy loại 1 (tường, cửa
+  EI tự đóng, áp suất dương); hai cửa D1 tầng 1 mở đúng chiều thoát nạn, cánh không quét vào cung vế; mặt bằng tầng 2 để biết thang
+  có lên tầng trên không (chưa có thì không khẳng định).
