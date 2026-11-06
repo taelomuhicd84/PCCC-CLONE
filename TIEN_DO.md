@@ -3,6 +3,10 @@
 File này cập nhật sau mỗi mốc việc và trước khi hết usage. Phiên mới đọc mục "ĐANG LÀM / VIỆC TIẾP THEO" trước.
 
 ## ĐANG LÀM / VIỆC TIẾP THEO (cập nhật 2026-11-06)
+**VIỆC TIẾP THEO (người dùng giao 06/11, CHƯA LÀM vì usage tuần 97 %, reset ≈ 04:59 07/11 UTC+7): lập BCKS "Văn phòng Quận 7 – Tân Quy Đông 1"** từ PDF
+`D:.DRIVE CÔNG TY\My Drive.PHÒNG THIẾT KẾ. BÁO CÁO KSAT - BG. Năm 2026\THÁNG 10\VĂN PHÒNG QUẬN 7 - KHÁCH WEB5 MAT BANG CAC TANG - TAN QUY DONG 1.pdf` (2,8 MB, chưa đọc).
+Chạy skill `tkpccc-khao-sat-tu-van` ở phiên mới (đã /clear). Công năng gợi ý theo tên thư mục: VĂN PHÒNG (người dùng cấp thì ghi, không đoán). Đọc trước: checklist vẽ buồng thang cuối `knowledge/nhan-dien-thang-thoat-nan.md`,
+`knowledge/hut-khoi-thong-tang.md`, bài "Căn hộ dịch vụ 8 m" + "cửa EI không cho WC" + "tum không người" trong `knowledge/hoc/du-an/so-bo-thiet-ke.md`; mẫu làm theo: `ket_qua/canho8m/v10/`. Nhớ: ghi chú PDF đủ mọi TT 6–27, BCKS ngắn một font, hệ thống ghi vách tường + bể đỏ đậm.
 **XONG 06/11 tối: BCKS "Nhà phố – Căn hộ dịch vụ 8 m" (Q.2)** ở `ket_qua/canho8m/v7/` (BCKS xlsx, ban_ve_ghi_chu.pdf, doi_chieu.xlsx, bang_doi_chieu.md; không commit). Công năng giả định F1.2 theo tên file; 5 tầng nổi + hầm; cao PCCC ≈ 15,0 m.
 Người dùng đã chỉnh nhiều vòng, TẤT CẢ đã chép vào skill/knowledge: `knowledge/nhan-dien-thang-thoat-nan.md` (checklist vẽ buồng thang cuối file: tầng nổi trên không tường quây; hầm + trệt tường cách bậc đầu ≈ 900 mm theo từng vế,
 thang máy ngoài cửa E30, hầm 1 cửa vế trái, cửa EI sát mép phía phòng T-01/T-02; cửa phòng mở vào phòng không bàn cung vế), `knowledge/hoc/du-an/so-bo-thiet-ke.md` (bài Căn hộ DV 8 m), skill `tkpccc-bang-doi-chieu` (BCKS: nhà không thẩm định ⇒ khoảng cách/giao thông "-Đảm bảo",
