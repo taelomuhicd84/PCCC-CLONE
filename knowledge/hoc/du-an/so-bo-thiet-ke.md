@@ -97,3 +97,8 @@ Chỉ áp dụng bài có "Trạng thái: da_duyet". Ghi bởi agent pccc-hoc-du
 - Nội dung: Khi đề xuất "cửa chống cháy EI cho các gian phòng/căn hộ mở vào thang, hành lang" thì chỉ khoanh cửa của PHÒNG Ở/căn hộ (P. L-01, L-02…), không khoanh cửa WC. Trước khi khoanh phải
   (1) đọc nhãn từng phòng, (2) phóng to xem cửa nào thuộc phòng nào (cung cửa mở ra hành lang/sảnh), (3) so lại với ảnh người dùng. Lỗi đã mắc: lửng khoanh tím cửa WC L-02, WC L-03 và đặt khung lệch cửa phòng L-02, L-01;
   lửng chỉ có P. L-01, L-02 (hai cửa mở ra sảnh thang), lầu 1–3 có 4 phòng L-01…04 (bốn cửa mở ra hành lang).
+
+### Tum thang không có người vẫn có cửa chống cháy (2026-11-06, nguồn: Căn hộ DV 8 m, người dùng nhắc)
+- Trạng thái: da_duyet
+- Căn cứ: người dạy 2026-11-06
+- Nội dung: Tum chỉ có thang, hành lang, kho (không có người) vẫn phải ghi cửa chống cháy EI cho cửa kho/phòng phụ trợ; cửa ra sân thượng không khóa. Không bỏ qua tum chỉ vì "không có người".
