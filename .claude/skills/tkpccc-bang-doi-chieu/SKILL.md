@@ -48,7 +48,7 @@ KẾT LUẬN TRƯỚC, không dẫn điều khoản, không giải thích dài; 
 - KHOẢNG CÁCH PCCC: "- Các mặt công trình giáp với ranh đất <3m cần xây tường cao tới mái và không trổ ô cửa sổ".
 - GIAO THÔNG: "-Đảm bảo" (hoặc việc phải làm, ngắn).
 - THOÁT NẠN: "Công trình có N thang. Tuy nhiên <lỗi chính> => Chưa đảm bảo làm thang thoát nạn. Cần cải tạo lại thang (<số tối thiểu>), thang phải được đóng kín bằng tường gạch và cửa chống cháy." Ví dụ lỗi chính: thang rẽ quạt.
-- NGĂN CHÁY: "Công trình có <lỗ giếng trời lấy sáng (lỗ thông tầng)> => Cần đóng kín bằng tường hoặc kính chống cháy hoặc kính cường lực dày 6mm có trang bị đai Sprinkler".
+- NGĂN CHÁY (có sảnh thông tầng / thang hở nối tầng nổi: áp `knowledge/hut-khoi-thong-tang.md`, thêm "nếu không đóng kín phải có màn ngăn khói E45 và hút khói đồng thời các tầng thông nhau"): "Công trình có <lỗ giếng trời lấy sáng (lỗ thông tầng)> => Cần đóng kín bằng tường hoặc kính chống cháy hoặc kính cường lực dày 6mm có trang bị đai Sprinkler".
 - HỆ THỐNG PCCC: "Các hệ thống PCCC cần trang bị:" + "- …" chỉ tên hệ thống, không ngoặc, không số căn cứ. Người dùng dặn 2026-11-06 (áp mãi mãi):
   (a) "họng nước chữa cháy" mặc định gọi là "Hệ thống chữa cháy vách tường (+ bơm)"; (b) sprinkler tầng hầm ghi "tầng hầm để xe" khi là hầm xe;
   (c) CÓ chữa cháy vách tường hoặc sprinkler thì BẮT BUỘC thêm dòng bể nước, chữ ĐỎ ĐẬM: `!- Bể nước PCCC: 126m3 (hầm để xe)` hoặc `9m3 (hầm kỹ thuật)`

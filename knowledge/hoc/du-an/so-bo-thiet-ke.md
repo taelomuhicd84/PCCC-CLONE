@@ -102,3 +102,9 @@ Chỉ áp dụng bài có "Trạng thái: da_duyet". Ghi bởi agent pccc-hoc-du
 - Trạng thái: da_duyet
 - Căn cứ: người dạy 2026-11-06
 - Nội dung: Tum chỉ có thang, hành lang, kho (không có người) vẫn phải ghi cửa chống cháy EI cho cửa kho/phòng phụ trợ; cửa ra sân thượng không khóa. Không bỏ qua tum chỉ vì "không có người".
+
+### Sảnh thông tầng, thang hở nối tầng nổi: áp `knowledge/hut-khoi-thong-tang.md` (2026-11-06, người dùng nhắc "áp dụng link với nhau")
+- Trạng thái: da_duyet
+- Căn cứ: PL D D.2 e), D.1.5; QCVN 06 4.35; `knowledge/hut-khoi-thong-tang.md`
+- Nội dung: Căn hộ DV 8 m có sảnh thông tầng trệt–lửng và thang hở nối lửng → tum ⇒ khảo sát phải áp bài hút khói thông tầng: ghi ở dòng ngăn cháy phương đứng (đóng kín hoặc màn ngăn khói E45) và dòng chống khói
+  (hút khói chung hút đồng thời các tầng, D.1.5, thiếu bản tính ⇒ CHƯA ĐẠT/cần bổ sung); chỉ các tầng NỔI, hầm là khoang riêng. BCKS mục Ngăn cháy thêm "nếu không đóng kín phải có màn ngăn khói E45 và hút khói đồng thời các tầng thông nhau".
