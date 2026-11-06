@@ -22,6 +22,7 @@ Nguyên tắc (vì sao): người dùng là kỹ sư PCCC, kết quả đi vào 
 | Đường, bãi đỗ xe chữa cháy, thang máy chữa cháy, CNCH | `knowledge/qcvn06-dieu-6.md`, `knowledge/so-bo-thiet-ke-pccc.md` |
 | Thoát nạn: số lối ra, cửa, hành lang, cầu thang, khoảng cách | `skills/SKILL_thoat_nan.md` (đọc trước) → `skills/MOD_*.md`, `skills/PHU_LUC_G_QCVN06.md` |
 | Chống khói, tăng áp | `skills/MOD_chong_khoi_PL_D.md` |
+| Hút khói sảnh thông tầng, thang hở nối tầng (hút đồng thời các tầng) | `knowledge/hut-khoi-thong-tang.md` (nhận diện thang: `knowledge/nhan-dien-thang-thoat-nan.md`; ngăn cháy 4.35: `knowledge/qcvn06-dieu-4.md`) |
 | Vật liệu hoàn thiện | `skills/MOD_vat_lieu_hoan_thien.md` |
 | Nhà nào phải có báo cháy / chữa cháy tự động | `knowledge/qcvn10-2025-bao-chay-chua-chay-tu-dong.md` (Phụ lục A: Bảng A.1–A.4) |
 | Chọn loại đầu báo, khoảng cách đầu báo, khoang dầm | `knowledge/chon-loai-dau-bao.md` → `knowledge/tcvn7568-14-2025.md`, `skills/MOD_dau_bao_khoi_khoang_dam.md` |

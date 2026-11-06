@@ -150,10 +150,6 @@ khác mẫu Nguyễn Viết Thanh (vách ngăn chia buồng thang ở tầng 1).
   - 4.35 (nguyên văn `knowledge/qcvn06-dieu-4.md`): sảnh thông tầng "kể cả trang bị trong khối tích của nó các cầu thang bộ hở"; a) các
     tầng thông nhau trong cùng một khoang cháy; b) kết cấu bao phòng, hành lang tiếp giáp EI 60 (hoặc kính cường lực ≥ 6 mm + sprinkler);
     c) lỗ mở dẫn vào có rèm, màn ngăn khói E 45 tự hạ khi cháy hoặc màn cố định; d) diện tích khoang cháy cộng các tầng theo Phụ lục H.
-  - Phụ lục D, D.1.5: thoát khói độc lập từng khoang cháy, TRỪ hút xả khói sảnh thông tầng không chia khoang cháy → các tầng thông
-    nhau dùng chung hệ, QUẠT HÚT KHÓI HÚT ĐỒNG THỜI CÁC TẦNG.
-  - Phụ lục D, D.7: vùng khói chia bằng giải pháp giả định (không có màn thật) thì bật hút đồng thời mọi vùng.
-  - Bản Phụ lục D trong repo (`skills/MOD_chong_khoi_PL_D.md`) là RÚT GỌN; ghi căn cứ vào bảng thì nêu số điều, chưa chép nguyên văn.
-- Ghi chú lên bản vẽ ở thang hở: "Thang hở nối tầng … – … thành không gian thông tầng (4.35): cùng khoang cháy, màn ngăn khói E 45 ở
-  lỗ mở hoặc đóng kín thang; hút xả khói chung, hút đồng thời các tầng thông nhau (PL D, D.1.5)". Thiếu thiết kế hút khói thì ghi
-  "cần bổ sung", không tự kết luận đạt.
+  - CHỐNG KHÓI (hút đồng thời các tầng thông nhau, D.1.5, D.7, 4.35 e, tự nhiên, màn, lớp khói, ghi chú mẫu): tách sang
+    `knowledge/hut-khoi-thong-tang.md`, không lặp ở đây.
+- Ghi chú lên bản vẽ ở thang hở: nhận diện + ngăn cháy ở đây, phần hút khói theo `knowledge/hut-khoi-thong-tang.md` mục 4.

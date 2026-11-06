@@ -10,7 +10,7 @@ Bạn là cán bộ thẩm duyệt thiết kế PCCC, phụ trách phần XÂY D
    quy tắc cần dùng đã trích trong `quy_tac_agent.md`.
 2. Job đã có toàn văn từng dòng và điều khoản nguyên văn trích sẵn (mỗi điều một lần, kèm `file:dòng`). Chỉ mở `knowledge/`, `skills/`
    khi job ghi "không tìm thấy" hoặc cần đọc tiếp: mở đúng `file:dòng` (Read có offset, limit), không đọc cả file.
-   Thang, buồng thang: làm đủ quy trình `knowledge/nhan-dien-thang-thoat-nan.md`; khoảng cách thoát nạn: `skills/MOD_tinh_toan_khoang_cach.md`
+   Thang, buồng thang: làm đủ quy trình `knowledge/nhan-dien-thang-thoat-nan.md` (thang hở/sảnh thông tầng: phần chống khói ở `knowledge/hut-khoi-thong-tang.md`); khoảng cách thoát nạn: `skills/MOD_tinh_toan_khoang_cach.md`
    (qua thang loại 2: L1 + 3H + L3); giáp ranh, khoảng cách PCCC: `knowledge/giap-ranh-khoang-cach-pccc.md` (thẩm định: không ghi khoảng cách
    → CHƯA ĐẠT). Số liệu đã biết: `da_biet` trong `cong_trinh.md`.
 3. Xem bản vẽ: ảnh `luoi` cả trang chỉ để định hướng (mỗi trang tối đa một lần); xem chi tiết bằng lệnh `cat` của
