@@ -3,17 +3,12 @@
 File này cập nhật sau mỗi mốc việc và trước khi hết usage. Phiên mới đọc mục "ĐANG LÀM / VIỆC TIẾP THEO" trước.
 
 ## ĐANG LÀM / VIỆC TIẾP THEO (cập nhật 2026-11-06)
-**DỞ (06/11, dừng vì usage tuần 95 %, reset ≈ 04:59 07/11 UTC+7): BCKS "NHÀ PHỐ – CĂN HỘ DỊCH VỤ 8 m"** (PDF `C:\Users\HP\Downloads\2026-08-26_CanHoDichVu8m_HSKT_1.pdf`,
-8 trang A3 ngang, không có lớp chữ, chỉ ảnh/vector). Đã chép `ket_qua/canho8m/ban_ve.pdf`, render lưới `ket_qua/canho8m/anh/luoi_1..8.png` (zoom 1.6). CHƯA tạo `doi_chieu.json`.
-Nhận diện (chưa ghi JSON): CTY CP TVTK XD&TM Hoàng Gia (TVTK Phan Hùng, Kts Đinh Ngọc Bảo Tín); "NHÀ PHỐ", P. Thạnh Mỹ Lợi, Q.2, TP.HCM; 08/2026; mục đích TRÌNH DUYỆT; 1:75.
-Công năng người dùng chưa cấp (tên file "Căn hộ dịch vụ" ⇒ hỏi/ghi theo người dùng cấp, nhóm F1.2 nếu cho thuê lưu trú).
-- Trang 1 hầm -1,300 (xe: ram dốc + bãi đỗ xe hầm, thang bộ + thang máy giữa nhà, sảnh thang máy). Trang 2 trệt ±0,000/+1,200 (khu lễ tân, khu giữ đồ dân cư, phòng T-01, T-02, WC).
-  Trang 3 lửng +4,200 (sảnh thông tầng lớn bên trái, phòng L-01, WC L-01..03; khung đỏ = phần cơi nới/ô thông tầng). Trang 4 Lầu 1 +7,000, trang 5 Lầu 2 +10,400, trang 6 Lầu 3 +13,800:
-  mỗi tầng 4 phòng (Lx-01..04) + 4 WC, hành lang giữa 1,8 m, 1 thang bộ 2 vế + thang máy ở giữa (trục 2–3), cửa phòng L-01/04 mở sát đầu vế. Trang 7 tum/sân thượng +17,150/17,200 (hành lang, kho, thang). Trang 8 mái BT +20,000.
-- Mặt bằng 20 m x 8 m (A–B 8000, trục 1'–4'); KHÔNG có mặt đứng/mặt cắt ⇒ chiều cao PCCC ước lượng: sàn lầu 3 +13,800 + cửa sổ ≈ 1,2 m tính từ mặt đường ≈ 15,0 m (SÁT NGƯỠNG 15 m: ghi cần xác nhận cao độ đường).
-- Tầng: hầm 1 (sâu 1,3 m < 1/2 cao tầng, kiểm có phải tầng hầm), trệt, lửng (xét ≤ 65 % hay vượt vì sảnh thông tầng), L1–L3; tum ≤ 30 % sàn mái ⇒ xét theo luật tầng thượng.
-- Việc kế: đọc `knowledge/nhan-dien-thang-thoat-nan.md` (thang giữa nhà, chiếu nghỉ, tách thang hầm, cung cánh cửa); `ket_qua/lao_7_5/dien.py` làm mẫu sinh JSON; `python -X utf8 $B lamviec KS -o ket_qua/canho8m/doi_chieu.json`;
-  điền 27 dòng KS; ghi chú PDF; `kiem`, `xlsx`, `md`, `bcks`; XEM ảnh; gửi file (SendUserFile). Nhớ: BCKS tóm gọn, ô Kết luận 1 câu, công năng chỉ ghi người dùng cấp, hầm xe ⇒ sprinkler + bể.
+**XONG 06/11 tối: BCKS "Nhà phố – Căn hộ dịch vụ 8 m" (Q.2)** ở `ket_qua/canho8m/v7/` (BCKS xlsx, ban_ve_ghi_chu.pdf, doi_chieu.xlsx, bang_doi_chieu.md; không commit). Công năng giả định F1.2 theo tên file; 5 tầng nổi + hầm; cao PCCC ≈ 15,0 m.
+Người dùng đã chỉnh nhiều vòng, TẤT CẢ đã chép vào skill/knowledge: `knowledge/nhan-dien-thang-thoat-nan.md` (checklist vẽ buồng thang cuối file: tầng nổi trên không tường quây; hầm + trệt tường cách bậc đầu ≈ 900 mm theo từng vế,
+thang máy ngoài cửa E30, hầm 1 cửa vế trái, cửa EI sát mép phía phòng T-01/T-02; cửa phòng mở vào phòng không bàn cung vế), `knowledge/hoc/du-an/so-bo-thiet-ke.md` (bài Căn hộ DV 8 m), skill `tkpccc-bang-doi-chieu` (BCKS: nhà không thẩm định ⇒ khoảng cách/giao thông "-Đảm bảo",
+hệ thống: họng nước = chữa cháy vách tường, bể 126/9 m3 chữ đỏ đậm khi có vách tường/sprinkler, cùng một font; hàm `_rich` trong `bang_doi_chieu.py`), skill `tkpccc-ghi-chu-ban-ve`, `tkpccc-khao-sat-tu-van`.
+Còn 👤: người dùng xem lại vị trí tường/cửa PA1 (ước lượng từ ảnh), công năng thật, cao độ mặt đường (cao PCCC sát 15 m), hầm xe hay kỹ thuật (bể 126 m3), BCKS chưa xuất PDF xem ảnh bản in. `ket_qua/canho8m/dien.py` + `bcks_fix.py` là bản cũ, bản đúng nằm ở `v7/doi_chieu.json`.
+Quy tắc ghi chú PDF đủ mọi TT 6–27 (memory `ghi-chu-pdf-du-moi-tt`). Usage tuần ≈ 95 % lúc làm (reset ≈ 04:59 07/11 UTC+7).
 **XONG 06/11: BCKS "Nhà ở gia đình 81 Phạm Ngũ Lão, TX. Thủ Dầu Một" (PDF Downloads "ĐƯỜNG PHAM NGÕ1 LÀO 7,5 mét")** ở `ket_qua/lao_7_5/`
 (BCKS_Pham_Ngu_Lao xlsx+pdf, ban_ve_ghi_chu.pdf, bang_doi_chieu.md, doi_chieu.xlsx; sinh bằng `dien.py` từ mẫu v4 Nguyễn Viết Thanh).
 27 dòng KS: 3 ĐẠT, 1 CHƯA ĐẠT (thang hở 4 tầng), 5 CẦN XÁC NHẬN, 13 KHÔNG ÁP DỤNG. 👤 Chờ người dùng xem: chiếu nghỉ nét chéo (bậc chéo?),

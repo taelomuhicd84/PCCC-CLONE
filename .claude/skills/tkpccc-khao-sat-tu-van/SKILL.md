@@ -31,6 +31,8 @@ Không đọc cả `knowledge/`: mở file theo cột "Tra ở" của từng dò
 - Đường thoát nạn đo từ ĐIỂM XA NHẤT TRONG PHÒNG (không từ cửa phòng), vẽ nét xanh có mũi tên đầu trong phòng; cửa chống cháy đặt ngay cửa
   phòng (người dùng dặn 2026-11-03; chi tiết và lỗi Q.4 7,9 m → ≈ 9,2 m: `knowledge/nhan-dien-thang-thoat-nan.md`).
 - Cung vế thang và cánh cửa (người dùng dặn 2026-11-06): kiểm vùng quét cánh cửa không giao cung vế (cả hai vế; cửa trái/phải tự phán đoán theo ký hiệu), ghi vào ô Kết luận và ghi chú bằng chữ, KHÔNG vẽ cung lên PDF trừ khi người dùng bảo; chi tiết `knowledge/nhan-dien-thang-thoat-nan.md` bước 3.
+- Cửa PHÒNG mở vào trong phòng thì KHÔNG bao giờ vướng cung vế thang/đường thoát nạn: không ghi "kiểm cung cánh cửa phòng" (người dùng dặn 2026-11-06). Chỉ kiểm cánh cửa của buồng thang (cửa EI mở ra sảnh) có chắn đường thoát nạn của các phòng tiếp giáp không: chắn thì ghi "bề rộng đường thoát nạn không đảm bảo, công trình không thuộc diện thẩm định nên tạm chấp nhận".
+- Thang hở nhiều tầng, nhà không thuộc diện thẩm định (người dùng dặn 2026-11-06): hầm và trệt BẮT BUỘC quây kín thang (tường + cửa EI); các tầng trên có thể thay bằng cửa chống cháy EI cho từng phòng/căn hộ mở vào thang, hành lang.
 - Không có số trên bản vẽ thì ghi "phải đảm bảo ≥ …". Chỉ ghi "cửa chống cháy" khi bản vẽ có ký hiệu.
 - Thẻ bản vẽ mẫu đã thẩm duyệt (`data/ban_ve_mau`, 36 MB, repo SKILL-PCCC-NEW) chưa chép sang: clone repo đó vào thư mục tạm khi cần tra.
 

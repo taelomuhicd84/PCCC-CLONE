@@ -44,11 +44,15 @@ KẾT LUẬN TRƯỚC, không dẫn điều khoản, không giải thích dài; 
 - THÔNG TIN CÔNG TRÌNH: "Quy mô: …", "- Công năng", "- Diện tích sàn điển hình", "- Chiều cao PCCC", "- Chiều cao". Tên khách "Quý khách", địa điểm chung
   ("TP.HCM") khi người dùng chưa cung cấp; không ghi địa chỉ, tên chủ trên bản vẽ.
 - HỒ SƠ PHÁP LÝ: một dòng so ngưỡng có số "=> … thuộc / không thuộc diện thẩm định".
+- (người dùng dặn 2026-11-06, áp mãi mãi) Công trình KHÔNG thuộc diện thẩm định ⇒ KHOẢNG CÁCH PCCC và GIAO THÔNG ghi thẳng "-Đảm bảo" (dòng KS 7, 8 kết luận ĐẠT). Mọi ô BCKS cùng MỘT font, cỡ như ô mẫu (chỉ dòng bể nước thêm đỏ đậm), không lẫn cỡ chữ.
 - KHOẢNG CÁCH PCCC: "- Các mặt công trình giáp với ranh đất <3m cần xây tường cao tới mái và không trổ ô cửa sổ".
 - GIAO THÔNG: "-Đảm bảo" (hoặc việc phải làm, ngắn).
 - THOÁT NẠN: "Công trình có N thang. Tuy nhiên <lỗi chính> => Chưa đảm bảo làm thang thoát nạn. Cần cải tạo lại thang (<số tối thiểu>), thang phải được đóng kín bằng tường gạch và cửa chống cháy." Ví dụ lỗi chính: thang rẽ quạt.
 - NGĂN CHÁY: "Công trình có <lỗ giếng trời lấy sáng (lỗ thông tầng)> => Cần đóng kín bằng tường hoặc kính chống cháy hoặc kính cường lực dày 6mm có trang bị đai Sprinkler".
-- HỆ THỐNG PCCC: "Các hệ thống PCCC cần trang bị:" + "- …" chỉ tên hệ thống, không ngoặc, không số căn cứ.
+- HỆ THỐNG PCCC: "Các hệ thống PCCC cần trang bị:" + "- …" chỉ tên hệ thống, không ngoặc, không số căn cứ. Người dùng dặn 2026-11-06 (áp mãi mãi):
+  (a) "họng nước chữa cháy" mặc định gọi là "Hệ thống chữa cháy vách tường (+ bơm)"; (b) sprinkler tầng hầm ghi "tầng hầm để xe" khi là hầm xe;
+  (c) CÓ chữa cháy vách tường hoặc sprinkler thì BẮT BUỘC thêm dòng bể nước, chữ ĐỎ ĐẬM: `!- Bể nước PCCC: 126m3 (hầm để xe)` hoặc `9m3 (hầm kỹ thuật)`
+  (dòng bắt đầu bằng "!" được `bcks` ghi đỏ đậm, hàm `_rich`); không có hai hệ thống đó thì KHÔNG ghi bể.
 - TƯ VẤN: "+ …" 4–6 việc ngắn của CĐT (đóng kín buồng thang, cửa chống cháy các gian phòng tiếp giáp sảnh, số người ≤ 20/tầng nếu 1 thang, lắp hệ thống như đã yêu cầu, tường giáp ranh).
 - Cột GHI CHÚ có ảnh cắt từ `ban_ve_ghi_chu.pdf` ở hàng liên quan (thoát nạn, ngăn cháy) như bản cũ (người dùng dặn 2026-11-03); khoá `bcks.ghi_chu.<mục>.anh`.
 Nội dung lấy từ khoá `bcks` của `doi_chieu.json`, viết theo văn phong mẫu (gạch đầu dòng "- …", kết luận "=> …", số có đơn vị):

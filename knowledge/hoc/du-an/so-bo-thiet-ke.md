@@ -80,3 +80,13 @@ Chỉ áp dụng bài có "Trạng thái: da_duyet". Ghi bởi agent pccc-hoc-du
 - Trạng thái: da_duyet
 - Căn cứ: QCVN 06:2022/BXD 3.4.7; người dùng dạy 2026-11-06
 - Nội dung: Nhà phố hẹp có thang ở giữa nhà, hai bên là tường giáp ranh, hai đầu cách xa thì KHÔNG trổ được lối ra ngoài trực tiếp từ buồng thang; không ghi "cần lối ra ngoài trực tiếp". Cách đúng: buồng thang quây kín (cả phần tiểu cảnh/không gian quanh vế), thoát qua TIỀN SẢNH tới cửa ra ngoài, với điều kiện sảnh ngăn cách các gian phòng tiếp giáp (phòng khách, phòng ngủ, bếp, sinh hoạt chung) bằng vách ngăn cháy loại 1, cửa chống cháy tự đóng, chèn kín khe. Thiếu gì: vạch ranh giới tiền sảnh từ cửa buồng thang tới cửa ra, ngăn cháy các phòng tiếp giáp, cửa EI ở mọi tầng, lỗ lấy sáng ≥ 1,2 m² (3.4.8). Lỗi đã mắc: bắt buộc lối ra ngoài trực tiếp ở tầng trệt và quây buồng chỉ ôm vế thang.
+
+
+### Căn hộ dịch vụ 8 m, Q.2 (2026-11-06, nguồn: người dùng sửa BCKS nhiều lần)
+- Trạng thái: da_duyet
+- Căn cứ: người dạy 2026-11-06; QCVN 06:2022/BXD 3.2.6.2a, 3.4.16; QCVN 10:2025 Bảng A.1 mục 25.1, Bảng 1 mục 1.2
+- Nội dung: (1) Ghi chú PDF phải có khung cho MỌI TT của bảng KS (6–27), không chỉ thang. (2) Nhà không thuộc diện thẩm định: BCKS khoảng cách PCCC và giao thông ghi
+  "-Đảm bảo". (3) THOÁT NẠN phải mở đầu bằng số lối: "Công trình có 1 thang bộ (1 lối thoát nạn/tầng). Tuy nhiên … => Chưa đảm bảo …". (4) Hệ thống: "họng nước" mặc định gọi
+  "chữa cháy vách tường + bơm"; hầm xe ⇒ sprinkler tầng hầm để xe; có vách tường hoặc sprinkler ⇒ ghi bể nước chữ đỏ đậm: 126m3 (hầm để xe), 9m3 (hầm kỹ thuật), không có hai
+  hệ thống đó thì không ghi bể. (5) BCKS ngắn gọn, cùng một font; thoát nạn gom thông số thang một câu (vế ≥ 900, bậc ≥ 250, cao ≤ 220). (6) Cơ sở lưu trú F1.2: lửng tính 1 tầng;
+  5 tầng nổi ⇒ vách tường + bơm + bể; < 5 tầng nổi và < 1.500 m² mới được báo cháy độc lập. (7) Quây thang: xem `knowledge/nhan-dien-thang-thoat-nan.md` mục "Vẽ tường quây buồng thang".

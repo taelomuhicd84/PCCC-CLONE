@@ -153,3 +153,33 @@ khác mẫu Nguyễn Viết Thanh (vách ngăn chia buồng thang ở tầng 1).
   - CHỐNG KHÓI (hút đồng thời các tầng thông nhau, D.1.5, D.7, 4.35 e, tự nhiên, màn, lớp khói, ghi chú mẫu): tách sang
     `knowledge/hut-khoi-thong-tang.md`, không lặp ở đây.
 - Ghi chú lên bản vẽ ở thang hở: nhận diện + ngăn cháy ở đây, phần hút khói theo `knowledge/hut-khoi-thong-tang.md` mục 4.
+
+
+## Vẽ tường quây buồng thang khi đóng kín (người dùng dặn 2026-11-06, áp mọi dự án)
+- Tường buồng thang cách mép BẬC ĐẦU TIÊN ≈ 900 mm (bề rộng 1 vế), tính RIÊNG cho từng vế: hai vế có thể bắt đầu ở cao độ khác nhau
+  (căn hộ DV 8 m: hầm, trệt vế trái bậc đầu ở y ≈ 458, vế phải y ≈ 419 px@1.6 ⇒ tường bậc thang: trái y ≈ 420, phải y ≈ 381). Không vẽ một đường thẳng
+  chung, không để trống khoảng lớn từ cửa tới bậc, không sát bậc. Đo bậc đầu từng vế bằng ảnh phóng 4 lần trước khi đặt `tuong`/`cua`.
+- Cửa EI ≈ 800 mm đặt ở đầu từng vế, mở VÀO buồng thang, cánh quét trong khoảng 900 mm, không chạm bậc.
+- Cửa EI phía có phòng mở ra sảnh (vd P. T-01, T-02 ở trệt) đặt SÁT MÉP tường để cánh cửa phòng mở ra không va vào cánh cửa EI. Nếu cánh vẫn chắn đường thoát
+  nạn của các phòng đó thì ghi "bề rộng đường thoát nạn không đảm bảo", nhà không thuộc diện thẩm định thì "tạm chấp nhận".
+- Cửa phòng mở vào trong phòng không bao giờ vướng cung vế thang: không ghi "kiểm cung cánh cửa phòng".
+- Nhà thang hở nhiều tầng, không thuộc diện thẩm định: hầm + trệt BẮT BUỘC quây kín thang; các tầng trên có thể thay bằng cửa EI cho từng phòng/căn hộ mở vào thang.
+
+### Hầm, trệt và các tầng trên (người dùng sửa 2026-11-06, căn hộ DV 8 m; GHI ĐÈ các ý trước trong mục này nếu mâu thuẫn)
+- HẦM: chỉ 1 cửa EI ở vế trái (vế đi LÊN); hầm là tầng thấp nhất nên không có cửa "đi xuống"; không vẽ cửa vế phải. Thang máy hầm mới cần khoang (buồng) đệm ngăn cháy với hầm xe.
+- TRỆT: tường quây ôm hai vế thang + thang máy sát theo đường nét đỏ người dùng vẽ (tường sát khối thang, bậc thang trái thấp hơn phải); cửa EI sát mép để cửa các phòng
+  mở ra sảnh (T-01, T-02) không va; hai cửa EI ở đầu hai vế khi thang đi xuống/lên cùng một sảnh.
+- CÁC TẦNG NỔI TRÊN (lửng trở lên): KHÔNG cần tường quây trước mặt thang, KHÔNG vẽ tường; thay bằng cửa chống cháy EI cho các phòng/căn hộ mở vào thang, hành lang.
+- Thang máy các tầng nổi không cần tường quây riêng; chỉ thang máy hầm cần khoang đệm.
+- Phần số liệu 900 mm của mục trên là tham chiếu khi người dùng chưa vẽ nét mẫu; ưu tiên nét người dùng vẽ.
+- (2026-11-06, người dùng sửa tiếp) Thang máy nằm NGOÀI tường quây, KHÔNG vẽ tường ngang qua đỉnh thang máy: tường quây chỉ gồm hai mũ che đầu hai vế (nối vào vách giếng thang máy sẵn có)
+  và hai tường bên; cửa thang máy dùng E30 thay cho tường/buồng đệm ở các tầng nổi.
+- (2026-11-06, CHỐT, ghi đè mọi ý trước về thang máy hầm) Hầm GIỐNG trệt: thang máy nằm ngoài tường quây, KHÔNG vẽ tường qua đỉnh thang máy, KHÔNG vẽ khoang đệm riêng, cửa thang máy E30;
+  tường quây chỉ gồm mũ che đầu hai vế nối vào vách giếng thang máy sẵn có. Khác trệt ở chỗ hầm chỉ có 1 cửa EI ở vế trái (đi lên).
+
+### Checklist vẽ buồng thang (đọc TRƯỚC khi đặt `tuong`/`cua`, người dùng dặn "đừng sai mãi" 2026-11-06)
+1. Tầng nổi trên (lửng trở lên): KHÔNG vẽ tường quây; cửa chống cháy từng phòng/căn hộ.
+2. Hầm + trệt: tường quây hai vế, cách mép bậc đầu từng vế ≈ 900 mm (nét người dùng vẽ nếu có thì theo nét đó), thang máy ở NGOÀI (cửa E30), không tường qua đỉnh thang máy.
+3. Cửa EI ≈ 800 mm mở vào buồng, không chạm bậc, sát mép phía có cửa phòng mở ra (T-01, T-02). Hầm chỉ 1 cửa, vế trái đi lên.
+4. Cửa phòng mở vào phòng thì không bàn cung vế thang.
+5. Đo bậc đầu từng vế bằng ảnh phóng 4 lần; so lại với nét người dùng vẽ trước khi gửi.

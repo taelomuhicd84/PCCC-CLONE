@@ -448,6 +448,20 @@ def _hang_bcks(ws) -> dict:
 COT_I_PX, PT_ANH = 640, 0.81
 
 
+def _rich(chu, font=None):
+    """Dòng bắt đầu bằng '!' ⇒ chữ đỏ đậm (vd bể nước PCCC trong mục Hệ thống); không có thì giữ chuỗi thường."""
+    if not chu or "!" not in chu:
+        return chu
+    from openpyxl.cell.rich_text import CellRichText, TextBlock
+    from openpyxl.cell.text import InlineFont
+    ten, co = (font.name, font.sz) if font is not None and font.name else ("Times New Roman", 12)   # CÙNG font, cỡ với ô mẫu (người dùng dặn 2026-11-06)
+    do = InlineFont(rFont=ten, sz=co, b=True, color="FFFF0000")
+    thuong = InlineFont(rFont=ten, sz=co)
+    ds = chu.split("\n")
+    nl = lambda i: "\n" if i < len(ds) - 1 else ""
+    return CellRichText(*[TextBlock(do, x[1:].lstrip() + nl(i)) if x.startswith("!") else TextBlock(thuong, x + nl(i)) for i, x in enumerate(ds)])
+
+
 def _so_dong(s, ky_tu_dong: int) -> int:
     return sum(max(1, -(-len(x) // ky_tu_dong)) for x in str(s).split("\n")) if s else 0
 
@@ -502,7 +516,7 @@ def bcks(dc: dict, f: Path, ra: Path, mau: Path = MAU_BCKS) -> dict:
     bo_qua = [k for k, v in b.get("muc", {}).items() if v and k not in hang_mau]   # mẫu không có mục này: báo để đưa vào Tư vấn
     for khoa, hang in hang_mau.items():
         chu, gc = b.get("muc", {}).get(khoa, ""), b.get("ghi_chu", {}).get(khoa, {})
-        ws.cell(hang[0], 6).value = chu or None
+        ws.cell(hang[0], 6).value = _rich(chu, ws.cell(hang[0], 6).font) or None
         ws.cell(hang[0], 9).value = gc.get("chu") or None
         if gc.get("chu"):
             ws.cell(hang[0], 9).alignment = Alignment(horizontal="left", vertical="top", wrap_text=True)   # chữ trên, ảnh dưới
@@ -522,7 +536,7 @@ def bcks(dc: dict, f: Path, ra: Path, mau: Path = MAU_BCKS) -> dict:
             for x in anh:
                 x.width, x.height = round(x.width * s), round(x.height * s)
             vt, cao_anh = _xep_anh([(x.width, x.height) for x in anh], tren_anh)
-        cao = max(_so_dong(chu, 64) * 16 + 10, cao_anh if anh else tren_anh, 30)
+        cao = max(_so_dong(chu.replace("!", ""), 64) * 16 + 10, cao_anh if anh else tren_anh, 30)
         for h in hang:
             ws.row_dimensions[h].height = min(409, cao / len(hang))
         for x, (cx, y) in zip(anh, vt):                          # y: pt tính từ đỉnh ô; đổi sang hàng chứa điểm neo
