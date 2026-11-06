@@ -73,3 +73,4 @@ Tường tính riêng từng vế (bậc đầu mỗi vế có thể khác cao �
 Hầm: chỉ cửa EI vế trái (đi lên), thang máy hầm có khoang đệm; trệt: tường ôm hai vế + thang máy theo nét người dùng vẽ; tầng nổi trên: KHÔNG vẽ tường quây (cửa EI từng phòng). Chi tiết `knowledge/nhan-dien-thang-thoat-nan.md`.
 Thang máy ngoài tường quây (không vẽ tường qua đỉnh thang máy), cửa thang máy E30: xem knowledge/nhan-dien-thang-thoat-nan.md.
 Đọc checklist "Vẽ buồng thang" cuối knowledge/nhan-dien-thang-thoat-nan.md trước khi đặt tuong/cua (hầm giống trệt: thang máy ngoài, cửa E30, hầm chỉ 1 cửa vế trái).
+Cửa EI đề xuất cho phòng ở/căn hộ, KHÔNG cho WC: phóng to đọc nhãn phòng và cung cửa từng phòng trước khi khoanh (bài học trong knowledge/hoc/du-an/so-bo-thiet-ke.md).

@@ -90,3 +90,10 @@ Chỉ áp dụng bài có "Trạng thái: da_duyet". Ghi bởi agent pccc-hoc-du
   "chữa cháy vách tường + bơm"; hầm xe ⇒ sprinkler tầng hầm để xe; có vách tường hoặc sprinkler ⇒ ghi bể nước chữ đỏ đậm: 126m3 (hầm để xe), 9m3 (hầm kỹ thuật), không có hai
   hệ thống đó thì không ghi bể. (5) BCKS ngắn gọn, cùng một font; thoát nạn gom thông số thang một câu (vế ≥ 900, bậc ≥ 250, cao ≤ 220). (6) Cơ sở lưu trú F1.2: lửng tính 1 tầng;
   5 tầng nổi ⇒ vách tường + bơm + bể; < 5 tầng nổi và < 1.500 m² mới được báo cháy độc lập. (7) Quây thang: xem `knowledge/nhan-dien-thang-thoat-nan.md` mục "Vẽ tường quây buồng thang".
+
+### Cửa chống cháy chỉ cho phòng ở/căn hộ, KHÔNG cho WC; đọc tên phòng và cửa trước khi khoanh (2026-11-06, nguồn: Căn hộ DV 8 m, người dùng sửa)
+- Trạng thái: da_duyet
+- Căn cứ: QCVN 06:2022/BXD (WC là phòng phụ trợ, không phải gian phòng ở/căn hộ); người dạy 2026-11-06
+- Nội dung: Khi đề xuất "cửa chống cháy EI cho các gian phòng/căn hộ mở vào thang, hành lang" thì chỉ khoanh cửa của PHÒNG Ở/căn hộ (P. L-01, L-02…), không khoanh cửa WC. Trước khi khoanh phải
+  (1) đọc nhãn từng phòng, (2) phóng to xem cửa nào thuộc phòng nào (cung cửa mở ra hành lang/sảnh), (3) so lại với ảnh người dùng. Lỗi đã mắc: lửng khoanh tím cửa WC L-02, WC L-03 và đặt khung lệch cửa phòng L-02, L-01;
+  lửng chỉ có P. L-01, L-02 (hai cửa mở ra sảnh thang), lầu 1–3 có 4 phòng L-01…04 (bốn cửa mở ra hành lang).
