@@ -171,3 +171,6 @@
 ## 2026-11-06 (toi)
 - BCKS "Nha pho - Can ho dich vu 8m": doc xong 8 trang ban ve, nhan dien ghi trong TIEN_DO.md; dung vi usage tuan 95 %, chua lap doi_chieu.json.
 - 2026-11-06 toi: BCKS Can ho dich vu 8m xong (ket_qua/canho8m/v7), nhieu bai hoc ve ve buong thang, BCKS he thong/be nuoc, ghi chu PDF du TT: da chep knowledge + skill. `bang_doi_chieu.py` them `_rich` (chu do dam trong o BCKS).
+
+## 2026-11-09
+- BCKS Khach san Duy Anh (ket_qua/tkcs_kientruc): xong, them thoat nan tang ham (2 loi, ~21 m, phan tan ~6,7 m < 11,5 m). ghi_chu_pdf.py them `quay` (xoay chu); bang_doi_chieu.py COT_I_PX 430. Con ap quy tac 3.2.8 hanh lang (MOD_tinh_toan_khoang_cach.md) cho khoang cach 2 thang.

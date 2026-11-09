@@ -9,6 +9,17 @@
 - Cách đo: đường thẳng nối **2 cạnh xa nhất** của 2 lối ra, phải ≥ 7 m. Nếu < 7 m → đo lại theo **2 cạnh gần nhất** rồi so số đó với ½D.
 - Phòng nằm trong phòng khác: xét theo đường chéo **d** của chính phòng đó (L ≥ ½d).
 - Hai buồng thang thoát nạn nối nhau bằng hành lang trong/hành lang bên **được bảo vệ theo 3.3.5** (xem MOD_hanh_lang_bao_che.md) → đo L **dọc theo đường di chuyển trên hành lang** (Hình I.5). Không rõ/không bảo vệ → đo đường thẳng. Thang hở (không phải buồng thang) → coi như không áp dụng, ghi nghi vấn.
+
+### 3.2.8 nguyên văn (QCVN 06:2022 sửa đổi 01:2023, ảnh người dùng gửi 2026-11-09) và cách áp dụng
+> Khoảng cách giữa hai lối ra thoát nạn được đo theo đường thẳng nối giữa hai cạnh xa nhất của chúng và phải lớn hơn hoặc bằng 7 m. Trường hợp khoảng cách này nhỏ hơn 7 m thì khoảng cách giữa hai lối ra thoát nạn được đo theo đường thẳng nối giữa hai cạnh gần nhất của chúng (xem Hình I.4 a), b), c)).
+> Nếu nhà được bảo vệ toàn bộ bằng hệ thống chữa cháy tự động Sprinkler, thì khoảng cách này có thể giảm xuống còn 1/3 chiều dài đường chéo lớn nhất của mặt bằng các gian phòng, phần nhà hoặc tầng nhà trên (xem Hình I.4 d)).
+> **Khi có hai buồng thang thoát nạn nối với nhau bằng một hành lang trong hoặc hành lang bên thì khoảng cách giữa hai lối ra thoát nạn (cửa vào buồng thang thoát nạn) được đo dọc theo đường di chuyển theo hành lang đó (xem Hình I.5). Hành lang này phải được bảo vệ theo quy định tại 3.3.5.**
+- **Thứ tự xét khi hai lối ra (hai thang) gần nhau (vd 5,8 m < 7 m), BẮT BUỘC làm trước khi kết luận "chưa đảm bảo phân tán":**
+  1. Hai buồng thang có nối nhau bằng hành lang trong/hành lang bên không? Có → đo L dọc hành lang (Hình I.5 b), so với ½D (⅓D nếu sprinkler toàn nhà).
+  2. Hành lang đó đã bảo vệ theo 3.3.5 chưa: tường bao hành lang ngăn cháy + MỌI cửa gian phòng mở vào hành lang là cửa chống cháy theo ĐÚNG mức 3.3.5: EI30 nhà bậc I, EI15 nhà bậc II–IV (người dùng chốt 2026-11-09: theo quy chuẩn; cửa có GHCL cao hơn mức này vẫn đạt). Đạt → được đo dọc hành lang.
+  3. Chưa bảo vệ → KHÔNG kết luận chết: ghi "chưa đảm bảo phân tán nếu đo đường thẳng" kèm **phương án**: các gian phòng dùng cửa chống cháy đạt mức 3.3.5 (và tường bao hành lang ngăn cháy) để đo phân tán dọc đường thoát nạn theo Hình I.5 b; hoặc tách hai lối ra ≥ ½D / ⅓D.
+  - **Phải ước một con số L dọc hành lang** (người dùng dặn: chỉ cần sát, không cần chính xác 100%): cộng các đoạn hành lang từ cửa buồng thang này tới cửa buồng thang kia theo tâm lối đi (đo trên PDF theo tỉ lệ, hoặc từ kích thước ghi trên bản vẽ). Ghi "L dọc hành lang ≈ … m (ước)" so với ½D hoặc ⅓D (sprinkler toàn nhà), kết luận đạt/không theo số đó. Không ước được → nói rõ thiếu số liệu nào, không bỏ trống.
+  4. Hai thang không nối nhau bằng hành lang (thang đứng riêng từ hai phía) → chỉ đo đường thẳng.
 - Có Sprinkler hay không lấy từ skill khác (xem [DU_LIEU_TU_SKILL_KHAC.md](DU_LIEU_TU_SKILL_KHAC.md)). Chưa có dữ liệu → tạm dùng ½D.
 
 ## 3.3.2 – Cách đo khoảng cách thoát nạn; đường thoát nạn qua cầu thang bộ loại 2

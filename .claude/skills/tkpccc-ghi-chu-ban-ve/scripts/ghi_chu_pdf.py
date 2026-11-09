@@ -89,14 +89,19 @@ class But:
         else:
             a.set_info(title=tieu_de, subject=kieu, content=nd)
 
-    def chu(self, rect, text, mau, co=7.5, vien=True, tro=None):
-        """FreeText; `tro` = [đích, khuỷu, mép hộp] (nhìn thấy) để thành callout."""
-        co, rect = _co_chu(text, rect, co)
+    def chu(self, rect, text, mau, co=7.5, vien=True, tro=None, quay=0):
+        """FreeText; `tro` = [đích, khuỷu, mép hộp] (nhìn thấy) để thành callout.
+        `quay` = 90: chữ chạy dọc từ dưới lên (bản vẽ vẽ nghiêng 90° trong trang, hộp cao hẹp; chiều dài chữ = cao hộp)."""
+        if quay:
+            co, r2 = _co_chu(text, pymupdf.Rect(0, 0, rect.height, rect.width), co)
+            rect = pymupdf.Rect(rect.x0, rect.y0, rect.x0 + r2.height, rect.y0 + rect.height)
+        else:
+            co, rect = _co_chu(text, rect, co)
         kw = {}
         if tro:
             kw = {"callout": [p * self.m for p in tro], "line_end": MUI_TEN}
         a = self.p.add_freetext_annot(rect * self.m, text, fontsize=co, text_color=mau, fill_color=(1, 1, 1),
-                                      border_width=1 if vien else 0, rotate=self.p.rotation, **kw)
+                                      border_width=1 if vien else 0, rotate=(self.p.rotation + quay) % 360, **kw)
         return a
 
     def khung(self, rect, mau, net_dut=True, may=False):
@@ -160,7 +165,7 @@ def ve_muc(page: pymupdf.Page, muc: dict, k: float) -> list:
                                  (rect.y0 + rect.y1) / 2)
             khuyu = _diem(muc["khuyu"], k) if "khuyu" in muc else pymupdf.Point((canh.x + dich.x) / 2, canh.y)
             tro = [dich, khuyu, canh]
-        tao.append(but.chu(rect, text, mau, co=float(muc.get("co", 7.5)), vien=muc.get("vien", True), tro=tro))
+        tao.append(but.chu(rect, text, mau, co=float(muc.get("co", 7.5)), vien=muc.get("vien", True), tro=tro, quay=int(muc.get("quay", 0))))
     elif kieu == "leader":
         if "tu" not in muc or "den" not in muc:
             raise Loi("leader cần 'tu' (đuôi, chỗ ghi chữ) và 'den' (mũi tên)")
@@ -205,7 +210,7 @@ def ve_muc(page: pymupdf.Page, muc: dict, k: float) -> list:
         cung = [tam + (r * math.cos(g0 + chieu * i * math.pi / 24), r * math.sin(g0 + chieu * i * math.pi / 24))
                 for i in range(13)]
         tao.append(but.net([tam, cung[-1]], mau, day=1.5))          # cánh mở 90°
-        tao.append(but.net(cung, mau, day=0.8, net_dut=True))       # cung quét
+        tao.append(but.net(cung, mau, day=0.8))       # cung quét (nét liền, người dùng dặn 2026-11-09: cửa vẽ cho đẹp)
         if muc.get("nhan") is not False:      # "nhan": false = không hiện nhãn (ô nhãn nền trắng che nét khi vẽ chật)
             muc = {**muc, "nhan": muc.get("nhan") or muc.get("loai")}
             tao += _nhan(but, muc, cung[6], mau, k)

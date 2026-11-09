@@ -107,7 +107,7 @@ rules:
     measure_threshold_m: 7.0 # SĐ1: đo cạnh xa nhất; nếu < 7 m thì đo cạnh gần nhất
     default_scale: null      # vd "1:100" nếu bản vẽ không ghi tỉ lệ
     severity: error
-    message: "Hai lối ra phân tán nhất ({pair}) chỉ cách ~{actual} m < {required} m yêu cầu"
+    message: "Hai lối ra phân tán nhất ({pair}) chỉ cách ~{actual} m < {required} m yêu cầu (đo đường thẳng). Nếu hai thang nối nhau bằng hành lang bảo vệ theo 3.3.5 (cửa phòng chống cháy đạt mức 3.3.5) thì đo dọc hành lang, Hình I.5 b — cần kiểm tay"
     verified: true
 
   - id: MIN-EXITS-PER-FLOOR

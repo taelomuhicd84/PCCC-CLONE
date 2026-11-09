@@ -445,7 +445,7 @@ def _hang_bcks(ws) -> dict:
 
 # Cột I của mẫu ≈ 650 px. Excel in hàng thấp hơn ≈ 7 % còn ảnh giữ cỡ, nên 1 px ảnh chiếm ≈ 0,81 pt chiều cao hàng
 # (đo trên bản PDF xuất từ Excel, 2026-11-02).
-COT_I_PX, PT_ANH = 640, 0.81
+COT_I_PX, PT_ANH = 430, 0.81   # cột I rộng 61 ký tự ≈ 430 px (sửa 2026-11-09: 640 làm ảnh thứ hai tràn khỏi cột)
 
 
 def _rich(chu, font=None):
