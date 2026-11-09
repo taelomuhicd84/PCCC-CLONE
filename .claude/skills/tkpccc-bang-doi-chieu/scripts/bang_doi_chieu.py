@@ -516,6 +516,10 @@ def bcks(dc: dict, f: Path, ra: Path, mau: Path = MAU_BCKS) -> dict:
     bo_qua = [k for k, v in b.get("muc", {}).items() if v and k not in hang_mau]   # mẫu không có mục này: báo để đưa vào Tư vấn
     for khoa, hang in hang_mau.items():
         chu, gc = b.get("muc", {}).get(khoa, ""), b.get("ghi_chu", {}).get(khoa, {})
+        if not chu and not gc:                                    # không có yêu cầu: ẩn hẳn dòng (người dùng dặn 2026-11-09), không để dòng trống
+            for h in hang:
+                ws.row_dimensions[h].hidden = True
+            continue
         ws.cell(hang[0], 6).value = _rich(chu, ws.cell(hang[0], 6).font) or None
         ws.cell(hang[0], 9).value = gc.get("chu") or None
         if gc.get("chu"):
