@@ -183,3 +183,9 @@ khác mẫu Nguyễn Viết Thanh (vách ngăn chia buồng thang ở tầng 1).
 3. Cửa EI ≈ 800 mm mở vào buồng, không chạm bậc, sát mép phía có cửa phòng mở ra (T-01, T-02). Hầm chỉ 1 cửa, vế trái đi lên.
 4. Cửa phòng mở vào phòng thì không bàn cung vế thang.
 5. Đo bậc đầu từng vế bằng ảnh phóng 4 lần; so lại với nét người dùng vẽ trước khi gửi.
+
+### Hầm: khoang đệm theo 4.28 (người dùng sửa 2026-11-09, GHI ĐÈ mục CHỐT 2026-11-06 về hầm; dự án Văn phòng Tân Quy Đông 1)
+- QCVN 06 4.28: tầng hầm, nửa hầm, trước lối vào thang máy phải có khoang đệm ngăn cháy loại 1, áp suất dương khi cháy; 3.2.1: thang hầm chung buồng thang tầng trên (nhà < 28 m, không lối riêng) vào qua khoang đệm.
+- Cách vẽ người dùng chỉ (nét đỏ + cửa xanh trên `ban_ve.pdf`): HẦM quây một khối gồm CẢ thang bộ lẫn thang máy (tường tại mép ngoài), chỉ 1 cửa EI 60 ở tường trái; TRỆT: tường quây vế trên (tường trái dọc theo sảnh), vách giếng thang máy, tường dưới vế dưới, 2 cửa EI 60 ra sảnh; thang máy cửa E30.
+- Người dùng tự vẽ nét trên PDF gốc thì GIỮ NGUYÊN nét đó (đọc `a.vertices` từ annotation Line), không tự vẽ tường/cửa thêm.
+- Ghi chú PDF mang sang BCKS phải GỌN (người dùng dặn 2026-11-09): chỉ ô chữ `chu` có số TT, KHÔNG khung nét đứt (`khung`), KHÔNG mũi tên dài kéo qua bản vẽ (`callout` có `den` xa), KHÔNG tự vẽ thêm `tuong`/`cua`/`net` khi người dùng đã vẽ mẫu; ô chữ xếp hàng ở lề dưới, chữ phải vừa ô (rút ngắn, kiểm ảnh).
