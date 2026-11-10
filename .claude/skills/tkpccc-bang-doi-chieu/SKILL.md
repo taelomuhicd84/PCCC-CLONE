@@ -113,3 +113,4 @@ Không mở cả file JSON bảng gốc (tới 160 KB): đọc bằng `khung`, `
   còn ngưỡng khối tích cũ (báo cháy 2.500/5.000 m³) khác QCVN 10:2025 Bảng A.1 mục 18 (≥ 3 tầng hoặc ≥ 700 m² sàn): xét theo QCVN 10:2025.
 - Sửa bảng gốc: sửa `data/<mã>.json`, giữ nguyên `idx`, ghi `LICH_SU.md`; muốn đồng bộ về SKILL-PCCC-NEW thì báo người dùng.
 - Mẫu Word chính thức của bảng A, B (`data/mau/*.docx` ở SKILL-PCCC-NEW) chưa chép: xuất Word theo mẫu là việc sau (ROADMAP Pha 5b).
+- Ảnh BCKS (người dùng dặn 2026-11-10): chỉ nét khoanh trọng yếu + mũi tên + note đi kèm mũi tên, KHÔNG có các khung note khác trong ảnh. Bản vẽ ghi chú thì khoanh nhiều, mỗi nét có ô comment. Cách làm: sinh `ban_ve_bcks.pdf` riêng (lọc ghi_chu: chỉ `net`, `leader` và `chu` gắn với leader), ảnh BCKS khai `"pdf":"ban_ve_bcks.pdf"`.

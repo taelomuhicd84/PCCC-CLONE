@@ -532,7 +532,8 @@ def bcks(dc: dict, f: Path, ra: Path, mau: Path = MAU_BCKS) -> dict:
         anh = []
         for i, a in enumerate(gc.get("anh", [])):
             anh_ra.mkdir(parents=True, exist_ok=True)
-            x = XLImage(str(_cat_anh(pdf, a, dc.get("zoom", 1), anh_ra / f"{khoa}_{i + 1}.png")))
+            nguon = f.parent / a["pdf"] if a.get("pdf") else pdf  # `pdf`: bản ghi chú riêng cho ảnh BCKS (chỉ khoanh + mũi tên)
+            x = XLImage(str(_cat_anh(nguon, a, dc.get("zoom", 1), anh_ra / f"{khoa}_{i + 1}.png")))
             rong = a.get("rong", 620 if len(gc["anh"]) == 1 else 305)
             x.width, x.height = rong, round(x.height * rong / x.width)
             anh.append(x)
