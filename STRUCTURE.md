@@ -23,7 +23,8 @@ TKPCCC/
 │     │                           scripts/bang_doi_chieu.py (chon, khung, dong, tim, lamviec, job, gop, kiem, xlsx, md), test/
 │     ├─ tkpccc-ghi-chu-ban-ve/   scripts/ghi_chu_pdf.py (ve, luoi, tim: annotation khung/callout/leader/nét/tường/cửa), test/
 │     ├─ tkpccc-kiem-luat-pdf/ · tkpccc-thuy-luc/ · tkpccc-bao-gia/ · tkpccc-huong-dan/   thẻ module (code ở shared/ runner/ thamdinh/ web/)
-│     ├─ tkpccc-cad-console/      module CAD: build + kiểm thử plugin (scripts/in_png.ps1), đường CAD qua MCP (Pha 6)
+│     ├─ tkpccc-cad-console/      module CAD: build + kiểm thử plugin (scripts/in_png.ps1)
+│     ├─ tkpccc-ve-cad/           vẽ CAD tự động qua MCP CAD (cad_tt, cad_chay) bằng spec ngắn
 │     └─ tkpccc-tra-quy-chuan/ · tkpccc-xong-dau-muc/   quy trình chung
 │
 ├─ shared/              LÕI NGHIỆP VỤ dùng chung, hàm thuần (không đọc/ghi file, không server)
@@ -59,6 +60,12 @@ TKPCCC/
 ├─ cad/                 PLUGIN AUTOCAD 2021–2024 (C# .NET Framework 4.8, chỉ cú pháp C# 5)
 │  ├─ src/Lenh.cs          toàn bộ lệnh PCCC_* (LIB, DAT, ONG, GAN, BOC, BANG, VUNGBV, HELP)
 │  ├─ test/chay_thu.ps1    kiểm thử trong accoreconsole (AutoCAD không giao diện)
+│  ├─ src/Spec.cs · Cau.cs  lệnh PCCC_SPEC (thao tác spec) · cầu nối hàng đợi -> AutoCAD đang mở
+│  ├─ chung/HangDoi.cs     hàng đợi file dùng chung plugin + máy chủ MCP
+│  ├─ mcp/Mcp.cs           máy chủ MCP (C#, stdio) -> bin/TKPCCC.Mcp.exe (không commit): cad_tt, cad_chay
+│  ├─ spec/TU_VUNG.md      từ vựng spec (nguồn duy nhất) + vi_du/
+│  ├─ test/thu_mcp.ps1     kiểm thử máy chủ MCP không cần mở AutoCAD
+│  ├─ README.md · KE_HOACH.md · TIEN_DO.md · LICH_SU.md   sổ sách riêng của CAD (tiến độ, nhật ký, kế hoạch)
 │  ├─ build.bat            biên dịch bằng csc.exe có sẵn của Windows -> TKPCCC.bundle/Contents/
 │  └─ TKPCCC.bundle/       gói nạp tự động của AutoCAD (tên *.bundle là bắt buộc)
 │     ├─ PackageContents.xml

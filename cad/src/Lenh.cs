@@ -46,12 +46,15 @@ namespace TKPCCC
         {
             Document doc = AcApp.DocumentManager.MdiActiveDocument;
             if (doc != null) doc.Editor.WriteMessage("\n[TKPCCC] Đã nạp plugin PCCC. Gõ PCCC_HELP để xem lệnh.");
+            // Cầu nối MCP chỉ bật trong AutoCAD có giao diện: accoreconsole không có vòng lặp thông điệp cho timer.
+            try { if (System.Diagnostics.Process.GetCurrentProcess().ProcessName.ToLowerInvariant() == "acad") Cau.BatDau(); }
+            catch (System.Exception) { }
         }
 
         public void Terminate() { }
     }
 
-    public class Lenh
+    public partial class Lenh // các file khác trong cad/src (Spec.cs...) là phần nối của lớp này
     {
         const string TAG_MA = "MA_VT";
         const string TIEN_TO_LAYER = "PCCC_";
@@ -71,6 +74,7 @@ namespace TKPCCC
         [CommandMethod("PCCC_BOC")] public void LenhBoc() { Chay(BocKhoiLuong); }
         [CommandMethod("PCCC_BANG")] public void LenhBang() { Chay(ChenBang); }
         [CommandMethod("PCCC_VUNGBV")] public void LenhVungBV() { Chay(VungBaoVe); }
+        [CommandMethod("PCCC_SPEC")] public void LenhSpec() { Chay(ChaySpec); } // cad/src/Spec.cs
 
         static void Chay(Action viec)
         {
@@ -369,25 +373,7 @@ namespace TKPCCC
                 if (r.Status != PromptStatus.OK) return;
                 using (Transaction tr = db.TransactionManager.StartTransaction())
                 {
-                    BlockTable bt = (BlockTable)tr.GetObject(db.BlockTableId, OpenMode.ForRead);
-                    if (!bt.Has(v.ma)) { ed.WriteMessage("\nThư viện không có block " + v.ma); return; }
-                    ObjectId bid = bt[v.ma];
-                    BlockTableRecord ms = (BlockTableRecord)tr.GetObject(db.CurrentSpaceId, OpenMode.ForWrite);
-                    BlockReference br = new BlockReference(r.Value.TransformBy(ed.CurrentUserCoordinateSystem), bid);
-                    br.ScaleFactors = new Scale3d(k);
-                    br.LayerId = DamBaoLayer(db, tr, TIEN_TO_LAYER + v.he, MauHe(v.he));
-                    ms.AppendEntity(br); tr.AddNewlyCreatedDBObject(br, true);
-                    BlockTableRecord def = (BlockTableRecord)tr.GetObject(bid, OpenMode.ForRead);
-                    foreach (ObjectId id in def)
-                    {
-                        AttributeDefinition ad = tr.GetObject(id, OpenMode.ForRead) as AttributeDefinition;
-                        if (ad == null || ad.Constant) continue;
-                        AttributeReference ar = new AttributeReference();
-                        ar.SetAttributeFromBlock(ad, br.BlockTransform);
-                        if (ad.Tag.ToUpperInvariant() == TAG_MA) ar.TextString = v.ma;
-                        br.AttributeCollection.AppendAttribute(ar);
-                        tr.AddNewlyCreatedDBObject(ar, true);
-                    }
+                    ChenThietBi(db, tr, v, r.Value.TransformBy(ed.CurrentUserCoordinateSystem), k, 0); // cad/src/Spec.cs
                     tr.Commit();
                 }
             }

@@ -9,6 +9,8 @@ Bộ công cụ thiết kế PCCC: plugin AutoCAD 2021 + runner Node + web nội
 - Cửa sổ 5 giờ (hoặc tuần) ≥ 85 % ⇒ **dừng ngay ở việc đang làm**: ghi `TIEN_DO.md` (dở ở đâu, bước tiếp theo cụ thể, đủ để phiên mới
   làm tiếp không cần hội thoại này) + `LICH_SU.md`, commit, push (skill `tkpccc-xong-dau-muc`); báo người dùng giờ reset.
 - Dự tính trước: việc sắp làm có thể đẩy usage qua 85 % (vd mở agent ≈ 10–25 % mỗi agent) thì lưu + push TRƯỚC khi làm.
+- Việc CAD (thư mục `cad/`, người dùng dặn 2026-11-10): tiến độ và nhật ký lưu RIÊNG ở `cad/TIEN_DO.md`, `cad/LICH_SU.md`
+  (`TIEN_DO.md` gốc chỉ trỏ tới); tới 85 % thì dừng, ghi 2 file đó, commit, push, rồi HỎI người dùng.
 
 ## Mỗi module là một skill (người dùng dặn 2026-11-02: sửa module nào thì chỉ vào đó, đỡ tốn token)
 Làm module nào: đọc `.claude/skills/<skill>/SKILL.md` của module đó và các file nó liệt kê; không đọc cả repo.
@@ -22,7 +24,8 @@ Làm module nào: đọc `.claude/skills/<skill>/SKILL.md` của module đó và
 | Thủy lực TCVN 7336 | `tkpccc-thuy-luc` | |
 | Khối lượng, báo giá, tab Khảo sát web | `tkpccc-bao-gia` | |
 | Hướng dẫn thiết kế B0–B7 | `tkpccc-huong-dan` | |
-| Plugin AutoCAD (+ đường thiết kế CAD qua MCP, Pha 6) | `tkpccc-cad-console` | |
+| Plugin AutoCAD: build, kiểm thử, thêm lệnh và thao tác spec | `tkpccc-cad-console` | |
+| Vẽ CAD tự động qua MCP CAD (`cad_tt`, `cad_chay`, spec ngắn) | `tkpccc-ve-cad` | |
 | Tra quy chuẩn (chọn file, chỉ văn bản hiện hành) | `tkpccc-tra-quy-chuan` | |
 | Khép đầu mục: kiểm → TIEN_DO/LICH_SU → commit → push | `tkpccc-xong-dau-muc` | |
 - Model + effort (người dùng dặn 2026-11-03: việc phức tạp cần tỉ mỉ, chính xác cực cao → Opus effort high; việc nhẹ → Sonnet effort thấp)

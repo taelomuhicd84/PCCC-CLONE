@@ -9,10 +9,12 @@ effort: medium
 Đây cũng là thẻ của MODULE CAD: `cad/src/Lenh.cs` (mọi lệnh `PCCC_*`), `cad/build.bat`, `cad/test/chay_thu.ps1`,
 `cad/TKPCCC.bundle/PackageContents.xml`, `cad/TKPCCC.bundle/Contents/PCCC_Blocks.dwg` + `block_alias.json` (người dùng sửa, có commit).
 
-**Đường sang thiết kế bằng CAD qua MCP (người dùng dặn 2026-11-02, ROADMAP Pha 6, CHƯA làm):** Claude ↔ máy chủ MCP (Node, stdio,
-thư mục `mcp/` khi làm) ↔ plugin lắng nghe 127.0.0.1 nhận lệnh JSON và chạy trên luồng chính AutoCAD (lệnh `PCCC_*` sẵn có: DAT, ONG, BOC…).
-Quyết định thiết kế lấy từ skill + `knowledge/`; phương án đã vẽ trên PDF (`tuong`, `cua`, `net` của skill `tkpccc-ghi-chu-ban-ve`)
-là đầu vào chung, đổi tọa độ PDF → mm bằng 2 điểm hiệu chỉnh. Plugin vẫn theo ràng buộc C# 5 dưới đây.
+**MCP CAD (làm 2026-11-10, ROADMAP Pha 6; khi VẼ thì dùng skill `tkpccc-ve-cad`):** AI ↔ `cad/bin/TKPCCC.Mcp.exe` (`cad/mcp/Mcp.cs`, C#, stdio)
+↔ hàng đợi file `%LOCALAPPDATA%\TKPCCC\cad` (`cad/chung/HangDoi.cs`) ↔ `cad/src/Cau.cs` (timer trên luồng chính, chỉ bật trong acad.exe;
+cần thêm tham chiếu `System.Windows.Forms` của .NET, không phải `acmgd`) ↔ lệnh `PCCC_SPEC` (`cad/src/Spec.cs`; từ vựng `cad/spec/TU_VUNG.md`).
+Thêm thao tác spec: hàm `Op...` + 1 dòng trong `MotOp` + 1 dòng trong `TU_VUNG.md` + 1 dòng kiểm trong `cad/test/chay_thu.ps1`.
+Kiểm máy chủ MCP không cần mở AutoCAD: `cad\test\thu_mcp.ps1`. Tiến độ và việc để lại của CAD: `cad/TIEN_DO.md`, `cad/KE_HOACH.md`.
+Plugin vẫn theo ràng buộc C# 5 dưới đây.
 
 AutoCAD 2021 có `accoreconsole.exe` (AutoCAD không giao diện): nạp được DLL .NET, chạy file kịch bản `.scr`, in ra dòng lệnh.
 Nhờ vậy kiểm thử được plugin mà không đụng AutoCAD người dùng đang mở và không cần họ thao tác.

@@ -12,3 +12,6 @@ cad/TKPCCC.bundle/Contents/vat_tu.json
 *.bak
 *.dwl
 *.dwl2
+
+# Ket qua build may chu MCP CAD
+cad/bin/

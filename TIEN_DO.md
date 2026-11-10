@@ -3,6 +3,7 @@
 File này cập nhật sau mỗi mốc việc và trước khi hết usage. Phiên mới đọc mục "ĐANG LÀM / VIỆC TIẾP THEO" trước.
 
 ## ĐANG LÀM / VIỆC TIẾP THEO (cập nhật 2026-11-06)
+**CAD tự động (MCP CAD, từ 2026-11-10): tiến độ và nhật ký RIÊNG ở `cad/TIEN_DO.md`, `cad/LICH_SU.md`; kế hoạch `cad/KE_HOACH.md`.**
 **XONG 06/11 (sáng): BCKS "Văn phòng Q.7 – Tân Quy Đông 1"** ở `ket_qua/tanquydong1/` (BCKS_Van_phong_Tan_Quy_Dong_1.xlsx/.pdf, ban_ve_ghi_chu.pdf, doi_chieu.xlsx, bang_doi_chieu.md; không commit; `dien.py`, `ghichu.py` dựng lại). 4 tầng nổi + hầm, cao PCCC ≈ 12 m (ước lượng), sàn ≈ 1.170 m², F4.3 theo tên hồ sơ (bản vẽ: trệt văn phòng, tầng trên căn A/B/E). Còn 👤: công năng thật (nhà ở KD thì hầm xe/báo cháy khác), vị trí tường/cửa PA1 (ước lượng từ ảnh), số người, mặt bằng mái. Usage tuần ≈ 97 % lúc làm.
 **XONG 06/11 tối: BCKS "Nhà phố – Căn hộ dịch vụ 8 m" (Q.2)** ở `ket_qua/canho8m/v7/` (BCKS xlsx, ban_ve_ghi_chu.pdf, doi_chieu.xlsx, bang_doi_chieu.md; không commit). Công năng giả định F1.2 theo tên file; 5 tầng nổi + hầm; cao PCCC ≈ 15,0 m.
 Người dùng đã chỉnh nhiều vòng, TẤT CẢ đã chép vào skill/knowledge: `knowledge/nhan-dien-thang-thoat-nan.md` (checklist vẽ buồng thang cuối file: tầng nổi trên không tường quây; hầm + trệt tường cách bậc đầu ≈ 900 mm theo từng vế,
