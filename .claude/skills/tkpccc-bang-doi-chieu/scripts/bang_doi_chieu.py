@@ -487,7 +487,10 @@ def _cat_anh(pdf: Path, a: dict, zoom: float, ra: Path) -> Path:
         pix = doc[a["trang"] - 1].get_pixmap(matrix=pymupdf.Matrix(z, z))
         im = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
     k = z / a.get("zoom", zoom)
-    im.crop(tuple(round(v * k) for v in a["hop"])).save(ra)
+    im = im.crop(tuple(round(v * k) for v in a["hop"]))
+    if a.get("quay"):  # trang xoay: quay = số độ xoay cùng chiều kim đồng hồ để chữ thẳng đứng
+        im = im.rotate(-int(a["quay"]), expand=True)
+    im.save(ra)
     return ra
 
 
