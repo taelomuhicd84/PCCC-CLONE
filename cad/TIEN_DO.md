@@ -11,8 +11,9 @@ Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.m
   (`Editor.TraceBoundary`) chỉ chạy được ở đó; DLL trong bundle chưa build lại (chạy `cad\build.bat`, tắt mở AutoCAD).
 - Thư mục `cad/layer/` chờ người dùng thả file `.md` chuẩn layer.
 - **ĐANG LÀM (người dùng giao 2026-11-11, giai đoạn dựng khung làm bằng Fable): vẽ được bản vẽ PCCC như bản mẫu.** Việc kế: Bước 1b dưới đây.
-- Chỉ MỘT phiên được sửa mã trong `cad/` tại một thời điểm (14:29 ngày 2026-11-11 hai phiên ghi đè nhau). Scheduled task `tkpccc-cad-lam-tiep` chạy lặp 2 giờ một lần,
-  tự thoát nếu repo vừa có thay đổi trong 45 phút; tới 90 % usage chỉ ghi tiến độ, commit, push rồi dừng, KHÔNG tạo scheduled task mới.
+- Chỉ MỘT phiên được sửa mã trong `cad/` tại một thời điểm (14:29 ngày 2026-11-11 hai phiên ghi đè nhau). Scheduled task `tkpccc-cad-lam-tiep` là task chạy MỘT lần lúc 19:25 ngày 2026-11-11
+  (phiên gốc báo không đổi được sang chạy lặp): lần chạy đó làm tiếp từ file này, bắt đầu ở `cad_anh` (Bước 1b). Trước lần đó, tới 90 % usage chỉ ghi tiến độ, commit, push rồi dừng.
+- 2 commit `0d694d3`, `5e5e979` CHƯA push (shell của Claude không có đăng nhập Git): chạy `git push origin main` trong tab Terminal của người dùng.
 
 ## VIỆC LÀM TIẾP, THEO THỨ TỰ (tự làm, không cần hỏi người dùng)
 Mỗi bước xong: `cad\test\chay_thu.ps1` + `cad\test\thu_mcp.ps1` ra `TAT CA DAT`, ghi file này + `cad/LICH_SU.md`, commit, push. Kiểm `get_usage` giữa các bước.
