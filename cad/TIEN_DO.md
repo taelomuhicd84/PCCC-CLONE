@@ -6,8 +6,9 @@ Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.m
 ## TRẠNG THÁI (cập nhật 2026-11-12, 02:35)
 - 02:35 ngày 12/11: lần chạy hẹn giờ bắt đầu, phiên chính chỉ điều phối. Đang chạy song song 2 subagent, cả hai KHÔNG sửa mã:
   (1) review Fable effort max cho mã tối 11/11 (`git diff 24109da..HEAD -- cad`), báo cáo ở `ket_qua/cad_review/review_2026-11-11.md`;
-  (2) Opus effort high làm Bước 5 (tim trục, hộp phòng, rải, đi ống tầng 1 bản mẫu), kết quả ở `ket_qua/cad_mau/cad/skills/` (`t1_vung.json`, `t1_spr.json`, `t1_spr.md`).
-  Việc sau đó: giao Opus (theo `cad-lap-trinh.md`) sửa các phát hiện CHẶN / NÊN SỬA, rồi `cad\build.bat`. Phiên chết giữa chừng thì xem hai nơi trên để biết tới đâu.
+  (2) Opus effort high làm Bước 5: XONG 02:47 (62 đầu phun, mẫu 64; xem mục "Bước 5"), kết quả ở `ket_qua/cad_mau/cad/skills/` (`t1_vung.json`, `t1_spr.json`, `t1_spr.md`).
+  Việc sau đó (chờ review xong mới làm, vì mỗi lúc chỉ một agent sửa mã): giao Opus (theo `cad-lap-trinh.md`) sửa các phát hiện CHẶN / NÊN SỬA của review cùng các mục a–f của Bước 5, rồi `cad\build.bat`,
+  chạy lại `t1_spr.json` để thấy ống góp P01 hết hở. Phiên chết giữa chừng thì xem `ket_qua/cad_review/` để biết review tới đâu.
 - 22:05: XONG Bước 1b (`cad_anh`), 1c (`rai` + `dt`, `tuyen` `tia`, `PCCC_TUYEN`), 2 (PDF → CAD), 3 (bảng block `PCCC_BLOCK`, `PCCC_THEMBLOCK`) và 4 (agent). VIỆC KẾ: Bước 5. Đầu phiên nhớ mục "NHẮC NGƯỜI DÙNG ĐẦU PHIÊN".
 - ĐÃ THỬ TRÊN AUTOCAD CÓ GIAO DIỆN bằng `cad\test\thu_gui.ps1` (script tự mở AutoCAD thật rồi tự tắt, 7/7 đạt): NETLOAD, cầu nối + máy chủ MCP thật (`cad_tt`, `cad_chay`, `cad_anh`),
   `pdf`, `rai`, `tuyen`, `anh` (`-PLOT` trong AutoCAD thật), bảng `PCCC_BLOCK` hiện 31 dòng + 2 nút. Máy người dùng `SECURELOAD` = 0, nạp plugin bằng NETLOAD tay (bundle không nằm trong ApplicationPlugins).
@@ -91,10 +92,22 @@ Skill `tkpccc-ve-cad` giữ sonnet/low (vẽ theo spec có sẵn).
      `cad\.claude\skills\tkpccc-ve-cad\scripts\chay_spec.ps1 -Spec <spec.json> -Dwg ket_qua\cad_mau\cad\t1_spr.dwg` (nhánh mở DWG có sẵn của script chưa thử).
      Điểm đặt chữ nhãn trục ở `tl` 285,0 (lệch tim trục vài trăm mm): trục 1 → 7 tại x = 29291, 36578, 43781, 50767, 57270, 64208, 70253; A → F tại y = 33429, 38327, 40114, 45530, 47314, 52213.
      Dãy phòng dưới A–B (sâu 4900), hành lang B–C, khối giữa C–D (5400), hành lang D–E, dãy phòng trên E–F (4900).
-  2. Lập hộp từng phòng lên `PCCC_VUNG` (`net` `kin`:true) từ ảnh, chụp `anh` để người dùng duyệt (người dùng dặn: AI đưa hộp, họ kiểm).
-  3. `rai` `SPR_DAU_DOWN` với `s` 4000, `dt` 12 (số ghi trên bảng thông số của tờ mẫu, không phải tra quy chuẩn) rồi `tuyen` `xuong_ca` / `nhanh` theo ống chính.
-  4. `anh` rồi so với nền: tờ mẫu có 64 đầu phun, phòng hát lưới 2 × 2. Ghi chỗ lệch vào `cad/LICH_SU.md`. Spec để ở `ket_qua/cad_mau/cad/skills/` (không commit).
-  Làm việc này qua chuỗi agent `cad-thiet-ke` → `cad-ve` → `cad-kiem` để thử luôn agent.
+  2–4. XONG 02:47 ngày 12/11 (subagent Opus effort high theo `cad-thiet-ke.md`: 11,6 phút, 235 nghìn token, chạy accoreconsole 2 lần, không phải chạy lại). 15 vùng trên `PCCC_VUNG`
+     (11 phòng P01–P11, 4 hành lang HL1–HL4); tim trục và mép tường lấy từ nét vector của PDF (PyMuPDF + ma trận xoay trang), hộp khớp tường ngay lần đầu.
+     Rải `s` 4000, `dt` 12 (hai số ghi trên bảng thông số của tờ mẫu) ra 62 đầu phun, mẫu 64: 11 phòng đủ 4 đầu như mẫu; hành lang thiếu 2 (HL1 9/10, HL2 5/6).
+     Ống: DN100 56,91 m, DN80 20,54 m, DN50 130,79 m. Spec `t1_vung.json`, `t1_spr.json`, báo cáo `t1_spr.md`, ảnh `anh/t1_spr_1..5.png`, `anh/t1_vung_1..4.png` trong `ket_qua/cad_mau/cad/skills/` (không commit).
+     Phiên chính đã xem ảnh tổng `t1_spr_1.png`: hộp vùng, đầu phun, ống nằm đúng trên nền.
+  CHỖ PLUGIN VẼ KHÁC KỸ SƯ (toạ độ và đầu vào cụ thể ở mục 3, 4 của `t1_spr.md`), là việc sửa mã kế tiếp:
+  a. LỖI `tuyen` `xuong_ca`: chân ống góp rơi ra ngoài đoạn ống chính mà `loi` vẫn rỗng (P01: ống góp (31444, 47459)–(31444, 51196), ống chính bắt đầu ở x 32965, hở 1521 mm).
+     Sửa: chỉ chọn cột có chân nằm trong đoạn; không cột nào được thì nối thêm dọc ống chính hoặc đưa vào `loi`.
+  b. `xuong_ca` chọn cột khi hoà phụ thuộc chiều vẽ `truc` (trái → phải ra cột trái, ngược lại ra cột phải): cần quy tắc phá hoà cố định, và `qua` theo TỪNG vùng (hiện một `qua` áp cho mọi vùng).
+  c. Ống chính chạy sát hoặc qua phòng (P06, hàng đầu phun cách ống chính 330 mm): `xuong_ca` ra một nhánh song song ống chính. Kỹ sư đi mỗi cột một nhánh vuông góc: thêm kiểu `cot`.
+  d. `rai` theo `s` luôn để cách tường nửa bước; kỹ sư dàn bước gần `s`, sát tường hơn, và xếp từng hàng theo bề rộng trống (phòng chữ L có WC). Vì thế theo phương dài lệch 0,2–1,4 m
+     (phương ngắn lệch dưới 25 mm). Đề xuất: cho `le` dùng cùng `s`; tuỳ chọn xếp theo từng hàng.
+  e. Hành lang: kỹ sư đặt đầu ở các góc giao hành lang, bước 3000–4000 xen nhau; `rai` chia đều nên thiếu 2 đầu. Đề xuất: rải theo đường tim có điểm bắt buộc.
+  f. `nhan` ghi trùng chữ DN50 ở chỗ ống góp gặp nhánh.
+  NGƯỜI DÙNG CẦN DUYỆT: 15 hộp vùng (`anh/t1_vung_*.png`), nhất là ranh giới tự đặt ở chỗ không có tường (HL1 / HL3 / P06; HL4 phía sảnh thông tầng, x 51056); vị trí ống góp từng phòng.
+  Chưa vẽ: trục xả DN50, van OS&Y, công tắc dòng chảy, van xả khí. Chưa thử `cad-ve`, `cad-kiem` (cần AutoCAD mở để gọi MCP).
 - Đo số token một lần vẽ (`claude -p --output-format json`), ghi vào `cad/LICH_SU.md`.
 - Sau đó theo `KE_HOACH.md`: G5 `so_do`, G6 chat trong CAD (bảng `PCCC_BLOCK` là tab đầu của G6).
 

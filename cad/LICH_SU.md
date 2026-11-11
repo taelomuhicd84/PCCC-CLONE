@@ -118,3 +118,11 @@ Dừng 15:20: usage 5 giờ 79 % (hai phiên dùng chung), việc kế `cad_anh`
   Phát hiện trên bản mẫu: hai nhịp ghi 1700 nhưng vẽ 1785 (tổng ghi 18800, các nhịp cộng lại 18600), làm bản tính đầu (chỉ trung vị) lệch 0,3 %; chữ font VNI nhập vào sai dấu.
   Chưa kiểm: `pdf` trên AutoCAD có giao diện.
 - Gỡ `cad/TKPCCC.bundle/Contents/hardcopy.log` khỏi git (log AutoCAD tự ghi, có đường dẫn trên máy người dùng) và thêm vào `.gitignore`. Các bản cũ của file vẫn còn trong lịch sử repo công khai.
+## 2026-11-12 (đêm) — lần chạy hẹn giờ 02:33: review bằng Fable max, Bước 5 bằng Opus
+- 02:35 bắt đầu. Lượt gọi đầu của phiên chính tốn 36 % cửa sổ 5 giờ và 14 % Fable tuần vì ngữ cảnh 580 nghìn token phải nạp lại sau 4 giờ nghỉ (bộ đệm hết hạn):
+  bài học, việc hẹn giờ nên chạy ở phiên mới ngữ cảnh sạch.
+- Giao 2 subagent song song (không ai sửa mã): review Fable effort max cho `git diff 24109da..HEAD -- cad`; Opus effort high làm Bước 5 theo `cad-thiet-ke.md`.
+- 02:47 Bước 5 xong (Opus, 11,6 phút, 235 nghìn token): 15 vùng, 62 đầu phun so với 64 của mẫu, 11 phòng khớp số lượng, hành lang thiếu 2. Tim trục và tường lấy từ nét vector PDF nên hộp khớp ngay.
+  Tìm ra 1 lỗi không báo của `tuyen` `xuong_ca` (ống góp P01 hở 1521 mm vì chân rơi ngoài đoạn ống chính) và 5 chỗ plugin vẽ khác kỹ sư (chọn cột khi hoà, ống chính sát phòng,
+  cách tường khi rải theo `s`, hành lang, chữ DN trùng): ghi ở mục "Bước 5" của `cad/TIEN_DO.md`. `chay_spec.ps1` nhánh "DWG đã có" chạy được.
+  Cách làm đáng giữ: agent thiết kế tự chạy spec để nhìn ảnh rồi chỉnh (không tách `cad-ve` ra), và lấy hình học từ vector của PDF thay vì ước theo ảnh.
