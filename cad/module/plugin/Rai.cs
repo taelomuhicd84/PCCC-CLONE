@@ -24,6 +24,7 @@ namespace TKPCCC
             public List<Point3d> Diem = new List<Point3d>();
             public int Nx, Ny;
             public double Bx, By, Tx, Ty, Ho; // bước, cách tường, % vùng hở
+            public double O;                  // diện tích bảo vệ của một thiết bị (đơn vị bản vẽ bình phương), xem ORai
         }
 
         // ---------- Hình học ----------
@@ -82,8 +83,8 @@ namespace TKPCCC
 
         /// Chia một chiều dài W thành n điểm bước b, cách tường t (lưới luôn đặt giữa).
         /// dung > 0: bước ĐÚNG, n = số điểm nhiều nhất mà cách tường còn >= le (mặc định bước / 4).
-        /// ngược lại toiDa là bước TỐI ĐA: n = ceil(W / toiDa), bước chia đều rồi làm tròn xuống theo chan nếu cách tường không vượt toiDa / 2.
-        static void ChiaBuoc(double W, double toiDa, double dung, double le, double chan, out int n, out double b, out double t)
+        /// ngược lại toiDa là bước TỐI ĐA: n = ceil(W / toiDa) (không ít hơn nMin), bước chia đều rồi làm tròn xuống theo chan nếu cách tường không vượt toiDa / 2.
+        static void ChiaBuoc(double W, double toiDa, double dung, double le, double chan, int nMin, out int n, out double b, out double t)
         {
             if (dung > 0)
             {
@@ -92,7 +93,7 @@ namespace TKPCCC
             }
             else
             {
-                n = Math.Max(1, (int)Math.Ceiling(W / toiDa - 1e-9));
+                n = Math.Max(Math.Max(1, nMin), (int)Math.Ceiling(W / toiDa - 1e-9));
                 b = W / n;
                 if (chan > 0 && n > 1)
                 {
@@ -103,17 +104,45 @@ namespace TKPCCC
             t = (W - (n - 1) * b) / 2;
         }
 
+        /// Diện tích bảo vệ của một thiết bị = Sx × Sy; mỗi phương S là số lớn hơn giữa bước và 2 lần cách tường (chỉ một hàng thì S = cả bề rộng vùng).
+        static double ORai(LuoiRai k)
+        {
+            return (k.Nx > 1 ? Math.Max(k.Bx, 2 * k.Tx) : 2 * k.Tx) * (k.Ny > 1 ? Math.Max(k.By, 2 * k.Ty) : 2 * k.Ty);
+        }
+
         /// Lưới thiết bị trong một vùng (đa giác). Lưới tính theo hộp bao (xoay gocDo nếu phòng nghiêng), bỏ điểm ngoài đa giác,
         /// rồi tự kiểm vùng hở: điểm nào trong vùng xa mọi thiết bị hơn nửa đường chéo ô lưới cho phép thì tính là hở.
-        static LuoiRai LuoiVung(List<Point2d> vung, double sx, double sy, double bx, double by, double le, double chan, double gocDo)
+        /// dt > 0 (đơn vị bản vẽ bình phương) = diện tích bảo vệ tối đa của một thiết bị. Rải theo bước tối đa thì lấy số cột × số hàng ÍT thiết bị nhất
+        /// mà ô lưới không vượt dt (hoà thì lấy ô vuông hơn): 16 × 12 m, s 4 m, dt 12 m2 ra 4 × 4 (bước 4000 × 3000), không phải 4 × 3 (16 m2) hay 5 × 4.
+        static LuoiRai LuoiVung(List<Point2d> vung, double sx, double sy, double bx, double by, double le, double chan, double dt, double gocDo)
         {
             double a = gocDo * Math.PI / 180, c = Math.Cos(a), s = Math.Sin(a);
             List<Point2d> q = vung.Select(p => new Point2d(p.X * c + p.Y * s, -p.X * s + p.Y * c)).ToList();
             double x0 = q.Min(p => p.X), x1 = q.Max(p => p.X), y0 = q.Min(p => p.Y), y1 = q.Max(p => p.Y);
             if (x1 - x0 < 1e-6 || y1 - y0 < 1e-6) throw new System.Exception("vùng suy biến (rộng hoặc cao bằng 0)");
+            double W = x1 - x0, H = y1 - y0;
+            int nx0 = 0, ny0 = 0;
+            if (dt > 0 && bx <= 0)
+            {
+                int ax = Math.Max(1, (int)Math.Ceiling(W / sx - 1e-9)), ay = Math.Max(1, (int)Math.Ceiling(H / sy - 1e-9));
+                for (int nx = ax; nx <= ax + 5000; nx++) // quá 5000 thiết bị thì phép chặn bên dưới báo lỗi
+                {
+                    int ny = Math.Max(ay, (int)Math.Ceiling(W / nx * H / dt - 1e-9));
+                    if (nx0 == 0 || (long)nx * ny < (long)nx0 * ny0
+                        || ((long)nx * ny == (long)nx0 * ny0 && Math.Abs(W / nx - H / ny) < Math.Abs(W / nx0 - H / ny0) - 1e-9)) { nx0 = nx; ny0 = ny; }
+                    if (ny == ay) break; // thêm cột nữa chỉ thêm thiết bị
+                }
+            }
             LuoiRai k = new LuoiRai();
-            ChiaBuoc(x1 - x0, sx, bx, le, chan, out k.Nx, out k.Bx, out k.Tx);
-            ChiaBuoc(y1 - y0, sy, by, le, chan, out k.Ny, out k.By, out k.Ty);
+            ChiaBuoc(W, sx, bx, le, chan, nx0, out k.Nx, out k.Bx, out k.Tx);
+            ChiaBuoc(H, sy, by, le, chan, ny0, out k.Ny, out k.By, out k.Ty);
+            if (dt > 0 && bx <= 0 && ORai(k) > dt * (1 + 1e-9))
+            {
+                // Làm tròn bước theo "chan" dồn phần dư ra tường làm ô sát tường vượt dt: giữ bước chia đều.
+                ChiaBuoc(W, sx, bx, le, 0, nx0, out k.Nx, out k.Bx, out k.Tx);
+                ChiaBuoc(H, sy, by, le, 0, ny0, out k.Ny, out k.By, out k.Ty);
+            }
+            k.O = ORai(k);
             // Chặn bước gõ nhầm đơn vị (vd 4 thay vì 4000 trong bản vẽ mm): không để AutoCAD treo vì chèn hàng triệu block.
             if ((long)k.Nx * k.Ny > 5000) throw new System.Exception("bước quá nhỏ so với vùng (" + k.Nx + " x " + k.Ny + " thiết bị): kiểm đơn vị của bước và của bản vẽ");
             List<Point2d> luoi = new List<Point2d>();
@@ -210,12 +239,17 @@ namespace TKPCCC
             HaiSo(o, "s", out sx, out sy);
             HaiSo(o, "buoc", out bx, out by);
             if (sx <= 0 && bx <= 0) throw new System.Exception("rai cần \"s\" (bước tối đa) hoặc \"buoc\" (bước đúng), lấy theo quy chuẩn áp dụng cho công trình");
-            double m = HeSoMet(g.Db), k = 0.001 / m, goc = LaySo(o, "goc", 0);
+            double m = HeSoMet(g.Db), k = 0.001 / m, goc = LaySo(o, "goc", 0), dt = LaySo(o, "dt", 0) / (m * m);
             bool kt = LayCo(o, "kt", false) && goc == 0;
             g.DiemRai = new List<List<Point3d>>();
             foreach (List<Point2d> d in VungOp(g, o))
             {
-                LuoiRai r = LuoiVung(d, sx, sy, bx, by, LaySo(o, "le", -1), LaySo(o, "chan", 0.05 / m), goc);
+                LuoiRai r = LuoiVung(d, sx, sy, bx, by, LaySo(o, "le", -1), LaySo(o, "chan", 0.05 / m), dt, goc);
+                // Chỉ xảy ra khi rải theo "buoc": bước đúng là của người gọi, plugin không tự sửa.
+                if (dt > 0 && r.O > dt * (1 + 1e-9))
+                    throw new System.Exception(string.Format(CultureInfo.InvariantCulture,
+                        "\"buoc\" {0} x {1} cho diện tích bảo vệ một thiết bị {2} m2, vượt \"dt\" {3} m2: giảm \"buoc\", hoặc dùng \"s\" để plugin tự chia",
+                        Lt(r.Bx), Lt(r.By), Math.Round(r.O * m * m, 2), LaySo(o, "dt", 0)));
                 foreach (Point3d p in r.Diem)
                 {
                     ChenThietBi(g.Db, g.Tr, v, p, k, 0);
@@ -226,7 +260,7 @@ namespace TKPCCC
                 if (kt && r.Diem.Count > 0) KtRai(g, d, r);
                 if (g.KqRai.Count < DOC_TOI_DA)
                     g.KqRai.Add(new Dictionary<string, object> { { "n", r.Diem.Count }, { "nx", r.Nx }, { "ny", r.Ny }, { "bx", Lt(r.Bx) }, { "by", Lt(r.By) },
-                        { "tuong", new double[] { Lt(r.Tx), Lt(r.Ty) } }, { "ho", r.Ho } });
+                        { "tuong", new double[] { Lt(r.Tx), Lt(r.Ty) } }, { "m2", Math.Round(r.O * m * m, 2) }, { "ho", r.Ho } });
             }
         }
 
@@ -341,7 +375,7 @@ namespace TKPCCC
             else if (g.DiemRai != null) nhom.AddRange(g.DiemRai.Where(x => x.Count > 0));
             if (nhom.Count == 0) throw new System.Exception("tuyen cần \"p\" [[x,y],...] hoặc đứng ngay sau một thao tác rai có thiết bị");
             List<Point3d> truc = Lay(o, "truc") == null ? null : DsP(g, Lay(o, "truc"), "truc");
-            if (kieu != "noi_tiep" && (truc == null || truc.Count < 2))
+            if ((kieu == "xuong_ca" || kieu == "nhanh") && (truc == null || truc.Count < 2))
                 throw new System.Exception("tuyen kiểu \"" + kieu + "\" cần \"truc\" [[x,y],[x,y],...] là ống chính");
             Point3d? tu = DiemTuyChon(g, o, "tu"), den = DiemTuyChon(g, o, "den"), qua = DiemTuyChon(g, o, "qua");
             double m = HeSoMet(g.Db), saiSo = LaySo(o, "sai_so", 0.1 / m);
@@ -350,7 +384,15 @@ namespace TKPCCC
             if (kieu == "noi_tiep") doan = TuyenNoiTiep(nhom, tu, den, saiSo);
             else if (kieu == "xuong_ca") foreach (List<Point3d> ps in nhom) doan.AddRange(TuyenXuongCa(ps, truc, tu, qua, saiSo));
             else if (kieu == "nhanh") foreach (List<Point3d> ps in nhom) doan.AddRange(TuyenNhanh(ps, truc));
-            else throw new System.Exception("tuyen: \"kieu\" phải là noi_tiep, xuong_ca hoặc nhanh");
+            else if (kieu == "tia")
+            {
+                // Đèn báo phòng: phòng có bao nhiêu đầu báo thì bấy nhiêu nét thẳng từ đầu báo ra đèn (cad/knowledge/tu-duy-di-day-di-ong.md).
+                if (!den.HasValue) throw new System.Exception("tuyen kiểu \"tia\" cần \"den\" [x,y] (vd vị trí đèn báo phòng)");
+                foreach (List<Point3d> ps in nhom)
+                    foreach (Point3d p in ps)
+                        if (p.DistanceTo(den.Value) > 1e-6) doan.Add(new List<Point3d> { p, den.Value });
+            }
+            else throw new System.Exception("tuyen: \"kieu\" phải là noi_tiep, tia, xuong_ca hoặc nhanh");
 
             ObjectId layer = DamBaoLayer(g.Db, g.Tr, TIEN_TO_LAYER + v.ma, MauHe(v.he));
             bool nhan = LayCo(o, "nhan", false);
@@ -384,6 +426,11 @@ namespace TKPCCC
             PromptDoubleResult sr = ed.GetDouble(so);
             if (sr.Status != PromptStatus.OK) return;
             double m = HeSoMet(db), s = sr.Value / m, k = 0.001 / m;
+            PromptDoubleOptions dtHoi = new PromptDoubleOptions("\nDiện tích bảo vệ tối đa của một thiết bị (m2) theo tiêu chuẩn áp dụng, Enter = không xét: ");
+            dtHoi.AllowNegative = false; dtHoi.AllowZero = false; dtHoi.AllowNone = true;
+            PromptDoubleResult dr = ed.GetDouble(dtHoi);
+            if (dr.Status != PromptStatus.OK && dr.Status != PromptStatus.None) return;
+            double dt = dr.Status == PromptStatus.OK ? dr.Value / (m * m) : 0;
 
             bool coBlock;
             using (Transaction tr = db.TransactionManager.StartTransaction())
@@ -440,17 +487,74 @@ namespace TKPCCC
                 {
                     foreach (List<Point2d> d in vung)
                     {
-                        LuoiRai r = LuoiVung(d, s, s, 0, 0, -1, 0.05 / m, 0);
+                        LuoiRai r = LuoiVung(d, s, s, 0, 0, -1, 0.05 / m, dt, 0);
                         foreach (Point3d p in r.Diem) ChenThietBi(db, tr, v, p, k, 0);
                         tong += r.Diem.Count;
                         ed.WriteMessage("\n[TKPCCC] PCCC_RAI " + v.ma + " n=" + r.Diem.Count + " luoi=" + r.Nx + "x" + r.Ny
                             + " buoc=" + Lt(r.Bx).ToString(CultureInfo.InvariantCulture) + "x" + Lt(r.By).ToString(CultureInfo.InvariantCulture)
+                            + " m2=" + Math.Round(r.O * m * m, 2).ToString(CultureInfo.InvariantCulture)
                             + (r.Ho > 0 ? " HO=" + r.Ho.ToString(CultureInfo.InvariantCulture) + "% (vùng chưa phủ hết, kiểm lại)" : ""));
                     }
                     tr.Commit();
                 }
             }
             ed.WriteMessage("\nĐã rải tổng " + tong + " " + v.ten + ".");
+        }
+
+        /// PCCC_TUYEN: ống nhánh sprinkler kiểu xương cá cho một phòng. Chọn đầu phun, chọn ống chính, rồi BẤM chỗ đặt ống góp
+        /// (người dùng dặn 2026-11-11: tự chọn vị trí ống góp, không để máy chọn cột đầu phun).
+        static void TuyenTay()
+        {
+            Document doc = AcApp.DocumentManager.MdiActiveDocument;
+            Database db = doc.Database;
+            Editor ed = doc.Editor;
+            VatTu v = HoiMa(ed, DocDanhMuc(), "tuyen", "Mã ống nhánh (vd ONG_DN25)");
+            if (v == null) return;
+            PromptSelectionOptions c1 = new PromptSelectionOptions();
+            c1.MessageForAdding = "\nChọn các đầu phun của một phòng: ";
+            PromptSelectionResult r1 = ed.GetSelection(c1, new SelectionFilter(new TypedValue[] { new TypedValue((int)DxfCode.Start, "INSERT") }));
+            if (r1.Status != PromptStatus.OK) return;
+            // Chọn bằng GetSelection (không GetEntity) để kịch bản accoreconsole trả lời được bằng "L".
+            PromptSelectionOptions c2 = new PromptSelectionOptions();
+            c2.MessageForAdding = "\nChọn ống chính (polyline hoặc line): ";
+            c2.SingleOnly = true;
+            PromptSelectionResult r2 = ed.GetSelection(c2, new SelectionFilter(new TypedValue[] { new TypedValue((int)DxfCode.Start, "LWPOLYLINE,LINE") }));
+            if (r2.Status != PromptStatus.OK || r2.Value.Count == 0) return;
+            PromptPointOptions po = new PromptPointOptions("\nBấm vị trí ống góp (Enter = cột đầu phun gần giữa phòng): ");
+            po.AllowNone = true;
+            PromptPointResult pr = ed.GetPoint(po);
+            if (pr.Status != PromptStatus.OK && pr.Status != PromptStatus.None) return;
+            Point3d? qua = pr.Status == PromptStatus.OK ? pr.Value.TransformBy(ed.CurrentUserCoordinateSystem) : (Point3d?)null;
+
+            double m = HeSoMet(db), dai = 0;
+            int soDoan = 0;
+            using (Transaction tr = db.TransactionManager.StartTransaction())
+            {
+                List<Point3d> ps = new List<Point3d>(), truc = new List<Point3d>();
+                foreach (ObjectId id in r1.Value.GetObjectIds())
+                {
+                    BlockReference br = tr.GetObject(id, OpenMode.ForRead) as BlockReference;
+                    if (br != null && !(br is Table)) ps.Add(new Point3d(br.Position.X, br.Position.Y, 0));
+                }
+                Entity e = (Entity)tr.GetObject(r2.Value.GetObjectIds()[0], OpenMode.ForRead);
+                Polyline pl = e as Polyline;
+                Line ln = e as Line;
+                if (pl != null) for (int i = 0; i < pl.NumberOfVertices; i++) truc.Add(pl.GetPoint3dAt(i));
+                else if (ln != null) { truc.Add(ln.StartPoint); truc.Add(ln.EndPoint); }
+                if (ps.Count == 0 || truc.Count < 2) throw new System.Exception("cần ít nhất một đầu phun (block) và một ống chính có 2 điểm trở lên");
+                ObjectId layer = DamBaoLayer(db, tr, TIEN_TO_LAYER + v.ma, MauHe(v.he));
+                BlockTableRecord ms = (BlockTableRecord)tr.GetObject(db.CurrentSpaceId, OpenMode.ForWrite);
+                foreach (List<Point3d> d in TuyenXuongCa(ps, truc, null, qua, 0.1 / m))
+                {
+                    Polyline ong = TaoPline(d, false, layer);
+                    ms.AppendEntity(ong);
+                    tr.AddNewlyCreatedDBObject(ong, true);
+                    dai += ong.Length;
+                    soDoan++;
+                }
+                tr.Commit();
+            }
+            ed.WriteMessage("\n[TKPCCC] PCCC_TUYEN " + v.ma + " doan=" + soDoan + " m=" + Math.Round(dai * m, 2).ToString(CultureInfo.InvariantCulture));
         }
     }
 }

@@ -20,6 +20,13 @@ AI không vẽ từng nét. AI viết một gói spec ngắn, plugin C# sinh hì
    Cần nhìn hình (so với PDF mẫu, kiểm chữ đè, tuyến cắt nhau): thêm `{"op":"anh","hop":[...],"rong":800}` vào cuối gói rồi đọc file PNG ở `anh`; chỉ chụp khi số đếm chưa đủ để kết luận.
 5. Báo người dùng: số đối tượng đã vẽ, giả định đã dùng (cao độ, tỉ lệ, cỡ chữ), điểm cần họ xem.
 
+## Rải thiết bị và đi tuyến (người dùng dạy 2026-11-11, đầy đủ ở `cad/knowledge/tu-duy-di-day-di-ong.md`)
+1. Phân khu vực TRƯỚC khi rải: vẽ hộp hoặc polyline kín từng khu vực (theo tường, dầm sàn, vì kèo) lên layer `PCCC_VUNG` bằng `net` với `kin`:true, kèm `{"op":"anh"}` rồi dừng để người dùng kiểm và sửa trong CAD.
+2. Người dùng báo xong: `doc` với `gi`:"vung" đọc lại vùng, rồi `rai` theo `l`. `s` (bước tối đa) và `dt` (m² tối đa một thiết bị) tra theo `cad/rule/LUAT.md` (BC-02, SP-02), ghi rõ căn cứ khi báo.
+   Kết quả `rai` có `m2` và `ho`: `ho` > 0 hoặc `m2` sát `dt` thì nêu cho người dùng.
+3. Dây báo cháy hệ thường: chia zone trước (LUAT BC-04: theo khu vực, không quá 25 đầu báo, dưới giới hạn m²), mỗi zone một lần `rai` + `tuyen` `noi_tiep`; phòng có đèn báo phòng thì `tuyen` `tia` với `den` là vị trí đèn.
+4. Ống sprinkler: `tuyen` `xuong_ca` chỉ là phương án nháp. Vị trí ống góp do người dùng chọn: nhờ họ chạy lệnh `PCCC_TUYEN` trong CAD (chọn đầu phun, chọn ống chính, bấm chỗ đặt ống góp), hoặc truyền `qua` khi họ cho toạ độ.
+
 ## Lưu ý
 - Trị số thiết kế (bước rải đầu báo, đầu phun, bán kính bảo vệ...) lấy từ skill `tkpccc-tra-quy-chuan`, không viết theo trí nhớ.
 - `cad_chay` báo "AutoCAD chưa mở": nhờ người dùng mở AutoCAD (bundle TKPCCC tự nạp). Vẫn ra được DWG mà không cần mở CAD bằng `PCCC_SPEC` trong accoreconsole, cách chạy xem `cad/test/chay_thu.ps1`.

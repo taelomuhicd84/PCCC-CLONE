@@ -19,6 +19,7 @@
         <Command Local="PCCC_VUNGBV" Global="PCCC_VUNGBV" />
         <Command Local="PCCC_SPEC" Global="PCCC_SPEC" />
         <Command Local="PCCC_RAI" Global="PCCC_RAI" />
+        <Command Local="PCCC_TUYEN" Global="PCCC_TUYEN" />
       </Commands>
     </ComponentEntry>
   </Components>

@@ -25,7 +25,8 @@ $kb = @('INSUNITS', '4', 'NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '_.SAVEAS', '2018',
   'PCCC_BOC', 'Co', 'L', '', '', 'ThuPlugin',
   'PCCC_VUNGBV', 'BC_KHOI', '3', 'PCCC_VUNGBV', 'BC_KHOI', '3',
   'PCCC_BANG', '0,-3000', '250',
-  'RECTANG', '50000,0', '56500,4500', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', 'D', 'L', '', '',
+  'RECTANG', '50000,0', '56500,4500', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '12', 'D', 'L', '', '',
+  'PLINE', '49000,-1000', '58000,-1000', '', '_.ZOOM', '_E', 'PCCC_TUYEN', 'ONG_DN25', 'W', '50000,0', '56500,4500', '', 'L', '53000,2000',
   'PCCC_BOC', 'Khong', '', 'ThuPlugin', '_.QSAVE')
 $kb -join "`r`n" | Set-Content -Encoding ascii "$T\kb.scr"
 $p = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb.out.txt"
@@ -38,7 +39,8 @@ $can = @(
   @('ONG_DN50\s+15 ', 'ong 15 m'),
   @('\[TANG 1\] BC_KHOI=2', 'tach theo khu'),
   @('R = 3 m .*thay 2 ', 'chay lai VUNGBV thay vong cu, khong ve trung'),
-  @('PCCC_RAI SPR_DAU_DOWN n=4 luoi=2x2 buoc=3250x2250', 'PCCC_RAI: phong 6500x4500, S = 4 m ra 4 dau phun, buoc 3250 x 2250'))
+  @('PCCC_RAI SPR_DAU_DOWN n=4 luoi=2x2 buoc=3250x2250 m2=7\.31', 'PCCC_RAI: phong 6500x4500, S = 4 m, dt 12 m2 ra 4 dau phun, buoc 3250 x 2250, 7,31 m2 moi dau'),
+  @('PCCC_TUYEN ONG_DN25 doan=3 m=10\.8[78]', 'PCCC_TUYEN: ong gop qua diem bam x = 53000 + 2 nhanh, dai 10,88 m'))
 $loi = 0
 foreach ($c in $can) { if ($out -match $c[0]) { "DAT   $($c[1])" } else { "LOI   $($c[1])"; $loi++ } }
 # Lan boc thu 2 (sau khi chen bang + vung bao ve) van phai ra 2 / 7: bang thong ke va vong tron khong bi dem.
@@ -79,14 +81,17 @@ if (Test-Path "$T\spec.kq.json") {
 if (Test-Path "$T\rai.kq.json") {
   $kr = Get-Content -Raw -Encoding UTF8 "$T\rai.kq.json" | ConvertFrom-Json
   $ks2 = @(
-    @(($kr.ve -eq 29), "rai + tuyen ve 29 doi tuong (thay $($kr.ve))"),
+    @(($kr.ve -eq 53), "rai + tuyen ve 53 doi tuong (thay $($kr.ve))"),
     @(($kr.rai[0].n -eq 4 -and $kr.rai[0].bx -eq 3250 -and $kr.rai[0].by -eq 2250 -and $kr.rai[0].tuong[0] -eq 1625 -and $kr.rai[0].ho -eq 0), 'rai s = 4000: 4 thiet bi, buoc <= 4000, cach tuong <= 2000, khong ho'),
     @(($kr.tuyen[0].doan -eq 1 -and [math]::Abs($kr.tuyen[0].m - 11.05) -lt 0.011), "tuyen noi_tiep: 1 duong ran bo tu diem tu, dai 11,05 m (thay $($kr.tuyen[0].m))"),
     @(($kr.rai[1].n -eq 4 -and $kr.rai[1].tuong[0] -eq 1250 -and $kr.rai[1].tuong[1] -eq 750), 'rai buoc dung 4000 x 3000: cach tuong 1250 / 750 nhu ban mau'),
     @(($kr.tuyen[1].doan -eq 3 -and $kr.tuyen[1].m -eq 12.75), "tuyen xuong_ca: 1 ong gop + 2 nhanh, dai 12,75 m (thay $($kr.tuyen[1].m))"),
     @(($kr.rai[2].n -eq 2 -and $kr.rai[2].ny -eq 1 -and $kr.tuyen[2].doan -eq 2 -and $kr.tuyen[2].m -eq 1), 'hanh lang 1 hang + tuyen nhanh: 2 doan vuong goc 0,5 m'),
     @(($kr.rai[3].n -eq 3 -and $kr.rai[3].ho -eq 0), 'rai vung chu L tren layer: bo diem ngoai da giac, khong ho'),
-    @(($kr.ok -eq $false -and @($kr.loi).Count -eq 1 -and $kr.loi[0].i -eq 8), 'rai thieu s va buoc thi bao loi, khong tu dat tri so'))
+    @(($kr.rai[4].n -eq 16 -and $kr.rai[4].bx -eq 4000 -and $kr.rai[4].by -eq 3000 -and $kr.rai[4].m2 -eq 12), "rai s = 4000 + dt = 12: phong 16 x 12 m ra 4 x 4, buoc 4000 x 3000 (thay $($kr.rai[4].bx) x $($kr.rai[4].by), $($kr.rai[4].m2) m2)"),
+    @(($kr.tuyen[3].kieu -eq 'tia' -and $kr.tuyen[3].doan -eq 4 -and [math]::Abs($kr.tuyen[3].m - 17.87) -lt 0.011), "tuyen tia: 4 dau bao, 4 net ra den bao phong, dai 17,87 m (thay $($kr.tuyen[3].m))"),
+    @(($kr.ok -eq $false -and @($kr.loi).Count -eq 2 -and $kr.loi[0].i -eq 11 -and $kr.loi[0].ly_do -match 'dt' -and $kr.loi[1].i -eq 12),
+      'rai buoc 4000 x 4000 vuot dt = 12 thi bao loi; thieu s va buoc thi bao loi, khong tu dat tri so'))
   foreach ($c in $ks2) { if ($c[0]) { "DAT   $($c[1])" } else { "LOI   $($c[1])"; $loi++ } }
 } else { "LOI   rai.json khong ghi ket qua: $T\kb2.out.txt"; $loi++ }
 # --- Khoa ban_ve: spec ghi ten ban ve khac thi tu choi ca goi; dung ten (khong phan biet hoa thuong) thi ve ---

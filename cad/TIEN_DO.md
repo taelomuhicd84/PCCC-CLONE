@@ -3,9 +3,13 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
-## TRẠNG THÁI (cập nhật 2026-11-11, 19:45)
-- 19:45: XONG Bước 1b (`cad_anh`). VIỆC KẾ: Bước 1c (người dùng đã trả lời 6 câu hỏi thiết kế, mục "NGƯỜI DÙNG ĐÃ TRẢ LỜI"). Đầu phiên nhớ mục "NHẮC NGƯỜI DÙNG ĐẦU PHIÊN".
-- Hạn mức đang chặn là "Weekly · Fable" (86 % lúc 19:40, reset 05:00 ngày 2026-11-14 giờ VN), không phải cửa sổ 5 giờ (25 %). Một bước cỡ Bước 1b tốn khoảng 6 % tuần Fable.
+## TRẠNG THÁI (cập nhật 2026-11-11, 20:05)
+- 20:05: XONG Bước 1b (`cad_anh`) và Bước 1c (`rai` + `dt`, `tuyen` `tia`, lệnh `PCCC_TUYEN`, luật, hướng dẫn). VIỆC KẾ: Bước 2 (PDF → CAD). Đầu phiên nhớ mục "NHẮC NGƯỜI DÙNG ĐẦU PHIÊN".
+- DỪNG 20:05 theo luật 90 %: "Weekly · Fable" 92 % (reset 05:00 ngày 2026-11-14 giờ VN); cửa sổ 5 giờ mới 47 %, "Weekly · all models" 54 %. Mỗi bước cỡ 1b, 1c tốn khoảng 6 % tuần Fable.
+  Đã hẹn `CronCreate` một lần lúc 05:03 ngày 2026-11-14 trong phiên đang mở để tự làm tiếp Bước 2 (đóng ứng dụng thì mất hẹn: phiên mới đọc file này rồi làm). Muốn làm sớm hơn thì đổi model của phiên sang Opus, do người dùng quyết.
+- Commit `f3d354f` (1b) và commit 1c CHƯA lên GitHub lúc 20:05: `git push` ở tab Terminal đang chờ Git Credential Manager (người dùng đăng nhập ở cửa sổ nó bật lên); xong thì chạy lại `git push origin main`.
+- XONG Bước 1c: `rai` nhận `dt` (m² tối đa một thiết bị) và trả `m2`; `tuyen` kiểu `tia`; lệnh `PCCC_TUYEN` (chọn đầu phun, chọn ống chính, bấm vị trí ống góp); `PCCC_RAI` hỏi thêm diện tích bảo vệ.
+  `chay_thu.ps1` 27/27, `thu_mcp.ps1` 9/9, bundle build lại 20:05. CHƯA thử trên AutoCAD có giao diện: `PCCC_TUYEN` (chọn bằng chuột, bấm điểm) và dấu nhắc mới của `PCCC_RAI`.
 - XONG Bước 1b: thao tác spec `anh` (`module/plugin/Spec.cs`, hàm `InAnh`) + công cụ MCP `cad_anh` (`module/mcp/Mcp.cs`). In Model ra PNG bằng `-PLOT` qua `Editor.Command`,
   chạy SAU khi commit gói nên vẽ + chụp trong một lần gọi được. `chay_thu.ps1` 24/24, `thu_mcp.ps1` 9/9; bundle đã build lại 19:45 (tắt mở AutoCAD và Claude Code để nạp).
   CHƯA thử `anh` trên AutoCAD có giao diện: dấu nhắc `-PLOT` mới thử trong accoreconsole; cần xem in nền (`BACKGROUNDPLOT`) và hộp tiến độ in có làm lệch không.
@@ -15,10 +19,10 @@ Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.m
   từ vựng trong `skills/TU_VUNG.md`. `chay_thu.ps1` 21/21, `thu_mcp.ps1` 7/7. CHƯA thử trên AutoCAD có giao diện: nhánh bấm điểm trong phòng của `PCCC_RAI`
   (`Editor.TraceBoundary`) chỉ chạy được ở đó; DLL trong bundle chưa build lại (chạy `cad\build.bat`, tắt mở AutoCAD).
 - Thư mục `cad/layer/` chờ người dùng thả file `.md` chuẩn layer.
-- **ĐANG LÀM (người dùng giao 2026-11-11, giai đoạn dựng khung làm bằng Fable): vẽ được bản vẽ PCCC như bản mẫu.** Việc kế: Bước 1c dưới đây.
+- **ĐANG LÀM (người dùng giao 2026-11-11, giai đoạn dựng khung làm bằng Fable): vẽ được bản vẽ PCCC như bản mẫu.** Việc kế: Bước 2 dưới đây.
 - Chỉ MỘT phiên được sửa mã trong `cad/` tại một thời điểm (14:29 ngày 2026-11-11 hai phiên ghi đè nhau).
-- Hẹn giờ: người dùng bảo xoá hết hẹn giờ cũ (2026-11-11 15:20), scheduled task `tkpccc-cad-lam-tiep` đã xoá. Người dùng muốn tự làm tiếp NGAY TRONG phiên đang làm:
-  hẹn bằng `CronCreate` một lần (mất khi đóng ứng dụng), không tạo scheduled task mở phiên mới.
+- Hẹn giờ: người dùng bảo "xoá hết mọi hẹn giờ, tự động chạy lại tại phiên này" (2026-11-11 15:20), scheduled task `tkpccc-cad-lam-tiep` đã xoá.
+  Claude hiểu là: hẹn làm tiếp bằng `CronCreate` một lần ngay trong phiên đang làm, không tạo scheduled task mở phiên mới (chưa hỏi lại người dùng có áp dụng cho mọi lần không).
 - Push: shell của Claude không lấy được đăng nhập Git thì chạy `git push origin main` trong tab Terminal của người dùng.
 
 ## VIỆC LÀM TIẾP, THEO THỨ TỰ (tự làm, không cần hỏi người dùng)
@@ -27,12 +31,9 @@ Mỗi bước xong: `cad\test\chay_thu.ps1` + `cad\test\thu_mcp.ps1` ra `TAT CA 
 ### Bước 1b. XONG 2026-11-11 (khoá `ban_ve` 15:20, `cad_anh` 19:45; chi tiết ở `cad/LICH_SU.md`)
 Skill `tkpccc-ve-cad` đã nhắc ghi `ban_ve` khi vẽ nhiều lượt và cách thêm `anh` vào cuối gói.
 
-### Bước 1c. Sửa theo trả lời của người dùng 11/11 (làm trước Bước 2; căn cứ `knowledge/tu-duy-di-day-di-ong.md`)
-- `rai`: thêm `dt` = diện tích bảo vệ tối đa của một thiết bị (m², lấy theo quy chuẩn, vd TCVN 7336: 12 hoặc 9). Sau khi chia theo `s`, nếu bx × by > `dt` thì thêm hàng hoặc cột ở phương có bước lớn hơn cho tới khi đạt. Trả thêm `m2` (diện tích thực mỗi thiết bị). Phép kiểm: `s` 4000 với `dt` 12 phải cho bước kiểu 4000 × 3000 hoặc 3500 × 3500, không ra 4000 × 4000.
-- `tuyen` kiểu mới `tia`: mỗi điểm một nét thẳng tới điểm `den` (đèn báo phòng): phòng có bao nhiêu đầu báo thì bấy nhiêu nét từ đầu báo ra đèn.
-- Lệnh gõ tay `PCCC_TUYEN` cho ống sprinkler: chọn các đầu phun, chọn ống chính, rồi BẤM vị trí ống góp (thành `qua`). Người dùng muốn tự chọn chỗ đặt ống góp.
-- Quy trình vùng: trước khi rải phải có polyline kín từng khu vực trên layer `PCCC_VUNG` (theo tường, dầm sàn, vì kèo). AI đưa hộp từng phòng bằng `net` `kin`:true lên layer đó, người dùng kiểm và sửa, rồi mới `rai` theo `l`. Ghi vào skill `tkpccc-ve-cad`.
-- Luật chia zone (không quá 25 đầu báo một zone hệ thường, dưới giới hạn m² của TCVN, zone theo khu vực) và nối dây hệ địa chỉ (ZM, CM, RM, mạch vòng) là việc của AI thiết kế, không phải của plugin: ghi vào `rule/LUAT.md` (trỏ tới knowledge), agent `cad-thiet-ke` và phần `so_do` (G5).
+### Bước 1c. XONG 2026-11-11 20:00 (sửa theo trả lời của người dùng 11/11; chi tiết ở `cad/LICH_SU.md`)
+Quy trình vùng (vẽ polyline `PCCC_VUNG` trước, người dùng kiểm, rồi `rai` theo `l`) đã ghi vào skill `tkpccc-ve-cad`; luật chia zone, đi dây, bước rải ở `rule/LUAT.md` (BC-04, BC-05, SP-02).
+Còn lại của các ý này: agent `cad-thiet-ke` (Bước 4) và `so_do` hệ địa chỉ (G5) dùng các luật đó. `knowledge/` gốc chưa có bản nguyên văn bảng khoảng cách đầu phun của TCVN 7336.
 
 ### Bước 2. PDF → CAD (G4)
 - Thao tác `pdf`: `file`, `trang`, `p`, `tl`, `goc`. Chạy `-PDFIMPORT` bằng `Editor.Command` TRƯỚC khi mở transaction vẽ (như đoạn nạp block cho `dat` trong `ThucHienSpec`). Phải thử trong accoreconsole: thứ tự dấu nhắc của `-PDFIMPORT` (File, tên file, trang, điểm chèn, tỉ lệ, góc) và `Editor.Command` có chạy không; không được thì đẩy lệnh qua `SendStringToExecute` trong `Cau.cs`.
@@ -91,6 +92,9 @@ Ba thứ người dùng CHƯA cấp, bảo Claude làm sườn trước rồi h�
 
 ## GHI NHỚ KỸ THUẬT
 - `rai`: trường `goc` là góc xoay LƯỚI (phòng nghiêng), không phải góc xoay block; `kt` chỉ vẽ khi `goc` = 0. `le` mặc định bước / 4. Trần 5000 thiết bị một vùng.
+- `rai` + `dt`: lấy số cột × số hàng ÍT thiết bị nhất mà ô lưới không vượt `dt`, hoà thì lấy ô vuông hơn (16 × 16 m, `s` 4 m, `dt` 12 ra 4 × 6 = 24 đầu, không phải 5 × 5).
+  `m2` = Sx × Sy, mỗi phương S = số lớn hơn giữa bước và 2 lần cách tường; làm tròn bước theo `chan` mà đẩy `m2` vượt `dt` thì bỏ làm tròn.
+- Kịch bản accoreconsole: `GetSelection` có `SingleOnly` kết thúc ngay sau `L` (không thêm dòng trống); chọn bằng `W x1,y1 x2,y2` được sau khi `_.ZOOM _E`; `GetEntity` thì không trả lời được.
 - `tuyen` `noi_tiep` nối MỌI vùng của `rai` trước đó thành một đường; muốn mỗi phòng một đường thì gọi `rai` + `tuyen` từng phòng.
 - Thêm thao tác spec: hàm `Op...` trong `module/plugin/Spec.cs` + 1 dòng `MotOp` + 1 dòng `skills/TU_VUNG.md` + 1 phép kiểm trong `test/chay_thu.ps1`.
 - Thao tác phải chạy LỆNH AutoCAD (`anh` dùng `-PLOT`, sắp tới `pdf` dùng `-PDFIMPORT`): không đặt trong `MotOp`. `ThucHienSpec` gom chúng rồi gọi `Editor.Command` ngoài transaction
