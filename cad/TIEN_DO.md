@@ -15,10 +15,12 @@ Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.m
   Đã hẹn `CronCreate` một lần lúc 02:33 ngày 2026-11-12 trong phiên đang mở để tự làm Bước 5 (đóng ứng dụng thì mất hẹn: phiên mới đọc file này rồi làm).
   Phiên 11/11 đã dài 520 nghìn token ngữ cảnh nên mỗi lượt gọi tốn khoảng 1,2 % cửa sổ 5 giờ; phiên mới rẻ hơn nhiều lần.
   22:35 làm thêm bước con 1 của Bước 5 rồi dừng hẳn ở khoảng 85 % cửa sổ 5 giờ.
-- Người dùng dặn 22:25: "Dùng Fable 5.2 tối đa". Claude hiểu: giai đoạn dựng khung này làm trực tiếp bằng Fable 5.2 ở phiên chính, chưa giao việc cho agent opus / sonnet.
-  Đã hỏi lại câu đó có gồm đặt effort của phiên lên max và đổi model 4 agent sang Fable không; CHƯA có trả lời, nên chưa đổi gì.
-- 5 commit (`f3d354f` 1b, `eee2b1f` 1c, `79b9fe8` 2, `b5104b2` 3, `5f8a738` 4) và commit chốt mốc CHƯA lên GitHub lúc 22:20: `git push` ở tab Terminal chờ Git Credential Manager từ 19:30
-  (người dùng đăng nhập ở cửa sổ nó bật lên; máy không có `gh`). Xong thì chạy lại `git push origin main`.
+- Người dùng dặn 22:25 và giải thích 22:45: "Dùng Fable 5.2 tối đa" là khi TƯ DUY và DỰNG BỘ CODE cho toàn bộ dự án (làm ở phiên chính). Khi chạy dự án thật thì chia việc cho từng agent,
+  chọn model hợp công việc, hợp token mà vẫn giữ chính xác. Vậy 4 agent giữ nguyên opus / sonnet; không đổi effort của phiên.
+- Người dùng dặn 22:45 cho lần chạy 02:33 ngày 12/11: chạy HẾT usage 5 giờ của cửa sổ đó (không dừng ở 90 %), xong tự ghi file này + `cad/LICH_SU.md` và commit, KHÔNG push.
+  Vì chạy tới hết hạn mức: ghi tiến độ + commit sau MỖI bước con.
+- PUSH: các commit từ `f3d354f` (Bước 1b, 19:30 ngày 11/11) trở đi CHƯA lên GitHub. Người dùng dặn 22:45: Claude không push nữa, sáng 12/11 họ tự chạy `git push origin main`.
+  (Lệnh push thử lúc 19:30 kẹt ở Git Credential Manager; máy không có `gh`.)
 - XONG Bước 2: thao tác spec `pdf` (`Spec.cs`, hàm `NhapPdf`, lệnh `-PDFIMPORT`) + `cad/.claude/skills/tkpccc-ve-cad/scripts/pdf_ti_le.py` (tính `tl` từ chuỗi kích thước).
   `chay_thu.ps1` 29/29 (PDF thử 1:200: `tl` 200,0, trục 1–7 đo lại 41000,0), `thu_mcp.ps1` 9/9. PDF mẫu thật `ket_qua/cad_mau/test_HA2.pdf` trang 3: `tl` 285,0, nhập 39 056 đối tượng trong 8 giây,
   trục 1–7 lệch −0,09 % (đạt ± 1 %). Tỉ lệ 4 trang: 260,3 / 285,2 / 285,0 / 249,6.
