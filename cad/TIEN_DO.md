@@ -3,7 +3,11 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
-## TRẠNG THÁI (cập nhật 2026-11-11, 22:05)
+## TRẠNG THÁI (cập nhật 2026-11-12, 02:35)
+- 02:35 ngày 12/11: lần chạy hẹn giờ bắt đầu, phiên chính chỉ điều phối. Đang chạy song song 2 subagent, cả hai KHÔNG sửa mã:
+  (1) review Fable effort max cho mã tối 11/11 (`git diff 24109da..HEAD -- cad`), báo cáo ở `ket_qua/cad_review/review_2026-11-11.md`;
+  (2) Opus effort high làm Bước 5 (tim trục, hộp phòng, rải, đi ống tầng 1 bản mẫu), kết quả ở `ket_qua/cad_mau/cad/skills/` (`t1_vung.json`, `t1_spr.json`, `t1_spr.md`).
+  Việc sau đó: giao Opus (theo `cad-lap-trinh.md`) sửa các phát hiện CHẶN / NÊN SỬA, rồi `cad\build.bat`. Phiên chết giữa chừng thì xem hai nơi trên để biết tới đâu.
 - 22:05: XONG Bước 1b (`cad_anh`), 1c (`rai` + `dt`, `tuyen` `tia`, `PCCC_TUYEN`), 2 (PDF → CAD), 3 (bảng block `PCCC_BLOCK`, `PCCC_THEMBLOCK`) và 4 (agent). VIỆC KẾ: Bước 5. Đầu phiên nhớ mục "NHẮC NGƯỜI DÙNG ĐẦU PHIÊN".
 - ĐÃ THỬ TRÊN AUTOCAD CÓ GIAO DIỆN bằng `cad\test\thu_gui.ps1` (script tự mở AutoCAD thật rồi tự tắt, 7/7 đạt): NETLOAD, cầu nối + máy chủ MCP thật (`cad_tt`, `cad_chay`, `cad_anh`),
   `pdf`, `rai`, `tuyen`, `anh` (`-PLOT` trong AutoCAD thật), bảng `PCCC_BLOCK` hiện 31 dòng + 2 nút. Máy người dùng `SECURELOAD` = 0, nạp plugin bằng NETLOAD tay (bundle không nằm trong ApplicationPlugins).
