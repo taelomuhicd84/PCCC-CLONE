@@ -7,7 +7,7 @@ Mở Claude Code tại gốc repo hay ngay tại `cad/` đều làm việc đư�
 - Tới 85 % hạn mức: dừng, ghi `cad/TIEN_DO.md` + `cad/LICH_SU.md`, commit, push.
 - Skill riêng của CAD ở `cad/.claude/skills/`: `tkpccc-ve-cad` (vẽ qua MCP), `tkpccc-cad-console` (build, kiểm thử, thêm lệnh). Agent riêng ở `cad/.claude/agents/`.
 - Cây thư mục cố định, thêm gì thì đặt đúng chỗ và ghi 1 dòng vào `cad/README.md`:
-  `module/` mã chạy · `data/` dữ liệu vẽ · `rule/` luật nối tới quy chuẩn · `knowledge/` kiến thức vẽ · `skills/` hướng dẫn cho mọi AI · `test/` kiểm thử.
+  `module/` mã chạy · `data/` dữ liệu vẽ · `layer/` chuẩn layer (đọc trước khi tạo layer) · `rule/` luật nối tới quy chuẩn · `knowledge/` kiến thức vẽ · `skills/` hướng dẫn cho mọi AI · `test/` kiểm thử.
 - Trị số quy chuẩn không chép vào `cad/`: `rule/LUAT.md` chỉ trỏ tới file nguyên văn trong `knowledge/`, `skills/` gốc.
 - Plugin chỉ C# 5, tham chiếu `acdbmgd` + `accoremgd` (cộng `System.Windows.Forms` của .NET cho cầu nối). Máy chủ MCP không chạy LISP hay lệnh tự do.
 - Trước khi báo xong việc CAD: `cad\test\chay_thu.ps1` và `cad\test\thu_mcp.ps1` phải ra `TAT CA DAT`.

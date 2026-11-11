@@ -13,6 +13,7 @@ cad/
 ├─ skills/                 hướng dẫn dùng cho MỌI AI (Claude, Gemini, Codex): TU_VUNG.md (từ vựng spec, nguồn duy nhất) · vi_du/
 ├─ knowledge/              kiến thức vẽ CAD: quy-uoc-ban-ve.md · hoc/ (bài học người dùng dạy)
 ├─ rule/                   LUAT.md: việc trên CAD ↔ file quy chuẩn nguyên văn ↔ skill, agent liên quan
+├─ layer/                  file .md chuẩn layer (tên, màu, loại đường) để tạo layer đúng chuẩn
 ├─ data/                   dữ liệu vẽ (xem data/README.md)
 │  ├─ ky_hieu/             ky_hieu.json: mặc định ký hiệu trục, kích thước, chữ (plugin đọc)
 │  ├─ block/               thư viện block, block động co, tê (chờ file của người dùng)
