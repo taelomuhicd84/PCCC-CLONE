@@ -11,9 +11,11 @@ Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.m
   NETLOAD một file `TKPCCC.Cad.dll` là đủ: nó tự nạp `TKPCCC.UI.dll` khi chạy trong `acad.exe`. `chay_thu.ps1` 33/33, `thu_mcp.ps1` 9/9.
 - XONG Bước 4 (22:15): 4 agent trong `cad/.claude/agents/` (`cad-thiet-ke`, `cad-ve`, `cad-kiem`, `cad-lap-trinh`), bảng việc ở `cad/CLAUDE.md`. CHƯA chạy thử agent nào trên việc thật;
   chưa kiểm Claude Code có nạp agent của thư mục con khi mở ở gốc repo không (README cũ ghi chỉ nạp khi mở tại `cad/`).
-- Hạn mức: 20:05 dừng vì "Weekly · Fable" 92 %; người dùng tự reset khoảng 21:40 (mọi cửa sổ về 0 %) và bảo làm tiếp. Mỗi bước cỡ 1b, 1c, 2 tốn khoảng 6 % tuần Fable.
-  Không còn hẹn giờ nào (hẹn 05:03 ngày 14/11 đã xoá). Tuần reset 05:00 ngày 2026-11-14 giờ VN.
-- Các commit từ `f3d354f` (1b) trở đi CHƯA lên GitHub lúc 22:00: `git push` ở tab Terminal chờ Git Credential Manager từ 19:30 (người dùng đăng nhập ở cửa sổ nó bật lên); xong thì chạy lại `git push origin main`.
+- Hạn mức: người dùng tự reset khoảng 21:40 (mọi cửa sổ về 0 %) và bảo làm tiếp. 22:20 chốt ở mốc Bước 4: cửa sổ 5 giờ 72 % (reset 02:30 ngày 2026-11-12), tuần Fable 20 %, không đủ chỗ cho Bước 5.
+  Đã hẹn `CronCreate` một lần lúc 02:33 ngày 2026-11-12 trong phiên đang mở để tự làm Bước 5 (đóng ứng dụng thì mất hẹn: phiên mới đọc file này rồi làm).
+  Phiên 11/11 đã dài 520 nghìn token ngữ cảnh nên mỗi lượt gọi tốn khoảng 1,2 % cửa sổ 5 giờ; phiên mới rẻ hơn nhiều lần.
+- 5 commit (`f3d354f` 1b, `eee2b1f` 1c, `79b9fe8` 2, `b5104b2` 3, `5f8a738` 4) và commit chốt mốc CHƯA lên GitHub lúc 22:20: `git push` ở tab Terminal chờ Git Credential Manager từ 19:30
+  (người dùng đăng nhập ở cửa sổ nó bật lên; máy không có `gh`). Xong thì chạy lại `git push origin main`.
 - XONG Bước 2: thao tác spec `pdf` (`Spec.cs`, hàm `NhapPdf`, lệnh `-PDFIMPORT`) + `cad/.claude/skills/tkpccc-ve-cad/scripts/pdf_ti_le.py` (tính `tl` từ chuỗi kích thước).
   `chay_thu.ps1` 29/29 (PDF thử 1:200: `tl` 200,0, trục 1–7 đo lại 41000,0), `thu_mcp.ps1` 9/9. PDF mẫu thật `ket_qua/cad_mau/test_HA2.pdf` trang 3: `tl` 285,0, nhập 39 056 đối tượng trong 8 giây,
   trục 1–7 lệch −0,09 % (đạt ± 1 %). Tỉ lệ 4 trang: 260,3 / 285,2 / 285,0 / 249,6.
@@ -71,10 +73,17 @@ Người dùng dặn 2026-11-11: lúc dựng khung và viết thuật toán thì
 | `cad-lap-trinh` | Sửa plugin C#, thêm thao tác spec, chạy bộ test | sửa `cad/module`, `cad/test`; Bash | opus, high |
 Skill `tkpccc-ve-cad` giữ sonnet/low (vẽ theo spec có sẵn).
 
-### Bước 5. Việc nhỏ còn nợ
-- Thêm 1 dòng cho `knowledge/mau-ban-ve-pccc.md` vào `cad/README.md`; cập nhật `rule/LUAT.md` (rải đầu báo, đầu phun trỏ tới file quy chuẩn) và skill `tkpccc-ve-cad` (ví dụ `rai` + `tuyen`).
-- Đo số token một lần vẽ; vẽ lại một tầng của bản mẫu bằng `rai` + `tuyen` trên AutoCAD thật, in PNG rồi so với PDF mẫu.
-- Sau đó theo `KE_HOACH.md`: G5 `so_do`, G6 chat trong CAD.
+### Bước 5. Vẽ lại một tầng của bản mẫu, đo token (VIỆC KẾ)
+- XONG từ các bước trước: dòng README cho `mau-ban-ve-pccc.md`, `rule/LUAT.md`, ví dụ `rai` + `tuyen` trong skill.
+- Vẽ lại tầng 1 sprinkler của bản mẫu (`ket_qua/cad_mau/test_HA2.pdf` trang 3, `tl` 285,0), không cần AutoCAD có giao diện (chạy `PCCC_SPEC` trong accoreconsole như `chay_thu.ps1`):
+  1. `pdf` nhập nền + `anh` để nhìn. Lưới trục đã đọc được ở lần nhập `tl` 284,6 (nhân 285 / 284,6 khi dùng): nhãn trục 1 → 7 tại x = 29250, 36527, 43720, 50696, 57190, 64118, 70154;
+     nhãn A → F tại y = 33382, 38273, 40058, 45466, 47248, 52140. Dãy phòng dưới A–B (sâu 4900), hành lang B–C, khối giữa C–D (5400), hành lang D–E, dãy phòng trên E–F (4900).
+  2. Lập hộp từng phòng lên `PCCC_VUNG` (`net` `kin`:true) từ ảnh, chụp `anh` để người dùng duyệt (người dùng dặn: AI đưa hộp, họ kiểm).
+  3. `rai` `SPR_DAU_DOWN` với `s` 4000, `dt` 12 (số ghi trên bảng thông số của tờ mẫu, không phải tra quy chuẩn) rồi `tuyen` `xuong_ca` / `nhanh` theo ống chính.
+  4. `anh` rồi so với nền: tờ mẫu có 64 đầu phun, phòng hát lưới 2 × 2. Ghi chỗ lệch vào `cad/LICH_SU.md`. Spec để ở `ket_qua/cad_mau/cad/skills/` (không commit).
+  Làm việc này qua chuỗi agent `cad-thiet-ke` → `cad-ve` → `cad-kiem` để thử luôn agent.
+- Đo số token một lần vẽ (`claude -p --output-format json`), ghi vào `cad/LICH_SU.md`.
+- Sau đó theo `KE_HOACH.md`: G5 `so_do`, G6 chat trong CAD (bảng `PCCC_BLOCK` là tab đầu của G6).
 
 ### Bước 6. Việc ưu tiên 2 và 3 từ `knowledge/tham-khao-mcp-hub.md` (chi tiết từng việc ở file đó)
 - Ưu tiên 2, làm khi người dùng cấp file chuẩn layer: bảng layer `data/ky_hieu/layer.json` cho `DamBaoLayer` (màu, kiểu đường, độ dày; dây báo cháy ra nét đứt);

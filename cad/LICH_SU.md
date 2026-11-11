@@ -93,6 +93,7 @@ Dừng 15:20: usage 5 giờ 79 % (hai phiên dùng chung), việc kế `cad_anh`
   Chưa kiểm: `PCCC_TUYEN` và dấu nhắc mới của `PCCC_RAI` trên AutoCAD có giao diện.
 - Dừng 20:05: "Weekly · Fable" 92 % (reset 05:00 ngày 2026-11-14). Hẹn `CronCreate` 05:03 ngày 14/11 trong phiên. `git push` đang chờ người dùng đăng nhập Git Credential Manager.
 - 21:40 người dùng tự reset hạn mức (mọi cửa sổ về 0 %) và bảo làm tiếp; xoá hẹn 05:03 ngày 14/11.
+- 22:20 chốt mốc: cửa sổ 5 giờ 72 % (reset 02:30 ngày 12/11), hẹn `CronCreate` 02:33 trong phiên để làm Bước 5. 5 commit của buổi tối chưa lên GitHub (chờ đăng nhập Git Credential Manager).
 - Bước 4 (22:15), agent: tạo `cad-thiet-ke` (opus, high; lập spec, không có công cụ vẽ), `cad-ve` (sonnet, low; chỉ chạy spec), `cad-kiem` (sonnet, medium; chỉ `doc`, `dem`, `anh`),
   `cad-lap-trinh` (opus, high; sửa plugin + test) trong `cad/.claude/agents/`; bảng việc ở `cad/CLAUDE.md`. Chưa chạy thử agent nào.
 - Bước 3 (22:05), bảng block: `module/plugin/Block.cs` có lệnh `PCCC_THEMBLOCK` (chọn block trong bản vẽ, kể cả block động; nhập mã mới, tên, hệ, đơn vị; chép định nghĩa sang `PCCC_Blocks.dwg`
