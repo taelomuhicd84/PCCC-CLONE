@@ -73,3 +73,9 @@ Chưa kiểm: `PCCC_RAI` nhánh bấm điểm và hình vẽ trên AutoCAD có g
 Thêm 15:20: khoá `ban_ve` cấp gói (spec ghi tên bản vẽ, AutoCAD đang hiện bản khác thì từ chối cả gói); `chay_thu.ps1` 23/23, `thu_mcp.ps1` 7/7.
 Dừng 15:20: usage 5 giờ 79 % (hai phiên dùng chung), việc kế `cad_anh` dễ đẩy qua 90 %. `git push` từ shell của Claude không lấy được đăng nhập
 (`could not read Username`): đẩy bằng tab Terminal của người dùng, không được thì người dùng tự `git push`.
+## 2026-11-11 (chiều) — phiên hẹn giờ commit Bước 1; người dùng trả lời 6 câu hỏi thiết kế
+- Phiên hẹn giờ 14:25 (Fable) commit Bước 1 (`rai`, `tuyen`, `PCCC_RAI`) và khoá `ban_ve`; kết quả test do phiên đó ghi ở mục TRẠNG THÁI của `cad/TIEN_DO.md`. Ba commit của nó được phiên gốc push lúc 15:15.
+- Sự cố: phiên gốc cũng viết mã cùng lúc nên hai phiên sửa trùng file; đã giao lại cho một phiên ghi. Bài học: khi phiên hẹn giờ đang chạy thì phiên khác không sửa mã.
+- Người dùng gửi tài liệu hướng dẫn AutoCAD MCP của bên khác: ý lấy được ghi ở `cad/knowledge/tham-khao-mcp-hub.md`.
+- Người dùng trả lời 6 câu hỏi (đi dây, chia zone, hệ địa chỉ, ống góp, bước rải, nhận phòng): ghi ở `cad/knowledge/tu-duy-di-day-di-ong.md`; việc phải sửa là Bước 1c của `cad/TIEN_DO.md`. Thêm mục nhắc ba thứ người dùng chưa cấp (chuẩn layer, block động, catalog).
+- Dừng 15:15 vì usage 5 giờ gần 90 % (reset 19:20). Task hẹn giờ chạy một lần lúc 19:25 sẽ làm tiếp.

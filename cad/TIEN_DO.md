@@ -4,6 +4,7 @@ Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
 ## TRẠNG THÁI (cập nhật 2026-11-11, 15:00)
+- 15:15: người dùng đã trả lời 6 câu hỏi thiết kế (mục "NGƯỜI DÙNG ĐÃ TRẢ LỜI"), việc sửa theo là Bước 1c. Dừng vì usage 5 giờ gần 90 % (reset 19:20); task hẹn giờ 19:25 làm tiếp. Đầu phiên nhớ mục "NHẮC NGƯỜI DÙNG ĐẦU PHIÊN".
 - XONG: MCP CAD (G0–G2), `cad/` thành dự án con, thử thật với AutoCAD đang mở (`luoi_truc`, `dat`, `ong`, `chu`, `dem`, `doc` đều đúng).
   Lưu ý khi vẽ thật: `cad_chay` vẽ vào bản vẽ đang hiện (đổi tab giữa chừng là vẽ sang bản khác); `doc` `vung` chỉ đọc layer `PCCC_VUNG`; `hop` chỉ lấy đối tượng nằm trọn trong hộp.
 - XONG Bước 1 (G3): thao tác `rai`, `tuyen` (3 kiểu `noi_tiep`, `xuong_ca`, `nhanh`), lệnh `PCCC_RAI`. Mã ở `module/plugin/Rai.cs`, ví dụ `skills/vi_du/rai.json`,
@@ -24,6 +25,13 @@ Mỗi bước xong: `cad\test\chay_thu.ps1` + `cad\test\thu_mcp.ps1` ra `TAT CA 
 - VIỆC KẾ, CHƯA LÀM (dừng 15:20 vì usage 5 giờ 79 %, làm tiếp dễ vượt 90 %): công cụ MCP `cad_anh` {`hop` hoặc toàn bản vẽ, `rong` px}: plugin in vùng đó ra PNG (lệnh `-PLOT` cửa sổ như `cad/.claude/skills/tkpccc-cad-console/scripts/in_png.ps1`,
   đẩy qua `Cau.cs`), trả ĐƯỜNG DẪN file; AI chỉ đọc ảnh khi cần. Sửa `module/mcp/Mcp.cs` (hàm `CongCu`), `Cau.cs`, `thu_mcp.ps1` (`tools/list` thành 3 công cụ).
   Phải thử thứ tự dấu nhắc `-PLOT` trong accoreconsole trước.
+
+### Bước 1c. Sửa theo trả lời của người dùng 11/11 (làm trước Bước 2; căn cứ `knowledge/tu-duy-di-day-di-ong.md`)
+- `rai`: thêm `dt` = diện tích bảo vệ tối đa của một thiết bị (m², lấy theo quy chuẩn, vd TCVN 7336: 12 hoặc 9). Sau khi chia theo `s`, nếu bx × by > `dt` thì thêm hàng hoặc cột ở phương có bước lớn hơn cho tới khi đạt. Trả thêm `m2` (diện tích thực mỗi thiết bị). Phép kiểm: `s` 4000 với `dt` 12 phải cho bước kiểu 4000 × 3000 hoặc 3500 × 3500, không ra 4000 × 4000.
+- `tuyen` kiểu mới `tia`: mỗi điểm một nét thẳng tới điểm `den` (đèn báo phòng): phòng có bao nhiêu đầu báo thì bấy nhiêu nét từ đầu báo ra đèn.
+- Lệnh gõ tay `PCCC_TUYEN` cho ống sprinkler: chọn các đầu phun, chọn ống chính, rồi BẤM vị trí ống góp (thành `qua`). Người dùng muốn tự chọn chỗ đặt ống góp.
+- Quy trình vùng: trước khi rải phải có polyline kín từng khu vực trên layer `PCCC_VUNG` (theo tường, dầm sàn, vì kèo). AI đưa hộp từng phòng bằng `net` `kin`:true lên layer đó, người dùng kiểm và sửa, rồi mới `rai` theo `l`. Ghi vào skill `tkpccc-ve-cad`.
+- Luật chia zone (không quá 25 đầu báo một zone hệ thường, dưới giới hạn m² của TCVN, zone theo khu vực) và nối dây hệ địa chỉ (ZM, CM, RM, mạch vòng) là việc của AI thiết kế, không phải của plugin: ghi vào `rule/LUAT.md` (trỏ tới knowledge), agent `cad-thiet-ke` và phần `so_do` (G5).
 
 ### Bước 2. PDF → CAD (G4)
 - Thao tác `pdf`: `file`, `trang`, `p`, `tl`, `goc`. Chạy `-PDFIMPORT` bằng `Editor.Command` TRƯỚC khi mở transaction vẽ (như đoạn nạp block cho `dat` trong `ThucHienSpec`). Phải thử trong accoreconsole: thứ tự dấu nhắc của `-PDFIMPORT` (File, tên file, trang, điểm chèn, tỉ lệ, góc) và `Editor.Command` có chạy không; không được thì đẩy lệnh qua `SendStringToExecute` trong `Cau.cs`.
@@ -59,13 +67,17 @@ Skill `tkpccc-ve-cad` giữ sonnet/low (vẽ theo spec có sẵn).
   bộ ký hiệu van của bản mẫu khi làm `so_do`; đoạn cấu hình mẫu cho AI khác và 4–5 câu lệnh mẫu PCCC trong `cad/README.md`.
 - Đưa vào skill `tkpccc-ve-cad`: vẽ theo giai đoạn (nền + trục → rải → tuyến → ghi chú), hết mỗi giai đoạn gọi `cad_anh` và báo số đếm; chỉ dừng chờ duyệt khi người dùng yêu cầu.
 
-## CHỜ NGƯỜI DÙNG (đã hỏi 2026-11-11; chưa trả lời thì làm theo giả định ghi sẵn)
-1. Dây báo cháy trong phòng: giả định nét thẳng nối thiết bị, đi rắn bò; phòng nối tiếp phòng trong cùng zone, không rẽ nhánh chữ T; cuối zone đặt điện trở cuối dây.
-2. Chia zone: giả định AI chia theo dãy phòng như mẫu rồi người dùng duyệt; plugin không tự chia.
-3. Ống góp sprinkler trong phòng: giả định đi trùng cột đầu phun gần cửa, mọi nhánh DN50 như mẫu, không tự giảm cỡ theo số đầu phun.
-4. Bước rải: giả định AI chọn bước số tròn theo quy chuẩn, phần dư dồn đều ra hai tường như mẫu.
-5. Nhận phòng từ PDF: giả định người dùng bấm phòng bằng `PCCC_RAI`, hoặc AI đưa hộp từng phòng.
-6. File chuẩn layer (`cad/layer/`), block động, catalog ống + bơm: chờ người dùng cấp.
+## NHẮC NGƯỜI DÙNG ĐẦU PHIÊN (người dùng dặn 2026-11-11: mở phiên mới thì phải nhắc)
+Ba thứ người dùng CHƯA cấp, bảo Claude làm sườn trước rồi họ sửa sau: (1) file chuẩn layer trong `cad/layer/`; (2) block động của thiết bị; (3) catalog ống + phụ kiện và catalog bơm.
+Đầu mỗi phiên CAD nêu một dòng nhắc. Người dùng cấp thứ nào thì gạch thứ đó; đủ cả ba thì xoá mục này.
+
+## NGƯỜI DÙNG ĐÃ TRẢ LỜI 2026-11-11 (đầy đủ: `cad/knowledge/tu-duy-di-day-di-ong.md`)
+1. Dây báo cháy hệ thường: nét thẳng, rắn bò, phòng nối tiếp phòng trong cùng zone, không rẽ chữ T, cuối zone có điện trở cuối dây. Có đèn báo phòng thì mỗi đầu báo trong phòng một nét kéo ra đèn.
+2. Chia zone: theo giới hạn m² của TCVN VÀ không quá 25 đầu báo một zone (hệ thường), chạm giới hạn nào trước thì dừng. Zone là khu vực: không lấn sang khu vực khác, không để một khu vực thành hai zone lẻ tẻ. Hệ địa chỉ: ZM, CM, RM và mạch vòng, xem knowledge.
+3. Ống góp sprinkler: người dùng tự bấm chọn vị trí trong CAD (lệnh của plugin).
+4. Bước rải: theo quy chuẩn, tính từ diện tích bảo vệ một đầu phun (TCVN 7336: 12 m² hoặc 9 m²). Trước khi rải phải vẽ polyline phân khu vực theo tường, dầm sàn, vì kèo.
+5. Nhận phòng: AI đưa hộp từng phòng, người dùng kiểm lại rồi bấm vào phòng.
+6. Chuẩn layer, block động, catalog: để sau, làm sườn trước, phải nhắc (mục trên).
 
 ## CHƯA KIỂM
 - Skill trong `cad/.claude/skills/` có hiện khi mở Claude Code ở gốc repo không (Claude Code nạp skill của thư mục con khi làm việc với file trong thư mục đó). Không hiện thì vẫn vẽ được nhờ hướng dẫn máy chủ MCP gửi lúc kết nối; cần thì đặt bản trỏ ở `.claude/skills/` gốc.
