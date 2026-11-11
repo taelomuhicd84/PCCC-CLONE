@@ -24,6 +24,9 @@ Nhờ vậy kiểm thử được plugin mà không đụng AutoCAD người dù
   `powershell -ExecutionPolicy Bypass -File cad\test\chay_thu.ps1` → phải ra `TAT CA DAT`.
 - Build vào bundle thật: `cad\build.bat` (chạy được khi AutoCAD đang mở: đổi tên DLL cũ thành `*.dll.cu*` vì Windows cho đổi tên
   DLL đang nạp nhưng không cho ghi đè; người dùng tắt hẳn AutoCAD rồi mở lại để nạp bản mới).
+- Thử trên AutoCAD có giao diện (bảng `PCCC_BLOCK`, cầu nối + máy chủ MCP thật, `-PLOT`, `-PDFIMPORT`): `powershell -ExecutionPolicy Bypass -File cad\test\thu_gui.ps1`
+  sau `cad\build.bat`. Script tự mở một AutoCAD, tự tắt, dùng thư mục tạm; từ chối chạy khi đang có AutoCAD mở.
+- Mã giao diện nằm riêng ở `cad/module/ui/` (`TKPCCC.UI.dll`, tham chiếu `acmgd`); phần xử lý bản vẽ của nó ở `cad/module/plugin/Block.cs`.
 - Xem bản vẽ kết quả bằng mắt: `powershell -ExecutionPolicy Bypass -File cad\.claude\skills\tkpccc-cad-console\scripts\in_png.ps1 <ban_ve.dwg> <ra.png>`
   rồi đọc ảnh PNG (Read). Dùng để kiểm hình block, chữ căn giữa, bảng, màu layer — những thứ đọc dòng lệnh không thấy.
 

@@ -20,6 +20,13 @@
         <Command Local="PCCC_SPEC" Global="PCCC_SPEC" />
         <Command Local="PCCC_RAI" Global="PCCC_RAI" />
         <Command Local="PCCC_TUYEN" Global="PCCC_TUYEN" />
+        <Command Local="PCCC_THEMBLOCK" Global="PCCC_THEMBLOCK" />
+      </Commands>
+    </ComponentEntry>
+    <!-- Bảng block: cần acmgd.dll nên chỉ chạy trong AutoCAD có giao diện; phải nạp SAU TKPCCC.Cad.dll. -->
+    <ComponentEntry AppName="TKPCCC.UI" ModuleName="./Contents/TKPCCC.UI.dll" LoadOnAutoCADStartup="True">
+      <Commands GroupName="TKPCCC">
+        <Command Local="PCCC_BLOCK" Global="PCCC_BLOCK" />
       </Commands>
     </ComponentEntry>
   </Components>

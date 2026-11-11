@@ -8,10 +8,28 @@ $T = Join-Path $env:TEMP ('tkpccc_thu_' + [guid]::NewGuid().ToString('N').Substr
 New-Item -ItemType Directory $T | Out-Null
 
 & "$FW\csc.exe" /nologo /target:library /platform:x64 /codepage:65001 /out:"$T\TKPCCC.Cad.dll" `
-  /r:"$ACAD\acdbmgd.dll" /r:"$ACAD\accoremgd.dll" /r:"$FW\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Windows.Forms.dll `
+  /r:"$ACAD\acdbmgd.dll" /r:"$ACAD\accoremgd.dll" /r:"$FW\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll `
   "$GOC\cad\module\plugin\*.cs" "$GOC\cad\module\chung\HangDoi.cs"
 if ($LASTEXITCODE) { throw 'Bien dich loi' }
+# DLL giao dien (bang PCCC_BLOCK): accoreconsole khong nap duoc nen o day chi kiem bien dich; chay that phai thu trong AutoCAD.
+& "$FW\csc.exe" /nologo /target:library /platform:x64 /codepage:65001 /out:"$T\TKPCCC.UI.dll" `
+  /r:"$ACAD\acdbmgd.dll" /r:"$ACAD\accoremgd.dll" /r:"$ACAD\acmgd.dll" /r:"$ACAD\AdWindows.dll" `
+  /r:"$FW\WPF\PresentationCore.dll" /r:"$FW\WPF\WindowsBase.dll" /r:"$FW\System.Xaml.dll" `
+  /r:System.Core.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll /r:"$T\TKPCCC.Cad.dll" "$GOC\cad\module\ui\*.cs"
+if ($LASTEXITCODE) { throw 'Bien dich TKPCCC.UI.dll loi' }
 Copy-Item "$GOC\data\vat_tu.json" $T
+
+# Be rong anh va so gia tri byte khac nhau cua anh: anh trang tron chi co 1 gia tri.
+Add-Type -AssemblyName System.Drawing
+function DocAnh($f) {
+  $bmp = New-Object Drawing.Bitmap $f
+  $du = $bmp.LockBits((New-Object Drawing.Rectangle 0, 0, $bmp.Width, $bmp.Height), 'ReadOnly', 'Format32bppArgb')
+  $byte = New-Object byte[] ($du.Stride * $du.Height)
+  [Runtime.InteropServices.Marshal]::Copy($du.Scan0, $byte, 0, $byte.Length)
+  $kq = @{ rong = $bmp.Width; mau = (New-Object 'Collections.Generic.HashSet[byte]' (, $byte)).Count }
+  $bmp.UnlockBits($du); $bmp.Dispose()
+  $kq
+}
 
 # Ban ve mm: 3 dau bao khoi (1 cai copy de), 1 dau nhiet + MINSERT 2x3, ong DN50 15 m, khu "TANG 1" bao 2 dau khoi.
 # Luu ban ve vao thu muc tam truoc khi boc: runner tat thi file _KL.json nam o day, khong ra Documents.
@@ -27,6 +45,8 @@ $kb = @('INSUNITS', '4', 'NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '_.SAVEAS', '2018',
   'PCCC_BANG', '0,-3000', '250',
   'RECTANG', '50000,0', '56500,4500', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '12', 'D', 'L', '', '',
   'PLINE', '49000,-1000', '58000,-1000', '', '_.ZOOM', '_E', 'PCCC_TUYEN', 'ONG_DN25', 'W', '50000,0', '56500,4500', '', 'L', '53000,2000',
+  'CIRCLE', '80000,0', '150', '-BLOCK', 'KHACH_VAN', '80000,0', 'L', '', '-INSERT', 'KHACH_VAN', '80000,0', '1', '', '0',
+  'PCCC_THEMBLOCK', 'L', 'van_khach', 'Van khach them', 'SPR', '', 'PCCC_DAT', 'VAN_KHACH', '81000,0', '',
   'PCCC_BOC', 'Khong', '', 'ThuPlugin', '_.QSAVE')
 $kb -join "`r`n" | Set-Content -Encoding ascii "$T\kb.scr"
 $p = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb.out.txt"
@@ -40,13 +60,24 @@ $can = @(
   @('\[TANG 1\] BC_KHOI=2', 'tach theo khu'),
   @('R = 3 m .*thay 2 ', 'chay lai VUNGBV thay vong cu, khong ve trung'),
   @('PCCC_RAI SPR_DAU_DOWN n=4 luoi=2x2 buoc=3250x2250 m2=7\.31', 'PCCC_RAI: phong 6500x4500, S = 4 m, dt 12 m2 ra 4 dau phun, buoc 3250 x 2250, 7,31 m2 moi dau'),
-  @('PCCC_TUYEN ONG_DN25 doan=3 m=10\.8[78]', 'PCCC_TUYEN: ong gop qua diem bam x = 53000 + 2 nhanh, dai 10,88 m'))
+  @('PCCC_TUYEN ONG_DN25 doan=3 m=10\.8[78]', 'PCCC_TUYEN: ong gop qua diem bam x = 53000 + 2 nhanh, dai 10,88 m'),
+  @('PCCC_THEMBLOCK VAN_KHACH', 'PCCC_THEMBLOCK: block cua nguoi dung vao thu vien duoi ma moi'),
+  @('VAN_KHACH\s+1 ', 'block moi them: PCCC_DAT dat duoc, PCCC_BOC dem 1 cai'))
 $loi = 0
 foreach ($c in $can) { if ($out -match $c[0]) { "DAT   $($c[1])" } else { "LOI   $($c[1])"; $loi++ } }
 # Lan boc thu 2 (sau khi chen bang + vung bao ve) van phai ra 2 / 7: bang thong ke va vong tron khong bi dem.
 $lan2 = $out.Substring($out.LastIndexOf('Command: PCCC_BOC')) # 'Command: ': thong bao loi runner cung co chu PCCC_BOC
 if ($lan2 -match 'BC_KHOI\s+2 ' -and $lan2 -match 'BC_NHIET\s+7 ') { 'DAT   boc lai sau PCCC_BANG khong dem ky hieu trong bang' } else { 'LOI   boc lai sau PCCC_BANG'; $loi++ }
 if ($out -match '\[TKPCCC\] L') { 'LOI   co lenh bao loi:'; ($out -split "`n" | Select-String '\[TKPCCC\] L'); $loi++ }
+# PCCC_THEMBLOCK ghi them 1 dong vao vat_tu.json canh DLL (ban trong thu muc tam; file goc cua repo khong bi dung toi vi khong co nguon_vat_tu.txt).
+$dmThu = Get-Content -Raw -Encoding UTF8 "$T\vat_tu.json" | ConvertFrom-Json
+$dmGoc = Get-Content -Raw -Encoding UTF8 "$GOC\data\vat_tu.json" | ConvertFrom-Json
+$moi = @($dmThu.vat_tu | Where-Object { $_.ma -eq 'VAN_KHACH' })
+if ($moi.Count -eq 1 -and $moi[0].ten -eq 'Van khach them' -and $moi[0].he -eq 'SPR' -and $moi[0].loai -eq 'block' -and $moi[0].dvt -eq ('c' + [char]0xE1 + 'i') -and
+  @($dmThu.vat_tu).Count -eq @($dmGoc.vat_tu).Count + 1) { 'DAT   vat_tu.json them dung 1 dong cho ma moi, cac dong cu giu nguyen' } else { 'LOI   vat_tu.json sau PCCC_THEMBLOCK'; $loi++ }
+# Anh xem truoc cho bang PCCC_BLOCK: PCCC_LIB ve cho block mac dinh, PCCC_THEMBLOCK ve cho block moi; anh phai co net.
+$anhLoi = @('BC_KHOI', 'VAN_KHACH' | Where-Object { -not (Test-Path "$T\anh_block\$_.png") -or (DocAnh "$T\anh_block\$_.png").mau -le 1 })
+if ($anhLoi.Count -eq 0) { 'DAT   anh xem truoc block: BC_KHOI, VAN_KHACH co anh 64 px co net' } else { "LOI   anh xem truoc block thieu hoac trang: $($anhLoi -join ', ')"; $loi++ }
 
 # --- PCCC_SPEC: chay goi spec mau (cad\skills\vi_du\thu.json) trong ban ve moi, kiem ket qua JSON ---
 # Goi mau co 1 thao tac sai co y (khong_co) de kiem duong bao loi: ok = false, loi dung vi tri, cac thao tac khac van chay.
@@ -109,15 +140,8 @@ if ($kdung -and $kdung.ok -eq $true -and $kdung.ve -eq 1) { 'DAT   ban_ve dung t
 $ka = if (Test-Path "$T\anh.kq.json") { Get-Content -Raw -Encoding UTF8 "$T\anh.kq.json" | ConvertFrom-Json }
 $fa = if ($ka) { [string]@($ka.anh)[0] }
 if ($fa -and (Test-Path $fa)) {
-  Add-Type -AssemblyName System.Drawing
-  $bmp = New-Object Drawing.Bitmap $fa
-  $rongAnh = $bmp.Width
-  $du = $bmp.LockBits((New-Object Drawing.Rectangle 0, 0, $bmp.Width, $bmp.Height), 'ReadOnly', 'Format32bppArgb')
-  $byte = New-Object byte[] ($du.Stride * $du.Height)
-  [Runtime.InteropServices.Marshal]::Copy($du.Scan0, $byte, 0, $byte.Length)
-  $bmp.UnlockBits($du); $bmp.Dispose()
-  $soMau = (New-Object 'Collections.Generic.HashSet[byte]' (, $byte)).Count
-  if ($ka.ok -eq $true -and $rongAnh -eq 800 -and $soMau -gt 1) { 'DAT   anh: PNG 800 px co net ve, in sau khi ve xong' } else { "LOI   anh: rong $rongAnh, so gia tri byte $soMau"; $loi++ }
+  $da = DocAnh $fa
+  if ($ka.ok -eq $true -and $da.rong -eq 800 -and $da.mau -gt 1) { 'DAT   anh: PNG 800 px co net ve, in sau khi ve xong' } else { "LOI   anh: rong $($da.rong), so gia tri byte $($da.mau)"; $loi++ }
 } else { "LOI   anh khong ra PNG: $T\kb2.out.txt"; $loi++ }
 # --- pdf: ti le tinh tu chuoi kich thuoc; nhap vao phai ra kich thuoc that (truc 1-7 = 41000, khung 1090 pt = 76906 mm o 1:200) ---
 if ([math]::Abs($tlTrang.tl - 200) -le 2 -and $tlTrang.cap -ge 8 -and $tlTrang.tin_cay -ge 0.8) { "DAT   pdf_ti_le.py: PDF mau ve 1:200 ra tl = $($tlTrang.tl) ($($tlTrang.cap) cap so)" }

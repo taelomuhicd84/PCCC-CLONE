@@ -3,26 +3,30 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
-## TRẠNG THÁI (cập nhật 2026-11-11, 22:00)
-- 22:00: XONG Bước 1b (`cad_anh`), Bước 1c (`rai` + `dt`, `tuyen` `tia`, `PCCC_TUYEN`) và Bước 2 (PDF → CAD: thao tác `pdf` + `pdf_ti_le.py`). VIỆC KẾ: Bước 3. Đầu phiên nhớ mục "NHẮC NGƯỜI DÙNG ĐẦU PHIÊN".
+## TRẠNG THÁI (cập nhật 2026-11-11, 22:05)
+- 22:05: XONG Bước 1b (`cad_anh`), 1c (`rai` + `dt`, `tuyen` `tia`, `PCCC_TUYEN`), 2 (PDF → CAD) và 3 (bảng block `PCCC_BLOCK`, `PCCC_THEMBLOCK`). VIỆC KẾ: Bước 4. Đầu phiên nhớ mục "NHẮC NGƯỜI DÙNG ĐẦU PHIÊN".
+- ĐÃ THỬ TRÊN AUTOCAD CÓ GIAO DIỆN bằng `cad\test\thu_gui.ps1` (script tự mở AutoCAD thật rồi tự tắt, 7/7 đạt): NETLOAD, cầu nối + máy chủ MCP thật (`cad_tt`, `cad_chay`, `cad_anh`),
+  `pdf`, `rai`, `tuyen`, `anh` (`-PLOT` trong AutoCAD thật), bảng `PCCC_BLOCK` hiện 31 dòng + 2 nút. Máy người dùng `SECURELOAD` = 0, nạp plugin bằng NETLOAD tay (bundle không nằm trong ApplicationPlugins).
+- XONG Bước 3: `module/plugin/Block.cs` (lệnh `PCCC_THEMBLOCK`, ảnh xem trước 64 px tự vẽ vào `Contents\anh_block`) + `module/ui/BangBlock.cs` → `TKPCCC.UI.dll` (lệnh `PCCC_BLOCK`).
+  NETLOAD một file `TKPCCC.Cad.dll` là đủ: nó tự nạp `TKPCCC.UI.dll` khi chạy trong `acad.exe`. `chay_thu.ps1` 34/34, `thu_mcp.ps1` 9/9.
 - Hạn mức: 20:05 dừng vì "Weekly · Fable" 92 %; người dùng tự reset khoảng 21:40 (mọi cửa sổ về 0 %) và bảo làm tiếp. Mỗi bước cỡ 1b, 1c, 2 tốn khoảng 6 % tuần Fable.
   Không còn hẹn giờ nào (hẹn 05:03 ngày 14/11 đã xoá). Tuần reset 05:00 ngày 2026-11-14 giờ VN.
 - Các commit từ `f3d354f` (1b) trở đi CHƯA lên GitHub lúc 22:00: `git push` ở tab Terminal chờ Git Credential Manager từ 19:30 (người dùng đăng nhập ở cửa sổ nó bật lên); xong thì chạy lại `git push origin main`.
 - XONG Bước 2: thao tác spec `pdf` (`Spec.cs`, hàm `NhapPdf`, lệnh `-PDFIMPORT`) + `cad/.claude/skills/tkpccc-ve-cad/scripts/pdf_ti_le.py` (tính `tl` từ chuỗi kích thước).
   `chay_thu.ps1` 29/29 (PDF thử 1:200: `tl` 200,0, trục 1–7 đo lại 41000,0), `thu_mcp.ps1` 9/9. PDF mẫu thật `ket_qua/cad_mau/test_HA2.pdf` trang 3: `tl` 285,0, nhập 39 056 đối tượng trong 8 giây,
-  trục 1–7 lệch −0,09 % (đạt ± 1 %). Tỉ lệ 4 trang: 260,3 / 285,2 / 285,0 / 249,6. CHƯA thử `pdf` trên AutoCAD có giao diện.
+  trục 1–7 lệch −0,09 % (đạt ± 1 %). Tỉ lệ 4 trang: 260,3 / 285,2 / 285,0 / 249,6.
 - XONG Bước 1c: `rai` nhận `dt` (m² tối đa một thiết bị) và trả `m2`; `tuyen` kiểu `tia`; lệnh `PCCC_TUYEN` (chọn đầu phun, chọn ống chính, bấm vị trí ống góp); `PCCC_RAI` hỏi thêm diện tích bảo vệ.
   `chay_thu.ps1` 27/27, `thu_mcp.ps1` 9/9, bundle build lại 20:05. CHƯA thử trên AutoCAD có giao diện: `PCCC_TUYEN` (chọn bằng chuột, bấm điểm) và dấu nhắc mới của `PCCC_RAI`.
 - XONG Bước 1b: thao tác spec `anh` (`module/plugin/Spec.cs`, hàm `InAnh`) + công cụ MCP `cad_anh` (`module/mcp/Mcp.cs`). In Model ra PNG bằng `-PLOT` qua `Editor.Command`,
   chạy SAU khi commit gói nên vẽ + chụp trong một lần gọi được. `chay_thu.ps1` 24/24, `thu_mcp.ps1` 9/9; bundle đã build lại 19:45 (tắt mở AutoCAD và Claude Code để nạp).
-  CHƯA thử `anh` trên AutoCAD có giao diện: dấu nhắc `-PLOT` mới thử trong accoreconsole; cần xem in nền (`BACKGROUNDPLOT`) và hộp tiến độ in có làm lệch không.
+  Trên AutoCAD có giao diện: đạt (PNG 800 và 640 px có nét).
 - XONG: MCP CAD (G0–G2), `cad/` thành dự án con, thử thật với AutoCAD đang mở (`luoi_truc`, `dat`, `ong`, `chu`, `dem`, `doc` đều đúng).
   Lưu ý khi vẽ thật: `cad_chay` vẽ vào bản vẽ đang hiện (đổi tab giữa chừng là vẽ sang bản khác); `doc` `vung` chỉ đọc layer `PCCC_VUNG`; `hop` chỉ lấy đối tượng nằm trọn trong hộp.
 - XONG Bước 1 (G3): thao tác `rai`, `tuyen` (3 kiểu `noi_tiep`, `xuong_ca`, `nhanh`), lệnh `PCCC_RAI`. Mã ở `module/plugin/Rai.cs`, ví dụ `skills/vi_du/rai.json`,
   từ vựng trong `skills/TU_VUNG.md`. `chay_thu.ps1` 21/21, `thu_mcp.ps1` 7/7. CHƯA thử trên AutoCAD có giao diện: nhánh bấm điểm trong phòng của `PCCC_RAI`
   (`Editor.TraceBoundary`) chỉ chạy được ở đó; DLL trong bundle chưa build lại (chạy `cad\build.bat`, tắt mở AutoCAD).
 - Thư mục `cad/layer/` chờ người dùng thả file `.md` chuẩn layer.
-- **ĐANG LÀM (người dùng giao 2026-11-11, giai đoạn dựng khung làm bằng Fable): vẽ được bản vẽ PCCC như bản mẫu.** Việc kế: Bước 3 dưới đây.
+- **ĐANG LÀM (người dùng giao 2026-11-11, giai đoạn dựng khung làm bằng Fable): vẽ được bản vẽ PCCC như bản mẫu.** Việc kế: Bước 4 dưới đây.
 - Chỉ MỘT phiên được sửa mã trong `cad/` tại một thời điểm (14:29 ngày 2026-11-11 hai phiên ghi đè nhau).
 - Hẹn giờ: người dùng bảo "xoá hết mọi hẹn giờ, tự động chạy lại tại phiên này" (2026-11-11 15:20), scheduled task `tkpccc-cad-lam-tiep` đã xoá.
   Claude hiểu là: hẹn làm tiếp bằng `CronCreate` một lần ngay trong phiên đang làm, không tạo scheduled task mở phiên mới (chưa hỏi lại người dùng có áp dụng cho mọi lần không).
@@ -38,18 +42,21 @@ Skill `tkpccc-ve-cad` đã nhắc ghi `ban_ve` khi vẽ nhiều lượt và các
 Quy trình vùng (vẽ polyline `PCCC_VUNG` trước, người dùng kiểm, rồi `rai` theo `l`) đã ghi vào skill `tkpccc-ve-cad`; luật chia zone, đi dây, bước rải ở `rule/LUAT.md` (BC-04, BC-05, SP-02).
 Còn lại của các ý này: agent `cad-thiet-ke` (Bước 4) và `so_do` hệ địa chỉ (G5) dùng các luật đó. `knowledge/` gốc chưa có bản nguyên văn bảng khoảng cách đầu phun của TCVN 7336.
 
-### Bước 2. PDF → CAD (G4). XONG 2026-11-11 22:00 (chi tiết ở `cad/LICH_SU.md`; cách dùng ở skill `tkpccc-ve-cad`, mục "Nền kiến trúc từ PDF")
+### Bước 2. PDF → CAD (G4). XONG 2026-11-11 21:50 (chi tiết ở `cad/LICH_SU.md`; cách dùng ở skill `tkpccc-ve-cad`, mục "Nền kiến trúc từ PDF")
 Còn lại của G4:
 - Chữ font VNI trong PDF nhập vào bị sai dấu (vd "TAÛI TROÏNG"): chưa chuyển mã. `thamdinh/pccc_checker/pdf/` có sẵn `vni_to_unicode`, `is_vni_font` để tham khảo khi làm.
 - Nền nhập vào giữ màu của PDF; bản mẫu muốn nền kiến trúc xám nhạt, nét mảnh: làm cùng lúc có file chuẩn layer.
 - Nhận phòng tự động chưa có: AI xem ảnh (`anh`) rồi đưa hộp từng phòng lên `PCCC_VUNG`, hoặc người dùng bấm phòng bằng `PCCC_RAI`.
 - Tờ PDF chỉ có ảnh quét thì `pdf` báo lỗi: khi gặp mới làm đường `PDFATTACH` (gắn làm nền, không thành nét).
 
-### Bước 3. Bảng block trong AutoCAD (ảnh + tên + mô tả), thêm được block động từ bản vẽ
-- DLL riêng `TKPCCC.UI.dll`, thư mục mới `cad/module/ui/`, tham chiếu thêm `acmgd.dll`. accoreconsole không nạp được DLL này nên test lõi giữ nguyên.
-- Lệnh `PCCC_BLOCK`: mở `PaletteSet` liệt kê block của `PCCC_Blocks.dwg` theo `data/vat_tu.json`: ảnh xem trước, mã, tên, hệ; bấm một dòng là gọi `PCCC_DAT <mã>`.
-- Nút "Thêm từ bản vẽ": người dùng chọn một block (kể cả block động) trong bản vẽ đang mở, nhập mã + tên + hệ + đơn vị; plugin chép định nghĩa block vào `PCCC_Blocks.dwg` (`WblockCloneObjects`, đổi tên thành mã, thêm thuộc tính ẩn `MA_VT`) và thêm một dòng vào `data/vat_tu.json` (nguồn duy nhất của danh mục, nên cả báo giá cũng thấy).
-- `build.bat` build thêm DLL này; `PackageContents.xml` chỉ nạp nó trong AutoCAD có giao diện.
+### Bước 3. Bảng block trong AutoCAD. XONG 2026-11-11 22:05 (chi tiết ở `cad/LICH_SU.md`)
+Người dùng cần tự xem và báo lại (máy không kiểm được):
+- Hình thức bảng `PCCC_BLOCK`: cỡ cột, ảnh 40 px, chữ; bấm đúp một dòng có ra `PCCC_DAT <mã>` và con trỏ về vùng vẽ không; nút "Thêm từ bản vẽ" (gọi `PCCC_THEMBLOCK`, xong thì bảng tự nạp lại).
+- `PCCC_THEMBLOCK` với block ĐỘNG thật (accoreconsole chỉ thử được block thường): chèn ra bằng `PCCC_DAT`, đổi trạng thái, rồi `PCCC_BOC` có đếm không.
+Giới hạn bản này (ghi `shortcut:` trong mã):
+- Chỉ thêm mã MỚI. Đổi hình cho mã đã có: sửa trong `PCCC_Blocks.dwg` hoặc `PCCC_GAN`. Block phải vẽ theo mm như thư viện.
+- Ảnh xem trước do plugin tự vẽ từ nét (không hatch, không xoay chữ, block động theo trạng thái đang lưu). Ảnh cũ hơn `PCCC_Blocks.dwg` thì `PCCC_LIB`, `PCCC_BLOCK` tự vẽ lại.
+- Mã mới ghi vào `vat_tu.json` cạnh DLL và vào `data/vat_tu.json` của repo (đường dẫn do `build.bat` để ở `Contents\nguon_vat_tu.txt`); bundle chép đi máy khác không có file đó thì chỉ ghi bản cạnh DLL và báo.
 
 ### Bước 4. Agent, model, effort
 Người dùng dặn 2026-11-11: lúc dựng khung và viết thuật toán thì dùng Fable; về sau chỉ dùng Opus trở xuống. Tạo trong `cad/.claude/agents/`, ghi bảng vào `cad/CLAUDE.md` và `cad/README.md`:
@@ -103,6 +110,9 @@ Ba thứ người dùng CHƯA cấp, bảo Claude làm sườn trước rồi h�
 - Thêm thao tác spec: hàm `Op...` trong `module/plugin/Spec.cs` + 1 dòng `MotOp` + 1 dòng `skills/TU_VUNG.md` + 1 phép kiểm trong `test/chay_thu.ps1`.
 - Thao tác phải chạy LỆNH AutoCAD (`anh` dùng `-PLOT`, sắp tới `pdf` dùng `-PDFIMPORT`): không đặt trong `MotOp`. `ThucHienSpec` gom chúng rồi gọi `Editor.Command` ngoài transaction
   (`anh` sau commit). `Editor.Command` chạy được trong accoreconsole. Toạ độ gõ cho lệnh thêm dấu `*` đằng trước để tính theo WCS.
+- Giao diện: chỉ `module/ui/` được tham chiếu `acmgd.dll` (+ `AdWindows`, `PresentationCore`, `WindowsBase`, `System.Xaml` vì `PaletteSet` kéo theo WPF). DLL này không xử lý bản vẽ:
+  gọi `Lenh.DanhMucBlock` của lõi và gửi lệnh bằng `SendStringToExecute`. Trong AutoCAD, điều khiển WinForms chỉ hiện là "Pane" với UI Automation:
+  `thu_gui.ps1` tìm khung theo tên rồi đếm dòng bằng thông điệp `LVM_GETITEMCOUNT`. `thu_gui.ps1` chép DLL ra thư mục tạm rồi mới NETLOAD để không đụng thư viện block thật.
 - Thứ tự dấu nhắc `-PDFIMPORT` (AutoCAD 2021): F, tên file, số trang, điểm chèn, tỉ lệ, góc xoay. Ở tỉ lệ 1 thì 1 đơn vị bản vẽ = 1 inch giấy, KHÔNG theo `INSUNITS`
   (plugin nhân 25,4 × `tl`). Trang có `/Rotate` vào đúng chiều đang hiển thị. Layer mặc định `PDF_Geometry`, `PDF_Text`, `PDF_Solid Fills`. Lệnh không trả danh sách đối tượng:
   đếm đối tượng mới theo handle ≥ `Handseed` trước lệnh.

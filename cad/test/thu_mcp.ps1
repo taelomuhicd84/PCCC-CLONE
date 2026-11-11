@@ -12,7 +12,7 @@ New-Item -ItemType Directory $T | Out-Null
   "$GOC\cad\module\mcp\Mcp.cs" "$GOC\cad\module\chung\HangDoi.cs"
 if ($LASTEXITCODE) { throw 'Bien dich Mcp loi' }
 & "$FW\csc.exe" /nologo /target:library /platform:x64 /codepage:65001 /out:"$T\TKPCCC.Cad.dll" `
-  /r:"$ACAD\acdbmgd.dll" /r:"$ACAD\accoremgd.dll" /r:"$FW\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Windows.Forms.dll `
+  /r:"$ACAD\acdbmgd.dll" /r:"$ACAD\accoremgd.dll" /r:"$FW\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll `
   "$GOC\cad\module\plugin\*.cs" "$GOC\cad\module\chung\HangDoi.cs"
 if ($LASTEXITCODE) { throw 'Bien dich plugin loi' }
 Copy-Item "$GOC\data\vat_tu.json", "$GOC\cad\skills\TU_VUNG.md" $T

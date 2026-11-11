@@ -47,7 +47,16 @@ namespace TKPCCC
             Document doc = AcApp.DocumentManager.MdiActiveDocument;
             if (doc != null) doc.Editor.WriteMessage("\n[TKPCCC] Đã nạp plugin PCCC. Gõ PCCC_HELP để xem lệnh.");
             // Cầu nối MCP chỉ bật trong AutoCAD có giao diện: accoreconsole không có vòng lặp thông điệp cho timer.
-            try { if (System.Diagnostics.Process.GetCurrentProcess().ProcessName.ToLowerInvariant() == "acad") Cau.BatDau(); }
+            try
+            {
+                if (System.Diagnostics.Process.GetCurrentProcess().ProcessName.ToLowerInvariant() == "acad")
+                {
+                    Cau.BatDau();
+                    // Bảng block (TKPCCC.UI.dll, lệnh PCCC_BLOCK) cần acmgd nên chỉ nạp ở đây: người dùng NETLOAD một file TKPCCC.Cad.dll là đủ.
+                    string ui = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "TKPCCC.UI.dll");
+                    if (File.Exists(ui)) ExtensionLoader.Load(ui);
+                }
+            }
             catch (System.Exception) { }
         }
 
@@ -77,6 +86,7 @@ namespace TKPCCC
         [CommandMethod("PCCC_SPEC")] public void LenhSpec() { Chay(ChaySpec); } // cad/module/plugin/Spec.cs
         [CommandMethod("PCCC_RAI")] public void LenhRai() { Chay(RaiTay); }     // cad/module/plugin/Rai.cs
         [CommandMethod("PCCC_TUYEN")] public void LenhTuyen() { Chay(TuyenTay); } // cad/module/plugin/Rai.cs
+        [CommandMethod("PCCC_THEMBLOCK")] public void LenhThemBlock() { Chay(ThemBlock); } // cad/module/plugin/Block.cs
         static void Chay(Action viec)
         {
             try { viec(); }
@@ -96,6 +106,8 @@ namespace TKPCCC
                 "PCCC_ONG     Vẽ ống/dây trên layer PCCC_<mã> (vd PCCC_ONG_DN50)",
                 "PCCC_RAI     Rải thiết bị theo lưới trong phòng: bấm một điểm trong phòng hoặc chọn polyline kín, nhập bước tối đa S và diện tích bảo vệ",
                 "PCCC_TUYEN   Ống nhánh sprinkler kiểu xương cá: chọn đầu phun, chọn ống chính, bấm vị trí ống góp",
+                "PCCC_BLOCK   Mở bảng block PCCC (ảnh, mã, tên, hệ): bấm đúp để đặt thiết bị; chỉ có trong AutoCAD có giao diện",
+                "PCCC_THEMBLOCK  Thêm một block của bạn (kể cả block động) vào thư viện dưới một mã vật tư mới",
                 "PCCC_GAN     Gán block có sẵn trong bản vẽ -> mã vật tư (bóc được bản vẽ không vẽ bằng plugin)",
                 "PCCC_BOC     Bóc khối lượng (tách theo tầng/khu nếu muốn), gửi lên web báo giá",
                 "PCCC_BANG    Chèn bảng thống kê (kết quả PCCC_BOC gần nhất) vào bản vẽ",
@@ -346,6 +358,8 @@ namespace TKPCCC
                 ed.WriteMessage("\nĐã cất thư viện cũ: " + cu);
             }
             NapVaoBanVe(doc, dm);
+            int anh = CapNhatAnhBlock(dm); // cad/module/plugin/Block.cs
+            if (anh > 0) ed.WriteMessage("\nĐã vẽ " + anh + " ảnh xem trước block cho bảng PCCC_BLOCK.");
         }
 
         // ---------- Vẽ ----------

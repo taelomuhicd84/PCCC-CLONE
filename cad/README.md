@@ -20,11 +20,12 @@ cad/
 │  ├─ ong/ · bom/          kích thước ống + phụ kiện, kích thước bơm (chờ catalog)
 │  └─ mau/                 bản vẽ mẫu, khung tên (chờ file của người dùng)
 ├─ module/                 mã chạy
-│  ├─ plugin/              Lenh.cs (lệnh PCCC_*) · Spec.cs (PCCC_SPEC, thao tác spec) · Rai.cs (rai, tuyen, PCCC_RAI) · Cau.cs (cầu nối) -> TKPCCC.Cad.dll
+│  ├─ plugin/              Lenh.cs (lệnh PCCC_*) · Spec.cs (PCCC_SPEC, thao tác spec) · Rai.cs (rai, tuyen, PCCC_RAI, PCCC_TUYEN) · Block.cs (PCCC_THEMBLOCK, ảnh xem trước) · Cau.cs (cầu nối) -> TKPCCC.Cad.dll
+│  ├─ ui/                  BangBlock.cs (bảng PCCC_BLOCK) -> TKPCCC.UI.dll; chỗ DUY NHẤT được tham chiếu acmgd, không xử lý bản vẽ
 │  ├─ mcp/                 Mcp.cs -> bin/TKPCCC.Mcp.exe (công cụ cad_tt, cad_chay, cad_anh)
 │  ├─ chung/               HangDoi.cs: hàng đợi file dùng chung plugin + máy chủ MCP
 │  └─ lisp/                LISP của người dùng (nạp tay bằng APPLOAD)
-├─ test/                   chay_thu.ps1 (plugin + PCCC_SPEC) · thu_mcp.ps1 (máy chủ MCP), không cần mở AutoCAD · mau_kt.pdf (PDF thử 1:200, sinh bằng tao_pdf_mau.py)
+├─ test/                   chay_thu.ps1 (plugin + PCCC_SPEC) · thu_mcp.ps1 (máy chủ MCP), không cần mở AutoCAD · mau_kt.pdf (PDF thử 1:200, sinh bằng tao_pdf_mau.py) · thu_gui.ps1 (tự mở AutoCAD thật, không bắt buộc)
 ├─ build.bat               build DLL + exe, chép dữ liệu vào bundle
 ├─ bin/                    kết quả build máy chủ MCP (không commit)
 └─ TKPCCC.bundle/          gói AutoCAD tự nạp: PackageContents.xml, Contents/ (DLL, PCCC_Blocks.dwg, block_alias.json)
@@ -51,17 +52,20 @@ AI chỉ viết một gói thao tác ngắn (spec JSON), plugin sinh hình. Mộ
 | Đổi chỗ đặt hàng đợi | `module/chung/HangDoi.cs` hoặc biến môi trường `TKPCCC_CAD_HANG_DOI` |
 | Lệnh gõ tay `PCCC_*` | `module/plugin/Lenh.cs` (xem skill `tkpccc-cad-console`) |
 | Thêm vật tư, thiết bị | `data/vat_tu.json` ở GỐC repo (dùng chung với báo giá), rồi `build.bat`, `PCCC_LIB` |
+| Đưa block của mình (kể cả block động) vào thư viện dưới một mã mới | trong AutoCAD: `PCCC_THEMBLOCK` hoặc nút "Thêm từ bản vẽ" của bảng `PCCC_BLOCK`; mã nguồn `module/plugin/Block.cs` |
+| Đổi bảng block (cột, ô lọc, nút) | `module/ui/BangBlock.cs`; cách vẽ ảnh xem trước ở `module/plugin/Block.cs`, hàm `VeAnhBlock` |
 | Sửa hình block thiết bị | `TKPCCC.bundle/Contents/PCCC_Blocks.dwg` bằng BEDIT, rồi `PCCC_LIB` |
 | Thêm một luật vẽ, nối tới quy chuẩn | 1 dòng trong `rule/LUAT.md` |
 | Ghi bài học khi vẽ | `knowledge/hoc/` |
 
 ## Build và kiểm thử
-- `cad\build.bat`: ra `TKPCCC.bundle\Contents\TKPCCC.Cad.dll` và `bin\TKPCCC.Mcp.exe`. AutoCAD đang mở thì tắt hẳn rồi mở lại để nạp bản mới.
+- `cad\build.bat`: ra `TKPCCC.bundle\Contents\TKPCCC.Cad.dll`, `TKPCCC.UI.dll` và `bin\TKPCCC.Mcp.exe`. AutoCAD đang mở thì tắt hẳn rồi mở lại để nạp bản mới.
+- `powershell -ExecutionPolicy Bypass -File cad\test\thu_gui.ps1` (không bắt buộc, chạy khi sửa giao diện hoặc cầu nối): tự mở một AutoCAD thật 1–2 phút rồi tự tắt, thử bảng `PCCC_BLOCK` và đường MCP thật. Chỉ chạy khi không có AutoCAD nào đang mở.
 - `powershell -ExecutionPolicy Bypass -File cad\test\chay_thu.ps1`: plugin + `PCCC_SPEC`, không cần mở AutoCAD.
 - `powershell -ExecutionPolicy Bypass -File cad\test\thu_mcp.ps1`: máy chủ MCP + hàng đợi + plugin, không cần mở AutoCAD.
 - Cả hai phải ra `TAT CA DAT`.
 
 ## Dùng
-1. Chạy `cad\build.bat`, mở AutoCAD (bundle tự nạp, hoặc `NETLOAD` file `TKPCCC.Cad.dll`).
+1. Chạy `cad\build.bat`, mở AutoCAD (bundle tự nạp, hoặc `NETLOAD` file `TKPCCC.Cad.dll`; file này tự nạp luôn `TKPCCC.UI.dll`). Gõ `PCCC_BLOCK` để mở bảng block, `PCCC_HELP` để xem mọi lệnh.
 2. Mở Claude Code ở gốc repo hoặc tại `cad/`: file `.mcp.json` khai máy chủ `cad`. AI khác thì khai lệnh chạy là đường dẫn tới `cad\bin\TKPCCC.Mcp.exe`.
 3. Gõ yêu cầu vẽ. Chạy tay một spec: trong AutoCAD gõ `PCCC_SPEC` rồi dán đường dẫn file `.json`; kết quả nằm ở `<tên>.kq.json`.

@@ -93,7 +93,14 @@ Dừng 15:20: usage 5 giờ 79 % (hai phiên dùng chung), việc kế `cad_anh`
   Chưa kiểm: `PCCC_TUYEN` và dấu nhắc mới của `PCCC_RAI` trên AutoCAD có giao diện.
 - Dừng 20:05: "Weekly · Fable" 92 % (reset 05:00 ngày 2026-11-14). Hẹn `CronCreate` 05:03 ngày 14/11 trong phiên. `git push` đang chờ người dùng đăng nhập Git Credential Manager.
 - 21:40 người dùng tự reset hạn mức (mọi cửa sổ về 0 %) và bảo làm tiếp; xoá hẹn 05:03 ngày 14/11.
-- Bước 2 (22:00), PDF → CAD: thao tác spec `pdf` (`Spec.cs`, hàm `NhapPdf`) chạy `-PDFIMPORT` qua `Editor.Command` TRƯỚC transaction vẽ, nhân 25,4 × `tl` để nét vào đúng kích thước thật,
+- Bước 3 (22:05), bảng block: `module/plugin/Block.cs` có lệnh `PCCC_THEMBLOCK` (chọn block trong bản vẽ, kể cả block động; nhập mã mới, tên, hệ, đơn vị; chép định nghĩa sang `PCCC_Blocks.dwg`
+  bằng `WblockCloneObjects`, đổi tên thành mã, thêm thuộc tính ẩn `MA_VT`; thêm đúng một dòng vào `vat_tu.json`, tự đọc lại file mới trước khi ghi đè) và phần vẽ ảnh xem trước 64 px
+  (GDI+, từ nét của block). `module/ui/BangBlock.cs` → `TKPCCC.UI.dll`: lệnh `PCCC_BLOCK` mở `PaletteSet` có ô lọc, danh sách ảnh + mã + tên + hệ, bấm đúp = `PCCC_DAT <mã>`, nút "Thêm từ bản vẽ", "Nạp lại".
+  `KhoiDong` tự nạp DLL giao diện khi chạy trong `acad.exe`. `build.bat` build thêm DLL này và ghi `nguon_vat_tu.txt`.
+  Kiểm chứng: `chay_thu.ps1` 34/34 (block thường → mã `VAN_KHACH`: `PCCC_DAT` đặt được, `PCCC_BOC` đếm 1; `vat_tu.json` thêm đúng 1 dòng; ảnh có nét; DLL giao diện biên dịch được).
+  Thêm `cad/test/thu_gui.ps1`: tự mở AutoCAD thật, 7/7 đạt (cầu nối + MCP thật, `pdf`, `rai`, `tuyen`, `anh`, `cad_anh`, bảng `PCCC_BLOCK` 31 dòng). Nhờ đó các mục "chưa thử trên AutoCAD có giao diện" của `anh`, `pdf` đã đạt.
+  Chưa kiểm: bấm đúp và nút trong bảng, `PCCC_THEMBLOCK` với block động thật, `PCCC_TUYEN` và `PCCC_RAI` bấm chuột.
+- Bước 2 (21:50), PDF → CAD: thao tác spec `pdf` (`Spec.cs`, hàm `NhapPdf`) chạy `-PDFIMPORT` qua `Editor.Command` TRƯỚC transaction vẽ, nhân 25,4 × `tl` để nét vào đúng kích thước thật,
   trả `n` + layer. Script `cad/.claude/skills/tkpccc-ve-cad/scripts/pdf_ti_le.py` tính `tl` từ chuỗi kích thước: hai số liền nhau cùng hàng cách nhau (d1 + d2) / 2;
   trung vị rồi lọc hai vòng 1 % và 0,5 %, mỗi vòng lấy tổng pt / tổng mm. PDF thử `cad/test/mau_kt.pdf` (1:200) sinh bằng `cad/test/tao_pdf_mau.py`.
   Kiểm chứng: `chay_thu.ps1` 29/29 (`tl` 200,0; nhập 40 đối tượng; trục 1–7 đo lại 41000,0; khung 76905,5), `thu_mcp.ps1` 9/9.
