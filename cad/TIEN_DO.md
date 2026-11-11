@@ -15,8 +15,9 @@ Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.m
   Đã hẹn `CronCreate` một lần lúc 02:33 ngày 2026-11-12 trong phiên đang mở để tự làm Bước 5 (đóng ứng dụng thì mất hẹn: phiên mới đọc file này rồi làm).
   Phiên 11/11 đã dài 520 nghìn token ngữ cảnh nên mỗi lượt gọi tốn khoảng 1,2 % cửa sổ 5 giờ; phiên mới rẻ hơn nhiều lần.
   22:35 làm thêm bước con 1 của Bước 5 rồi dừng hẳn ở khoảng 85 % cửa sổ 5 giờ.
-- Người dùng dặn 22:25 và giải thích 22:45: "Dùng Fable 5.2 tối đa" là khi TƯ DUY và DỰNG BỘ CODE cho toàn bộ dự án (làm ở phiên chính). Khi chạy dự án thật thì chia việc cho từng agent,
-  chọn model hợp công việc, hợp token mà vẫn giữ chính xác. Vậy 4 agent giữ nguyên opus / sonnet; không đổi effort của phiên.
+- MODEL (người dùng chốt khoảng 23:00 ngày 11/11, thay các lời dặn trước trong ngày): viết code bằng Opus (agent `cad-lap-trinh`; effort Claude chọn: high cho thuật toán và thao tác mới,
+  medium cho sửa nhỏ); review và kiểm tra bằng Fable effort max (agent mới `cad-review`, một lần cuối mỗi mốc vì hạn mức Fable tuần có hạn); chạy dự án thật thì chia agent theo bảng ở `cad/CLAUDE.md`.
+  Phiên chính chỉ điều phối. Mã viết tối 11/11 (commit `24109da`..HEAD, do Fable viết) CHƯA qua review: là việc đầu tiên của lần chạy 02:33.
 - Người dùng dặn 22:45 cho lần chạy 02:33 ngày 12/11: chạy HẾT usage 5 giờ của cửa sổ đó (không dừng ở 90 %), xong tự ghi file này + `cad/LICH_SU.md` và commit, KHÔNG push.
   Vì chạy tới hết hạn mức: ghi tiến độ + commit sau MỖI bước con.
 - PUSH: các commit từ `f3d354f` (Bước 1b, 19:30 ngày 11/11) trở đi CHƯA lên GitHub. Người dùng dặn 22:45: Claude không push nữa, sáng 12/11 họ tự chạy `git push origin main`.

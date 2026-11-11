@@ -93,6 +93,8 @@ Dừng 15:20: usage 5 giờ 79 % (hai phiên dùng chung), việc kế `cad_anh`
   Chưa kiểm: `PCCC_TUYEN` và dấu nhắc mới của `PCCC_RAI` trên AutoCAD có giao diện.
 - Dừng 20:05: "Weekly · Fable" 92 % (reset 05:00 ngày 2026-11-14). Hẹn `CronCreate` 05:03 ngày 14/11 trong phiên. `git push` đang chờ người dùng đăng nhập Git Credential Manager.
 - 21:40 người dùng tự reset hạn mức (mọi cửa sổ về 0 %) và bảo làm tiếp; xoá hẹn 05:03 ngày 14/11.
+- Khoảng 23:00 người dùng chốt lại cách dùng model: viết code bằng Opus, review và kiểm tra bằng Fable effort max, effort còn lại Claude chọn. Thêm agent `cad-review` (fable, max),
+  sửa `cad/CLAUDE.md`, đặt lại hẹn 02:33 theo cách này (việc đầu: review mã tối 11/11).
 - 22:45 người dùng giải thích: "Fable 5.2 tối đa" = dùng Fable khi tư duy và dựng code cho dự án; chạy dự án thật thì chia agent theo model hợp việc (ghi vào `cad/CLAUDE.md`).
   Lần chạy 02:33 ngày 12/11: chạy hết usage 5 giờ, tự ghi tiến độ + lịch sử, không push; người dùng tự push tay. Đã đặt lại hẹn 02:33 với lời dặn này.
 - 22:35 Bước 5, bước con 1: thêm `cad/.claude/skills/tkpccc-ve-cad/scripts/chay_spec.ps1` (chạy một spec trong accoreconsole, lưu DWG, chép ảnh về cạnh spec); dùng nó nhập trang 3 PDF mẫu
