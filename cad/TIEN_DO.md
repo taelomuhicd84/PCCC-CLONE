@@ -14,7 +14,8 @@ Người dùng NETLOAD `TKPCCC.Cad.dll`; `cad_tt` ra tên bản vẽ `K2-2026 - 
 Lưới nằm trong bản vẽ thật của người dùng (gốc 0,0): 👤 Ctrl+Z một lần để bỏ (một lần gọi = một bước Undo).
 
 ## VIỆC KẾ
-- Chưa đo số token của lần vẽ; chưa thử `dat`, `ong`, `doc`, `dem` trên bản vẽ thật (đã có test accoreconsole).
+- Thử thật 11/11 trên AutoCAD: `dat` (3 BC_KHOI), `ong` (ONG_DN50), `chu`, `dem` (BC_KHOI 3, ONG_DN50 7,2 m), `doc` layer đều đúng. `doc` `vung` chỉ đọc layer `PCCC_VUNG` (không phải vùng bất kỳ); `hop` của `doc`/`xoa` chỉ lấy đối tượng nằm TRỌN trong hộp. Cad_chay luôn vẽ vào bản vẽ đang hiện: đổi tab giữa chừng thì vẽ sang bản khác.
+- Chưa đo số token của lần vẽ.
 - Sau đó theo `KE_HOACH.md`: G3 `rai`, `tuyen`, `PCCC_RAI`.
 
 ## CHƯA KIỂM
