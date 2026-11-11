@@ -9,13 +9,13 @@ Luật: dùng tới 85 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.m
 - **Thêm 11/11:** `cad/data/ky_hieu/ky_hieu.json` (mặc định ký hiệu trục, kích thước, chữ; plugin đọc lại ở mỗi lần `PCCC_SPEC`), `cad/rule/LUAT.md` (9 dòng nối việc CAD ↔ file quy chuẩn ↔ skill, agent), `cad/knowledge/quy-uoc-ban-ve.md`.
 - Kiểm 11/11 sau khi chuyển: `chay_thu.ps1` 12/12, `thu_mcp.ps1` 7/7. Máy chủ `cad` trong `.mcp.json` gốc đã được duyệt và nối được (Claude Code thấy công cụ `mcp__cad__cad_tt`, `mcp__cad__cad_chay`).
 
-## VIỆC KẾ NGAY: thử thật với AutoCAD đang mở
-Phần timer + `SendStringToExecute` trong `cad/module/plugin/Cau.cs` chưa chạy lần nào (test không mở CAD không phủ tới).
-1. 👤 Người dùng: trong AutoCAD gõ `NETLOAD`, chọn `D:\1_Claude\TKPCCC\cad\TKPCCC.bundle\Contents\TKPCCC.Cad.dll` (có hộp cảnh báo bảo mật thì chọn Load). Ngày 11/11 AutoCAD đang mở nhưng chưa nạp plugin: chưa có file `%LOCALAPPDATA%\TKPCCC\cad\song.json`.
-2. Claude: gọi `cad_tt` (phải ra tên bản vẽ, không báo "AutoCAD chưa mở"), rồi `cad_chay` với
-   `{"ops":[{"op":"luoi_truc","x":[3600,3600,3600,3600],"y":[3600,3600,3600,3600,3600,3600,3600,3600,3600]}]}` (trục 1–5 × A–J). Kết quả cần: `ok` true, `ve` = 90.
-3. Hỏng thì xem dòng lệnh AutoCAD và các thư mục `vao`, `dang`, `ra` trong `%LOCALAPPDATA%\TKPCCC\cad`, rồi sửa `Cau.cs`.
-4. Ghi kết quả và số token của lần vẽ vào `cad/LICH_SU.md`.
+## XONG 11/11: thử thật với AutoCAD đang mở
+Người dùng NETLOAD `TKPCCC.Cad.dll`; `cad_tt` ra tên bản vẽ `K2-2026 - Copy.dwg` (177 layer); `cad_chay` lưới trục 5×9 → `ok` true, `ve` = 90, hộp `[-2555,-2555,16955,34955]`. Đường nối timer + `SendStringToExecute` chạy được.
+Lưới nằm trong bản vẽ thật của người dùng (gốc 0,0): 👤 Ctrl+Z một lần để bỏ (một lần gọi = một bước Undo).
+
+## VIỆC KẾ
+- Chưa đo số token của lần vẽ; chưa thử `dat`, `ong`, `doc`, `dem` trên bản vẽ thật (đã có test accoreconsole).
+- Sau đó theo `KE_HOACH.md`: G3 `rai`, `tuyen`, `PCCC_RAI`.
 
 ## CHƯA KIỂM
 - Skill trong `cad/.claude/skills/` có hiện khi mở Claude Code ở gốc repo không (Claude Code nạp skill của thư mục con khi làm việc với file trong thư mục đó). Không hiện thì vẫn vẽ được nhờ hướng dẫn máy chủ MCP gửi lúc kết nối; cần thì đặt bản trỏ ở `.claude/skills/` gốc.
