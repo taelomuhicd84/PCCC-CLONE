@@ -25,6 +25,7 @@ $kb = @('INSUNITS', '4', 'NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '_.SAVEAS', '2018',
   'PCCC_BOC', 'Co', 'L', '', '', 'ThuPlugin',
   'PCCC_VUNGBV', 'BC_KHOI', '3', 'PCCC_VUNGBV', 'BC_KHOI', '3',
   'PCCC_BANG', '0,-3000', '250',
+  'RECTANG', '50000,0', '56500,4500', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', 'D', 'L', '', '',
   'PCCC_BOC', 'Khong', '', 'ThuPlugin', '_.QSAVE')
 $kb -join "`r`n" | Set-Content -Encoding ascii "$T\kb.scr"
 $p = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb.out.txt"
@@ -36,7 +37,8 @@ $can = @(
   @('BC_NHIET\s+7 ', 'dem 1 dau nhiet + MINSERT 2x3'),
   @('ONG_DN50\s+15 ', 'ong 15 m'),
   @('\[TANG 1\] BC_KHOI=2', 'tach theo khu'),
-  @('R = 3 m .*thay 2 ', 'chay lai VUNGBV thay vong cu, khong ve trung'))
+  @('R = 3 m .*thay 2 ', 'chay lai VUNGBV thay vong cu, khong ve trung'),
+  @('PCCC_RAI SPR_DAU_DOWN n=4 luoi=2x2 buoc=3250x2250', 'PCCC_RAI: phong 6500x4500, S = 4 m ra 4 dau phun, buoc 3250 x 2250'))
 $loi = 0
 foreach ($c in $can) { if ($out -match $c[0]) { "DAT   $($c[1])" } else { "LOI   $($c[1])"; $loi++ } }
 # Lan boc thu 2 (sau khi chen bang + vung bao ve) van phai ra 2 / 7: bang thong ke va vong tron khong bi dem.
@@ -47,10 +49,11 @@ if ($out -match '\[TKPCCC\] L') { 'LOI   co lenh bao loi:'; ($out -split "`n" | 
 # --- PCCC_SPEC: chay goi spec mau (cad\skills\vi_du\thu.json) trong ban ve moi, kiem ket qua JSON ---
 # Goi mau co 1 thao tac sai co y (khong_co) de kiem duong bao loi: ok = false, loi dung vi tri, cac thao tac khac van chay.
 Copy-Item "$GOC\cad\skills\vi_du\thu.json" "$T\spec.json"
+Copy-Item "$GOC\cad\skills\vi_du\rai.json" "$T\rai.json"
 # Ban ky_hieu.json da doi ten layer truc: chung to plugin doc mac dinh tu file du lieu (cad\data\ky_hieu), khong dung so cung trong ma.
 (Get-Content -Raw -Encoding UTF8 "$GOC\cad\data\ky_hieu\ky_hieu.json") -replace '"layer_truc":\s*"TRUC"', '"layer_truc": "TRUC_T"' |
   Set-Content -Encoding UTF8 "$T\ky_hieu.json"
-@('INSUNITS', '4', 'NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '_.SAVEAS', '2018', "`"$T\spec.dwg`"", 'PCCC_SPEC', "$T\spec.json", '_.QSAVE') -join "`r`n" |
+@('INSUNITS', '4', 'NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '_.SAVEAS', '2018', "`"$T\spec.dwg`"", 'PCCC_SPEC', "$T\spec.json", 'PCCC_SPEC', "$T\rai.json", '_.QSAVE') -join "`r`n" |
   Set-Content -Encoding ascii "$T\kb2.scr"
 $p2 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb2.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb2.out.txt"
 if (-not $p2.WaitForExit(180000)) { Stop-Process -Id $p2.Id -Force; throw "accoreconsole qua 3 phut (PCCC_SPEC): $T\kb2.out.txt" }
@@ -65,5 +68,19 @@ if (Test-Path "$T\spec.kq.json") {
     @((@($kq.doc[0].ds | Where-Object { $_.l -eq 'TRUC_T' -and $_.n -eq 7 }).Count -eq 1), 'spec doc layer + ky_hieu.json doi ten layer truc: TRUC_T co 7 truc'))
   foreach ($c in $ks) { if ($c[0]) { "DAT   $($c[1])" } else { "LOI   $($c[1])"; $loi++ } }
 } else { "LOI   PCCC_SPEC khong ghi ket qua: $T\kb2.out.txt"; $loi++ }
+# --- rai + tuyen (cad\skills\vi_du\rai.json): so dem, buoc, cach tuong, chieu dai tuyen ---
+if (Test-Path "$T\rai.kq.json") {
+  $kr = Get-Content -Raw -Encoding UTF8 "$T\rai.kq.json" | ConvertFrom-Json
+  $ks2 = @(
+    @(($kr.ve -eq 29), "rai + tuyen ve 29 doi tuong (thay $($kr.ve))"),
+    @(($kr.rai[0].n -eq 4 -and $kr.rai[0].bx -eq 3250 -and $kr.rai[0].by -eq 2250 -and $kr.rai[0].tuong[0] -eq 1625 -and $kr.rai[0].ho -eq 0), 'rai s = 4000: 4 thiet bi, buoc <= 4000, cach tuong <= 2000, khong ho'),
+    @(($kr.tuyen[0].doan -eq 1 -and [math]::Abs($kr.tuyen[0].m - 11.05) -lt 0.011), "tuyen noi_tiep: 1 duong ran bo tu diem tu, dai 11,05 m (thay $($kr.tuyen[0].m))"),
+    @(($kr.rai[1].n -eq 4 -and $kr.rai[1].tuong[0] -eq 1250 -and $kr.rai[1].tuong[1] -eq 750), 'rai buoc dung 4000 x 3000: cach tuong 1250 / 750 nhu ban mau'),
+    @(($kr.tuyen[1].doan -eq 3 -and $kr.tuyen[1].m -eq 12.75), "tuyen xuong_ca: 1 ong gop + 2 nhanh, dai 12,75 m (thay $($kr.tuyen[1].m))"),
+    @(($kr.rai[2].n -eq 2 -and $kr.rai[2].ny -eq 1 -and $kr.tuyen[2].doan -eq 2 -and $kr.tuyen[2].m -eq 1), 'hanh lang 1 hang + tuyen nhanh: 2 doan vuong goc 0,5 m'),
+    @(($kr.rai[3].n -eq 3 -and $kr.rai[3].ho -eq 0), 'rai vung chu L tren layer: bo diem ngoai da giac, khong ho'),
+    @(($kr.ok -eq $false -and @($kr.loi).Count -eq 1 -and $kr.loi[0].i -eq 8), 'rai thieu s va buoc thi bao loi, khong tu dat tri so'))
+  foreach ($c in $ks2) { if ($c[0]) { "DAT   $($c[1])" } else { "LOI   $($c[1])"; $loi++ } }
+} else { "LOI   rai.json khong ghi ket qua: $T\kb2.out.txt"; $loi++ }
 "Thu muc thu: $T"
 if ($loi) { exit 1 } else { 'TAT CA DAT' }

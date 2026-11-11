@@ -1,0 +1,11 @@
+{"goc":[100000,0],"ops":[
+ {"op":"rai","ma":"BC_NHIET","hop":[0,0,6500,4500],"s":4000},
+ {"op":"tuyen","ma":"DAY_BC","kieu":"noi_tiep","tu":[6500,-500]},
+ {"op":"rai","ma":"SPR_DAU_DOWN","hop":[0,10000,6500,14500],"buoc":[4000,3000],"kt":true},
+ {"op":"tuyen","ma":"ONG_DN50","kieu":"xuong_ca","truc":[[-1000,9000],[8000,9000]],"nhan":true},
+ {"op":"rai","ma":"SPR_DAU_DOWN","hop":[0,8150,6500,9850],"s":4000},
+ {"op":"tuyen","ma":"ONG_DN50","kieu":"nhanh","truc":[[-1000,8500],[8000,8500]]},
+ {"op":"net","l":"VUNG_THU","p":[[20000,0],[26000,0],[26000,3000],[23000,3000],[23000,6000],[20000,6000]],"kin":true},
+ {"op":"rai","ma":"BC_KHOI","l":"VUNG_THU","s":3000},
+ {"op":"rai","ma":"BC_KHOI","hop":[0,0,10,10]}
+]}

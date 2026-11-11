@@ -75,7 +75,7 @@ namespace TKPCCC
         [CommandMethod("PCCC_BANG")] public void LenhBang() { Chay(ChenBang); }
         [CommandMethod("PCCC_VUNGBV")] public void LenhVungBV() { Chay(VungBaoVe); }
         [CommandMethod("PCCC_SPEC")] public void LenhSpec() { Chay(ChaySpec); } // cad/module/plugin/Spec.cs
-
+        [CommandMethod("PCCC_RAI")] public void LenhRai() { Chay(RaiTay); }     // cad/module/plugin/Rai.cs
         static void Chay(Action viec)
         {
             try { viec(); }
@@ -93,6 +93,7 @@ namespace TKPCCC
                 "PCCC_LIB     Nạp/cập nhật block PCCC từ PCCC_Blocks.dwg (Taomoi = cất bản cũ, tạo lại thư viện mặc định)",
                 "PCCC_DAT     Đặt thiết bị theo mã vật tư (? = danh sách, gõ 1 phần tên/mã để tìm)",
                 "PCCC_ONG     Vẽ ống/dây trên layer PCCC_<mã> (vd PCCC_ONG_DN50)",
+                "PCCC_RAI     Rải thiết bị theo lưới trong phòng: bấm một điểm trong phòng hoặc chọn polyline kín, nhập bước tối đa S",
                 "PCCC_GAN     Gán block có sẵn trong bản vẽ -> mã vật tư (bóc được bản vẽ không vẽ bằng plugin)",
                 "PCCC_BOC     Bóc khối lượng (tách theo tầng/khu nếu muốn), gửi lên web báo giá",
                 "PCCC_BANG    Chèn bảng thống kê (kết quả PCCC_BOC gần nhất) vào bản vẽ",

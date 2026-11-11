@@ -3,38 +3,26 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
-## TRẠNG THÁI (cập nhật 2026-11-11, 11:00)
+## TRẠNG THÁI (cập nhật 2026-11-11, 15:00)
 - XONG: MCP CAD (G0–G2), `cad/` thành dự án con, thử thật với AutoCAD đang mở (`luoi_truc`, `dat`, `ong`, `chu`, `dem`, `doc` đều đúng).
   Lưu ý khi vẽ thật: `cad_chay` vẽ vào bản vẽ đang hiện (đổi tab giữa chừng là vẽ sang bản khác); `doc` `vung` chỉ đọc layer `PCCC_VUNG`; `hop` chỉ lấy đối tượng nằm trọn trong hộp.
+- XONG Bước 1 (G3): thao tác `rai`, `tuyen` (3 kiểu `noi_tiep`, `xuong_ca`, `nhanh`), lệnh `PCCC_RAI`. Mã ở `module/plugin/Rai.cs`, ví dụ `skills/vi_du/rai.json`,
+  từ vựng trong `skills/TU_VUNG.md`. `chay_thu.ps1` 21/21, `thu_mcp.ps1` 7/7. CHƯA thử trên AutoCAD có giao diện: nhánh bấm điểm trong phòng của `PCCC_RAI`
+  (`Editor.TraceBoundary`) chỉ chạy được ở đó; DLL trong bundle chưa build lại (chạy `cad\build.bat`, tắt mở AutoCAD).
 - Thư mục `cad/layer/` chờ người dùng thả file `.md` chuẩn layer.
-- **ĐANG LÀM (người dùng giao 2026-11-11, giai đoạn dựng khung làm bằng Fable): vẽ được bản vẽ PCCC như bản mẫu.**
-  Dừng lúc 11:00 vì usage 5 giờ chạm 90 % (reset 14:20 giờ VN). CHƯA viết dòng mã nào của việc này.
-  Đã xong phần đọc mẫu: `cad/knowledge/mau-ban-ve-pccc.md` (cách rải, đi dây, đi ống rút từ PDF 4 tờ; PDF ở `ket_qua/cad_mau/test_HA2.pdf`, không commit).
+- **ĐANG LÀM (người dùng giao 2026-11-11, giai đoạn dựng khung làm bằng Fable): vẽ được bản vẽ PCCC như bản mẫu.** Việc kế: Bước 1b dưới đây.
+- Chỉ MỘT phiên được sửa mã trong `cad/` tại một thời điểm (14:29 ngày 2026-11-11 hai phiên ghi đè nhau). Scheduled task `tkpccc-cad-lam-tiep` chạy lặp 2 giờ một lần,
+  tự thoát nếu repo vừa có thay đổi trong 45 phút; tới 90 % usage chỉ ghi tiến độ, commit, push rồi dừng, KHÔNG tạo scheduled task mới.
 
 ## VIỆC LÀM TIẾP, THEO THỨ TỰ (tự làm, không cần hỏi người dùng)
 Mỗi bước xong: `cad\test\chay_thu.ps1` + `cad\test\thu_mcp.ps1` ra `TAT CA DAT`, ghi file này + `cad/LICH_SU.md`, commit, push. Kiểm `get_usage` giữa các bước.
 
-### Bước 1. `rai` + `tuyen` + lệnh `PCCC_RAI` (G3)
-File mới `cad/module/plugin/Rai.cs` (`partial class Lenh`, C# 5). Sửa kèm: 2 dòng trong `MotOp` (`Spec.cs`), `[CommandMethod("PCCC_RAI")]` + `PCCC_HELP` (`Lenh.cs`),
-`TKPCCC.bundle/PackageContents.xml`, `skills/TU_VUNG.md` (phần đầu giữ dưới 1900 ký tự), phép kiểm trong `test/chay_thu.ps1` + `skills/vi_du/thu.json`.
-
-`rai`: rải thiết bị theo lưới trong vùng.
-- Trường: `ma`; vùng là `vung` [[x,y],...] hoặc `hop` [x1,y1,x2,y2] hoặc `l` (mọi polyline kín trên layer đó, mặc định `PCCC_VUNG`, lọc thêm bằng `hop`);
-  `s` (bước TỐI ĐA, số hoặc [sx, sy]) hoặc `buoc` (bước ĐÚNG, số hoặc [bx, by]); `le` (cách tường tối thiểu, dùng với `buoc`); `chan` (làm tròn bước, mặc định 50); `goc`; `kt`:true (ghi chuỗi kích thước như mẫu, dùng `VeKt`).
-- Có `s`: n = ceil(W / s), bước = W / n làm tròn xuống theo `chan`, phần dư chia đều ra hai tường; nếu cách tường vượt s / 2 thì bỏ làm tròn.
-- Có `buoc`: n = floor((W − 2·le) / bước) + 1, lưới đặt giữa vùng. Mẫu: phòng 6500 × 4500, bước 4000 × 3000 ra 2 × 2, cách tường 1250 và 750.
-- Vùng không phải chữ nhật: lưới theo hộp bao, bỏ điểm ngoài đa giác (ray casting), rồi tự kiểm vùng hở: lấy mẫu trong đa giác bước s / 4, điểm nào xa mọi thiết bị hơn nửa đường chéo ô lưới thì tính là hở; trả `ho` (%) để cảnh báo.
-- Không chép trị số quy chuẩn vào plugin: thiếu cả `s` và `buoc` thì báo lỗi. AI lấy trị số theo `cad/rule/LUAT.md`.
-- Kết quả gọn `kq["rai"]`: mỗi vùng `n`, `nx`, `ny`, `bx`, `by`, `tuong` [x, y], `ho`. Giữ danh sách điểm vừa rải (theo từng vùng) trong `GoiSpec` để `tuyen` ngay sau dùng lại khi không truyền `p`.
-
-`tuyen`: đi ống, đi dây qua các điểm. Trường chung: `ma` (mã ống/dây), `p` (bỏ trống = các điểm của `rai` ngay trước, xử lý từng vùng), `nhan`:true (ghi chữ DN dọc ống, lấy từ mã: `ONG_DN50` ra "DN50"; chữ đặt trên layer riêng để `PCCC_BOC` không đụng).
-- `kieu`:"noi_tiep" (dây báo cháy): xếp điểm thành hàng (sai số 100 mm), đi kiểu rắn bò, MỘT polyline nét thẳng qua lần lượt các điểm; `tu` [x,y] nối thêm đầu vào (đèn chỉ thị ở cửa hoặc điểm cuối phòng trước), `den` nối thêm đầu ra; hàng bắt đầu từ phía gần `tu`.
-- `kieu`:"xuong_ca" (ống nhánh sprinkler trong phòng): cần `truc` [[x,y],[x,y],...] là ống chính. Lấy đoạn ống chính gần tâm các điểm; gom đầu phun thành hàng song song ống chính; MỘT ống góp vuông góc từ ống chính tới hàng xa nhất, mặc định đi trùng cột đầu phun gần `tu` nhất (không có `tu` thì cột giữa), `qua` [x,y] để chỉ chỗ khác; mỗi hàng một nhánh từ đầu phun ngoài cùng tới ống góp. Mỗi đoạn là một polyline riêng trên layer `PCCC_<mã>` (hàm `Duyet` cộng chiều dài mọi `Curve` trên layer này).
-- `kieu`:"nhanh" (đầu phun hành lang, tủ vách tường): mỗi điểm một đoạn vuông góc vào đoạn ống chính gần nhất.
-- Bản đầu chưa né tường: là phương án nháp để kỹ sư chỉnh (`KE_HOACH.md` mục 12).
-
-`PCCC_RAI` (gõ tay): hỏi mã thiết bị, bước tối đa S (m), rồi lặp: bấm một điểm trong phòng (`Editor.TraceBoundary`) hoặc từ khoá `Doituong` để chọn polyline kín; rải và in "n thiết bị, bước bx × by". Trong accoreconsole chỉ thử nhánh `Doituong` (chọn bằng `L`).
-Phép kiểm cần có: chữ nhật 6500 × 4500 với `s` 4000 ra 4 thiết bị, bước ≤ 4000, cách tường ≤ 2000; `buoc` [4000,3000] ra đúng cách tường 1250/750; `xuong_ca` lưới 2 × 2 với ống chính nằm ngang ra 3 đoạn và tổng chiều dài đúng; `noi_tiep` ra 1 polyline 4 đỉnh; `dem` thấy mã ống tăng đúng số mét.
+### Bước 1b. Hai việc ưu tiên 1 lấy từ `knowledge/tham-khao-mcp-hub.md` (dùng để kiểm mọi bước sau)
+- Khoá `ban_ve`: trường cấp gói trong spec; tên file phải khớp bản vẽ đang hiện (`Path.GetFileName(doc.Name)`, không phân biệt hoa thường), lệch thì từ chối cả gói, không vẽ.
+  Sửa `ThucHienSpec` (`Spec.cs`), 1 dòng `TU_VUNG.md`, 1 phép kiểm trong `chay_thu.ps1`.
+- Công cụ MCP `cad_anh` {`hop` hoặc toàn bản vẽ, `rong` px}: plugin in vùng đó ra PNG (lệnh `-PLOT` cửa sổ như `cad/.claude/skills/tkpccc-cad-console/scripts/in_png.ps1`,
+  đẩy qua `Cau.cs`), trả ĐƯỜNG DẪN file; AI chỉ đọc ảnh khi cần. Sửa `module/mcp/Mcp.cs` (hàm `CongCu`), `Cau.cs`, `thu_mcp.ps1` (`tools/list` thành 3 công cụ).
+  Phải thử thứ tự dấu nhắc `-PLOT` trong accoreconsole trước.
 
 ### Bước 2. PDF → CAD (G4)
 - Thao tác `pdf`: `file`, `trang`, `p`, `tl`, `goc`. Chạy `-PDFIMPORT` bằng `Editor.Command` TRƯỚC khi mở transaction vẽ (như đoạn nạp block cho `dat` trong `ThucHienSpec`). Phải thử trong accoreconsole: thứ tự dấu nhắc của `-PDFIMPORT` (File, tên file, trang, điểm chèn, tỉ lệ, góc) và `Editor.Command` có chạy không; không được thì đẩy lệnh qua `SendStringToExecute` trong `Cau.cs`.
@@ -63,6 +51,13 @@ Skill `tkpccc-ve-cad` giữ sonnet/low (vẽ theo spec có sẵn).
 - Đo số token một lần vẽ; vẽ lại một tầng của bản mẫu bằng `rai` + `tuyen` trên AutoCAD thật, in PNG rồi so với PDF mẫu.
 - Sau đó theo `KE_HOACH.md`: G5 `so_do`, G6 chat trong CAD.
 
+### Bước 6. Việc ưu tiên 2 và 3 từ `knowledge/tham-khao-mcp-hub.md` (chi tiết từng việc ở file đó)
+- Ưu tiên 2, làm khi người dùng cấp file chuẩn layer: bảng layer `data/ky_hieu/layer.json` cho `DamBaoLayer` (màu, kiểu đường, độ dày; dây báo cháy ra nét đứt);
+  thao tác `dan` (mũi tên + chữ); thao tác `in_pdf`, `luu` (chung đường `-PLOT` với `cad_anh`).
+- Ưu tiên 3, sau Bước 2–4: `doc` thêm `gi`:"block"; `cung`, `hatch` khi vẽ lại nền cần tới; `TKPCCC.Mcp.exe` tự `NETLOAD` qua COM + thời gian chờ bằng biến môi trường;
+  bộ ký hiệu van của bản mẫu khi làm `so_do`; đoạn cấu hình mẫu cho AI khác và 4–5 câu lệnh mẫu PCCC trong `cad/README.md`.
+- Đưa vào skill `tkpccc-ve-cad`: vẽ theo giai đoạn (nền + trục → rải → tuyến → ghi chú), hết mỗi giai đoạn gọi `cad_anh` và báo số đếm; chỉ dừng chờ duyệt khi người dùng yêu cầu.
+
 ## CHỜ NGƯỜI DÙNG (đã hỏi 2026-11-11; chưa trả lời thì làm theo giả định ghi sẵn)
 1. Dây báo cháy trong phòng: giả định nét thẳng nối thiết bị, đi rắn bò; phòng nối tiếp phòng trong cùng zone, không rẽ nhánh chữ T; cuối zone đặt điện trở cuối dây.
 2. Chia zone: giả định AI chia theo dãy phòng như mẫu rồi người dùng duyệt; plugin không tự chia.
@@ -81,6 +76,8 @@ Skill `tkpccc-ve-cad` giữ sonnet/low (vẽ theo spec có sẵn).
 - Dữ liệu chờ người dùng cấp (xem `cad/data/README.md`): block động co/tê, catalog ống + phụ kiện, catalog bơm, bản vẽ mẫu + khung tên.
 
 ## GHI NHỚ KỸ THUẬT
+- `rai`: trường `goc` là góc xoay LƯỚI (phòng nghiêng), không phải góc xoay block; `kt` chỉ vẽ khi `goc` = 0. `le` mặc định bước / 4. Trần 5000 thiết bị một vùng.
+- `tuyen` `noi_tiep` nối MỌI vùng của `rai` trước đó thành một đường; muốn mỗi phòng một đường thì gọi `rai` + `tuyen` từng phòng.
 - Thêm thao tác spec: hàm `Op...` trong `module/plugin/Spec.cs` + 1 dòng `MotOp` + 1 dòng `skills/TU_VUNG.md` + 1 phép kiểm trong `test/chay_thu.ps1`.
 - Phần đầu `skills/TU_VUNG.md` (trước dòng `---`) gửi cho AI lúc kết nối: giữ dưới 1900 ký tự (`thu_mcp.ps1` có kiểm).
 - Lệnh Bash của Claude làm mất một dấu gạch chéo ngược khi viết hai dấu liền nhau trong heredoc: script Python có đường dẫn Windows thì dùng `chr(92)`, hoặc ghi script ra file rồi chạy.

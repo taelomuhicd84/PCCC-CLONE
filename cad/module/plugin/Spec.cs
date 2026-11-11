@@ -34,6 +34,8 @@ namespace TKPCCC
             public List<object> Loi = new List<object>();
             public List<object> KqDoc = new List<object>();
             public Dictionary<string, object> Dem;
+            public List<object> KqRai = new List<object>(), KqTuyen = new List<object>();   // cad/module/plugin/Rai.cs
+            public List<List<Point3d>> DiemRai = new List<List<Point3d>>();                 // điểm của "rai" gần nhất, theo từng vùng, để "tuyen" dùng lại
         }
 
         // ---------- Đọc JSON ----------
@@ -145,7 +147,7 @@ namespace TKPCCC
             foreach (object x in ops)
             {
                 Dictionary<string, object> d = x as Dictionary<string, object>;
-                if (d != null && LayChu(d, "op", "") == "dat") maDat.Add(LayChu(d, "ma", ""));
+                if (d != null && (LayChu(d, "op", "") == "dat" || LayChu(d, "op", "") == "rai")) maDat.Add(LayChu(d, "ma", ""));
             }
             if (maDat.Count > 0)
             {
@@ -192,6 +194,8 @@ namespace TKPCCC
             if (g.Loi.Count > 0) kq["loi"] = g.Loi;
             if (g.Dem != null) kq["dem"] = g.Dem;
             if (g.KqDoc.Count > 0) kq["doc"] = g.KqDoc;
+            if (g.KqRai.Count > 0) kq["rai"] = g.KqRai;
+            if (g.KqTuyen.Count > 0) kq["tuyen"] = g.KqTuyen;
             kq["ban_ve"] = Path.GetFileName(doc.Name);
             return kq;
         }
@@ -210,6 +214,8 @@ namespace TKPCCC
                 case "xoa": OpXoa(g, o); break;
                 case "doc": OpDoc(g, o); break;
                 case "dem": OpDem(g); break;
+                case "rai": OpRai(g, o); break;     // cad/module/plugin/Rai.cs
+                case "tuyen": OpTuyen(g, o); break; // cad/module/plugin/Rai.cs
                 default: throw new System.Exception("không có thao tác \"" + ten + "\" (xem cad/skills/TU_VUNG.md)");
             }
         }

@@ -11,7 +11,7 @@ cad/
 │  ├─ agents/              agent riêng của CAD (chưa có; chỉ nạp khi mở Claude Code tại cad/)
 │  └─ skills/              tkpccc-ve-cad (vẽ qua MCP) · tkpccc-cad-console (build, kiểm thử, in PNG)
 ├─ skills/                 hướng dẫn dùng cho MỌI AI (Claude, Gemini, Codex): TU_VUNG.md (từ vựng spec, nguồn duy nhất) · vi_du/
-├─ knowledge/              kiến thức vẽ CAD: quy-uoc-ban-ve.md · hoc/ (bài học người dùng dạy)
+├─ knowledge/              kiến thức vẽ CAD: quy-uoc-ban-ve.md · mau-ban-ve-pccc.md (cách rải, đi dây, đi ống của bản mẫu) · tham-khao-mcp-hub.md (ý lấy từ MCP bên khác) · hoc/
 ├─ rule/                   LUAT.md: việc trên CAD ↔ file quy chuẩn nguyên văn ↔ skill, agent liên quan
 ├─ layer/                  file .md chuẩn layer (tên, màu, loại đường) để tạo layer đúng chuẩn
 ├─ data/                   dữ liệu vẽ (xem data/README.md)
@@ -20,7 +20,7 @@ cad/
 │  ├─ ong/ · bom/          kích thước ống + phụ kiện, kích thước bơm (chờ catalog)
 │  └─ mau/                 bản vẽ mẫu, khung tên (chờ file của người dùng)
 ├─ module/                 mã chạy
-│  ├─ plugin/              Lenh.cs (lệnh PCCC_*) · Spec.cs (PCCC_SPEC, thao tác spec) · Cau.cs (cầu nối) -> TKPCCC.Cad.dll
+│  ├─ plugin/              Lenh.cs (lệnh PCCC_*) · Spec.cs (PCCC_SPEC, thao tác spec) · Rai.cs (rai, tuyen, PCCC_RAI) · Cau.cs (cầu nối) -> TKPCCC.Cad.dll
 │  ├─ mcp/                 Mcp.cs -> bin/TKPCCC.Mcp.exe (công cụ cad_tt, cad_chay)
 │  ├─ chung/               HangDoi.cs: hàng đợi file dùng chung plugin + máy chủ MCP
 │  └─ lisp/                LISP của người dùng (nạp tay bằng APPLOAD)
@@ -41,6 +41,7 @@ AI chỉ viết một gói thao tác ngắn (spec JSON), plugin sinh hình. Mộ
 |---|---|
 | Đổi cỡ chữ, bóng trục, tên và màu layer trục, khoảng cách kích thước mặc định | `data/ky_hieu/ky_hieu.json`, rồi chạy `build.bat` |
 | Thêm hoặc đổi một thao tác vẽ (`luoi_truc`, `dat`, `ong`...) | `module/plugin/Spec.cs` (hàm `Op...` + 1 dòng trong `MotOp`) và `skills/TU_VUNG.md` |
+| Đổi cách rải thiết bị, cách đi dây, đi ống (`rai`, `tuyen`, `PCCC_RAI`) | `module/plugin/Rai.cs`; cách vẽ gốc ở `knowledge/mau-ban-ve-pccc.md` |
 | Đổi câu hướng dẫn AI nhận lúc kết nối | phần đầu `skills/TU_VUNG.md`, trước dòng `---` (giữ dưới 1900 ký tự) |
 | Đổi tên, mô tả công cụ MCP | `module/mcp/Mcp.cs`, hàm `CongCu` |
 | Đổi nhịp xem hàng đợi, điều kiện "AutoCAD đang rảnh" | `module/plugin/Cau.cs` |

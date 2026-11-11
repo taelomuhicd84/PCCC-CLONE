@@ -54,3 +54,19 @@ Giao kèm PDF mẫu 4 tờ (báo cháy, vách tường, sprinkler, EXIT-EM). Yê
 - Chốt thiết kế `rai`, `tuyen`, `pdf`, bảng block, 4 agent: ghi đủ trong `cad/TIEN_DO.md`.
 
 Dừng 11:00 vì usage 5 giờ chạm 90 % (reset 14:20). Chưa viết mã. Đã gửi người dùng sáu câu hỏi về tư duy đi dây, đi ống, kèm giả định để làm tiếp nếu chưa có trả lời. Đã hẹn scheduled task `tkpccc-cad-lam-tiep` chạy 14:25 để tự làm tiếp.
+
+## 2026-11-11 (chiều) — Bước 1: `rai`, `tuyen`, `PCCC_RAI`
+Scheduled task `tkpccc-cad-lam-tiep` chạy 14:25 bằng `claude-fable-5-2` (usage 5 giờ 22 %). Lúc 14:28–14:29 phiên gốc "Plugin cad PCCC" cũng viết Bước 1:
+hai phiên ghi đè nhau (`Rai.cs`, `rai.json`, dòng trùng trong `Lenh.cs`, `Spec.cs`, `chay_thu.ps1`, lỗi biên dịch `CS0111`). Hoà giải: giữ bản `Rai.cs` + `rai.json`
+của phiên gốc, gỡ dòng trùng; phiên gốc thôi sửa mã, chỉ phiên hẹn giờ ghi file.
+
+Đã làm:
+- `module/plugin/Rai.cs`: `OpRai` (lưới theo hộp bao, bỏ điểm ngoài đa giác, tự kiểm vùng hở `ho`), `OpTuyen` (`noi_tiep`, `xuong_ca`, `nhanh`, nhãn DN),
+  `RaiTay` (lệnh `PCCC_RAI`: bấm điểm trong phòng bằng `TraceBoundary` hoặc `Doituong`). Thêm trần 5000 thiết bị một vùng (chặn bước sai đơn vị).
+- `Spec.cs`: 2 dòng `MotOp`, trường `KqRai`, `KqTuyen`, `DiemRai` của `GoiSpec`, nạp block trước cho `rai`, trả `kq["rai"]`, `kq["tuyen"]`.
+- `Lenh.cs` (`PCCC_RAI` + `PCCC_HELP`), `PackageContents.xml`, `skills/TU_VUNG.md` (phần đầu 1440 ký tự), `skills/vi_du/rai.json`.
+- `knowledge/tham-khao-mcp-hub.md` (phiên gốc viết theo việc người dùng giao 14:29): ý lấy từ tài liệu AutoCAD MCP của bên khác; đã chép việc vào `TIEN_DO.md` (Bước 1b, Bước 6).
+
+Kiểm chứng: `chay_thu.ps1` 21/21 (phòng 6500 × 4500, `s` 4000 ra 4 thiết bị bước 3250 × 2250; `buoc` [4000, 3000] ra cách tường 1250 / 750 như bản mẫu;
+`xuong_ca` 3 đoạn 12,75 m; `noi_tiep` 1 đường 11,05 m; vùng chữ L còn 3 thiết bị, không hở; thiếu `s` và `buoc` thì báo lỗi; `PCCC_RAI` nhánh `Doituong`). `thu_mcp.ps1` 7/7.
+Chưa kiểm: `PCCC_RAI` nhánh bấm điểm và hình vẽ trên AutoCAD có giao diện; chưa in PNG so với PDF mẫu (chờ `cad_anh`).
