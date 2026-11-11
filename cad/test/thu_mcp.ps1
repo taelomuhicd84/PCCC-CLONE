@@ -9,13 +9,13 @@ $T = Join-Path $env:TEMP ('tkpccc_mcp_' + [guid]::NewGuid().ToString('N').Substr
 New-Item -ItemType Directory $T | Out-Null
 
 & "$FW\csc.exe" /nologo /target:exe /codepage:65001 /out:"$T\TKPCCC.Mcp.exe" /r:"$FW\System.Web.Extensions.dll" /r:System.Core.dll `
-  "$GOC\cad\mcp\Mcp.cs" "$GOC\cad\chung\HangDoi.cs"
+  "$GOC\cad\module\mcp\Mcp.cs" "$GOC\cad\module\chung\HangDoi.cs"
 if ($LASTEXITCODE) { throw 'Bien dich Mcp loi' }
 & "$FW\csc.exe" /nologo /target:library /platform:x64 /codepage:65001 /out:"$T\TKPCCC.Cad.dll" `
   /r:"$ACAD\acdbmgd.dll" /r:"$ACAD\accoremgd.dll" /r:"$FW\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Windows.Forms.dll `
-  "$GOC\cad\src\*.cs" "$GOC\cad\chung\HangDoi.cs"
+  "$GOC\cad\module\plugin\*.cs" "$GOC\cad\module\chung\HangDoi.cs"
 if ($LASTEXITCODE) { throw 'Bien dich plugin loi' }
-Copy-Item "$GOC\data\vat_tu.json", "$GOC\cad\spec\TU_VUNG.md" $T
+Copy-Item "$GOC\data\vat_tu.json", "$GOC\cad\skills\TU_VUNG.md" $T
 
 # Hang doi rieng cho lan thu: ca Mcp.exe lan accoreconsole deu doc bien moi truong nay.
 $env:TKPCCC_CAD_HANG_DOI = "$T\hd"

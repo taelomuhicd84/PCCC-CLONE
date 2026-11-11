@@ -1,5 +1,5 @@
 // PCCC_SPEC: chạy một gói thao tác (spec JSON) trong MỘT lệnh = một bước Undo, trả kết quả gọn (đếm + lỗi).
-// Từ vựng (nguồn duy nhất): cad/spec/TU_VUNG.md. Thêm thao tác: viết hàm Op..., thêm 1 dòng vào MotOp, ghi vào TU_VUNG.md.
+// Từ vựng (nguồn duy nhất): cad/skills/TU_VUNG.md. Thêm thao tác: viết hàm Op..., thêm 1 dòng vào MotOp, ghi vào TU_VUNG.md.
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -69,6 +69,28 @@ namespace TKPCCC
             return kq;
         }
 
+        // ---------- Mặc định ký hiệu (trục, kích thước, chữ) ----------
+        // Đọc ky_hieu.json cạnh DLL (nguồn: cad/data/ky_hieu/ky_hieu.json, build.bat chép sang). Thiếu file hoặc thiếu khoá thì dùng số trong mã.
+
+        static Dictionary<string, object> kyHieu;
+
+        static Dictionary<string, object> NhomKyHieu(string nhom)
+        {
+            if (kyHieu == null)
+            {
+                kyHieu = new Dictionary<string, object>();
+                string f = Path.Combine(ThuMuc, "ky_hieu.json");
+                if (File.Exists(f))
+                {
+                    Dictionary<string, object> d;
+                    try { d = new JavaScriptSerializer().DeserializeObject(File.ReadAllText(f, Encoding.UTF8)) as Dictionary<string, object>; }
+                    catch (System.Exception ex) { kyHieu = null; throw new System.Exception("ky_hieu.json sai cú pháp: " + ex.Message); }
+                    if (d != null) kyHieu = d;
+                }
+            }
+            return Lay(kyHieu, nhom) as Dictionary<string, object> ?? new Dictionary<string, object>();
+        }
+
         // ---------- Lệnh ----------
 
         static void ChaySpec()
@@ -109,6 +131,7 @@ namespace TKPCCC
             if (goi == null || !(Lay(goi, "ops") is IList)) throw new System.Exception("Spec phải có dạng {\"ops\":[...]}");
             IList ops = (IList)goi["ops"];
             zoom = LayCo(goi, "zoom", false);
+            kyHieu = null; // đọc lại ky_hieu.json mỗi lần chạy: sửa file xong không cần mở lại AutoCAD
 
             GoiSpec g = new GoiSpec();
             g.Doc = doc;
@@ -187,7 +210,7 @@ namespace TKPCCC
                 case "xoa": OpXoa(g, o); break;
                 case "doc": OpDoc(g, o); break;
                 case "dem": OpDem(g); break;
-                default: throw new System.Exception("không có thao tác \"" + ten + "\" (xem cad/spec/TU_VUNG.md)");
+                default: throw new System.Exception("không có thao tác \"" + ten + "\" (xem cad/skills/TU_VUNG.md)");
             }
         }
 
@@ -346,13 +369,14 @@ namespace TKPCCC
 
         static void OpChu(GoiSpec g, Dictionary<string, object> o)
         {
-            Them(g, TaoChu(g, P(g, Lay(o, "p"), "p"), LayChu(o, "t", ""), LaySo(o, "cao", 250), LaySo(o, "goc", 0),
+            Them(g, TaoChu(g, P(g, Lay(o, "p"), "p"), LayChu(o, "t", ""), LaySo(o, "cao", LaySo(NhomKyHieu("chu"), "cao", 250)), LaySo(o, "goc", 0),
                 LayChu(o, "can", "trai") == "giua", LayerOp(g, o)));
         }
 
         static void OpKt(GoiSpec g, Dictionary<string, object> o)
         {
-            VeKt(g, P(g, Lay(o, "p1"), "p1"), P(g, Lay(o, "p2"), "p2"), LaySo(o, "cach", 500), LaySo(o, "cao", 250), LayerOp(g, o));
+            Dictionary<string, object> k = NhomKyHieu("kt");
+            VeKt(g, P(g, Lay(o, "p1"), "p1"), P(g, Lay(o, "p2"), "p2"), LaySo(o, "cach", LaySo(k, "cach", 500)), LaySo(o, "cao", LaySo(k, "cao", 250)), LayerOp(g, o));
         }
 
         static List<double> CongDon(object o, string ten)
@@ -384,19 +408,23 @@ namespace TKPCCC
         static void OpLuoiTruc(GoiSpec g, Dictionary<string, object> o)
         {
             List<double> xs = CongDon(Lay(o, "x"), "x"), ys = CongDon(Lay(o, "y"), "y");
-            double cao = LaySo(o, "cao", 350), r = LaySo(o, "r", cao * 1.15), du = LaySo(o, "du", cao * 5);
+            Dictionary<string, object> k = NhomKyHieu("luoi_truc");
+            double cao = LaySo(o, "cao", LaySo(k, "cao", 350)), r = LaySo(o, "r", cao * LaySo(k, "r", 1.15)), du = LaySo(o, "du", cao * LaySo(k, "du", 5));
             Point3d O = Lay(o, "p") == null ? new Point3d(g.Gx, g.Gy, 0) : P(g, Lay(o, "p"), "p");
             string tx = LayChu(o, "ten_x", "1"), ty = LayChu(o, "ten_y", "A");
             if (tx == "" || ty == "") throw new System.Exception("ten_x, ten_y không được rỗng");
             double W = xs[xs.Count - 1], H = ys[ys.Count - 1];
-            ObjectId lTruc = DamBaoLayer(g.Db, g.Tr, "TRUC", 1), lKh = DamBaoLayer(g.Db, g.Tr, "KH_TRUC", 3), lKt = DamBaoLayer(g.Db, g.Tr, "DIM_TRUC", 5);
-            ObjectId net = DamBaoNet(g, "CENTER");
+            ObjectId lTruc = DamBaoLayer(g.Db, g.Tr, LayChu(k, "layer_truc", "TRUC"), (short)LaySo(k, "mau_truc", 1));
+            ObjectId lKh = DamBaoLayer(g.Db, g.Tr, LayChu(k, "layer_bong", "KH_TRUC"), (short)LaySo(k, "mau_bong", 3));
+            ObjectId lKt = DamBaoLayer(g.Db, g.Tr, LayChu(k, "layer_kt", "DIM_TRUC"), (short)LaySo(k, "mau_kt", 5));
+            ObjectId net = DamBaoNet(g, LayChu(k, "net", "CENTER"));
+            double tlNet = cao / LaySo(k, "ti_le_net", 7);
 
             for (int i = 0; i < xs.Count; i++)
             {
                 double x = O.X + xs[i];
                 Line ln = new Line(new Point3d(x, O.Y - du, 0), new Point3d(x, O.Y + H + du, 0));
-                ln.LayerId = lTruc; ln.LinetypeId = net; ln.LinetypeScale = cao / 7;
+                ln.LayerId = lTruc; ln.LinetypeId = net; ln.LinetypeScale = tlNet;
                 Them(g, ln);
                 Bong(g, new Point3d(x, O.Y - du - r, 0), TenTruc(tx, i), r, cao, lKh);
                 Bong(g, new Point3d(x, O.Y + H + du + r, 0), TenTruc(tx, i), r, cao, lKh);
@@ -405,14 +433,14 @@ namespace TKPCCC
             {
                 double y = O.Y + ys[i];
                 Line ln = new Line(new Point3d(O.X - du, y, 0), new Point3d(O.X + W + du, y, 0));
-                ln.LayerId = lTruc; ln.LinetypeId = net; ln.LinetypeScale = cao / 7;
+                ln.LayerId = lTruc; ln.LinetypeId = net; ln.LinetypeScale = tlNet;
                 Them(g, ln);
                 Bong(g, new Point3d(O.X - du - r, y, 0), TenTruc(ty, i), r, cao, lKh);
                 Bong(g, new Point3d(O.X + W + du + r, y, 0), TenTruc(ty, i), r, cao, lKh);
             }
             if (!LayCo(o, "kt", true)) return;
             // Kích thước từng nhịp (gần lưới) và tổng (xa hơn), phía dưới và bên trái.
-            double c1 = du * 0.4, c2 = du * 0.75, caoKt = cao * 0.7;
+            double c1 = du * LaySo(k, "kt_gan", 0.4), c2 = du * LaySo(k, "kt_xa", 0.75), caoKt = cao * LaySo(k, "kt_cao", 0.7);
             for (int i = 0; i + 1 < xs.Count; i++)
                 VeKt(g, new Point3d(O.X + xs[i], O.Y, 0), new Point3d(O.X + xs[i + 1], O.Y, 0), -c1, caoKt, lKt);
             if (xs.Count > 2) VeKt(g, new Point3d(O.X, O.Y, 0), new Point3d(O.X + W, O.Y, 0), -c2, caoKt, lKt);

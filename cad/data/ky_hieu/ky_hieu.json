@@ -1,0 +1,21 @@
+{
+  "_ghi_chu": "Mac dinh cho thao tac spec (luoi_truc, kt, chu). Sua xong chay cad\\build.bat de chep vao bundle; lan PCCC_SPEC ke tiep dung so moi, khong can mo lai AutoCAD. r, du, kt_gan, kt_xa, kt_cao la he so nhan voi co chu 'cao'. mau_* la so mau AutoCAD (1 do, 2 vang, 3 xanh la, 4 cyan, 5 xanh duong, 6 tim, 7 trang).",
+  "chu": { "cao": 250 },
+  "kt": { "cao": 250, "cach": 500 },
+  "luoi_truc": {
+    "cao": 350,
+    "r": 1.15,
+    "du": 5,
+    "layer_truc": "TRUC",
+    "mau_truc": 1,
+    "net": "CENTER",
+    "ti_le_net": 7,
+    "layer_bong": "KH_TRUC",
+    "mau_bong": 3,
+    "layer_kt": "DIM_TRUC",
+    "mau_kt": 5,
+    "kt_gan": 0.4,
+    "kt_xa": 0.75,
+    "kt_cao": 0.7
+  }
+}

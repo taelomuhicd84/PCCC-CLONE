@@ -74,7 +74,7 @@ namespace TKPCCC
         [CommandMethod("PCCC_BOC")] public void LenhBoc() { Chay(BocKhoiLuong); }
         [CommandMethod("PCCC_BANG")] public void LenhBang() { Chay(ChenBang); }
         [CommandMethod("PCCC_VUNGBV")] public void LenhVungBV() { Chay(VungBaoVe); }
-        [CommandMethod("PCCC_SPEC")] public void LenhSpec() { Chay(ChaySpec); } // cad/src/Spec.cs
+        [CommandMethod("PCCC_SPEC")] public void LenhSpec() { Chay(ChaySpec); } // cad/module/plugin/Spec.cs
 
         static void Chay(Action viec)
         {
@@ -373,7 +373,7 @@ namespace TKPCCC
                 if (r.Status != PromptStatus.OK) return;
                 using (Transaction tr = db.TransactionManager.StartTransaction())
                 {
-                    ChenThietBi(db, tr, v, r.Value.TransformBy(ed.CurrentUserCoordinateSystem), k, 0); // cad/src/Spec.cs
+                    ChenThietBi(db, tr, v, r.Value.TransformBy(ed.CurrentUserCoordinateSystem), k, 0); // cad/module/plugin/Spec.cs
                     tr.Commit();
                 }
             }

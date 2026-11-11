@@ -1,17 +1,17 @@
 ---
 name: tkpccc-cad-console
-description: Build và kiểm thử plugin AutoCAD của TKPCCC (cad/src/Lenh.cs) KHÔNG cần mở AutoCAD — biên dịch bằng csc.exe (C# 5), chạy kịch bản lệnh trong accoreconsole, đọc kết quả dòng lệnh, in bản vẽ ra PNG để xem bằng mắt. Dùng mỗi khi sửa/thêm lệnh PCCC_*, gặp lỗi plugin (eWrongDatabase, đếm sai, chữ lệch), cần chạy thử bản vẽ mẫu, hoặc người dùng nói "chạy thử plugin", "test CAD", "kiểm tra lệnh AutoCAD", kể cả khi AutoCAD đang mở trên máy.
+description: Build và kiểm thử plugin AutoCAD của TKPCCC (cad/module/plugin/Lenh.cs) KHÔNG cần mở AutoCAD — biên dịch bằng csc.exe (C# 5), chạy kịch bản lệnh trong accoreconsole, đọc kết quả dòng lệnh, in bản vẽ ra PNG để xem bằng mắt. Dùng mỗi khi sửa/thêm lệnh PCCC_*, gặp lỗi plugin (eWrongDatabase, đếm sai, chữ lệch), cần chạy thử bản vẽ mẫu, hoặc người dùng nói "chạy thử plugin", "test CAD", "kiểm tra lệnh AutoCAD", kể cả khi AutoCAD đang mở trên máy.
 model: sonnet
 effort: medium
 ---
 
 # Kiểm thử plugin AutoCAD bằng accoreconsole
-Đây cũng là thẻ của MODULE CAD: `cad/src/Lenh.cs` (mọi lệnh `PCCC_*`), `cad/build.bat`, `cad/test/chay_thu.ps1`,
+Đây cũng là thẻ của MODULE CAD: `cad/module/plugin/Lenh.cs` (mọi lệnh `PCCC_*`), `cad/build.bat`, `cad/test/chay_thu.ps1`,
 `cad/TKPCCC.bundle/PackageContents.xml`, `cad/TKPCCC.bundle/Contents/PCCC_Blocks.dwg` + `block_alias.json` (người dùng sửa, có commit).
 
-**MCP CAD (làm 2026-11-10, ROADMAP Pha 6; khi VẼ thì dùng skill `tkpccc-ve-cad`):** AI ↔ `cad/bin/TKPCCC.Mcp.exe` (`cad/mcp/Mcp.cs`, C#, stdio)
-↔ hàng đợi file `%LOCALAPPDATA%\TKPCCC\cad` (`cad/chung/HangDoi.cs`) ↔ `cad/src/Cau.cs` (timer trên luồng chính, chỉ bật trong acad.exe;
-cần thêm tham chiếu `System.Windows.Forms` của .NET, không phải `acmgd`) ↔ lệnh `PCCC_SPEC` (`cad/src/Spec.cs`; từ vựng `cad/spec/TU_VUNG.md`).
+**MCP CAD (làm 2026-11-10, ROADMAP Pha 6; khi VẼ thì dùng skill `tkpccc-ve-cad`):** AI ↔ `cad/bin/TKPCCC.Mcp.exe` (`cad/module/mcp/Mcp.cs`, C#, stdio)
+↔ hàng đợi file `%LOCALAPPDATA%\TKPCCC\cad` (`cad/module/chung/HangDoi.cs`) ↔ `cad/module/plugin/Cau.cs` (timer trên luồng chính, chỉ bật trong acad.exe;
+cần thêm tham chiếu `System.Windows.Forms` của .NET, không phải `acmgd`) ↔ lệnh `PCCC_SPEC` (`cad/module/plugin/Spec.cs`; từ vựng `cad/skills/TU_VUNG.md`).
 Thêm thao tác spec: hàm `Op...` + 1 dòng trong `MotOp` + 1 dòng trong `TU_VUNG.md` + 1 dòng kiểm trong `cad/test/chay_thu.ps1`.
 Kiểm máy chủ MCP không cần mở AutoCAD: `cad\test\thu_mcp.ps1`. Tiến độ và việc để lại của CAD: `cad/TIEN_DO.md`, `cad/KE_HOACH.md`.
 Plugin vẫn theo ràng buộc C# 5 dưới đây.
@@ -24,7 +24,7 @@ Nhờ vậy kiểm thử được plugin mà không đụng AutoCAD người dù
   `powershell -ExecutionPolicy Bypass -File cad\test\chay_thu.ps1` → phải ra `TAT CA DAT`.
 - Build vào bundle thật: `cad\build.bat` (chạy được khi AutoCAD đang mở: đổi tên DLL cũ thành `*.dll.cu*` vì Windows cho đổi tên
   DLL đang nạp nhưng không cho ghi đè; người dùng tắt hẳn AutoCAD rồi mở lại để nạp bản mới).
-- Xem bản vẽ kết quả bằng mắt: `powershell -ExecutionPolicy Bypass -File .claude\skills\tkpccc-cad-console\scripts\in_png.ps1 <ban_ve.dwg> <ra.png>`
+- Xem bản vẽ kết quả bằng mắt: `powershell -ExecutionPolicy Bypass -File cad\.claude\skills\tkpccc-cad-console\scripts\in_png.ps1 <ban_ve.dwg> <ra.png>`
   rồi đọc ảnh PNG (Read). Dùng để kiểm hình block, chữ căn giữa, bảng, màu layer — những thứ đọc dòng lệnh không thấy.
 
 ## Ràng buộc biên dịch (vì sao)

@@ -31,6 +31,8 @@ Mọi thao tác vẽ nhận `l` (layer, mặc định `0`; chưa có thì tạo 
 
 Cấp gói: `goc` [x,y], `zoom`:true (zoom toàn bản vẽ sau khi vẽ, tốn thêm một bước Undo).
 
+Mặc định của `luoi_truc`, `kt`, `chu` (cỡ chữ, bóng trục, tên và màu layer trục, khoảng cách kích thước) nằm ở `cad/data/ky_hieu/ky_hieu.json`. Muốn đổi cho mọi bản vẽ thì sửa file đó, không cần truyền lại trong từng spec.
+
 ## Ví dụ
 ```json
 {"ops":[
@@ -44,4 +46,4 @@ Cấp gói: `goc` [x,y], `zoom`:true (zoom toàn bản vẽ sau khi vẽ, tốn 
 - Gộp mọi thao tác vào một lần gọi `cad_chay`. Không chia nhỏ theo từng nét.
 - Không gọi `cad_tt` hay `doc` để kiểm lại khi kết quả đã có `ok:true`.
 - Đọc bản vẽ: dùng `doc` có `l` hoặc `hop` để thu hẹp, không đọc cả bản vẽ.
-- Hình lặp lại nhiều lần: xin thêm thao tác tham số trong `cad/src/Spec.cs` thay vì liệt kê từng nét.
+- Hình lặp lại nhiều lần: xin thêm thao tác tham số trong `cad/module/plugin/Spec.cs` thay vì liệt kê từng nét.

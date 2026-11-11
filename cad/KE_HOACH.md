@@ -1,5 +1,7 @@
 # Kế hoạch: vẽ CAD tự động, tốn ít token nhất (ROADMAP Pha 6 + 4b)
 
+> Cây thư mục `cad/` đã sắp lại ngày 2026-11-11 (module/, data/, rule/, knowledge/, skills/, .claude/). Mục 4 dưới đây là bản cũ; bản đúng ở `cad/README.md`.
+
 **Phạm vi làm ngay (bạn chốt): chỉ MCP CAD = giai đoạn G0, G1, G2.** Các phần còn lại (G3–G9) để lại, ghi vào `cad/TIEN_DO.md` làm việc sau.
 
 ## 1. Bối cảnh
@@ -7,7 +9,7 @@ Bạn muốn gõ yêu cầu rồi AutoCAD tự vẽ: thiết bị PCCC, đi ốn
 
 Gói Claude đang dùng là **Pro** (hạn mức nhỏ), nên thiết kế phải ép token từ gốc chứ không tối ưu sau.
 
-Đã có sẵn: `cad/src/Lenh.cs` (8 lệnh `PCCC_*`, C# 5, ~900 dòng), `cad/test/chay_thu.ps1` (chạy thử không cần mở AutoCAD), `runner/src/engines/claude.ts` (`hoiClaude`: gọi `claude -p` bằng đăng nhập CLI, không API key). ROADMAP Pha 6 (MCP) và Pha 4b (`PCCC_RAI`) chưa làm.
+Đã có sẵn: `cad/module/plugin/Lenh.cs` (8 lệnh `PCCC_*`, C# 5, ~900 dòng), `cad/test/chay_thu.ps1` (chạy thử không cần mở AutoCAD), `runner/src/engines/claude.ts` (`hoiClaude`: gọi `claude -p` bằng đăng nhập CLI, không API key). ROADMAP Pha 6 (MCP) và Pha 4b (`PCCC_RAI`) chưa làm.
 
 ## 2. Cách ép token (xương sống của thiết kế)
 | Chỗ tốn token | Cách làm ở đây |
@@ -36,7 +38,7 @@ accoreconsole (test, vẽ không cần mở CAD) ───┘
 - Công cụ MCP: `cad_tt` (trạng thái + đếm), `cad_chay` (chạy gói spec: vẽ, sửa, xoá, đọc). `cad_anh` (ảnh khi cần) để lại, làm cùng bảng UI.
 - Hàng đợi bằng file thay cho cổng 127.0.0.1 ghi trong ROADMAP: không mở cổng mạng, không kẹt cổng, file việc chạy lại được để test.
 - AI không chạy được LISP hay lệnh tự do, chỉ các thao tác có trong từ vựng.
-- Từ vựng spec có một nguồn duy nhất `cad/spec/TU_VUNG.md`. Máy chủ MCP gửi nó cho mọi AI lúc kết nối, nên Gemini/Codex dùng được mà không cần cài skill.
+- Từ vựng spec có một nguồn duy nhất `cad/skills/TU_VUNG.md`. Máy chủ MCP gửi nó cho mọi AI lúc kết nối, nên Gemini/Codex dùng được mà không cần cài skill.
 - Máy chủ MCP viết bằng C# (file `.exe`) thay cho Node ghi trong ROADMAP: máy nào có Windows cũng chạy, không phải cài Node/Python.
 
 ## 4. Thư mục `cad/` sau khi làm
@@ -80,16 +82,16 @@ Mỗi giai đoạn là một đầu mục: kiểm → ghi `cad/TIEN_DO.md`, `cad
 | 9 | Sau này: bản quyền + bảo mật | — |
 
 ## 7. Dùng lại cái có sẵn
-- `cad/src/Lenh.cs`: `Chay` (bọc lỗi), `DocDanhMuc`, `TimMa`, `DamBaoLayer`, `DamBaoKieuChu`, `HeSoMet`, `MauHe`, `NapVaoBanVe`, `Duyet` + `BoiCanh` (đếm), `ChonKhu` (tách tầng). Đổi `class Lenh` thành `partial` để file mới gọi thẳng, không đổi quyền truy cập.
+- `cad/module/plugin/Lenh.cs`: `Chay` (bọc lỗi), `DocDanhMuc`, `TimMa`, `DamBaoLayer`, `DamBaoKieuChu`, `HeSoMet`, `MauHe`, `NapVaoBanVe`, `Duyet` + `BoiCanh` (đếm), `ChonKhu` (tách tầng). Đổi `class Lenh` thành `partial` để file mới gọi thẳng, không đổi quyền truy cập.
 - `JavaScriptSerializer` (đã tham chiếu `System.Web.Extensions`) cho JSON ở cả 4 phần, không thêm thư viện.
-- `cad/test/chay_thu.ps1`, `.claude/skills/tkpccc-cad-console/scripts/in_png.ps1`.
+- `cad/test/chay_thu.ps1`, `cad/.claude/skills/tkpccc-cad-console/scripts/in_png.ps1`.
 - Bộ cờ `claude -p` trong `runner/src/engines/claude.ts` (`--setting-sources project,local`, `--strict-mcp-config`, bỏ `ANTHROPIC_API_KEY`) cho khung chat, thêm `--model`, `--effort`, `--mcp-config`, `--output-format stream-json`, `--resume` (CLI 2.1.301 trên máy có đủ).
 - `data/vat_tu.json` là nguồn duy nhất cho dropdown. `doc_spec` của skill `tkpccc-ghi-chu-ban-ve` đọc phương án trên PDF.
-- Sửa kèm: `cad/build.bat`, `PackageContents.xml` (thêm `PCCC_SPEC`), `STRUCTURE.md`, `ROADMAP.md`, bảng module `CLAUDE.md` (thêm skill `tkpccc-ve-cad`), skill `tkpccc-cad-console` (đường MCP đổi sang `cad/mcp/`).
+- Sửa kèm: `cad/build.bat`, `PackageContents.xml` (thêm `PCCC_SPEC`), `STRUCTURE.md`, `ROADMAP.md`, bảng module `CLAUDE.md` (thêm skill `tkpccc-ve-cad`), skill `tkpccc-cad-console` (đường MCP đổi sang `cad/module/mcp/`).
 
 ## 8. Kiểm chứng
 - Mỗi giai đoạn: `powershell -ExecutionPolicy Bypass -File cad\test\chay_thu.ps1` phải ra `TAT CA DAT`; in PNG rồi xem bằng mắt.
-- G2: `cad\test\thu_mcp.ps1` đưa `initialize`, `tools/list`, `tools/call` vào `TKPCCC.Mcp.exe` và so câu trả lời. Đầu-cuối: AutoCAD mở, gọi `cad_chay` với `cad/spec/vi_du/luoi_truc.json`, so số đếm bằng `cad_tt`.
+- G2: `cad\test\thu_mcp.ps1` đưa `initialize`, `tools/list`, `tools/call` vào `TKPCCC.Mcp.exe` và so câu trả lời. Đầu-cuối: AutoCAD mở, gọi `cad_chay` với `cad/skills/vi_du/luoi_truc.json`, so số đếm bằng `cad_tt`.
 - Đo token: cùng một đề (lưới trục A–J × 1–5 bước 3600 như ảnh tham khảo), ghi `usage` của `claude -p --output-format json` vào `cad/LICH_SU.md`. Mục tiêu: 1 lần gọi công cụ.
 - Trước khi báo xong: `npm test`, `python -m pytest thamdinh/test .claude/skills -q`, `chay_thu.ps1`.
 

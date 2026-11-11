@@ -1,31 +1,33 @@
 # Tiến độ CAD (riêng cho thư mục cad/)
 
-Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (sửa gì vào đâu) và `cad/KE_HOACH.md` (kế hoạch tổng G0–G9). Nhật ký: `cad/LICH_SU.md`.
-Luật: dùng tới 85 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push, rồi hỏi người dùng.
+Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
+Luật: dùng tới 85 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push.
 
-## TRẠNG THÁI (cập nhật 2026-11-10)
-**DỪNG 2026-11-10 khoảng 15:40: hạn mức 5 giờ đã 87 % (đặt lại khoảng 19:30 giờ Việt Nam); tuần 19 %, tuần Fable 23 %.** `claude mcp list` báo máy chủ `cad` đang chờ duyệt (Pending approval): đường dẫn tương đối trong `.mcp.json` chưa thử kết nối thật. `npm test` chưa đọc được kết quả ở lần chạy cuối (đầu ra bị cắt), pytest 13 đạt.
-**XONG G0, G1, G2 = MCP CAD.** Người dùng chốt 10/11: trước mắt chỉ làm MCP CAD, các phần khác để lại.
-- G1 lệnh `PCCC_SPEC` (`cad/src/Spec.cs`), 10 thao tác: `luoi_truc`, `dat`, `ong`, `net`, `tron`, `chu`, `kt`, `xoa`, `doc`, `dem`. `chay_thu.ps1` 12/12 đạt.
-- G2 cầu nối `cad/src/Cau.cs` + `cad/bin/TKPCCC.Mcp.exe` (công cụ `cad_tt`, `cad_chay`) + skill `tkpccc-ve-cad` + `.mcp.json`. `thu_mcp.ps1` 7/7 đạt.
+## TRẠNG THÁI (cập nhật 2026-11-11)
+- **XONG MCP CAD (G0, G1, G2)**, đã push 10/11: lệnh `PCCC_SPEC` 10 thao tác, cầu nối, `cad/bin/TKPCCC.Mcp.exe` (công cụ `cad_tt`, `cad_chay`).
+- **XONG 11/11: sắp `cad/` thành dự án con** theo ý người dùng: `.claude/` (skills, agents), `skills/`, `knowledge/`, `data/`, `module/`, `rule/`. Mã nằm trong `module/` (plugin, mcp, chung, lisp); 2 skill CAD nằm trong `cad/.claude/skills/`; từ vựng spec ở `cad/skills/TU_VUNG.md`.
+- **Thêm 11/11:** `cad/data/ky_hieu/ky_hieu.json` (mặc định ký hiệu trục, kích thước, chữ; plugin đọc lại ở mỗi lần `PCCC_SPEC`), `cad/rule/LUAT.md` (9 dòng nối việc CAD ↔ file quy chuẩn ↔ skill, agent), `cad/knowledge/quy-uoc-ban-ve.md`.
+- Kiểm 11/11 sau khi chuyển: `chay_thu.ps1` 12/12, `thu_mcp.ps1` 7/7. Máy chủ `cad` trong `.mcp.json` gốc đã được duyệt và nối được (Claude Code thấy công cụ `mcp__cad__cad_tt`, `mcp__cad__cad_chay`).
 
-## CHƯA KIỂM, CẦN NGƯỜI DÙNG
-1. 👤 Chạy thật với AutoCAD đang mở (phần timer + `SendStringToExecute` trong `Cau.cs` chưa chạy lần nào, test không mở CAD không phủ tới):
-   tắt hẳn AutoCAD, chạy `cad\build.bat`, mở lại AutoCAD (bundle `cad\TKPCCC.bundle` phải nằm trong `%APPDATA%\Autodesk\ApplicationPlugins`, hoặc gõ `NETLOAD` chọn `cad\TKPCCC.bundle\Contents\TKPCCC.Cad.dll`).
-   Sau vài giây phải có file `%LOCALAPPDATA%\TKPCCC\cad\song.json`. Rồi trong Claude Code gõ: "vẽ lưới trục A–J × 1–5 bước 3600".
-2. Đo token của lần vẽ ở mục 1 (mục tiêu: 1 lần gọi `cad_chay`) và ghi vào `cad/LICH_SU.md`.
-3. Lần đầu mở Claude Code sau khi có `.mcp.json`, ứng dụng hỏi cho phép máy chủ `cad`: bấm đồng ý.
+## VIỆC KẾ NGAY: thử thật với AutoCAD đang mở
+Phần timer + `SendStringToExecute` trong `cad/module/plugin/Cau.cs` chưa chạy lần nào (test không mở CAD không phủ tới).
+1. 👤 Người dùng: trong AutoCAD gõ `NETLOAD`, chọn `D:\1_Claude\TKPCCC\cad\TKPCCC.bundle\Contents\TKPCCC.Cad.dll` (có hộp cảnh báo bảo mật thì chọn Load). Ngày 11/11 AutoCAD đang mở nhưng chưa nạp plugin: chưa có file `%LOCALAPPDATA%\TKPCCC\cad\song.json`.
+2. Claude: gọi `cad_tt` (phải ra tên bản vẽ, không báo "AutoCAD chưa mở"), rồi `cad_chay` với
+   `{"ops":[{"op":"luoi_truc","x":[3600,3600,3600,3600],"y":[3600,3600,3600,3600,3600,3600,3600,3600,3600]}]}` (trục 1–5 × A–J). Kết quả cần: `ok` true, `ve` = 90.
+3. Hỏng thì xem dòng lệnh AutoCAD và các thư mục `vao`, `dang`, `ra` trong `%LOCALAPPDATA%\TKPCCC\cad`, rồi sửa `Cau.cs`.
+4. Ghi kết quả và số token của lần vẽ vào `cad/LICH_SU.md`.
 
-## VIỆC KẾ (để lại, thứ tự theo `KE_HOACH.md`)
-- G3 thuật toán PCCC: `rai` (rải đầu phun, đầu báo, đèn exit/EM, bình theo vùng), `tuyen` (đi ống xương cá, đi dây nối tiếp), lệnh `PCCC_RAI`.
-- G4 PDF → CAD: thao tác `pdf` (PDFIMPORT + tỉ lệ 2 điểm), phương án ghi chú PDF → spec.
-- G5 sơ đồ nguyên lý `so_do` từ số đếm theo tầng + cao độ tầng.
-- G6 bảng trong CAD: tab Công cụ (0 token), tab Chat (chọn máy AI, model, effort, thư mục dự án), `cad_anh`.
-- G7 Hub: cài bundle, ghi cấu hình MCP cho các AI trên máy (có sao lưu), chẩn đoán.
-- G8 tab YouTube (WebView2). G9 bản quyền + bảo mật (trước đó phải chuyển repo sang riêng tư).
+## CHƯA KIỂM
+- Skill trong `cad/.claude/skills/` có hiện khi mở Claude Code ở gốc repo không (Claude Code nạp skill của thư mục con khi làm việc với file trong thư mục đó). Không hiện thì vẫn vẽ được nhờ hướng dẫn máy chủ MCP gửi lúc kết nối; cần thì đặt bản trỏ ở `.claude/skills/` gốc.
+- `cad/.mcp.json` (mở Claude Code ngay tại `cad/`) chưa thử.
+- `cad/rule/LUAT.md` lập theo tên file, chưa mở từng file căn cứ để đối chiếu phạm vi.
+
+## VIỆC ĐỂ LẠI (thứ tự theo `KE_HOACH.md`)
+- G3 `rai`, `tuyen`, `PCCC_RAI` · G4 PDF → CAD · G5 `so_do` · G6 bảng trong CAD + chat + `cad_anh` · G7 Hub · G8 YouTube · G9 bản quyền (trước đó chuyển repo sang riêng tư).
+- Dữ liệu chờ người dùng cấp (xem `cad/data/README.md`): block động co/tê, catalog ống + phụ kiện, catalog bơm, bản vẽ mẫu + khung tên.
 
 ## GHI NHỚ KỸ THUẬT
-- Thêm thao tác spec: hàm `Op...` trong `Spec.cs` + 1 dòng `MotOp` + 1 dòng `TU_VUNG.md` + 1 phép kiểm trong `chay_thu.ps1`.
-- Phần đầu `TU_VUNG.md` (trước dòng `---`) là hướng dẫn gửi cho AI lúc kết nối: giữ dưới 1900 ký tự, `thu_mcp.ps1` có kiểm.
-- Lưới trục mặc định: chữ 350, bóng bán kính 1,15 × cao, trục kéo dài 5 × cao; kích thước tổng nằm sát bóng trục, muốn thoáng thì tăng `du`.
-- Đi tuyến, rải thiết bị chưa có: hiện AI phải tự tính toạ độ rồi dùng `dat`, `ong`.
+- Thêm thao tác spec: hàm `Op...` trong `module/plugin/Spec.cs` + 1 dòng `MotOp` + 1 dòng `skills/TU_VUNG.md` + 1 phép kiểm trong `test/chay_thu.ps1`.
+- Phần đầu `skills/TU_VUNG.md` (trước dòng `---`) gửi cho AI lúc kết nối: giữ dưới 1900 ký tự (`thu_mcp.ps1` có kiểm).
+- Lệnh Bash của Claude làm mất một dấu gạch chéo ngược khi viết hai dấu liền nhau trong heredoc: script Python có đường dẫn Windows thì dùng `chr(92)`, hoặc ghi script ra file rồi chạy.
+- `build.bat` đổi tên DLL/exe đang bị khoá thành `*.cu*` rồi build bản mới. Build hỏng giữa chừng thì bundle tạm không có DLL: sửa lỗi rồi chạy lại `build.bat`.

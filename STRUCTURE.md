@@ -23,8 +23,6 @@ TKPCCC/
 │     │                           scripts/bang_doi_chieu.py (chon, khung, dong, tim, lamviec, job, gop, kiem, xlsx, md), test/
 │     ├─ tkpccc-ghi-chu-ban-ve/   scripts/ghi_chu_pdf.py (ve, luoi, tim: annotation khung/callout/leader/nét/tường/cửa), test/
 │     ├─ tkpccc-kiem-luat-pdf/ · tkpccc-thuy-luc/ · tkpccc-bao-gia/ · tkpccc-huong-dan/   thẻ module (code ở shared/ runner/ thamdinh/ web/)
-│     ├─ tkpccc-cad-console/      module CAD: build + kiểm thử plugin (scripts/in_png.ps1)
-│     ├─ tkpccc-ve-cad/           vẽ CAD tự động qua MCP CAD (cad_tt, cad_chay) bằng spec ngắn
 │     └─ tkpccc-tra-quy-chuan/ · tkpccc-xong-dau-muc/   quy trình chung
 │
 ├─ shared/              LÕI NGHIỆP VỤ dùng chung, hàm thuần (không đọc/ghi file, không server)
@@ -57,20 +55,16 @@ TKPCCC/
 │  ├─ scripts/make_sample_pdf.py  PDF mẫu có lỗi cài sẵn
 │  └─ test/                pytest
 │
-├─ cad/                 PLUGIN AUTOCAD 2021–2024 (C# .NET Framework 4.8, chỉ cú pháp C# 5)
-│  ├─ src/Lenh.cs          toàn bộ lệnh PCCC_* (LIB, DAT, ONG, GAN, BOC, BANG, VUNGBV, HELP)
-│  ├─ test/chay_thu.ps1    kiểm thử trong accoreconsole (AutoCAD không giao diện)
-│  ├─ src/Spec.cs · Cau.cs  lệnh PCCC_SPEC (thao tác spec) · cầu nối hàng đợi -> AutoCAD đang mở
-│  ├─ chung/HangDoi.cs     hàng đợi file dùng chung plugin + máy chủ MCP
-│  ├─ mcp/Mcp.cs           máy chủ MCP (C#, stdio) -> bin/TKPCCC.Mcp.exe (không commit): cad_tt, cad_chay
-│  ├─ spec/TU_VUNG.md      từ vựng spec (nguồn duy nhất) + vi_du/
-│  ├─ test/thu_mcp.ps1     kiểm thử máy chủ MCP không cần mở AutoCAD
-│  ├─ README.md · KE_HOACH.md · TIEN_DO.md · LICH_SU.md   sổ sách riêng của CAD (tiến độ, nhật ký, kế hoạch)
-│  ├─ build.bat            biên dịch bằng csc.exe có sẵn của Windows -> TKPCCC.bundle/Contents/
-│  └─ TKPCCC.bundle/       gói nạp tự động của AutoCAD (tên *.bundle là bắt buộc)
-│     ├─ PackageContents.xml
-│     └─ Contents/         TKPCCC.Cad.dll + vat_tu.json (do build tạo, không commit)
-│                          PCCC_Blocks.dwg (thư viện block, người dùng sửa hình) + block_alias.json (bảng gán block) — CÓ commit
+├─ cad/                 DỰ ÁN CON AUTOCAD 2021–2024 (C# .NET Framework 4.8, cú pháp C# 5): bản đồ đầy đủ ở cad/README.md, luật riêng cad/CLAUDE.md
+│  ├─ .claude/             skill riêng (tkpccc-ve-cad, tkpccc-cad-console + scripts/in_png.ps1) và agent riêng của CAD
+│  ├─ module/              mã chạy: plugin/ (Lenh.cs, Spec.cs, Cau.cs) · mcp/ (Mcp.cs) · chung/ (HangDoi.cs) · lisp/
+│  ├─ skills/              TU_VUNG.md (từ vựng spec cho mọi AI, nguồn duy nhất) + vi_du/
+│  ├─ data/                dữ liệu vẽ: ky_hieu/ (mặc định trục, kích thước, chữ) · block/ · ong/ · bom/ · mau/
+│  ├─ rule/ · knowledge/   LUAT.md (việc CAD ↔ file quy chuẩn ↔ skill, agent) · quy ước bản vẽ, bài học vẽ
+│  ├─ test/                chay_thu.ps1 (accoreconsole) · thu_mcp.ps1 (máy chủ MCP), không cần mở AutoCAD
+│  ├─ build.bat · bin/     build DLL + TKPCCC.Mcp.exe (bin/ không commit)
+│  ├─ KE_HOACH.md · TIEN_DO.md · LICH_SU.md   kế hoạch, tiến độ, nhật ký riêng của CAD
+│  └─ TKPCCC.bundle/       gói AutoCAD tự nạp: Contents/ (DLL do build tạo, PCCC_Blocks.dwg, block_alias.json)
 │
 ├─ data/                DỮ LIỆU CẤU HÌNH
 │  ├─ vat_tu.json          danh mục vật tư: nguồn DUY NHẤT cho plugin + báo giá (loai: block / tuyen / khac)
@@ -106,7 +100,7 @@ TKPCCC/
 | Server, xuất file, gọi Claude | `runner/src` | Claude, kèm test trong `runner/test` | có |
 | Giao diện | `web/index.html` | Claude | có |
 | Thẩm định PDF (Python) | `thamdinh/` (luật: `thamdinh/rules/*.yaml`) | Claude, kèm test trong `thamdinh/test` | có |
-| AutoCAD | `cad/src/Lenh.cs` | Claude, kiểm bằng `cad/test/chay_thu.ps1` | có |
+| AutoCAD | `cad/module/plugin/Lenh.cs` | Claude, kiểm bằng `cad/test/chay_thu.ps1` | có |
 | Thư viện block, gán block | `cad/TKPCCC.bundle/Contents/PCCC_Blocks.dwg`, `block_alias.json` | người dùng (BEDIT, `PCCC_GAN`) | có |
 | Danh mục, quy trình | `data/vat_tu.json`, `data/huong_dan.json` | người dùng / Claude | có |
 | Tri thức, điều khoản | `knowledge/`, `skills/` | chép nguyên văn bằng script, không viết theo trí nhớ | có |
@@ -131,7 +125,7 @@ Web: tab Thẩm định PDF ─POST /api/tham-dinh─► ket_qua/<dự án>/tham
 - Vật tư / thiết bị mới: 1 dòng trong `data/vat_tu.json` → `cad\build.bat` → `PCCC_LIB` (tự thêm block mặc định cho mã mới).
 - Phép tính nghiệp vụ mới (ước khối lượng, thủy lực…): file mới trong `shared/src/` + test trong `shared/test/`.
 - API mới: route trong `runner/src/server.ts`; xuất định dạng mới: `runner/src/xuat_<định dạng>.ts`; engine AI mới: `runner/src/engines/`.
-- Lệnh AutoCAD mới: `cad/src/Lenh.cs` (bọc `Chay(...)`), thêm dòng kiểm vào `cad/test/chay_thu.ps1`, khai báo trong `PackageContents.xml`.
+- Lệnh AutoCAD mới: `cad/module/plugin/Lenh.cs` (bọc `Chay(...)`), thêm dòng kiểm vào `cad/test/chay_thu.ps1`, khai báo trong `PackageContents.xml`.
 - Quy chuẩn mới: nguyên văn vào `knowledge/` (văn bản, bảng) hoặc `skills/` (điều khoản theo chuyên đề); nối vào bước trong `data/huong_dan.json`.
 - Luật thẩm định PDF mới: thêm vào `thamdinh/rules/qcvn06_2022_sd01_2023.yaml` (check có sẵn) hoặc hàm `@register` trong
   `thamdinh/pccc_checker/rules/checks.py`; thêm ca kiểm vào `thamdinh/test/`.

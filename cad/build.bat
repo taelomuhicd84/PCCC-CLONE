@@ -17,9 +17,11 @@ if exist "%OUT%\TKPCCC.Cad.dll" move /y "%OUT%\TKPCCC.Cad.dll" "%OUT%\TKPCCC.Cad
 "%FW%\csc.exe" /nologo /target:library /platform:x64 /codepage:65001 /optimize+ /out:"%OUT%\TKPCCC.Cad.dll" ^
   /r:"%ACAD%\acdbmgd.dll" /r:"%ACAD%\accoremgd.dll" ^
   /r:"%FW%\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Windows.Forms.dll ^
-  "%~dp0src\*.cs" "%~dp0chung\HangDoi.cs" || exit /b 1
+  "%~dp0module\plugin\*.cs" "%~dp0module\chung\HangDoi.cs" || exit /b 1
 
 copy /y "%~dp0..\data\vat_tu.json" "%OUT%\vat_tu.json" >nul
+rem Mac dinh ky hieu truc, kich thuoc, chu: nguoi dung sua o cad\data\ky_hieu, plugin doc ban chep canh DLL.
+copy /y "%~dp0data\ky_hieu\ky_hieu.json" "%OUT%\ky_hieu.json" >nul
 echo OK: %OUT%\TKPCCC.Cad.dll
 
 rem May chu MCP (cad\bin\TKPCCC.Mcp.exe): AI goi cad_tt / cad_chay. Dang chay thi doi ten ban cu nhu DLL.
@@ -29,7 +31,7 @@ del /q "%BIN%\TKPCCC.Mcp.exe.cu*" >nul 2>&1
 if exist "%BIN%\TKPCCC.Mcp.exe" move /y "%BIN%\TKPCCC.Mcp.exe" "%BIN%\TKPCCC.Mcp.exe.cu%RANDOM%" >nul
 "%FW%\csc.exe" /nologo /target:exe /codepage:65001 /optimize+ /out:"%BIN%\TKPCCC.Mcp.exe" ^
   /r:"%FW%\System.Web.Extensions.dll" /r:System.Core.dll ^
-  "%~dp0mcp\Mcp.cs" "%~dp0chung\HangDoi.cs" || exit /b 1
-copy /y "%~dp0spec\TU_VUNG.md" "%BIN%\TU_VUNG.md" >nul
+  "%~dp0module\mcp\Mcp.cs" "%~dp0module\chung\HangDoi.cs" || exit /b 1
+copy /y "%~dp0skills\TU_VUNG.md" "%BIN%\TU_VUNG.md" >nul
 echo OK: %BIN%\TKPCCC.Mcp.exe
 echo Neu AutoCAD dang mo: tat han AutoCAD roi mo lai de nap ban moi.

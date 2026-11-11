@@ -187,11 +187,11 @@ namespace TKPCCC
             }
         }
 
-        /// TU_VUNG.md nằm cạnh exe (build.bat chép) hoặc ở ..\spec. tomTat = phần trước dòng "---" đầu tiên, gửi cho AI lúc kết nối.
+        /// TU_VUNG.md nằm cạnh exe (build.bat chép) hoặc ở ..\skills. tomTat = phần trước dòng "---" đầu tiên, gửi cho AI lúc kết nối.
         static string TuVung(bool tomTat)
         {
             string thuMuc = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            foreach (string f in new string[] { Path.Combine(thuMuc, "TU_VUNG.md"), Path.Combine(thuMuc, "..", "spec", "TU_VUNG.md") })
+            foreach (string f in new string[] { Path.Combine(thuMuc, "TU_VUNG.md"), Path.Combine(thuMuc, "..", "skills", "TU_VUNG.md") })
             {
                 if (!File.Exists(f)) continue;
                 string t = File.ReadAllText(f, Encoding.UTF8);

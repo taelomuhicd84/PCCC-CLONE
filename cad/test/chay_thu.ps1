@@ -9,7 +9,7 @@ New-Item -ItemType Directory $T | Out-Null
 
 & "$FW\csc.exe" /nologo /target:library /platform:x64 /codepage:65001 /out:"$T\TKPCCC.Cad.dll" `
   /r:"$ACAD\acdbmgd.dll" /r:"$ACAD\accoremgd.dll" /r:"$FW\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Windows.Forms.dll `
-  "$GOC\cad\src\*.cs" "$GOC\cad\chung\HangDoi.cs"
+  "$GOC\cad\module\plugin\*.cs" "$GOC\cad\module\chung\HangDoi.cs"
 if ($LASTEXITCODE) { throw 'Bien dich loi' }
 Copy-Item "$GOC\data\vat_tu.json" $T
 
@@ -44,9 +44,12 @@ $lan2 = $out.Substring($out.LastIndexOf('Command: PCCC_BOC')) # 'Command: ': tho
 if ($lan2 -match 'BC_KHOI\s+2 ' -and $lan2 -match 'BC_NHIET\s+7 ') { 'DAT   boc lai sau PCCC_BANG khong dem ky hieu trong bang' } else { 'LOI   boc lai sau PCCC_BANG'; $loi++ }
 if ($out -match '\[TKPCCC\] L') { 'LOI   co lenh bao loi:'; ($out -split "`n" | Select-String '\[TKPCCC\] L'); $loi++ }
 
-# --- PCCC_SPEC: chay goi spec mau (cad\spec\vi_du\thu.json) trong ban ve moi, kiem ket qua JSON ---
+# --- PCCC_SPEC: chay goi spec mau (cad\skills\vi_du\thu.json) trong ban ve moi, kiem ket qua JSON ---
 # Goi mau co 1 thao tac sai co y (khong_co) de kiem duong bao loi: ok = false, loi dung vi tri, cac thao tac khac van chay.
-Copy-Item "$GOC\cad\spec\vi_du\thu.json" "$T\spec.json"
+Copy-Item "$GOC\cad\skills\vi_du\thu.json" "$T\spec.json"
+# Ban ky_hieu.json da doi ten layer truc: chung to plugin doc mac dinh tu file du lieu (cad\data\ky_hieu), khong dung so cung trong ma.
+(Get-Content -Raw -Encoding UTF8 "$GOC\cad\data\ky_hieu\ky_hieu.json") -replace '"layer_truc":\s*"TRUC"', '"layer_truc": "TRUC_T"' |
+  Set-Content -Encoding UTF8 "$T\ky_hieu.json"
 @('INSUNITS', '4', 'NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '_.SAVEAS', '2018', "`"$T\spec.dwg`"", 'PCCC_SPEC', "$T\spec.json", '_.QSAVE') -join "`r`n" |
   Set-Content -Encoding ascii "$T\kb2.scr"
 $p2 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb2.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb2.out.txt"
@@ -59,7 +62,7 @@ if (Test-Path "$T\spec.kq.json") {
     @(($kq.dem.BC_KHOI -eq 3), 'spec dat 3 dau khoi'),
     @(($kq.dem.ONG_DN50 -eq 15), 'spec ong 15 m'),
     @(($kq.ok -eq $false -and @($kq.loi).Count -eq 1 -and $kq.loi[0].i -eq 8), 'spec bao dung 1 thao tac sai, khong lam hong goi'),
-    @((@($kq.doc[0].ds | Where-Object { $_.l -eq 'TRUC' -and $_.n -eq 7 }).Count -eq 1), 'spec doc layer: TRUC co 7 truc'))
+    @((@($kq.doc[0].ds | Where-Object { $_.l -eq 'TRUC_T' -and $_.n -eq 7 }).Count -eq 1), 'spec doc layer + ky_hieu.json doi ten layer truc: TRUC_T co 7 truc'))
   foreach ($c in $ks) { if ($c[0]) { "DAT   $($c[1])" } else { "LOI   $($c[1])"; $loi++ } }
 } else { "LOI   PCCC_SPEC khong ghi ket qua: $T\kb2.out.txt"; $loi++ }
 "Thu muc thu: $T"
