@@ -96,7 +96,7 @@ Mỗi giai đoạn là một đầu mục: kiểm → ghi `cad/TIEN_DO.md`, `cad
 - Trước khi báo xong: `npm test`, `python -m pytest thamdinh/test .claude/skills -q`, `chay_thu.ps1`.
 
 ## 9. Luật làm việc
-- Đã dùng **≥ 85 %** hạn mức (5 giờ hoặc tuần; đo `get_usage` sau mỗi giai đoạn và trước việc lớn): dừng, ghi `cad/TIEN_DO.md` + `cad/LICH_SU.md`, commit + push theo QUY TẮC SỐ 1, rồi hỏi bạn.
+- Mức dừng vì hạn mức: xem `cad/CLAUDE.md` (từ 2026-11-11 là 90 %, lưu + push rồi tự làm tiếp khi usage hồi).
 - Code các giai đoạn nên chạy Sonnet (đúng frontmatter skill CAD). Fable/Opus chỉ cần cho thuật toán G3, G5.
 
 ## 10. Lấy gì từ ảnh tham khảo
