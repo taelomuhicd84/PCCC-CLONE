@@ -36,6 +36,7 @@ namespace TKPCCC
             public Dictionary<string, object> Dem;
             public List<object> KqRai = new List<object>(), KqTuyen = new List<object>();   // cad/module/plugin/Rai.cs
             public List<List<Point3d>> DiemRai = new List<List<Point3d>>();                 // điểm của "rai" gần nhất, theo từng vùng, để "tuyen" dùng lại
+            public List<object> KqAnh = new List<object>();                                 // đường dẫn PNG của thao tác "anh"
         }
 
         // ---------- Đọc JSON ----------
@@ -165,6 +166,7 @@ namespace TKPCCC
                 if (thieu) NapVaoBanVe(doc, g.Dm);
             }
 
+            List<int> anh = new List<int>(); // "anh" chạy lệnh -PLOT: để sau commit thì ảnh mới có đối tượng vừa vẽ
             using (Transaction tr = g.Db.TransactionManager.StartTransaction())
             {
                 g.Tr = tr;
@@ -176,6 +178,7 @@ namespace TKPCCC
                     try
                     {
                         if (o == null) throw new System.Exception("thao tác phải là object {\"op\":...}");
+                        if (ten == "anh") { anh.Add(i); continue; }
                         MotOp(g, ten, o);
                     }
                     catch (System.Exception ex)
@@ -184,6 +187,11 @@ namespace TKPCCC
                     }
                 }
                 tr.Commit();
+            }
+            foreach (int i in anh)
+            {
+                try { g.KqAnh.Add(InAnh(g, (Dictionary<string, object>)ops[i])); }
+                catch (System.Exception ex) { g.Loi.Add(new Dictionary<string, object> { { "i", i }, { "op", "anh" }, { "ly_do", ex.Message } }); }
             }
 
             Dictionary<string, object> kq = new Dictionary<string, object>();
@@ -200,8 +208,47 @@ namespace TKPCCC
             if (g.KqDoc.Count > 0) kq["doc"] = g.KqDoc;
             if (g.KqRai.Count > 0) kq["rai"] = g.KqRai;
             if (g.KqTuyen.Count > 0) kq["tuyen"] = g.KqTuyen;
+            if (g.KqAnh.Count > 0) kq["anh"] = g.KqAnh;
             kq["ban_ve"] = Path.GetFileName(doc.Name);
             return kq;
+        }
+
+        // ---------- Ảnh (thao tác "anh", công cụ MCP cad_anh) ----------
+        // Khổ ngang có sẵn của "PublishToWeb PNG.pc3" (thiết bị in PNG cài theo AutoCAD); thiết bị này không nhận cỡ tuỳ ý.
+        static readonly int[] RONG_ANH = { 640, 800, 1024, 1280, 1600 };
+        static readonly string[] KHO_ANH = { "VGA (640.00 x 480.00 Pixels)", "Super VGA (800.00 x 600.00 Pixels)", "XGA (1024.00 x 768.00 Pixels)",
+            "Super XGA (1280.00 x 1024.00 Pixels)", "Sun Hi-Res (1600.00 x 1280.00 Pixels)" };
+
+        /// In Model ra PNG bằng lệnh -PLOT (thứ tự dấu nhắc đã thử trong accoreconsole 2021), trả đường dẫn file.
+        /// shortcut: luôn khổ ngang, vùng cao hơn rộng thì ảnh có lề trắng hai bên; cần thì thêm khổ đứng.
+        static string InAnh(GoiSpec g, Dictionary<string, object> o)
+        {
+            double[] h = HopOp(g, o);
+            double rong = LaySo(o, "rong", 1024);
+            int k = 0;
+            while (k < RONG_ANH.Length - 1 && RONG_ANH[k] < rong) k++;
+            string tm = Path.Combine(HangDoi.Goc, "anh");
+            Directory.CreateDirectory(tm);
+            foreach (string cu in Directory.GetFiles(tm, "*.png")) // ảnh chỉ để xem ngay: dọn ảnh quá 1 ngày
+                if (File.GetLastWriteTimeUtc(cu) < DateTime.UtcNow.AddDays(-1)) try { File.Delete(cu); } catch (System.Exception) { }
+            // Tên mới mỗi lần: file đã có thì -PLOT hỏi ghi đè, lệch dấu nhắc.
+            string f = Path.Combine(tm, DateTime.Now.ToString("yyyyMMdd_HHmmss_fff") + ".png");
+            List<object> a = new List<object> { "-PLOT", "Y", "Model", "PublishToWeb PNG.pc3", KHO_ANH[k], "L", "N" };
+            if (h == null) a.Add("E");
+            else
+            {
+                // Dấu * = toạ độ WCS: spec vẽ theo WCS, người dùng có thể đang ở UCS khác.
+                a.Add("W");
+                a.Add(string.Format(CultureInfo.InvariantCulture, "*{0},{1}", h[0], h[1]));
+                a.Add(string.Format(CultureInfo.InvariantCulture, "*{0},{1}", h[2], h[3]));
+            }
+            a.AddRange(new object[] { "F", "C", "Y", ".", "Y", "", f, "N", "Y" });
+            object nen = AcApp.GetSystemVariable("BACKGROUNDPLOT");
+            AcApp.SetSystemVariable("BACKGROUNDPLOT", (short)0); // in nền thì lệnh trả về khi file chưa có
+            try { g.Doc.Editor.Command(a.ToArray()); }
+            finally { AcApp.SetSystemVariable("BACKGROUNDPLOT", nen); }
+            if (!File.Exists(f)) throw new System.Exception("không in được ảnh (bản vẽ trống, vùng \"hop\" rỗng hoặc thiếu thiết bị in \"PublishToWeb PNG.pc3\"); xem dòng lệnh AutoCAD");
+            return f;
         }
 
         static void MotOp(GoiSpec g, string ten, Dictionary<string, object> o)
@@ -220,6 +267,7 @@ namespace TKPCCC
                 case "dem": OpDem(g); break;
                 case "rai": OpRai(g, o); break;     // cad/module/plugin/Rai.cs
                 case "tuyen": OpTuyen(g, o); break; // cad/module/plugin/Rai.cs
+                // "anh" không ở đây: ThucHienSpec chạy nó sau khi commit (InAnh)
                 default: throw new System.Exception("không có thao tác \"" + ten + "\" (xem cad/skills/TU_VUNG.md)");
             }
         }

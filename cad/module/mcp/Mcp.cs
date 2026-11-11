@@ -1,6 +1,6 @@
 // Máy chủ MCP cho AutoCAD (stdio, JSON-RPC, mỗi dòng một thông điệp). Ghi việc vào hàng đợi file, chờ plugin trả kết quả.
 // Chỉ dùng .NET Framework có sẵn trong Windows: máy khác không phải cài Node hay Python. Biên dịch: cad\build.bat.
-// AI chỉ gọi được 2 công cụ dưới đây; không có đường chạy LISP hay lệnh tự do.
+// AI chỉ gọi được 3 công cụ dưới đây; không có đường chạy LISP hay lệnh tự do.
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -98,7 +98,14 @@ namespace TKPCCC
                             { "ops", new Dictionary<string, object> { { "type", "array" }, { "items", new Dictionary<string, object> { { "type", "object" } } } } },
                             { "goc", new Dictionary<string, object> { { "type", "array" }, { "items", kieuSo }, { "description", "[x,y] cộng vào mọi toạ độ" } } },
                             { "zoom", new Dictionary<string, object> { { "type", "boolean" } } },
-                            { "file", new Dictionary<string, object> { { "type", "string" }, { "description", "đường dẫn tuyệt đối file spec .json, thay cho ops" } } } } } } } } };
+                            { "file", new Dictionary<string, object> { { "type", "string" }, { "description", "đường dẫn tuyệt đối file spec .json, thay cho ops" } } } } } } } },
+                new Dictionary<string, object> {
+                    { "name", "cad_anh" },
+                    { "description", "In bản vẽ đang mở ra PNG để NHÌN lại sau khi vẽ. Trả đường dẫn file ở \"anh\"; chỉ đọc ảnh khi cần xem. hop: chụp một vùng, bỏ = toàn bản vẽ." },
+                    { "inputSchema", new Dictionary<string, object> { { "type", "object" },
+                        { "properties", new Dictionary<string, object> {
+                            { "hop", new Dictionary<string, object> { { "type", "array" }, { "items", kieuSo }, { "description", "[x1,y1,x2,y2]" } } },
+                            { "rong", new Dictionary<string, object> { { "type", "number" }, { "description", "bề rộng ảnh px: 640, 800, 1024 (mặc định), 1280, 1600" } } } } } } } } };
         }
 
         static string Goi(string ten, Dictionary<string, object> a, out bool hong)
@@ -125,6 +132,13 @@ namespace TKPCCC
                     json = Js.Serialize(a);
                 }
                 return ChayViec(json, out hong);
+            }
+            if (ten == "cad_anh")
+            {
+                // Là thao tác "anh" của spec (Spec.cs, InAnh): muốn vẽ rồi chụp trong một lần gọi thì thêm {"op":"anh"} vào cuối ops của cad_chay.
+                Dictionary<string, object> op = new Dictionary<string, object>(a);
+                op["op"] = "anh";
+                return ChayViec(Js.Serialize(new Dictionary<string, object> { { "ops", new object[] { op } } }), out hong);
             }
             hong = true;
             return "Không có công cụ " + ten;

@@ -79,3 +79,11 @@ Dừng 15:20: usage 5 giờ 79 % (hai phiên dùng chung), việc kế `cad_anh`
 - Người dùng gửi tài liệu hướng dẫn AutoCAD MCP của bên khác: ý lấy được ghi ở `cad/knowledge/tham-khao-mcp-hub.md`.
 - Người dùng trả lời 6 câu hỏi (đi dây, chia zone, hệ địa chỉ, ống góp, bước rải, nhận phòng): ghi ở `cad/knowledge/tu-duy-di-day-di-ong.md`; việc phải sửa là Bước 1c của `cad/TIEN_DO.md`. Thêm mục nhắc ba thứ người dùng chưa cấp (chuẩn layer, block động, catalog).
 - Dừng 15:15 vì usage 5 giờ gần 90 % (reset 19:20). Task hẹn giờ chạy một lần lúc 19:25 sẽ làm tiếp.
+## 2026-11-11 (tối) — Bước 1b: công cụ MCP `cad_anh`
+- Người dùng bảo xoá mọi hẹn giờ và làm tiếp ngay trong phiên: đã xoá scheduled task `tkpccc-cad-lam-tiep` (19:25); phiên này làm tiếp từ 19:22 sau khi usage 5 giờ reset.
+- Thêm thao tác spec `anh` (`Spec.cs`, hàm `InAnh`) và công cụ MCP `cad_anh` (`Mcp.cs`): in Model ra PNG bằng lệnh `-PLOT` qua `Editor.Command`, thiết bị `PublishToWeb PNG.pc3`,
+  5 khổ ngang 640–1600 px (`rong`), `hop` = cửa sổ theo WCS, bỏ `hop` = toàn bản vẽ. Chạy SAU khi commit gói nên vẽ và chụp trong một lần gọi được.
+  Ảnh nằm ở `%LOCALAPPDATA%\TKPCCC\cad\anh`, tự dọn sau 1 ngày; kết quả chỉ trả đường dẫn. `Cau.cs` không phải sửa vì ảnh là một thao tác của `PCCC_SPEC`.
+- Kiểm chứng: `chay_thu.ps1` 24/24 (PNG 800 px có nét của hình vẽ trong cùng gói, vùng chụp nằm xa mọi hình khác), `thu_mcp.ps1` 9/9 (`tools/list` 3 công cụ, `cad_anh` ghi đúng gói vào hàng đợi).
+- Chưa kiểm: `anh` trên AutoCAD có giao diện.
+- Gỡ `cad/TKPCCC.bundle/Contents/hardcopy.log` khỏi git (log AutoCAD tự ghi, có đường dẫn trên máy người dùng) và thêm vào `.gitignore`. Các bản cũ của file vẫn còn trong lịch sử repo công khai.

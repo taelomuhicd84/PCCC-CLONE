@@ -13,6 +13,7 @@ Thao tác (`op`):
 - `dem` (thiết bị cái, ống m theo mã)
 - `rai` ma, vùng = hop | vung:[[x,y],...] | l (polyline kín, mặc định PCCC_VUNG), s (bước TỐI ĐA) hoặc buoc:[bx,by] (bước đúng), kt:true. Trả `rai`: n, bx, by, tuong, ho (% hở)
 - `tuyen` ma, kieu:"noi_tiep" (dây, tu/den) | "xuong_ca" | "nhanh" (hai kiểu sau cần truc:[[x,y],...] ống chính), p (bỏ = điểm của `rai` ngay trước), nhan:true ghi DN. Trả `tuyen`: doan, m
+- `anh` hop, rong (px): in PNG SAU khi vẽ xong cả gói, trả đường dẫn ở `anh`; chỉ đọc ảnh khi cần nhìn
 Bước rải lấy theo quy chuẩn (`cad/rule/LUAT.md`), plugin không tự đặt.
 Chi tiết: `cad_tt` với tu_vung=true.
 ---
@@ -33,6 +34,7 @@ Mọi thao tác vẽ nhận `l` (layer, mặc định `0`; chưa có thì tạo 
 | `dem` | | Số thiết bị (cái) và ống/dây (m) theo mã, cùng cách đếm với `PCCC_BOC` |
 | `rai` | `ma`; vùng: `vung` hoặc `hop` hoặc `l` (+ `hop` để lọc); `s` hoặc `buoc` (số hoặc [x, y]); `le`, `chan` (mặc định 50 mm), `goc`, `kt` | Rải thiết bị theo lưới đặt giữa vùng. `s`: n = ceil(W / s), bước chia đều rồi làm tròn xuống theo `chan`, dư dồn đều ra hai tường. `buoc`: bước đúng, số thiết bị nhiều nhất mà cách tường còn ≥ `le` (mặc định bước / 4). `goc` (độ) xoay lưới cho phòng nghiêng. Vùng không chữ nhật: lưới theo hộp bao, bỏ điểm ngoài đa giác. `kt`:true ghi chuỗi kích thước tường–thiết bị–tường trên layer `PCCC_KT` (chỉ khi `goc` = 0). Thiếu cả `s` và `buoc` thì báo lỗi. Quá 5000 thiết bị một vùng thì báo lỗi (sai đơn vị). Kết quả `rai`: mỗi vùng `n`, `nx`, `ny`, `bx`, `by`, `tuong` [x, y], `ho` (% diện tích xa mọi thiết bị hơn nửa đường chéo ô lưới; > 0 thì phải xem lại) |
 | `tuyen` | `ma` (ống/dây), `kieu`, `p`, `truc`, `tu`, `den`, `qua`, `nhan`, `cao`, `sai_so` (mặc định 100 mm) | Không có `p` thì dùng điểm của `rai` ngay trước, theo từng vùng. `noi_tiep`: MỘT polyline đi rắn bò qua mọi điểm, hết vùng này sang vùng kế; `tu` nối thêm đầu vào (hàng bắt đầu từ góc gần `tu`), `den` nối thêm đầu ra. `xuong_ca`: mỗi vùng một ống góp vuông góc ống chính `truc` tới hàng xa nhất (trùng cột thiết bị gần `tu`, không có `tu` thì cột gần giữa; `qua` để chỉ chỗ khác) + mỗi hàng một nhánh tới ống góp. `nhanh`: mỗi điểm một đoạn vuông góc vào ống chính. `nhan`:true ghi chữ DN (từ mã `ONG_DN50`) dọc đoạn đủ dài, layer `PCCC_NHAN`. Kết quả `tuyen`: `kieu`, `doan`, `m`. Chưa né tường: là phương án nháp để kỹ sư chỉnh |
+| `anh` | `hop`, `rong` (640, 800, 1024 mặc định, 1280, 1600; số khác thì lấy khổ lớn hơn kế tiếp) | In Model ra PNG (thiết bị `PublishToWeb PNG.pc3` của AutoCAD), bỏ `hop` = toàn bản vẽ. Đặt ở đâu trong `ops` cũng chạy SAU khi cả gói vẽ xong. Kết quả `anh`: mảng đường dẫn file trong `%LOCALAPPDATA%\TKPCCC\cad\anh` (tự xoá sau 1 ngày, cần giữ thì chép đi). Ảnh luôn khổ ngang 4:3 hoặc 5:4, vùng không cùng tỉ lệ thì có lề trắng. Công cụ `cad_anh` là thao tác này gọi riêng |
 
 Cấp gói: `goc` [x,y], `zoom`:true (zoom toàn bản vẽ sau khi vẽ, tốn thêm một bước Undo), `ban_ve`:"ten.dwg" (khoá: bản vẽ đang hiện không đúng tên này thì từ chối cả gói, không vẽ gì; tên lấy từ `cad_tt` hoặc trường `ban_ve` của kết quả trước. Nên ghi khi vẽ nhiều lượt vào cùng một bản vẽ).
 
@@ -60,5 +62,6 @@ Số `s`, `buoc` trong ví dụ là số của bản mẫu, không phải quy ch
 ## Quy tắc tiết kiệm token
 - Gộp mọi thao tác vào một lần gọi `cad_chay`. Không chia nhỏ theo từng nét.
 - Không gọi `cad_tt` hay `doc` để kiểm lại khi kết quả đã có `ok:true`.
+- Cần nhìn lại hình: thêm `{"op":"anh"}` vào cuối gói vẽ (không tốn thêm lần gọi), `rong` nhỏ nhất còn đọc được, `hop` bó sát vùng cần xem.
 - Đọc bản vẽ: dùng `doc` có `l` hoặc `hop` để thu hẹp, không đọc cả bản vẽ.
 - Hình lặp lại nhiều lần: xin thêm thao tác tham số trong `cad/module/plugin/Spec.cs` thay vì liệt kê từng nét.

@@ -46,7 +46,7 @@ try {
   Gui @{ jsonrpc = '2.0'; method = 'notifications/initialized' }
   Gui @{ jsonrpc = '2.0'; id = 2; method = 'tools/list' }
   $r = Nhan 15000
-  Kiem ((@($r.result.tools).Count -eq 2) -and ($r.result.tools[0].name -eq 'cad_tt') -and ($r.result.tools[1].name -eq 'cad_chay')) 'tools/list co cad_tt, cad_chay'
+  Kiem (((@($r.result.tools) | ForEach-Object { $_.name }) -join ',') -eq 'cad_tt,cad_chay,cad_anh') 'tools/list co cad_tt, cad_chay, cad_anh'
 
   # Chua co song.json: phai bao ngay la AutoCAD chua mo, khong treo.
   Gui @{ jsonrpc = '2.0'; id = 3; method = 'tools/call'; params = @{ name = 'cad_chay'; arguments = @{ ops = @(@{ op = 'dem' }) } } }
@@ -68,6 +68,20 @@ try {
     $kq = $r.result.content[0].text | ConvertFrom-Json
     Kiem ($r.result.isError -eq $false -and $kq.ok -eq $true -and $kq.ve -eq 29) "cad_chay tra ket qua cua plugin (ve = $($kq.ve), can 29)"
     Kiem (-not (Test-Path "$T\hd\dang\$($viec.Name)") -and -not (Test-Path "$T\hd\ra\$($viec.Name)")) 'hang doi don sach sau khi xong'
+  }
+
+  # cad_anh: Mcp.exe phai goi thanh goi {"ops":[{"op":"anh",...}]}. Thao tac "anh" that kiem o chay_thu.ps1;
+  # o day dua chinh file viec sang "ra" lam ket qua gia de khong phai mo accoreconsole lan nua.
+  '{"luc":"' + (Get-Date).ToUniversalTime().ToString('o') + '","ban_ve":"thu.dwg"}' | Set-Content -Encoding ascii "$T\hd\song.json"
+  Gui @{ jsonrpc = '2.0'; id = 5; method = 'tools/call'; params = @{ name = 'cad_anh'; arguments = @{ hop = @(0, 0, 100, 100); rong = 800 } } }
+  $viec = $null
+  for ($i = 0; $i -lt 100 -and -not $viec; $i++) { Start-Sleep -Milliseconds 100; $viec = Get-ChildItem "$T\hd\vao\*.json" | Select-Object -First 1 }
+  $g = if ($viec) { Get-Content -Raw -Encoding UTF8 $viec.FullName | ConvertFrom-Json }
+  Kiem ($g -and $g.ops[0].op -eq 'anh' -and $g.ops[0].rong -eq 800 -and @($g.ops[0].hop).Count -eq 4) 'cad_anh ghi goi {op: anh, hop, rong} vao hang doi'
+  if ($viec) {
+    Move-Item $viec.FullName "$T\hd\ra\"
+    $r = Nhan 15000
+    Kiem ($r.result.isError -eq $false -and $r.result.content[0].text -match '"anh"') 'cad_anh tra ket qua cua plugin'
   }
 }
 finally { $mcp.StandardInput.Close(); if (-not $mcp.WaitForExit(5000)) { $mcp.Kill() } }

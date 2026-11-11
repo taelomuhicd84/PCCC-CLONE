@@ -16,6 +16,8 @@ AI không vẽ từng nét. AI viết một gói spec ngắn, plugin C# sinh hì
 2. Số liệu dự án lấy từ `du_an.json` trong thư mục dự án (mặc định `ket_qua/<dự án>/cad/`) nếu có. Không đọc lại PDF để lấy số đã có.
 3. Soạn MỘT gói cho cả việc rồi gọi `cad_chay` một lần. Gói dài hoặc sẽ chạy lại: lưu `ket_qua/<dự án>/cad/skills/<tên>.json` rồi truyền `file` (chạy lại không tốn token viết).
 4. Đọc kết quả: `loi` rỗng là xong, không gọi lại để kiểm. Có `loi` thì chỉ sửa đúng thao tác hỏng (theo `i`) và gửi lại riêng thao tác đó.
+   Vẽ nhiều lượt vào cùng một bản vẽ: từ lượt hai ghi `"ban_ve":"<tên>"` (lấy ở kết quả lượt trước) để người dùng đổi tab giữa chừng thì gói bị từ chối, không vẽ nhầm bản khác.
+   Cần nhìn hình (so với PDF mẫu, kiểm chữ đè, tuyến cắt nhau): thêm `{"op":"anh","hop":[...],"rong":800}` vào cuối gói rồi đọc file PNG ở `anh`; chỉ chụp khi số đếm chưa đủ để kết luận.
 5. Báo người dùng: số đối tượng đã vẽ, giả định đã dùng (cao độ, tỉ lệ, cỡ chữ), điểm cần họ xem.
 
 ## Lưu ý
@@ -24,4 +26,4 @@ AI không vẽ từng nét. AI viết một gói spec ngắn, plugin C# sinh hì
 - `cad_chay` báo "đang bận": người dùng đang dở một lệnh trong AutoCAD, nhờ họ kết thúc lệnh rồi gọi lại.
 - Thiếu thao tác cho một hình lặp lại nhiều lần: thêm thao tác tham số vào `cad/module/plugin/Spec.cs` theo skill `tkpccc-cad-console`, đừng liệt kê hàng trăm nét.
 - Người dùng muốn hoàn tác: một lần `cad_chay` là một bước Undo (gõ `U` trong AutoCAD).
-- Chưa có (để lại, xem `cad/KE_HOACH.md`): rải thiết bị tự động theo vùng, đi tuyến ống/dây, sơ đồ nguyên lý, PDF → CAD, ảnh chụp bản vẽ, khung chat trong CAD.
+- Chưa có (để lại, xem `cad/KE_HOACH.md`): sơ đồ nguyên lý, PDF → CAD, khung chat trong CAD.

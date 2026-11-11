@@ -3,28 +3,29 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
-## TRẠNG THÁI (cập nhật 2026-11-11, 15:00)
-- 15:15: người dùng đã trả lời 6 câu hỏi thiết kế (mục "NGƯỜI DÙNG ĐÃ TRẢ LỜI"), việc sửa theo là Bước 1c. Dừng vì usage 5 giờ gần 90 % (reset 19:20); task hẹn giờ 19:25 làm tiếp. Đầu phiên nhớ mục "NHẮC NGƯỜI DÙNG ĐẦU PHIÊN".
+## TRẠNG THÁI (cập nhật 2026-11-11, 19:45)
+- 19:45: XONG Bước 1b (`cad_anh`). VIỆC KẾ: Bước 1c (người dùng đã trả lời 6 câu hỏi thiết kế, mục "NGƯỜI DÙNG ĐÃ TRẢ LỜI"). Đầu phiên nhớ mục "NHẮC NGƯỜI DÙNG ĐẦU PHIÊN".
+- Hạn mức đang chặn là "Weekly · Fable" (86 % lúc 19:40, reset 05:00 ngày 2026-11-14 giờ VN), không phải cửa sổ 5 giờ (25 %). Một bước cỡ Bước 1b tốn khoảng 6 % tuần Fable.
+- XONG Bước 1b: thao tác spec `anh` (`module/plugin/Spec.cs`, hàm `InAnh`) + công cụ MCP `cad_anh` (`module/mcp/Mcp.cs`). In Model ra PNG bằng `-PLOT` qua `Editor.Command`,
+  chạy SAU khi commit gói nên vẽ + chụp trong một lần gọi được. `chay_thu.ps1` 24/24, `thu_mcp.ps1` 9/9; bundle đã build lại 19:45 (tắt mở AutoCAD và Claude Code để nạp).
+  CHƯA thử `anh` trên AutoCAD có giao diện: dấu nhắc `-PLOT` mới thử trong accoreconsole; cần xem in nền (`BACKGROUNDPLOT`) và hộp tiến độ in có làm lệch không.
 - XONG: MCP CAD (G0–G2), `cad/` thành dự án con, thử thật với AutoCAD đang mở (`luoi_truc`, `dat`, `ong`, `chu`, `dem`, `doc` đều đúng).
   Lưu ý khi vẽ thật: `cad_chay` vẽ vào bản vẽ đang hiện (đổi tab giữa chừng là vẽ sang bản khác); `doc` `vung` chỉ đọc layer `PCCC_VUNG`; `hop` chỉ lấy đối tượng nằm trọn trong hộp.
 - XONG Bước 1 (G3): thao tác `rai`, `tuyen` (3 kiểu `noi_tiep`, `xuong_ca`, `nhanh`), lệnh `PCCC_RAI`. Mã ở `module/plugin/Rai.cs`, ví dụ `skills/vi_du/rai.json`,
   từ vựng trong `skills/TU_VUNG.md`. `chay_thu.ps1` 21/21, `thu_mcp.ps1` 7/7. CHƯA thử trên AutoCAD có giao diện: nhánh bấm điểm trong phòng của `PCCC_RAI`
   (`Editor.TraceBoundary`) chỉ chạy được ở đó; DLL trong bundle chưa build lại (chạy `cad\build.bat`, tắt mở AutoCAD).
 - Thư mục `cad/layer/` chờ người dùng thả file `.md` chuẩn layer.
-- **ĐANG LÀM (người dùng giao 2026-11-11, giai đoạn dựng khung làm bằng Fable): vẽ được bản vẽ PCCC như bản mẫu.** Việc kế: Bước 1b dưới đây.
-- Chỉ MỘT phiên được sửa mã trong `cad/` tại một thời điểm (14:29 ngày 2026-11-11 hai phiên ghi đè nhau). Scheduled task `tkpccc-cad-lam-tiep` là task chạy MỘT lần lúc 19:25 ngày 2026-11-11
-  (phiên gốc báo không đổi được sang chạy lặp): lần chạy đó làm tiếp từ file này, bắt đầu ở `cad_anh` (Bước 1b). Trước lần đó, tới 90 % usage chỉ ghi tiến độ, commit, push rồi dừng.
-- 2 commit `0d694d3`, `5e5e979` CHƯA push (shell của Claude không có đăng nhập Git): chạy `git push origin main` trong tab Terminal của người dùng.
+- **ĐANG LÀM (người dùng giao 2026-11-11, giai đoạn dựng khung làm bằng Fable): vẽ được bản vẽ PCCC như bản mẫu.** Việc kế: Bước 1c dưới đây.
+- Chỉ MỘT phiên được sửa mã trong `cad/` tại một thời điểm (14:29 ngày 2026-11-11 hai phiên ghi đè nhau).
+- Hẹn giờ: người dùng bảo xoá hết hẹn giờ cũ (2026-11-11 15:20), scheduled task `tkpccc-cad-lam-tiep` đã xoá. Người dùng muốn tự làm tiếp NGAY TRONG phiên đang làm:
+  hẹn bằng `CronCreate` một lần (mất khi đóng ứng dụng), không tạo scheduled task mở phiên mới.
+- Push: shell của Claude không lấy được đăng nhập Git thì chạy `git push origin main` trong tab Terminal của người dùng.
 
 ## VIỆC LÀM TIẾP, THEO THỨ TỰ (tự làm, không cần hỏi người dùng)
 Mỗi bước xong: `cad\test\chay_thu.ps1` + `cad\test\thu_mcp.ps1` ra `TAT CA DAT`, ghi file này + `cad/LICH_SU.md`, commit, push. Kiểm `get_usage` giữa các bước.
 
-### Bước 1b. Hai việc ưu tiên 1 lấy từ `knowledge/tham-khao-mcp-hub.md` (dùng để kiểm mọi bước sau)
-- XONG (2026-11-11 15:20): khoá `ban_ve` cấp gói trong spec (`ThucHienSpec`, `Spec.cs`); lệch tên thì từ chối cả gói. `chay_thu.ps1` 23/23, `thu_mcp.ps1` 7/7.
-  Còn nợ: hướng dẫn trong skill `tkpccc-ve-cad` nhắc AI ghi `ban_ve` khi vẽ nhiều lượt.
-- VIỆC KẾ, CHƯA LÀM (dừng 15:20 vì usage 5 giờ 79 %, làm tiếp dễ vượt 90 %): công cụ MCP `cad_anh` {`hop` hoặc toàn bản vẽ, `rong` px}: plugin in vùng đó ra PNG (lệnh `-PLOT` cửa sổ như `cad/.claude/skills/tkpccc-cad-console/scripts/in_png.ps1`,
-  đẩy qua `Cau.cs`), trả ĐƯỜNG DẪN file; AI chỉ đọc ảnh khi cần. Sửa `module/mcp/Mcp.cs` (hàm `CongCu`), `Cau.cs`, `thu_mcp.ps1` (`tools/list` thành 3 công cụ).
-  Phải thử thứ tự dấu nhắc `-PLOT` trong accoreconsole trước.
+### Bước 1b. XONG 2026-11-11 (khoá `ban_ve` 15:20, `cad_anh` 19:45; chi tiết ở `cad/LICH_SU.md`)
+Skill `tkpccc-ve-cad` đã nhắc ghi `ban_ve` khi vẽ nhiều lượt và cách thêm `anh` vào cuối gói.
 
 ### Bước 1c. Sửa theo trả lời của người dùng 11/11 (làm trước Bước 2; căn cứ `knowledge/tu-duy-di-day-di-ong.md`)
 - `rai`: thêm `dt` = diện tích bảo vệ tối đa của một thiết bị (m², lấy theo quy chuẩn, vd TCVN 7336: 12 hoặc 9). Sau khi chia theo `s`, nếu bx × by > `dt` thì thêm hàng hoặc cột ở phương có bước lớn hơn cho tới khi đạt. Trả thêm `m2` (diện tích thực mỗi thiết bị). Phép kiểm: `s` 4000 với `dt` 12 phải cho bước kiểu 4000 × 3000 hoặc 3500 × 3500, không ra 4000 × 4000.
@@ -92,6 +93,10 @@ Ba thứ người dùng CHƯA cấp, bảo Claude làm sườn trước rồi h�
 - `rai`: trường `goc` là góc xoay LƯỚI (phòng nghiêng), không phải góc xoay block; `kt` chỉ vẽ khi `goc` = 0. `le` mặc định bước / 4. Trần 5000 thiết bị một vùng.
 - `tuyen` `noi_tiep` nối MỌI vùng của `rai` trước đó thành một đường; muốn mỗi phòng một đường thì gọi `rai` + `tuyen` từng phòng.
 - Thêm thao tác spec: hàm `Op...` trong `module/plugin/Spec.cs` + 1 dòng `MotOp` + 1 dòng `skills/TU_VUNG.md` + 1 phép kiểm trong `test/chay_thu.ps1`.
+- Thao tác phải chạy LỆNH AutoCAD (`anh` dùng `-PLOT`, sắp tới `pdf` dùng `-PDFIMPORT`): không đặt trong `MotOp`. `ThucHienSpec` gom chúng rồi gọi `Editor.Command` ngoài transaction
+  (`anh` sau commit). `Editor.Command` chạy được trong accoreconsole. Toạ độ gõ cho lệnh thêm dấu `*` đằng trước để tính theo WCS.
+- Thứ tự dấu nhắc `-PLOT` ra PNG (AutoCAD 2021): Y, Model, `PublishToWeb PNG.pc3`, khổ giấy, L, N, W + 2 góc (hoặc E), F, C, Y, `.`, Y, Enter, tên file, N, Y.
+  File đã có thì lệnh hỏi ghi đè (lệch dấu nhắc): luôn đặt tên mới. Thiết bị này chỉ có khổ định sẵn (640–1600 px), không nhận cỡ tuỳ ý.
 - Phần đầu `skills/TU_VUNG.md` (trước dòng `---`) gửi cho AI lúc kết nối: giữ dưới 1900 ký tự (`thu_mcp.ps1` có kiểm).
 - Lệnh Bash của Claude làm mất một dấu gạch chéo ngược khi viết hai dấu liền nhau trong heredoc: script Python có đường dẫn Windows thì dùng `chr(92)`, hoặc ghi script ra file rồi chạy.
 - `build.bat` đổi tên DLL/exe đang bị khoá thành `*.cu*` rồi build bản mới. Build hỏng giữa chừng thì bundle tạm không có DLL: sửa lỗi rồi chạy lại `build.bat`.

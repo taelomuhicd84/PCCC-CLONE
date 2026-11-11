@@ -12,6 +12,9 @@ cad/TKPCCC.bundle/Contents/vat_tu.json
 *.bak
 *.dwl
 *.dwl2
+# Log AutoCAD tu ghi khi in (co duong dan tren may nguoi dung)
+hardcopy.log
+plot.log
 
 # Ket qua build may chu MCP CAD
 cad/bin/
