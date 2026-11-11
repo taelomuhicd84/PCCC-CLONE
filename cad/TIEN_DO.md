@@ -18,9 +18,9 @@ Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.m
 Mỗi bước xong: `cad\test\chay_thu.ps1` + `cad\test\thu_mcp.ps1` ra `TAT CA DAT`, ghi file này + `cad/LICH_SU.md`, commit, push. Kiểm `get_usage` giữa các bước.
 
 ### Bước 1b. Hai việc ưu tiên 1 lấy từ `knowledge/tham-khao-mcp-hub.md` (dùng để kiểm mọi bước sau)
-- Khoá `ban_ve`: trường cấp gói trong spec; tên file phải khớp bản vẽ đang hiện (`Path.GetFileName(doc.Name)`, không phân biệt hoa thường), lệch thì từ chối cả gói, không vẽ.
-  Sửa `ThucHienSpec` (`Spec.cs`), 1 dòng `TU_VUNG.md`, 1 phép kiểm trong `chay_thu.ps1`.
-- Công cụ MCP `cad_anh` {`hop` hoặc toàn bản vẽ, `rong` px}: plugin in vùng đó ra PNG (lệnh `-PLOT` cửa sổ như `cad/.claude/skills/tkpccc-cad-console/scripts/in_png.ps1`,
+- XONG (2026-11-11 15:20): khoá `ban_ve` cấp gói trong spec (`ThucHienSpec`, `Spec.cs`); lệch tên thì từ chối cả gói. `chay_thu.ps1` 23/23, `thu_mcp.ps1` 7/7.
+  Còn nợ: hướng dẫn trong skill `tkpccc-ve-cad` nhắc AI ghi `ban_ve` khi vẽ nhiều lượt.
+- VIỆC KẾ, CHƯA LÀM (dừng 15:20 vì usage 5 giờ 79 %, làm tiếp dễ vượt 90 %): công cụ MCP `cad_anh` {`hop` hoặc toàn bản vẽ, `rong` px}: plugin in vùng đó ra PNG (lệnh `-PLOT` cửa sổ như `cad/.claude/skills/tkpccc-cad-console/scripts/in_png.ps1`,
   đẩy qua `Cau.cs`), trả ĐƯỜNG DẪN file; AI chỉ đọc ảnh khi cần. Sửa `module/mcp/Mcp.cs` (hàm `CongCu`), `Cau.cs`, `thu_mcp.ps1` (`tools/list` thành 3 công cụ).
   Phải thử thứ tự dấu nhắc `-PLOT` trong accoreconsole trước.
 

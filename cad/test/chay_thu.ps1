@@ -50,10 +50,13 @@ if ($out -match '\[TKPCCC\] L') { 'LOI   co lenh bao loi:'; ($out -split "`n" | 
 # Goi mau co 1 thao tac sai co y (khong_co) de kiem duong bao loi: ok = false, loi dung vi tri, cac thao tac khac van chay.
 Copy-Item "$GOC\cad\skills\vi_du\thu.json" "$T\spec.json"
 Copy-Item "$GOC\cad\skills\vi_du\rai.json" "$T\rai.json"
+'{"ban_ve":"khac.dwg","ops":[{"op":"tron","l":"KHOA","c":[0,0],"r":100}]}' | Set-Content -Encoding ascii "$T\khoa_sai.json"
+'{"ban_ve":"SPEC.DWG","ops":[{"op":"tron","l":"KHOA","c":[0,0],"r":100}]}' | Set-Content -Encoding ascii "$T\khoa_dung.json"
 # Ban ky_hieu.json da doi ten layer truc: chung to plugin doc mac dinh tu file du lieu (cad\data\ky_hieu), khong dung so cung trong ma.
 (Get-Content -Raw -Encoding UTF8 "$GOC\cad\data\ky_hieu\ky_hieu.json") -replace '"layer_truc":\s*"TRUC"', '"layer_truc": "TRUC_T"' |
   Set-Content -Encoding UTF8 "$T\ky_hieu.json"
-@('INSUNITS', '4', 'NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '_.SAVEAS', '2018', "`"$T\spec.dwg`"", 'PCCC_SPEC', "$T\spec.json", 'PCCC_SPEC', "$T\rai.json", '_.QSAVE') -join "`r`n" |
+@('INSUNITS', '4', 'NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '_.SAVEAS', '2018', "`"$T\spec.dwg`"", 'PCCC_SPEC', "$T\spec.json", 'PCCC_SPEC', "$T\rai.json",
+  'PCCC_SPEC', "$T\khoa_sai.json", 'PCCC_SPEC', "$T\khoa_dung.json", '_.QSAVE') -join "`r`n" |
   Set-Content -Encoding ascii "$T\kb2.scr"
 $p2 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb2.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb2.out.txt"
 if (-not $p2.WaitForExit(180000)) { Stop-Process -Id $p2.Id -Force; throw "accoreconsole qua 3 phut (PCCC_SPEC): $T\kb2.out.txt" }
@@ -82,5 +85,10 @@ if (Test-Path "$T\rai.kq.json") {
     @(($kr.ok -eq $false -and @($kr.loi).Count -eq 1 -and $kr.loi[0].i -eq 8), 'rai thieu s va buoc thi bao loi, khong tu dat tri so'))
   foreach ($c in $ks2) { if ($c[0]) { "DAT   $($c[1])" } else { "LOI   $($c[1])"; $loi++ } }
 } else { "LOI   rai.json khong ghi ket qua: $T\kb2.out.txt"; $loi++ }
+# --- Khoa ban_ve: spec ghi ten ban ve khac thi tu choi ca goi; dung ten (khong phan biet hoa thuong) thi ve ---
+$ksai = if (Test-Path "$T\khoa_sai.kq.json") { Get-Content -Raw -Encoding UTF8 "$T\khoa_sai.kq.json" | ConvertFrom-Json }
+$kdung = if (Test-Path "$T\khoa_dung.kq.json") { Get-Content -Raw -Encoding UTF8 "$T\khoa_dung.kq.json" | ConvertFrom-Json }
+if ($ksai -and $ksai.ok -eq $false -and $ksai.ve -eq 0 -and $ksai.loi[0].i -eq -1) { 'DAT   ban_ve sai ten: tu choi ca goi, khong ve' } else { 'LOI   ban_ve sai ten van ve'; $loi++ }
+if ($kdung -and $kdung.ok -eq $true -and $kdung.ve -eq 1) { 'DAT   ban_ve dung ten: ve binh thuong' } else { 'LOI   ban_ve dung ten ma khong ve'; $loi++ }
 "Thu muc thu: $T"
 if ($loi) { exit 1 } else { 'TAT CA DAT' }

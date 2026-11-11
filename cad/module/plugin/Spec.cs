@@ -133,6 +133,10 @@ namespace TKPCCC
             if (goi == null || !(Lay(goi, "ops") is IList)) throw new System.Exception("Spec phải có dạng {\"ops\":[...]}");
             IList ops = (IList)goi["ops"];
             zoom = LayCo(goi, "zoom", false);
+            // Khoá bản vẽ: spec ghi "ban_ve" thì chỉ vẽ khi đúng bản đó đang hiện (người dùng đổi tab giữa chừng là vẽ nhầm bản khác).
+            string khoa = LayChu(goi, "ban_ve", null), dangHien = Path.GetFileName(doc.Name);
+            if (khoa != null && !string.Equals(Path.GetFileName(khoa), dangHien, StringComparison.OrdinalIgnoreCase))
+                throw new System.Exception("spec khoá bản vẽ \"" + khoa + "\" nhưng AutoCAD đang hiện \"" + dangHien + "\": không vẽ gì. Chuyển về đúng bản vẽ rồi chạy lại");
             kyHieu = null; // đọc lại ky_hieu.json mỗi lần chạy: sửa file xong không cần mở lại AutoCAD
 
             GoiSpec g = new GoiSpec();
