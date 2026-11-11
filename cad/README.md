@@ -9,7 +9,7 @@ cad/
 ├─ .mcp.json               khai máy chủ MCP "cad" khi mở Claude Code ngay tại cad/ (gốc repo có bản riêng)
 ├─ .claude/
 │  ├─ agents/              agent riêng của CAD (chưa có; chỉ nạp khi mở Claude Code tại cad/)
-│  └─ skills/              tkpccc-ve-cad (vẽ qua MCP) · tkpccc-cad-console (build, kiểm thử, in PNG)
+│  └─ skills/              tkpccc-ve-cad (vẽ qua MCP; scripts/pdf_ti_le.py tính tỉ lệ trang PDF) · tkpccc-cad-console (build, kiểm thử, in PNG)
 ├─ skills/                 hướng dẫn dùng cho MỌI AI (Claude, Gemini, Codex): TU_VUNG.md (từ vựng spec, nguồn duy nhất) · vi_du/
 ├─ knowledge/              kiến thức vẽ CAD: quy-uoc-ban-ve.md · mau-ban-ve-pccc.md (cách rải, đi dây, đi ống của bản mẫu) · tham-khao-mcp-hub.md (ý lấy từ MCP bên khác) · hoc/
 ├─ rule/                   LUAT.md: việc trên CAD ↔ file quy chuẩn nguyên văn ↔ skill, agent liên quan
@@ -24,7 +24,7 @@ cad/
 │  ├─ mcp/                 Mcp.cs -> bin/TKPCCC.Mcp.exe (công cụ cad_tt, cad_chay, cad_anh)
 │  ├─ chung/               HangDoi.cs: hàng đợi file dùng chung plugin + máy chủ MCP
 │  └─ lisp/                LISP của người dùng (nạp tay bằng APPLOAD)
-├─ test/                   chay_thu.ps1 (plugin + PCCC_SPEC) · thu_mcp.ps1 (máy chủ MCP), không cần mở AutoCAD
+├─ test/                   chay_thu.ps1 (plugin + PCCC_SPEC) · thu_mcp.ps1 (máy chủ MCP), không cần mở AutoCAD · mau_kt.pdf (PDF thử 1:200, sinh bằng tao_pdf_mau.py)
 ├─ build.bat               build DLL + exe, chép dữ liệu vào bundle
 ├─ bin/                    kết quả build máy chủ MCP (không commit)
 └─ TKPCCC.bundle/          gói AutoCAD tự nạp: PackageContents.xml, Contents/ (DLL, PCCC_Blocks.dwg, block_alias.json)
@@ -45,6 +45,8 @@ AI chỉ viết một gói thao tác ngắn (spec JSON), plugin sinh hình. Mộ
 | Đổi câu hướng dẫn AI nhận lúc kết nối | phần đầu `skills/TU_VUNG.md`, trước dòng `---` (giữ dưới 1900 ký tự) |
 | Đổi tên, mô tả công cụ MCP | `module/mcp/Mcp.cs`, hàm `CongCu` |
 | Đổi cách in ảnh (`anh`, `cad_anh`): khổ, thiết bị in, chỗ lưu PNG | `module/plugin/Spec.cs`, hàm `InAnh` |
+| Đổi cách nhập PDF làm nền (`pdf`) | `module/plugin/Spec.cs`, hàm `NhapPdf` |
+| Đổi cách tính tỉ lệ trang PDF từ chuỗi kích thước | `.claude/skills/tkpccc-ve-cad/scripts/pdf_ti_le.py` (kiểm bằng `test/chay_thu.ps1`) |
 | Đổi nhịp xem hàng đợi, điều kiện "AutoCAD đang rảnh" | `module/plugin/Cau.cs` |
 | Đổi chỗ đặt hàng đợi | `module/chung/HangDoi.cs` hoặc biến môi trường `TKPCCC_CAD_HANG_DOI` |
 | Lệnh gõ tay `PCCC_*` | `module/plugin/Lenh.cs` (xem skill `tkpccc-cad-console`) |

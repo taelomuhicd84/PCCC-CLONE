@@ -37,6 +37,7 @@ namespace TKPCCC
             public List<object> KqRai = new List<object>(), KqTuyen = new List<object>();   // cad/module/plugin/Rai.cs
             public List<List<Point3d>> DiemRai = new List<List<Point3d>>();                 // điểm của "rai" gần nhất, theo từng vùng, để "tuyen" dùng lại
             public List<object> KqAnh = new List<object>();                                 // đường dẫn PNG của thao tác "anh"
+            public List<object> KqPdf = new List<object>();                                 // số đối tượng + layer của từng thao tác "pdf"
         }
 
         // ---------- Đọc JSON ----------
@@ -166,6 +167,15 @@ namespace TKPCCC
                 if (thieu) NapVaoBanVe(doc, g.Dm);
             }
 
+            // "pdf" chạy lệnh -PDFIMPORT (lệnh tự mở transaction riêng): làm TRƯỚC mọi thao tác khác của gói, ngoài transaction vẽ.
+            for (int i = 0; i < ops.Count; i++)
+            {
+                Dictionary<string, object> o = ops[i] as Dictionary<string, object>;
+                if (o == null || LayChu(o, "op", "") != "pdf") continue;
+                try { NhapPdf(g, o); }
+                catch (System.Exception ex) { g.Loi.Add(new Dictionary<string, object> { { "i", i }, { "op", "pdf" }, { "ly_do", ex.Message } }); }
+            }
+
             List<int> anh = new List<int>(); // "anh" chạy lệnh -PLOT: để sau commit thì ảnh mới có đối tượng vừa vẽ
             using (Transaction tr = g.Db.TransactionManager.StartTransaction())
             {
@@ -179,6 +189,7 @@ namespace TKPCCC
                     {
                         if (o == null) throw new System.Exception("thao tác phải là object {\"op\":...}");
                         if (ten == "anh") { anh.Add(i); continue; }
+                        if (ten == "pdf") continue; // đã chạy ở trên
                         MotOp(g, ten, o);
                     }
                     catch (System.Exception ex)
@@ -209,8 +220,52 @@ namespace TKPCCC
             if (g.KqRai.Count > 0) kq["rai"] = g.KqRai;
             if (g.KqTuyen.Count > 0) kq["tuyen"] = g.KqTuyen;
             if (g.KqAnh.Count > 0) kq["anh"] = g.KqAnh;
+            if (g.KqPdf.Count > 0) kq["pdf"] = g.KqPdf;
             kq["ban_ve"] = Path.GetFileName(doc.Name);
             return kq;
+        }
+
+        // ---------- PDF -> CAD (thao tác "pdf") ----------
+
+        /// Nhập nét và chữ vector của một trang PDF bằng lệnh -PDFIMPORT. Thứ tự dấu nhắc (đã thử trong accoreconsole 2021):
+        /// F, tên file, số trang, điểm chèn, tỉ lệ, góc xoay. Ở tỉ lệ 1 lệnh cho 1 đơn vị bản vẽ = 1 inch giấy (không theo INSUNITS),
+        /// nên nhân 25,4 × tl (tl = mẫu số tỉ lệ của trang) để nét vào bản vẽ đúng kích thước thật.
+        static void NhapPdf(GoiSpec g, Dictionary<string, object> o)
+        {
+            string f = LayChu(o, "file", "");
+            if (f == "" || !File.Exists(f)) throw new System.Exception("pdf: không thấy file \"" + f + "\" (cần đường dẫn tuyệt đối)");
+            double tl = LaySo(o, "tl", 0);
+            if (tl <= 0) throw new System.Exception("pdf cần \"tl\" = mẫu số tỉ lệ của trang (1:100 thì 100); tính bằng cad/.claude/skills/tkpccc-ve-cad/scripts/pdf_ti_le.py");
+            Point3d p = Lay(o, "p") == null ? new Point3d(g.Gx, g.Gy, 0) : P(g, Lay(o, "p"), "p");
+            long truoc = g.Db.Handseed.Value; // lệnh không trả danh sách: đối tượng mới là đối tượng có handle từ đây trở lên
+            object hopThoai = AcApp.GetSystemVariable("FILEDIA");
+            AcApp.SetSystemVariable("FILEDIA", (short)0); // không để lệnh mở hộp chọn file
+            try
+            {
+                g.Doc.Editor.Command("-PDFIMPORT", "F", Path.GetFullPath(f), ((int)LaySo(o, "trang", 1)).ToString(CultureInfo.InvariantCulture),
+                    string.Format(CultureInfo.InvariantCulture, "*{0},{1}", p.X, p.Y),
+                    (25.4 * tl * 0.001 / HeSoMet(g.Db)).ToString("R", CultureInfo.InvariantCulture),
+                    LaySo(o, "goc", 0).ToString("R", CultureInfo.InvariantCulture));
+            }
+            finally { AcApp.SetSystemVariable("FILEDIA", hopThoai); }
+            int n = 0;
+            List<string> layer = new List<string>();
+            using (Transaction tr = g.Db.TransactionManager.StartTransaction())
+            {
+                foreach (ObjectId id in (BlockTableRecord)tr.GetObject(g.Db.CurrentSpaceId, OpenMode.ForRead))
+                {
+                    if (id.Handle.Value < truoc) continue;
+                    Entity e = tr.GetObject(id, OpenMode.ForRead) as Entity;
+                    if (e == null) continue;
+                    n++;
+                    if (!layer.Contains(e.Layer) && layer.Count < 10) layer.Add(e.Layer);
+                    try { MoHop(g, e.GeometricExtents); } catch (System.Exception) { }
+                }
+                tr.Commit();
+            }
+            if (n == 0) throw new System.Exception("pdf: không nhập được đối tượng nào (trang là ảnh quét không có nét vector, hoặc số trang sai)");
+            g.Ve += n;
+            g.KqPdf.Add(new Dictionary<string, object> { { "n", n }, { "l", layer } });
         }
 
         // ---------- Ảnh (thao tác "anh", công cụ MCP cad_anh) ----------

@@ -3,11 +3,14 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
-## TRẠNG THÁI (cập nhật 2026-11-11, 20:05)
-- 20:05: XONG Bước 1b (`cad_anh`) và Bước 1c (`rai` + `dt`, `tuyen` `tia`, lệnh `PCCC_TUYEN`, luật, hướng dẫn). VIỆC KẾ: Bước 2 (PDF → CAD). Đầu phiên nhớ mục "NHẮC NGƯỜI DÙNG ĐẦU PHIÊN".
-- DỪNG 20:05 theo luật 90 %: "Weekly · Fable" 92 % (reset 05:00 ngày 2026-11-14 giờ VN); cửa sổ 5 giờ mới 47 %, "Weekly · all models" 54 %. Mỗi bước cỡ 1b, 1c tốn khoảng 6 % tuần Fable.
-  Đã hẹn `CronCreate` một lần lúc 05:03 ngày 2026-11-14 trong phiên đang mở để tự làm tiếp Bước 2 (đóng ứng dụng thì mất hẹn: phiên mới đọc file này rồi làm). Muốn làm sớm hơn thì đổi model của phiên sang Opus, do người dùng quyết.
-- Commit `f3d354f` (1b) và commit 1c CHƯA lên GitHub lúc 20:05: `git push` ở tab Terminal đang chờ Git Credential Manager (người dùng đăng nhập ở cửa sổ nó bật lên); xong thì chạy lại `git push origin main`.
+## TRẠNG THÁI (cập nhật 2026-11-11, 22:00)
+- 22:00: XONG Bước 1b (`cad_anh`), Bước 1c (`rai` + `dt`, `tuyen` `tia`, `PCCC_TUYEN`) và Bước 2 (PDF → CAD: thao tác `pdf` + `pdf_ti_le.py`). VIỆC KẾ: Bước 3. Đầu phiên nhớ mục "NHẮC NGƯỜI DÙNG ĐẦU PHIÊN".
+- Hạn mức: 20:05 dừng vì "Weekly · Fable" 92 %; người dùng tự reset khoảng 21:40 (mọi cửa sổ về 0 %) và bảo làm tiếp. Mỗi bước cỡ 1b, 1c, 2 tốn khoảng 6 % tuần Fable.
+  Không còn hẹn giờ nào (hẹn 05:03 ngày 14/11 đã xoá). Tuần reset 05:00 ngày 2026-11-14 giờ VN.
+- Các commit từ `f3d354f` (1b) trở đi CHƯA lên GitHub lúc 22:00: `git push` ở tab Terminal chờ Git Credential Manager từ 19:30 (người dùng đăng nhập ở cửa sổ nó bật lên); xong thì chạy lại `git push origin main`.
+- XONG Bước 2: thao tác spec `pdf` (`Spec.cs`, hàm `NhapPdf`, lệnh `-PDFIMPORT`) + `cad/.claude/skills/tkpccc-ve-cad/scripts/pdf_ti_le.py` (tính `tl` từ chuỗi kích thước).
+  `chay_thu.ps1` 29/29 (PDF thử 1:200: `tl` 200,0, trục 1–7 đo lại 41000,0), `thu_mcp.ps1` 9/9. PDF mẫu thật `ket_qua/cad_mau/test_HA2.pdf` trang 3: `tl` 285,0, nhập 39 056 đối tượng trong 8 giây,
+  trục 1–7 lệch −0,09 % (đạt ± 1 %). Tỉ lệ 4 trang: 260,3 / 285,2 / 285,0 / 249,6. CHƯA thử `pdf` trên AutoCAD có giao diện.
 - XONG Bước 1c: `rai` nhận `dt` (m² tối đa một thiết bị) và trả `m2`; `tuyen` kiểu `tia`; lệnh `PCCC_TUYEN` (chọn đầu phun, chọn ống chính, bấm vị trí ống góp); `PCCC_RAI` hỏi thêm diện tích bảo vệ.
   `chay_thu.ps1` 27/27, `thu_mcp.ps1` 9/9, bundle build lại 20:05. CHƯA thử trên AutoCAD có giao diện: `PCCC_TUYEN` (chọn bằng chuột, bấm điểm) và dấu nhắc mới của `PCCC_RAI`.
 - XONG Bước 1b: thao tác spec `anh` (`module/plugin/Spec.cs`, hàm `InAnh`) + công cụ MCP `cad_anh` (`module/mcp/Mcp.cs`). In Model ra PNG bằng `-PLOT` qua `Editor.Command`,
@@ -19,7 +22,7 @@ Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.m
   từ vựng trong `skills/TU_VUNG.md`. `chay_thu.ps1` 21/21, `thu_mcp.ps1` 7/7. CHƯA thử trên AutoCAD có giao diện: nhánh bấm điểm trong phòng của `PCCC_RAI`
   (`Editor.TraceBoundary`) chỉ chạy được ở đó; DLL trong bundle chưa build lại (chạy `cad\build.bat`, tắt mở AutoCAD).
 - Thư mục `cad/layer/` chờ người dùng thả file `.md` chuẩn layer.
-- **ĐANG LÀM (người dùng giao 2026-11-11, giai đoạn dựng khung làm bằng Fable): vẽ được bản vẽ PCCC như bản mẫu.** Việc kế: Bước 2 dưới đây.
+- **ĐANG LÀM (người dùng giao 2026-11-11, giai đoạn dựng khung làm bằng Fable): vẽ được bản vẽ PCCC như bản mẫu.** Việc kế: Bước 3 dưới đây.
 - Chỉ MỘT phiên được sửa mã trong `cad/` tại một thời điểm (14:29 ngày 2026-11-11 hai phiên ghi đè nhau).
 - Hẹn giờ: người dùng bảo "xoá hết mọi hẹn giờ, tự động chạy lại tại phiên này" (2026-11-11 15:20), scheduled task `tkpccc-cad-lam-tiep` đã xoá.
   Claude hiểu là: hẹn làm tiếp bằng `CronCreate` một lần ngay trong phiên đang làm, không tạo scheduled task mở phiên mới (chưa hỏi lại người dùng có áp dụng cho mọi lần không).
@@ -35,11 +38,12 @@ Skill `tkpccc-ve-cad` đã nhắc ghi `ban_ve` khi vẽ nhiều lượt và các
 Quy trình vùng (vẽ polyline `PCCC_VUNG` trước, người dùng kiểm, rồi `rai` theo `l`) đã ghi vào skill `tkpccc-ve-cad`; luật chia zone, đi dây, bước rải ở `rule/LUAT.md` (BC-04, BC-05, SP-02).
 Còn lại của các ý này: agent `cad-thiet-ke` (Bước 4) và `so_do` hệ địa chỉ (G5) dùng các luật đó. `knowledge/` gốc chưa có bản nguyên văn bảng khoảng cách đầu phun của TCVN 7336.
 
-### Bước 2. PDF → CAD (G4)
-- Thao tác `pdf`: `file`, `trang`, `p`, `tl`, `goc`. Chạy `-PDFIMPORT` bằng `Editor.Command` TRƯỚC khi mở transaction vẽ (như đoạn nạp block cho `dat` trong `ThucHienSpec`). Phải thử trong accoreconsole: thứ tự dấu nhắc của `-PDFIMPORT` (File, tên file, trang, điểm chèn, tỉ lệ, góc) và `Editor.Command` có chạy không; không được thì đẩy lệnh qua `SendStringToExecute` trong `Cau.cs`.
-- Script `cad/.claude/skills/tkpccc-ve-cad/scripts/pdf_ti_le.py` (PyMuPDF): tính tỉ lệ từ chuỗi kích thước. Các số kích thước cùng hàng nằm ở giữa từng nhịp, nên k (pt trên mỗi mm thật) = (c2 − c1) / ((d1 + d2) / 2), với c là tâm chữ và d là số ghi; lấy trung vị cả trang. `tl` = 1 / (k × 25,4 / 72). Mẫu: trang 841 × 595 pt xoay 90°, tổng 41000 mm dài khoảng 446 pt, `tl` khoảng 260.
-- Kiểm: nhập trang 3 của PDF mẫu, đo lại khoảng cách trục 1–7 phải ra 41000 ± 1 %.
-- Nhận phòng: bản đầu để người dùng bấm phòng bằng `PCCC_RAI`, hoặc AI xem ảnh rồi đưa `hop` từng phòng.
+### Bước 2. PDF → CAD (G4). XONG 2026-11-11 22:00 (chi tiết ở `cad/LICH_SU.md`; cách dùng ở skill `tkpccc-ve-cad`, mục "Nền kiến trúc từ PDF")
+Còn lại của G4:
+- Chữ font VNI trong PDF nhập vào bị sai dấu (vd "TAÛI TROÏNG"): chưa chuyển mã. `thamdinh/pccc_checker/pdf/` có sẵn `vni_to_unicode`, `is_vni_font` để tham khảo khi làm.
+- Nền nhập vào giữ màu của PDF; bản mẫu muốn nền kiến trúc xám nhạt, nét mảnh: làm cùng lúc có file chuẩn layer.
+- Nhận phòng tự động chưa có: AI xem ảnh (`anh`) rồi đưa hộp từng phòng lên `PCCC_VUNG`, hoặc người dùng bấm phòng bằng `PCCC_RAI`.
+- Tờ PDF chỉ có ảnh quét thì `pdf` báo lỗi: khi gặp mới làm đường `PDFATTACH` (gắn làm nền, không thành nét).
 
 ### Bước 3. Bảng block trong AutoCAD (ảnh + tên + mô tả), thêm được block động từ bản vẽ
 - DLL riêng `TKPCCC.UI.dll`, thư mục mới `cad/module/ui/`, tham chiếu thêm `acmgd.dll`. accoreconsole không nạp được DLL này nên test lõi giữ nguyên.
@@ -99,6 +103,12 @@ Ba thứ người dùng CHƯA cấp, bảo Claude làm sườn trước rồi h�
 - Thêm thao tác spec: hàm `Op...` trong `module/plugin/Spec.cs` + 1 dòng `MotOp` + 1 dòng `skills/TU_VUNG.md` + 1 phép kiểm trong `test/chay_thu.ps1`.
 - Thao tác phải chạy LỆNH AutoCAD (`anh` dùng `-PLOT`, sắp tới `pdf` dùng `-PDFIMPORT`): không đặt trong `MotOp`. `ThucHienSpec` gom chúng rồi gọi `Editor.Command` ngoài transaction
   (`anh` sau commit). `Editor.Command` chạy được trong accoreconsole. Toạ độ gõ cho lệnh thêm dấu `*` đằng trước để tính theo WCS.
+- Thứ tự dấu nhắc `-PDFIMPORT` (AutoCAD 2021): F, tên file, số trang, điểm chèn, tỉ lệ, góc xoay. Ở tỉ lệ 1 thì 1 đơn vị bản vẽ = 1 inch giấy, KHÔNG theo `INSUNITS`
+  (plugin nhân 25,4 × `tl`). Trang có `/Rotate` vào đúng chiều đang hiển thị. Layer mặc định `PDF_Geometry`, `PDF_Text`, `PDF_Solid Fills`. Lệnh không trả danh sách đối tượng:
+  đếm đối tượng mới theo handle ≥ `Handseed` trước lệnh.
+- `pdf_ti_le.py`: `get_text("words")` của PyMuPDF trả toạ độ trang CHƯA xoay (trang `/Rotate 90` thì chuỗi ngang trên màn hình là chuỗi đứng trong toạ độ này); script xét cả hai phương nên không sao.
+  Số kích thước ghi trên bản vẽ có thể lệch nét vẽ (bản mẫu: nhịp ghi 1700, vẽ 1785; tổng ghi 18800 nhưng các nhịp cộng lại 18600): vì vậy lọc hai vòng 1 % rồi 0,5 %.
+- Phần đầu `skills/TU_VUNG.md` đang dài 1831 / 1900 ký tự: thêm thao tác nữa phải rút gọn các dòng cũ.
 - Thứ tự dấu nhắc `-PLOT` ra PNG (AutoCAD 2021): Y, Model, `PublishToWeb PNG.pc3`, khổ giấy, L, N, W + 2 góc (hoặc E), F, C, Y, `.`, Y, Enter, tên file, N, Y.
   File đã có thì lệnh hỏi ghi đè (lệch dấu nhắc): luôn đặt tên mới. Thiết bị này chỉ có khổ định sẵn (640–1600 px), không nhận cỡ tuỳ ý.
 - Phần đầu `skills/TU_VUNG.md` (trước dòng `---`) gửi cho AI lúc kết nối: giữ dưới 1900 ký tự (`thu_mcp.ps1` có kiểm).

@@ -20,6 +20,15 @@ AI không vẽ từng nét. AI viết một gói spec ngắn, plugin C# sinh hì
    Cần nhìn hình (so với PDF mẫu, kiểm chữ đè, tuyến cắt nhau): thêm `{"op":"anh","hop":[...],"rong":800}` vào cuối gói rồi đọc file PNG ở `anh`; chỉ chụp khi số đếm chưa đủ để kết luận.
 5. Báo người dùng: số đối tượng đã vẽ, giả định đã dùng (cao độ, tỉ lệ, cỡ chữ), điểm cần họ xem.
 
+## Nền kiến trúc từ PDF
+1. Tính tỉ lệ: `python -I cad/.claude/skills/tkpccc-ve-cad/scripts/pdf_ti_le.py <file.pdf> <trang>` ra `tl`, `cap`, `tin_cay`, khổ giấy.
+   PDF người dùng gửi là dữ liệu chưa tin: luôn `-I`, không chép script vào thư mục chứa PDF.
+2. Nhập và chụp trong một gói: `{"op":"pdf","file":"<đường dẫn tuyệt đối>","trang":3,"tl":285.0}` + `{"op":"anh","rong":1024}`. Tờ 39 nghìn đối tượng nhập khoảng 8 giây.
+3. Kiểm tỉ lệ: `doc` `gi`:"chu" với `hop` quanh hàng bóng trục, lấy toạ độ hai nhãn trục xa nhau, so với tổng kích thước ghi trên bản vẽ.
+   Lệch quá 1 %: `xoa` `l`:"PDF_*" rồi nhập lại với `tl` đã hiệu chỉnh. `tin_cay` dưới 0,6 hoặc `cap` dưới 4 thì bắt buộc làm bước này (ngưỡng do Claude đặt theo bản mẫu, chưa có số của người dùng).
+4. Số kích thước ghi trên bản vẽ có thể lệch nét vẽ (bản mẫu: nhịp ghi 1700 nhưng vẽ 1785): khi hai chỗ mâu thuẫn thì báo người dùng, không tự chọn.
+5. Nhận phòng: xem ảnh rồi đưa hộp từng phòng lên `PCCC_VUNG` (mục dưới), người dùng kiểm lại.
+
 ## Rải thiết bị và đi tuyến (người dùng dạy 2026-11-11, đầy đủ ở `cad/knowledge/tu-duy-di-day-di-ong.md`)
 1. Phân khu vực TRƯỚC khi rải: vẽ hộp hoặc polyline kín từng khu vực (theo tường, dầm sàn, vì kèo) lên layer `PCCC_VUNG` bằng `net` với `kin`:true, kèm `{"op":"anh"}` rồi dừng để người dùng kiểm và sửa trong CAD.
 2. Người dùng báo xong: `doc` với `gi`:"vung" đọc lại vùng, rồi `rai` theo `l`. `s` (bước tối đa) và `dt` (m² tối đa một thiết bị) tra theo `cad/rule/LUAT.md` (BC-02, SP-02), ghi rõ căn cứ khi báo.
@@ -33,4 +42,4 @@ AI không vẽ từng nét. AI viết một gói spec ngắn, plugin C# sinh hì
 - `cad_chay` báo "đang bận": người dùng đang dở một lệnh trong AutoCAD, nhờ họ kết thúc lệnh rồi gọi lại.
 - Thiếu thao tác cho một hình lặp lại nhiều lần: thêm thao tác tham số vào `cad/module/plugin/Spec.cs` theo skill `tkpccc-cad-console`, đừng liệt kê hàng trăm nét.
 - Người dùng muốn hoàn tác: một lần `cad_chay` là một bước Undo (gõ `U` trong AutoCAD).
-- Chưa có (để lại, xem `cad/KE_HOACH.md`): sơ đồ nguyên lý, PDF → CAD, khung chat trong CAD.
+- Chưa có (để lại, xem `cad/KE_HOACH.md`): sơ đồ nguyên lý, bảng block trong CAD, khung chat trong CAD.

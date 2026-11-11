@@ -92,4 +92,12 @@ Dừng 15:20: usage 5 giờ 79 % (hai phiên dùng chung), việc kế `cad_anh`
   Kiểm chứng: `chay_thu.ps1` 27/27 (phòng 16 × 12 m, `s` 4000, `dt` 12 ra 4 × 4 bước 4000 × 3000, 12 m²; `tia` 4 nét 17,87 m; `PCCC_TUYEN` 3 đoạn 10,88 m qua điểm bấm), `thu_mcp.ps1` 9/9.
   Chưa kiểm: `PCCC_TUYEN` và dấu nhắc mới của `PCCC_RAI` trên AutoCAD có giao diện.
 - Dừng 20:05: "Weekly · Fable" 92 % (reset 05:00 ngày 2026-11-14). Hẹn `CronCreate` 05:03 ngày 14/11 trong phiên. `git push` đang chờ người dùng đăng nhập Git Credential Manager.
+- 21:40 người dùng tự reset hạn mức (mọi cửa sổ về 0 %) và bảo làm tiếp; xoá hẹn 05:03 ngày 14/11.
+- Bước 2 (22:00), PDF → CAD: thao tác spec `pdf` (`Spec.cs`, hàm `NhapPdf`) chạy `-PDFIMPORT` qua `Editor.Command` TRƯỚC transaction vẽ, nhân 25,4 × `tl` để nét vào đúng kích thước thật,
+  trả `n` + layer. Script `cad/.claude/skills/tkpccc-ve-cad/scripts/pdf_ti_le.py` tính `tl` từ chuỗi kích thước: hai số liền nhau cùng hàng cách nhau (d1 + d2) / 2;
+  trung vị rồi lọc hai vòng 1 % và 0,5 %, mỗi vòng lấy tổng pt / tổng mm. PDF thử `cad/test/mau_kt.pdf` (1:200) sinh bằng `cad/test/tao_pdf_mau.py`.
+  Kiểm chứng: `chay_thu.ps1` 29/29 (`tl` 200,0; nhập 40 đối tượng; trục 1–7 đo lại 41000,0; khung 76905,5), `thu_mcp.ps1` 9/9.
+  PDF mẫu thật trang 3 (sprinkler tầng 1): `tl` 285,0; nhập 39 056 đối tượng trong 8 giây; nhãn trục 1 và 7 cách nhau 40 961 theo `tl` này (−0,09 %). Xem ảnh `anh`: đúng chiều, đủ khung tên.
+  Phát hiện trên bản mẫu: hai nhịp ghi 1700 nhưng vẽ 1785 (tổng ghi 18800, các nhịp cộng lại 18600), làm bản tính đầu (chỉ trung vị) lệch 0,3 %; chữ font VNI nhập vào sai dấu.
+  Chưa kiểm: `pdf` trên AutoCAD có giao diện.
 - Gỡ `cad/TKPCCC.bundle/Contents/hardcopy.log` khỏi git (log AutoCAD tự ghi, có đường dẫn trên máy người dùng) và thêm vào `.gitignore`. Các bản cũ của file vẫn còn trong lịch sử repo công khai.

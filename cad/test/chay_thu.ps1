@@ -58,11 +58,17 @@ Copy-Item "$GOC\cad\skills\vi_du\rai.json" "$T\rai.json"
 # Vung chup nam xa moi hinh khac (x = 900000) nen anh chi co net neu "tron" da commit truoc khi in.
 '{"ops":[{"op":"anh","hop":[900000,0,908000,6000],"rong":700},{"op":"tron","l":"ANH","c":[904000,3000],"r":2000}]}' | Set-Content -Encoding ascii "$T\anh.json"
 $env:TKPCCC_CAD_HANG_DOI = "$T\hd"
+# pdf: pdf_ti_le.py tinh ti le cua PDF mau (cad\test\tao_pdf_mau.py ve 1:200) tu chuoi kich thuoc; thao tac "pdf" nhap voi ti le do,
+# "doc" doc lai chu da nhap de do khoang cach truc 1-7. Can python co PyMuPDF.
+$pdfMau = "$GOC\cad\test\mau_kt.pdf"
+$tlTrang = (& python -I "$GOC\cad\.claude\skills\tkpccc-ve-cad\scripts\pdf_ti_le.py" $pdfMau 1 | ConvertFrom-Json)[0]
+@{ ops = @(@{ op = 'pdf'; file = $pdfMau; trang = 1; tl = $tlTrang.tl; p = @(200000, 0) }, @{ op = 'doc'; gi = 'chu'; l = 'PDF_Text' }) } |
+  ConvertTo-Json -Depth 5 -Compress | Set-Content -Encoding ascii "$T\pdf.json"
 # Ban ky_hieu.json da doi ten layer truc: chung to plugin doc mac dinh tu file du lieu (cad\data\ky_hieu), khong dung so cung trong ma.
 (Get-Content -Raw -Encoding UTF8 "$GOC\cad\data\ky_hieu\ky_hieu.json") -replace '"layer_truc":\s*"TRUC"', '"layer_truc": "TRUC_T"' |
   Set-Content -Encoding UTF8 "$T\ky_hieu.json"
 @('INSUNITS', '4', 'NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '_.SAVEAS', '2018', "`"$T\spec.dwg`"", 'PCCC_SPEC', "$T\spec.json", 'PCCC_SPEC', "$T\rai.json",
-  'PCCC_SPEC', "$T\khoa_sai.json", 'PCCC_SPEC', "$T\khoa_dung.json", 'PCCC_SPEC', "$T\anh.json", '_.QSAVE') -join "`r`n" |
+  'PCCC_SPEC', "$T\khoa_sai.json", 'PCCC_SPEC', "$T\khoa_dung.json", 'PCCC_SPEC', "$T\anh.json", 'PCCC_SPEC', "$T\pdf.json", '_.QSAVE') -join "`r`n" |
   Set-Content -Encoding ascii "$T\kb2.scr"
 $p2 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb2.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb2.out.txt"
 if (-not $p2.WaitForExit(180000)) { Stop-Process -Id $p2.Id -Force; throw "accoreconsole qua 3 phut (PCCC_SPEC): $T\kb2.out.txt" }
@@ -113,5 +119,16 @@ if ($fa -and (Test-Path $fa)) {
   $soMau = (New-Object 'Collections.Generic.HashSet[byte]' (, $byte)).Count
   if ($ka.ok -eq $true -and $rongAnh -eq 800 -and $soMau -gt 1) { 'DAT   anh: PNG 800 px co net ve, in sau khi ve xong' } else { "LOI   anh: rong $rongAnh, so gia tri byte $soMau"; $loi++ }
 } else { "LOI   anh khong ra PNG: $T\kb2.out.txt"; $loi++ }
+# --- pdf: ti le tinh tu chuoi kich thuoc; nhap vao phai ra kich thuoc that (truc 1-7 = 41000, khung 1090 pt = 76906 mm o 1:200) ---
+if ([math]::Abs($tlTrang.tl - 200) -le 2 -and $tlTrang.cap -ge 8 -and $tlTrang.tin_cay -ge 0.8) { "DAT   pdf_ti_le.py: PDF mau ve 1:200 ra tl = $($tlTrang.tl) ($($tlTrang.cap) cap so)" }
+else { "LOI   pdf_ti_le.py: tl = $($tlTrang.tl), cap = $($tlTrang.cap), tin_cay = $($tlTrang.tin_cay)"; $loi++ }
+$kp = if (Test-Path "$T\pdf.kq.json") { Get-Content -Raw -Encoding UTF8 "$T\pdf.kq.json" | ConvertFrom-Json }
+$chuPdf = if ($kp -and $kp.doc) { @($kp.doc[0].ds) } else { @() }
+$t1 = @($chuPdf | Where-Object { $_.t -eq '1' })[0]; $t7 = @($chuPdf | Where-Object { $_.t -eq '7' })[0]
+$truc17 = if ($t1 -and $t7) { [math]::Abs($t7.p[0] - $t1.p[0]) } else { 0 }
+$rongKhung = if ($kp -and $kp.hop) { $kp.hop[2] - $kp.hop[0] } else { 0 }
+if ($kp -and $kp.ok -eq $true -and $kp.pdf[0].n -ge 20 -and [math]::Abs($truc17 - 41000) -le 410 -and [math]::Abs($rongKhung - 76906) -le 769) {
+  "DAT   pdf: nhap $($kp.pdf[0].n) doi tuong, truc 1-7 do duoc $truc17 (can 41000 +- 1 %), khung rong $rongKhung"
+} else { "LOI   pdf: n = $($kp.pdf.n), truc 1-7 = $truc17, khung = $rongKhung, loi = $($kp.loi | ConvertTo-Json -Compress -Depth 4): $T\kb2.out.txt"; $loi++ }
 "Thu muc thu: $T"
 if ($loi) { exit 1 } else { 'TAT CA DAT' }
