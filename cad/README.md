@@ -9,7 +9,7 @@ cad/
 ├─ .mcp.json               khai máy chủ MCP "cad" khi mở Claude Code ngay tại cad/ (gốc repo có bản riêng)
 ├─ .claude/
 │  ├─ agents/              cad-thiet-ke (lập spec) · cad-ve (chạy spec) · cad-kiem (soát bản vẽ) · cad-lap-trinh (sửa plugin); bảng việc ở CLAUDE.md
-│  └─ skills/              tkpccc-ve-cad (vẽ qua MCP; scripts/pdf_ti_le.py tính tỉ lệ trang PDF) · tkpccc-cad-console (build, kiểm thử, in PNG)
+│  └─ skills/              tkpccc-ve-cad (vẽ qua MCP; scripts/pdf_ti_le.py tính tỉ lệ trang PDF, scripts/chay_spec.ps1 chạy spec không cần mở AutoCAD) · tkpccc-cad-console (build, kiểm thử, in PNG)
 ├─ skills/                 hướng dẫn dùng cho MỌI AI (Claude, Gemini, Codex): TU_VUNG.md (từ vựng spec, nguồn duy nhất) · vi_du/
 ├─ knowledge/              kiến thức vẽ CAD: quy-uoc-ban-ve.md · mau-ban-ve-pccc.md (cách rải, đi dây, đi ống của bản mẫu) · tham-khao-mcp-hub.md (ý lấy từ MCP bên khác) · hoc/
 ├─ rule/                   LUAT.md: việc trên CAD ↔ file quy chuẩn nguyên văn ↔ skill, agent liên quan

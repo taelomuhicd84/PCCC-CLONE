@@ -14,6 +14,9 @@ Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.m
 - Hạn mức: người dùng tự reset khoảng 21:40 (mọi cửa sổ về 0 %) và bảo làm tiếp. 22:20 chốt ở mốc Bước 4: cửa sổ 5 giờ 72 % (reset 02:30 ngày 2026-11-12), tuần Fable 20 %, không đủ chỗ cho Bước 5.
   Đã hẹn `CronCreate` một lần lúc 02:33 ngày 2026-11-12 trong phiên đang mở để tự làm Bước 5 (đóng ứng dụng thì mất hẹn: phiên mới đọc file này rồi làm).
   Phiên 11/11 đã dài 520 nghìn token ngữ cảnh nên mỗi lượt gọi tốn khoảng 1,2 % cửa sổ 5 giờ; phiên mới rẻ hơn nhiều lần.
+  22:35 làm thêm bước con 1 của Bước 5 rồi dừng hẳn ở khoảng 85 % cửa sổ 5 giờ.
+- Người dùng dặn 22:25: "Dùng Fable 5.2 tối đa". Claude hiểu: giai đoạn dựng khung này làm trực tiếp bằng Fable 5.2 ở phiên chính, chưa giao việc cho agent opus / sonnet.
+  Đã hỏi lại câu đó có gồm đặt effort của phiên lên max và đổi model 4 agent sang Fable không; CHƯA có trả lời, nên chưa đổi gì.
 - 5 commit (`f3d354f` 1b, `eee2b1f` 1c, `79b9fe8` 2, `b5104b2` 3, `5f8a738` 4) và commit chốt mốc CHƯA lên GitHub lúc 22:20: `git push` ở tab Terminal chờ Git Credential Manager từ 19:30
   (người dùng đăng nhập ở cửa sổ nó bật lên; máy không có `gh`). Xong thì chạy lại `git push origin main`.
 - XONG Bước 2: thao tác spec `pdf` (`Spec.cs`, hàm `NhapPdf`, lệnh `-PDFIMPORT`) + `cad/.claude/skills/tkpccc-ve-cad/scripts/pdf_ti_le.py` (tính `tl` từ chuỗi kích thước).
@@ -76,8 +79,11 @@ Skill `tkpccc-ve-cad` giữ sonnet/low (vẽ theo spec có sẵn).
 ### Bước 5. Vẽ lại một tầng của bản mẫu, đo token (VIỆC KẾ)
 - XONG từ các bước trước: dòng README cho `mau-ban-ve-pccc.md`, `rule/LUAT.md`, ví dụ `rai` + `tuyen` trong skill.
 - Vẽ lại tầng 1 sprinkler của bản mẫu (`ket_qua/cad_mau/test_HA2.pdf` trang 3, `tl` 285,0), không cần AutoCAD có giao diện (chạy `PCCC_SPEC` trong accoreconsole như `chay_thu.ps1`):
-  1. `pdf` nhập nền + `anh` để nhìn. Lưới trục đã đọc được ở lần nhập `tl` 284,6 (nhân 285 / 284,6 khi dùng): nhãn trục 1 → 7 tại x = 29250, 36527, 43720, 50696, 57190, 64118, 70154;
-     nhãn A → F tại y = 33382, 38273, 40058, 45466, 47248, 52140. Dãy phòng dưới A–B (sâu 4900), hành lang B–C, khối giữa C–D (5400), hành lang D–E, dãy phòng trên E–F (4900).
+  1. XONG 22:35: nền đã nhập vào `ket_qua/cad_mau/cad/t1_spr.dwg` (39 056 đối tượng, `tl` 285,0); ảnh mặt bằng 1600 px ở `ket_qua/cad_mau/cad/skills/anh/t1_nen_1.png`
+     (vùng [28000, 31000, 72500, 54800], 27,8 mm mỗi px), CHƯA đọc ảnh. Chạy tiếp vào đúng DWG đó bằng
+     `cad\.claude\skills\tkpccc-ve-cad\scripts\chay_spec.ps1 -Spec <spec.json> -Dwg ket_qua\cad_mau\cad\t1_spr.dwg` (nhánh mở DWG có sẵn của script chưa thử).
+     Điểm đặt chữ nhãn trục ở `tl` 285,0 (lệch tim trục vài trăm mm): trục 1 → 7 tại x = 29291, 36578, 43781, 50767, 57270, 64208, 70253; A → F tại y = 33429, 38327, 40114, 45530, 47314, 52213.
+     Dãy phòng dưới A–B (sâu 4900), hành lang B–C, khối giữa C–D (5400), hành lang D–E, dãy phòng trên E–F (4900).
   2. Lập hộp từng phòng lên `PCCC_VUNG` (`net` `kin`:true) từ ảnh, chụp `anh` để người dùng duyệt (người dùng dặn: AI đưa hộp, họ kiểm).
   3. `rai` `SPR_DAU_DOWN` với `s` 4000, `dt` 12 (số ghi trên bảng thông số của tờ mẫu, không phải tra quy chuẩn) rồi `tuyen` `xuong_ca` / `nhanh` theo ống chính.
   4. `anh` rồi so với nền: tờ mẫu có 64 đầu phun, phòng hát lưới 2 × 2. Ghi chỗ lệch vào `cad/LICH_SU.md`. Spec để ở `ket_qua/cad_mau/cad/skills/` (không commit).
