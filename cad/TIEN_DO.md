@@ -3,7 +3,10 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
-## TRẠNG THÁI (cập nhật 2026-11-12, 02:35)
+## TRẠNG THÁI (cập nhật 2026-11-12, 07:35)
+- 07:35 ngày 12/11: cửa sổ 02:30 đã dùng hết 100 % lúc khoảng 02:50 (phiên chính ngữ cảnh 600 nghìn token + review Fable max), review bị ngắt giữa chừng, CHƯA có báo cáo.
+  07:30 hạn mức reset, đã gọi agent review làm tiếp và bảo nó ghi báo cáo ngay (`ket_qua/cad_review/review_2026-11-11.md`). Fable tuần đã 66 % (reset 05:00 ngày 14/11):
+  mỗi lượt gọi "nguội" của phiên chính 11/11 tốn khoảng 35 % cửa sổ 5 giờ và 10 % Fable tuần. VIỆC SỬA MÃ (review + mục a–f của Bước 5) NÊN LÀM Ở PHIÊN MỚI, giao Opus theo `cad-lap-trinh.md`.
 - 02:35 ngày 12/11: lần chạy hẹn giờ bắt đầu, phiên chính chỉ điều phối. Đang chạy song song 2 subagent, cả hai KHÔNG sửa mã:
   (1) review Fable effort max cho mã tối 11/11 (`git diff 24109da..HEAD -- cad`), báo cáo ở `ket_qua/cad_review/review_2026-11-11.md`;
   (2) Opus effort high làm Bước 5: XONG 02:47 (62 đầu phun, mẫu 64; xem mục "Bước 5"), kết quả ở `ket_qua/cad_mau/cad/skills/` (`t1_vung.json`, `t1_spr.json`, `t1_spr.md`).
