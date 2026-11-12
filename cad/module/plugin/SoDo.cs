@@ -46,7 +46,7 @@ namespace TKPCCC
             tang = tang.OrderBy(t => t.Cot).ToList();
 
             double k = 0.001 / HeSoMet(g.Db); // 1 mm theo đơn vị bản vẽ (cùng tỉ lệ chèn block)
-            double h = LaySo(o, "h", 3000 * k), dai = LaySo(o, "dai", 8000 * k), cao = LaySo(o, "cao", LaySo(NhomKyHieu("chu"), "cao", 250));
+            double h = LaySo(o, "h", 3000 * k), dai = LaySo(o, "dai", 8000 * k), cao = LaySo(o, "cao", k * LaySo(NhomKyHieu("chu"), "cao", 250));
             if (h <= 0 || dai <= 0 || cao <= 0) throw new System.Exception("\"h\", \"dai\", \"cao\" phải > 0");
             Point3d p0 = Lay(o, "p") == null ? new Point3d(g.Gx, g.Gy, 0) : P(g, Lay(o, "p"), "p");
             if (he == "bc") { SoDoBaoChay(g, o, tang, k, h, cao, p0); return; }
@@ -58,8 +58,14 @@ namespace TKPCCC
                     foreach (KeyValuePair<string, object> kv in dem)
                     {
                         VatTu v = TimMa(g.Dm, kv.Key);
-                        s.Dem.Add((v != null ? v.ten : kv.Key) + ": " + So(D(kv.Value)) + (v != null ? " " + v.dvt : ""));
+                        if (v == null) throw new System.Exception(s.Ten + ": mã không có trong danh mục: " + kv.Key);
+                        if (v.he != "SPR") continue; // kết quả "dem" đếm cả bản vẽ: bỏ mã hệ khác, ống, dây
+                        double sl = D(kv.Value);
+                        if (sl <= 0) throw new System.Exception(s.Ten + ": " + kv.Key + " phải > 0");
+                        s.Dem.Add(v.ten + ": " + So(sl) + " " + v.dvt);
                     }
+                if ((s.Dem.Count + 1) * 1.67 * cao > h)
+                    throw new System.Exception(s.Ten + ": " + (s.Dem.Count + 1) + " dòng chữ đếm cao hơn \"h\": tăng \"h\" hoặc giảm \"cao\"");
             }
             if (!tang.Any(t => t.Dem.Count > 0)) throw new System.Exception("không tầng nào có \"dem\": sơ đồ không có nhánh tầng nào");
 
@@ -228,13 +234,15 @@ namespace TKPCCC
                     foreach (KeyValuePair<string, object> kv in dem)
                     {
                         VatTu v = TimMa(g.Dm, kv.Key);
-                        if (v == null || v.loai != "block") throw new System.Exception(z.Ten + ": mã thiết bị không có trong danh mục: " + kv.Key);
+                        if (v == null) throw new System.Exception(z.Ten + ": mã không có trong danh mục: " + kv.Key);
+                        if (v.loai != "block") continue; // "dem" chép từ kết quả dem có cả dây/ống (DAY_BC): sơ đồ zone không vẽ
                         double sl = D(kv.Value);
                         if (sl <= 0) continue;
                         if (v.ten.StartsWith("Đầu báo")) nDau += sl;
                         z.Dem.Add(new KeyValuePair<VatTu, double>(v, sl));
                         if (!cot.Contains(v)) cot.Add(v);
                     }
+                    if (z.Dem.Count == 0) throw new System.Exception(z.Ten + " (" + tang[i].Ten + "): \"dem\" không có mã thiết bị nào");
                     if (nDau > toiDa) throw new System.Exception(z.Ten + " (" + tang[i].Ten + "): " + So(nDau) + " đầu báo, quá toi_da " + So(toiDa) + ": chia thêm zone");
                     zone.Add(z);
                 }
@@ -246,7 +254,11 @@ namespace TKPCCC
                 if (!bt.Has(v.ma)) throw new System.Exception("Thư viện không có block " + v.ma + " (chạy PCCC_LIB)");
 
             // --- Bố trí: dây zone z đứng ở x0 + z × dxz; cột thiết bị sau bó dây; tủ là khung chữ nhật đỡ chân bó dây ---
-            int nz = zone.Count;
+            int nz = zone.Count, mMax = zone.GroupBy(q => q.Tang).Max(q => q.Count());
+            // Tự tăng "h" (chiều đứng sơ đồ không theo cao độ thật): dây zone cách nhau đủ chữ "x<số>" (tTren) + nửa ký hiệu (kh),
+            // dây thấp nhất (0,4 h) cách cạnh trên khung tủ (0,2 h + 300) một nửa ký hiệu, chữ của dây trên cùng (0,85 h) dưới vạch tầng kế.
+            double tTren = 350 * k + 0.4 * cao, kh = 250 * k;
+            h = Math.Max(h, Math.Max((tTren + kh) * (mMax - 1) / 0.45, Math.Max((300 * k + kh) / 0.2, tTren / 0.15)));
             double x0 = p0.X, y0 = p0.Y, dxz = 300 * k, dxc = 2000 * k, r = 100 * k;
             double xLast = x0 + (nz - 1) * dxz, xS = xLast + 2000 * k, xR = xS + cot.Count * dxc;
             double yTu = y0 + 0.2 * h, yChan = yTu + 300 * k, yChu = y0 - 0.15 * h;
@@ -263,7 +275,6 @@ namespace TKPCCC
             for (int z = 0; z < nz; z++)
             {
                 int i = zone[z].Tang, m = zone.Count(q => q.Tang == i), j = zone.Take(z).Count(q => q.Tang == i);
-                // shortcut: nhiều zone một tầng thì các dây ngang sít nhau (3 zone, h 3000: cách 675); gặp thì tăng "h".
                 double xz = x0 + z * dxz, yz = y0 + i * h + h * (0.4 + (m > 1 ? 0.45 * j / (m - 1) : 0));
                 Polyline pl = OngCau(new Point3d(xz, yz, 0), new Point3d(xR, yz, 0), Enumerable.Range(z + 1, nz - z - 1).Select(q => x0 + q * dxz), r, lBc);
                 pl.AddVertexAt(0, new Point2d(xz, yChan), 0, 0, 0);

@@ -268,3 +268,10 @@ Chưa kiểm: các phép kiểm mới chưa chạy đột biến ngược trên 
   (lần đầu nhãn zone đè chữ `x18` và zone viết tắt `dem` lấy nhầm tên tầng: đã sửa).
 - Kiểm: `chay_thu.ps1` 65/65, `thu_mcp.ps1` TAT CA DAT; `build.bat` OK. Chưa chạy `thu_gui.ps1`; chưa thử qua MCP trên AutoCAD có giao diện.
 - Còn của G5: báo cháy hệ địa chỉ (ZM, CM, RM, mạch vòng), đèn báo phòng, dây nét đứt; vách tường / trạm bơm; mã van xả; cao độ đọc từ mặt đứng.
+
+## 2026-11-12 — Sửa 4 NÊN SỬA review 12/11d (`so_do`)
+- `SoDo.cs`: cỡ chữ mặc định nhân `k` (bản vẽ đơn vị m); `spr` chỉ ghi mã hệ `SPR`, mã lạ hoặc số ≤ 0 báo lỗi, chữ đếm cao hơn `h` báo lỗi;
+  `bc` bỏ qua mã dây/ống (`DAY_BC`) trong `dem`, zone không còn thiết bị báo lỗi; `bc` tự tăng `h` theo số zone nhiều nhất một tầng
+  (dây cách nhau ≥ 700 mm, dây zone 1 không trùng cạnh khung tủ).
+- `chay_thu.ps1` thêm 5 phép kiểm dùng đúng đầu vào review (`so_do_loc`, `so_do_bc2`, `so_do_m` INSUNITS 6): 70/70; `thu_mcp.ps1` 9/9; `build.bat` OK.
+- Chưa làm: `MaSoDo` vẫn đưa `DAY_BC` vào danh sách nạp block (gọi `NapVaoBanVe` thừa); GHI CHÚ 1–6 để lại.

@@ -177,6 +177,19 @@ Copy-Item "$GOC\cad\skills\vi_du\so_do.json" "$T\so_do.json"
 Copy-Item "$GOC\cad\skills\vi_du\so_do_bc.json" "$T\so_do_bc.json"
 '{"goc":[1400000,0],"ops":[{"op":"so_do","he":"bc","toi_da":25,"tang":[{"cot":0,"zone":[{"dem":{"BC_KHOI":20,"BC_NHIET":6,"BC_NUTAN":1}}]}]},{"op":"so_do","he":"bc","tang":[{"cot":0,"dem":{"BC_KHOI":2}}]}]}' |
   Set-Content -Encoding ascii "$T\so_do_bc_loi.json"
+# Review 12/11d NEN SUA 2: spr nhan dem chep tu ket qua dem (ca BC, ong, day) chi ghi ma SPR; ma la, so <= 0 bao loi.
+$demDu = '"dem":{"BC_KHOI":10,"BC_NHIET":4,"DAY_BC":28.91,"ONG_DN25":183.32,"ONG_DN50":20,"SPR_DAU_DOWN":64,"SPR_VAN_OSY_DN100":2,"SPR_VAN_XK":1}'
+('{"goc":[1500000,0],"ops":[{"op":"so_do","p":[0,0],"h":3000,"tang":[{"ten":"L1","cot":0,' + $demDu + '},{"ten":"L2","cot":4200,' + $demDu + '}]},' +
+  '{"op":"so_do","p":[0,20000],"tang":[{"cot":0,"dem":{"SPR_DAU_DWN":4}}]},{"op":"so_do","p":[0,40000],"tang":[{"cot":0,"dem":{"SPR_DAU_DOWN":-3}}]},' +
+  '{"op":"doc","gi":"chu","l":"PCCC_SODO"}]}') | Set-Content -Encoding ascii "$T\so_do_loc.json"
+# NEN SUA 3, 4: bc dem co DAY_BC khong bao loi; 4 zone mot tang h mac dinh va 2 zone h 1500: tu tang h, day khong sit, khong trung khung tu.
+('{"goc":[1700000,0],"ops":[{"op":"so_do","he":"bc","toi_da":25,"tang":[{"ten":"B1","cot":0,"dem":{"BC_KHOI":10,"BC_NHIET":4,"DAY_BC":28.91,"BC_NUTAN":1}}]},' +
+  '{"op":"so_do","he":"bc","toi_da":25,"p":[0,20000],"tang":[{"cot":0,"zone":[{"dem":{"BC_KHOI":21}},{"dem":{"BC_KHOI":22}},{"dem":{"BC_KHOI":23}},{"dem":{"BC_KHOI":24}}]}]},' +
+  '{"op":"so_do","he":"bc","toi_da":25,"p":[0,40000],"h":1500,"tang":[{"cot":0,"zone":[{"dem":{"BC_KHOI":15}},{"dem":{"BC_KHOI":16}}]}]},' +
+  '{"op":"doc","gi":"chu","l":"PCCC_SODO_BC","hop":[-10000,15000,30000,60000]}]}') | Set-Content -Encoding ascii "$T\so_do_bc2.json"
+# NEN SUA 1: ban ve don vi m (INSUNITS 6): co chu mac dinh nhan k, hop cua so do vai chuc m (truoc: 7 724 x 1 227 m).
+'{"goc":[1600,0],"ops":[{"op":"so_do","he":"spr","p":[0,0],"tang":[{"ten":"T1","cot":0,"dem":{"SPR_DAU_DOWN":64}},{"ten":"T2","cot":4200,"dem":{"SPR_DAU_DOWN":64}}]}]}' |
+  Set-Content -Encoding ascii "$T\so_do_m.json"
 # Ma van sprinkler moi trong vat_tu.json (Buoc 5): dat 2 OS&Y + 1 XK, dem theo MA_VT ("mat bang" cho phep kiem chong dem trung cua so_do).
 '{"goc":[1100000,0],"ops":[{"op":"dat","ma":"SPR_VAN_OSY_DN100","p":[[0,0],[0,1000]],"goc":90},{"op":"dat","ma":"SPR_VAN_XK","p":[[1000,0]]},{"op":"dem"}]}' |
   Set-Content -Encoding ascii "$T\van.json"
@@ -193,7 +206,8 @@ $bamTv = (Get-FileHash "$T\PCCC_Blocks.dwg").Hash
   'PCCC_SPEC', "$T\khoa_sai.json", 'PCCC_SPEC', "$T\khoa_dung.json", 'PCCC_SPEC', "$T\anh.json", 'PCCC_SPEC', "$T\pdf_sai.json", 'PCCC_SPEC', "$T\pdf.json",
   'PCCC_SPEC', "$T\pdf2.json", 'PCCC_SPEC', "$T\xoa2.json", 'PCCC_SPEC', "$T\rai_loi.json", 'PCCC_SPEC', "$T\tuyen_thu.json", 'PCCC_SPEC', "$T\nhan.json",
   'PCCC_SPEC', "$T\rai_moi.json", 'PCCC_SPEC', "$T\pdf_mk.json", 'PCCC_SPEC', "$T\rv_tuyen.json", 'PCCC_SPEC', "$T\hoa.json", 'PCCC_SPEC', "$T\hoa_doc.json",
-  'PCCC_SPEC', "$T\rv_hang.json", 'PCCC_SPEC', "$T\rv2.json", 'PCCC_SPEC', "$T\van.json", 'PCCC_SPEC', "$T\so_do.json", 'PCCC_SPEC', "$T\so_do_loi.json", 'PCCC_SPEC', "$T\so_do_bc.json", 'PCCC_SPEC', "$T\so_do_bc_loi.json", '_.QSAVE') -join "`r`n" |
+  'PCCC_SPEC', "$T\rv_hang.json", 'PCCC_SPEC', "$T\rv2.json", 'PCCC_SPEC', "$T\van.json", 'PCCC_SPEC', "$T\so_do.json", 'PCCC_SPEC', "$T\so_do_loi.json", 'PCCC_SPEC', "$T\so_do_bc.json", 'PCCC_SPEC', "$T\so_do_bc_loi.json",
+  'PCCC_SPEC', "$T\so_do_loc.json", 'PCCC_SPEC', "$T\so_do_bc2.json", 'INSUNITS', '6', 'PCCC_SPEC', "$T\so_do_m.json", 'INSUNITS', '4', '_.QSAVE') -join "`r`n" |
   Set-Content -Encoding ascii "$T\kb2.scr"
 $p2 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb2.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb2.out.txt"
 if (-not $p2.WaitForExit(180000)) { Stop-Process -Id $p2.Id -Force; throw "accoreconsole qua 3 phut (PCCC_SPEC): $T\kb2.out.txt" }
@@ -318,6 +332,21 @@ Kiem ($ksb -and $ksb.ok -eq $true -and $ksb.ve -eq 47 -and $ksb.dem.BC_KHOI -eq 
   "so_do bc: 3 zone, 4 cot thiet bi + dien tro cuoi day, ve 47; block so do khong cong vao dem (thay ve $($ksb.ve), dem $($ksb.dem | ConvertTo-Json -Compress))"
 Kiem ($ksbl -and $ksbl.ve -eq 0 -and @($ksbl.loi).Count -eq 2 -and $ksbl.loi[0].ly_do -match '26 .+toi_da 25' -and $ksbl.loi[1].ly_do -match 'toi_da') `
   "so_do bc: zone 26 dau bao > toi_da 25 bao loi; thieu toi_da bao loi; khong ve ($($ksbl.loi | ConvertTo-Json -Compress -Depth 3))"
+$kloc = DocKq 'so_do_loc'
+$chuSpr = if ($kloc -and $kloc.doc) { @($kloc.doc[0].ds | Where-Object { $_.t -match '^SPRINKLER L' }) } else { @() }
+Kiem ($kloc -and @($kloc.loi).Count -eq 2 -and $kloc.loi[0].i -eq 1 -and $kloc.loi[0].ly_do -match 'SPR_DAU_DWN' -and $kloc.loi[1].i -eq 2 -and $kloc.loi[1].ly_do -match '> 0' -and
+  $chuSpr.Count -eq 2 -and @($chuSpr | Where-Object { @($_.t -split "`r?`n").Count -eq 4 }).Count -eq 2) `
+  "so_do spr: dem du (BC, ong, day) chi ghi 3 ma SPR; ma la va so -3 bao loi ($($chuSpr.Count) chu, $($kloc.loi | ConvertTo-Json -Compress -Depth 3))"
+$kbc2 = DocKq 'so_do_bc2'
+$xY = { param($a, $b) if ($kbc2 -and $kbc2.doc) { @($kbc2.doc[0].ds | Where-Object { $_.t -match "^x($a)$" } | ForEach-Object { $_.p[1] } | Sort-Object) } else { @() } }
+$y4 = & $xY '2[1-4]' 0; $y2 = & $xY '1[56]' 0
+$cach4 = if ($y4.Count -eq 4) { ($y4[1] - $y4[0]), ($y4[2] - $y4[1]), ($y4[3] - $y4[2]) | Measure-Object -Minimum | ForEach-Object { $_.Minimum } } else { 0 }
+Kiem ($kbc2 -and $kbc2.ok -eq $true) "so_do bc: dem co DAY_BC (chep tu ket qua dem) bo qua day, khong bao loi ($($kbc2.loi | ConvertTo-Json -Compress -Depth 3))"
+Kiem ($cach4 -ge 699) "so_do bc: 4 zone mot tang h mac dinh tu tang h, day zone cach nhau >= 700 (chu x<so> khong de ky hieu zone tren; thay $cach4)"
+Kiem ($y2.Count -eq 2 -and $y2[0] - 350 - 40000 -ge 1000) "so_do bc: h 1500 tu tang h, day zone 1 o 1200 cach canh khung tu 900 (thay $(if ($y2.Count) { $y2[0] - 350 - 40000 }))"
+$ksm = DocKq 'so_do_m'
+Kiem ($ksm -and $ksm.ok -eq $true -and $ksm.hop -and ($ksm.hop[2] - $ksm.hop[0]) -lt 50 -and ($ksm.hop[3] - $ksm.hop[1]) -lt 30) `
+  "so_do ban ve don vi m: co chu nhan k, hop vai chuc m (thay $($ksm.hop -join ', '))"
 $kv = DocKq 'van'
 Kiem ($kv -and $kv.ok -eq $true -and $kv.ve -eq 3 -and $kv.dem.SPR_VAN_OSY_DN100 -eq 2 -and $kv.dem.SPR_VAN_XK -eq 1) `
   "dat ma van moi: 2 SPR_VAN_OSY_DN100 + 1 SPR_VAN_XK, dem theo MA_VT (thay ve $($kv.ve), dem $($kv.dem | ConvertTo-Json -Compress))"

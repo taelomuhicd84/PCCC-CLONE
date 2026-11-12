@@ -23,7 +23,7 @@ Chỉ có khung "CHI TIẾT: VAN CỔNG OS&Y + CÔNG TẮC DÒNG CHẢY" trên t
 
 ## Đầu vào
 `{"op":"so_do","he":"spr","p":[x,y],"truc":["ONG_DN100","ONG_DN100"],"xa":"ONG_DN50","h":3000,"tang":[{"ten":"TẦNG 1","cot":0,"dem":{"SPR_DAU_DOWN":64}},...]}`
-- `tang[].dem`: số đếm của mặt bằng tầng đó (kết quả `dem` sau khi rải, hoặc người/AI tự nhập). Tầng không có `dem` (mái, tầng không có sprinkler) chỉ vẽ vạch + cao độ.
+- `tang[].dem`: số đếm của mặt bằng tầng đó (kết quả `dem` sau khi rải, hoặc người/AI tự nhập). Tầng không có `dem` (mái, tầng không có sprinkler) chỉ vẽ vạch + cao độ. Plugin chỉ ghi mã hệ `SPR`, bỏ mã hệ khác, ống, dây; mã lạ hoặc số ≤ 0 báo lỗi. `dem` không có `hop`: bản vẽ nhiều tầng thì cộng `rai[].n` của tầng, hoặc mỗi tầng một bản vẽ.
 - `tang[].cot`: cao độ sàn (mm) đọc từ mặt đứng / mặt cắt. Sơ đồ xếp tầng theo `cot`.
 - Van OS&Y lấy theo DN trục (`ONG_DN100` → `SPR_VAN_OSY_DN100`); số van = số trục × số tầng có `dem`.
 
@@ -48,7 +48,7 @@ Hệ quả: van chỉ vẽ trên sơ đồ (không có trên mặt bằng) thì 
 | Tủ = khung chữ nhật + block `BC_TT` trên tầng thấp nhất, bó dây zone đứng cạnh nhau cách 300 | TỰ ĐẶT |
 | Dây zone đi đứng từ tủ lên tầng của zone, rẽ ngang qua thiết bị; dây vượt nhau vẽ nét cầu (như sprinkler) | TỰ ĐẶT |
 | Mỗi loại thiết bị một cột (thứ tự như danh mục), trên ký hiệu ghi `x<số>`; chú thích tên cột dưới vạch tầng thấp nhất; tên tủ + tên dây dưới tủ | TỰ ĐẶT |
-| Dây zone trong tầng ở 0,4 h đến 0,85 h trên vạch sàn, chia đều theo số zone | TỰ ĐẶT (nhiều zone một tầng thì tăng `h`) |
+| Dây zone trong tầng ở 0,4 h đến 0,85 h trên vạch sàn, chia đều theo số zone | TỰ ĐẶT (plugin tự tăng `h` cho dây cách nhau đủ chữ `x<số>` + ký hiệu, dây thấp nhất không chạm khung tủ) |
 | Dây vẽ nét liền (mẫu mặt bằng vẽ nét đứt) | TỰ ĐẶT, chưa đổi loại đường |
 
 Vẽ thử: `ket_qua/cad_mau/cad/so_do/so_do_bc.json` (2 tầng + mái, 3 zone, SỐ ĐẾM GIẢ ĐỊNH), ảnh `anh/so_do_bc_1.png`.
