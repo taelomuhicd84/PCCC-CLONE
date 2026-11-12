@@ -190,3 +190,8 @@ Theo `ket_qua/cad_review/review_2026-11-12.md`: 1 CHẶN + 5 NÊN SỬA; 5 GHI C
 Kiểm chứng: `chay_thu.ps1` 54/54 `TAT CA DAT`, `thu_mcp.ps1` 9/9 `TAT CA DAT`, `build.bat` OK (bundle 14:45). Không chạy `thu_gui.ps1` (AutoCAD người dùng đang mở).
 Chưa kiểm: các phép kiểm mới chưa chạy đột biến ngược trên mã cũ (số "trước" lấy từ review đã chạy); `theo_hang` mới chưa dò vét cạn bằng Python như review (phòng chữ L/U/T, `chan`/`le` lớn); PDF mã hoá trên AutoCAD có giao diện.
 
+## 2026-11-12 15:00 — chốt mốc Bước 5 (a–f), review bằng Opus max thay Fable
+- Người dùng dặn 12/11: review, kiểm tra CAD dùng Opus effort max, không dùng Fable nữa (đã sửa `cad-review.md`, `cad/CLAUDE.md`). Duyệt 15 vùng tầng 1. Chuẩn layer, block động, catalog ống/bơm sẽ nạp qua lệnh plugin.
+- Chuỗi: sửa review 11/11 (`7408077`) → c, d, e (`a2b65c0`) → review Opus max 1 CHẶN 5 NÊN SỬA → sửa (`1c20265`) → review lại hẹp 0 CHẶN 2 NÊN SỬA (`review_2026-11-12b.md`).
+- Kiểm chứng: `chay_thu.ps1` 54/54, `thu_mcp.ps1` 9/9 (agent review chạy). Chưa kiểm: `thu_gui.ps1`, `pdf` trong acad.exe có giao diện, bản vẽ đơn vị m và UCS khác World sau lần sửa này.
+- Hạn mức: 5 giờ 10 % → 82 % cho 5 lượt agent (sửa ~18 %, c/d/e ~13 %, review rộng ~26 %, sửa ~6 %, review hẹp ~9 %).

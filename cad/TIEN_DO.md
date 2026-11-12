@@ -3,7 +3,13 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
-## TRẠNG THÁI (cập nhật 2026-11-12, 14:45)
+## TRẠNG THÁI (cập nhật 2026-11-12, 15:00)
+- 15:00 ngày 12/11: CHỐT MỐC Bước 5 phần a–f (commit `1c20265`). Review lại hẹp bằng Opus max (`ket_qua/cad_review/review_2026-11-12b.md`): 0 CHẶN, 2 NÊN SỬA, 2 GHI CHÚ;
+  6 lỗi của review 12/11 chạy lại đúng đầu vào cũ đều đã hết; `chay_thu.ps1` 54/54, `thu_mcp.ps1` 9/9. Dừng ở cửa sổ 5 giờ 82 % (reset 17:30).
+  VIỆC KẾ (giao `cad-lap-trinh` Opus, effort medium):
+  (1) NÊN SỬA `Rai.cs:191`: `theo_hang` có `dt` thừa đầu ở phòng chữ L vì nMin = ceil(số cột × w / W) (phòng 10 × 6 m khoét WC 3 × 3 m: có `dt` 12 ra 6, không `dt` ra 5; Python: 14,6 % phòng chữ L thừa);
+  (2) NÊN SỬA `Rai.cs:525-530`: `cot` với `truc` bậc chữ Z gộp các đoạn nối thành một đoạn chéo, một nhánh không nối vào đâu (9,61 m, đúng 12,77 m);
+  (3) GHI CHÚ: cập nhật `TU_VUNG.md` cho `theo_hang`. Mỗi lỗi một phép kiểm trong `chay_thu.ps1`. Rồi phần còn lại của Bước 5 (trục xả, van, đo token).
 - 14:45 ngày 12/11: agent `cad-lap-trinh` (Opus) SỬA XONG review 12/11 (`ket_qua/cad_review/review_2026-11-12.md`): 1 CHẶN (`pdf` với PDF có mật khẩu, chỉ khoá chống sửa, file hỏng:
   báo lỗi, không gọi `-PDFIMPORT`) + 5 NÊN SỬA (`cot` nối chồng, `xuong_ca`/`cot` đè ống chính khi `truc` có đỉnh thẳng hàng, `theo_hang` theo `s` thừa thiết bị, `theo_hang` theo `buoc` vượt `dt` không báo,
   phép kiểm phá hoà). 5 GHI CHÚ để nguyên. `chay_thu.ps1` 54/54, `thu_mcp.ps1` 9/9, bundle build lại 14:45. CHƯA commit.
