@@ -28,6 +28,12 @@
     { "ma": "SPR_VAN_BD", "ten": "Van báo động (van ướt)", "dvt": "bộ", "he": "SPR", "loai": "block", "ky_hieu": "AV" },
     { "ma": "SPR_CTDC", "ten": "Công tắc dòng chảy", "dvt": "cái", "he": "SPR", "loai": "block", "ky_hieu": "FS" },
     { "ma": "SPR_VAN_KT", "ten": "Van kiểm tra cuối tuyến", "dvt": "bộ", "he": "SPR", "loai": "block", "ky_hieu": "KT" },
+    { "ma": "SPR_VAN_OSY_DN65", "ten": "Van cổng OS&Y có giám sát tín hiệu DN65", "dvt": "cái", "he": "SPR", "loai": "block", "ky_hieu": "OSY" },
+    { "ma": "SPR_VAN_OSY_DN80", "ten": "Van cổng OS&Y có giám sát tín hiệu DN80", "dvt": "cái", "he": "SPR", "loai": "block", "ky_hieu": "OSY" },
+    { "ma": "SPR_VAN_OSY_DN100", "ten": "Van cổng OS&Y có giám sát tín hiệu DN100", "dvt": "cái", "he": "SPR", "loai": "block", "ky_hieu": "OSY" },
+    { "ma": "SPR_VAN_OSY_DN125", "ten": "Van cổng OS&Y có giám sát tín hiệu DN125", "dvt": "cái", "he": "SPR", "loai": "block", "ky_hieu": "OSY" },
+    { "ma": "SPR_VAN_OSY_DN150", "ten": "Van cổng OS&Y có giám sát tín hiệu DN150", "dvt": "cái", "he": "SPR", "loai": "block", "ky_hieu": "OSY" },
+    { "ma": "SPR_VAN_XK", "ten": "Van xả khí tự động", "dvt": "cái", "he": "SPR", "loai": "block", "ky_hieu": "AAV" },
 
     { "ma": "HVT_TU", "ten": "Tủ họng nước vách tường (van, lăng, cuộn vòi)", "dvt": "bộ", "he": "HVT", "loai": "block", "ky_hieu": "HN" },
     { "ma": "HVT_VAN_CHAN", "ten": "Van chặn", "dvt": "cái", "he": "HVT", "loai": "block", "ky_hieu": "V" },

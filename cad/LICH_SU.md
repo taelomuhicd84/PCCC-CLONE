@@ -211,3 +211,15 @@ Chưa kiểm: các phép kiểm mới chưa chạy đột biến ngược trên 
 - Thử HL1 `s` 3500: `ket_qua/cad_mau/cad/lan4/` (chép `t1_spr.bak`, spec = `lan3` chỉ đổi `s` HL1): `ok`, HL1 10 đầu (mẫu 10), bước lớn nhất 3416,8, cách tường 1599 / 1493; HL2 6, tổng 64 (mẫu 64);
   DN50 146,54 m. Ảnh `lan4/anh/t1_spr_2.png` (nửa trái HL1), đã xem: đầu phun đều dọc tim, không đè.
 - Kiểm chứng: `chay_thu.ps1` TAT CA DAT (57 dòng DAT), `thu_mcp.ps1` TAT CA DAT, `build.bat` xong. Chưa kiểm: `thu_gui.ps1` (không chạy theo bài giao); lệch vị trí HL1 so với mẫu chưa đo lại.
+
+## 2026-11-12 (17:45) — Bước 5: van OS&Y, công tắc dòng chảy, trục xả DN50, van xả khí (agent `cad-lap-trinh`)
+- `data/vat_tu.json`: thêm `SPR_VAN_OSY_DN65`…`DN150` (theo DN ống chính, ký hiệu `OSY`) và `SPR_VAN_XK` (van xả khí, `AAV`). Công tắc dòng chảy dùng `SPR_CTDC` có sẵn,
+  ống trục xả dùng `ONG_DN50` có sẵn. Block mặc định do plugin tự sinh vào `TKPCCC.bundle/Contents/PCCC_Blocks.dwg` (thêm 6 block) khi spec chạy lần đầu.
+- Vị trí đọc từ bản mẫu `test_HA2.pdf` trang 3 (ảnh cắt vector PDF + chữ): 2 van OS&Y DN100 trên 2 trục đứng x 43184 / 43558, y 34409 (`goc` 90); 2 FS cạnh trục (42940 / 43805, y 34585);
+  ống xả DN50 rẽ từ trục trái y 34798 qua x 42413 xuống y 34105 tới điểm trục xả (42890, 34105); AAV ở hai góc mạch vòng: (31990, 40124) và (48462, 48365).
+  TỰ ĐẶT: ống tới AAV vẽ DN25 (mẫu không ghi DN); kéo dài 2 trục DN100 xuống y 32700 (chỗ "KẾT NỐI TRẠM BƠM"); điểm trục xả là vòng tròn r 60 trên `PCCC_NHAN`; nhãn chữ không dấu.
+  Chưa vẽ: van xả trên ống xả và các van, đồng hồ ở cụm AAV (mẫu có, danh mục chưa có mã).
+- Spec `ket_qua/cad_mau/cad/lan4/t1_van.json` chạy vào `lan4/t1_spr.dwg`: `ok`, vẽ 14, `dem` ONG_DN100 60,51 (+3,6), ONG_DN50 148,48 (+1,94), ONG_DN25 1,88, SPR_VAN_OSY_DN100 2,
+  SPR_CTDC 2, SPR_VAN_XK 2, SPR_DAU_DOWN 64. Ảnh `lan4/anh/t1_van_1..3.png` đã xem: block trùng ký hiệu mẫu.
+- `skills/TU_VUNG.md` (phần sau `---`, dòng `dat`): mã van sprinkler. `test/chay_thu.ps1`: `dat` `SPR_VAN_OSY_DN100` + `SPR_VAN_XK` ra mỗi mã 1 block.
+- Kiểm chứng: `chay_thu.ps1` TAT CA DAT (58 dòng DAT), `thu_mcp.ps1` TAT CA DAT (9), `npm test` 57/57, `build.bat` xong. Chưa kiểm: `thu_gui.ps1`; block mặc định chưa vẽ hình van thật.

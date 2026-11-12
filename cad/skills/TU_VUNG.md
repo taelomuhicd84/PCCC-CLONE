@@ -24,7 +24,7 @@ Mọi thao tác vẽ nhận `l` (layer, mặc định `0`; chưa có thì tạo 
 | op | Trường | Ghi chú |
 |---|---|---|
 | `luoi_truc` | `x`, `y` (dãy nhịp), `cao`, `r` (bán kính bóng, mặc định 1,15 × cao), `du` (đoạn trục kéo dài, mặc định 5 × cao), `ten_x`, `ten_y`, `p`, `kt` | Trục đứng đánh theo `ten_x`, trục ngang theo `ten_y`. Layer `TRUC` (đỏ, nét CENTER), `KH_TRUC` (bóng + tên), `DIM_TRUC` (kích thước nhịp + tổng ở dưới và bên trái) |
-| `dat` | `ma`, `p`, `goc` | Block lấy từ thư viện `PCCC_Blocks.dwg`, layer `PCCC_<hệ>`, có thuộc tính `MA_VT` để `PCCC_BOC` đếm |
+| `dat` | `ma`, `p`, `goc` | Block lấy từ thư viện `PCCC_Blocks.dwg`, layer `PCCC_<hệ>`, có thuộc tính `MA_VT` để `PCCC_BOC` đếm. Van sprinkler: `SPR_VAN_OSY_DN<DN ống chính>` (65–150), `SPR_CTDC` (công tắc dòng chảy), `SPR_VAN_XK` (van xả khí); `goc` 90 trên ống đứng |
 | `ong` | `ma`, `p` | Polyline trên layer `PCCC_<mã>`; `PCCC_BOC` tính chiều dài theo layer này |
 | `net` | `l`, `p`, `kin`, `mau` | Polyline thường (tường, vùng, khung) |
 | `tron` | `l`, `c`, `r` | |
