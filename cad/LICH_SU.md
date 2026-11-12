@@ -231,3 +231,10 @@ Chưa kiểm: các phép kiểm mới chưa chạy đột biến ngược trên 
 - Số đo: 70 140 token (phần lớn là lời nhắc hệ thống + công cụ của subagent), 5 lượt công cụ, 19 giây. Cửa sổ 5 giờ Pro tăng khoảng 1–2 % (gộp cả lượt điều phối của phiên chính).
   Chưa đo qua MCP với AutoCAD có giao diện (agent `cad-ve`), vì `cad_chay` vẽ vào bản vẽ người dùng đang mở.
 
+
+## 2026-11-12 — Sửa GHI CHÚ nhỏ của review 12/11c
+- `Rai.cs` `TuyenCot`: điểm nối coi là trên đường trục khi lệch ≤ `saiSo` (trước 1e-6). Ống chính bậc 0,5 mm (vẽ tay lệch) nay gộp đoạn nối: 5 đoạn 8 m, không còn vẽ chồng (trước 6 đoạn 9 m).
+- `chay_thu.ps1` thêm 3 phép kiểm: `cot` ống chính bậc 0,5 mm (5 đoạn 8 m); `theo_hang` hàng rộng bằng vùng (phòng 6 × 6 m, `le` 650, `dt` 12: 4 đầu, `m2` 9; bỏ dòng `w >= W` ra `m2` 12);
+  `PCCC_RAI` trả lời `Co` (phòng chữ L 12 × 8 m khoét 3 × 3 m: `n=6 HO=1.1%`).
+- Kiểm: `chay_thu.ps1` 61/61, `thu_mcp.ps1` 9/9 `TAT CA DAT`; `build.bat` OK. Chưa chạy `thu_gui.ps1`. Chưa thử phép kiểm mới trên DLL cũ (dựa theo số của review).
+- Chưa sửa (chỉ ghi): `cot` nối hình quạt dư ống khi nhiều cột vượt đầu ống chính có bậc; hở sát góc khoét của `theo_hang` (`ho` = 0 chưa chắc phủ kín); DN trên block OS&Y; tài liệu cũ ở `TIEN_DO.md:172-174`, `Rai.cs:142`, `PCCC_HELP`.

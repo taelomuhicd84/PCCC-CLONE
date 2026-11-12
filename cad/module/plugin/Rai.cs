@@ -526,8 +526,8 @@ namespace TKPCCC
                 Point3d F = A + u * x, T = ChanTruc(truc, F);
                 if (F.DistanceTo(T) <= 1e-6) continue;
                 // Cùng điểm nối T, cùng phía và T nằm trên đường trục (F, F' và T thẳng hàng): giữ đoạn dài hơn, đoạn dài phủ đoạn ngắn.
-                // T ngoài đường trục (đỉnh của ống chính có bậc) thì mỗi chân một đoạn nối, không thì nhánh ngắn bị treo.
-                int j = Math.Abs(fd(T)) > 1e-6 ? -1 : noi.FindIndex(d => d[1].DistanceTo(T) <= 1e-6 && (d[0] - T).DotProduct(F - T) > 0);
+                // T ngoài đường trục quá saiSo (đỉnh của ống chính có bậc; bậc vẽ tay vài phần mm vẫn coi là trên trục) thì mỗi chân một đoạn nối, không thì nhánh ngắn bị treo.
+                int j = Math.Abs(fd(T)) > saiSo ? -1 : noi.FindIndex(d => d[1].DistanceTo(T) <= 1e-6 && (d[0] - T).DotProduct(F - T) > 0);
                 if (j < 0) noi.Add(new List<Point3d> { F, T });
                 else if (F.DistanceTo(T) > noi[j][0].DistanceTo(T)) noi[j] = new List<Point3d> { F, T };
             }

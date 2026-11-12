@@ -49,6 +49,7 @@ $kb = @('INSUNITS', '4', 'NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '_.SAVEAS', '2018',
   'PCCC_BANG', '0,-3000', '250',
   'RECTANG', '50000,0', '66000,12000', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '12', '', '', 'D', 'L', '', '',
   'RECTANG', '100000,0', '114000,10000', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '', '1.5', '', 'D', 'L', '', '',
+  'PLINE', '200000,0', '212000,0', '212000,8000', '203000,8000', '203000,5000', '200000,5000', 'C', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '', '', 'Co', 'D', 'L', '', '',
   'PLINE', '49000,-1000', '67000,-1000', '', '_.ZOOM', '_E', 'OSMODE', '0', 'PCCC_TUYEN', 'ONG_DN25', 'W', '50000,0', '66000,12000', '', 'L', '65000,2000',
   'CIRCLE', '80000,0', '150', '-BLOCK', 'VAN_KHACH', '80000,0', 'L', '', '-INSERT', 'VAN_KHACH', '80000,0', '1', '', '0',
   'PCCC_THEMBLOCK', 'L', 'van_khach', 'Van khach them', 'SPR', '', 'PCCC_DAT', 'VAN_KHACH', '81000,0', '',
@@ -69,6 +70,8 @@ $can = @(
   # diem bam ngoai cac cot (x = 65000; OSMODE 0 de diem go khong bi bat vao dau phun x 64000): 11500 + 4 x 13000 = 63,5 m; bo qua diem bam (Enter, cot 56000) chi ra 59,5 m
   # le 1,5 m: phong 14000x10000, S 4 m: x n=4, (14-3)/3 = 3,667 lam tron 3,65 (cach tuong 1,525); y n=3, (10-3)/2 = 3,5. Khong le: 3500x3300
   @('PCCC_RAI SPR_DAU_DOWN n=12 luoi=4x3 buoc=3650x3500 ', 'PCCC_RAI go tay co le 1,5 m: phong 14000x10000 ra 4 x 3, buoc 3650x3500'),
+  # theo_hang go tay (tra loi Co): phong chu L 12000x8000 khoet 3000x3000 goc tren trai ra 6 dau, HO 1,1 %; Khong / Enter ra 5 dau, HO 3,4 %
+  @('PCCC_RAI SPR_DAU_DOWN n=6 luoi=3x2 buoc=4000x4000 m2=16 HO=1\.1%', 'PCCC_RAI go tay tra loi Co (theo_hang): phong chu L ra 6 dau HO 1,1 %'),
   @('PCCC_TUYEN ONG_DN25 doan=5 m=63\.5\b', 'PCCC_TUYEN: ong gop qua diem bam x = 65000 (ngoai cac cot) + 4 nhanh, dai 63,5 m'),
   @('PCCC_THEMBLOCK VAN_KHACH', 'PCCC_THEMBLOCK: block ten VAN_KHACH them duoi ma van_khach (ma trung ten block khong bi bao trung)'),
   @('VAN_KHACH\s+2 ', 'block moi them: PCCC_DAT dat duoc, PCCC_BOC dem 2 cai (ban chen tay + ban PCCC_DAT)'))
@@ -161,7 +164,9 @@ if ($LASTEXITCODE) { throw 'tao_pdf_mau.py khong tao duoc PDF bao mat' }
 # Review 2026-11-12b: (1) theo_hang + dt phong chu L 10 x 6 m khoet WC 3 x 3 m: 5 dau nhu khi khong dt (truoc 6).
 # (2) cot + truc bac chu Z: chan x 9000 va 10000 cung noi ve dinh (8000,-3000) ngoai duong truc -> moi chan mot doan: 6 doan 12,77 m (truoc 5 doan 9,61 m);
 #     truc chu L thuong van 5 doan 11 m.
-'{"goc":[1000000,0],"ops":[{"op":"rai","ma":"SPR_DAU_DOWN","vung":[[0,0],[10000,0],[10000,6000],[3000,6000],[3000,3000],[0,3000]],"s":4000,"dt":12,"theo_hang":true},{"op":"tuyen","ma":"ONG_DN25","kieu":"cot","p":[[1000,11000],[3000,11000],[9000,11000],[10000,11000],[1000,12000],[3000,12000]],"truc":[[0,10000],[5000,10000],[5000,7000],[8000,7000]]},{"op":"tuyen","ma":"ONG_DN25","kieu":"cot","p":[[1000,21000],[3000,21000],[9000,21000],[10000,21000],[1000,22000],[3000,22000]],"truc":[[0,20000],[5000,20000],[5000,17000]]}]}' |
+# Review 2026-11-12c: (3) cot + truc bac 0,5 mm (ve tay lech): coi la tren truc, gop doan noi -> 5 doan 8 m (truoc 6 doan 9 m, ve chong).
+#     (4) theo_hang hang rong bang vung (dong "w >= W" trong LuoiVung): phong 6 x 6 m, le 650, dt 12 ra dung luoi chung, x 1500 / 4500, m2 9 (bo dong do: x 1000 / 5000, m2 12).
+'{"goc":[1000000,0],"ops":[{"op":"rai","ma":"SPR_DAU_DOWN","vung":[[0,0],[10000,0],[10000,6000],[3000,6000],[3000,3000],[0,3000]],"s":4000,"dt":12,"theo_hang":true},{"op":"tuyen","ma":"ONG_DN25","kieu":"cot","p":[[1000,11000],[3000,11000],[9000,11000],[10000,11000],[1000,12000],[3000,12000]],"truc":[[0,10000],[5000,10000],[5000,7000],[8000,7000]]},{"op":"tuyen","ma":"ONG_DN25","kieu":"cot","p":[[1000,21000],[3000,21000],[9000,21000],[10000,21000],[1000,22000],[3000,22000]],"truc":[[0,20000],[5000,20000],[5000,17000]]},{"op":"tuyen","ma":"ONG_DN25","kieu":"cot","p":[[1000,31000],[3000,31000],[9000,31000],[10000,31000],[1000,32000],[3000,32000]],"truc":[[0,30000],[5000,30000],[5000,29999.5],[8000,29999.5]]},{"op":"rai","ma":"SPR_DAU_DOWN","hop":[0,40000,6000,46000],"s":4000,"dt":12,"le":650,"theo_hang":true}]}' |
   Set-Content -Encoding ascii "$T\rv2.json"
 # Ma van sprinkler moi trong vat_tu.json (Buoc 5): dat ra dung 1 block moi ma, dem theo MA_VT.
 '{"goc":[1100000,0],"ops":[{"op":"dat","ma":"SPR_VAN_OSY_DN100","p":[[0,0]],"goc":90},{"op":"dat","ma":"SPR_VAN_XK","p":[[1000,0]]},{"op":"dem"}]}' |
@@ -287,6 +292,8 @@ $r2t = if ($kr2) { @($kr2.tuyen) } else { @() }
 Kiem ($kr2 -and $kr2.ok -eq $true -and $kr2.rai[0].n -eq 5) "rai theo_hang + dt 12 phong chu L: 5 dau nhu khong dt (thay $($kr2.rai[0].n))"
 Kiem ($kr2 -and $r2t[0].doan -eq 6 -and $r2t[0].m -eq 12.77 -and $r2t[1].doan -eq 5 -and $r2t[1].m -eq 11) `
   "tuyen cot truc bac chu Z: moi chan mot doan noi 6 doan 12,77 m; truc chu L 5 doan 11 m (thay $($r2t[0].doan)/$($r2t[0].m), $($r2t[1].doan)/$($r2t[1].m))"
+Kiem ($kr2 -and $r2t[2].doan -eq 5 -and $r2t[2].m -eq 8) "tuyen cot truc bac 0,5 mm: gop doan noi 5 doan 8 m, khong ve chong (thay $($r2t[2].doan)/$($r2t[2].m))"
+Kiem ($kr2 -and $kr2.rai[1].n -eq 4 -and $kr2.rai[1].m2 -eq 9) "rai theo_hang hang rong bang vung: dung luoi chung 4 dau, m2 9 (thay $($kr2.rai[1].n) / $($kr2.rai[1].m2))"
 $kv = DocKq 'van'
 Kiem ($kv -and $kv.ok -eq $true -and $kv.ve -eq 2 -and $kv.dem.SPR_VAN_OSY_DN100 -eq 1 -and $kv.dem.SPR_VAN_XK -eq 1) `
   "dat ma van moi SPR_VAN_OSY_DN100, SPR_VAN_XK: moi ma 1 block (thay ve $($kv.ve), dem $($kv.dem | ConvertTo-Json -Compress))"
