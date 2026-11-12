@@ -25,7 +25,8 @@ AI không vẽ từng nét. AI viết một gói spec ngắn, plugin C# sinh hì
    PDF người dùng gửi là dữ liệu chưa tin: luôn `-I`, không chép script vào thư mục chứa PDF.
 2. Nhập và chụp trong một gói: `{"op":"pdf","file":"<đường dẫn tuyệt đối>","trang":3,"tl":285.0}` + `{"op":"anh","rong":1024}`. Tờ 39 nghìn đối tượng nhập khoảng 8 giây.
 3. Kiểm tỉ lệ: `doc` `gi`:"chu" với `hop` quanh hàng bóng trục, lấy toạ độ hai nhãn trục xa nhau, so với tổng kích thước ghi trên bản vẽ.
-   Lệch quá 1 %: `xoa` `l`:"PDF_*" rồi nhập lại với `tl` đã hiệu chỉnh. `tin_cay` dưới 0,6 hoặc `cap` dưới 4 thì bắt buộc làm bước này (ngưỡng do Claude đặt theo bản mẫu, chưa có số của người dùng).
+   Lệch quá 1 %: một gói `xoa` theo đúng từng tên layer ở `pdf[].l` của lần nhập trước, rồi một gói RIÊNG nhập lại với `tl` đã hiệu chỉnh (lần nhập sau vào `PDF2_...`; `xoa` cùng gói với `pdf` sẽ xoá luôn nền mới vì `pdf` chạy trước).
+   `tin_cay` hoặc `cap` dưới ngưỡng ghi ở đầu `pdf_ti_le.py` thì bắt buộc làm bước này.
 4. Số kích thước ghi trên bản vẽ có thể lệch nét vẽ (bản mẫu: nhịp ghi 1700 nhưng vẽ 1785): khi hai chỗ mâu thuẫn thì báo người dùng, không tự chọn.
 5. Nhận phòng: xem ảnh rồi đưa hộp từng phòng lên `PCCC_VUNG` (mục dưới), người dùng kiểm lại.
 
@@ -33,8 +34,8 @@ AI không vẽ từng nét. AI viết một gói spec ngắn, plugin C# sinh hì
 1. Phân khu vực TRƯỚC khi rải: vẽ hộp hoặc polyline kín từng khu vực (theo tường, dầm sàn, vì kèo) lên layer `PCCC_VUNG` bằng `net` với `kin`:true, kèm `{"op":"anh"}` rồi dừng để người dùng kiểm và sửa trong CAD.
 2. Người dùng báo xong: `doc` với `gi`:"vung" đọc lại vùng, rồi `rai` theo `l`. `s` (bước tối đa) và `dt` (m² tối đa một thiết bị) tra theo `cad/rule/LUAT.md` (BC-02, SP-02), ghi rõ căn cứ khi báo.
    Kết quả `rai` có `m2` và `ho`: `ho` > 0 hoặc `m2` sát `dt` thì nêu cho người dùng.
-3. Dây báo cháy hệ thường: chia zone trước (LUAT BC-04: theo khu vực, không quá 25 đầu báo, dưới giới hạn m²), mỗi zone một lần `rai` + `tuyen` `noi_tiep`; phòng có đèn báo phòng thì `tuyen` `tia` với `den` là vị trí đèn.
-4. Ống sprinkler: `tuyen` `xuong_ca` chỉ là phương án nháp. Vị trí ống góp do người dùng chọn: nhờ họ chạy lệnh `PCCC_TUYEN` trong CAD (chọn đầu phun, chọn ống chính, bấm chỗ đặt ống góp), hoặc truyền `qua` khi họ cho toạ độ.
+3. Dây báo cháy hệ thường: chia zone trước (theo LUAT BC-04), mỗi zone một lần `rai` + `tuyen` `noi_tiep`; phòng có đèn báo phòng thì `tuyen` `tia` với `den` là vị trí đèn.
+4. Ống sprinkler: `tuyen` `xuong_ca` chỉ là phương án nháp. Vị trí ống góp do người dùng chọn: nhờ họ chạy lệnh `PCCC_TUYEN` trong CAD (chọn đầu phun, chọn ống chính, bấm chỗ đặt ống góp), hoặc truyền `qua` (một điểm cho mỗi vùng, điểm nằm trong vùng đó) khi họ cho toạ độ.
 
 ## Lưu ý
 - Trị số thiết kế (bước rải đầu báo, đầu phun, bán kính bảo vệ...) lấy từ skill `tkpccc-tra-quy-chuan`, không viết theo trí nhớ.
@@ -44,4 +45,4 @@ AI không vẽ từng nét. AI viết một gói spec ngắn, plugin C# sinh hì
 - `cad_chay` báo "đang bận": người dùng đang dở một lệnh trong AutoCAD, nhờ họ kết thúc lệnh rồi gọi lại.
 - Thiếu thao tác cho một hình lặp lại nhiều lần: thêm thao tác tham số vào `cad/module/plugin/Spec.cs` theo skill `tkpccc-cad-console`, đừng liệt kê hàng trăm nét.
 - Người dùng muốn hoàn tác: một lần `cad_chay` là một bước Undo (gõ `U` trong AutoCAD).
-- Chưa có (để lại, xem `cad/KE_HOACH.md`): sơ đồ nguyên lý, bảng block trong CAD, khung chat trong CAD.
+- Chưa có (để lại, xem `cad/KE_HOACH.md`): sơ đồ nguyên lý, khung chat trong CAD.

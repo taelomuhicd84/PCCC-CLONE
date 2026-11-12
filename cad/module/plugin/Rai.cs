@@ -242,14 +242,24 @@ namespace TKPCCC
             double m = HeSoMet(g.Db), k = 0.001 / m, goc = LaySo(o, "goc", 0), dt = LaySo(o, "dt", 0) / (m * m);
             bool kt = LayCo(o, "kt", false) && goc == 0;
             g.DiemRai = new List<List<Point3d>>();
-            foreach (List<Point2d> d in VungOp(g, o))
+            g.VungRai = new List<List<Point2d>>();
+            // Tính lưới MỌI vùng trước, đạt hết mới chèn: vùng sau lỗi thì không để lại thiết bị của vùng trước (gửi lại thao tác không rải trùng).
+            List<List<Point2d>> vung = VungOp(g, o);
+            List<LuoiRai> luoi = new List<LuoiRai>();
+            foreach (List<Point2d> d in vung)
             {
                 LuoiRai r = LuoiVung(d, sx, sy, bx, by, LaySo(o, "le", -1), LaySo(o, "chan", 0.05 / m), dt, goc);
                 // Chỉ xảy ra khi rải theo "buoc": bước đúng là của người gọi, plugin không tự sửa.
                 if (dt > 0 && r.O > dt * (1 + 1e-9))
                     throw new System.Exception(string.Format(CultureInfo.InvariantCulture,
-                        "\"buoc\" {0} x {1} cho diện tích bảo vệ một thiết bị {2} m2, vượt \"dt\" {3} m2: giảm \"buoc\", hoặc dùng \"s\" để plugin tự chia",
-                        Lt(r.Bx), Lt(r.By), Math.Round(r.O * m * m, 2), LaySo(o, "dt", 0)));
+                        "vùng {4}: \"buoc\" {0} x {1} cho diện tích bảo vệ một thiết bị {2} m2, vượt \"dt\" {3} m2: giảm \"buoc\", hoặc dùng \"s\" để plugin tự chia; chưa rải vùng nào",
+                        Lt(r.Bx), Lt(r.By), Math.Round(r.O * m * m, 2), LaySo(o, "dt", 0), luoi.Count + 1));
+                luoi.Add(r);
+            }
+            for (int j = 0; j < vung.Count; j++)
+            {
+                List<Point2d> d = vung[j];
+                LuoiRai r = luoi[j];
                 foreach (Point3d p in r.Diem)
                 {
                     ChenThietBi(g.Db, g.Tr, v, p, k, 0);
@@ -257,6 +267,7 @@ namespace TKPCCC
                     MoHop(g, new Extents3d(p, p));
                 }
                 g.DiemRai.Add(r.Diem);
+                g.VungRai.Add(d);
                 if (kt && r.Diem.Count > 0) KtRai(g, d, r);
                 if (g.KqRai.Count < DOC_TOI_DA)
                     g.KqRai.Add(new Dictionary<string, object> { { "n", r.Diem.Count }, { "nx", r.Nx }, { "ny", r.Ny }, { "bx", Lt(r.Bx) }, { "by", Lt(r.By) },
@@ -307,23 +318,34 @@ namespace TKPCCC
 
         /// Xương cá: MỘT ống góp vuông góc ống chính tới hàng xa nhất + mỗi hàng một nhánh song song ống chính, từ thiết bị ngoài cùng tới ống góp.
         /// Ống góp đi trùng cột thiết bị gần "tu" nhất (không có "tu" thì cột gần giữa), hoặc qua điểm "qua".
+        /// Chỉ chọn cột có chân ống góp nằm trong đoạn ống chính; không cột nào được thì lấy cột chân gần đoạn nhất.
+        /// Hoà thì lấy cột có chân X nhỏ hơn, rồi Y nhỏ hơn (WCS): đảo chiều vẽ "truc" không đổi kết quả.
+        /// Chân ống góp (kể cả theo "qua") ra ngoài đoạn thì nối thêm một đoạn dọc trục ống chính về đầu mút gần nhất.
         static List<List<Point3d>> TuyenXuongCa(List<Point3d> ps, List<Point3d> truc, Point3d? tu, Point3d? qua, double saiSo)
         {
             Point3d tam = new Point3d(ps.Average(p => p.X), ps.Average(p => p.Y), 0);
             int i0 = DoanGan(truc, tam);
-            Point3d A = truc[i0];
-            Vector3d u = (truc[i0 + 1] - A).GetNormal(), n = new Vector3d(-u.Y, u.X, 0);
+            Point3d A = truc[i0], B = truc[i0 + 1];
+            double L = A.DistanceTo(B);
+            Vector3d u = (B - A).GetNormal(), n = new Vector3d(-u.Y, u.X, 0);
             Func<Point3d, double> fa = p => (p - A).DotProduct(u), fd = p => (p - A).DotProduct(n);
+            Func<double, double> ngoai = x => Math.Max(0, Math.Max(-x, x - L)); // chân ống góp cách đoạn ống chính bao nhiêu
             double af;
             if (qua.HasValue) af = fa(qua.Value);
             else
             {
                 double dich = tu.HasValue ? fa(tu.Value) : ps.Average(fa);
-                af = Gom(ps, fa, saiSo).Select(c => c.Average(fa)).OrderBy(x => Math.Abs(x - dich)).First();
+                List<double> cot = Gom(ps, fa, saiSo).Select(c => c.Average(fa)).ToList();
+                bool coTrong = cot.Any(x => ngoai(x) <= saiSo);
+                if (coTrong) cot = cot.Where(x => ngoai(x) <= saiSo).ToList();
+                Func<double, double> lech = coTrong ? (Func<double, double>)(x => Math.Abs(x - dich)) : ngoai;
+                double tot = cot.Min(lech);
+                af = cot.Where(x => lech(x) <= tot + saiSo).OrderBy(x => Math.Round((A + u * x).X / saiSo)).ThenBy(x => (A + u * x).Y).First();
             }
             List<List<Point3d>> hang = Gom(ps, fd, saiSo), kq = new List<List<Point3d>>();
             double thap = Math.Min(0, hang.Min(h => h.Average(fd))), cao = Math.Max(0, hang.Max(h => h.Average(fd)));
             if (cao - thap > 1e-6) kq.Add(new List<Point3d> { A + u * af + n * thap, A + u * af + n * cao });
+            if (ngoai(af) > 1e-6) kq.Add(new List<Point3d> { A + u * af, af < 0 ? A : B });
             foreach (List<Point3d> h in hang)
             {
                 double d = h.Average(fd), a0 = Math.Min(h.Min(fa), af), a1 = Math.Max(h.Max(fa), af);
@@ -346,7 +368,8 @@ namespace TKPCCC
         }
 
         /// Ghi chữ (vd DN50) dọc từng đoạn thẳng đủ dài, lệch về một phía của ống; chữ luôn đọc từ trái sang hoặc từ dưới lên.
-        static void NhanDoan(GoiSpec g, List<Point3d> d, string chu, double cao, ObjectId layer)
+        /// Bỏ chữ khi trong bán kính (cỡ chữ × số ký tự) đã có chữ cùng nội dung (daCo: điểm đặt các chữ đó, chữ mới ghi vào đây).
+        static void NhanDoan(GoiSpec g, List<Point3d> d, string chu, double cao, ObjectId layer, List<Point3d> daCo)
         {
             for (int i = 0; i + 1 < d.Count; i++)
             {
@@ -356,8 +379,26 @@ namespace TKPCCC
                 if (a > Math.PI / 2 + 1e-9) a -= Math.PI;
                 else if (a <= -Math.PI / 2 + 1e-9) a += Math.PI;
                 Point3d giua = d[i] + v * 0.5 + new Vector3d(-Math.Sin(a), Math.Cos(a), 0) * (cao * 0.9);
+                if (daCo.Any(p => p.DistanceTo(giua) < cao * chu.Length)) continue;
+                daCo.Add(giua);
                 Them(g, TaoChu(g, giua, chu, cao, a * 180 / Math.PI, true, layer));
             }
+        }
+
+        /// Điểm đặt mọi chữ có nội dung "chu" (không phân biệt hoa thường) đang có trong không gian vẽ.
+        static List<Point3d> ChuCungNoiDung(GoiSpec g, string chu)
+        {
+            List<Point3d> kq = new List<Point3d>();
+            foreach (ObjectId id in g.Ms)
+            {
+                if (id.ObjectClass.DxfName != "MTEXT" && id.ObjectClass.DxfName != "TEXT") continue;
+                Entity e = g.Tr.GetObject(id, OpenMode.ForRead) as Entity;
+                MText mt = e as MText;
+                DBText t = e as DBText;
+                string s = mt != null ? mt.Text : t != null ? t.TextString : null;
+                if (s != null && string.Equals(s.Trim(), chu, StringComparison.OrdinalIgnoreCase)) kq.Add(mt != null ? mt.Location : t.Position);
+            }
+            return kq;
         }
 
         static Point3d? DiemTuyChon(GoiSpec g, Dictionary<string, object> o, string k)
@@ -371,18 +412,32 @@ namespace TKPCCC
             VatTu v = TimMa(g.Dm, ma);
             if (v == null || v.loai != "tuyen") throw new System.Exception("mã ống/dây không có trong danh mục: " + ma);
             List<List<Point3d>> nhom = new List<List<Point3d>>();
-            if (Lay(o, "p") != null) nhom.Add(DsP(g, Lay(o, "p"), "p"));
-            else if (g.DiemRai != null) nhom.AddRange(g.DiemRai.Where(x => x.Count > 0));
+            List<List<Point2d>> vungNhom = new List<List<Point2d>>(); // đa giác vùng của từng nhóm; null khi điểm lấy từ "p"
+            if (Lay(o, "p") != null) { nhom.Add(DsP(g, Lay(o, "p"), "p")); vungNhom.Add(null); }
+            else if (g.DiemRai != null)
+                for (int j = 0; j < g.DiemRai.Count; j++)
+                    if (g.DiemRai[j].Count > 0) { nhom.Add(g.DiemRai[j]); vungNhom.Add(g.VungRai[j]); }
             if (nhom.Count == 0) throw new System.Exception("tuyen cần \"p\" [[x,y],...] hoặc đứng ngay sau một thao tác rai có thiết bị");
             List<Point3d> truc = Lay(o, "truc") == null ? null : DsP(g, Lay(o, "truc"), "truc");
             if ((kieu == "xuong_ca" || kieu == "nhanh") && (truc == null || truc.Count < 2))
                 throw new System.Exception("tuyen kiểu \"" + kieu + "\" cần \"truc\" [[x,y],[x,y],...] là ống chính");
-            Point3d? tu = DiemTuyChon(g, o, "tu"), den = DiemTuyChon(g, o, "den"), qua = DiemTuyChon(g, o, "qua");
+            Point3d? tu = DiemTuyChon(g, o, "tu"), den = DiemTuyChon(g, o, "den");
             double m = HeSoMet(g.Db), saiSo = LaySo(o, "sai_so", 0.1 / m);
+            // "qua": một hoặc nhiều điểm; mỗi điểm dùng cho vùng chứa nó (điểm lấy từ "p" thì một nhóm, nhận mọi điểm).
+            Point3d?[] qua = new Point3d?[nhom.Count];
+            if (Lay(o, "qua") != null)
+                foreach (Point3d q in DsP(g, Lay(o, "qua"), "qua"))
+                {
+                    int j = -1;
+                    for (int k = 0; k < nhom.Count && j < 0; k++) if (vungNhom[k] == null || TrongDaGiac(vungNhom[k], new Point2d(q.X, q.Y))) j = k;
+                    if (j < 0) throw new System.Exception(string.Format(CultureInfo.InvariantCulture, "điểm \"qua\" [{0},{1}] không nằm trong vùng nào của rai trước đó", Lt(q.X - g.Gx), Lt(q.Y - g.Gy)));
+                    if (qua[j].HasValue) throw new System.Exception("hai điểm \"qua\" cùng nằm trong một vùng: mỗi vùng một điểm");
+                    qua[j] = q;
+                }
 
             List<List<Point3d>> doan = new List<List<Point3d>>();
             if (kieu == "noi_tiep") doan = TuyenNoiTiep(nhom, tu, den, saiSo);
-            else if (kieu == "xuong_ca") foreach (List<Point3d> ps in nhom) doan.AddRange(TuyenXuongCa(ps, truc, tu, qua, saiSo));
+            else if (kieu == "xuong_ca") for (int j = 0; j < nhom.Count; j++) doan.AddRange(TuyenXuongCa(nhom[j], truc, tu, qua[j], saiSo));
             else if (kieu == "nhanh") foreach (List<Point3d> ps in nhom) doan.AddRange(TuyenNhanh(ps, truc));
             else if (kieu == "tia")
             {
@@ -399,12 +454,13 @@ namespace TKPCCC
             ObjectId lNhan = nhan ? DamBaoLayer(g.Db, g.Tr, LAYER_NHAN, 7) : ObjectId.Null;
             string chu = v.ma.StartsWith("ONG_", StringComparison.OrdinalIgnoreCase) ? v.ma.Substring(4) : v.ma;
             double caoChu = LaySo(o, "cao", LaySo(NhomKyHieu("chu"), "cao", 250)), dai = 0;
+            List<Point3d> daCo = nhan ? ChuCungNoiDung(g, chu) : null;
             foreach (List<Point3d> d in doan)
             {
                 Polyline pl = TaoPline(d, false, layer);
                 Them(g, pl);
                 dai += pl.Length;
-                if (nhan) NhanDoan(g, d, chu, caoChu, lNhan);
+                if (nhan) NhanDoan(g, d, chu, caoChu, lNhan, daCo);
             }
             g.KqTuyen.Add(new Dictionary<string, object> { { "kieu", kieu }, { "doan", doan.Count }, { "m", Math.Round(dai * m, 2) } });
         }
@@ -531,10 +587,12 @@ namespace TKPCCC
             using (Transaction tr = db.TransactionManager.StartTransaction())
             {
                 List<Point3d> ps = new List<Point3d>(), truc = new List<Point3d>();
+                BoiCanh bc = new BoiCanh { Tr = tr, Dm = DocDanhMuc(), Alias = DocAlias() };
                 foreach (ObjectId id in r1.Value.GetObjectIds())
                 {
                     BlockReference br = tr.GetObject(id, OpenMode.ForRead) as BlockReference;
-                    if (br != null && !(br is Table)) ps.Add(new Point3d(br.Position.X, br.Position.Y, 0));
+                    // Chỉ block là thiết bị (có mã vật tư): quét cửa sổ quanh phòng không lấy nhầm đồ nội thất.
+                    if (br != null && !(br is Table) && MaThietBi(br, bc) != null) ps.Add(new Point3d(br.Position.X, br.Position.Y, 0));
                 }
                 Entity e = (Entity)tr.GetObject(r2.Value.GetObjectIds()[0], OpenMode.ForRead);
                 Polyline pl = e as Polyline;

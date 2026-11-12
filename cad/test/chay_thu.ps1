@@ -18,6 +18,10 @@ if ($LASTEXITCODE) { throw 'Bien dich loi' }
   /r:System.Core.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll /r:"$T\TKPCCC.Cad.dll" "$GOC\cad\module\ui\*.cs"
 if ($LASTEXITCODE) { throw 'Bien dich TKPCCC.UI.dll loi' }
 Copy-Item "$GOC\data\vat_tu.json" $T
+# File danh muc "goc" cua repo: tro toi ban chep tam (nhu build.bat ghi nguon_vat_tu.txt) de PCCC_THEMBLOCK ghi ca hai file ma khong dung repo.
+New-Item -ItemType Directory "$T\goc" | Out-Null
+Copy-Item "$GOC\data\vat_tu.json" "$T\goc"
+"$T\goc\vat_tu.json" | Set-Content -Encoding ascii "$T\nguon_vat_tu.txt"
 
 # Be rong anh va so gia tri byte khac nhau cua anh: anh trang tron chi co 1 gia tri.
 Add-Type -AssemblyName System.Drawing
@@ -43,9 +47,9 @@ $kb = @('INSUNITS', '4', 'NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '_.SAVEAS', '2018',
   'PCCC_BOC', 'Co', 'L', '', '', 'ThuPlugin',
   'PCCC_VUNGBV', 'BC_KHOI', '3', 'PCCC_VUNGBV', 'BC_KHOI', '3',
   'PCCC_BANG', '0,-3000', '250',
-  'RECTANG', '50000,0', '56500,4500', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '12', 'D', 'L', '', '',
-  'PLINE', '49000,-1000', '58000,-1000', '', '_.ZOOM', '_E', 'PCCC_TUYEN', 'ONG_DN25', 'W', '50000,0', '56500,4500', '', 'L', '53000,2000',
-  'CIRCLE', '80000,0', '150', '-BLOCK', 'KHACH_VAN', '80000,0', 'L', '', '-INSERT', 'KHACH_VAN', '80000,0', '1', '', '0',
+  'RECTANG', '50000,0', '66000,12000', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '12', 'D', 'L', '', '',
+  'PLINE', '49000,-1000', '67000,-1000', '', '_.ZOOM', '_E', 'OSMODE', '0', 'PCCC_TUYEN', 'ONG_DN25', 'W', '50000,0', '66000,12000', '', 'L', '65000,2000',
+  'CIRCLE', '80000,0', '150', '-BLOCK', 'VAN_KHACH', '80000,0', 'L', '', '-INSERT', 'VAN_KHACH', '80000,0', '1', '', '0',
   'PCCC_THEMBLOCK', 'L', 'van_khach', 'Van khach them', 'SPR', '', 'PCCC_DAT', 'VAN_KHACH', '81000,0', '',
   'PCCC_BOC', 'Khong', '', 'ThuPlugin', '_.QSAVE')
 $kb -join "`r`n" | Set-Content -Encoding ascii "$T\kb.scr"
@@ -59,22 +63,26 @@ $can = @(
   @('ONG_DN50\s+15 ', 'ong 15 m'),
   @('\[TANG 1\] BC_KHOI=2', 'tach theo khu'),
   @('R = 3 m .*thay 2 ', 'chay lai VUNGBV thay vong cu, khong ve trung'),
-  @('PCCC_RAI SPR_DAU_DOWN n=4 luoi=2x2 buoc=3250x2250 m2=7\.31', 'PCCC_RAI: phong 6500x4500, S = 4 m, dt 12 m2 ra 4 dau phun, buoc 3250 x 2250, 7,31 m2 moi dau'),
-  @('PCCC_TUYEN ONG_DN25 doan=3 m=10\.8[78]', 'PCCC_TUYEN: ong gop qua diem bam x = 53000 + 2 nhanh, dai 10,88 m'),
-  @('PCCC_THEMBLOCK VAN_KHACH', 'PCCC_THEMBLOCK: block cua nguoi dung vao thu vien duoi ma moi'),
-  @('VAN_KHACH\s+1 ', 'block moi them: PCCC_DAT dat duoc, PCCC_BOC dem 1 cai'))
+  # dt doi luoi: S = 4 m khong co dt ra 4 x 3 (16 m2 moi dau); co dt 12 phai ra 4 x 4
+  @('PCCC_RAI SPR_DAU_DOWN n=16 luoi=4x4 buoc=4000x3000 m2=12\b', 'PCCC_RAI: phong 16000x12000, S = 4 m, dt 12 m2 ra 4 x 4 (khong phai 4 x 3)'),
+  # diem bam ngoai cac cot (x = 65000; OSMODE 0 de diem go khong bi bat vao dau phun x 64000): 11500 + 4 x 13000 = 63,5 m; bo qua diem bam (Enter, cot 56000) chi ra 59,5 m
+  @('PCCC_TUYEN ONG_DN25 doan=5 m=63\.5\b', 'PCCC_TUYEN: ong gop qua diem bam x = 65000 (ngoai cac cot) + 4 nhanh, dai 63,5 m'),
+  @('PCCC_THEMBLOCK VAN_KHACH', 'PCCC_THEMBLOCK: block ten VAN_KHACH them duoi ma van_khach (ma trung ten block khong bi bao trung)'),
+  @('VAN_KHACH\s+2 ', 'block moi them: PCCC_DAT dat duoc, PCCC_BOC dem 2 cai (ban chen tay + ban PCCC_DAT)'))
 $loi = 0
 foreach ($c in $can) { if ($out -match $c[0]) { "DAT   $($c[1])" } else { "LOI   $($c[1])"; $loi++ } }
 # Lan boc thu 2 (sau khi chen bang + vung bao ve) van phai ra 2 / 7: bang thong ke va vong tron khong bi dem.
 $lan2 = $out.Substring($out.LastIndexOf('Command: PCCC_BOC')) # 'Command: ': thong bao loi runner cung co chu PCCC_BOC
 if ($lan2 -match 'BC_KHOI\s+2 ' -and $lan2 -match 'BC_NHIET\s+7 ') { 'DAT   boc lai sau PCCC_BANG khong dem ky hieu trong bang' } else { 'LOI   boc lai sau PCCC_BANG'; $loi++ }
 if ($out -match '\[TKPCCC\] L') { 'LOI   co lenh bao loi:'; ($out -split "`n" | Select-String '\[TKPCCC\] L'); $loi++ }
-# PCCC_THEMBLOCK ghi them 1 dong vao vat_tu.json canh DLL (ban trong thu muc tam; file goc cua repo khong bi dung toi vi khong co nguon_vat_tu.txt).
+# PCCC_THEMBLOCK ghi them 1 dong vao vat_tu.json canh DLL va vao file goc (nguon_vat_tu.txt tro toi ban chep tam $T\goc, repo khong bi dung toi).
 $dmThu = Get-Content -Raw -Encoding UTF8 "$T\vat_tu.json" | ConvertFrom-Json
 $dmGoc = Get-Content -Raw -Encoding UTF8 "$GOC\data\vat_tu.json" | ConvertFrom-Json
+$dmGocThu = Get-Content -Raw -Encoding UTF8 "$T\goc\vat_tu.json" | ConvertFrom-Json
 $moi = @($dmThu.vat_tu | Where-Object { $_.ma -eq 'VAN_KHACH' })
 if ($moi.Count -eq 1 -and $moi[0].ten -eq 'Van khach them' -and $moi[0].he -eq 'SPR' -and $moi[0].loai -eq 'block' -and $moi[0].dvt -eq ('c' + [char]0xE1 + 'i') -and
-  @($dmThu.vat_tu).Count -eq @($dmGoc.vat_tu).Count + 1) { 'DAT   vat_tu.json them dung 1 dong cho ma moi, cac dong cu giu nguyen' } else { 'LOI   vat_tu.json sau PCCC_THEMBLOCK'; $loi++ }
+  @($dmThu.vat_tu).Count -eq @($dmGoc.vat_tu).Count + 1 -and @($dmGocThu.vat_tu | Where-Object { $_.ma -eq 'VAN_KHACH' }).Count -eq 1 -and
+  @($dmGocThu.vat_tu).Count -eq @($dmGoc.vat_tu).Count + 1) { 'DAT   vat_tu.json canh DLL va file goc (nguon_vat_tu.txt) them dung 1 dong cho ma moi' } else { 'LOI   vat_tu.json sau PCCC_THEMBLOCK'; $loi++ }
 # Anh xem truoc cho bang PCCC_BLOCK: PCCC_LIB ve cho block mac dinh, PCCC_THEMBLOCK ve cho block moi; anh phai co net.
 $anhLoi = @('BC_KHOI', 'VAN_KHACH' | Where-Object { -not (Test-Path "$T\anh_block\$_.png") -or (DocAnh "$T\anh_block\$_.png").mau -le 1 })
 if ($anhLoi.Count -eq 0) { 'DAT   anh xem truoc block: BC_KHOI, VAN_KHACH co anh 64 px co net' } else { "LOI   anh xem truoc block thieu hoac trang: $($anhLoi -join ', ')"; $loi++ }
@@ -98,8 +106,36 @@ $tlTrang = (& python -I "$GOC\cad\.claude\skills\tkpccc-ve-cad\scripts\pdf_ti_le
 # Ban ky_hieu.json da doi ten layer truc: chung to plugin doc mac dinh tu file du lieu (cad\data\ky_hieu), khong dung so cung trong ma.
 (Get-Content -Raw -Encoding UTF8 "$GOC\cad\data\ky_hieu\ky_hieu.json") -replace '"layer_truc":\s*"TRUC"', '"layer_truc": "TRUC_T"' |
   Set-Content -Encoding UTF8 "$T\ky_hieu.json"
-@('INSUNITS', '4', 'NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '_.SAVEAS', '2018', "`"$T\spec.dwg`"", 'PCCC_SPEC', "$T\spec.json", 'PCCC_SPEC', "$T\rai.json",
-  'PCCC_SPEC', "$T\khoa_sai.json", 'PCCC_SPEC', "$T\khoa_dung.json", 'PCCC_SPEC', "$T\anh.json", 'PCCC_SPEC', "$T\pdf.json", '_.QSAVE') -join "`r`n" |
+# pdf sai so trang (review 2026-11-11: trang 99 cua PDF 1 trang lam -PDFIMPORT hoi lai mai, nuot cac lenh sau) + loi xep theo i:
+# tron sai o i = 0, hai pdf sai o i = 1, 2 (pdf chay truoc moi thao tac khac nen truoc khi xep, loi cua tron dung cuoi).
+@{ ops = @(@{ op = 'tron'; l = 'X'; c = @(0, 0); r = 0 }, @{ op = 'pdf'; file = $pdfMau; trang = 99; tl = 200 }, @{ op = 'pdf'; file = $pdfMau; trang = 0; tl = 200 }) } |
+  ConvertTo-Json -Depth 5 -Compress | Set-Content -Encoding ascii "$T\pdf_sai.json"
+# Nhap lan hai: AutoCAD dat nen moi o layer PDF2_*; xoa dung ten layer tra ve o pdf[].l, o goi RIENG, thi nen lan dau con nguyen.
+@{ ops = @(@{ op = 'pdf'; file = $pdfMau; trang = 1; tl = $tlTrang.tl; p = @(200000, 100000) }) } | ConvertTo-Json -Depth 5 -Compress | Set-Content -Encoding ascii "$T\pdf2.json"
+'{"ops":[{"op":"xoa","l":"PDF2_Geometry"},{"op":"xoa","l":"PDF2_Text"},{"op":"xoa","l":"PDF2_Solid Fills"},{"op":"doc","gi":"layer","l":"PDF*"}]}' | Set-Content -Encoding ascii "$T\xoa2.json"
+# rai: vung sau loi (9000 x 6000, buoc 4000 x 3000 cho 15 m2 > dt 12) thi khong chen thiet bi cua vung truoc (8000 x 6000, dat).
+'{"goc":[300000,0],"ops":[{"op":"net","l":"VUNG_P","p":[[0,0],[8000,0],[8000,6000],[0,6000]],"kin":true},{"op":"net","l":"VUNG_P","p":[[10000,0],[19000,0],[19000,6000],[10000,6000]],"kin":true},{"op":"rai","ma":"SPR_DAU_DOWN","l":"VUNG_P","buoc":[4000,3000],"dt":12}]}' |
+  Set-Content -Encoding ascii "$T\rai_loi.json"
+# tuyen xuong_ca: (0, 1) hai cot deu ngoai doan ong chinh, ve "truc" hai chieu: cung chon cot gan doan (x 5000) va noi them doan doc truc 2000 -> 12 m;
+# (5) "qua" theo tung vung: moi diem dung cho vung chua no (vung 1 ong gop x 7000, vung 2 x 11000) -> 31 m.
+'{"goc":[400000,0],"ops":[{"op":"tuyen","ma":"ONG_DN25","kieu":"xuong_ca","p":[[5000,2000],[8000,2000],[5000,4000],[8000,4000]],"truc":[[0,0],[3000,0]]},{"op":"tuyen","ma":"ONG_DN25","kieu":"xuong_ca","p":[[5000,2000],[8000,2000],[5000,4000],[8000,4000]],"truc":[[3000,0],[0,0]]},{"op":"net","l":"VUNG_Q","p":[[0,10000],[8000,10000],[8000,16000],[0,16000]],"kin":true},{"op":"net","l":"VUNG_Q","p":[[10000,10000],[18000,10000],[18000,16000],[10000,16000]],"kin":true},{"op":"rai","ma":"SPR_DAU_DOWN","l":"VUNG_Q","buoc":[4000,3000]},{"op":"tuyen","ma":"ONG_DN25","kieu":"xuong_ca","truc":[[-1000,9000],[20000,9000]],"qua":[[7000,13000],[11000,13000]]}]}' |
+  Set-Content -Encoding ascii "$T\tuyen_thu.json"
+# nhan: cho chu DN25 cua ong gop da co san chu DN25 thi khong ghi chong (3 doan, 2 chu nhanh) -> ve 1 + 3 + 2 = 6.
+'{"goc":[500000,0],"ops":[{"op":"chu","l":"PCCC_NHAN","p":[-225,22500],"t":"DN25","cao":250,"can":"giua"},{"op":"tuyen","ma":"ONG_DN25","kieu":"xuong_ca","p":[[0,22000],[3000,22000],[0,25000],[3000,25000]],"truc":[[-1000,20000],[5000,20000]],"nhan":true}]}' |
+  Set-Content -Encoding ascii "$T\nhan.json"
+# PCCC_THEMBLOCK khong ghi gi khi danh muc khong ghi duoc: file goc da co VAN_TRUNG (them tay) va la file chi doc.
+# van_trung: trung ma trong file goc; van_ro: file goc chi doc. Ca hai phai dung TRUOC khi luu PCCC_Blocks.dwg.
+$fGoc = "$T\goc\vat_tu.json"
+[IO.File]::WriteAllText($fGoc, ([IO.File]::ReadAllText($fGoc) -replace '"vat_tu":\s*\[', ("`"vat_tu`": [`r`n    { `"ma`": `"VAN_TRUNG`", `"ten`": `"Van trung`", `"dvt`": `"cai`", `"he`": `"SPR`", `"loai`": `"block`" },")))
+Set-ItemProperty $fGoc IsReadOnly $true
+$bamTv = (Get-FileHash "$T\PCCC_Blocks.dwg").Hash
+@('INSUNITS', '4', 'NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '_.SAVEAS', '2018', "`"$T\spec.dwg`"",
+  'CIRCLE', '-500000,0', '150', '-BLOCK', 'VAN_TRUNG', '-500000,0', 'L', '', '-INSERT', 'VAN_TRUNG', '-500000,0', '1', '', '0',
+  'PCCC_THEMBLOCK', 'L', 'van_trung', 'Van trung', 'SPR', '', 'PCCC_THEMBLOCK', 'L', 'van_ro', 'Van ro', 'SPR', '',
+  'PCCC_SPEC', "$T\spec.json", 'PCCC_SPEC', "$T\rai.json",
+  'PCCC_SPEC', "$T\khoa_sai.json", 'PCCC_SPEC', "$T\khoa_dung.json", 'PCCC_SPEC', "$T\anh.json", 'PCCC_SPEC', "$T\pdf_sai.json", 'PCCC_SPEC', "$T\pdf.json",
+  'PCCC_SPEC', "$T\pdf2.json", 'PCCC_SPEC', "$T\xoa2.json", 'PCCC_SPEC', "$T\rai_loi.json", 'PCCC_SPEC', "$T\tuyen_thu.json", 'PCCC_SPEC', "$T\nhan.json",
+  '_.QSAVE') -join "`r`n" |
   Set-Content -Encoding ascii "$T\kb2.scr"
 $p2 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb2.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb2.out.txt"
 if (-not $p2.WaitForExit(180000)) { Stop-Process -Id $p2.Id -Force; throw "accoreconsole qua 3 phut (PCCC_SPEC): $T\kb2.out.txt" }
@@ -144,8 +180,11 @@ if ($fa -and (Test-Path $fa)) {
   if ($ka.ok -eq $true -and $da.rong -eq 800 -and $da.mau -gt 1) { 'DAT   anh: PNG 800 px co net ve, in sau khi ve xong' } else { "LOI   anh: rong $($da.rong), so gia tri byte $($da.mau)"; $loi++ }
 } else { "LOI   anh khong ra PNG: $T\kb2.out.txt"; $loi++ }
 # --- pdf: ti le tinh tu chuoi kich thuoc; nhap vao phai ra kich thuoc that (truc 1-7 = 41000, khung 1090 pt = 76906 mm o 1:200) ---
-if ([math]::Abs($tlTrang.tl - 200) -le 2 -and $tlTrang.cap -ge 8 -and $tlTrang.tin_cay -ge 0.8) { "DAT   pdf_ti_le.py: PDF mau ve 1:200 ra tl = $($tlTrang.tl) ($($tlTrang.cap) cap so)" }
+# PDF mau co 3 cap so "ban" (nhip ghi sai, so khong ke nhau cung hang) + chu "1 000 000": phai qua hai vong loc moi ra 200 +- 0,1 %.
+if ([math]::Abs($tlTrang.tl - 200) -le 0.2 -and $tlTrang.cap -ge 9) { "DAT   pdf_ti_le.py: PDF mau ve 1:200 co cap so ban ra tl = $($tlTrang.tl) ($($tlTrang.cap) cap so, tin_cay $($tlTrang.tin_cay))" }
 else { "LOI   pdf_ti_le.py: tl = $($tlTrang.tl), cap = $($tlTrang.cap), tin_cay = $($tlTrang.tin_cay)"; $loi++ }
+& python -I "$GOC\cad\.claude\skills\tkpccc-ve-cad\scripts\pdf_ti_le.py" $pdfMau 0 | Out-Null
+if ($LASTEXITCODE -eq 2) { 'DAT   pdf_ti_le.py: trang 0 bao loi, khong lang le tra trang cuoi' } else { "LOI   pdf_ti_le.py trang 0: ma thoat $LASTEXITCODE"; $loi++ }
 $kp = if (Test-Path "$T\pdf.kq.json") { Get-Content -Raw -Encoding UTF8 "$T\pdf.kq.json" | ConvertFrom-Json }
 $chuPdf = if ($kp -and $kp.doc) { @($kp.doc[0].ds) } else { @() }
 $t1 = @($chuPdf | Where-Object { $_.t -eq '1' })[0]; $t7 = @($chuPdf | Where-Object { $_.t -eq '7' })[0]
@@ -154,5 +193,46 @@ $rongKhung = if ($kp -and $kp.hop) { $kp.hop[2] - $kp.hop[0] } else { 0 }
 if ($kp -and $kp.ok -eq $true -and $kp.pdf[0].n -ge 20 -and [math]::Abs($truc17 - 41000) -le 410 -and [math]::Abs($rongKhung - 76906) -le 769) {
   "DAT   pdf: nhap $($kp.pdf[0].n) doi tuong, truc 1-7 do duoc $truc17 (can 41000 +- 1 %), khung rong $rongKhung"
 } else { "LOI   pdf: n = $($kp.pdf.n), truc 1-7 = $truc17, khung = $rongKhung, loi = $($kp.loi | ConvertTo-Json -Compress -Depth 4): $T\kb2.out.txt"; $loi++ }
+
+function DocKq($ten) { if (Test-Path "$T\$ten.kq.json") { Get-Content -Raw -Encoding UTF8 "$T\$ten.kq.json" | ConvertFrom-Json } }
+function Kiem($dk, $ten) { if ($dk) { "DAT   $ten" } else { "LOI   $ten"; $script:loi++ } }
+$ks = DocKq 'pdf_sai'
+Kiem ($ks -and $ks.ok -eq $false -and $ks.ve -eq 0 -and @($ks.loi).Count -eq 3 -and $ks.loi[0].i -eq 0 -and $ks.loi[1].i -eq 1 -and $ks.loi[2].i -eq 2 -and
+  $ks.loi[1].ly_do -match 'trang' -and $ks.loi[2].ly_do -match 'trang') 'pdf trang 99 va trang 0: bao loi, khong goi -PDFIMPORT; loi xep theo i'
+$kp2 = DocKq 'pdf2'; $kx2 = DocKq 'xoa2'
+Kiem ($kp -and $kp2 -and $kx2 -and @($kp2.pdf[0].l | Where-Object { $_ -notmatch '^PDF2_' }).Count -eq 0 -and $kx2.xoa -eq $kp2.pdf[0].n -and
+  @($kx2.doc[0].ds | Where-Object { $_.l -match '^PDF2_' }).Count -eq 0 -and ($kx2.doc[0].ds | Measure-Object n -Sum).Sum -eq $kp.pdf[0].n) `
+  "pdf nhap lan hai vao layer PDF2_* ($($kp2.pdf[0].l -join ', ')); xoa dung ten do o goi rieng: xoa $($kx2.xoa), nen lan dau con nguyen"
+$krl = DocKq 'rai_loi'
+Kiem ($krl -and $krl.ok -eq $false -and @($krl.loi).Count -eq 1 -and $krl.loi[0].i -eq 2 -and $krl.ve -eq 2 -and -not $krl.rai) 'rai: vung thu hai vuot dt thi khong chen thiet bi nao (ve chi gom 2 polyline)'
+$ktt = DocKq 'tuyen_thu'
+Kiem ($ktt -and $ktt.ok -eq $true -and $ktt.tuyen[0].doan -eq 4 -and $ktt.tuyen[0].m -eq 12 -and $ktt.tuyen[1].doan -eq 4 -and $ktt.tuyen[1].m -eq 12) `
+  "tuyen xuong_ca: chan ong gop ngoai doan ong chinh thi noi them doc truc; dao chieu truc van cung cot ($($ktt.tuyen[0].m) / $($ktt.tuyen[1].m) m, can 12)"
+Kiem ($ktt -and $ktt.tuyen[2].doan -eq 6 -and $ktt.tuyen[2].m -eq 31) "tuyen xuong_ca: qua theo tung vung, 2 vung 31 m (thay $($ktt.tuyen[2].m))"
+$knh = DocKq 'nhan'
+Kiem ($knh -and $knh.ok -eq $true -and $knh.ve -eq 6) "tuyen nhan: khong ghi chong chu DN25 len chu DN25 da co (ve $($knh.ve), can 6)"
+# PCCC_THEMBLOCK that bai o danh muc: thu vien DWG khong doi, khong file danh muc nao co ma moi
+$out2 = [Text.Encoding]::Unicode.GetString([IO.File]::ReadAllBytes("$T\kb2.out.txt")) -replace "`0", ''
+$dm2 = Get-Content -Raw -Encoding UTF8 "$T\vat_tu.json" | ConvertFrom-Json
+$dmGoc2 = Get-Content -Raw -Encoding UTF8 $fGoc | ConvertFrom-Json
+Kiem ((Get-FileHash "$T\PCCC_Blocks.dwg").Hash -eq $bamTv -and $out2 -match 'VAN_TRUNG \S+ c. trong' -and $out2 -match 'kh\S+ng ghi \S+c' -and
+  @($dm2.vat_tu | Where-Object { $_.ma -match '^VAN_(TRUNG|RO)$' }).Count -eq 0 -and @($dmGoc2.vat_tu | Where-Object { $_.ma -eq 'VAN_TRUNG' }).Count -eq 1 -and
+  @($dmGoc2.vat_tu | Where-Object { $_.ma -eq 'VAN_RO' }).Count -eq 0) 'PCCC_THEMBLOCK: ma trung trong file goc, file goc chi doc: bao loi, PCCC_Blocks.dwg va danh muc khong doi'
+Set-ItemProperty $fGoc IsReadOnly $false
+
+# chay_spec.ps1: -Dwg tuong doi tinh theo thu muc hien tai cua PowerShell; thu muc co dau (chu a huyen) va dau cach.
+$tmVN = "$T\Nh$([char]0xE0) A"
+New-Item -ItemType Directory $tmVN | Out-Null
+'{"ops":[{"op":"tron","l":"X","c":[0,0],"r":100}]}' | Set-Content -Encoding ascii "$tmVN\s1.json"
+'{"ops":[{"op":"doc","gi":"layer","l":"X"}]}' | Set-Content -Encoding ascii "$tmVN\s2.json"
+$env:TKPCCC_CAD_DLL = "$T\TKPCCC.Cad.dll"
+Push-Location $tmVN
+try {
+  & "$GOC\cad\.claude\skills\tkpccc-ve-cad\scripts\chay_spec.ps1" -Spec 's1.json' -Dwg 'ban ve.dwg' | Out-Null
+  & "$GOC\cad\.claude\skills\tkpccc-ve-cad\scripts\chay_spec.ps1" -Spec 's2.json' -Dwg 'ban ve.dwg' | Out-Null
+} catch { "chay_spec.ps1 loi: $_" } finally { Pop-Location; Remove-Item Env:\TKPCCC_CAD_DLL }
+$kc2 = if (Test-Path -LiteralPath "$tmVN\s2.kq.json") { Get-Content -Raw -Encoding UTF8 -LiteralPath "$tmVN\s2.kq.json" | ConvertFrom-Json }
+Kiem ((Test-Path -LiteralPath "$tmVN\ban ve.dwg") -and $kc2 -and $kc2.ok -eq $true -and $kc2.doc[0].ds[0].l -eq 'X' -and $kc2.doc[0].ds[0].n -eq 1) `
+  'chay_spec.ps1: DWG tuong doi theo $PWD, thu muc co dau: lan 1 tao ban ve, lan 2 mo lai dung ban ve do'
 "Thu muc thu: $T"
 if ($loi) { exit 1 } else { 'TAT CA DAT' }

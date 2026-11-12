@@ -36,6 +36,7 @@ namespace TKPCCC
             public Dictionary<string, object> Dem;
             public List<object> KqRai = new List<object>(), KqTuyen = new List<object>();   // cad/module/plugin/Rai.cs
             public List<List<Point3d>> DiemRai = new List<List<Point3d>>();                 // điểm của "rai" gần nhất, theo từng vùng, để "tuyen" dùng lại
+            public List<List<Point2d>> VungRai = new List<List<Point2d>>();                 // đa giác của từng vùng đó (cùng chỉ số): "tuyen" nhận "qua" theo vùng
             public List<object> KqAnh = new List<object>();                                 // đường dẫn PNG của thao tác "anh"
             public List<object> KqPdf = new List<object>();                                 // số đối tượng + layer của từng thao tác "pdf"
         }
@@ -214,7 +215,7 @@ namespace TKPCCC
                 Extents3d h = g.Hop.Value;
                 kq["hop"] = new double[] { Lt(h.MinPoint.X), Lt(h.MinPoint.Y), Lt(h.MaxPoint.X), Lt(h.MaxPoint.Y) };
             }
-            if (g.Loi.Count > 0) kq["loi"] = g.Loi;
+            if (g.Loi.Count > 0) kq["loi"] = g.Loi.OrderBy(x => (int)((Dictionary<string, object>)x)["i"]).ToList(); // pdf chạy trước, anh chạy sau: xếp lại theo thứ tự thao tác
             if (g.Dem != null) kq["dem"] = g.Dem;
             if (g.KqDoc.Count > 0) kq["doc"] = g.KqDoc;
             if (g.KqRai.Count > 0) kq["rai"] = g.KqRai;
@@ -237,12 +238,16 @@ namespace TKPCCC
             double tl = LaySo(o, "tl", 0);
             if (tl <= 0) throw new System.Exception("pdf cần \"tl\" = mẫu số tỉ lệ của trang (1:100 thì 100); tính bằng cad/.claude/skills/tkpccc-ve-cad/scripts/pdf_ti_le.py");
             Point3d p = Lay(o, "p") == null ? new Point3d(g.Gx, g.Gy, 0) : P(g, Lay(o, "p"), "p");
+            // Số trang sai thì -PDFIMPORT hỏi lại số trang mãi, nuốt hết các lệnh sau (bản vẽ treo): chặn trước khi gọi lệnh.
+            int trang = (int)LaySo(o, "trang", 1), soTrang = SoTrangPdf(f);
+            if (trang < 1 || (soTrang > 0 && trang > soTrang))
+                throw new System.Exception("pdf: \"trang\" " + trang + " ngoài khoảng 1.." + (soTrang > 0 ? soTrang.ToString(CultureInfo.InvariantCulture) : "?") + " của file");
             long truoc = g.Db.Handseed.Value; // lệnh không trả danh sách: đối tượng mới là đối tượng có handle từ đây trở lên
             object hopThoai = AcApp.GetSystemVariable("FILEDIA");
             AcApp.SetSystemVariable("FILEDIA", (short)0); // không để lệnh mở hộp chọn file
             try
             {
-                g.Doc.Editor.Command("-PDFIMPORT", "F", Path.GetFullPath(f), ((int)LaySo(o, "trang", 1)).ToString(CultureInfo.InvariantCulture),
+                g.Doc.Editor.Command("-PDFIMPORT", "F", Path.GetFullPath(f), trang.ToString(CultureInfo.InvariantCulture),
                     string.Format(CultureInfo.InvariantCulture, "*{0},{1}", p.X, p.Y),
                     (25.4 * tl * 0.001 / HeSoMet(g.Db)).ToString("R", CultureInfo.InvariantCulture),
                     LaySo(o, "goc", 0).ToString("R", CultureInfo.InvariantCulture));
@@ -268,8 +273,22 @@ namespace TKPCCC
             g.KqPdf.Add(new Dictionary<string, object> { { "n", n }, { "l", layer } });
         }
 
+        /// Số trang của file PDF theo bộ đọc underlay của AutoCAD; 0 = không đọc được.
+        /// shortcut: không đọc được số trang thì chỉ chặn trang < 1; trang lớn hơn số trang khi đó vẫn làm -PDFIMPORT treo.
+        static int SoTrangPdf(string f)
+        {
+            try
+            {
+                UnderlayHost h = UnderlayHost.PdfHost;
+                UnderlayFile uf = h == null ? null : h.GetFile(Path.GetFullPath(f), "");
+                return uf == null ? 0 : uf.Items.Count;
+            }
+            catch (System.Exception) { return 0; }
+        }
+
         // ---------- Ảnh (thao tác "anh", công cụ MCP cad_anh) ----------
         // Khổ ngang có sẵn của "PublishToWeb PNG.pc3" (thiết bị in PNG cài theo AutoCAD); thiết bị này không nhận cỡ tuỳ ý.
+        const string MAY_IN_ANH = "PublishToWeb PNG.pc3";
         static readonly int[] RONG_ANH = { 640, 800, 1024, 1280, 1600 };
         static readonly string[] KHO_ANH = { "VGA (640.00 x 480.00 Pixels)", "Super VGA (800.00 x 600.00 Pixels)", "XGA (1024.00 x 768.00 Pixels)",
             "Super XGA (1280.00 x 1024.00 Pixels)", "Sun Hi-Res (1600.00 x 1280.00 Pixels)" };
@@ -279,6 +298,9 @@ namespace TKPCCC
         static string InAnh(GoiSpec g, Dictionary<string, object> o)
         {
             double[] h = HopOp(g, o);
+            // Thiếu thiết bị in thì -PLOT hỏi lại tên thiết bị, lệch hết dấu nhắc sau: kiểm trước.
+            if (!PlotSettingsValidator.Current.GetPlotDeviceList().Cast<string>().Contains(MAY_IN_ANH, StringComparer.OrdinalIgnoreCase))
+                throw new System.Exception("anh: máy không có thiết bị in \"" + MAY_IN_ANH + "\" (cài theo AutoCAD, xem PLOTTERMANAGER)");
             double rong = LaySo(o, "rong", 1024);
             int k = 0;
             while (k < RONG_ANH.Length - 1 && RONG_ANH[k] < rong) k++;
@@ -288,7 +310,7 @@ namespace TKPCCC
                 if (File.GetLastWriteTimeUtc(cu) < DateTime.UtcNow.AddDays(-1)) try { File.Delete(cu); } catch (System.Exception) { }
             // Tên mới mỗi lần: file đã có thì -PLOT hỏi ghi đè, lệch dấu nhắc.
             string f = Path.Combine(tm, DateTime.Now.ToString("yyyyMMdd_HHmmss_fff") + ".png");
-            List<object> a = new List<object> { "-PLOT", "Y", "Model", "PublishToWeb PNG.pc3", KHO_ANH[k], "L", "N" };
+            List<object> a = new List<object> { "-PLOT", "Y", "Model", MAY_IN_ANH, KHO_ANH[k], "L", "N" };
             if (h == null) a.Add("E");
             else
             {

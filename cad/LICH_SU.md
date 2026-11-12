@@ -126,3 +126,34 @@ Dừng 15:20: usage 5 giờ 79 % (hai phiên dùng chung), việc kế `cad_anh`
   Tìm ra 1 lỗi không báo của `tuyen` `xuong_ca` (ống góp P01 hở 1521 mm vì chân rơi ngoài đoạn ống chính) và 5 chỗ plugin vẽ khác kỹ sư (chọn cột khi hoà, ống chính sát phòng,
   cách tường khi rải theo `s`, hành lang, chữ DN trùng): ghi ở mục "Bước 5" của `cad/TIEN_DO.md`. `chay_spec.ps1` nhánh "DWG đã có" chạy được.
   Cách làm đáng giữ: agent thiết kế tự chạy spec để nhìn ảnh rồi chỉnh (không tách `cad-ve` ra), và lấy hình học từ vector của PDF thay vì ước theo ảnh.
+
+## 2026-11-12 — sửa theo review 11/11 + Bước 5 mục a, b, f (agent `cad-lap-trinh`, Opus)
+Bài giao: sửa 1 CHẶN + 12 NÊN SỬA của `ket_qua/cad_review/review_2026-11-11.md`, mục a, b, f của Bước 5, GHI CHÚ loại tài liệu cũ / sửa 1–2 dòng. Không làm c, d, e.
+
+Đã sửa (mã):
+- CHẶN `Spec.cs` `NhapPdf`: đọc số trang bằng `UnderlayHost.PdfHost.GetFile(f, "").Items.Count` (chạy được trong accoreconsole), `trang` < 1 hoặc > số trang thì báo lỗi, không gọi `-PDFIMPORT`.
+  Không đọc được số trang thì chỉ chặn `trang` < 1 (`shortcut:` trong mã). `InAnh` kiểm `PublishToWeb PNG.pc3` có trong `PlotSettingsValidator.GetPlotDeviceList()` trước `-PLOT`.
+- `Spec.cs`: `loi` xếp theo `i` trước khi trả.
+- `Block.cs` `PCCC_THEMBLOCK`: (1) block tên trùng mã (block `VAN_KHACH`, mã `van_khach`) không còn bị báo "thư viện đã có block"; (2) `DanhMucThem` dựng + tự kiểm nội dung mới của CẢ HAI file danh mục,
+  báo lỗi khi mã đã có trong file gốc, file chỉ đọc hoặc đang khoá, TRƯỚC khi lưu `PCCC_Blocks.dwg`; ghi danh mục sau cùng.
+- `Rai.cs` `OpRai`: tính lưới mọi vùng trước, đạt hết mới chèn (vùng sau lỗi thì không để lại thiết bị vùng trước).
+- `Rai.cs` `TuyenXuongCa` (NÊN SỬA `Rai.cs:313-326` = Bước 5 a, b): chỉ chọn cột có chân trong đoạn ống chính; không cột nào thì cột chân gần đoạn nhất; hoà thì cột có x nhỏ hơn rồi y nhỏ hơn (không phụ thuộc chiều `truc`);
+  chân (kể cả theo `qua`) ngoài đoạn thì nối thêm đoạn dọc trục về đầu mút gần nhất. `qua` nhận nhiều điểm, mỗi điểm dùng cho vùng của `rai` chứa nó (`GoiSpec.VungRai` giữ đa giác từng vùng).
+- `Rai.cs` `nhan` (Bước 5 f): bỏ chữ DN khi trong bán kính cỡ chữ × số ký tự đã có chữ cùng nội dung (kể cả chữ của nền PDF).
+- `Rai.cs` `PCCC_TUYEN`: chỉ nhận block có mã thiết bị (`MaThietBi`).
+- `pdf_ti_le.py`: bỏ số bằng 0 (chuỗi `000` của "1 000 000" gây chia cho 0); `trang` ngoài khoảng thì in lỗi, mã thoát 2.
+- `chay_spec.ps1`: `-Dwg` tương đối tính theo `$PWD`; làm trên bản chép spec + DWG trong thư mục tạm tên ASCII rồi chép về (đường dẫn có dấu không còn hỏng; DWG đang mở ở AutoCAD khác thì báo lỗi lúc chép về);
+  biến môi trường `TKPCCC_CAD_DLL` để test dùng DLL tạm.
+- `test/tao_pdf_mau.py` + `mau_kt.pdf`: một nhịp ghi 6650 vẽ 7000, một số không kề nhau cùng hàng với số tổng, chữ "1 000 000".
+Đã sửa (tài liệu): `TU_VUNG.md` (phần chi tiết: `rai`, `tuyen` `xuong_ca`/`qua`/`nhan`, `pdf` số trang và nhập lần hai vào `PDF2_*`), skill `tkpccc-ve-cad` (xoá nền theo tên layer ở gói riêng, ngưỡng `tin_cay` trỏ về `pdf_ti_le.py`,
+bỏ "chưa có bảng block", con số 25 đầu báo trỏ về LUAT BC-04), `cad-thiet-ke.md` (trỏ BC-04), `rule/LUAT.md` (bỏ "(chưa tạo)", SP-01), `README.md` (thêm `cad-review`), `cad-review.md` (thêm Write), `TIEN_DO.md` ghi nhớ `-PDFIMPORT`.
+
+Kiểm chứng: `chay_thu.ps1` 42/42 (thêm 9 phép, sửa 4 phép theo review: `PCCC_RAI` phòng 16 × 12 m ra 4 × 4; `PCCC_TUYEN` bấm ngoài các cột x 65000 ra 63,5 m (Enter ra 59,5); `pdf_ti_le.py` trên PDF có cặp số bẩn đòi 200 ± 0,1 %
+(thử đảo dấu lọc ra 208,8, bản cũ văng ZeroDivisionError); `vat_tu.json` gốc qua `nguon_vat_tu.txt`); `thu_mcp.ps1` 9/9; `build.bat` xong.
+Chạy lại `t1_spr.json` trên bản chép nền (`ket_qua/cad_mau/cad/lan2/`, từ `t1_spr.bak`): `ok`, 62 đầu phun, DN100 56,91 m, DN80 20,54 m, DN50 130,79 m (như lần trước: P01 đổi sang cột 34894, cùng chiều dài),
+`ve` 131 (lần trước 153: 22 chữ DN50 trùng bị bỏ). Ảnh `lan2/anh/t1_spr_2.png`: ống góp P01 nối vào DN100, hết hở.
+Chưa kiểm: nhánh thiếu thiết bị `PublishToWeb PNG.pc3` (máy có sẵn, không gỡ được để thử); `-PDFIMPORT` với trang sai trong `acad.exe` (đã chặn trước lệnh nên không còn gọi); `thu_gui.ps1` không chạy.
+GHI CHÚ của review để nguyên (không phải tài liệu cũ, không sửa trong 1–2 dòng): `Block.cs:248` lưu đè thư viện không cất bản cũ; `NapBlock` `Replace` block lồng trùng tên;
+`anh` luôn in Model; `anh` vùng trống ra PNG trắng mà `ok`; `pdf_ti_le.py:34` phương chữ đoán theo hộp chữ; `thu_mcp.ps1:45` (máy chủ tự cắt 1900) và `:84` (kiểm luôn đúng);
+`chay_thu.ps1` chưa có `anh` vùng trống, chưa so vị trí `p` của `pdf`, chưa đếm block thư viện trước/sau; `thu_gui.ps1` thử bản build trong bundle; `build.bat` ghi `nguon_vat_tu.txt` theo bảng mã OEM.
+(`chay_spec.ps1` không thấy QSAVE hỏng: nay chép DWG về sau cùng, DWG đang mở thì báo lỗi lúc chép.)

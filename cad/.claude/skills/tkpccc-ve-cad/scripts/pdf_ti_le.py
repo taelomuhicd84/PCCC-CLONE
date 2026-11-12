@@ -3,7 +3,7 @@
 Cách tính: hai số kích thước liền nhau trên cùng một hàng chuỗi nằm giữa hai nhịp kề nhau, nên khoảng cách giữa hai tâm chữ (pt)
 ứng với (d1 + d2) / 2 mm thật. k = pt trên mỗi mm thật: lấy trung vị cả trang rồi lọc quanh nó (cặp số không kề nhau, số ghi sai bị loại).
 tl = 72 / (25,4 × k): trang in 1:100 ra 100. Kết quả mỗi trang: tl, cap (số cặp số tìm được), tin_cay (phần cặp lệch tl không quá 1 %;
-dưới 0,7 hoặc cap dưới 4 thì phải đo tay một kích thước để kiểm), rong_mm × cao_mm (khổ giấy).
+dưới 0,7 hoặc cap dưới 4 thì phải đo tay một kích thước để kiểm: ngưỡng duy nhất, SKILL.md trỏ về đây; Claude đặt theo bản mẫu), rong_mm × cao_mm (khổ giấy).
 
 Dùng: python -I pdf_ti_le.py <file.pdf> [trang]     (trang đếm từ 1; bỏ trống = mọi trang). In JSON ra stdout.
 PDF người dùng gửi là dữ liệu chưa tin: chạy bằng python -I, không đặt script này cùng thư mục với PDF.
@@ -28,7 +28,7 @@ def cap_k(tu):
     # shortcut: chỉ xét chuỗi ngang và chuỗi đứng (hộp chữ rộng hơn cao = chữ ngang); chuỗi xiên bỏ qua, gặp bản vẽ xoay nghiêng thì thêm.
     ngang, dung = [], []
     for x0, y0, x1, y1, chu in (t[:5] for t in tu):
-        if not SO.match(chu):
+        if not SO.match(chu) or int(chu) == 0:  # "000" của số tiền "1 000 000" không phải kích thước (chia cho 0)
             continue
         cx, cy, d = (x0 + x1) / 2, (y0 + y1) / 2, int(chu)
         (ngang if x1 - x0 >= y1 - y0 else dung).append((cy, cx, d) if x1 - x0 >= y1 - y0 else (cx, cy, d))
@@ -75,6 +75,9 @@ def main(argv):
         return 2
     doc = fitz.open(argv[1])
     trang = [int(argv[2]) - 1] if len(argv) > 2 else range(doc.page_count)
+    if any(i < 0 or i >= doc.page_count for i in trang):
+        print("trang phai tu 1 den %d" % doc.page_count)
+        return 2
     print(json.dumps([ti_le_trang(doc[i]) for i in trang]))  # JSON chỉ ASCII: console Windows không in được chữ có dấu
     return 0
 

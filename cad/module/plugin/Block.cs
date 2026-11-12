@@ -149,18 +149,22 @@ namespace TKPCCC
             return r.Status == PromptStatus.OK ? r.StringResult.Trim() : null;
         }
 
-        /// Thêm một dòng vào mảng "vat_tu" của file danh mục, giữ nguyên cách trình bày (mỗi vật tư một dòng) để diff git chỉ có một dòng.
-        static void ThemVaoDanhMuc(string file, VatTu v)
+        /// Nội dung mới của file danh mục khi thêm một dòng vào mảng "vat_tu", giữ nguyên cách trình bày (mỗi vật tư một dòng) để diff git chỉ có một dòng.
+        /// Chưa ghi gì: mã đã có trong file, file chỉ đọc hoặc đang bị khoá thì ném lỗi để PCCC_THEMBLOCK dừng TRƯỚC khi lưu thư viện.
+        static string DanhMucThem(string file, VatTu v)
         {
             JavaScriptSerializer js = new JavaScriptSerializer();
             string t = File.ReadAllText(file, Encoding.UTF8);
+            if (TimMa(js.Deserialize<FileDanhMuc>(t), v.ma) != null) throw new System.Exception("mã " + v.ma + " đã có trong " + file + ": chưa ghi gì");
             int dong = t.LastIndexOf(']'), cuoi = dong < 0 ? -1 : t.LastIndexOf('}', dong);
             if (cuoi < 0) throw new System.Exception("không đọc được cấu trúc " + file);
             string moi = t.Substring(0, cuoi + 1) + "," + (t.Contains("\r\n") ? "\r\n" : "\n") + "    { \"ma\": " + js.Serialize(v.ma) + ", \"ten\": " + js.Serialize(v.ten)
                 + ", \"dvt\": " + js.Serialize(v.dvt) + ", \"he\": " + js.Serialize(v.he) + ", \"loai\": \"block\" }" + t.Substring(cuoi + 1);
             // Tự kiểm trước khi ghi đè: file mới phải đọc lại được và có mã vừa thêm.
             if (TimMa(js.Deserialize<FileDanhMuc>(moi), v.ma) == null) throw new System.Exception("ghi danh mục hỏng, chưa lưu: " + file);
-            HangDoi.GhiAnToan(file, moi);
+            try { using (new FileStream(file, FileMode.Open, FileAccess.ReadWrite, FileShare.None)) { } }
+            catch (System.Exception ex) { throw new System.Exception("không ghi được " + file + " (chỉ đọc hoặc đang mở ở chương trình khác): " + ex.Message + "; chưa ghi gì"); }
+            return moi;
         }
 
         /// PCCC_THEMBLOCK: đưa một block của người dùng (kể cả block động) vào PCCC_Blocks.dwg dưới một mã vật tư MỚI và thêm dòng vào vat_tu.json.
@@ -194,6 +198,17 @@ namespace TKPCCC
             if (v.dvt == null) return;
             if (v.dvt == "") v.dvt = "cái";
 
+            // Danh mục: bản cạnh DLL (plugin đọc) và file gốc của repo (nguồn duy nhất; build.bat ghi đường dẫn vào nguon_vat_tu.txt).
+            // Dựng và tự kiểm nội dung mới của cả hai file TRƯỚC, rồi lưu thư viện, rồi mới ghi danh mục: lỗi danh mục không để lại block mồ côi.
+            List<string> ghi = new List<string> { Path.Combine(ThuMuc, "vat_tu.json") };
+            string fNguon = Path.Combine(ThuMuc, "nguon_vat_tu.txt");
+            if (File.Exists(fNguon))
+            {
+                string goc = Path.GetFullPath(File.ReadAllText(fNguon).Trim());
+                if (File.Exists(goc) && !string.Equals(goc, ghi[0], StringComparison.OrdinalIgnoreCase)) ghi.Add(goc);
+            }
+            List<string> noiDung = ghi.Select(f => DanhMucThem(f, v)).ToList();
+
             ObjectId nguon;
             using (Transaction tr = db.TransactionManager.StartTransaction())
             {
@@ -222,7 +237,8 @@ namespace TKPCCC
                     using (Transaction tr = tv.TransactionManager.StartTransaction())
                     {
                         BlockTable bt = (BlockTable)tr.GetObject(tv.BlockTableId, OpenMode.ForRead);
-                        if (bt.Has(v.ma)) throw new System.Exception("thư viện đã có block tên " + v.ma);
+                        // Block vừa chép còn mang tên gốc: tên gốc trùng mã (block VAN_KHACH, mã van_khach) là chính nó, không phải trùng.
+                        if (bt.Has(v.ma) && bt[v.ma] != cap.Value) throw new System.Exception("thư viện đã có block tên " + v.ma);
                         BlockTableRecord b = (BlockTableRecord)tr.GetObject(cap.Value, OpenMode.ForWrite);
                         b.Name = v.ma;
                         // MA_VT để PCCC_BOC đếm: block động chèn ra mang tên vô danh, chỉ còn thuộc tính này để nhận ra.
@@ -248,15 +264,7 @@ namespace TKPCCC
                 tv.SaveAs(FileThuVien, DwgVersion.Current);
             }
 
-            // Danh mục: bản cạnh DLL (plugin đọc) và file gốc của repo (nguồn duy nhất; build.bat ghi đường dẫn vào nguon_vat_tu.txt).
-            List<string> ghi = new List<string> { Path.Combine(ThuMuc, "vat_tu.json") };
-            string fNguon = Path.Combine(ThuMuc, "nguon_vat_tu.txt");
-            if (File.Exists(fNguon))
-            {
-                string goc = Path.GetFullPath(File.ReadAllText(fNguon).Trim());
-                if (File.Exists(goc) && !string.Equals(goc, ghi[0], StringComparison.OrdinalIgnoreCase)) ghi.Add(goc);
-            }
-            foreach (string f in ghi) ThemVaoDanhMuc(f, v);
+            for (int i = 0; i < ghi.Count; i++) HangDoi.GhiAnToan(ghi[i], noiDung[i]);
             CapNhatAnhBlock(DocDanhMuc());
             ed.WriteMessage("\n[TKPCCC] PCCC_THEMBLOCK " + v.ma + " -> " + FileThuVien + "; danh mục: " + string.Join(", ", ghi));
             if (ghi.Count == 1) ed.WriteMessage("\nLưu ý: không thấy file danh mục gốc của repo (nguon_vat_tu.txt), mã mới chỉ nằm ở bản cạnh DLL và sẽ mất khi chạy lại build.bat.");

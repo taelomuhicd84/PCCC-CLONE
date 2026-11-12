@@ -3,7 +3,11 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
-## TRẠNG THÁI (cập nhật 2026-11-12, 07:35)
+## TRẠNG THÁI (cập nhật 2026-11-12, 13:50)
+- 13:50 ngày 12/11: agent `cad-lap-trinh` (Opus) XONG lượt sửa lỗi: CHẶN + 12 NÊN SỬA của `ket_qua/cad_review/review_2026-11-11.md`, Bước 5 mục a, b, f, các GHI CHÚ loại tài liệu cũ
+  (chi tiết + GHI CHÚ còn để nguyên ở `cad/LICH_SU.md`). `chay_thu.ps1` 42/42, `thu_mcp.ps1` 9/9, bundle build lại 13:44. CHƯA commit (phiên điều phối commit).
+  Chạy lại `t1_spr.json` trên bản chép nền `ket_qua/cad_mau/cad/lan2/t1_spr.dwg`: ống góp P01 hết hở (ảnh `lan2/anh/t1_spr_2.png`), 62 đầu phun, ống như cũ.
+  VIỆC KẾ: review mốc này (`cad-review`, Opus max) rồi Bước 5 mục c, d, e.
 - 07:35 ngày 12/11: cửa sổ 02:30 đã dùng hết 100 % lúc khoảng 02:50 (phiên chính ngữ cảnh 600 nghìn token + review Fable max), review bị ngắt giữa chừng, CHƯA có báo cáo.
   07:30 hạn mức reset, đã gọi agent review làm tiếp và bảo nó ghi báo cáo ngay (`ket_qua/cad_review/review_2026-11-11.md`). Fable tuần đã 66 % (reset 05:00 ngày 14/11):
   mỗi lượt gọi "nguội" của phiên chính 11/11 tốn khoảng 35 % cửa sổ 5 giờ và 10 % Fable tuần. VIỆC SỬA MÃ (review + mục a–f của Bước 5) NÊN LÀM Ở PHIÊN MỚI, giao Opus theo `cad-lap-trinh.md`.
@@ -24,7 +28,7 @@ Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.m
   Phiên 11/11 đã dài 520 nghìn token ngữ cảnh nên mỗi lượt gọi tốn khoảng 1,2 % cửa sổ 5 giờ; phiên mới rẻ hơn nhiều lần.
   22:35 làm thêm bước con 1 của Bước 5 rồi dừng hẳn ở khoảng 85 % cửa sổ 5 giờ.
 - MODEL (người dùng chốt khoảng 23:00 ngày 11/11, thay các lời dặn trước trong ngày): viết code bằng Opus (agent `cad-lap-trinh`; effort Claude chọn: high cho thuật toán và thao tác mới,
-  medium cho sửa nhỏ); review và kiểm tra bằng Fable effort max (agent mới `cad-review`, một lần cuối mỗi mốc vì hạn mức Fable tuần có hạn); chạy dự án thật thì chia agent theo bảng ở `cad/CLAUDE.md`.
+  medium cho sửa nhỏ); review và kiểm tra bằng Opus effort max (`cad-review`, một lần cuối mỗi mốc; người dùng dặn 2026-11-12 bỏ Fable, thay lời dặn 11/11); chạy dự án thật thì chia agent theo bảng ở `cad/CLAUDE.md`.
   Phiên chính chỉ điều phối. Mã viết tối 11/11 (commit `24109da`..HEAD, do Fable viết) CHƯA qua review: là việc đầu tiên của lần chạy 02:33.
 - Người dùng dặn 22:45 cho lần chạy 02:33 ngày 12/11: chạy HẾT usage 5 giờ của cửa sổ đó (không dừng ở 90 %), xong tự ghi file này + `cad/LICH_SU.md` và commit, KHÔNG push.
   Vì chạy tới hết hạn mức: ghi tiến độ + commit sau MỖI bước con.
@@ -100,15 +104,15 @@ Skill `tkpccc-ve-cad` giữ sonnet/low (vẽ theo spec có sẵn).
      Rải `s` 4000, `dt` 12 (hai số ghi trên bảng thông số của tờ mẫu) ra 62 đầu phun, mẫu 64: 11 phòng đủ 4 đầu như mẫu; hành lang thiếu 2 (HL1 9/10, HL2 5/6).
      Ống: DN100 56,91 m, DN80 20,54 m, DN50 130,79 m. Spec `t1_vung.json`, `t1_spr.json`, báo cáo `t1_spr.md`, ảnh `anh/t1_spr_1..5.png`, `anh/t1_vung_1..4.png` trong `ket_qua/cad_mau/cad/skills/` (không commit).
      Phiên chính đã xem ảnh tổng `t1_spr_1.png`: hộp vùng, đầu phun, ống nằm đúng trên nền.
-  CHỖ PLUGIN VẼ KHÁC KỸ SƯ (toạ độ và đầu vào cụ thể ở mục 3, 4 của `t1_spr.md`), là việc sửa mã kế tiếp:
-  a. LỖI `tuyen` `xuong_ca`: chân ống góp rơi ra ngoài đoạn ống chính mà `loi` vẫn rỗng (P01: ống góp (31444, 47459)–(31444, 51196), ống chính bắt đầu ở x 32965, hở 1521 mm).
+  CHỖ PLUGIN VẼ KHÁC KỸ SƯ (toạ độ và đầu vào cụ thể ở mục 3, 4 của `t1_spr.md`); a, b, f xong 12/11, CÒN c, d, e:
+  a. XONG 12/11 (chạy lại: P01 ống góp x 34894 nối vào DN100). LỖI `tuyen` `xuong_ca`: chân ống góp rơi ra ngoài đoạn ống chính mà `loi` vẫn rỗng (P01: ống góp (31444, 47459)–(31444, 51196), ống chính bắt đầu ở x 32965, hở 1521 mm).
      Sửa: chỉ chọn cột có chân nằm trong đoạn; không cột nào được thì nối thêm dọc ống chính hoặc đưa vào `loi`.
-  b. `xuong_ca` chọn cột khi hoà phụ thuộc chiều vẽ `truc` (trái → phải ra cột trái, ngược lại ra cột phải): cần quy tắc phá hoà cố định, và `qua` theo TỪNG vùng (hiện một `qua` áp cho mọi vùng).
+  b. XONG 12/11 (hoà: cột x nhỏ hơn rồi y nhỏ hơn; `qua` nhiều điểm, mỗi điểm cho vùng chứa nó). `xuong_ca` chọn cột khi hoà phụ thuộc chiều vẽ `truc` (trái → phải ra cột trái, ngược lại ra cột phải): cần quy tắc phá hoà cố định, và `qua` theo TỪNG vùng (hiện một `qua` áp cho mọi vùng).
   c. Ống chính chạy sát hoặc qua phòng (P06, hàng đầu phun cách ống chính 330 mm): `xuong_ca` ra một nhánh song song ống chính. Kỹ sư đi mỗi cột một nhánh vuông góc: thêm kiểu `cot`.
   d. `rai` theo `s` luôn để cách tường nửa bước; kỹ sư dàn bước gần `s`, sát tường hơn, và xếp từng hàng theo bề rộng trống (phòng chữ L có WC). Vì thế theo phương dài lệch 0,2–1,4 m
      (phương ngắn lệch dưới 25 mm). Đề xuất: cho `le` dùng cùng `s`; tuỳ chọn xếp theo từng hàng.
   e. Hành lang: kỹ sư đặt đầu ở các góc giao hành lang, bước 3000–4000 xen nhau; `rai` chia đều nên thiếu 2 đầu. Đề xuất: rải theo đường tim có điểm bắt buộc.
-  f. `nhan` ghi trùng chữ DN50 ở chỗ ống góp gặp nhánh.
+  f. XONG 12/11 (bỏ chữ khi gần đó đã có chữ cùng nội dung, kể cả chữ nền PDF). `nhan` ghi trùng chữ DN50 ở chỗ ống góp gặp nhánh.
   NGƯỜI DÙNG CẦN DUYỆT: 15 hộp vùng (`anh/t1_vung_*.png`), nhất là ranh giới tự đặt ở chỗ không có tường (HL1 / HL3 / P06; HL4 phía sảnh thông tầng, x 51056); vị trí ống góp từng phòng.
   Chưa vẽ: trục xả DN50, van OS&Y, công tắc dòng chảy, van xả khí. Chưa thử `cad-ve`, `cad-kiem` (cần AutoCAD mở để gọi MCP).
 - Đo số token một lần vẽ (`claude -p --output-format json`), ghi vào `cad/LICH_SU.md`.
@@ -149,7 +153,7 @@ Ba thứ người dùng CHƯA cấp, bảo Claude làm sườn trước rồi h�
 - Kịch bản accoreconsole: `GetSelection` có `SingleOnly` kết thúc ngay sau `L` (không thêm dòng trống); chọn bằng `W x1,y1 x2,y2` được sau khi `_.ZOOM _E`; `GetEntity` thì không trả lời được.
 - `tuyen` `noi_tiep` nối MỌI vùng của `rai` trước đó thành một đường; muốn mỗi phòng một đường thì gọi `rai` + `tuyen` từng phòng.
 - Thêm thao tác spec: hàm `Op...` trong `module/plugin/Spec.cs` + 1 dòng `MotOp` + 1 dòng `skills/TU_VUNG.md` + 1 phép kiểm trong `test/chay_thu.ps1`.
-- Thao tác phải chạy LỆNH AutoCAD (`anh` dùng `-PLOT`, sắp tới `pdf` dùng `-PDFIMPORT`): không đặt trong `MotOp`. `ThucHienSpec` gom chúng rồi gọi `Editor.Command` ngoài transaction
+- Thao tác phải chạy LỆNH AutoCAD (`anh` dùng `-PLOT`, `pdf` dùng `-PDFIMPORT`): không đặt trong `MotOp`. `ThucHienSpec` gom chúng rồi gọi `Editor.Command` ngoài transaction
   (`anh` sau commit). `Editor.Command` chạy được trong accoreconsole. Toạ độ gõ cho lệnh thêm dấu `*` đằng trước để tính theo WCS.
 - Giao diện: chỉ `module/ui/` được tham chiếu `acmgd.dll` (+ `AdWindows`, `PresentationCore`, `WindowsBase`, `System.Xaml` vì `PaletteSet` kéo theo WPF). DLL này không xử lý bản vẽ:
   gọi `Lenh.DanhMucBlock` của lõi và gửi lệnh bằng `SendStringToExecute`. Trong AutoCAD, điều khiển WinForms chỉ hiện là "Pane" với UI Automation:
@@ -157,6 +161,9 @@ Ba thứ người dùng CHƯA cấp, bảo Claude làm sườn trước rồi h�
 - Thứ tự dấu nhắc `-PDFIMPORT` (AutoCAD 2021): F, tên file, số trang, điểm chèn, tỉ lệ, góc xoay. Ở tỉ lệ 1 thì 1 đơn vị bản vẽ = 1 inch giấy, KHÔNG theo `INSUNITS`
   (plugin nhân 25,4 × `tl`). Trang có `/Rotate` vào đúng chiều đang hiển thị. Layer mặc định `PDF_Geometry`, `PDF_Text`, `PDF_Solid Fills`. Lệnh không trả danh sách đối tượng:
   đếm đối tượng mới theo handle ≥ `Handseed` trước lệnh.
+- Kịch bản accoreconsole: điểm GÕ cho `GetPoint` vẫn bị OSNAP bắt vào đối tượng gần (bấm 65000,2000 ra x 64200 của đầu phun): đặt `OSMODE` 0 trước lệnh cần điểm chính xác.
+- Số trang PDF đọc được bằng `UnderlayHost.PdfHost.GetFile(f, "").Items.Count` (có trong `acdbmgd`, chạy được trong accoreconsole). Lần nhập PDF thứ hai vào layer `PDF2_*`.
+- `chay_spec.ps1` làm trên bản chép spec + DWG trong thư mục tạm rồi chép về: kết quả `<spec>.kq.json` và DWG chỉ đổi khi chạy xong.
 - `pdf_ti_le.py`: `get_text("words")` của PyMuPDF trả toạ độ trang CHƯA xoay (trang `/Rotate 90` thì chuỗi ngang trên màn hình là chuỗi đứng trong toạ độ này); script xét cả hai phương nên không sao.
   Số kích thước ghi trên bản vẽ có thể lệch nét vẽ (bản mẫu: nhịp ghi 1700, vẽ 1785; tổng ghi 18800 nhưng các nhịp cộng lại 18600): vì vậy lọc hai vòng 1 % rồi 0,5 %.
 - Phần đầu `skills/TU_VUNG.md` đang dài 1831 / 1900 ký tự: thêm thao tác nữa phải rút gọn các dòng cũ.
