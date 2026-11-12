@@ -182,11 +182,12 @@ $demDu = '"dem":{"BC_KHOI":10,"BC_NHIET":4,"DAY_BC":28.91,"ONG_DN25":183.32,"ONG
 ('{"goc":[1500000,0],"ops":[{"op":"so_do","p":[0,0],"h":3000,"tang":[{"ten":"L1","cot":0,' + $demDu + '},{"ten":"L2","cot":4200,' + $demDu + '}]},' +
   '{"op":"so_do","p":[0,20000],"tang":[{"cot":0,"dem":{"SPR_DAU_DWN":4}}]},{"op":"so_do","p":[0,40000],"tang":[{"cot":0,"dem":{"SPR_DAU_DOWN":-3}}]},' +
   '{"op":"doc","gi":"chu","l":"PCCC_SODO"}]}') | Set-Content -Encoding ascii "$T\so_do_loc.json"
-# NEN SUA 3, 4: bc dem co DAY_BC khong bao loi; 4 zone mot tang h mac dinh va 2 zone h 1500: tu tang h, day khong sit, khong trung khung tu.
+# NEN SUA 3: bc dem co DAY_BC khong bao loi. Bo cuc ho so that (12/11): zone truc tiep, khong vach tang/cao do, so luong DUOI ky hieu,
+# dien tich bao ve cuoi hang, dong du phong, mui ten lien dong duoi tu.
 ('{"goc":[1700000,0],"ops":[{"op":"so_do","he":"bc","toi_da":25,"tang":[{"ten":"B1","cot":0,"dem":{"BC_KHOI":10,"BC_NHIET":4,"DAY_BC":28.91,"BC_NUTAN":1}}]},' +
-  '{"op":"so_do","he":"bc","toi_da":25,"p":[0,20000],"tang":[{"cot":0,"zone":[{"dem":{"BC_KHOI":21}},{"dem":{"BC_KHOI":22}},{"dem":{"BC_KHOI":23}},{"dem":{"BC_KHOI":24}}]}]},' +
-  '{"op":"so_do","he":"bc","toi_da":25,"p":[0,40000],"h":1500,"tang":[{"cot":0,"zone":[{"dem":{"BC_KHOI":15}},{"dem":{"BC_KHOI":16}}]}]},' +
-  '{"op":"doc","gi":"chu","l":"PCCC_SODO_BC","hop":[-10000,15000,30000,60000]}]}') | Set-Content -Encoding ascii "$T\so_do_bc2.json"
+  '{"op":"so_do","he":"bc","toi_da":25,"p":[0,20000],"du_phong":"ZONE 4 DU PHONG","lien_dong":["LD THU"],"zone":[{"dt":120,"dem":{"BC_KHOI":21}},' +
+  '{"kv":"KHU B","dem":{"BC_KHOI":22,"BC_NUTAN":1}},{"dem":{"SPR_VAN_OSY_DN100":2,"SPR_CTDC":2}}]},' +
+  '{"op":"doc","gi":"chu","hop":[-10000,15000,30000,60000]}]}') | Set-Content -Encoding ascii "$T\so_do_bc2.json"
 # NEN SUA 1: ban ve don vi m (INSUNITS 6): co chu mac dinh nhan k, hop cua so do vai chuc m (truoc: 7 724 x 1 227 m).
 '{"goc":[1600,0],"ops":[{"op":"so_do","he":"spr","p":[0,0],"tang":[{"ten":"T1","cot":0,"dem":{"SPR_DAU_DOWN":64}},{"ten":"T2","cot":4200,"dem":{"SPR_DAU_DOWN":64}}]}]}' |
   Set-Content -Encoding ascii "$T\so_do_m.json"
@@ -328,8 +329,8 @@ Kiem ($ksl -and $ksl.ve -eq 0 -and @($ksl.loi).Count -eq 1 -and $ksl.loi[0].ly_d
   ($chuSd -contains ([string][char]0xB1 + '0.000')) -and ($chuSd -contains '+4.200') -and ($chuSd -contains '+8.400') -and $chuSd.Count -eq 6) `
   "so_do: chu cao do +-0.000 / +4.200 / +8.400 + 3 ten tang; truc DN25 khong co van OS&Y thi bao loi, khong ve ($($chuSd -join ' | '))"
 $ksb = DocKq 'so_do_bc'; $ksbl = DocKq 'so_do_bc_loi'
-Kiem ($ksb -and $ksb.ok -eq $true -and $ksb.ve -eq 47 -and $ksb.dem.BC_KHOI -eq $ksd.dem.BC_KHOI -and $ksb.dem.BC_NHIET -eq $ksd.dem.BC_NHIET -and -not $ksb.dem.BC_DTCD -and -not $ksb.dem.BC_TT) `
-  "so_do bc: 3 zone, 4 cot thiet bi + dien tro cuoi day, ve 47; block so do khong cong vao dem (thay ve $($ksb.ve), dem $($ksb.dem | ConvertTo-Json -Compress))"
+Kiem ($ksb -and $ksb.ok -eq $true -and $ksb.ve -eq 59 -and $ksb.dem.BC_KHOI -eq $ksd.dem.BC_KHOI -and $ksb.dem.BC_NHIET -eq $ksd.dem.BC_NHIET -and -not $ksb.dem.BC_DTCD -and -not $ksb.dem.BC_TT) `
+  "so_do bc: 4 zone (1 giam sat van), 7 cot thiet bi + dien tro cuoi day, du phong, 3 lien dong, ve 59; block so do khong cong vao dem (thay ve $($ksb.ve), dem $($ksb.dem | ConvertTo-Json -Compress))"
 Kiem ($ksbl -and $ksbl.ve -eq 0 -and @($ksbl.loi).Count -eq 2 -and $ksbl.loi[0].ly_do -match '26 .+toi_da 25' -and $ksbl.loi[1].ly_do -match 'toi_da') `
   "so_do bc: zone 26 dau bao > toi_da 25 bao loi; thieu toi_da bao loi; khong ve ($($ksbl.loi | ConvertTo-Json -Compress -Depth 3))"
 $kloc = DocKq 'so_do_loc'
@@ -338,12 +339,15 @@ Kiem ($kloc -and @($kloc.loi).Count -eq 2 -and $kloc.loi[0].i -eq 1 -and $kloc.l
   $chuSpr.Count -eq 2 -and @($chuSpr | Where-Object { @($_.t -split "`r?`n").Count -eq 4 }).Count -eq 2) `
   "so_do spr: dem du (BC, ong, day) chi ghi 3 ma SPR; ma la va so -3 bao loi ($($chuSpr.Count) chu, $($kloc.loi | ConvertTo-Json -Compress -Depth 3))"
 $kbc2 = DocKq 'so_do_bc2'
-$xY = { param($a, $b) if ($kbc2 -and $kbc2.doc) { @($kbc2.doc[0].ds | Where-Object { $_.t -match "^x($a)$" } | ForEach-Object { $_.p[1] } | Sort-Object) } else { @() } }
-$y4 = & $xY '2[1-4]' 0; $y2 = & $xY '1[56]' 0
-$cach4 = if ($y4.Count -eq 4) { ($y4[1] - $y4[0]), ($y4[2] - $y4[1]), ($y4[3] - $y4[2]) | Measure-Object -Minimum | ForEach-Object { $_.Minimum } } else { 0 }
+$cb = if ($kbc2 -and $kbc2.doc) { @($kbc2.doc[0].ds) } else { @() }
+$yC = { param($re) @($cb | Where-Object { $_.t -match $re } | ForEach-Object { $_.p[1] }) }
+$z1 = & $yC '^ZONE 1$'; $z2 = & $yC '^ZONE 2$'; $z3 = & $yC '^ZONE 3$'; $dp = & $yC '^ZONE 4 DU PHONG$'; $n21 = & $yC '^21$'; $ld = & $yC '^LD THU$'
 Kiem ($kbc2 -and $kbc2.ok -eq $true) "so_do bc: dem co DAY_BC (chep tu ket qua dem) bo qua day, khong bao loi ($($kbc2.loi | ConvertTo-Json -Compress -Depth 3))"
-Kiem ($cach4 -ge 699) "so_do bc: 4 zone mot tang h mac dinh tu tang h, day zone cach nhau >= 700 (chu x<so> khong de ky hieu zone tren; thay $cach4)"
-Kiem ($y2.Count -eq 2 -and $y2[0] - 350 - 40000 -ge 1000) "so_do bc: h 1500 tu tang h, day zone 1 o 1200 cach canh khung tu 900 (thay $(if ($y2.Count) { $y2[0] - 350 - 40000 }))"
+Kiem ($z1.Count -eq 1 -and $z2.Count -eq 1 -and $z3.Count -eq 1 -and $dp.Count -eq 1 -and $z1[0] -lt $z2[0] -and $z2[0] -lt $z3[0] -and $z3[0] -lt $dp[0] -and $z1[0] -gt 20600) `
+  "so_do bc: zone truyen thang, xep tu duoi len tren khung tu, dong du phong tren cung ($z1 / $z2 / $z3 / $dp)"
+Kiem ($n21.Count -eq 1 -and $n21[0] -lt $z1[0] -and @($cb | Where-Object { $_.t -match '^x\d' }).Count -eq 0) "so_do bc: so luong ghi DUOI ky hieu, khong con chu x<so> ($n21 < $z1)"
+Kiem (@($cb | Where-Object { $_.t -match 'ZONE 1: 120 m' }).Count -eq 1 -and @($cb | Where-Object { $_.t -match '^KHU B$' }).Count -eq 1 -and $ld.Count -eq 1 -and $ld[0] -lt 20000 -and
+  @($cb | Where-Object { $_.t -match '^[+-]\d\.\d{3}$|0\.000' }).Count -eq 0) "so_do bc: dien tich bao ve + khu vuc cuoi hang, lien dong duoi tu, khong cao do"
 $ksm = DocKq 'so_do_m'
 Kiem ($ksm -and $ksm.ok -eq $true -and $ksm.hop -and ($ksm.hop[2] - $ksm.hop[0]) -lt 50 -and ($ksm.hop[3] - $ksm.hop[1]) -lt 30) `
   "so_do ban ve don vi m: co chu nhan k, hop vai chuc m (thay $($ksm.hop -join ', '))"

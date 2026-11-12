@@ -10,8 +10,9 @@ Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.m
 - HỒ SƠ THẬT người dùng gửi 12/11 (PDF 63 trang, có sơ đồ nguyên lý): `ket_qua/cad_mau/drive_goc/cong_trinh.pdf` (không commit). Mục lục tên bản vẽ từng trang: `ket_qua/cad_mau/drive_goc/muc_luc.txt`
   (người dùng dặn: quét tên bản vẽ trước, cần gì thì chỉ đọc đúng trang đó). Đã đọc trang 11 (nguyên lý báo cháy) và 22 (không gian sprinkler), ghi ở `cad/knowledge/mau-so-do-that.md`.
 - VIỆC KẾ (ngày 13/11), theo thứ tự:
-  1. Sửa `so_do` `bc` cho giống hồ sơ thật (`cad/knowledge/mau-so-do-that.md`): bỏ vạch tầng, zone xếp chồng trên tủ, bó dây đứng bên trái, số lượng ghi dưới ký hiệu,
-     diện tích bảo vệ cuối zone, zone giám sát van (OS&Y + FS mỗi tầng, van báo động phòng bơm), zone dự phòng, mũi tên liên động, bảng ký hiệu. Nếu tối 12/11 đã làm thì xem `cad/LICH_SU.md`.
+  1. XONG tối 12/11 (19:30): `so_do` `bc` theo trang 11 (bỏ vạch tầng, zone xếp trên tủ, bó dây trái, số dưới ký hiệu, `kv` + `dt` diện tích bảo vệ, zone giám sát van,
+     `du_phong`, `lien_dong`); ảnh `ket_qua/cad_mau/cad/so_do/anh/so_do_bc_2.png`, chưa review. CÒN: bảng ký hiệu, bảng tính ắc quy, nguồn/tiếp địa/điện thoại,
+     cột còi đèn riêng; mũi tên liên động đang đi xuống (bản gốc đi ngang). Làm tiếp các phần này rồi review Opus max cho G5.
   2. HỎI NGƯỜI DÙNG: sơ đồ sprinkler vẽ kiểu không gian trục đo như hồ sơ thật (việc lớn) hay giữ nguyên lý phẳng.
   3. Đọc thêm trang 46 (âm thanh), 58 (hút khói), 63 (cấp điện) khi làm các sơ đồ đó; trang 23 (không gian vách tường).
   4. GHI CHÚ còn lại của review 12/11c, 12/11d; `thu_gui.ps1` + thử `cad-ve`/`cad-kiem` khi AutoCAD có giao diện.

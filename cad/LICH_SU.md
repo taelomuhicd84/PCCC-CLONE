@@ -275,3 +275,9 @@ Chưa kiểm: các phép kiểm mới chưa chạy đột biến ngược trên 
   (dây cách nhau ≥ 700 mm, dây zone 1 không trùng cạnh khung tủ).
 - `chay_thu.ps1` thêm 5 phép kiểm dùng đúng đầu vào review (`so_do_loc`, `so_do_bc2`, `so_do_m` INSUNITS 6): 70/70; `thu_mcp.ps1` 9/9; `build.bat` OK.
 - Chưa làm: `MaSoDo` vẫn đưa `DAY_BC` vào danh sách nạp block (gọi `NapVaoBanVe` thừa); GHI CHÚ 1–6 để lại.
+
+## 2026-11-12 — `so_do` bc theo bố cục hồ sơ thật (trang 11)
+- `SoDo.cs`: bc bỏ vạch tầng + cao độ; tủ dưới, zone xếp hàng từ dưới lên, bó dây trái; số lượng DƯỚI ký hiệu; `zone` truyền thẳng (`kv`, `dt` → "DIỆN TÍCH BẢO VỆ"), `du_phong`, `lien_dong` (mũi tên từ đáy tủ); zone giám sát van dùng mã van trong `dem`. `tang` cũ vẫn nhận, `cot` không bắt buộc cho bc. `spr` giữ nguyên.
+- Ví dụ `skills/vi_du/so_do_bc.json` đổi sang dạng mới; `chay_thu.ps1` thay 2 phép kiểm bố cục cũ bằng 3 phép mới (thứ tự zone, số dưới ký hiệu, diện tích/liên động/không cao độ): 71/71; `thu_mcp.ps1` TAT CA DAT; `build.bat` OK.
+- Thử: `ket_qua/cad_mau/cad/so_do/so_do_bc_2.json` → `.dwg`, ảnh `anh/so_do_bc_2.png` đã xem.
+- Còn: bảng ký hiệu riêng, bảng tính ắc quy (phụ lục C TCVN 7568-14), nguồn 220 V/24 V + tiếp địa + điện thoại, cột còi đèn riêng, liên động đi ngang như bản mẫu; số lượng ghi "2" (bản mẫu ghi "02").

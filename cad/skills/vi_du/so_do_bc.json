@@ -1,9 +1,9 @@
 {"goc":[1300000,0],"ops":[
- {"op":"so_do","he":"bc","p":[0,0],"tu":"BC_TT","day":"DAY_BC","toi_da":25,"h":3000,
-  "tang":[
-   {"ten":"TẦNG 1","cot":0,"zone":[
-     {"ten":"ZONE 1","dem":{"BC_KHOI":12,"BC_NUTAN":1,"BC_CHUONG":1}},
-     {"ten":"ZONE 2","dem":{"BC_NHIET":8,"BC_KHOI":4}}]},
-   {"ten":"TẦNG 2","cot":4200,"dem":{"BC_KHOI":18,"BC_NHIET":2,"BC_NUTAN":2,"BC_CHUONG":2}},
-   {"ten":"MÁI","cot":8400}]},
+ {"op":"so_do","he":"bc","p":[0,0],"tu":"BC_TT","day":"DAY_BC","toi_da":25,"du_phong":"ZONE 5 - 6 DỰ PHÒNG",
+  "zone":[
+   {"ten":"ZONE 1","kv":"TẦNG 1","dt":88.11,"dem":{"BC_TOHOP":1,"BC_NHIET":12,"BC_DEN":3,"BC_CHUONG":4}},
+   {"ten":"ZONE 2","kv":"TẦNG 2","dt":115.74,"dem":{"BC_KHOI":20,"BC_DEN":20}},
+   {"ten":"ZONE 3","kv":"TẦNG 3","dt":76.3,"dem":{"BC_TOHOP":1,"BC_KHOI":4,"BC_CHUONG":1}},
+   {"ten":"ZONE 4","kv":"PHÒNG BƠM","dem":{"SPR_VAN_OSY_DN100":2,"SPR_CTDC":2}}],
+  "lien_dong":["KẾT NỐI HỆ THỐNG ÂM THANH THOÁT NẠN","KẾT NỐI QUẠT HÚT KHÓI","KẾT NỐI VỀ CƠ QUAN CẢNH SÁT PCCC (TCVN 3890)"]},
  {"op":"dem"}]}

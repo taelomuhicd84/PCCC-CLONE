@@ -35,11 +35,14 @@ namespace TKPCCC
 
             // --- Đọc và kiểm hết đầu vào TRƯỚC khi vẽ: thao tác lỗi không để lại hình dở trong gói ---
             List<TangSoDo> tang = new List<TangSoDo>();
-            foreach (object x in DS(Lay(o, "tang"), "tang"))
+            // bc không vẽ tầng: cho truyền thẳng "zone" (cot không bắt buộc), "tang" giữ để tương thích spec cũ.
+            if (he == "bc" && Lay(o, "tang") == null && Lay(o, "zone") != null)
+                tang.Add(new TangSoDo { Ten = "", T = new Dictionary<string, object> { { "zone", Lay(o, "zone") } } });
+            else foreach (object x in DS(Lay(o, "tang"), "tang"))
             {
                 Dictionary<string, object> t = x as Dictionary<string, object>;
                 if (t == null) throw new System.Exception("mỗi phần tử \"tang\" phải là {\"ten\",\"cot\",\"dem\"}");
-                if (Lay(t, "cot") == null) throw new System.Exception("tầng thứ " + (tang.Count + 1) + " thiếu \"cot\" (cao độ sàn, mm)");
+                if (he == "spr" && Lay(t, "cot") == null) throw new System.Exception("tầng thứ " + (tang.Count + 1) + " thiếu \"cot\" (cao độ sàn, mm)");
                 tang.Add(new TangSoDo { Ten = LayChu(t, "ten", "TẦNG " + (tang.Count + 1)), Cot = LaySo(t, "cot", 0), T = t });
             }
             if (tang.Count == 0) throw new System.Exception("\"tang\" rỗng");
@@ -162,7 +165,7 @@ namespace TKPCCC
             if (LayChu(o, "he", "spr").ToLowerInvariant() == "bc")
             {
                 List<string> bc = new List<string> { LayChu(o, "tu", "BC_TT").ToUpperInvariant(), "BC_DTCD" };
-                IList ts = Lay(o, "tang") as IList;
+                IList ts = Lay(o, "tang") as IList ?? new List<object> { new Dictionary<string, object> { { "zone", Lay(o, "zone") } } };
                 if (ts != null)
                     foreach (Dictionary<string, object> t in ts.OfType<Dictionary<string, object>>())
                     {
@@ -190,7 +193,7 @@ namespace TKPCCC
             MoHop(g, new Extents3d(p, p));
         }
 
-        /// Vạch sàn mỗi tầng (cách đều h) + ký hiệu cao độ (tam giác ngược trên vạch) + chữ cao độ + tên tầng dưới vạch. Dùng chung "spr" và "bc".
+        /// Vạch sàn mỗi tầng (cách đều h) + ký hiệu cao độ (tam giác ngược trên vạch) + chữ cao độ + tên tầng dưới vạch (chỉ "spr").
         static void VeVachTang(GoiSpec g, List<TangSoDo> tang, double y0, double h, double xL, double xEnd, double cao, ObjectId lTang)
         {
             for (int i = 0; i < tang.Count; i++)
@@ -203,10 +206,11 @@ namespace TKPCCC
             }
         }
 
-        class ZoneSoDo { public int Tang; public string Ten; public List<KeyValuePair<VatTu, double>> Dem = new List<KeyValuePair<VatTu, double>>(); }
+        class ZoneSoDo { public string Ten, Kv; public double Dt; public List<KeyValuePair<VatTu, double>> Dem = new List<KeyValuePair<VatTu, double>>(); }
 
-        /// Sơ đồ báo cháy hệ thường: tủ trung tâm ở tầng thấp nhất, mỗi zone một dây riêng từ tủ lên tầng của nó rồi chạy ngang qua các thiết bị
-        /// (mỗi loại một cột, ghi "x<số>"), cuối dây điện trở cuối dây. Giới hạn đầu báo một zone "toi_da" truyền từ spec (cad/rule/LUAT.md BC-04).
+        /// Sơ đồ báo cháy hệ thường theo hồ sơ thật (cad/knowledge/mau-so-do-that.md): KHÔNG vạch tầng, cao độ; tủ ở dưới, zone xếp hàng ngang
+        /// từ dưới lên (zone 1 dưới cùng); bó dây đứng bên trái rẽ vào từng zone, thiết bị mỗi loại một cột, số lượng ghi DƯỚI ký hiệu,
+        /// cuối hàng điện trở cuối dây + chữ khu vực / diện tích bảo vệ. Giới hạn đầu báo một zone "toi_da" truyền từ spec (cad/rule/LUAT.md BC-04).
         static void SoDoBaoChay(GoiSpec g, Dictionary<string, object> o, List<TangSoDo> tang, double k, double h, double cao, Point3d p0)
         {
             if (Lay(o, "toi_da") == null) throw new System.Exception("he \"bc\" cần \"toi_da\" (số đầu báo tối đa một zone, tra cad/rule/LUAT.md BC-04)");
@@ -220,16 +224,17 @@ namespace TKPCCC
 
             List<ZoneSoDo> zone = new List<ZoneSoDo>();
             List<VatTu> cot = new List<VatTu>(); // mỗi loại thiết bị một cột, thứ tự như danh mục
-            for (int i = 0; i < tang.Count; i++)
+            foreach (TangSoDo t in tang)
             {
-                object oz = Lay(tang[i].T, "zone");
-                IList ds = oz != null ? DS(oz, "zone") : (Lay(tang[i].T, "dem") != null ? new List<object> { new Dictionary<string, object> { { "dem", Lay(tang[i].T, "dem") } } } : new List<object>());
+                string tTen = t.Ten == "" ? "" : " (" + t.Ten + ")";
+                object oz = Lay(t.T, "zone");
+                IList ds = oz != null ? DS(oz, "zone") : (Lay(t.T, "dem") != null ? new List<object> { new Dictionary<string, object> { { "dem", Lay(t.T, "dem") } } } : new List<object>());
                 foreach (object x in ds)
                 {
                     Dictionary<string, object> zd = x as Dictionary<string, object>;
                     Dictionary<string, object> dem = zd == null ? null : Lay(zd, "dem") as Dictionary<string, object>;
-                    if (dem == null || dem.Count == 0) throw new System.Exception(tang[i].Ten + ": mỗi zone phải là {\"ten\",\"dem\":{mã:số}}");
-                    ZoneSoDo z = new ZoneSoDo { Tang = i, Ten = LayChu(zd, "ten", "ZONE " + (zone.Count + 1)) };
+                    if (dem == null || dem.Count == 0) throw new System.Exception(t.Ten + ": mỗi zone phải là {\"ten\",\"dem\":{mã:số}}");
+                    ZoneSoDo z = new ZoneSoDo { Ten = LayChu(zd, "ten", "ZONE " + (zone.Count + 1)), Kv = LayChu(zd, "kv", t.Ten), Dt = LaySo(zd, "dt", 0) };
                     double nDau = 0;
                     foreach (KeyValuePair<string, object> kv in dem)
                     {
@@ -242,40 +247,40 @@ namespace TKPCCC
                         z.Dem.Add(new KeyValuePair<VatTu, double>(v, sl));
                         if (!cot.Contains(v)) cot.Add(v);
                     }
-                    if (z.Dem.Count == 0) throw new System.Exception(z.Ten + " (" + tang[i].Ten + "): \"dem\" không có mã thiết bị nào");
-                    if (nDau > toiDa) throw new System.Exception(z.Ten + " (" + tang[i].Ten + "): " + So(nDau) + " đầu báo, quá toi_da " + So(toiDa) + ": chia thêm zone");
+                    if (z.Dem.Count == 0) throw new System.Exception(z.Ten + tTen + ": \"dem\" không có mã thiết bị nào");
+                    if (nDau > toiDa) throw new System.Exception(z.Ten + tTen + ": " + So(nDau) + " đầu báo, quá toi_da " + So(toiDa) + ": chia thêm zone");
                     zone.Add(z);
                 }
             }
-            if (zone.Count == 0) throw new System.Exception("không tầng nào có \"zone\" hoặc \"dem\": sơ đồ không có zone nào");
+            if (zone.Count == 0) throw new System.Exception("không có \"zone\" hoặc \"dem\": sơ đồ không có zone nào");
             cot = cot.OrderBy(v => g.Dm.vat_tu.IndexOf(v)).ToList();
             BlockTable bt = (BlockTable)g.Tr.GetObject(g.Db.BlockTableId, OpenMode.ForRead);
             foreach (VatTu v in cot.Concat(new VatTu[] { tu, dtcd }))
                 if (!bt.Has(v.ma)) throw new System.Exception("Thư viện không có block " + v.ma + " (chạy PCCC_LIB)");
+            string duPhong = LayChu(o, "du_phong", "");
+            List<string> lienDong = new List<string>();
+            if (Lay(o, "lien_dong") != null)
+                foreach (object x in DS(Lay(o, "lien_dong"), "lien_dong")) lienDong.Add(Convert.ToString(x, CultureInfo.InvariantCulture));
 
-            // --- Bố trí: dây zone z đứng ở x0 + z × dxz; cột thiết bị sau bó dây; tủ là khung chữ nhật đỡ chân bó dây ---
-            int nz = zone.Count, mMax = zone.GroupBy(q => q.Tang).Max(q => q.Count());
-            // Tự tăng "h" (chiều đứng sơ đồ không theo cao độ thật): dây zone cách nhau đủ chữ "x<số>" (tTren) + nửa ký hiệu (kh),
-            // dây thấp nhất (0,4 h) cách cạnh trên khung tủ (0,2 h + 300) một nửa ký hiệu, chữ của dây trên cùng (0,85 h) dưới vạch tầng kế.
-            double tTren = 350 * k + 0.4 * cao, kh = 250 * k;
-            h = Math.Max(h, Math.Max((tTren + kh) * (mMax - 1) / 0.45, Math.Max((300 * k + kh) / 0.2, tTren / 0.15)));
+            // --- Bố trí: tủ (khung) dưới cùng; dây zone z đứng ở x0 + z × dxz (bó dây bên trái) lên hàng z rồi rẽ phải ---
+            // Hàng cách nhau "h" (mặc định 1500), tối thiểu đủ nửa ký hiệu trên + số lượng dưới ký hiệu.
+            int nz = zone.Count;
+            double dy = Math.Max(Lay(o, "h") == null ? 1500 * k : h, 700 * k + 2 * cao);
             double x0 = p0.X, y0 = p0.Y, dxz = 300 * k, dxc = 2000 * k, r = 100 * k;
             double xLast = x0 + (nz - 1) * dxz, xS = xLast + 2000 * k, xR = xS + cot.Count * dxc;
-            double yTu = y0 + 0.2 * h, yChan = yTu + 300 * k, yChu = y0 - 0.15 * h;
-            ObjectId lBc = DamBaoLayer(g.Db, g.Tr, LAYER_SO_DO_BC, MauHe("BC")), lTang = DamBaoLayer(g.Db, g.Tr, LAYER_SO_DO_TANG, 8);
-            VeVachTang(g, tang, y0, h, x0 - 4000 * k, xR + 1000 * k, cao, lTang);
+            double xTuL = x0 - 1200 * k, xTuR = xLast + 300 * k, yChan = y0 + 600 * k;
+            Func<int, double> yHang = z => yChan + (z + 1) * dy;
+            ObjectId lBc = DamBaoLayer(g.Db, g.Tr, LAYER_SO_DO_BC, MauHe("BC"));
 
-            Them(g, TaoPline(new List<Point3d> { new Point3d(x0 - 1200 * k, yTu - 300 * k, 0), new Point3d(xLast + 300 * k, yTu - 300 * k, 0),
-                new Point3d(xLast + 300 * k, yChan, 0), new Point3d(x0 - 1200 * k, yChan, 0) }, true, lBc));
-            DatSoDo(g, tu, new Point3d(x0 - 800 * k, yTu, 0), k, lBc);
-            MText mTu = TaoChu(g, new Point3d(x0 - 1200 * k, yChu, 0), tu.ten + "\nDây: " + day.ten, 0.7 * cao, 0, false, lBc);
-            mTu.Attachment = AttachmentPoint.TopLeft; mTu.Width = xS - x0 + 100 * k; // không lấn chú thích cột đầu
+            Them(g, TaoPline(new List<Point3d> { new Point3d(xTuL, y0, 0), new Point3d(xTuR, y0, 0), new Point3d(xTuR, yChan, 0), new Point3d(xTuL, yChan, 0) }, true, lBc));
+            DatSoDo(g, tu, new Point3d(x0 - 800 * k, y0 + 300 * k, 0), k, lBc);
+            MText mTu = TaoChu(g, new Point3d(xTuR + 300 * k, y0 + 300 * k, 0), tu.ten + "\nDây: " + day.ten, 0.7 * cao, 0, false, lBc);
+            mTu.Attachment = AttachmentPoint.MiddleLeft;
             Them(g, mTu);
 
             for (int z = 0; z < nz; z++)
             {
-                int i = zone[z].Tang, m = zone.Count(q => q.Tang == i), j = zone.Take(z).Count(q => q.Tang == i);
-                double xz = x0 + z * dxz, yz = y0 + i * h + h * (0.4 + (m > 1 ? 0.45 * j / (m - 1) : 0));
+                double xz = x0 + z * dxz, yz = yHang(z);
                 Polyline pl = OngCau(new Point3d(xz, yz, 0), new Point3d(xR, yz, 0), Enumerable.Range(z + 1, nz - z - 1).Select(q => x0 + q * dxz), r, lBc);
                 pl.AddVertexAt(0, new Point2d(xz, yChan), 0, 0, 0);
                 Them(g, pl);
@@ -284,16 +289,39 @@ namespace TKPCCC
                 {
                     double xc = xS + cot.IndexOf(kv.Key) * dxc;
                     DatSoDo(g, kv.Key, new Point3d(xc, yz, 0), k, lBc);
-                    Them(g, TaoChu(g, new Point3d(xc, yz + 350 * k, 0), "x" + So(kv.Value), 0.8 * cao, 0, true, lBc));
+                    MText ms = TaoChu(g, new Point3d(xc, yz - 300 * k, 0), So(kv.Value), 0.8 * cao, 0, true, lBc);
+                    ms.Attachment = AttachmentPoint.TopCenter;
+                    Them(g, ms);
                 }
                 DatSoDo(g, dtcd, new Point3d(xR, yz, 0), k, lBc);
+                string ghi = (zone[z].Kv != "" ? zone[z].Kv + (zone[z].Dt > 0 ? "\n" : "") : "") + (zone[z].Dt > 0 ? "DIỆN TÍCH BẢO VỆ " + zone[z].Ten + ": " + So(zone[z].Dt) + " m²" : "");
+                if (ghi != "")
+                {
+                    MText mg = TaoChu(g, new Point3d(xR + 400 * k, yz, 0), ghi, 0.7 * cao, 0, false, lBc);
+                    mg.Attachment = AttachmentPoint.MiddleLeft;
+                    Them(g, mg);
+                }
             }
-            // Chú thích cột dưới vạch tầng thấp nhất: tên từng loại thiết bị + điện trở cuối dây.
+            if (duPhong != "") Them(g, TaoChu(g, new Point3d(xLast + 200 * k, yHang(nz) + 0.2 * cao, 0), duPhong, 0.8 * cao, 0, false, lBc));
+            // Tên thiết bị trên đầu mỗi cột (thay bảng ký hiệu).
+            double yDau = yHang(duPhong != "" ? nz : nz - 1) + 0.6 * dy;
             for (int c = 0; c <= cot.Count; c++)
             {
-                MText mc = TaoChu(g, new Point3d(xS + c * dxc, yChu, 0), (c < cot.Count ? cot[c] : dtcd).ten, 0.7 * cao, 0, true, lBc);
-                mc.Attachment = AttachmentPoint.TopCenter; mc.Width = 0.9 * dxc;
+                MText mc = TaoChu(g, new Point3d(xS + c * dxc, yDau, 0), (c < cot.Count ? cot[c] : dtcd).ten, 0.7 * cao, 0, true, lBc);
+                mc.Attachment = AttachmentPoint.BottomCenter; mc.Width = 0.9 * dxc;
                 Them(g, mc);
+            }
+            // Liên động: dây xuống từ đáy tủ, mỗi mục một mũi tên sang phải + chữ.
+            for (int i = 0; i < lienDong.Count; i++)
+            {
+                double yl = y0 - (i + 1) * 600 * k, xa = x0 - 600 * k, xb = xa + 1500 * k;
+                Them(g, TaoPline(new List<Point3d> { new Point3d(xa, y0 - i * 600 * k, 0), new Point3d(xa, yl, 0), new Point3d(xb - 300 * k, yl, 0) }, false, lBc));
+                Polyline mui = TaoPline(new List<Point3d> { new Point3d(xb - 300 * k, yl, 0), new Point3d(xb, yl, 0) }, false, lBc);
+                mui.SetStartWidthAt(0, 150 * k); mui.SetEndWidthAt(0, 0);
+                Them(g, mui);
+                MText ml = TaoChu(g, new Point3d(xb + 200 * k, yl, 0), lienDong[i], 0.7 * cao, 0, false, lBc);
+                ml.Attachment = AttachmentPoint.MiddleLeft;
+                Them(g, ml);
             }
         }
 
