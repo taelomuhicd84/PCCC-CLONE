@@ -1,0 +1,7 @@
+{"goc":[1200000,0],"ops":[
+ {"op":"so_do","he":"spr","p":[0,0],"truc":["ONG_DN100","ONG_DN100"],"xa":"ONG_DN50","h":3000,
+  "tang":[
+   {"ten":"TẦNG 1","cot":0,"dem":{"SPR_DAU_DOWN":64}},
+   {"ten":"TẦNG 2","cot":4200,"dem":{"SPR_DAU_DOWN":64}},
+   {"ten":"MÁI","cot":8400}]},
+ {"op":"dem"}]}

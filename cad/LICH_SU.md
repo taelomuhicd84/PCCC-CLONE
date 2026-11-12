@@ -238,3 +238,18 @@ Chưa kiểm: các phép kiểm mới chưa chạy đột biến ngược trên 
   `PCCC_RAI` trả lời `Co` (phòng chữ L 12 × 8 m khoét 3 × 3 m: `n=6 HO=1.1%`).
 - Kiểm: `chay_thu.ps1` 61/61, `thu_mcp.ps1` 9/9 `TAT CA DAT`; `build.bat` OK. Chưa chạy `thu_gui.ps1`. Chưa thử phép kiểm mới trên DLL cũ (dựa theo số của review).
 - Chưa sửa (chỉ ghi): `cot` nối hình quạt dư ống khi nhiều cột vượt đầu ống chính có bậc; hở sát góc khoét của `theo_hang` (`ho` = 0 chưa chắc phủ kín); DN trên block OS&Y; tài liệu cũ ở `TIEN_DO.md:172-174`, `Rai.cs:142`, `PCCC_HELP`.
+
+## 2026-11-12 18:30 — G5 bước đầu: thao tác `so_do` (sơ đồ nguyên lý sprinkler), agent `cad-lap-trinh` (Opus)
+- Bản mẫu `test_HA2.pdf` không có tờ sơ đồ nguyên lý, không có mặt đứng: lấy cụm van từ khung "CHI TIẾT: VAN CỔNG OS&Y + CÔNG TẮC DÒNG CHẢY" của tờ CC-07
+  (2 trục DN100 + trục xả DN50 bên trái, nhánh OS&Y → FS → mũi tên, ống xả có van về trục xả, nét cầu chỗ ống vượt nhau); vạch tầng, cao độ, AAV đầu trục,
+  van xả hình nơ, khoảng cách là TỰ ĐẶT. Bảng nguồn từng chi tiết: `knowledge/so-do-nguyen-ly.md`.
+- Mã: `module/plugin/SoDo.cs` (`OpSoDo`, `MaSoDo`, `OngCau`, `ChuCaoDo`), 1 dòng `MotOp`; `ThucHienSpec` nạp block thư viện cho `so_do` như `dat`/`rai` (bản vẽ mới chưa có block thì trước đây báo "Thư viện không có block" và vẽ dở 6 đối tượng).
+  Kiểm hết đầu vào (mã ống, van OS&Y cùng DN, block có trong bản vẽ) trước khi vẽ: lỗi thì không để lại hình dở.
+  Ống + chữ sơ đồ ở layer `PCCC_SODO`, vạch tầng `PCCC_SODO_TANG`: `dem`/`PCCC_BOC` không cộng chiều dài ống sơ đồ; van có `MA_VT` nên vẫn đếm.
+- `TU_VUNG.md`: dòng `so_do` ở phần đầu (rút gọn dòng `luoi_truc`, `tuyen`, `anh`, `pdf` để còn 1895 / 1900 ký tự) + dòng chi tiết; ví dụ `skills/vi_du/so_do.json`; README 3 chỗ; skill `tkpccc-ve-cad` 1 dòng.
+- `chay_thu.ps1` thêm 2 phép kiểm: `so_do` 2 trục, 3 vạch tầng (2 tầng có `dem`) ra 4 OS&Y DN100 + 4 FS + 2 AAV, `ve` 48, chiều dài ống DN50 không đổi;
+  chữ cao độ `±0.000`, `+4.200`, `+8.400` + 3 tên tầng; trục `ONG_DN25` (không có van OS&Y DN25) báo lỗi, không vẽ.
+- Thử: `ket_qua/cad_mau/cad/so_do/so_do_spr.json` (tầng 1 64 đầu phun theo `lan4`; tầng 2 GIẢ ĐỊNH 64 như tầng 1, cao độ 4,2 / 8,4 m TỰ ĐẶT vì mẫu không có) →
+  `so_do_spr.dwg`, ảnh `anh/so_do_spr_1.png` đã xem: trục, nhánh, van, nét cầu, chữ đúng chỗ.
+- Kiểm: `chay_thu.ps1` 63/63, `thu_mcp.ps1` TAT CA DAT; `build.bat` OK. Chưa chạy `thu_gui.ps1`; chưa thử qua MCP trên AutoCAD có giao diện.
+- Còn của G5: sơ đồ báo cháy (`he:"bc"`), vách tường / trạm bơm; mã van xả; cao độ đọc tự động từ mặt đứng.

@@ -11,7 +11,7 @@ cad/
 │  ├─ agents/              cad-thiet-ke (lập spec) · cad-ve (chạy spec) · cad-kiem (soát bản vẽ) · cad-lap-trinh (sửa plugin) · cad-review (review mỗi mốc, Write chỉ để ghi báo cáo); bảng việc ở CLAUDE.md
 │  └─ skills/              tkpccc-ve-cad (vẽ qua MCP; scripts/pdf_ti_le.py tính tỉ lệ trang PDF, scripts/chay_spec.ps1 chạy spec không cần mở AutoCAD) · tkpccc-cad-console (build, kiểm thử, in PNG)
 ├─ skills/                 hướng dẫn dùng cho MỌI AI (Claude, Gemini, Codex): TU_VUNG.md (từ vựng spec, nguồn duy nhất) · vi_du/
-├─ knowledge/              kiến thức vẽ CAD: quy-uoc-ban-ve.md · mau-ban-ve-pccc.md (cách rải, đi dây, đi ống của bản mẫu) · tham-khao-mcp-hub.md (ý lấy từ MCP bên khác) · hoc/
+├─ knowledge/              kiến thức vẽ CAD: quy-uoc-ban-ve.md · mau-ban-ve-pccc.md (cách rải, đi dây, đi ống của bản mẫu) · tham-khao-mcp-hub.md (ý lấy từ MCP bên khác) · so-do-nguyen-ly.md (cách vẽ sơ đồ nguyên lý `so_do`, chi tiết nào lấy từ mẫu, chi tiết nào tự đặt) · hoc/
 ├─ rule/                   LUAT.md: việc trên CAD ↔ file quy chuẩn nguyên văn ↔ skill, agent liên quan
 ├─ layer/                  file .md chuẩn layer (tên, màu, loại đường) để tạo layer đúng chuẩn
 ├─ data/                   dữ liệu vẽ (xem data/README.md)
@@ -20,7 +20,7 @@ cad/
 │  ├─ ong/ · bom/          kích thước ống + phụ kiện, kích thước bơm (chờ catalog)
 │  └─ mau/                 bản vẽ mẫu, khung tên (chờ file của người dùng)
 ├─ module/                 mã chạy
-│  ├─ plugin/              Lenh.cs (lệnh PCCC_*) · Spec.cs (PCCC_SPEC, thao tác spec) · Rai.cs (rai, tuyen, PCCC_RAI, PCCC_TUYEN) · Block.cs (PCCC_THEMBLOCK, ảnh xem trước) · Cau.cs (cầu nối) -> TKPCCC.Cad.dll
+│  ├─ plugin/              Lenh.cs (lệnh PCCC_*) · Spec.cs (PCCC_SPEC, thao tác spec) · Rai.cs (rai, tuyen, PCCC_RAI, PCCC_TUYEN) · SoDo.cs (so_do, sơ đồ nguyên lý) · Block.cs (PCCC_THEMBLOCK, ảnh xem trước) · Cau.cs (cầu nối) -> TKPCCC.Cad.dll
 │  ├─ ui/                  BangBlock.cs (bảng PCCC_BLOCK) -> TKPCCC.UI.dll; chỗ DUY NHẤT được tham chiếu acmgd, không xử lý bản vẽ
 │  ├─ mcp/                 Mcp.cs -> bin/TKPCCC.Mcp.exe (công cụ cad_tt, cad_chay, cad_anh)
 │  ├─ chung/               HangDoi.cs: hàng đợi file dùng chung plugin + máy chủ MCP
@@ -45,6 +45,7 @@ AI chỉ viết một gói thao tác ngắn (spec JSON), plugin sinh hình. Mộ
 | Đổi cách rải thiết bị, cách đi dây, đi ống (`rai`, `tuyen`, `PCCC_RAI`) | `module/plugin/Rai.cs`; cách vẽ gốc ở `knowledge/mau-ban-ve-pccc.md` |
 | Đổi câu hướng dẫn AI nhận lúc kết nối | phần đầu `skills/TU_VUNG.md`, trước dòng `---` (giữ dưới 1900 ký tự) |
 | Đổi tên, mô tả công cụ MCP | `module/mcp/Mcp.cs`, hàm `CongCu` |
+| Đổi cách vẽ sơ đồ nguyên lý (`so_do`) | `module/plugin/SoDo.cs`; cách vẽ, nguồn ở `knowledge/so-do-nguyen-ly.md` |
 | Đổi cách in ảnh (`anh`, `cad_anh`): khổ, thiết bị in, chỗ lưu PNG | `module/plugin/Spec.cs`, hàm `InAnh` |
 | Đổi cách nhập PDF làm nền (`pdf`) | `module/plugin/Spec.cs`, hàm `NhapPdf` |
 | Đổi cách tính tỉ lệ trang PDF từ chuỗi kích thước | `.claude/skills/tkpccc-ve-cad/scripts/pdf_ti_le.py` (kiểm bằng `test/chay_thu.ps1`) |

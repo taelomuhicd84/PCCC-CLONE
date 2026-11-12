@@ -168,6 +168,11 @@ if ($LASTEXITCODE) { throw 'tao_pdf_mau.py khong tao duoc PDF bao mat' }
 #     (4) theo_hang hang rong bang vung (dong "w >= W" trong LuoiVung): phong 6 x 6 m, le 650, dt 12 ra dung luoi chung, x 1500 / 4500, m2 9 (bo dong do: x 1000 / 5000, m2 12).
 '{"goc":[1000000,0],"ops":[{"op":"rai","ma":"SPR_DAU_DOWN","vung":[[0,0],[10000,0],[10000,6000],[3000,6000],[3000,3000],[0,3000]],"s":4000,"dt":12,"theo_hang":true},{"op":"tuyen","ma":"ONG_DN25","kieu":"cot","p":[[1000,11000],[3000,11000],[9000,11000],[10000,11000],[1000,12000],[3000,12000]],"truc":[[0,10000],[5000,10000],[5000,7000],[8000,7000]]},{"op":"tuyen","ma":"ONG_DN25","kieu":"cot","p":[[1000,21000],[3000,21000],[9000,21000],[10000,21000],[1000,22000],[3000,22000]],"truc":[[0,20000],[5000,20000],[5000,17000]]},{"op":"tuyen","ma":"ONG_DN25","kieu":"cot","p":[[1000,31000],[3000,31000],[9000,31000],[10000,31000],[1000,32000],[3000,32000]],"truc":[[0,30000],[5000,30000],[5000,29999.5],[8000,29999.5]]},{"op":"rai","ma":"SPR_DAU_DOWN","hop":[0,40000,6000,46000],"s":4000,"dt":12,"le":650,"theo_hang":true}]}' |
   Set-Content -Encoding ascii "$T\rv2.json"
+# so_do (G5, cad\skills\vi_du\so_do.json): 2 truc DN100, 3 vach tang (2 tang co dem) -> moi tang co dem 2 OS&Y + 2 FS, dau 2 truc 2 van xa khi.
+# Chay SAU van.json (goi do dat 1 OS&Y + 1 XK): so van cua so_do = dem sau tru dem cua van.json. Goi thu hai: truc ONG_DN25 khong co van OS&Y -> bao loi, khong ve gi; doc chu cao do.
+Copy-Item "$GOC\cad\skills\vi_du\so_do.json" "$T\so_do.json"
+'{"goc":[1200000,0],"ops":[{"op":"so_do","truc":["ONG_DN25"],"tang":[{"ten":"T1","cot":0,"dem":{"SPR_DAU_DOWN":4}}]},{"op":"doc","gi":"chu","l":"PCCC_SODO_TANG"}]}' |
+  Set-Content -Encoding ascii "$T\so_do_loi.json"
 # Ma van sprinkler moi trong vat_tu.json (Buoc 5): dat ra dung 1 block moi ma, dem theo MA_VT.
 '{"goc":[1100000,0],"ops":[{"op":"dat","ma":"SPR_VAN_OSY_DN100","p":[[0,0]],"goc":90},{"op":"dat","ma":"SPR_VAN_XK","p":[[1000,0]]},{"op":"dem"}]}' |
   Set-Content -Encoding ascii "$T\van.json"
@@ -184,7 +189,7 @@ $bamTv = (Get-FileHash "$T\PCCC_Blocks.dwg").Hash
   'PCCC_SPEC', "$T\khoa_sai.json", 'PCCC_SPEC', "$T\khoa_dung.json", 'PCCC_SPEC', "$T\anh.json", 'PCCC_SPEC', "$T\pdf_sai.json", 'PCCC_SPEC', "$T\pdf.json",
   'PCCC_SPEC', "$T\pdf2.json", 'PCCC_SPEC', "$T\xoa2.json", 'PCCC_SPEC', "$T\rai_loi.json", 'PCCC_SPEC', "$T\tuyen_thu.json", 'PCCC_SPEC', "$T\nhan.json",
   'PCCC_SPEC', "$T\rai_moi.json", 'PCCC_SPEC', "$T\pdf_mk.json", 'PCCC_SPEC', "$T\rv_tuyen.json", 'PCCC_SPEC', "$T\hoa.json", 'PCCC_SPEC', "$T\hoa_doc.json",
-  'PCCC_SPEC', "$T\rv_hang.json", 'PCCC_SPEC', "$T\rv2.json", 'PCCC_SPEC', "$T\van.json", '_.QSAVE') -join "`r`n" |
+  'PCCC_SPEC', "$T\rv_hang.json", 'PCCC_SPEC', "$T\rv2.json", 'PCCC_SPEC', "$T\van.json", 'PCCC_SPEC', "$T\so_do.json", 'PCCC_SPEC', "$T\so_do_loi.json", '_.QSAVE') -join "`r`n" |
   Set-Content -Encoding ascii "$T\kb2.scr"
 $p2 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb2.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb2.out.txt"
 if (-not $p2.WaitForExit(180000)) { Stop-Process -Id $p2.Id -Force; throw "accoreconsole qua 3 phut (PCCC_SPEC): $T\kb2.out.txt" }
@@ -294,6 +299,16 @@ Kiem ($kr2 -and $r2t[0].doan -eq 6 -and $r2t[0].m -eq 12.77 -and $r2t[1].doan -e
   "tuyen cot truc bac chu Z: moi chan mot doan noi 6 doan 12,77 m; truc chu L 5 doan 11 m (thay $($r2t[0].doan)/$($r2t[0].m), $($r2t[1].doan)/$($r2t[1].m))"
 Kiem ($kr2 -and $r2t[2].doan -eq 5 -and $r2t[2].m -eq 8) "tuyen cot truc bac 0,5 mm: gop doan noi 5 doan 8 m, khong ve chong (thay $($r2t[2].doan)/$($r2t[2].m))"
 Kiem ($kr2 -and $kr2.rai[1].n -eq 4 -and $kr2.rai[1].m2 -eq 9) "rai theo_hang hang rong bang vung: dung luoi chung 4 dau, m2 9 (thay $($kr2.rai[1].n) / $($kr2.rai[1].m2))"
+# so_do: ve 48 = 3 vach tang x 4 + 2 tang x (2 nhanh x 5 + ong xa + no van + chu dem) + 2 truc x 3 + chu tram bom + truc xa x 3
+$ksd = DocKq 'so_do'; $kv0 = DocKq 'van'
+Kiem ($ksd -and $kv0 -and $ksd.ok -eq $true -and $ksd.ve -eq 48 -and $ksd.dem.SPR_VAN_OSY_DN100 - $kv0.dem.SPR_VAN_OSY_DN100 -eq 4 -and $ksd.dem.SPR_CTDC -eq 4 -and
+  $ksd.dem.SPR_VAN_XK - $kv0.dem.SPR_VAN_XK -eq 2 -and $ksd.dem.ONG_DN50 -eq $kv0.dem.ONG_DN50 -and $ksd.dem.ONG_DN50 -gt 0) `
+  "so_do: 2 tang co dem x 2 truc = 4 OS&Y DN100 + 4 FS, 2 van xa khi, ong so do khong cong vao khoi luong, ve 48 (thay ve $($ksd.ve), dem $($ksd.dem | ConvertTo-Json -Compress))"
+$ksl = DocKq 'so_do_loi'
+$chuSd = if ($ksl -and $ksl.doc) { @($ksl.doc[0].ds | ForEach-Object { $_.t }) } else { @() }
+Kiem ($ksl -and $ksl.ve -eq 0 -and @($ksl.loi).Count -eq 1 -and $ksl.loi[0].ly_do -match 'OS&Y' -and
+  ($chuSd -contains ([string][char]0xB1 + '0.000')) -and ($chuSd -contains '+4.200') -and ($chuSd -contains '+8.400') -and $chuSd.Count -eq 6) `
+  "so_do: chu cao do +-0.000 / +4.200 / +8.400 + 3 ten tang; truc DN25 khong co van OS&Y thi bao loi, khong ve ($($chuSd -join ' | '))"
 $kv = DocKq 'van'
 Kiem ($kv -and $kv.ok -eq $true -and $kv.ve -eq 2 -and $kv.dem.SPR_VAN_OSY_DN100 -eq 1 -and $kv.dem.SPR_VAN_XK -eq 1) `
   "dat ma van moi SPR_VAN_OSY_DN100, SPR_VAN_XK: moi ma 1 block (thay ve $($kv.ve), dem $($kv.dem | ConvertTo-Json -Compress))"

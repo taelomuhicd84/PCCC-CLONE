@@ -45,4 +45,5 @@ AI không vẽ từng nét. AI viết một gói spec ngắn, plugin C# sinh hì
 - `cad_chay` báo "đang bận": người dùng đang dở một lệnh trong AutoCAD, nhờ họ kết thúc lệnh rồi gọi lại.
 - Thiếu thao tác cho một hình lặp lại nhiều lần: thêm thao tác tham số vào `cad/module/plugin/Spec.cs` theo skill `tkpccc-cad-console`, đừng liệt kê hàng trăm nét.
 - Người dùng muốn hoàn tác: một lần `cad_chay` là một bước Undo (gõ `U` trong AutoCAD).
-- Chưa có (để lại, xem `cad/KE_HOACH.md`): sơ đồ nguyên lý, khung chat trong CAD.
+- Sơ đồ nguyên lý sprinkler: thao tác `so_do` (truyền số đếm `dem` của từng tầng + cao độ `cot`; cách vẽ ở `cad/knowledge/so-do-nguyen-ly.md`).
+- Chưa có (để lại, xem `cad/KE_HOACH.md`): sơ đồ nguyên lý báo cháy, khung chat trong CAD.

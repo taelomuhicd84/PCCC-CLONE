@@ -154,7 +154,9 @@ namespace TKPCCC
             foreach (object x in ops)
             {
                 Dictionary<string, object> d = x as Dictionary<string, object>;
-                if (d != null && (LayChu(d, "op", "") == "dat" || LayChu(d, "op", "") == "rai")) maDat.Add(LayChu(d, "ma", ""));
+                string op = d == null ? "" : LayChu(d, "op", "");
+                if (op == "dat" || op == "rai") maDat.Add(LayChu(d, "ma", ""));
+                else if (op == "so_do") maDat.AddRange(MaSoDo(d)); // cad/module/plugin/SoDo.cs
             }
             if (maDat.Count > 0)
             {
@@ -346,6 +348,7 @@ namespace TKPCCC
                 case "dem": OpDem(g); break;
                 case "rai": OpRai(g, o); break;     // cad/module/plugin/Rai.cs
                 case "tuyen": OpTuyen(g, o); break; // cad/module/plugin/Rai.cs
+                case "so_do": OpSoDo(g, o); break;  // cad/module/plugin/SoDo.cs
                 // "anh" không ở đây: ThucHienSpec chạy nó sau khi commit (InAnh)
                 default: throw new System.Exception("không có thao tác \"" + ten + "\" (xem cad/skills/TU_VUNG.md)");
             }
