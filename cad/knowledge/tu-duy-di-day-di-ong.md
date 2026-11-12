@@ -38,8 +38,8 @@ không để máy tự chọn cột đầu phun.
 "AI đưa hộp từng phòng, tôi sẽ kiểm tra lại và bấm vào phòng."
 
 ## 6. Chuẩn layer, block động, catalog ống và bơm
-Để sau. Claude làm sườn trước, người dùng sửa sau. Phải để ghi chú nhắc: mở phiên mới thì nhắc người dùng là các thứ này chưa làm
-(mục "NHẮC NGƯỜI DÙNG ĐẦU PHIÊN" trong `cad/TIEN_DO.md`).
+Để sau. Claude làm sườn trước. Người dùng dặn 2026-11-12: sau này plugin có chức năng để họ tự thêm các thứ này vào trong CAD, không cần nhắc đầu phiên
+(mục "NẠP DỮ LIỆU NGƯỜI DÙNG QUA PLUGIN" trong `cad/TIEN_DO.md`).
 
 ## Suy ra cho lệnh vẽ và cho AI thiết kế
 | Lời dạy | Việc trong plugin hoặc trong skill |

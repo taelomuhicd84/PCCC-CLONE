@@ -19,7 +19,7 @@ Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.m
   (2) Opus effort high làm Bước 5: XONG 02:47 (62 đầu phun, mẫu 64; xem mục "Bước 5"), kết quả ở `ket_qua/cad_mau/cad/skills/` (`t1_vung.json`, `t1_spr.json`, `t1_spr.md`).
   Việc sau đó (chờ review xong mới làm, vì mỗi lúc chỉ một agent sửa mã): giao Opus (theo `cad-lap-trinh.md`) sửa các phát hiện CHẶN / NÊN SỬA của review cùng các mục a–f của Bước 5, rồi `cad\build.bat`,
   chạy lại `t1_spr.json` để thấy ống góp P01 hết hở. Phiên chết giữa chừng thì xem `ket_qua/cad_review/` để biết review tới đâu.
-- 22:05: XONG Bước 1b (`cad_anh`), 1c (`rai` + `dt`, `tuyen` `tia`, `PCCC_TUYEN`), 2 (PDF → CAD), 3 (bảng block `PCCC_BLOCK`, `PCCC_THEMBLOCK`) và 4 (agent). VIỆC KẾ: Bước 5. Đầu phiên nhớ mục "NHẮC NGƯỜI DÙNG ĐẦU PHIÊN".
+- 22:05: XONG Bước 1b (`cad_anh`), 1c (`rai` + `dt`, `tuyen` `tia`, `PCCC_TUYEN`), 2 (PDF → CAD), 3 (bảng block `PCCC_BLOCK`, `PCCC_THEMBLOCK`) và 4 (agent). VIỆC KẾ: Bước 5.
 - ĐÃ THỬ TRÊN AUTOCAD CÓ GIAO DIỆN bằng `cad\test\thu_gui.ps1` (script tự mở AutoCAD thật rồi tự tắt, 7/7 đạt): NETLOAD, cầu nối + máy chủ MCP thật (`cad_tt`, `cad_chay`, `cad_anh`),
   `pdf`, `rai`, `tuyen`, `anh` (`-PLOT` trong AutoCAD thật), bảng `PCCC_BLOCK` hiện 31 dòng + 2 nút. Máy người dùng `SECURELOAD` = 0, nạp plugin bằng NETLOAD tay (bundle không nằm trong ApplicationPlugins).
 - XONG Bước 3: `module/plugin/Block.cs` (lệnh `PCCC_THEMBLOCK`, ảnh xem trước 64 px tự vẽ vào `Contents\anh_block`) + `module/ui/BangBlock.cs` → `TKPCCC.UI.dll` (lệnh `PCCC_BLOCK`).
@@ -50,7 +50,7 @@ Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.m
 - XONG Bước 1 (G3): thao tác `rai`, `tuyen` (3 kiểu `noi_tiep`, `xuong_ca`, `nhanh`), lệnh `PCCC_RAI`. Mã ở `module/plugin/Rai.cs`, ví dụ `skills/vi_du/rai.json`,
   từ vựng trong `skills/TU_VUNG.md`. `chay_thu.ps1` 21/21, `thu_mcp.ps1` 7/7. CHƯA thử trên AutoCAD có giao diện: nhánh bấm điểm trong phòng của `PCCC_RAI`
   (`Editor.TraceBoundary`) chỉ chạy được ở đó; DLL trong bundle chưa build lại (chạy `cad\build.bat`, tắt mở AutoCAD).
-- Thư mục `cad/layer/` chờ người dùng thả file `.md` chuẩn layer.
+- Thư mục `cad/layer/` để chứa chuẩn layer; người dùng sẽ nạp qua lệnh plugin (mục "NẠP DỮ LIỆU NGƯỜI DÙNG QUA PLUGIN").
 - **ĐANG LÀM (người dùng giao 2026-11-11, giai đoạn dựng khung làm bằng Fable): vẽ được bản vẽ PCCC như bản mẫu.** Việc kế: Bước 5 dưới đây.
 - Chỉ MỘT phiên được sửa mã trong `cad/` tại một thời điểm (14:29 ngày 2026-11-11 hai phiên ghi đè nhau).
 - Hẹn giờ: người dùng bảo "xoá hết mọi hẹn giờ, tự động chạy lại tại phiên này" (2026-11-11 15:20), scheduled task `tkpccc-cad-lam-tiep` đã xoá.
@@ -116,21 +116,22 @@ Skill `tkpccc-ve-cad` giữ sonnet/low (vẽ theo spec có sẵn).
      (phương ngắn lệch dưới 25 mm). Đề xuất: cho `le` dùng cùng `s`; tuỳ chọn xếp theo từng hàng.
   e. XONG (`rai` `tim`; HL1 còn 9/10 vì mẫu dày hơn `s`). Hành lang: kỹ sư đặt đầu ở các góc giao hành lang, bước 3000–4000 xen nhau; `rai` chia đều nên thiếu 2 đầu. Đề xuất: rải theo đường tim có điểm bắt buộc.
   f. XONG 12/11 (bỏ chữ khi gần đó đã có chữ cùng nội dung, kể cả chữ nền PDF). `nhan` ghi trùng chữ DN50 ở chỗ ống góp gặp nhánh.
-  NGƯỜI DÙNG CẦN DUYỆT: 15 hộp vùng (`anh/t1_vung_*.png`), nhất là ranh giới tự đặt ở chỗ không có tường (HL1 / HL3 / P06; HL4 phía sảnh thông tầng, x 51056); vị trí ống góp từng phòng.
+  NGƯỜI DÙNG ĐÃ DUYỆT 2026-11-12 (chốt): 15 hộp vùng (`anh/t1_vung_*.png`), nhất là ranh giới tự đặt ở chỗ không có tường (HL1 / HL3 / P06; HL4 phía sảnh thông tầng, x 51056); vị trí ống góp từng phòng.
   Chưa vẽ: trục xả DN50, van OS&Y, công tắc dòng chảy, van xả khí. Chưa thử `cad-ve`, `cad-kiem` (cần AutoCAD mở để gọi MCP).
 - Đo số token một lần vẽ (`claude -p --output-format json`), ghi vào `cad/LICH_SU.md`.
 - Sau đó theo `KE_HOACH.md`: G5 `so_do`, G6 chat trong CAD (bảng `PCCC_BLOCK` là tab đầu của G6).
 
 ### Bước 6. Việc ưu tiên 2 và 3 từ `knowledge/tham-khao-mcp-hub.md` (chi tiết từng việc ở file đó)
-- Ưu tiên 2, làm khi người dùng cấp file chuẩn layer: bảng layer `data/ky_hieu/layer.json` cho `DamBaoLayer` (màu, kiểu đường, độ dày; dây báo cháy ra nét đứt);
+- Ưu tiên 2: bảng layer `data/ky_hieu/layer.json` cho `DamBaoLayer` (màu, kiểu đường, độ dày; dây báo cháy ra nét đứt);
   thao tác `dan` (mũi tên + chữ); thao tác `in_pdf`, `luu` (chung đường `-PLOT` với `cad_anh`).
 - Ưu tiên 3, sau Bước 2–4: `doc` thêm `gi`:"block"; `cung`, `hatch` khi vẽ lại nền cần tới; `TKPCCC.Mcp.exe` tự `NETLOAD` qua COM + thời gian chờ bằng biến môi trường;
   bộ ký hiệu van của bản mẫu khi làm `so_do`; đoạn cấu hình mẫu cho AI khác và 4–5 câu lệnh mẫu PCCC trong `cad/README.md`.
 - Đưa vào skill `tkpccc-ve-cad`: vẽ theo giai đoạn (nền + trục → rải → tuyến → ghi chú), hết mỗi giai đoạn gọi `cad_anh` và báo số đếm; chỉ dừng chờ duyệt khi người dùng yêu cầu.
 
-## NHẮC NGƯỜI DÙNG ĐẦU PHIÊN (người dùng dặn 2026-11-11: mở phiên mới thì phải nhắc)
-Ba thứ người dùng CHƯA cấp, bảo Claude làm sườn trước rồi họ sửa sau: (1) file chuẩn layer trong `cad/layer/`; (2) block động của thiết bị; (3) catalog ống + phụ kiện và catalog bơm.
-Đầu mỗi phiên CAD nêu một dòng nhắc. Người dùng cấp thứ nào thì gạch thứ đó; đủ cả ba thì xoá mục này.
+## NẠP DỮ LIỆU NGƯỜI DÙNG QUA PLUGIN (người dùng dặn 2026-11-12, thay mục "nhắc đầu phiên" của 11/11)
+Chuẩn layer, block động thiết bị, catalog ống + phụ kiện, catalog bơm: người dùng KHÔNG gửi file cho Claude; sau này plugin có chức năng để họ tự thêm vào trong CAD.
+Không cần nhắc đầu phiên nữa. Việc của Claude: làm các lệnh nạp đó (block đã có `PCCC_THEMBLOCK`, cần kiểm với block động thật; còn thiếu lệnh nạp chuẩn layer, catalog ống + phụ kiện, catalog bơm),
+xếp sau Bước 5 hoặc gộp vào G6 (bảng trong CAD). Trong lúc chưa có, plugin vẫn dùng layer và block mặc định.
 
 ## NGƯỜI DÙNG ĐÃ TRẢ LỜI 2026-11-11 (đầy đủ: `cad/knowledge/tu-duy-di-day-di-ong.md`)
 1. Dây báo cháy hệ thường: nét thẳng, rắn bò, phòng nối tiếp phòng trong cùng zone, không rẽ chữ T, cuối zone có điện trở cuối dây. Có đèn báo phòng thì mỗi đầu báo trong phòng một nét kéo ra đèn.
