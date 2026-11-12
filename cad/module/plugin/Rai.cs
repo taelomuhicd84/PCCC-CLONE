@@ -77,6 +77,13 @@ namespace TKPCCC
             return tot;
         }
 
+        /// Điểm gần p nhất trên CẢ polyline ống chính (không chỉ một đoạn).
+        static Point3d ChanTruc(List<Point3d> truc, Point3d p)
+        {
+            int i = DoanGan(truc, p);
+            return ChanVuongGoc(p, truc[i], truc[i + 1]);
+        }
+
         /// Gom điểm thành nhóm theo một toạ độ (chênh không quá sai số thì cùng nhóm); nhóm xếp tăng dần.
         static List<List<Point3d>> Gom(IEnumerable<Point3d> ps, Func<Point3d, double> f, double saiSo)
         {
@@ -132,7 +139,8 @@ namespace TKPCCC
         /// dt > 0 (đơn vị bản vẽ bình phương) = diện tích bảo vệ tối đa của một thiết bị. Rải theo bước tối đa thì lấy số cột × số hàng ÍT thiết bị nhất
         /// mà ô lưới không vượt dt (hoà thì lấy ô vuông hơn): 16 × 12 m, s 4 m, dt 12 m2 ra 4 × 4 (bước 4000 × 3000), không phải 4 × 3 (16 m2) hay 5 × 4.
         /// lex, ley: cách tường (xem ChiaBuoc), số âm = mặc định. theoHang: mỗi hàng chia lại theo bề rộng trống thật của hàng đó
-        /// (giao đường ngang của hàng với đa giác, phòng chữ L có WC), bước không quá bước của lưới nên vẫn đạt dt.
+        /// (giao đường ngang của hàng với đa giác, phòng chữ L có WC): số thiết bị như lưới chung (hàng rộng bằng vùng ra đúng lưới chung),
+        /// thêm thiết bị khi ô của hàng vượt dt; với "buoc" ô của hàng có thể vượt dt: k.O = ô lớn nhất của các hàng để nơi gọi báo lỗi.
         static LuoiRai LuoiVung(List<Point2d> vung, double sx, double sy, double bx, double by, double lex, double ley, double chan, double dt, double gocDo, bool theoHang)
         {
             double a = gocDo * Math.PI / 180, c = Math.Cos(a), s = Math.Sin(a);
@@ -153,7 +161,7 @@ namespace TKPCCC
                 }
             }
             LuoiRai k = new LuoiRai();
-            double ch = chan;
+            double ch = chan, lex0 = lex;
             // Vượt dt (chỉ khi rải theo bước tối đa): lần 2 bỏ làm tròn theo "chan" (dư dồn ra tường làm ô sát tường lớn),
             // lần 3 bỏ cả "le" (chia đều, luôn đạt dt nhờ số cột × số hàng đã chọn ở trên).
             for (int lan = 0; lan < 3; lan++)
@@ -165,6 +173,8 @@ namespace TKPCCC
                 if (!(dt > 0 && bx <= 0 && ORai(k) > dt * (1 + 1e-9))) break;
             }
             k.O = ORai(k);
+            double oHang = 0, sy0 = k.Ny > 1 ? Math.Max(k.By, 2 * k.Ty) : 2 * k.Ty; // Sy của mọi hàng
+            Func<int, double, double, double> oCuaHang = (n, b, t) => (n > 1 ? Math.Max(b, 2 * t) : 2 * t) * sy0;
             // Chặn bước gõ nhầm đơn vị (vd 4 thay vì 4000 trong bản vẽ mm): không để AutoCAD treo vì chèn hàng triệu block.
             if ((long)k.Nx * k.Ny > 5000) throw new System.Exception("bước quá nhỏ so với vùng (" + k.Nx + " x " + k.Ny + " thiết bị): kiểm đơn vị của bước và của bản vẽ");
             List<Point2d> luoi = new List<Point2d>();
@@ -174,8 +184,20 @@ namespace TKPCCC
                 if (theoHang)
                     foreach (double[] kh in KhoangNgang(q, y))
                     {
-                        int n; double b, t;
-                        ChiaBuoc(kh[1] - kh[0], bx > 0 ? 0 : k.Bx, bx > 0 ? k.Bx : 0, lex, ch, 0, out n, out b, out t);
+                        int n; double b, t, w = kh[1] - kh[0];
+                        if (bx > 0) ChiaBuoc(w, 0, bx, lex, 0, 0, out n, out b, out t);
+                        else
+                            // Như lưới chung: nMin theo tỉ lệ bề rộng, ba lần thử như vòng "lan" ở trên, vượt dt thì thêm một thiết bị.
+                            for (int nMin = (int)Math.Ceiling(Math.Max(nx0, 1) * w / W - 1e-9); ; nMin = n + 1)
+                            {
+                                ChiaBuoc(w, sx, 0, lex0, chan, nMin, out n, out b, out t);
+                                if (dt <= 0 || oCuaHang(n, b, t) <= dt * (1 + 1e-9)) break;
+                                ChiaBuoc(w, sx, 0, lex0, 0, nMin, out n, out b, out t);
+                                if (oCuaHang(n, b, t) <= dt * (1 + 1e-9)) break;
+                                ChiaBuoc(w, sx, 0, -1, 0, nMin, out n, out b, out t);
+                                if (oCuaHang(n, b, t) <= dt * (1 + 1e-9) || n > 5000) break;
+                            }
+                        oHang = Math.Max(oHang, oCuaHang(n, b, t));
                         for (int i = 0; i < n; i++) luoi.Add(new Point2d(kh[0] + t + i * b, y));
                     }
                 else
@@ -198,6 +220,7 @@ namespace TKPCCC
                     tong++;
                     if (!luoi.Any(p => p.GetDistanceTo(m) <= r)) ho++;
                 }
+            if (oHang > 0) k.O = oHang;
             k.Ho = tong == 0 ? 0 : Math.Round(100.0 * ho / tong, 1);
             foreach (Point2d p in luoi) k.Diem.Add(new Point3d(p.X * c - p.Y * s, p.X * s + p.Y * c, 0));
             return k;
@@ -451,16 +474,15 @@ namespace TKPCCC
         /// Ống góp đi trùng cột thiết bị gần "tu" nhất (không có "tu" thì cột gần giữa), hoặc qua điểm "qua".
         /// Chỉ chọn cột có chân ống góp nằm trong đoạn ống chính; không cột nào được thì lấy cột chân gần đoạn nhất.
         /// Hoà thì lấy cột có chân X nhỏ hơn, rồi Y nhỏ hơn (WCS): đảo chiều vẽ "truc" không đổi kết quả.
-        /// Chân ống góp (kể cả theo "qua") ra ngoài đoạn thì nối thêm một đoạn dọc trục ống chính về đầu mút gần nhất.
+        /// Chân ống góp (kể cả theo "qua") ra ngoài CẢ polyline ống chính thì nối thêm một đoạn về điểm gần nhất của ống chính.
         static List<List<Point3d>> TuyenXuongCa(List<Point3d> ps, List<Point3d> truc, Point3d? tu, Point3d? qua, double saiSo)
         {
             Point3d tam = new Point3d(ps.Average(p => p.X), ps.Average(p => p.Y), 0);
             int i0 = DoanGan(truc, tam);
             Point3d A = truc[i0], B = truc[i0 + 1];
-            double L = A.DistanceTo(B);
             Vector3d u = (B - A).GetNormal(), n = new Vector3d(-u.Y, u.X, 0);
             Func<Point3d, double> fa = p => (p - A).DotProduct(u), fd = p => (p - A).DotProduct(n);
-            Func<double, double> ngoai = x => Math.Max(0, Math.Max(-x, x - L)); // chân ống góp cách đoạn ống chính bao nhiêu
+            Func<double, double> ngoai = x => (A + u * x).DistanceTo(ChanTruc(truc, A + u * x)); // chân ống góp cách ống chính (cả polyline) bao nhiêu
             double af;
             if (qua.HasValue) af = fa(qua.Value);
             else
@@ -476,7 +498,7 @@ namespace TKPCCC
             List<List<Point3d>> hang = Gom(ps, fd, saiSo), kq = new List<List<Point3d>>();
             double thap = Math.Min(0, hang.Min(h => h.Average(fd))), cao = Math.Max(0, hang.Max(h => h.Average(fd)));
             if (cao - thap > 1e-6) kq.Add(new List<Point3d> { A + u * af + n * thap, A + u * af + n * cao });
-            if (ngoai(af) > 1e-6) kq.Add(new List<Point3d> { A + u * af, af < 0 ? A : B });
+            if (ngoai(af) > 1e-6) kq.Add(new List<Point3d> { A + u * af, ChanTruc(truc, A + u * af) });
             foreach (List<Point3d> h in hang)
             {
                 double d = h.Average(fd), a0 = Math.Min(h.Min(fa), af), a1 = Math.Max(h.Max(fa), af);
@@ -486,22 +508,28 @@ namespace TKPCCC
         }
 
         /// Mỗi cột thiết bị (cột = cùng vị trí dọc ống chính) một nhánh vuông góc ống chính, từ ống chính tới thiết bị xa nhất của cột
-        /// (ống chính chạy sát hoặc xuyên qua phòng thì nhánh đi cả hai phía). Chân nhánh ra ngoài đoạn ống chính thì nối thêm dọc trục như xuong_ca.
+        /// (ống chính chạy sát hoặc xuyên qua phòng thì nhánh đi cả hai phía). Chân nhánh ra ngoài ống chính thì nối thêm như xuong_ca:
+        /// các chân cùng phía cùng điểm nối chỉ một đoạn nối, từ chân xa nhất (không vẽ chồng).
         static List<List<Point3d>> TuyenCot(List<Point3d> ps, List<Point3d> truc, double saiSo)
         {
             Point3d tam = new Point3d(ps.Average(p => p.X), ps.Average(p => p.Y), 0);
             int i0 = DoanGan(truc, tam);
             Point3d A = truc[i0], B = truc[i0 + 1];
-            double L = A.DistanceTo(B);
             Vector3d u = (B - A).GetNormal(), n = new Vector3d(-u.Y, u.X, 0);
             Func<Point3d, double> fa = p => (p - A).DotProduct(u), fd = p => (p - A).DotProduct(n);
-            List<List<Point3d>> kq = new List<List<Point3d>>();
+            List<List<Point3d>> kq = new List<List<Point3d>>(), noi = new List<List<Point3d>>();
             foreach (List<Point3d> c in Gom(ps, fa, saiSo))
             {
                 double x = c.Average(fa), thap = Math.Min(0, c.Min(fd)), cao = Math.Max(0, c.Max(fd));
                 if (cao - thap > 1e-6) kq.Add(new List<Point3d> { A + u * x + n * thap, A + u * x + n * cao });
-                if (x < -1e-6 || x > L + 1e-6) kq.Add(new List<Point3d> { A + u * x, x < 0 ? A : B });
+                Point3d F = A + u * x, T = ChanTruc(truc, F);
+                if (F.DistanceTo(T) <= 1e-6) continue;
+                // Cùng điểm nối T và cùng phía: giữ đoạn dài hơn (chân trên cùng đường thẳng nên đoạn dài phủ đoạn ngắn).
+                int j = noi.FindIndex(d => d[1].DistanceTo(T) <= 1e-6 && (d[0] - T).DotProduct(F - T) > 0);
+                if (j < 0) noi.Add(new List<Point3d> { F, T });
+                else if (F.DistanceTo(T) > noi[j][0].DistanceTo(T)) noi[j] = new List<Point3d> { F, T };
             }
+            kq.AddRange(noi);
             return kq;
         }
 

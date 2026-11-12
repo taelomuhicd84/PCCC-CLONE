@@ -238,10 +238,13 @@ namespace TKPCCC
             double tl = LaySo(o, "tl", 0);
             if (tl <= 0) throw new System.Exception("pdf cần \"tl\" = mẫu số tỉ lệ của trang (1:100 thì 100); tính bằng cad/.claude/skills/tkpccc-ve-cad/scripts/pdf_ti_le.py");
             Point3d p = Lay(o, "p") == null ? new Point3d(g.Gx, g.Gy, 0) : P(g, Lay(o, "p"), "p");
-            // Số trang sai thì -PDFIMPORT hỏi lại số trang mãi, nuốt hết các lệnh sau (bản vẽ treo): chặn trước khi gọi lệnh.
+            // Số trang sai, hoặc file bộ đọc underlay không mở được (PDF có mật khẩu, kể cả chỉ khoá chống sửa; file hỏng), thì -PDFIMPORT
+            // hỏi lại mãi, nuốt hết các lệnh sau (bản vẽ treo): chặn trước khi gọi lệnh.
             int trang = (int)LaySo(o, "trang", 1), soTrang = SoTrangPdf(f);
-            if (trang < 1 || (soTrang > 0 && trang > soTrang))
-                throw new System.Exception("pdf: \"trang\" " + trang + " ngoài khoảng 1.." + (soTrang > 0 ? soTrang.ToString(CultureInfo.InvariantCulture) : "?") + " của file");
+            if (soTrang < 1)
+                throw new System.Exception("pdf: không đọc được PDF \"" + f + "\": có bảo mật/mật khẩu hoặc hỏng; in lại ra PDF không bảo mật rồi nhập");
+            if (trang < 1 || trang > soTrang)
+                throw new System.Exception("pdf: \"trang\" " + trang + " ngoài khoảng 1.." + soTrang.ToString(CultureInfo.InvariantCulture) + " của file");
             long truoc = g.Db.Handseed.Value; // lệnh không trả danh sách: đối tượng mới là đối tượng có handle từ đây trở lên
             object hopThoai = AcApp.GetSystemVariable("FILEDIA");
             AcApp.SetSystemVariable("FILEDIA", (short)0); // không để lệnh mở hộp chọn file
@@ -274,7 +277,6 @@ namespace TKPCCC
         }
 
         /// Số trang của file PDF theo bộ đọc underlay của AutoCAD; 0 = không đọc được.
-        /// shortcut: không đọc được số trang thì chỉ chặn trang < 1; trang lớn hơn số trang khi đó vẫn làm -PDFIMPORT treo.
         static int SoTrangPdf(string f)
         {
             try

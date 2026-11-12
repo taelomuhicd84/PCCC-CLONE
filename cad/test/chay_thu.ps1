@@ -134,6 +134,27 @@ $tlTrang = (& python -I "$GOC\cad\.claude\skills\tkpccc-ve-cad\scripts\pdf_ti_le
 #     Cung tim + le 600: buoc cuoi min(4000, 8400 / 2) = 4000, cach tuong 1000. Tim kin 8000 x 6000: 4 goc + 4 giua canh = 8.
 '{"goc":[600000,0],"ops":[{"op":"rai","ma":"SPR_DAU_DOWN","hop":[0,0,6300,4500],"s":4000,"dt":12,"le":[650,1100]},{"op":"rai","ma":"SPR_DAU_DOWN","vung":[[0,10000],[6300,10000],[6300,14500],[1100,14500],[1100,12500],[0,12500]],"s":4000,"dt":12,"le":[650,1100],"theo_hang":true},{"op":"tuyen","ma":"ONG_DN25","kieu":"noi_tiep"},{"op":"tuyen","ma":"ONG_DN25","kieu":"cot","p":[[0,21000],[0,24000],[3000,21000],[3000,24000],[3000,18000],[6000,22500]],"truc":[[1000,20000],[8000,20000]]},{"op":"rai","ma":"SPR_DAU_DOWN","tim":[[0,30000],[1500,30000],[11500,30000],[11500,39000]],"s":4000},{"op":"tuyen","ma":"ONG_DN25","kieu":"nhanh","truc":[[-1000,29000],[20000,29000]]},{"op":"rai","ma":"SPR_DAU_DOWN","tim":[[0,50000],[1500,50000],[11500,50000],[11500,59000]],"s":4000,"le":600},{"op":"rai","ma":"SPR_DAU_DOWN","tim":[[0,70000],[8000,70000],[8000,76000],[0,76000],[0,70000]],"s":4000}]}' |
   Set-Content -Encoding ascii "$T\rai_moi.json"
+# Review 2026-11-12 (dau vao dung nhu review):
+# CHAN: PDF bo doc underlay khong mo duoc (chi khoa sua, co mat khau mo, file hong) thi khong goi -PDFIMPORT (truoc day treo, nuot ca goi sau va QSAVE).
+& python -I "$GOC\cad\test\tao_pdf_mau.py" $T
+if ($LASTEXITCODE) { throw 'tao_pdf_mau.py khong tao duoc PDF bao mat' }
+@{ ops = @(@{ op = 'pdf'; file = "$T\khoa_sua.pdf"; trang = 1; tl = 200 }, @{ op = 'pdf'; file = "$T\mat_khau.pdf"; trang = 1; tl = 200 },
+  @{ op = 'pdf'; file = "$T\hong.pdf"; trang = 1; tl = 200 }, @{ op = 'tron'; l = 'X'; c = @(0, -900000); r = 100 }) } |
+  ConvertTo-Json -Depth 5 -Compress | Set-Content -Encoding ascii "$T\pdf_mk.json"
+# (1) cot: 2 cot cung phia ngoai doan -> 1 doan noi tu chan xa nhat: 3 x 1 + 3 = 6 m, 4 doan (truoc 7 m, 5 doan).
+# (2) truc co dinh thang hang: xuong_ca qua x 3500 chan nam tren doan ke tiep -> khong noi them: 3 + 1,5 + 1,5 = 6 m (truoc 6,5);
+#     cot -> 2 doan 3 m (truoc 3 doan 5 m).
+# (5) pha hoa: 2 cot doi xung x 1000 / 5000, khong qua, truc ve hai chieu -> ca hai lan ong gop o cot trai (X nho).
+'{"goc":[700000,0],"ops":[{"op":"tuyen","ma":"ONG_DN25","kieu":"cot","p":[[-1000,1000],[-3000,1000],[2000,1000]],"truc":[[0,0],[5000,0]]},{"op":"tuyen","ma":"ONG_DN25","kieu":"cot","p":[[-1000,1000],[-3000,1000],[2000,1000]],"truc":[[5000,0],[0,0]]},{"op":"tuyen","ma":"ONG_DN25","kieu":"xuong_ca","p":[[2000,1000],[3500,1000],[2000,3000],[3500,3000]],"truc":[[0,0],[3000,0],[6000,0]],"qua":[3500,2000]},{"op":"tuyen","ma":"ONG_DN25","kieu":"cot","p":[[1000,30000],[1000,31000],[5000,30000]],"truc":[[0,29000],[3000,29000],[6000,29000]]}]}' |
+  Set-Content -Encoding ascii "$T\rv_tuyen.json"
+'{"goc":[800000,0],"ops":[{"op":"tuyen","ma":"ONG_DN25","kieu":"xuong_ca","p":[[1000,2000],[5000,2000],[1000,4000],[5000,4000]],"truc":[[-1000,0],[7000,0]]},{"op":"tuyen","ma":"ONG_DN25","kieu":"xuong_ca","p":[[1000,12000],[5000,12000],[1000,14000],[5000,14000]],"truc":[[7000,10000],[-1000,10000]]}]}' |
+  Set-Content -Encoding ascii "$T\hoa.json"
+'{"goc":[800000,0],"ops":[{"op":"doc","gi":"layer","l":"PCCC_ONG_DN25","hop":[900,-100,1100,4100]},{"op":"doc","gi":"layer","l":"PCCC_ONG_DN25","hop":[900,9900,1100,14100]}]}' |
+  Set-Content -Encoding ascii "$T\hoa_doc.json"
+# (3) theo_hang theo s, phong chu nhat 10000 x 6000: phai ra nhu luoi chung (6, khong phai 8).
+# (4) theo_hang theo buoc: hang tren 9900 rong, 2 thiet bi cach tuong 2950 -> o 5,9 x 3 = 17,7 m2 > dt 12 phai bao loi; khong dt thi m2 17,7.
+'{"goc":[900000,0],"ops":[{"op":"rai","ma":"SPR_DAU_DOWN","hop":[0,0,10000,6000],"s":4000,"dt":12,"theo_hang":true},{"op":"rai","ma":"SPR_DAU_DOWN","hop":[0,0,10000,6000],"s":4000,"theo_hang":true},{"op":"rai","ma":"SPR_DAU_DOWN","hop":[0,0,10000,6000],"s":4000,"dt":12},{"op":"rai","ma":"SPR_DAU_DOWN","vung":[[0,10000],[10000,10000],[10000,16000],[100,16000],[100,13000],[0,13000]],"buoc":[4000,3000],"dt":12,"theo_hang":true},{"op":"rai","ma":"SPR_DAU_DOWN","vung":[[0,10000],[10000,10000],[10000,16000],[100,16000],[100,13000],[0,13000]],"buoc":[4000,3000],"theo_hang":true}]}' |
+  Set-Content -Encoding ascii "$T\rv_hang.json"
 # PCCC_THEMBLOCK khong ghi gi khi danh muc khong ghi duoc: file goc da co VAN_TRUNG (them tay) va la file chi doc.
 # van_trung: trung ma trong file goc; van_ro: file goc chi doc. Ca hai phai dung TRUOC khi luu PCCC_Blocks.dwg.
 $fGoc = "$T\goc\vat_tu.json"
@@ -146,7 +167,8 @@ $bamTv = (Get-FileHash "$T\PCCC_Blocks.dwg").Hash
   'PCCC_SPEC', "$T\spec.json", 'PCCC_SPEC', "$T\rai.json",
   'PCCC_SPEC', "$T\khoa_sai.json", 'PCCC_SPEC', "$T\khoa_dung.json", 'PCCC_SPEC', "$T\anh.json", 'PCCC_SPEC', "$T\pdf_sai.json", 'PCCC_SPEC', "$T\pdf.json",
   'PCCC_SPEC', "$T\pdf2.json", 'PCCC_SPEC', "$T\xoa2.json", 'PCCC_SPEC', "$T\rai_loi.json", 'PCCC_SPEC', "$T\tuyen_thu.json", 'PCCC_SPEC', "$T\nhan.json",
-  'PCCC_SPEC', "$T\rai_moi.json", '_.QSAVE') -join "`r`n" |
+  'PCCC_SPEC', "$T\rai_moi.json", 'PCCC_SPEC', "$T\pdf_mk.json", 'PCCC_SPEC', "$T\rv_tuyen.json", 'PCCC_SPEC', "$T\hoa.json", 'PCCC_SPEC', "$T\hoa_doc.json",
+  'PCCC_SPEC', "$T\rv_hang.json", '_.QSAVE') -join "`r`n" |
   Set-Content -Encoding ascii "$T\kb2.scr"
 $p2 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb2.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb2.out.txt"
 if (-not $p2.WaitForExit(180000)) { Stop-Process -Id $p2.Id -Force; throw "accoreconsole qua 3 phut (PCCC_SPEC): $T\kb2.out.txt" }
@@ -232,6 +254,23 @@ Kiem ($krm -and $krm.rai[2].n -eq 6 -and $krm.rai[2].bx -eq 3600 -and $krm.rai[2
   "rai tim: 2 diem bat buoc + 2 giua + 2 ra tuong, buoc lon nhat 3600, nhanh 16,8 m (thay $($krm.rai[2] | ConvertTo-Json -Compress), $($krm.tuyen[2].m) m)"
 Kiem ($krm -and $krm.rai[3].n -eq 6 -and $krm.rai[3].bx -eq 4000 -and $krm.rai[3].tuong[1] -eq 1000 -and $krm.rai[4].n -eq 8 -and $krm.rai[4].bx -eq 4000) `
   "rai tim + le 600: doan ra tuong buoc 4000, cach tuong 1000; tim kin 8000 x 6000 ra 8 dau ($($krm.rai[3].tuong -join '/'), $($krm.rai[4].n))"
+# Review 2026-11-12
+$kmk = DocKq 'pdf_mk'
+Kiem ($kmk -and $kmk.ok -eq $false -and $kmk.ve -eq 1 -and @($kmk.loi).Count -eq 3 -and @($kmk.loi | Where-Object { $_.ly_do -match 'PDF' }).Count -eq 3 -and (DocKq 'rv_hang')) `
+  "pdf chi khoa sua / co mat khau / hong: bao loi, khong goi -PDFIMPORT, goi sau van chay ($($kmk.loi.ly_do -join ' | '))"
+$krt = DocKq 'rv_tuyen'
+$tt = if ($krt) { @($krt.tuyen) } else { @() }
+Kiem ($krt -and $krt.ok -eq $true -and $tt[0].doan -eq 4 -and $tt[0].m -eq 6 -and $tt[1].doan -eq 4 -and $tt[1].m -eq 6) "tuyen cot: 2 cot cung phia ngoai doan chi 1 doan noi, 6 m ca hai chieu truc ($($tt[0].m) / $($tt[1].m), $($tt[0].doan) doan)"
+Kiem ($krt -and $tt[2].doan -eq 3 -and $tt[2].m -eq 6) "tuyen xuong_ca: truc dinh thang hang, chan tren doan ke khong noi de ong chinh (6 m, thay $($tt[2].m), $($tt[2].doan) doan)"
+Kiem ($krt -and $tt[3].doan -eq 2 -and $tt[3].m -eq 3) "tuyen cot: truc dinh thang hang, 2 doan 3 m (thay $($tt[3].doan) doan $($tt[3].m) m)"
+$khd = DocKq 'hoa_doc'
+Kiem ((DocKq 'hoa') -and $khd -and @($khd.doc).Count -eq 2 -and $khd.doc[0].ds[0].n -eq 1 -and $khd.doc[1].ds[0].n -eq 1) `
+  "tuyen xuong_ca pha hoa: 2 cot doi xung, truc ve hai chieu deu chon cot trai ($($khd.doc | ConvertTo-Json -Compress -Depth 4))"
+$krh = DocKq 'rv_hang'
+$rh = if ($krh) { @($krh.rai) } else { @() }
+Kiem ($krh -and $rh[0].n -eq 6 -and $rh[1].n -eq 6 -and $rh[2].n -eq 6) "rai theo_hang theo s phong chu nhat: nhu luoi chung 6 thiet bi ($($rh[0].n) / $($rh[1].n) / $($rh[2].n))"
+Kiem ($krh -and $krh.ok -eq $false -and @($krh.loi).Count -eq 1 -and $krh.loi[0].i -eq 3 -and $krh.loi[0].ly_do -match 'dt' -and $rh.Count -eq 4 -and $rh[3].m2 -eq 17.7) `
+  "rai theo_hang theo buoc: o hang 17,7 m2 vuot dt 12 thi bao loi, khong dt thi m2 17,7 (thay $($rh[3].m2), loi $($krh.loi | ConvertTo-Json -Compress -Depth 3))"
 # PCCC_THEMBLOCK that bai o danh muc: thu vien DWG khong doi, khong file danh muc nao co ma moi
 $out2 = [Text.Encoding]::Unicode.GetString([IO.File]::ReadAllBytes("$T\kb2.out.txt")) -replace "`0", ''
 $dm2 = Get-Content -Raw -Encoding UTF8 "$T\vat_tu.json" | ConvertFrom-Json

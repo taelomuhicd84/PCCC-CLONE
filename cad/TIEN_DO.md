@@ -3,7 +3,11 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
-## TRẠNG THÁI (cập nhật 2026-11-12, 14:05)
+## TRẠNG THÁI (cập nhật 2026-11-12, 14:45)
+- 14:45 ngày 12/11: agent `cad-lap-trinh` (Opus) SỬA XONG review 12/11 (`ket_qua/cad_review/review_2026-11-12.md`): 1 CHẶN (`pdf` với PDF có mật khẩu, chỉ khoá chống sửa, file hỏng:
+  báo lỗi, không gọi `-PDFIMPORT`) + 5 NÊN SỬA (`cot` nối chồng, `xuong_ca`/`cot` đè ống chính khi `truc` có đỉnh thẳng hàng, `theo_hang` theo `s` thừa thiết bị, `theo_hang` theo `buoc` vượt `dt` không báo,
+  phép kiểm phá hoà). 5 GHI CHÚ để nguyên. `chay_thu.ps1` 54/54, `thu_mcp.ps1` 9/9, bundle build lại 14:45. CHƯA commit.
+  VIỆC KẾ: review lại HẸP bằng `cad-review` (Opus max) chỉ các sửa này (`git diff` của `module/plugin/Rai.cs`, `Spec.cs`, `test/`), rồi chốt mốc Bước 5 (commit); sau đó phần còn lại của Bước 5.
 - 14:05 ngày 12/11: agent `cad-lap-trinh` (Opus) XONG Bước 5 mục c, d, e (`tuyen` `cot`; `rai` `le` cùng `s` + `theo_hang`; `rai` theo `tim`). `chay_thu.ps1` 47/47, `thu_mcp.ps1` 9/9, bundle build lại 13:55.
   Vẽ lại tầng 1 ở `ket_qua/cad_mau/cad/lan3/`: 63/64 đầu phun (HL1 9/10, HL2 6/6), lệch vị trí trung bình 546 → 412 mm; chi tiết `cad/LICH_SU.md`. CHƯA commit.
   VIỆC KẾ: review cả hai lượt (a, b, f + CHẶN/NÊN SỬA, rồi c, d, e) bằng `cad-review` (Opus max), rồi phần còn lại của Bước 5 (đo token, trục xả, van).
@@ -152,6 +156,10 @@ xếp sau Bước 5 hoặc gộp vào G6 (bảng trong CAD). Trong lúc chưa c�
 
 ## GHI NHỚ KỸ THUẬT
 - `rai`: trường `goc` là góc xoay LƯỚI (phòng nghiêng), không phải góc xoay block; `kt` chỉ vẽ khi `goc` = 0. `le` mặc định bước / 4 (với `buoc`); với `s` thì `le` là cách tường tối thiểu, bước dàn tới `s`. Trần 5000 thiết bị một vùng.
+- `theo_hang` (12/11): mỗi hàng chia như lưới chung (nMin = số cột lưới × bề rộng hàng / bề rộng vùng, cùng ba lần thử bỏ `chan`, bỏ `le`, thêm thiết bị khi ô hàng vượt `dt`): hàng rộng bằng vùng ra đúng lưới chung.
+  `m2` = ô lớn nhất của các hàng; với `buoc` ô đó vượt `dt` thì báo lỗi như lưới chung. `nx`, `bx`, `tuong` vẫn là của lưới chung (GHI CHÚ review 12/11 chưa sửa).
+- `tuyen` `xuong_ca`/`cot`: chân ống góp/nhánh "ngoài" khi cách CẢ polyline `truc` (hàm `ChanTruc`), đoạn nối vẽ tới điểm gần nhất của polyline; `cot` gom các chân cùng điểm nối cùng phía, chỉ vẽ đoạn nối từ chân xa nhất.
+- `pdf`: `SoTrangPdf` = 0 (bộ đọc underlay không mở được: PDF có mật khẩu kể cả chỉ khoá sửa, file hỏng) thì báo lỗi, không gọi `-PDFIMPORT` (lệnh sẽ hỏi lại tên file mãi). `tao_pdf_mau.py <thư mục>` tạo 3 file thử.
 - `theo_hang` làm cột các hàng lệch nhau: `xuong_ca` vẫn một ống góp nhưng nhánh hàng dài hơn (tầng 1: DN50 +15 m). `tim` không dùng đa giác vùng: `qua` của `tuyen` sau nhận mọi điểm.
 - Xuất toạ độ block để so với mẫu: accoreconsole `/i <bản chép dwg> /s` một dòng LISP `ssget "X"` `((0 . "INSERT") (2 . "SPR_DAU_DOWN"))` ghi ra file; đầu phun mẫu = vòng tròn đường kính 160–200 mm trong PDF (PyMuPDF `get_drawings`).
 - `rai` + `dt`: lấy số cột × số hàng ÍT thiết bị nhất mà ô lưới không vượt `dt`, hoà thì lấy ô vuông hơn (16 × 16 m, `s` 4 m, `dt` 12 ra 4 × 6 = 24 đầu, không phải 5 × 5).

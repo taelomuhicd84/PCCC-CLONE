@@ -175,3 +175,18 @@ Lệch vị trí so với mẫu (đầu phun mẫu đọc lại từ vòng tròn
 P09 175 → 501, P01 370 → 449 (mẫu P01 hàng dưới dồn trái, hàng trên lại hẹp: không theo một luật đối xứng). P06: 2 nhánh đứng x 64970 / 68470, không còn nhánh ngang (ảnh `lan3/anh/t1_spr_5.png`).
 HL1 vẫn thiếu 1: đoạn 49759 → tường 63200 dài 13441 mm, `s` 4000 cho 3 đầu (bước 3840); mẫu đặt 4 (bước khoảng 3000–3500). Truyền `s` 3500 cho HL1 thì ra 10 (tính tay, chưa vẽ).
 Chưa kiểm: `PCCC_RAI` chưa có `le`/`theo_hang` (chỉ qua spec); `tim` không làm tròn bước theo `chan`; `thu_gui.ps1` không chạy.
+
+## 2026-11-12 (chiều) — sửa review 12/11 (agent `cad-lap-trinh`, Opus)
+Theo `ket_qua/cad_review/review_2026-11-12.md`: 1 CHẶN + 5 NÊN SỬA; 5 GHI CHÚ để nguyên (tim [A, B, A]; `nx`/`bx`/`tuong` của `theo_hang` vẫn của lưới chung; `PCCC_TUYEN` nhận thiết bị khác SPR; `chay_spec.ps1` tên có `[ ]`, tên có dấu + `ban_ve`, DWG chỉ đọc; phép kiểm `pdf_ti_le.py` chưa bắt bỏ vòng lọc).
+
+Đã làm:
+- `module/plugin/Spec.cs` (`NhapPdf`): `SoTrangPdf` < 1 thì ném lỗi "không đọc được PDF …: có bảo mật/mật khẩu hoặc hỏng; in lại ra PDF không bảo mật rồi nhập", không gọi `-PDFIMPORT`; bỏ dòng `shortcut:`.
+- `module/plugin/Rai.cs`: hàm `ChanTruc` (điểm gần nhất trên cả polyline). `TuyenXuongCa`: `ngoai` tính tới cả polyline, đoạn nối tới `ChanTruc`. `TuyenCot`: như vậy + gom đoạn nối cùng điểm nối cùng phía, giữ đoạn từ chân xa nhất.
+  `LuoiVung` `theo_hang`: theo `s` mỗi hàng `nMin` = cột lưới × bề rộng hàng / W, ba lần thử như vòng `lan`, thêm thiết bị tới khi ô hàng ≤ `dt`; theo `buoc` giữ bước đúng; `k.O` (= `m2`) là ô lớn nhất của các hàng nên `rai` báo lỗi khi vượt `dt`.
+- `test/tao_pdf_mau.py`: tham số thư mục thì tạo `khoa_sua.pdf` (chỉ mật khẩu chủ, AES-128, chỉ cho in), `mat_khau.pdf` (có mật khẩu mở), `hong.pdf` (không phải PDF).
+- `test/chay_thu.ps1`: 7 phép kiểm mới, đầu vào đúng như review: `pdf_mk.json` (3 file, gói sau vẫn chạy), `rv_tuyen.json` (`cot` 2 cột cùng phía 6 m hai chiều `truc`; `xuong_ca` `truc` thẳng hàng 6 m 3 đoạn; `cot` `truc` thẳng hàng 2 đoạn 3 m),
+  `hoa.json` + `hoa_doc.json` (2 cột đối xứng, `truc` hai chiều, `doc` hộp hẹp quanh cột trái ra 1 cả hai lần), `rv_hang.json` (`theo_hang` 10 × 6 m ra 6 như lưới chung; `buoc` + `dt` 12 báo lỗi, không `dt` thì `m2` 17,7).
+
+Kiểm chứng: `chay_thu.ps1` 54/54 `TAT CA DAT`, `thu_mcp.ps1` 9/9 `TAT CA DAT`, `build.bat` OK (bundle 14:45). Không chạy `thu_gui.ps1` (AutoCAD người dùng đang mở).
+Chưa kiểm: các phép kiểm mới chưa chạy đột biến ngược trên mã cũ (số "trước" lấy từ review đã chạy); `theo_hang` mới chưa dò vét cạn bằng Python như review (phòng chữ L/U/T, `chan`/`le` lớn); PDF mã hoá trên AutoCAD có giao diện.
+

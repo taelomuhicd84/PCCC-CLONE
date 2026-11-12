@@ -58,7 +58,23 @@ def tao(duong_dan):
     doc.save(duong_dan, garbage=4, deflate=True)
 
 
+def tao_bao_mat(thu_muc):
+    """PDF bo doc underlay cua AutoCAD khong mo duoc (review 2026-11-12: -PDFIMPORT hoi lai ten file mai, treo):
+    khoa_sua.pdf chi co mat khau chu (mo tu do, chi khoa sua), mat_khau.pdf co mat khau mo, hong.pdf khong phai PDF."""
+    for ten, user in (("khoa_sua.pdf", ""), ("mat_khau.pdf", "mo")):
+        doc = fitz.open()
+        doc.new_page().insert_text((72, 72), "BAO MAT", fontsize=20)
+        doc.save(os.path.join(thu_muc, ten), encryption=fitz.PDF_ENCRYPT_AES_128, owner_pw="chu", user_pw=user,
+                 permissions=fitz.PDF_PERM_PRINT)
+    with open(os.path.join(thu_muc, "hong.pdf"), "w") as f:
+        f.write("khong phai PDF")
+
+
 if __name__ == "__main__":
-    f = os.path.join(os.path.dirname(os.path.abspath(__file__)), "mau_kt.pdf")
-    tao(f)
-    print("Da tao", f)
+    import sys
+    if len(sys.argv) > 1:  # python tao_pdf_mau.py <thu muc>: chi tao 3 PDF bao mat / hong cho chay_thu.ps1
+        tao_bao_mat(sys.argv[1])
+    else:
+        f = os.path.join(os.path.dirname(os.path.abspath(__file__)), "mau_kt.pdf")
+        tao(f)
+        print("Da tao", f)
