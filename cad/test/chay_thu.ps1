@@ -155,6 +155,11 @@ if ($LASTEXITCODE) { throw 'tao_pdf_mau.py khong tao duoc PDF bao mat' }
 # (4) theo_hang theo buoc: hang tren 9900 rong, 2 thiet bi cach tuong 2950 -> o 5,9 x 3 = 17,7 m2 > dt 12 phai bao loi; khong dt thi m2 17,7.
 '{"goc":[900000,0],"ops":[{"op":"rai","ma":"SPR_DAU_DOWN","hop":[0,0,10000,6000],"s":4000,"dt":12,"theo_hang":true},{"op":"rai","ma":"SPR_DAU_DOWN","hop":[0,0,10000,6000],"s":4000,"theo_hang":true},{"op":"rai","ma":"SPR_DAU_DOWN","hop":[0,0,10000,6000],"s":4000,"dt":12},{"op":"rai","ma":"SPR_DAU_DOWN","vung":[[0,10000],[10000,10000],[10000,16000],[100,16000],[100,13000],[0,13000]],"buoc":[4000,3000],"dt":12,"theo_hang":true},{"op":"rai","ma":"SPR_DAU_DOWN","vung":[[0,10000],[10000,10000],[10000,16000],[100,16000],[100,13000],[0,13000]],"buoc":[4000,3000],"theo_hang":true}]}' |
   Set-Content -Encoding ascii "$T\rv_hang.json"
+# Review 2026-11-12b: (1) theo_hang + dt phong chu L 10 x 6 m khoet WC 3 x 3 m: 5 dau nhu khi khong dt (truoc 6).
+# (2) cot + truc bac chu Z: chan x 9000 va 10000 cung noi ve dinh (8000,-3000) ngoai duong truc -> moi chan mot doan: 6 doan 12,77 m (truoc 5 doan 9,61 m);
+#     truc chu L thuong van 5 doan 11 m.
+'{"goc":[1000000,0],"ops":[{"op":"rai","ma":"SPR_DAU_DOWN","vung":[[0,0],[10000,0],[10000,6000],[3000,6000],[3000,3000],[0,3000]],"s":4000,"dt":12,"theo_hang":true},{"op":"tuyen","ma":"ONG_DN25","kieu":"cot","p":[[1000,11000],[3000,11000],[9000,11000],[10000,11000],[1000,12000],[3000,12000]],"truc":[[0,10000],[5000,10000],[5000,7000],[8000,7000]]},{"op":"tuyen","ma":"ONG_DN25","kieu":"cot","p":[[1000,21000],[3000,21000],[9000,21000],[10000,21000],[1000,22000],[3000,22000]],"truc":[[0,20000],[5000,20000],[5000,17000]]}]}' |
+  Set-Content -Encoding ascii "$T\rv2.json"
 # PCCC_THEMBLOCK khong ghi gi khi danh muc khong ghi duoc: file goc da co VAN_TRUNG (them tay) va la file chi doc.
 # van_trung: trung ma trong file goc; van_ro: file goc chi doc. Ca hai phai dung TRUOC khi luu PCCC_Blocks.dwg.
 $fGoc = "$T\goc\vat_tu.json"
@@ -168,7 +173,7 @@ $bamTv = (Get-FileHash "$T\PCCC_Blocks.dwg").Hash
   'PCCC_SPEC', "$T\khoa_sai.json", 'PCCC_SPEC', "$T\khoa_dung.json", 'PCCC_SPEC', "$T\anh.json", 'PCCC_SPEC', "$T\pdf_sai.json", 'PCCC_SPEC', "$T\pdf.json",
   'PCCC_SPEC', "$T\pdf2.json", 'PCCC_SPEC', "$T\xoa2.json", 'PCCC_SPEC', "$T\rai_loi.json", 'PCCC_SPEC', "$T\tuyen_thu.json", 'PCCC_SPEC', "$T\nhan.json",
   'PCCC_SPEC', "$T\rai_moi.json", 'PCCC_SPEC', "$T\pdf_mk.json", 'PCCC_SPEC', "$T\rv_tuyen.json", 'PCCC_SPEC', "$T\hoa.json", 'PCCC_SPEC', "$T\hoa_doc.json",
-  'PCCC_SPEC', "$T\rv_hang.json", '_.QSAVE') -join "`r`n" |
+  'PCCC_SPEC', "$T\rv_hang.json", 'PCCC_SPEC', "$T\rv2.json", '_.QSAVE') -join "`r`n" |
   Set-Content -Encoding ascii "$T\kb2.scr"
 $p2 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb2.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb2.out.txt"
 if (-not $p2.WaitForExit(180000)) { Stop-Process -Id $p2.Id -Force; throw "accoreconsole qua 3 phut (PCCC_SPEC): $T\kb2.out.txt" }
@@ -271,6 +276,11 @@ $rh = if ($krh) { @($krh.rai) } else { @() }
 Kiem ($krh -and $rh[0].n -eq 6 -and $rh[1].n -eq 6 -and $rh[2].n -eq 6) "rai theo_hang theo s phong chu nhat: nhu luoi chung 6 thiet bi ($($rh[0].n) / $($rh[1].n) / $($rh[2].n))"
 Kiem ($krh -and $krh.ok -eq $false -and @($krh.loi).Count -eq 1 -and $krh.loi[0].i -eq 3 -and $krh.loi[0].ly_do -match 'dt' -and $rh.Count -eq 4 -and $rh[3].m2 -eq 17.7) `
   "rai theo_hang theo buoc: o hang 17,7 m2 vuot dt 12 thi bao loi, khong dt thi m2 17,7 (thay $($rh[3].m2), loi $($krh.loi | ConvertTo-Json -Compress -Depth 3))"
+$kr2 = DocKq 'rv2'
+$r2t = if ($kr2) { @($kr2.tuyen) } else { @() }
+Kiem ($kr2 -and $kr2.ok -eq $true -and $kr2.rai[0].n -eq 5) "rai theo_hang + dt 12 phong chu L: 5 dau nhu khong dt (thay $($kr2.rai[0].n))"
+Kiem ($kr2 -and $r2t[0].doan -eq 6 -and $r2t[0].m -eq 12.77 -and $r2t[1].doan -eq 5 -and $r2t[1].m -eq 11) `
+  "tuyen cot truc bac chu Z: moi chan mot doan noi 6 doan 12,77 m; truc chu L 5 doan 11 m (thay $($r2t[0].doan)/$($r2t[0].m), $($r2t[1].doan)/$($r2t[1].m))"
 # PCCC_THEMBLOCK that bai o danh muc: thu vien DWG khong doi, khong file danh muc nao co ma moi
 $out2 = [Text.Encoding]::Unicode.GetString([IO.File]::ReadAllBytes("$T\kb2.out.txt")) -replace "`0", ''
 $dm2 = Get-Content -Raw -Encoding UTF8 "$T\vat_tu.json" | ConvertFrom-Json

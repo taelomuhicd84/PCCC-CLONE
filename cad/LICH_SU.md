@@ -195,3 +195,10 @@ Chưa kiểm: các phép kiểm mới chưa chạy đột biến ngược trên 
 - Chuỗi: sửa review 11/11 (`7408077`) → c, d, e (`a2b65c0`) → review Opus max 1 CHẶN 5 NÊN SỬA → sửa (`1c20265`) → review lại hẹp 0 CHẶN 2 NÊN SỬA (`review_2026-11-12b.md`).
 - Kiểm chứng: `chay_thu.ps1` 54/54, `thu_mcp.ps1` 9/9 (agent review chạy). Chưa kiểm: `thu_gui.ps1`, `pdf` trong acad.exe có giao diện, bản vẽ đơn vị m và UCS khác World sau lần sửa này.
 - Hạn mức: 5 giờ 10 % → 82 % cho 5 lượt agent (sửa ~18 %, c/d/e ~13 %, review rộng ~26 %, sửa ~6 %, review hẹp ~9 %).
+
+## 2026-11-12 — Sửa 2 NÊN SỬA + GHI CHÚ của review 12/11b
+- `module/plugin/Rai.cs` `LuoiVung` (`theo_hang` theo `s`): hàng rộng bằng vùng lấy thẳng lưới chung (`k.Nx`, `k.Bx`, `k.Tx`, đúng cả vị trí); hàng hẹp bắt đầu từ 1 thiết bị, vòng `dt` tự thêm. Phòng 10 × 6 m khoét WC 3 × 3 m, `dt` 12: 5 đầu (trước 6).
+- `Rai.cs` `TuyenCot`: chỉ gộp đoạn nối khi điểm nối T nằm trên đường trục (|fd(T)| ≤ 1e-6); ống chính bậc chữ Z: 6 đoạn 12,77 m (trước 5 đoạn 9,61 m, nhánh x 9000 treo); chữ L vẫn 5 đoạn 11 m.
+- `skills/TU_VUNG.md` (bảng, phần đầu giữ 1893 ký tự): `theo_hang`, đoạn nối của `xuong_ca`, `cot`.
+- Kiểm: 2 phép mới (`rv2`) trong `test/chay_thu.ps1` với đúng đầu vào review; `chay_thu.ps1`, `thu_mcp.ps1` TAT CA DAT; `build.bat` được.
+- Chưa kiểm: không chạy mã cũ với phép kiểm mới (dựa số của review); GHI CHÚ vị trí phòng chữ nhật + `le` 650 chưa có phép kiểm riêng; `thu_gui.ps1` không chạy.

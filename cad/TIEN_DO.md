@@ -3,7 +3,11 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
-## TRẠNG THÁI (cập nhật 2026-11-12, 15:00)
+## TRẠNG THÁI (cập nhật 2026-11-12, 15:05)
+- 15:05 ngày 12/11: XONG 2 NÊN SỬA + GHI CHÚ `TU_VUNG.md` của review 12/11b (agent `cad-lap-trinh` Opus medium): `theo_hang` phòng chữ L có `dt` 12 ra 5 đầu; `cot` với `truc` chữ Z ra 6 đoạn 12,77 m.
+  `chay_thu.ps1` + `thu_mcp.ps1` TAT CA DAT, bundle build lại. Dừng ở cửa sổ 5 giờ 87 % (người dùng dặn chạy tới 95 % rồi ghi, push; việc kế cần một agent nữa, dễ vượt 95 %).
+  VIỆC KẾ: phần còn lại của Bước 5 (mục "Bước 5" dưới): vẽ trục xả DN50, van OS&Y, công tắc dòng chảy, van xả khí; thử HL1 `s` 3500 (tính tay ra 10/10);
+  `PCCC_RAI` gõ tay thêm `le`/`theo_hang`; đo token một lần vẽ. Review cuối mốc bằng `cad-review` Opus max.
 - 15:00 ngày 12/11: CHỐT MỐC Bước 5 phần a–f (commit `1c20265`). Review lại hẹp bằng Opus max (`ket_qua/cad_review/review_2026-11-12b.md`): 0 CHẶN, 2 NÊN SỬA, 2 GHI CHÚ;
   6 lỗi của review 12/11 chạy lại đúng đầu vào cũ đều đã hết; `chay_thu.ps1` 54/54, `thu_mcp.ps1` 9/9. Dừng ở cửa sổ 5 giờ 82 % (reset 17:30).
   VIỆC KẾ (giao `cad-lap-trinh` Opus, effort medium):

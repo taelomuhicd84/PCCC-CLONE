@@ -186,9 +186,10 @@ namespace TKPCCC
                     {
                         int n; double b, t, w = kh[1] - kh[0];
                         if (bx > 0) ChiaBuoc(w, 0, bx, lex, 0, 0, out n, out b, out t);
+                        else if (w >= W - 1e-6) { n = k.Nx; b = k.Bx; t = k.Tx; } // hàng rộng bằng vùng: đúng lưới chung (cả vị trí)
                         else
-                            // Như lưới chung: nMin theo tỉ lệ bề rộng, ba lần thử như vòng "lan" ở trên, vượt dt thì thêm một thiết bị.
-                            for (int nMin = (int)Math.Ceiling(Math.Max(nx0, 1) * w / W - 1e-9); ; nMin = n + 1)
+                            // Hàng hẹp: từ 1 thiết bị (ChiaBuoc tự đủ bước ≤ s), ba lần thử như vòng "lan" ở trên, vượt dt thì thêm một thiết bị.
+                            for (int nMin = 1; ; nMin = n + 1)
                             {
                                 ChiaBuoc(w, sx, 0, lex0, chan, nMin, out n, out b, out t);
                                 if (dt <= 0 || oCuaHang(n, b, t) <= dt * (1 + 1e-9)) break;
@@ -524,8 +525,9 @@ namespace TKPCCC
                 if (cao - thap > 1e-6) kq.Add(new List<Point3d> { A + u * x + n * thap, A + u * x + n * cao });
                 Point3d F = A + u * x, T = ChanTruc(truc, F);
                 if (F.DistanceTo(T) <= 1e-6) continue;
-                // Cùng điểm nối T và cùng phía: giữ đoạn dài hơn (chân trên cùng đường thẳng nên đoạn dài phủ đoạn ngắn).
-                int j = noi.FindIndex(d => d[1].DistanceTo(T) <= 1e-6 && (d[0] - T).DotProduct(F - T) > 0);
+                // Cùng điểm nối T, cùng phía và T nằm trên đường trục (F, F' và T thẳng hàng): giữ đoạn dài hơn, đoạn dài phủ đoạn ngắn.
+                // T ngoài đường trục (đỉnh của ống chính có bậc) thì mỗi chân một đoạn nối, không thì nhánh ngắn bị treo.
+                int j = Math.Abs(fd(T)) > 1e-6 ? -1 : noi.FindIndex(d => d[1].DistanceTo(T) <= 1e-6 && (d[0] - T).DotProduct(F - T) > 0);
                 if (j < 0) noi.Add(new List<Point3d> { F, T });
                 else if (F.DistanceTo(T) > noi[j][0].DistanceTo(T)) noi[j] = new List<Point3d> { F, T };
             }
