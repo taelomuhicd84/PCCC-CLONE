@@ -223,3 +223,11 @@ Chưa kiểm: các phép kiểm mới chưa chạy đột biến ngược trên 
   SPR_CTDC 2, SPR_VAN_XK 2, SPR_DAU_DOWN 64. Ảnh `lan4/anh/t1_van_1..3.png` đã xem: block trùng ký hiệu mẫu.
 - `skills/TU_VUNG.md` (phần sau `---`, dòng `dat`): mã van sprinkler. `test/chay_thu.ps1`: `dat` `SPR_VAN_OSY_DN100` + `SPR_VAN_XK` ra mỗi mã 1 block.
 - Kiểm chứng: `chay_thu.ps1` TAT CA DAT (58 dòng DAT), `thu_mcp.ps1` TAT CA DAT (9), `npm test` 57/57, `build.bat` xong. Chưa kiểm: `thu_gui.ps1`; block mặc định chưa vẽ hình van thật.
+
+## 2026-11-12 18:00 — đo token một lần vẽ (Bước 5)
+- `claude -p --output-format json` từ Bash của Claude: lỗi `Failed to authenticate: OAuth session expired and could not be refreshed` (đăng nhập CLI hết hạn trong shell này; runner web gọi `claude -p` có thể cũng hỏng tới khi người dùng đăng nhập lại `claude` trong Terminal).
+- Đo thay bằng subagent Sonnet effort low, cùng việc người dùng hay giao: phòng 8000 × 6000, polyline `PCCC_VUNG`, `rai` SPR_DAU_DOWN `s` 4000 `dt` 12, `tuyen` `xuong_ca` ONG_DN100 có `nhan`, `dem`;
+  ghi spec, chạy `chay_spec.ps1` (accoreconsole). Kết quả 4 đầu phun (2 × 2, bước 4000 × 3000), ống 12,5 m, đúng ngay lần đầu, không sửa spec.
+- Số đo: 70 140 token (phần lớn là lời nhắc hệ thống + công cụ của subagent), 5 lượt công cụ, 19 giây. Cửa sổ 5 giờ Pro tăng khoảng 1–2 % (gộp cả lượt điều phối của phiên chính).
+  Chưa đo qua MCP với AutoCAD có giao diện (agent `cad-ve`), vì `cad_chay` vẽ vào bản vẽ người dùng đang mở.
+

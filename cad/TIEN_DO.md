@@ -3,7 +3,14 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
-## TRẠNG THÁI (cập nhật 2026-11-12, 17:10)
+## TRẠNG THÁI (cập nhật 2026-11-12, 18:20)
+- 18:20 ngày 12/11: CHỐT MỐC Bước 5 phần mã. Review cuối bằng Opus max (`ket_qua/cad_review/review_2026-11-12c.md`): 0 CHẶN, 0 NÊN SỬA, 6 GHI CHÚ;
+  `chay_thu.ps1` 58/58, `thu_mcp.ps1` 9/9, `npm test` 57/57. Tầng 1 bản mẫu vẽ lại ở `ket_qua/cad_mau/cad/lan4/`: 64/64 đầu phun, 2 OS&Y DN100, 2 công tắc dòng chảy, trục xả DN50,
+  2 van xả khí (lệch mẫu dưới 60 mm); mã mới `SPR_VAN_OSY_DN65`..`DN150`, `SPR_VAN_XK` trong `data/vat_tu.json`. Đo token một lần vẽ: 70 nghìn token (chi tiết `cad/LICH_SU.md`).
+  CÒN của Bước 5 (không phải mã, cần AutoCAD có giao diện): chạy thử `cad-ve` / `cad-kiem` qua MCP; `thu_gui.ps1`. Chưa có mã: van xả trên ống xả, đồng hồ cụm van xả khí; block van chưa vẽ hình thật.
+  GHI CHÚ của review 12/11c để lại (sửa nhỏ, gộp vào lượt mã kế): `cot` so điểm nối dung sai 1e-6 nên dùng `saiSo`; thiếu phép kiểm cho `Rai.cs:189` và câu trả lời `Co` của `PCCC_RAI`;
+  `cot` nối hình quạt dư ống; `theo_hang` hở góc khoét to hơn (có báo `ho`).
+  VIỆC KẾ: theo `KE_HOACH.md` G5 `so_do` (sơ đồ nguyên lý), hoặc lệnh nạp dữ liệu người dùng (mục "NẠP DỮ LIỆU NGƯỜI DÙNG QUA PLUGIN").
 - 17:10 ngày 12/11: XONG `PCCC_RAI` gõ tay hỏi thêm `le` + `theo_hang` (phép kiểm phòng 14 × 10 m, S 4, `le` 1,5 ra 4 × 3, bước 3650 × 3500); thử HL1 `s` 3500 ở
   `ket_qua/cad_mau/cad/lan4/`: HL1 10/10, tổng 64/64 như mẫu. `chay_thu.ps1` + `thu_mcp.ps1` TAT CA DAT, bundle build lại.
   VIỆC KẾ: trục xả DN50, van OS&Y, công tắc dòng chảy, van xả khí; đo token một lần vẽ; review cuối mốc Bước 5 bằng `cad-review` Opus max.
@@ -111,7 +118,7 @@ Người dùng dặn 2026-11-11: lúc dựng khung và viết thuật toán thì
 | `cad-lap-trinh` | Sửa plugin C#, thêm thao tác spec, chạy bộ test | sửa `cad/module`, `cad/test`; Bash | opus, high |
 Skill `tkpccc-ve-cad` giữ sonnet/low (vẽ theo spec có sẵn).
 
-### Bước 5. Vẽ lại một tầng của bản mẫu, đo token (VIỆC KẾ)
+### Bước 5. Vẽ lại một tầng của bản mẫu, đo token (XONG phần mã 2026-11-12 18:20, xem TRẠNG THÁI)
 - XONG từ các bước trước: dòng README cho `mau-ban-ve-pccc.md`, `rule/LUAT.md`, ví dụ `rai` + `tuyen` trong skill.
 - Vẽ lại tầng 1 sprinkler của bản mẫu (`ket_qua/cad_mau/test_HA2.pdf` trang 3, `tl` 285,0), không cần AutoCAD có giao diện (chạy `PCCC_SPEC` trong accoreconsole như `chay_thu.ps1`):
   1. XONG 22:35: nền đã nhập vào `ket_qua/cad_mau/cad/t1_spr.dwg` (39 056 đối tượng, `tl` 285,0); ảnh mặt bằng 1600 px ở `ket_qua/cad_mau/cad/skills/anh/t1_nen_1.png`
