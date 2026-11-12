@@ -3,7 +3,10 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
-## TRẠNG THÁI (cập nhật 2026-11-12, 15:05)
+## TRẠNG THÁI (cập nhật 2026-11-12, 17:10)
+- 17:10 ngày 12/11: XONG `PCCC_RAI` gõ tay hỏi thêm `le` + `theo_hang` (phép kiểm phòng 14 × 10 m, S 4, `le` 1,5 ra 4 × 3, bước 3650 × 3500); thử HL1 `s` 3500 ở
+  `ket_qua/cad_mau/cad/lan4/`: HL1 10/10, tổng 64/64 như mẫu. `chay_thu.ps1` + `thu_mcp.ps1` TAT CA DAT, bundle build lại.
+  VIỆC KẾ: trục xả DN50, van OS&Y, công tắc dòng chảy, van xả khí; đo token một lần vẽ; review cuối mốc Bước 5 bằng `cad-review` Opus max.
 - 15:05 ngày 12/11: XONG 2 NÊN SỬA + GHI CHÚ `TU_VUNG.md` của review 12/11b (agent `cad-lap-trinh` Opus medium): `theo_hang` phòng chữ L có `dt` 12 ra 5 đầu; `cot` với `truc` chữ Z ra 6 đoạn 12,77 m.
   `chay_thu.ps1` + `thu_mcp.ps1` TAT CA DAT, bundle build lại. Dừng ở cửa sổ 5 giờ 87 % (người dùng dặn chạy tới 95 % rồi ghi, push; việc kế cần một agent nữa, dễ vượt 95 %).
   VIỆC KẾ: phần còn lại của Bước 5 (mục "Bước 5" dưới): vẽ trục xả DN50, van OS&Y, công tắc dòng chảy, van xả khí; thử HL1 `s` 3500 (tính tay ra 10/10);

@@ -669,6 +669,19 @@ namespace TKPCCC
             PromptDoubleResult dr = ed.GetDouble(dtHoi);
             if (dr.Status != PromptStatus.OK && dr.Status != PromptStatus.None) return;
             double dt = dr.Status == PromptStatus.OK ? dr.Value / (m * m) : 0;
+            // Cùng nghĩa "le", "theo_hang" của thao tác spec rai (xem ChiaBuoc, LuoiVung).
+            PromptDoubleOptions leHoi = new PromptDoubleOptions("\nKhoảng cách từ thiết bị tới tường (m), Enter = mặc định (chia đều, tối đa S/2): ");
+            leHoi.AllowNegative = false; leHoi.AllowNone = true;
+            PromptDoubleResult lr = ed.GetDouble(leHoi);
+            if (lr.Status != PromptStatus.OK && lr.Status != PromptStatus.None) return;
+            double le = lr.Status == PromptStatus.OK ? lr.Value / m : -1;
+            PromptKeywordOptions hHoi = new PromptKeywordOptions("\nMỗi hàng chia lại theo bề rộng trống thật của hàng (phòng không chữ nhật)?");
+            hHoi.Keywords.Add("Co"); hHoi.Keywords.Add("Khong");
+            hHoi.Keywords.Default = "Khong";
+            hHoi.AllowNone = true;
+            PromptResult hr = ed.GetKeywords(hHoi);
+            if (hr.Status == PromptStatus.Cancel) return;
+            bool theoHang = hr.StringResult == "Co";
 
             bool coBlock;
             using (Transaction tr = db.TransactionManager.StartTransaction())
@@ -725,7 +738,7 @@ namespace TKPCCC
                 {
                     foreach (List<Point2d> d in vung)
                     {
-                        LuoiRai r = LuoiVung(d, s, s, 0, 0, -1, -1, 0.05 / m, dt, 0, false);
+                        LuoiRai r = LuoiVung(d, s, s, 0, 0, le, le, 0.05 / m, dt, 0, theoHang);
                         foreach (Point3d p in r.Diem) ChenThietBi(db, tr, v, p, k, 0);
                         tong += r.Diem.Count;
                         ed.WriteMessage("\n[TKPCCC] PCCC_RAI " + v.ma + " n=" + r.Diem.Count + " luoi=" + r.Nx + "x" + r.Ny

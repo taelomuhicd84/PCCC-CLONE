@@ -202,3 +202,12 @@ Chưa kiểm: các phép kiểm mới chưa chạy đột biến ngược trên 
 - `skills/TU_VUNG.md` (bảng, phần đầu giữ 1893 ký tự): `theo_hang`, đoạn nối của `xuong_ca`, `cot`.
 - Kiểm: 2 phép mới (`rv2`) trong `test/chay_thu.ps1` với đúng đầu vào review; `chay_thu.ps1`, `thu_mcp.ps1` TAT CA DAT; `build.bat` được.
 - Chưa kiểm: không chạy mã cũ với phép kiểm mới (dựa số của review); GHI CHÚ vị trí phòng chữ nhật + `le` 650 chưa có phép kiểm riêng; `thu_gui.ps1` không chạy.
+
+## 2026-11-12 (17:05) — `PCCC_RAI` hỏi `le`, `theo_hang`; thử HL1 `s` 3500
+- `module/plugin/Rai.cs` (`RaiTay`): sau diện tích bảo vệ, `PCCC_RAI` hỏi thêm khoảng cách tới tường (m, Enter = mặc định cũ, chia đều tối đa S/2) và "Mỗi hàng chia lại..." [Co/Khong] (mặc định Khong);
+  truyền xuống `LuoiVung` như thao tác spec `rai` (`le` cả hai phương, `theo_hang`).
+- `test/chay_thu.ps1`: kịch bản `PCCC_RAI` cũ thêm hai Enter; thêm `PCCC_RAI` phòng 14000 × 10000, S 4, không dt, `le` 1,5: tính tay x n = 4, (14 − 3) / 3 = 3,667 làm tròn 3,65; y n = 3, (10 − 3) / 2 = 3,5
+  ra `n=12 luoi=4x3 buoc=3650x3500` (không `le` thì 3500 × 3300).
+- Thử HL1 `s` 3500: `ket_qua/cad_mau/cad/lan4/` (chép `t1_spr.bak`, spec = `lan3` chỉ đổi `s` HL1): `ok`, HL1 10 đầu (mẫu 10), bước lớn nhất 3416,8, cách tường 1599 / 1493; HL2 6, tổng 64 (mẫu 64);
+  DN50 146,54 m. Ảnh `lan4/anh/t1_spr_2.png` (nửa trái HL1), đã xem: đầu phun đều dọc tim, không đè.
+- Kiểm chứng: `chay_thu.ps1` TAT CA DAT (57 dòng DAT), `thu_mcp.ps1` TAT CA DAT, `build.bat` xong. Chưa kiểm: `thu_gui.ps1` (không chạy theo bài giao); lệch vị trí HL1 so với mẫu chưa đo lại.

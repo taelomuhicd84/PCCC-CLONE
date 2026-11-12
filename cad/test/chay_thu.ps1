@@ -47,7 +47,8 @@ $kb = @('INSUNITS', '4', 'NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '_.SAVEAS', '2018',
   'PCCC_BOC', 'Co', 'L', '', '', 'ThuPlugin',
   'PCCC_VUNGBV', 'BC_KHOI', '3', 'PCCC_VUNGBV', 'BC_KHOI', '3',
   'PCCC_BANG', '0,-3000', '250',
-  'RECTANG', '50000,0', '66000,12000', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '12', 'D', 'L', '', '',
+  'RECTANG', '50000,0', '66000,12000', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '12', '', '', 'D', 'L', '', '',
+  'RECTANG', '100000,0', '114000,10000', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '', '1.5', '', 'D', 'L', '', '',
   'PLINE', '49000,-1000', '67000,-1000', '', '_.ZOOM', '_E', 'OSMODE', '0', 'PCCC_TUYEN', 'ONG_DN25', 'W', '50000,0', '66000,12000', '', 'L', '65000,2000',
   'CIRCLE', '80000,0', '150', '-BLOCK', 'VAN_KHACH', '80000,0', 'L', '', '-INSERT', 'VAN_KHACH', '80000,0', '1', '', '0',
   'PCCC_THEMBLOCK', 'L', 'van_khach', 'Van khach them', 'SPR', '', 'PCCC_DAT', 'VAN_KHACH', '81000,0', '',
@@ -66,6 +67,8 @@ $can = @(
   # dt doi luoi: S = 4 m khong co dt ra 4 x 3 (16 m2 moi dau); co dt 12 phai ra 4 x 4
   @('PCCC_RAI SPR_DAU_DOWN n=16 luoi=4x4 buoc=4000x3000 m2=12\b', 'PCCC_RAI: phong 16000x12000, S = 4 m, dt 12 m2 ra 4 x 4 (khong phai 4 x 3)'),
   # diem bam ngoai cac cot (x = 65000; OSMODE 0 de diem go khong bi bat vao dau phun x 64000): 11500 + 4 x 13000 = 63,5 m; bo qua diem bam (Enter, cot 56000) chi ra 59,5 m
+  # le 1,5 m: phong 14000x10000, S 4 m: x n=4, (14-3)/3 = 3,667 lam tron 3,65 (cach tuong 1,525); y n=3, (10-3)/2 = 3,5. Khong le: 3500x3300
+  @('PCCC_RAI SPR_DAU_DOWN n=12 luoi=4x3 buoc=3650x3500 ', 'PCCC_RAI go tay co le 1,5 m: phong 14000x10000 ra 4 x 3, buoc 3650x3500'),
   @('PCCC_TUYEN ONG_DN25 doan=5 m=63\.5\b', 'PCCC_TUYEN: ong gop qua diem bam x = 65000 (ngoai cac cot) + 4 nhanh, dai 63,5 m'),
   @('PCCC_THEMBLOCK VAN_KHACH', 'PCCC_THEMBLOCK: block ten VAN_KHACH them duoi ma van_khach (ma trung ten block khong bi bao trung)'),
   @('VAN_KHACH\s+2 ', 'block moi them: PCCC_DAT dat duoc, PCCC_BOC dem 2 cai (ban chen tay + ban PCCC_DAT)'))
