@@ -3,7 +3,19 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
-## TRẠNG THÁI (cập nhật 2026-11-12, 18:20)
+## TRẠNG THÁI (cập nhật 2026-11-12, 19:05) — ĐỌC TRƯỚC KHI LÀM TIẾP
+- 19:05 ngày 12/11: G5 `so_do` đã có 2 hệ: `he`:"spr" (sơ đồ nguyên lý phẳng sprinkler) và `he`:"bc" (báo cháy hệ thường). Thiết bị trên layer `PCCC_SODO*` không vào `dem`/`PCCC_BOC`.
+  Review Opus max (`ket_qua/cad_review/review_2026-11-12d.md`) 0 CHẶN; 4 NÊN SỬA đã sửa (commit `24b876f`), `chay_thu.ps1` 70/70, `thu_mcp.ps1` 9/9. 6 GHI CHÚ của review 12/11d chưa sửa.
+  Lưu ý agent sửa báo: `bc` tự tăng `h` khi nhỏ mà không báo; `MaSoDo` vẫn nạp block thừa vì `DAY_BC`.
+- HỒ SƠ THẬT người dùng gửi 12/11 (PDF 63 trang, có sơ đồ nguyên lý): `ket_qua/cad_mau/drive_goc/cong_trinh.pdf` (không commit). Mục lục tên bản vẽ từng trang: `ket_qua/cad_mau/drive_goc/muc_luc.txt`
+  (người dùng dặn: quét tên bản vẽ trước, cần gì thì chỉ đọc đúng trang đó). Đã đọc trang 11 (nguyên lý báo cháy) và 22 (không gian sprinkler), ghi ở `cad/knowledge/mau-so-do-that.md`.
+- VIỆC KẾ (ngày 13/11), theo thứ tự:
+  1. Sửa `so_do` `bc` cho giống hồ sơ thật (`cad/knowledge/mau-so-do-that.md`): bỏ vạch tầng, zone xếp chồng trên tủ, bó dây đứng bên trái, số lượng ghi dưới ký hiệu,
+     diện tích bảo vệ cuối zone, zone giám sát van (OS&Y + FS mỗi tầng, van báo động phòng bơm), zone dự phòng, mũi tên liên động, bảng ký hiệu. Nếu tối 12/11 đã làm thì xem `cad/LICH_SU.md`.
+  2. HỎI NGƯỜI DÙNG: sơ đồ sprinkler vẽ kiểu không gian trục đo như hồ sơ thật (việc lớn) hay giữ nguyên lý phẳng.
+  3. Đọc thêm trang 46 (âm thanh), 58 (hút khói), 63 (cấp điện) khi làm các sơ đồ đó; trang 23 (không gian vách tường).
+  4. GHI CHÚ còn lại của review 12/11c, 12/11d; `thu_gui.ps1` + thử `cad-ve`/`cad-kiem` khi AutoCAD có giao diện.
+- PUSH: các commit từ `f22d98b` trở đi CHƯA lên GitHub (push trong tab Terminal kẹt ở đăng nhập Git Credential Manager). Đầu phiên mai chạy `git push origin main` trong Terminal.
 - 18:20 ngày 12/11: CHỐT MỐC Bước 5 phần mã. Review cuối bằng Opus max (`ket_qua/cad_review/review_2026-11-12c.md`): 0 CHẶN, 0 NÊN SỬA, 6 GHI CHÚ;
   `chay_thu.ps1` 58/58, `thu_mcp.ps1` 9/9, `npm test` 57/57. Tầng 1 bản mẫu vẽ lại ở `ket_qua/cad_mau/cad/lan4/`: 64/64 đầu phun, 2 OS&Y DN100, 2 công tắc dòng chảy, trục xả DN50,
   2 van xả khí (lệch mẫu dưới 60 mm); mã mới `SPR_VAN_OSY_DN65`..`DN150`, `SPR_VAN_XK` trong `data/vat_tu.json`. Đo token một lần vẽ: 70 nghìn token (chi tiết `cad/LICH_SU.md`).
