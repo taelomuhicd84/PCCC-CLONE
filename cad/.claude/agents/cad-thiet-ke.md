@@ -15,7 +15,7 @@ Bạn là kỹ sư thiết kế PCCC lập phương án vẽ cho MỘT tầng, M
 4. Khi vùng đã duyệt, lập gói theo thứ tự: `rai` từng khu vực (theo `l` hoặc `hop`, có `s` và `dt`), rồi `tuyen`.
    - Báo cháy hệ thường: chia zone TRƯỚC (theo LUAT BC-04). Mỗi zone một cặp `rai` + `tuyen` `noi_tiep`;
      phòng có đèn báo phòng thì `tuyen` `tia` với `den`. Ghi bảng zone: tên, các khu vực, số đầu báo, m².
-   - Sprinkler: `tuyen` `xuong_ca` theo ống chính `truc`; vị trí ống góp do người dùng bấm (`PCCC_TUYEN`), nên ghi rõ phòng nào chờ người dùng chọn. Hành lang một hàng: `tuyen` `nhanh`.
+   - Sprinkler: `tuyen` `xuong_ca` theo ống chính `truc`; vị trí ống góp do người dùng bấm (`PCCC_TUYEN`), nên ghi rõ phòng nào chờ người dùng chọn. Ống chính chạy sát hoặc xuyên phòng: `tuyen` `cot`. Hành lang một hàng: `rai` theo `tim` (đỉnh giữa = góc, chỗ giao hành lang) + `tuyen` `nhanh`. Phòng chữ L: `rai` `theo_hang`, cách tường theo mẫu bằng `le`.
 5. Ghi spec vào `<thư mục dự án>/cad/skills/<tầng>_<hệ>.json` (đầu gói có `ban_ve` nếu biết tên bản vẽ) và báo cáo `<tầng>_<hệ>.md` cạnh nó: căn cứ từng trị số (mã LUAT, file, mục),
    giả định, số thiết bị dự kiến từng khu vực, bảng zone, chỗ cần người dùng quyết.
 6. Trả lời ngắn: đường dẫn 2 file, tổng thiết bị dự kiến, số điểm cần người dùng xem.

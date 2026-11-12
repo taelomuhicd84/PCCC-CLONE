@@ -3,7 +3,10 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
-## TRẠNG THÁI (cập nhật 2026-11-12, 13:50)
+## TRẠNG THÁI (cập nhật 2026-11-12, 14:05)
+- 14:05 ngày 12/11: agent `cad-lap-trinh` (Opus) XONG Bước 5 mục c, d, e (`tuyen` `cot`; `rai` `le` cùng `s` + `theo_hang`; `rai` theo `tim`). `chay_thu.ps1` 47/47, `thu_mcp.ps1` 9/9, bundle build lại 13:55.
+  Vẽ lại tầng 1 ở `ket_qua/cad_mau/cad/lan3/`: 63/64 đầu phun (HL1 9/10, HL2 6/6), lệch vị trí trung bình 546 → 412 mm; chi tiết `cad/LICH_SU.md`. CHƯA commit.
+  VIỆC KẾ: review cả hai lượt (a, b, f + CHẶN/NÊN SỬA, rồi c, d, e) bằng `cad-review` (Opus max), rồi phần còn lại của Bước 5 (đo token, trục xả, van).
 - 13:50 ngày 12/11: agent `cad-lap-trinh` (Opus) XONG lượt sửa lỗi: CHẶN + 12 NÊN SỬA của `ket_qua/cad_review/review_2026-11-11.md`, Bước 5 mục a, b, f, các GHI CHÚ loại tài liệu cũ
   (chi tiết + GHI CHÚ còn để nguyên ở `cad/LICH_SU.md`). `chay_thu.ps1` 42/42, `thu_mcp.ps1` 9/9, bundle build lại 13:44. CHƯA commit (phiên điều phối commit).
   Chạy lại `t1_spr.json` trên bản chép nền `ket_qua/cad_mau/cad/lan2/t1_spr.dwg`: ống góp P01 hết hở (ảnh `lan2/anh/t1_spr_2.png`), 62 đầu phun, ống như cũ.
@@ -104,14 +107,14 @@ Skill `tkpccc-ve-cad` giữ sonnet/low (vẽ theo spec có sẵn).
      Rải `s` 4000, `dt` 12 (hai số ghi trên bảng thông số của tờ mẫu) ra 62 đầu phun, mẫu 64: 11 phòng đủ 4 đầu như mẫu; hành lang thiếu 2 (HL1 9/10, HL2 5/6).
      Ống: DN100 56,91 m, DN80 20,54 m, DN50 130,79 m. Spec `t1_vung.json`, `t1_spr.json`, báo cáo `t1_spr.md`, ảnh `anh/t1_spr_1..5.png`, `anh/t1_vung_1..4.png` trong `ket_qua/cad_mau/cad/skills/` (không commit).
      Phiên chính đã xem ảnh tổng `t1_spr_1.png`: hộp vùng, đầu phun, ống nằm đúng trên nền.
-  CHỖ PLUGIN VẼ KHÁC KỸ SƯ (toạ độ và đầu vào cụ thể ở mục 3, 4 của `t1_spr.md`); a, b, f xong 12/11, CÒN c, d, e:
+  CHỖ PLUGIN VẼ KHÁC KỸ SƯ (toạ độ và đầu vào cụ thể ở mục 3, 4 của `t1_spr.md`); a–f XONG 12/11 (c, d, e lúc 14:05, kết quả vẽ lại ở `cad/LICH_SU.md`):
   a. XONG 12/11 (chạy lại: P01 ống góp x 34894 nối vào DN100). LỖI `tuyen` `xuong_ca`: chân ống góp rơi ra ngoài đoạn ống chính mà `loi` vẫn rỗng (P01: ống góp (31444, 47459)–(31444, 51196), ống chính bắt đầu ở x 32965, hở 1521 mm).
      Sửa: chỉ chọn cột có chân nằm trong đoạn; không cột nào được thì nối thêm dọc ống chính hoặc đưa vào `loi`.
   b. XONG 12/11 (hoà: cột x nhỏ hơn rồi y nhỏ hơn; `qua` nhiều điểm, mỗi điểm cho vùng chứa nó). `xuong_ca` chọn cột khi hoà phụ thuộc chiều vẽ `truc` (trái → phải ra cột trái, ngược lại ra cột phải): cần quy tắc phá hoà cố định, và `qua` theo TỪNG vùng (hiện một `qua` áp cho mọi vùng).
-  c. Ống chính chạy sát hoặc qua phòng (P06, hàng đầu phun cách ống chính 330 mm): `xuong_ca` ra một nhánh song song ống chính. Kỹ sư đi mỗi cột một nhánh vuông góc: thêm kiểu `cot`.
-  d. `rai` theo `s` luôn để cách tường nửa bước; kỹ sư dàn bước gần `s`, sát tường hơn, và xếp từng hàng theo bề rộng trống (phòng chữ L có WC). Vì thế theo phương dài lệch 0,2–1,4 m
+  c. XONG (`tuyen` `cot`). Ống chính chạy sát hoặc qua phòng (P06, hàng đầu phun cách ống chính 330 mm): `xuong_ca` ra một nhánh song song ống chính. Kỹ sư đi mỗi cột một nhánh vuông góc: thêm kiểu `cot`.
+  d. XONG (`le` cùng `s`, `theo_hang`). `rai` theo `s` luôn để cách tường nửa bước; kỹ sư dàn bước gần `s`, sát tường hơn, và xếp từng hàng theo bề rộng trống (phòng chữ L có WC). Vì thế theo phương dài lệch 0,2–1,4 m
      (phương ngắn lệch dưới 25 mm). Đề xuất: cho `le` dùng cùng `s`; tuỳ chọn xếp theo từng hàng.
-  e. Hành lang: kỹ sư đặt đầu ở các góc giao hành lang, bước 3000–4000 xen nhau; `rai` chia đều nên thiếu 2 đầu. Đề xuất: rải theo đường tim có điểm bắt buộc.
+  e. XONG (`rai` `tim`; HL1 còn 9/10 vì mẫu dày hơn `s`). Hành lang: kỹ sư đặt đầu ở các góc giao hành lang, bước 3000–4000 xen nhau; `rai` chia đều nên thiếu 2 đầu. Đề xuất: rải theo đường tim có điểm bắt buộc.
   f. XONG 12/11 (bỏ chữ khi gần đó đã có chữ cùng nội dung, kể cả chữ nền PDF). `nhan` ghi trùng chữ DN50 ở chỗ ống góp gặp nhánh.
   NGƯỜI DÙNG CẦN DUYỆT: 15 hộp vùng (`anh/t1_vung_*.png`), nhất là ranh giới tự đặt ở chỗ không có tường (HL1 / HL3 / P06; HL4 phía sảnh thông tầng, x 51056); vị trí ống góp từng phòng.
   Chưa vẽ: trục xả DN50, van OS&Y, công tắc dòng chảy, van xả khí. Chưa thử `cad-ve`, `cad-kiem` (cần AutoCAD mở để gọi MCP).
@@ -147,7 +150,9 @@ Ba thứ người dùng CHƯA cấp, bảo Claude làm sườn trước rồi h�
 - Dữ liệu chờ người dùng cấp (xem `cad/data/README.md`): block động co/tê, catalog ống + phụ kiện, catalog bơm, bản vẽ mẫu + khung tên.
 
 ## GHI NHỚ KỸ THUẬT
-- `rai`: trường `goc` là góc xoay LƯỚI (phòng nghiêng), không phải góc xoay block; `kt` chỉ vẽ khi `goc` = 0. `le` mặc định bước / 4. Trần 5000 thiết bị một vùng.
+- `rai`: trường `goc` là góc xoay LƯỚI (phòng nghiêng), không phải góc xoay block; `kt` chỉ vẽ khi `goc` = 0. `le` mặc định bước / 4 (với `buoc`); với `s` thì `le` là cách tường tối thiểu, bước dàn tới `s`. Trần 5000 thiết bị một vùng.
+- `theo_hang` làm cột các hàng lệch nhau: `xuong_ca` vẫn một ống góp nhưng nhánh hàng dài hơn (tầng 1: DN50 +15 m). `tim` không dùng đa giác vùng: `qua` của `tuyen` sau nhận mọi điểm.
+- Xuất toạ độ block để so với mẫu: accoreconsole `/i <bản chép dwg> /s` một dòng LISP `ssget "X"` `((0 . "INSERT") (2 . "SPR_DAU_DOWN"))` ghi ra file; đầu phun mẫu = vòng tròn đường kính 160–200 mm trong PDF (PyMuPDF `get_drawings`).
 - `rai` + `dt`: lấy số cột × số hàng ÍT thiết bị nhất mà ô lưới không vượt `dt`, hoà thì lấy ô vuông hơn (16 × 16 m, `s` 4 m, `dt` 12 ra 4 × 6 = 24 đầu, không phải 5 × 5).
   `m2` = Sx × Sy, mỗi phương S = số lớn hơn giữa bước và 2 lần cách tường; làm tròn bước theo `chan` mà đẩy `m2` vượt `dt` thì bỏ làm tròn.
 - Kịch bản accoreconsole: `GetSelection` có `SingleOnly` kết thúc ngay sau `L` (không thêm dòng trống); chọn bằng `W x1,y1 x2,y2` được sau khi `_.ZOOM _E`; `GetEntity` thì không trả lời được.
@@ -166,7 +171,7 @@ Ba thứ người dùng CHƯA cấp, bảo Claude làm sườn trước rồi h�
 - `chay_spec.ps1` làm trên bản chép spec + DWG trong thư mục tạm rồi chép về: kết quả `<spec>.kq.json` và DWG chỉ đổi khi chạy xong.
 - `pdf_ti_le.py`: `get_text("words")` của PyMuPDF trả toạ độ trang CHƯA xoay (trang `/Rotate 90` thì chuỗi ngang trên màn hình là chuỗi đứng trong toạ độ này); script xét cả hai phương nên không sao.
   Số kích thước ghi trên bản vẽ có thể lệch nét vẽ (bản mẫu: nhịp ghi 1700, vẽ 1785; tổng ghi 18800 nhưng các nhịp cộng lại 18600): vì vậy lọc hai vòng 1 % rồi 0,5 %.
-- Phần đầu `skills/TU_VUNG.md` đang dài 1831 / 1900 ký tự: thêm thao tác nữa phải rút gọn các dòng cũ.
+- Phần đầu `skills/TU_VUNG.md` đang dài 1893 / 1900 ký tự (12/11): thêm thao tác nữa phải rút gọn các dòng cũ.
 - Thứ tự dấu nhắc `-PLOT` ra PNG (AutoCAD 2021): Y, Model, `PublishToWeb PNG.pc3`, khổ giấy, L, N, W + 2 góc (hoặc E), F, C, Y, `.`, Y, Enter, tên file, N, Y.
   File đã có thì lệnh hỏi ghi đè (lệch dấu nhắc): luôn đặt tên mới. Thiết bị này chỉ có khổ định sẵn (640–1600 px), không nhận cỡ tuỳ ý.
 - Phần đầu `skills/TU_VUNG.md` (trước dòng `---`) gửi cho AI lúc kết nối: giữ dưới 1900 ký tự (`thu_mcp.ps1` có kiểm).

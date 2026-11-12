@@ -123,6 +123,17 @@ $tlTrang = (& python -I "$GOC\cad\.claude\skills\tkpccc-ve-cad\scripts\pdf_ti_le
 # nhan: cho chu DN25 cua ong gop da co san chu DN25 thi khong ghi chong (3 doan, 2 chu nhanh) -> ve 1 + 3 + 2 = 6.
 '{"goc":[500000,0],"ops":[{"op":"chu","l":"PCCC_NHAN","p":[-225,22500],"t":"DN25","cao":250,"can":"giua"},{"op":"tuyen","ma":"ONG_DN25","kieu":"xuong_ca","p":[[0,22000],[3000,22000],[0,25000],[3000,25000]],"truc":[[-1000,20000],[5000,20000]],"nhan":true}]}' |
   Set-Content -Encoding ascii "$T\nhan.json"
+# Buoc 5 c, d, e (so tinh tay):
+# (d) rai s 4000 + le [650, 1100], phong 6300 x 4500: x n 2, buoc min(4000, 6300 - 1300) = 4000, cach tuong 1150; y buoc 4500 - 2200 = 2300, cach 1100; m2 9,2 <= dt 12.
+# (d) theo_hang, phong chu L (WC 1100 x 2000 goc tren trai): hang duoi rong 6300 -> x 1150 / 5150; hang tren rong 5200 -> buoc 3900, x 1750 / 5650.
+#     noi_tiep qua 4 diem: 3900 + can(500^2 + 2300^2) + 4000 = 10,25 m (luoi chung cot thi 10,3 m).
+# (c) tuyen cot: 3 cot x 0 / 3000 / 6000; ong chinh y 20000 tu x 1000 xuyen qua cot 3000 (diem y 18000 phia duoi):
+#     4000 + 1000 (noi doc truc) + 6000 + 2500 = 13,5 m, 4 doan.
+# (e) rai tim [0..1500..11500..(11500, 9000)], s 4000: diem bat buoc 1500, 11500; giua 10000 / 3 buoc; tuong dau 1500 (khong them);
+#     doan cuoi 9000: them 2 diem, buoc 9000 / 2,5 = 3600, cach tuong 1800 -> 6 diem; nhanh xuong y -1000: 4 x 1000 + 4600 + 8200 = 16,8 m.
+#     Cung tim + le 600: buoc cuoi min(4000, 8400 / 2) = 4000, cach tuong 1000. Tim kin 8000 x 6000: 4 goc + 4 giua canh = 8.
+'{"goc":[600000,0],"ops":[{"op":"rai","ma":"SPR_DAU_DOWN","hop":[0,0,6300,4500],"s":4000,"dt":12,"le":[650,1100]},{"op":"rai","ma":"SPR_DAU_DOWN","vung":[[0,10000],[6300,10000],[6300,14500],[1100,14500],[1100,12500],[0,12500]],"s":4000,"dt":12,"le":[650,1100],"theo_hang":true},{"op":"tuyen","ma":"ONG_DN25","kieu":"noi_tiep"},{"op":"tuyen","ma":"ONG_DN25","kieu":"cot","p":[[0,21000],[0,24000],[3000,21000],[3000,24000],[3000,18000],[6000,22500]],"truc":[[1000,20000],[8000,20000]]},{"op":"rai","ma":"SPR_DAU_DOWN","tim":[[0,30000],[1500,30000],[11500,30000],[11500,39000]],"s":4000},{"op":"tuyen","ma":"ONG_DN25","kieu":"nhanh","truc":[[-1000,29000],[20000,29000]]},{"op":"rai","ma":"SPR_DAU_DOWN","tim":[[0,50000],[1500,50000],[11500,50000],[11500,59000]],"s":4000,"le":600},{"op":"rai","ma":"SPR_DAU_DOWN","tim":[[0,70000],[8000,70000],[8000,76000],[0,76000],[0,70000]],"s":4000}]}' |
+  Set-Content -Encoding ascii "$T\rai_moi.json"
 # PCCC_THEMBLOCK khong ghi gi khi danh muc khong ghi duoc: file goc da co VAN_TRUNG (them tay) va la file chi doc.
 # van_trung: trung ma trong file goc; van_ro: file goc chi doc. Ca hai phai dung TRUOC khi luu PCCC_Blocks.dwg.
 $fGoc = "$T\goc\vat_tu.json"
@@ -135,7 +146,7 @@ $bamTv = (Get-FileHash "$T\PCCC_Blocks.dwg").Hash
   'PCCC_SPEC', "$T\spec.json", 'PCCC_SPEC', "$T\rai.json",
   'PCCC_SPEC', "$T\khoa_sai.json", 'PCCC_SPEC', "$T\khoa_dung.json", 'PCCC_SPEC', "$T\anh.json", 'PCCC_SPEC', "$T\pdf_sai.json", 'PCCC_SPEC', "$T\pdf.json",
   'PCCC_SPEC', "$T\pdf2.json", 'PCCC_SPEC', "$T\xoa2.json", 'PCCC_SPEC', "$T\rai_loi.json", 'PCCC_SPEC', "$T\tuyen_thu.json", 'PCCC_SPEC', "$T\nhan.json",
-  '_.QSAVE') -join "`r`n" |
+  'PCCC_SPEC', "$T\rai_moi.json", '_.QSAVE') -join "`r`n" |
   Set-Content -Encoding ascii "$T\kb2.scr"
 $p2 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb2.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb2.out.txt"
 if (-not $p2.WaitForExit(180000)) { Stop-Process -Id $p2.Id -Force; throw "accoreconsole qua 3 phut (PCCC_SPEC): $T\kb2.out.txt" }
@@ -211,6 +222,16 @@ Kiem ($ktt -and $ktt.ok -eq $true -and $ktt.tuyen[0].doan -eq 4 -and $ktt.tuyen[
 Kiem ($ktt -and $ktt.tuyen[2].doan -eq 6 -and $ktt.tuyen[2].m -eq 31) "tuyen xuong_ca: qua theo tung vung, 2 vung 31 m (thay $($ktt.tuyen[2].m))"
 $knh = DocKq 'nhan'
 Kiem ($knh -and $knh.ok -eq $true -and $knh.ve -eq 6) "tuyen nhan: khong ghi chong chu DN25 len chu DN25 da co (ve $($knh.ve), can 6)"
+$krm = DocKq 'rai_moi'
+$r0 = if ($krm) { $krm.rai[0] }
+Kiem ($krm -and $krm.ok -eq $true -and $r0.n -eq 4 -and $r0.bx -eq 4000 -and $r0.by -eq 2300 -and $r0.tuong[0] -eq 1150 -and $r0.tuong[1] -eq 1100 -and $r0.m2 -eq 9.2) `
+  "rai s + le [650,1100]: buoc 4000 x 2300, cach tuong 1150 / 1100, m2 9,2 ($($r0 | ConvertTo-Json -Compress))"
+Kiem ($krm -and $krm.rai[1].n -eq 4 -and $krm.tuyen[0].m -eq 10.25) "rai theo_hang phong chu L: hang tren buoc 3900 theo be rong trong, noi_tiep 10,25 m (thay $($krm.tuyen[0].m))"
+Kiem ($krm -and $krm.tuyen[1].kieu -eq 'cot' -and $krm.tuyen[1].doan -eq 4 -and $krm.tuyen[1].m -eq 13.5) "tuyen cot: moi cot 1 nhanh vuong goc, ong chinh xuyen phong, 13,5 m (thay $($krm.tuyen[1].m))"
+Kiem ($krm -and $krm.rai[2].n -eq 6 -and $krm.rai[2].bx -eq 3600 -and $krm.rai[2].tuong[0] -eq 1500 -and $krm.rai[2].tuong[1] -eq 1800 -and $krm.tuyen[2].doan -eq 6 -and $krm.tuyen[2].m -eq 16.8) `
+  "rai tim: 2 diem bat buoc + 2 giua + 2 ra tuong, buoc lon nhat 3600, nhanh 16,8 m (thay $($krm.rai[2] | ConvertTo-Json -Compress), $($krm.tuyen[2].m) m)"
+Kiem ($krm -and $krm.rai[3].n -eq 6 -and $krm.rai[3].bx -eq 4000 -and $krm.rai[3].tuong[1] -eq 1000 -and $krm.rai[4].n -eq 8 -and $krm.rai[4].bx -eq 4000) `
+  "rai tim + le 600: doan ra tuong buoc 4000, cach tuong 1000; tim kin 8000 x 6000 ra 8 dau ($($krm.rai[3].tuong -join '/'), $($krm.rai[4].n))"
 # PCCC_THEMBLOCK that bai o danh muc: thu vien DWG khong doi, khong file danh muc nao co ma moi
 $out2 = [Text.Encoding]::Unicode.GetString([IO.File]::ReadAllBytes("$T\kb2.out.txt")) -replace "`0", ''
 $dm2 = Get-Content -Raw -Encoding UTF8 "$T\vat_tu.json" | ConvertFrom-Json

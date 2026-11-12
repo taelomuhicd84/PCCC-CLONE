@@ -157,3 +157,21 @@ GHI CHÚ của review để nguyên (không phải tài liệu cũ, không sửa
 `anh` luôn in Model; `anh` vùng trống ra PNG trắng mà `ok`; `pdf_ti_le.py:34` phương chữ đoán theo hộp chữ; `thu_mcp.ps1:45` (máy chủ tự cắt 1900) và `:84` (kiểm luôn đúng);
 `chay_thu.ps1` chưa có `anh` vùng trống, chưa so vị trí `p` của `pdf`, chưa đếm block thư viện trước/sau; `thu_gui.ps1` thử bản build trong bundle; `build.bat` ghi `nguon_vat_tu.txt` theo bảng mã OEM.
 (`chay_spec.ps1` không thấy QSAVE hỏng: nay chép DWG về sau cùng, DWG đang mở thì báo lỗi lúc chép.)
+
+## 2026-11-12 14:00 — Bước 5 mục c, d, e (agent `cad-lap-trinh`, Opus)
+Đã sửa `module/plugin/Rai.cs`:
+- c. `tuyen` kiểu `cot` (hàm `TuyenCot`): mỗi cột thiết bị (cùng vị trí dọc ống chính, gom theo `sai_so`) một nhánh vuông góc ống chính tới thiết bị xa nhất của cột, không có nhánh song song;
+  ống chính xuyên phòng thì nhánh đi cả hai phía; chân ngoài đoạn ống chính thì nối thêm dọc trục như `xuong_ca`.
+- d. `rai` + `s` nhận `le` (số hoặc [x, y]): giữ số thiết bị, bước = min(`s`, (W − 2·`le`) / (n − 1)) (`ChiaBuoc`), `le` quá `s` / 2 thì lấy `s` / 2. Vượt `dt` thì bỏ làm tròn, rồi bỏ `le` (chia đều như cũ).
+  `theo_hang`:true (`KhoangNgang`): mỗi hàng chia lại theo bề rộng trống thật của hàng (giao đường ngang với đa giác), bước không quá bước của lưới. Không truyền `le`/`theo_hang` thì như cũ.
+- e. `rai` theo `tim` (`RaiTim`, `DauMut`): đỉnh giữa của tim là chỗ bắt buộc có đầu, giữa hai đỉnh chia đều bước ≤ `s`; hai đầu tim là tường mút (thêm ít đầu nhất để bước ≤ `s`, cách tường nửa bước hoặc gần `le`);
+  tim khép kín thì mọi đỉnh bắt buộc; không xét `dt`. Kết quả `rai`: `n`, `bx` (bước lớn nhất), `tuong` [đầu, cuối].
+Tài liệu: `skills/TU_VUNG.md` (phần đầu 1893 / 1900 ký tự, đã rút gọn câu đầu; bảng chi tiết `rai`, `tuyen`), `.claude/agents/cad-thiet-ke.md` (khi nào dùng `cot`, `tim`, `theo_hang`).
+Kiểm chứng: `chay_thu.ps1` 47/47 (thêm 5 phép, số tính tay ghi ở chú thích `rai_moi.json`: `le` [650,1100] ra 4000 × 2300 cách tường 1150 / 1100; `theo_hang` phòng chữ L 10,25 m
+(lưới chung cột thì 10,3); `cot` 13,5 m 4 đoạn; `tim` 6 đầu, bước lớn nhất 3600, cách tường 1500 / 1800, nhánh 16,8 m; `tim` + `le` 600 cách tường 1000; tim kín 8 đầu); `thu_mcp.ps1` 9/9; `build.bat` xong (AutoCAD người dùng đang mở: tắt mở lại để nạp).
+Vẽ lại tầng 1 trên bản chép mới của nền (`ket_qua/cad_mau/cad/lan3/`, từ `t1_spr.bak`; spec `lan3/t1_spr.json` = `lan2` + `le` [650,1100] và `theo_hang` cho 11 phòng, P06 `tuyen` `cot`,
+HL1/HL2 `rai` `tim` qua 4 góc giao của mẫu): `ok`, 63 đầu phun (mẫu 64): 11 phòng × 4, HL1 9/10, HL2 6/6, HL3 2/2, HL4 2/2. Ống: DN100 56,91 m, DN80 20,54 m, DN50 146,12 m (lan2 130,79: hàng lệch cột nên nhánh hàng dài hơn).
+Lệch vị trí so với mẫu (đầu phun mẫu đọc lại từ vòng tròn PDF, ghép cặp gần nhất): trung bình 546 → 412 mm; HL1 1027 → 567, HL2 953 → 539, P04 509 → 275 (hàng trên 52804 / 56704, mẫu 52763 / 56660), P07 667 → 559;
+P09 175 → 501, P01 370 → 449 (mẫu P01 hàng dưới dồn trái, hàng trên lại hẹp: không theo một luật đối xứng). P06: 2 nhánh đứng x 64970 / 68470, không còn nhánh ngang (ảnh `lan3/anh/t1_spr_5.png`).
+HL1 vẫn thiếu 1: đoạn 49759 → tường 63200 dài 13441 mm, `s` 4000 cho 3 đầu (bước 3840); mẫu đặt 4 (bước khoảng 3000–3500). Truyền `s` 3500 cho HL1 thì ra 10 (tính tay, chưa vẽ).
+Chưa kiểm: `PCCC_RAI` chưa có `le`/`theo_hang` (chỉ qua spec); `tim` không làm tròn bước theo `chan`; `thu_gui.ps1` không chạy.

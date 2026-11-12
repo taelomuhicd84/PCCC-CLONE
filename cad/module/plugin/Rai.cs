@@ -37,6 +37,19 @@ namespace TKPCCC
             return trong;
         }
 
+        /// Các khoảng [x đầu, x cuối] của đường ngang y nằm trong đa giác (cùng quy ước cắt cạnh với TrongDaGiac).
+        static List<double[]> KhoangNgang(List<Point2d> d, double y)
+        {
+            List<double> xs = new List<double>();
+            for (int i = 0, j = d.Count - 1; i < d.Count; j = i++)
+                if ((d[i].Y > y) != (d[j].Y > y)) xs.Add(d[i].X + (y - d[i].Y) * (d[j].X - d[i].X) / (d[j].Y - d[i].Y));
+            xs.Sort();
+            List<double[]> kq = new List<double[]>();
+            for (int i = 0; i + 1 < xs.Count; i += 2)
+                if (xs[i + 1] - xs[i] > 1e-6) kq.Add(new[] { xs[i], xs[i + 1] });
+            return kq;
+        }
+
         static List<Point2d> DinhPl(Polyline pl)
         {
             List<Point2d> d = new List<Point2d>();
@@ -84,6 +97,8 @@ namespace TKPCCC
         /// Chia một chiều dài W thành n điểm bước b, cách tường t (lưới luôn đặt giữa).
         /// dung > 0: bước ĐÚNG, n = số điểm nhiều nhất mà cách tường còn >= le (mặc định bước / 4).
         /// ngược lại toiDa là bước TỐI ĐA: n = ceil(W / toiDa) (không ít hơn nMin), bước chia đều rồi làm tròn xuống theo chan nếu cách tường không vượt toiDa / 2.
+        /// Có le (>= 0) cùng bước tối đa: giữ n, dàn bước = min(toiDa, (W - 2 le) / (n - 1)) để cách tường gần le thay vì nửa bước;
+        /// le lớn hơn toiDa / 2 thì lấy toiDa / 2 (cách tường vẫn không vượt toiDa / 2).
         static void ChiaBuoc(double W, double toiDa, double dung, double le, double chan, int nMin, out int n, out double b, out double t)
         {
             if (dung > 0)
@@ -95,6 +110,8 @@ namespace TKPCCC
             {
                 n = Math.Max(Math.Max(1, nMin), (int)Math.Ceiling(W / toiDa - 1e-9));
                 b = W / n;
+                double bl = n > 1 && le >= 0 ? (W - 2 * Math.Min(le, toiDa / 2)) / (n - 1) : 0;
+                if (bl > 0) b = Math.Min(toiDa, bl); // bl <= 0: vùng hẹp hơn 2 le, giữ chia đều
                 if (chan > 0 && n > 1)
                 {
                     double tron = Math.Floor(b / chan + 1e-9) * chan;
@@ -114,7 +131,9 @@ namespace TKPCCC
         /// rồi tự kiểm vùng hở: điểm nào trong vùng xa mọi thiết bị hơn nửa đường chéo ô lưới cho phép thì tính là hở.
         /// dt > 0 (đơn vị bản vẽ bình phương) = diện tích bảo vệ tối đa của một thiết bị. Rải theo bước tối đa thì lấy số cột × số hàng ÍT thiết bị nhất
         /// mà ô lưới không vượt dt (hoà thì lấy ô vuông hơn): 16 × 12 m, s 4 m, dt 12 m2 ra 4 × 4 (bước 4000 × 3000), không phải 4 × 3 (16 m2) hay 5 × 4.
-        static LuoiRai LuoiVung(List<Point2d> vung, double sx, double sy, double bx, double by, double le, double chan, double dt, double gocDo)
+        /// lex, ley: cách tường (xem ChiaBuoc), số âm = mặc định. theoHang: mỗi hàng chia lại theo bề rộng trống thật của hàng đó
+        /// (giao đường ngang của hàng với đa giác, phòng chữ L có WC), bước không quá bước của lưới nên vẫn đạt dt.
+        static LuoiRai LuoiVung(List<Point2d> vung, double sx, double sy, double bx, double by, double lex, double ley, double chan, double dt, double gocDo, bool theoHang)
         {
             double a = gocDo * Math.PI / 180, c = Math.Cos(a), s = Math.Sin(a);
             List<Point2d> q = vung.Select(p => new Point2d(p.X * c + p.Y * s, -p.X * s + p.Y * c)).ToList();
@@ -134,24 +153,38 @@ namespace TKPCCC
                 }
             }
             LuoiRai k = new LuoiRai();
-            ChiaBuoc(W, sx, bx, le, chan, nx0, out k.Nx, out k.Bx, out k.Tx);
-            ChiaBuoc(H, sy, by, le, chan, ny0, out k.Ny, out k.By, out k.Ty);
-            if (dt > 0 && bx <= 0 && ORai(k) > dt * (1 + 1e-9))
+            double ch = chan;
+            // Vượt dt (chỉ khi rải theo bước tối đa): lần 2 bỏ làm tròn theo "chan" (dư dồn ra tường làm ô sát tường lớn),
+            // lần 3 bỏ cả "le" (chia đều, luôn đạt dt nhờ số cột × số hàng đã chọn ở trên).
+            for (int lan = 0; lan < 3; lan++)
             {
-                // Làm tròn bước theo "chan" dồn phần dư ra tường làm ô sát tường vượt dt: giữ bước chia đều.
-                ChiaBuoc(W, sx, bx, le, 0, nx0, out k.Nx, out k.Bx, out k.Tx);
-                ChiaBuoc(H, sy, by, le, 0, ny0, out k.Ny, out k.By, out k.Ty);
+                if (lan > 0) ch = 0;
+                if (lan == 2) { lex = -1; ley = -1; }
+                ChiaBuoc(W, sx, bx, lex, ch, nx0, out k.Nx, out k.Bx, out k.Tx);
+                ChiaBuoc(H, sy, by, ley, ch, ny0, out k.Ny, out k.By, out k.Ty);
+                if (!(dt > 0 && bx <= 0 && ORai(k) > dt * (1 + 1e-9))) break;
             }
             k.O = ORai(k);
             // Chặn bước gõ nhầm đơn vị (vd 4 thay vì 4000 trong bản vẽ mm): không để AutoCAD treo vì chèn hàng triệu block.
             if ((long)k.Nx * k.Ny > 5000) throw new System.Exception("bước quá nhỏ so với vùng (" + k.Nx + " x " + k.Ny + " thiết bị): kiểm đơn vị của bước và của bản vẽ");
             List<Point2d> luoi = new List<Point2d>();
             for (int j = 0; j < k.Ny; j++)
-                for (int i = 0; i < k.Nx; i++)
-                {
-                    Point2d p = new Point2d(x0 + k.Tx + i * k.Bx, y0 + k.Ty + j * k.By);
-                    if (TrongDaGiac(q, p)) luoi.Add(p);
-                }
+            {
+                double y = y0 + k.Ty + j * k.By;
+                if (theoHang)
+                    foreach (double[] kh in KhoangNgang(q, y))
+                    {
+                        int n; double b, t;
+                        ChiaBuoc(kh[1] - kh[0], bx > 0 ? 0 : k.Bx, bx > 0 ? k.Bx : 0, lex, ch, 0, out n, out b, out t);
+                        for (int i = 0; i < n; i++) luoi.Add(new Point2d(kh[0] + t + i * b, y));
+                    }
+                else
+                    for (int i = 0; i < k.Nx; i++)
+                    {
+                        Point2d p = new Point2d(x0 + k.Tx + i * k.Bx, y);
+                        if (TrongDaGiac(q, p)) luoi.Add(p);
+                    }
+            }
 
             double rx = bx > 0 ? bx : sx, ry = by > 0 ? by : sy;
             double r = Math.Sqrt(rx * rx + ry * ry) / 2 * 1.001;
@@ -168,6 +201,73 @@ namespace TKPCCC
             k.Ho = tong == 0 ? 0 : Math.Round(100.0 * ho / tong, 1);
             foreach (Point2d p in luoi) k.Diem.Add(new Point3d(p.X * c - p.Y * s, p.X * s + p.Y * c, 0));
             return k;
+        }
+
+        /// Đoạn từ điểm bắt buộc ra tường mút dài Lw: thêm k điểm ít nhất để bước ≤ s và cách tường ≤ s / 2. Cách tường bằng nửa bước;
+        /// có le (>= 0) thì dàn bước tới s cho cách tường gần le. Trả khoảng cách từng điểm thêm tới điểm bắt buộc.
+        static List<double> DauMut(double Lw, double s, double le, out double b, out double t)
+        {
+            int k = Math.Max(0, (int)Math.Ceiling(Lw / s - 0.5 - 1e-9));
+            b = k == 0 ? 0 : le >= 0 ? Math.Min(s, (Lw - Math.Min(le, s / 2)) / k) : Lw / (k + 0.5);
+            t = Lw - k * b;
+            List<double> kq = new List<double>();
+            for (int i = 1; i <= k; i++) kq.Add(i * b);
+            return kq;
+        }
+
+        /// Rải dọc đường tim hành lang. Đỉnh giữa của tim là điểm đặt bắt buộc (góc, chỗ giao hành lang; đỉnh thẳng hàng cũng được);
+        /// tim khép kín (đỉnh cuối trùng đỉnh đầu) thì mọi đỉnh bắt buộc. Giữa hai điểm bắt buộc chia đều theo chiều dài dọc tim, bước ≤ s.
+        /// Hai đầu tim hở là tường mút (DauMut). Không có điểm bắt buộc thì chia như rai theo s. tuong: cách hai tường mút (tim kín thì rỗng).
+        static List<Point3d> RaiTim(List<Point3d> tim, double s, double le, out double bMax, out double[] tuong)
+        {
+            List<double> mot = new List<double> { 0 }; // chiều dài dọc tim tới từng đỉnh
+            for (int i = 0; i + 1 < tim.Count; i++) mot.Add(mot[i] + tim[i].DistanceTo(tim[i + 1]));
+            double L = mot[mot.Count - 1];
+            if (L < 1e-6) throw new System.Exception("\"tim\" dài bằng 0");
+            bool kin = tim.Count > 3 && tim[0].DistanceTo(tim[tim.Count - 1]) < 1e-6;
+            List<double> bb = mot.Skip(kin ? 0 : 1).Take(mot.Count - (kin ? 1 : 2)).ToList();
+            List<double> vt = new List<double>();
+            bMax = 0;
+            tuong = new double[0];
+            if (bb.Count == 0)
+            {
+                int n; double b, t;
+                ChiaBuoc(L, s, 0, le, 0, 0, out n, out b, out t);
+                for (int i = 0; i < n; i++) vt.Add(t + i * b);
+                bMax = n > 1 ? b : 0;
+                tuong = new[] { t, t };
+            }
+            else
+            {
+                if (kin) bb.Add(bb[0] + L); // đi hết vòng về điểm đầu
+                for (int i = 0; i + 1 < bb.Count; i++)
+                {
+                    double d = bb[i + 1] - bb[i];
+                    if (d < 1e-6) continue; // đỉnh trùng nhau
+                    int n = (int)Math.Ceiling(d / s - 1e-9);
+                    for (int j = 0; j < n; j++) vt.Add(bb[i] + j * d / n);
+                    bMax = Math.Max(bMax, d / n);
+                }
+                if (!kin)
+                {
+                    double dau = bb[0], cuoi = bb[bb.Count - 1], b0, b1, t0, t1;
+                    vt.Add(cuoi);
+                    vt.AddRange(DauMut(dau, s, le, out b0, out t0).Select(x => dau - x));
+                    vt.AddRange(DauMut(L - cuoi, s, le, out b1, out t1).Select(x => cuoi + x));
+                    bMax = Math.Max(bMax, Math.Max(b0, b1));
+                    tuong = new[] { t0, t1 };
+                }
+            }
+            List<Point3d> kq = new List<Point3d>();
+            foreach (double x0 in vt.OrderBy(x => x))
+            {
+                double x = x0 >= L ? x0 - L : x0;
+                int i = 0;
+                while (i + 2 < mot.Count && x > mot[i + 1]) i++;
+                double d = mot[i + 1] - mot[i];
+                kq.Add(d < 1e-9 ? tim[i] : tim[i] + (tim[i + 1] - tim[i]) * ((x - mot[i]) / d));
+            }
+            return kq;
         }
 
         /// Đọc "s" hoặc "buoc": một số (dùng cho cả hai phương) hoặc [x, y]. Không có thì trả 0.
@@ -241,14 +341,45 @@ namespace TKPCCC
             if (sx <= 0 && bx <= 0) throw new System.Exception("rai cần \"s\" (bước tối đa) hoặc \"buoc\" (bước đúng), lấy theo quy chuẩn áp dụng cho công trình");
             double m = HeSoMet(g.Db), k = 0.001 / m, goc = LaySo(o, "goc", 0), dt = LaySo(o, "dt", 0) / (m * m);
             bool kt = LayCo(o, "kt", false) && goc == 0;
+            // "le": một số hoặc [x, y], cách tường theo từng phương; không có = mặc định (-1).
+            double lex = -1, ley = -1;
+            if (Lay(o, "le") != null)
+            {
+                IList ll = Lay(o, "le") as IList;
+                lex = D(ll != null ? ll[0] : Lay(o, "le"));
+                ley = ll != null && ll.Count > 1 ? D(ll[1]) : lex;
+                if (lex < 0 || ley < 0) throw new System.Exception("\"le\" phải >= 0");
+            }
             g.DiemRai = new List<List<Point3d>>();
             g.VungRai = new List<List<Point2d>>();
+            if (Lay(o, "tim") != null)
+            {
+                // Hành lang: rải dọc đường tim, đỉnh giữa là điểm bắt buộc (RaiTim). Không xét dt (plugin không biết bề rộng hành lang).
+                if (sx <= 0) throw new System.Exception("rai theo \"tim\" cần \"s\" (bước tối đa)");
+                List<Point3d> tim = DsP(g, Lay(o, "tim"), "tim");
+                if (tim.Count < 2) throw new System.Exception("\"tim\" cần ít nhất 2 điểm");
+                double bMax;
+                double[] tuong;
+                List<Point3d> ps = RaiTim(tim, sx, lex, out bMax, out tuong);
+                if (ps.Count > 5000) throw new System.Exception("bước quá nhỏ so với chiều dài tim (" + ps.Count + " thiết bị): kiểm đơn vị");
+                foreach (Point3d p in ps)
+                {
+                    ChenThietBi(g.Db, g.Tr, v, p, k, 0);
+                    g.Ve++;
+                    MoHop(g, new Extents3d(p, p));
+                }
+                g.DiemRai.Add(ps);
+                g.VungRai.Add(null); // không có đa giác: "qua" của tuyen sau nhận mọi điểm
+                if (g.KqRai.Count < DOC_TOI_DA)
+                    g.KqRai.Add(new Dictionary<string, object> { { "n", ps.Count }, { "bx", Lt(bMax) }, { "tuong", tuong.Select(x => Lt(x)).ToArray() } });
+                return;
+            }
             // Tính lưới MỌI vùng trước, đạt hết mới chèn: vùng sau lỗi thì không để lại thiết bị của vùng trước (gửi lại thao tác không rải trùng).
             List<List<Point2d>> vung = VungOp(g, o);
             List<LuoiRai> luoi = new List<LuoiRai>();
             foreach (List<Point2d> d in vung)
             {
-                LuoiRai r = LuoiVung(d, sx, sy, bx, by, LaySo(o, "le", -1), LaySo(o, "chan", 0.05 / m), dt, goc);
+                LuoiRai r = LuoiVung(d, sx, sy, bx, by, lex, ley, LaySo(o, "chan", 0.05 / m), dt, goc, LayCo(o, "theo_hang", false));
                 // Chỉ xảy ra khi rải theo "buoc": bước đúng là của người gọi, plugin không tự sửa.
                 if (dt > 0 && r.O > dt * (1 + 1e-9))
                     throw new System.Exception(string.Format(CultureInfo.InvariantCulture,
@@ -354,6 +485,26 @@ namespace TKPCCC
             return kq;
         }
 
+        /// Mỗi cột thiết bị (cột = cùng vị trí dọc ống chính) một nhánh vuông góc ống chính, từ ống chính tới thiết bị xa nhất của cột
+        /// (ống chính chạy sát hoặc xuyên qua phòng thì nhánh đi cả hai phía). Chân nhánh ra ngoài đoạn ống chính thì nối thêm dọc trục như xuong_ca.
+        static List<List<Point3d>> TuyenCot(List<Point3d> ps, List<Point3d> truc, double saiSo)
+        {
+            Point3d tam = new Point3d(ps.Average(p => p.X), ps.Average(p => p.Y), 0);
+            int i0 = DoanGan(truc, tam);
+            Point3d A = truc[i0], B = truc[i0 + 1];
+            double L = A.DistanceTo(B);
+            Vector3d u = (B - A).GetNormal(), n = new Vector3d(-u.Y, u.X, 0);
+            Func<Point3d, double> fa = p => (p - A).DotProduct(u), fd = p => (p - A).DotProduct(n);
+            List<List<Point3d>> kq = new List<List<Point3d>>();
+            foreach (List<Point3d> c in Gom(ps, fa, saiSo))
+            {
+                double x = c.Average(fa), thap = Math.Min(0, c.Min(fd)), cao = Math.Max(0, c.Max(fd));
+                if (cao - thap > 1e-6) kq.Add(new List<Point3d> { A + u * x + n * thap, A + u * x + n * cao });
+                if (x < -1e-6 || x > L + 1e-6) kq.Add(new List<Point3d> { A + u * x, x < 0 ? A : B });
+            }
+            return kq;
+        }
+
         /// Mỗi điểm một đoạn vuông góc vào đoạn ống chính gần nhất (đầu phun hành lang, tủ vách tường).
         static List<List<Point3d>> TuyenNhanh(List<Point3d> ps, List<Point3d> truc)
         {
@@ -419,7 +570,7 @@ namespace TKPCCC
                     if (g.DiemRai[j].Count > 0) { nhom.Add(g.DiemRai[j]); vungNhom.Add(g.VungRai[j]); }
             if (nhom.Count == 0) throw new System.Exception("tuyen cần \"p\" [[x,y],...] hoặc đứng ngay sau một thao tác rai có thiết bị");
             List<Point3d> truc = Lay(o, "truc") == null ? null : DsP(g, Lay(o, "truc"), "truc");
-            if ((kieu == "xuong_ca" || kieu == "nhanh") && (truc == null || truc.Count < 2))
+            if ((kieu == "xuong_ca" || kieu == "nhanh" || kieu == "cot") && (truc == null || truc.Count < 2))
                 throw new System.Exception("tuyen kiểu \"" + kieu + "\" cần \"truc\" [[x,y],[x,y],...] là ống chính");
             Point3d? tu = DiemTuyChon(g, o, "tu"), den = DiemTuyChon(g, o, "den");
             double m = HeSoMet(g.Db), saiSo = LaySo(o, "sai_so", 0.1 / m);
@@ -439,6 +590,7 @@ namespace TKPCCC
             if (kieu == "noi_tiep") doan = TuyenNoiTiep(nhom, tu, den, saiSo);
             else if (kieu == "xuong_ca") for (int j = 0; j < nhom.Count; j++) doan.AddRange(TuyenXuongCa(nhom[j], truc, tu, qua[j], saiSo));
             else if (kieu == "nhanh") foreach (List<Point3d> ps in nhom) doan.AddRange(TuyenNhanh(ps, truc));
+            else if (kieu == "cot") foreach (List<Point3d> ps in nhom) doan.AddRange(TuyenCot(ps, truc, saiSo));
             else if (kieu == "tia")
             {
                 // Đèn báo phòng: phòng có bao nhiêu đầu báo thì bấy nhiêu nét thẳng từ đầu báo ra đèn (cad/knowledge/tu-duy-di-day-di-ong.md).
@@ -447,7 +599,7 @@ namespace TKPCCC
                     foreach (Point3d p in ps)
                         if (p.DistanceTo(den.Value) > 1e-6) doan.Add(new List<Point3d> { p, den.Value });
             }
-            else throw new System.Exception("tuyen: \"kieu\" phải là noi_tiep, tia, xuong_ca hoặc nhanh");
+            else throw new System.Exception("tuyen: \"kieu\" phải là noi_tiep, tia, xuong_ca, cot hoặc nhanh");
 
             ObjectId layer = DamBaoLayer(g.Db, g.Tr, TIEN_TO_LAYER + v.ma, MauHe(v.he));
             bool nhan = LayCo(o, "nhan", false);
@@ -543,7 +695,7 @@ namespace TKPCCC
                 {
                     foreach (List<Point2d> d in vung)
                     {
-                        LuoiRai r = LuoiVung(d, s, s, 0, 0, -1, 0.05 / m, dt, 0);
+                        LuoiRai r = LuoiVung(d, s, s, 0, 0, -1, -1, 0.05 / m, dt, 0, false);
                         foreach (Point3d p in r.Diem) ChenThietBi(db, tr, v, p, k, 0);
                         tong += r.Diem.Count;
                         ed.WriteMessage("\n[TKPCCC] PCCC_RAI " + v.ma + " n=" + r.Diem.Count + " luoi=" + r.Nx + "x" + r.Ny
