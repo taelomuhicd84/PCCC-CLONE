@@ -1,7 +1,7 @@
 # Sơ đồ nguyên lý (thao tác spec `so_do`, G5)
 
-Mã: `cad/module/plugin/SoDo.cs`. Từ vựng: `cad/skills/TU_VUNG.md` (dòng `so_do`). Ví dụ: `cad/skills/vi_du/so_do.json`.
-Lượt 2026-11-12 chỉ làm hệ SPRINKLER. Báo cháy (`he:"bc"`, hệ thường + địa chỉ theo `knowledge/tu-duy-di-day-di-ong.md`) để lượt sau.
+Mã: `cad/module/plugin/SoDo.cs`. Từ vựng: `cad/skills/TU_VUNG.md` (dòng `so_do`). Ví dụ: `cad/skills/vi_du/so_do.json` (sprinkler), `cad/skills/vi_du/so_do_bc.json` (báo cháy).
+Có hệ SPRINKLER (`he:"spr"`) và BÁO CHÁY HỆ THƯỜNG (`he:"bc"`, mục cuối). Vạch tầng + cao độ dùng chung (hàm `VeVachTang`).
 
 ## Nguồn: lấy từ bản mẫu hay tự đặt
 Bộ mẫu `ket_qua/cad_mau/test_HA2.pdf` (4 tờ mặt bằng) KHÔNG có tờ sơ đồ nguyên lý, KHÔNG có mặt đứng / mặt cắt (không có cao độ tầng).
@@ -27,12 +27,34 @@ Chỉ có khung "CHI TIẾT: VAN CỔNG OS&Y + CÔNG TẮC DÒNG CHẢY" trên t
 - `tang[].cot`: cao độ sàn (mm) đọc từ mặt đứng / mặt cắt. Sơ đồ xếp tầng theo `cot`.
 - Van OS&Y lấy theo DN trục (`ONG_DN100` → `SPR_VAN_OSY_DN100`); số van = số trục × số tầng có `dem`.
 
-## Khối lượng
-Ống và chữ ở layer `PCCC_SODO`, vạch tầng ở `PCCC_SODO_TANG`: không phải layer `PCCC_<mã ống>` nên `PCCC_BOC` / `dem` không cộng chiều dài ống của sơ đồ.
-Van là block có `MA_VT` nên được đếm: lấy số van từ sơ đồ thì đừng đặt thêm van trên mặt bằng trong cùng bản vẽ (hoặc ngược lại), không sẽ đếm hai lần.
+## Khối lượng (chống đếm trùng, sửa 2026-11-12)
+Mọi thứ của sơ đồ, CẢ block van và thiết bị, nằm trên layer bắt đầu bằng `PCCC_SODO` (`PCCC_SODO` sprinkler, `PCCC_SODO_BC` báo cháy, `PCCC_SODO_TANG` vạch tầng).
+Hàm `Duyet` (`Lenh.cs`, dùng cho `dem` và `PCCC_BOC`) bỏ qua mọi đối tượng trên các layer này: số lượng thật chỉ lấy từ mặt bằng.
+Kiểm: bản vẽ có 2 OS&Y trên mặt bằng + sơ đồ 2 tầng × 2 trục thì `dem` OS&Y vẫn 2 (`cad/test/chay_thu.ps1`).
+Hệ quả: van chỉ vẽ trên sơ đồ (không có trên mặt bằng) thì không vào khối lượng, phải đặt trên mặt bằng hoặc cộng tay.
+
+## Báo cháy hệ thường (`he:"bc"`)
+`{"op":"so_do","he":"bc","p":[x,y],"tu":"BC_TT","day":"DAY_BC","toi_da":25,"h":3000,"tang":[{"ten":"TẦNG 1","cot":0,"zone":[{"ten":"ZONE 1","dem":{"BC_KHOI":12,"BC_NUTAN":1}},...]},{"ten":"TẦNG 2","cot":4200,"dem":{...}},{"ten":"MÁI","cot":8400}]}`
+- `toi_da` bắt buộc, truyền từ spec (giới hạn đầu báo một zone theo `cad/rule/LUAT.md` BC-04; người dùng dặn không quá 25). Zone vượt thì báo lỗi, không vẽ.
+  Plugin chỉ kiểm số đầu báo (vật tư có tên bắt đầu "Đầu báo"), KHÔNG kiểm giới hạn m² (việc của AI thiết kế khi chia zone).
+- `zone` mỗi tầng một hay nhiều; tầng chỉ có `dem` = một zone. `dem` lấy từ kết quả `dem` của từng zone trên mặt bằng.
+- Không có tờ sơ đồ báo cháy trong bộ mẫu `test_HA2.pdf`, nên bố trí TỰ ĐẶT; ký hiệu lấy theo mẫu mặt bằng (`mau-ban-ve-pccc.md` mục 2):
+
+| Chi tiết | Nguồn |
+|---|---|
+| Mỗi zone một dây riêng về tủ, cuối zone điện trở cuối dây; nhãn "Zone n" | bản mẫu (mặt bằng báo cháy: "Zone 1 về tủ TTBC", điện trở cuối dây ký hiệu Ω) + lời dạy người dùng (`tu-duy-di-day-di-ong.md` mục 1, 2) |
+| Ký hiệu đầu báo S, H, nút ấn N, chuông C, đèn DL, tủ TT | block thư viện `PCCC_Blocks.dwg` (chữ trong vòng tròn như mẫu) |
+| Điện trở cuối dây: mã MỚI `BC_DTCD`, block mặc định chữ `R` | TỰ ĐẶT (font txt.shx không có Ω) |
+| Tủ = khung chữ nhật + block `BC_TT` trên tầng thấp nhất, bó dây zone đứng cạnh nhau cách 300 | TỰ ĐẶT |
+| Dây zone đi đứng từ tủ lên tầng của zone, rẽ ngang qua thiết bị; dây vượt nhau vẽ nét cầu (như sprinkler) | TỰ ĐẶT |
+| Mỗi loại thiết bị một cột (thứ tự như danh mục), trên ký hiệu ghi `x<số>`; chú thích tên cột dưới vạch tầng thấp nhất; tên tủ + tên dây dưới tủ | TỰ ĐẶT |
+| Dây zone trong tầng ở 0,4 h đến 0,85 h trên vạch sàn, chia đều theo số zone | TỰ ĐẶT (nhiều zone một tầng thì tăng `h`) |
+| Dây vẽ nét liền (mẫu mặt bằng vẽ nét đứt) | TỰ ĐẶT, chưa đổi loại đường |
+
+Vẽ thử: `ket_qua/cad_mau/cad/so_do/so_do_bc.json` (2 tầng + mái, 3 zone, SỐ ĐẾM GIẢ ĐỊNH), ảnh `anh/so_do_bc_1.png`.
 
 ## Còn lại của G5
-- Sơ đồ báo cháy (`he:"bc"`): tủ trung tâm, zone theo tầng, số đầu báo / nút ấn / chuông đèn mỗi zone; hệ địa chỉ ZM, CM, RM, mạch vòng.
+- Sơ đồ báo cháy hệ địa chỉ: ZM, CM, RM, mạch vòng giám sát, đường nguồn đấu chữ T (`tu-duy-di-day-di-ong.md` mục 2); đèn báo phòng; loại đường nét đứt cho dây.
 - Sơ đồ chữa cháy vách tường (tủ mỗi tầng, van giảm áp), trạm bơm, van báo động, họng tiếp nước, van 1 chiều, đồng hồ áp.
 - Mã vật tư cho van xả; hình block van theo đúng ký hiệu bản mẫu.
 - Cao độ tầng đọc tự động từ mặt đứng PDF (hiện người/AI nhập `cot`).

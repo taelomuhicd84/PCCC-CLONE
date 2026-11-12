@@ -21,6 +21,7 @@
     { "ma": "BC_CHUONG", "ten": "Chuông báo cháy", "dvt": "cái", "he": "BC", "loai": "block", "ky_hieu": "C" },
     { "ma": "BC_DEN", "ten": "Đèn báo cháy", "dvt": "cái", "he": "BC", "loai": "block", "ky_hieu": "DL" },
     { "ma": "BC_MODULE", "ten": "Module giám sát/điều khiển", "dvt": "cái", "he": "BC", "loai": "block", "ky_hieu": "M" },
+    { "ma": "BC_DTCD", "ten": "Điện trở cuối dây", "dvt": "cái", "he": "BC", "loai": "block", "ky_hieu": "R" },
 
     { "ma": "SPR_DAU_UP", "ten": "Đầu phun sprinkler hướng lên", "dvt": "cái", "he": "SPR", "loai": "block", "ky_hieu": "U" },
     { "ma": "SPR_DAU_DOWN", "ten": "Đầu phun sprinkler hướng xuống", "dvt": "cái", "he": "SPR", "loai": "block", "ky_hieu": "D" },

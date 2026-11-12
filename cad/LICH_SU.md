@@ -253,3 +253,18 @@ Chưa kiểm: các phép kiểm mới chưa chạy đột biến ngược trên 
   `so_do_spr.dwg`, ảnh `anh/so_do_spr_1.png` đã xem: trục, nhánh, van, nét cầu, chữ đúng chỗ.
 - Kiểm: `chay_thu.ps1` 63/63, `thu_mcp.ps1` TAT CA DAT; `build.bat` OK. Chưa chạy `thu_gui.ps1`; chưa thử qua MCP trên AutoCAD có giao diện.
 - Còn của G5: sơ đồ báo cháy (`he:"bc"`), vách tường / trạm bơm; mã van xả; cao độ đọc tự động từ mặt đứng.
+
+## 2026-11-12 19:00 — G5: chống đếm trùng thiết bị sơ đồ + `so_do` `he:"bc"` (báo cháy hệ thường), agent `cad-lap-trinh` (Opus)
+- Chống đếm trùng: block van, thiết bị của sơ đồ đặt lên layer sơ đồ (`DatSoDo` đổi layer sau `ChenThietBi`); `Duyet` (`Lenh.cs`, dùng cho `dem` và `PCCC_BOC`)
+  bỏ qua mọi đối tượng trên layer bắt đầu bằng `PCCC_SODO`. Thay quyết định trước (van sơ đồ được đếm): số lượng thật chỉ lấy từ mặt bằng.
+- `he:"bc"` (`SoDoBaoChay`, `VeVachTang` dùng chung với `spr`): tủ (khung + `BC_TT`) trên tầng thấp nhất, mỗi zone một dây riêng từ tủ lên tầng rồi ngang qua
+  các cột thiết bị (`x<số>`), cuối dây điện trở cuối dây, dây vượt nhau nét cầu, chú thích cột dưới vạch tầng. `toi_da` (đầu báo / zone) bắt buộc, truyền từ spec;
+  zone vượt thì báo lỗi. Bản mẫu không có tờ sơ đồ báo cháy: bố trí TỰ ĐẶT, bảng nguồn ở `knowledge/so-do-nguyen-ly.md`.
+- Mã vật tư mới `BC_DTCD` (điện trở cuối dây, ký hiệu `R` vì txt.shx không có Ω) trong `data/vat_tu.json`; `PCCC_Blocks.dwg` tự thêm block mặc định.
+- `TU_VUNG.md` (đầu 1891 / 1900 ký tự, bỏ câu "chỉ đọc ảnh khi cần" ở dòng `anh`), ví dụ `skills/vi_du/so_do_bc.json`, `rule/LUAT.md` BC-04, BC-05.
+- `chay_thu.ps1`: `van.json` đặt 2 OS&Y; phép kiểm `so_do` spr đổi thành "mặt bằng 2 OS&Y + sơ đồ 2 tầng × 2 trục: `dem` OS&Y vẫn 2, không FS";
+  thêm 2 phép kiểm `bc`: ví dụ 3 zone `ve` 47, `dem` không đổi; zone 26 đầu báo > `toi_da` 25 và thiếu `toi_da` báo lỗi, không vẽ.
+- Thử: `ket_qua/cad_mau/cad/so_do/so_do_bc.json` (2 tầng + mái, 3 zone, SỐ ĐẾM GIẢ ĐỊNH) → `so_do_bc.dwg`, ảnh `anh/so_do_bc_1.png` đã xem
+  (lần đầu nhãn zone đè chữ `x18` và zone viết tắt `dem` lấy nhầm tên tầng: đã sửa).
+- Kiểm: `chay_thu.ps1` 65/65, `thu_mcp.ps1` TAT CA DAT; `build.bat` OK. Chưa chạy `thu_gui.ps1`; chưa thử qua MCP trên AutoCAD có giao diện.
+- Còn của G5: báo cháy hệ địa chỉ (ZM, CM, RM, mạch vòng), đèn báo phòng, dây nét đứt; vách tường / trạm bơm; mã van xả; cao độ đọc từ mặt đứng.

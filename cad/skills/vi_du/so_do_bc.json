@@ -1,0 +1,9 @@
+{"goc":[1300000,0],"ops":[
+ {"op":"so_do","he":"bc","p":[0,0],"tu":"BC_TT","day":"DAY_BC","toi_da":25,"h":3000,
+  "tang":[
+   {"ten":"TẦNG 1","cot":0,"zone":[
+     {"ten":"ZONE 1","dem":{"BC_KHOI":12,"BC_NUTAN":1,"BC_CHUONG":1}},
+     {"ten":"ZONE 2","dem":{"BC_NHIET":8,"BC_KHOI":4}}]},
+   {"ten":"TẦNG 2","cot":4200,"dem":{"BC_KHOI":18,"BC_NHIET":2,"BC_NUTAN":2,"BC_CHUONG":2}},
+   {"ten":"MÁI","cot":8400}]},
+ {"op":"dem"}]}

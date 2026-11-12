@@ -604,6 +604,7 @@ namespace TKPCCC
         {
             if (!e.Visible) return; // ẩn theo visibility của dynamic block cha
             if (e is Table) return; // Table kế thừa BlockReference: ký hiệu trong bảng thống kê không phải thiết bị
+            if (e.Layer.StartsWith(LAYER_SO_DO, StringComparison.OrdinalIgnoreCase)) return; // ký hiệu sơ đồ nguyên lý (SoDo.cs): thiết bị thật đếm ở mặt bằng
             BlockReference br = e as BlockReference;
             if (br != null)
             {
