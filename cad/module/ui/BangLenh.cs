@@ -160,7 +160,12 @@ namespace TKPCCC
                 if (e.ColumnIndex == C_NUT && e.RowIndex >= 0) e.ToolTipText = "Chạy lệnh";
             };
             ds.CellMouseClick += delegate(object s, DataGridViewCellMouseEventArgs e) { if (e.RowIndex >= 0 && e.ColumnIndex == C_NUT) Chay(); };
-            ds.CellDoubleClick += delegate(object s, DataGridViewCellEventArgs e) { if (e.RowIndex >= 0 && e.ColumnIndex != C_NUT && e.ColumnIndex != C_PHIM) Chay(); };
+            ds.CellDoubleClick += delegate(object s, DataGridViewCellEventArgs e)
+            {
+                if (e.RowIndex < 0 || e.ColumnIndex == C_NUT) return;
+                if (e.ColumnIndex == C_PHIM) ds.BeginEdit(true);
+                else Chay();
+            };
             ds.CellValidating += KiemPhim;
             ds.CellEndEdit += LuuPhim;
 
