@@ -19,7 +19,7 @@ Nhánh `claude/cad-panel-ui-ca1a1e` (worktree `.claude/worktrees/cad-panel-ui-ca
 
 ## Trạng thái kiểm
 - `cad\build.bat`: đạt.
-- `chay_thu.ps1`, `thu_mcp.ps1`: xem mục dưới khi chạy xong.
+- `chay_thu.ps1`: TAT CA DAT (79 dòng DAT); `thu_mcp.ps1`: TAT CA DAT (13/11).
 - `thu_gui.ps1`: CHƯA chạy được: AutoCAD của người dùng đang mở bản vẽ (không tự tắt).
 
 ## Việc tiếp theo
