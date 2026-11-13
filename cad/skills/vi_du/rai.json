@@ -11,5 +11,5 @@
  {"op":"rai","ma":"BC_KHOI","hop":[60000,0,66500,4500],"s":4000},
  {"op":"tuyen","ma":"DAY_BC","kieu":"tia","den":[66500,-500]},
  {"op":"rai","ma":"SPR_DAU_DOWN","hop":[40000,20000,48000,28000],"buoc":[4000,4000],"dt":12},
- {"op":"rai","ma":"BC_KHOI","hop":[0,0,10,10]}
+ {"op":"rai","ma":"SPR_DAU_DOWN","hop":[0,0,10,10]}
 ]}

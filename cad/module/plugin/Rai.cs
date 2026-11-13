@@ -153,8 +153,8 @@ namespace TKPCCC
         /// Phủ kín vùng q: điểm mẫu (lưới trong vùng + dọc từng cạnh, kể cả đỉnh) phải có một thiết bị cách nó không quá hx theo X và hy theo Y
         /// (đầu báo cách tường xiên 6771 mm theo phương đứng khi tối đa 5250 là lỗi người dùng gặp 13/11). Còn điểm hở thì thêm thiết bị:
         /// lấy điểm hở thấp nhất (rồi trái nhất), thử các vị trí quanh nó (cột / hàng lưới đang có trước, rồi lưới 9 x 9 trong ô phủ),
-        /// chọn vị trí trong vùng, cách tường >= cachMin, phủ được nhiều điểm hở nhất. Trả % điểm mẫu trong vùng còn hở (0 khi phủ kín).
-        /// shortcut: điểm mẫu bước ~ min(hx, hy) / 25 nên khe hở hẹp hơn bước mẫu có thể lọt; cần chính xác tuyệt đối thì trừ hình học vùng phủ.
+        /// chọn vị trí trong vùng, cách tường >= cachMin, phủ được nhiều điểm hở nhất. Điểm mẫu có thể lọt khe hẹp hơn bước mẫu nên sau mỗi lượt
+        /// kiểm chính xác bằng DiemHo (đỉnh của mọi khe hở) và rải tiếp tới khi hết. Trả % điểm mẫu trong vùng còn hở (0 khi phủ kín).
         static double PhuKin(List<Point2d> q, List<Point2d> luoi, double hx, double hy, double cachMin)
         {
             double x0 = q.Min(p => p.X), x1 = q.Max(p => p.X), y0 = q.Min(p => p.Y), y1 = q.Max(p => p.Y);
@@ -172,14 +172,34 @@ namespace TKPCCC
             Func<Point2d, Point2d, bool> phu = (p, c) => Math.Abs(p.X - c.X) <= hx + e && Math.Abs(p.Y - c.Y) <= hy + e;
             List<int> ho = Enumerable.Range(0, mau.Count).Where(i => !luoi.Any(c => phu(mau[i], c)))
                 .OrderBy(i => Math.Round(mau[i].Y / e)).ThenBy(i => mau[i].X).ToList();
-            for (int them = 0; ho.Count > 0 && them < 5000; them++)
+            int them = 0;
+            for (int luot = 0; luot < 20; luot++)
+            {
+                if (ho.Count == 0)
+                {
+                    List<Point2d> sot = DiemHo(q, luoi, hx, hy, phu);
+                    if (sot.Count == 0) break;
+                    // Khe hẹp hơn bước mẫu: mẫu dày (bước / 4) quanh từng đỉnh khe để chấm điểm vị trí theo đúng cỡ khe.
+                    foreach (Point2d s in sot.ToList())
+                        for (int i = -4; i <= 4; i++)
+                            for (int j = -4; j <= 4; j++)
+                            {
+                                Point2d m = new Point2d(s.X + buoc * i / 4, s.Y + buoc * j / 4);
+                                if (TrongDaGiac(q, m) && !luoi.Any(c => phu(m, c))) sot.Add(m);
+                            }
+                    ho = Enumerable.Range(mau.Count, sot.Count).ToList();
+                    mau.AddRange(sot);
+                }
+            for (; ho.Count > 0 && them < 5000; them++)
             {
                 Point2d P = mau[ho[0]];
                 List<Point2d> thu = new List<Point2d>();
                 foreach (double cy in luoi.Select(c => c.Y).Distinct().Where(v => Math.Abs(v - P.Y) <= hy))
                     foreach (double cx in luoi.Select(c => c.X).Distinct().Where(v => Math.Abs(v - P.X) <= hx)) thu.Add(new Point2d(cx, cy));
+                List<Point2d> luoiThu = new List<Point2d>();
                 for (int i = 0; i <= 8; i++)
-                    for (int j = 0; j <= 8; j++) thu.Add(new Point2d(P.X - hx + hx * i / 4, P.Y - hy + hy * j / 4));
+                    for (int j = 0; j <= 8; j++) luoiThu.Add(new Point2d(P.X - hx + hx * i / 4, P.Y - hy + hy * j / 4));
+                thu.AddRange(luoiThu.OrderBy(c => c.GetDistanceTo(P))); // hoà điểm thì gần điểm hở hơn (ô phủ dư ra hai phía)
                 Point2d tot = P; // không vị trí nào trong vùng: đặt ngay điểm hở (luôn thuộc vùng)
                 int diemTot = 0;
                 for (int lan = 0; lan < 2 && diemTot == 0; lan++) // lần 2 bỏ điều kiện cách tường (góc quá nhọn)
@@ -192,7 +212,61 @@ namespace TKPCCC
                 luoi.Add(tot);
                 ho.RemoveAll(i => phu(mau[i], tot));
             }
+            }
+            if (ho.Count == 0)
+            {
+                if (DiemHo(q, luoi, hx, hy, phu).Count > 0) return 0.1; // còn khe sau 20 lượt (không gặp khi thử): báo hở để người vẽ xem
+                // Tham lam có thể thêm thừa (thiết bị thêm sau phủ hết phần của thiết bị thêm trước): bỏ thử từng cái, từ cái thêm sau cùng.
+                for (int i = luoi.Count - 1, dau = luoi.Count - them; i >= dau; i--)
+                {
+                    Point2d c = luoi[i];
+                    luoi.RemoveAt(i);
+                    if (mau.Any(m => !luoi.Any(d => phu(m, d))) || DiemHo(q, luoi, hx, hy, phu).Count > 0) luoi.Insert(i, c);
+                }
+            }
             return nTrong == 0 ? 0 : Math.Round(100.0 * ho.Count(i => i < nTrong) / nTrong, 1);
+        }
+
+        /// Điểm trong vùng chưa được ô phủ nào chứa, tìm CHÍNH XÁC: mỗi khe hở (vùng trừ hợp các ô chữ nhật) có một đỉnh là đỉnh vùng,
+        /// giao cạnh vùng với cạnh ô, hoặc giao cạnh hai ô; thử 4 điểm lệch chéo rất nhỏ quanh từng đỉnh đó.
+        static List<Point2d> DiemHo(List<Point2d> q, List<Point2d> luoi, double hx, double hy, Func<Point2d, Point2d, bool> phu)
+        {
+            double eps = 1e-4 * (hx + hy);
+            List<Point2d> dinh = new List<Point2d>(q);
+            for (int i = 0, j = q.Count - 1; i < q.Count; j = i++)
+            {
+                Point2d a = q[j];
+                Vector2d ab = q[i] - a;
+                foreach (Point2d c in luoi)
+                {
+                    foreach (double x in new[] { c.X - hx, c.X + hx })
+                        if (Math.Abs(ab.X) > 1e-12)
+                        {
+                            double t = (x - a.X) / ab.X, y = a.Y + t * ab.Y;
+                            if (t >= 0 && t <= 1 && Math.Abs(y - c.Y) <= hy) dinh.Add(new Point2d(x, y));
+                        }
+                    foreach (double y in new[] { c.Y - hy, c.Y + hy })
+                        if (Math.Abs(ab.Y) > 1e-12)
+                        {
+                            double t = (y - a.Y) / ab.Y, x = a.X + t * ab.X;
+                            if (t >= 0 && t <= 1 && Math.Abs(x - c.X) <= hx) dinh.Add(new Point2d(x, y));
+                        }
+                }
+            }
+            foreach (Point2d c in luoi)
+                foreach (Point2d d in luoi)
+                    if (Math.Abs(c.X - d.X) <= 2 * hx && Math.Abs(c.Y - d.Y) <= 2 * hy)
+                        foreach (double x in new[] { c.X - hx, c.X + hx })
+                            foreach (double y in new[] { d.Y - hy, d.Y + hy })
+                                if (Math.Abs(x - d.X) <= hx && Math.Abs(y - c.Y) <= hy) dinh.Add(new Point2d(x, y));
+            List<Point2d> kq = new List<Point2d>();
+            foreach (Point2d p in dinh)
+                foreach (Vector2d v in new[] { new Vector2d(eps, eps), new Vector2d(-eps, eps), new Vector2d(eps, -eps), new Vector2d(-eps, -eps) })
+                {
+                    Point2d m = p + v;
+                    if (TrongDaGiac(q, m) && !luoi.Any(c => phu(m, c))) kq.Add(m);
+                }
+            return kq;
         }
 
         /// Góc lồi của vùng và thiết bị gần nó nhất: kích thước chéo góc như bản mẫu (TCVN 7568-14 Hình 2: 7,2 m), không vẽ vòng tròn.
