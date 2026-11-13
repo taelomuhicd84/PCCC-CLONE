@@ -320,3 +320,16 @@ Còn khác trang 11: màu theo layer (trang 11 đen trắng), tủ vẽ bằng n
 - `test/chay_thu.ps1`: sửa phép kiểm nhãn zone; thêm phép kiểm kiểu chữ sơ đồ.
 Kiểm chứng: `chay_thu.ps1` 76 DAT TAT CA DAT, `thu_mcp.ps1` TAT CA DAT, `build.bat` OK; ảnh `so_do_bc_3.png` vẽ lại (spec `ket_qua/cad_mau/cad/so_do/so_do_bc_3.json` có 3 thao tác `anh`).
 Chưa kiểm: `thu_gui.ps1`; chưa đối chiếu lại chi tiết từng phần với `trang11.png` ngoài vùng nhãn zone.
+
+## 2026-11-13 — sửa theo review 13/11 (cad-lap-trinh)
+- `SoDo.cs` NÊN SỬA 1: thiết bị chỉ thị HL lệch (−25, +25,6) pt so với tâm đầu báo như trang 11 (trước −50, +18): số "20" zone 4, 9 cách dây zone 9,5 pt (trước 0,5).
+  Hộp HL bỏ phần chữ "HL" lệch phải khi tính: số nằm giữa dưới khung, dây nối tới góc phải dưới khung.
+- NÊN SỬA 2: `nguon` `tq`, `ta`, `fc`, `hs`, `tq_nap`, `t_nap` ≤ 0 hoặc `i_tu` < 0 báo lỗi nêu tên khoá; `tb` `iq`, `ia`, `sl` < 0 báo lỗi. Kiểm lúc đọc đầu vào, chưa vẽ gì.
+- NÊN SỬA 3: `zone_tu` nhỏ hơn số zone trên sơ đồ báo lỗi (kiểm trước khi vẽ).
+- Khác trang 11 mục 5, 6: `TlKyHieu` `BC_CHI_THI`, `BC_CHI_THI_HL` = 1,47 (trước 1,75); dây đầu báo → thiết bị chỉ thị vẽ trên layer dây của zone (nét đứt như dây zone), không còn trên layer chữ.
+- `test/chay_thu.ps1`: +2 phép kiểm (5 lỗi đầu vào đúng như review: hs −1,25 / hs 0 / tq −24 / sl −59 / zone_tu 5 < 12; khoảng cách số HL tới dây zone 4, 9 ≥ 3 pt).
+- Ảnh `ket_qua/cad_mau/cad/so_do/anh/so_do_bc_3.png`, `_bang.png`, `_zone.png` vẽ lại.
+Kiểm chứng: `chay_thu.ps1` 78 DAT TAT CA DAT, `thu_mcp.ps1` TAT CA DAT, `build.bat` OK. Chưa chạy `thu_gui.ps1`. Chưa commit.
+CÒN (chưa làm, hết hạn mức):
+- Bảng ký hiệu thiếu dòng "ĐẦU BÁO KHÓI KIỂU ĐIỂM TRÊN TRẦN" (S khung vuông zone 4, 9): cần mã mới trong `data/vat_tu.json` + hình từ nét PDF (`hinh_tu_pdf.py`, đo khung 21 × 21 pt trang 11) + sửa `vi_du/so_do_bc.json` zone 4, 9 + `THU_TU_KY_HIEU`.
+- Ảnh zone (đã xem): chữ "HL" của thiết bị chỉ thị zone 4 chạm số "32" zone 5 vì hàng zone cách đều 45,45 pt; trang 11 zone 4→5 cách xa hơn (mục Bố cục 3 của review).

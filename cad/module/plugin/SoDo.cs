@@ -221,6 +221,7 @@ namespace TKPCCC
             switch (ma)
             {
                 case "BC_DTCD": return 0.87;
+                case "BC_CHI_THI": case "BC_CHI_THI_HL": return 1.47; // trang 11: 17,9 x 14,2 pt
                 case "BC_NUTAN": case "BC_TOHOP": return 1.95;
                 case "BC_COI_DEN": return 1.83;
                 case "SPR_CTDC": return 1.65;
@@ -372,7 +373,11 @@ namespace TKPCCC
             if (ng != null)
             {
                 foreach (string kh in new[] { "tq", "ta", "fc", "hs", "tq_nap", "t_nap", "i_tu" })
+                {
                     if (Lay(ng, kh) == null) throw new System.Exception("\"nguon\" thiếu \"" + kh + "\" (công thức C.1, C.2 phụ lục C TCVN 7568-14:2025, knowledge/tcvn7568-14-2025.md)");
+                    double hsv = LaySo(ng, kh, 0);
+                    if (kh == "i_tu" ? hsv < 0 : hsv <= 0) throw new System.Exception("\"nguon." + kh + "\" phải " + (kh == "i_tu" ? ">= 0" : "> 0"));
+                }
                 foreach (object x in DS(Lay(ng, "tb"), "nguon.tb"))
                 {
                     Dictionary<string, object> d = x as Dictionary<string, object>;
@@ -381,6 +386,8 @@ namespace TKPCCC
                     if (Lay(d, "ia") == null) throw new System.Exception("\"nguon.tb\" " + v.ma + " thiếu \"ia\" (dòng báo cháy mA/cái, theo catalog thiết bị)");
                     tbs.Add(new TbNguon { V = v, Ten = LayChu(d, "ten", Ten(v)), Iq = LaySo(d, "iq", 0), Ia = LaySo(d, "ia", 0),
                         Sl = Lay(d, "sl") != null ? LaySo(d, "sl", 0) : zone.Sum(z => z.Dem.Where(kv => kv.Key == v).Sum(kv => kv.Value)) });
+                    TbNguon tm = tbs[tbs.Count - 1];
+                    if (tm.Iq < 0 || tm.Ia < 0 || tm.Sl < 0) throw new System.Exception("\"nguon.tb\" " + v.ma + ": \"iq\", \"ia\", \"sl\" phải >= 0");
                 }
                 if (tbs.Count == 0) throw new System.Exception("\"nguon.tb\" rỗng");
             }
@@ -391,6 +398,7 @@ namespace TKPCCC
             Func<Point3d, double> PX = q => (q.X - p0.X) / S + 548.2;
             Func<Point3d, double> PY = q => 735.6 - (q.Y - p0.Y) / S;
             int nz = zone.Count;
+            if (Lay(o, "zone_tu") != null && LaySo(o, "zone_tu", 0) < nz) throw new System.Exception("\"zone_tu\" (" + LaySo(o, "zone_tu", 0) + ") nhỏ hơn số zone trên sơ đồ (" + nz + ")");
             double dy = Math.Max((Lay(o, "h") == null ? 1500 * k : h) / S, 38); // khoảng hàng zone (pt), tối thiểu đủ ký hiệu chỉ thị nâng lên + số lượng
             Func<int, double> Yz = i => 547.0 - i * dy;
             double bs = nz > 1 ? Math.Min(8.3, 91.0 / (nz - 1)) : 8.3; // bó dây đứng: zone 1 bên phải, zone sau lùi trái (không dây nào cắt nhau)
@@ -478,10 +486,13 @@ namespace TKPCCC
                         bool trai = kv.Key.ma == "BC_CHI_THI_HL";
                         Point3d c0 = dau.HasValue ? new Point3d((dau.Value.MinPoint.X + dau.Value.MaxPoint.X) / 2, (dau.Value.MinPoint.Y + dau.Value.MaxPoint.Y) / 2, 0) : M(763, y);
                         double rd = dau.HasValue ? (dau.Value.MaxPoint.X - dau.Value.MinPoint.X) / 2 : 9 * S;
-                        Extents3d e = Dat(kv.Key, c0 + new Vector3d((trai ? -50 : 26) * S, (trai ? 18 : 27) * S, 0), TlKyHieu(kv.Key.ma));
+                        Point3d pTb = c0 + new Vector3d((trai ? -25 : 26) * S, (trai ? 25.6 : 27) * S, 0);
+                        Extents3d e = Dat(kv.Key, pTb, TlKyHieu(kv.Key.ma));
+                        // HL: hộp bao gồm cả chữ "HL" lệch phải trên; góc phải khung = đối xứng mép trái qua tâm đặt.
+                        if (trai) e = new Extents3d(e.MinPoint, new Point3d(2 * pTb.X - e.MinPoint.X, e.MaxPoint.Y, 0));
                         SoDuoi(e, kv.Value);
                         double gocDau = (trai ? 120 : 60) * Math.PI / 180;
-                        Net(lChu, false, new[] { c0 + new Vector3d(rd * Math.Cos(gocDau), rd * Math.Sin(gocDau), 0), new Point3d(trai ? e.MaxPoint.X : e.MinPoint.X, e.MinPoint.Y, 0) });
+                        Net(LayerDay(g, z.Day), false, new[] { c0 + new Vector3d(rd * Math.Cos(gocDau), rd * Math.Sin(gocDau), 0), new Point3d(trai ? e.MaxPoint.X : e.MinPoint.X, e.MinPoint.Y, 0) });
                     }
                     Dat(dtcd, M(xOm, y), TlKyHieu("BC_DTCD"));
                     xHet = xOm;

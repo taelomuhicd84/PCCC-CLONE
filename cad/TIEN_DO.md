@@ -9,9 +9,10 @@ Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.m
   cột còi đèn, zone dự phòng, liên động ngang, tiêu đề. Nhãn zone 3 dòng: khu vực có tầng / DIỆN TÍCH BẢO VỆ: x M² / ZONE n (zone theo tầng lấy từ trang 5–8).
   Ký hiệu: block có sẵn trong bản vẽ được GIỮ (NapBlock không ghi đè, riêng PCCC_LIB cập nhật); bộ mặc định lấy từ nét PDF (`cad/data/ky_hieu/hinh_bc.json`, script
   `cad/.claude/skills/tkpccc-cad-console/scripts/hinh_tu_pdf.py`). Mã mới: `BC_CHI_THI`, `BC_CHI_THI_HL`, `BC_COI_DEN`, `BC_DIEN_THOAI`, `DAY_BC_10`, `DAY_BC_10_FR`, `DAY_NGUON_15`, `DAY_NGUON_15_FR`.
-  Review Opus max (`ket_qua/cad_review/review_2026-11-13.md`): 0 CHẶN, 3 NÊN SỬA, 9 GHI CHÚ, 14 chỗ khác trang 11; agent đang sửa 3 NÊN SỬA + dòng "khói trên trần" của bảng
-  ký hiệu + cỡ thiết bị chỉ thị (xem mục cuối `cad/LICH_SU.md` để biết xong tới đâu).
-  VIỆC KẾ: các chỗ khác trang 11 còn lại trong review 13/11 (hàng zone không cách đều như bản gốc, ký hiệu theo cột cố định, cột bảng tính rộng đều); sinh sơ đồ từ MẶT BẰNG CAD
+  Review Opus max (`ket_qua/cad_review/review_2026-11-13.md`): 0 CHẶN, 3 NÊN SỬA, 9 GHI CHÚ, 14 chỗ khác trang 11. ĐÃ SỬA 3 NÊN SỬA + cỡ thiết bị chỉ thị (tỉ lệ 1,47), dây nối nét đứt;
+  `chay_thu.ps1` 78/78, `thu_mcp.ps1` 9/9.
+  VIỆC KẾ: (1) bảng ký hiệu thêm dòng "đầu báo khói trên trần" (mã mới + hình S khung vuông lấy từ PDF, dùng ở zone 4, 9); (2) zone 4 chữ "HL" chạm số "32" của zone 5 vì hàng zone
+  cách đều: giãn hàng theo nội dung như trang 11; (3) các chỗ khác trang 11 còn lại trong review 13/11 (hàng zone không cách đều như bản gốc, ký hiệu theo cột cố định, cột bảng tính rộng đều); sinh sơ đồ từ MẶT BẰNG CAD
   báo cháy (đọc `dem` theo zone + diện tích vùng); hỏi người dùng kiểu sơ đồ sprinkler (không gian trục đo hay nguyên lý phẳng); đọc trang 46, 58, 63 khi làm sơ đồ âm thanh, hút khói, cấp điện.
 
 ## TRẠNG THÁI (cập nhật 2026-11-12, 19:05) (cũ)

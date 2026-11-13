@@ -177,7 +177,11 @@ Copy-Item "$GOC\cad\skills\vi_du\so_do.json" "$T\so_do.json"
 # so_do he bc (vi du so_do_bc.json = trang 11 ho so that: 12 zone + du phong, bang tinh nguon): them doc layer day + doc chu vung bang tinh.
 # goi loi: zone 26 dau bao > toi_da 25, va thieu toi_da -> 2 loi, khong ve.
 [IO.File]::WriteAllText("$T\so_do_bc.json", ([IO.File]::ReadAllText("$GOC\cad\skills\vi_du\so_do_bc.json") -replace '\{"op":"dem"\}\]\}\s*$',
-  '{"op":"dem"},{"op":"doc","gi":"layer","l":"PCCC_SODO_DAY*"},{"op":"doc","gi":"chu","l":"PCCC_SODO_BC","hop":[-16600,8300,-700,15800]}]}'))
+  '{"op":"dem"},{"op":"doc","gi":"layer","l":"PCCC_SODO_DAY*"},{"op":"doc","gi":"chu","l":"PCCC_SODO_BC","hop":[-16600,8300,-700,15800]},{"op":"doc","gi":"chu","l":"PCCC_SODO_BC"}]}'))
+# Review 13/11 NEN SUA 2, 3: moi op so_do vi du doi 1 gia tri (hs -1.25, hs 0, tq -24, sl -59, zone_tu 5 < 12 zone) -> 5 loi, khong ve.
+$opBc = ([IO.File]::ReadAllText("$GOC\cad\skills\vi_du\so_do_bc.json")); $opBc = $opBc.Substring($opBc.IndexOf('{"op":"so_do"')); $opBc = $opBc.Substring(0, $opBc.LastIndexOf(','))
+[IO.File]::WriteAllText("$T\so_do_bc_ng.json", '{"goc":[1800000,0],"ops":[' + ((@(@('"hs":1.25', '"hs":-1.25'), @('"hs":1.25', '"hs":0'), @('"tq":24,', '"tq":-24,'),
+  @('"sl":59', '"sl":-59'), @('"zone_tu":15', '"zone_tu":5')) | ForEach-Object { $opBc.Replace($_[0], $_[1]) }) -join ',') + ']}')
 '{"goc":[1400000,0],"ops":[{"op":"so_do","he":"bc","toi_da":25,"tang":[{"cot":0,"zone":[{"dem":{"BC_KHOI":20,"BC_NHIET":6,"BC_NUTAN":1}}]}]},{"op":"so_do","he":"bc","tang":[{"cot":0,"dem":{"BC_KHOI":2}}]}]}' |
   Set-Content -Encoding ascii "$T\so_do_bc_loi.json"
 # Review 12/11d NEN SUA 2: spr nhan dem chep tu ket qua dem (ca BC, ong, day) chi ghi ma SPR; ma la, so <= 0 bao loi.
@@ -215,7 +219,7 @@ $bamTv = (Get-FileHash "$T\PCCC_Blocks.dwg").Hash
   'PCCC_SPEC', "$T\khoa_sai.json", 'PCCC_SPEC', "$T\khoa_dung.json", 'PCCC_SPEC', "$T\anh.json", 'PCCC_SPEC', "$T\pdf_sai.json", 'PCCC_SPEC', "$T\pdf.json",
   'PCCC_SPEC', "$T\pdf2.json", 'PCCC_SPEC', "$T\xoa2.json", 'PCCC_SPEC', "$T\rai_loi.json", 'PCCC_SPEC', "$T\tuyen_thu.json", 'PCCC_SPEC', "$T\nhan.json",
   'PCCC_SPEC', "$T\rai_moi.json", 'PCCC_SPEC', "$T\pdf_mk.json", 'PCCC_SPEC', "$T\rv_tuyen.json", 'PCCC_SPEC', "$T\hoa.json", 'PCCC_SPEC', "$T\hoa_doc.json",
-  'PCCC_SPEC', "$T\rv_hang.json", 'PCCC_SPEC', "$T\rv2.json", 'PCCC_SPEC', "$T\van.json", 'PCCC_SPEC', "$T\so_do.json", 'PCCC_SPEC', "$T\so_do_loi.json", 'PCCC_SPEC', "$T\so_do_bc.json", 'PCCC_SPEC', "$T\so_do_bc_loi.json",
+  'PCCC_SPEC', "$T\rv_hang.json", 'PCCC_SPEC', "$T\rv2.json", 'PCCC_SPEC', "$T\van.json", 'PCCC_SPEC', "$T\so_do.json", 'PCCC_SPEC', "$T\so_do_loi.json", 'PCCC_SPEC', "$T\so_do_bc.json", 'PCCC_SPEC', "$T\so_do_bc_loi.json", 'PCCC_SPEC', "$T\so_do_bc_ng.json",
   'PCCC_SPEC', "$T\so_do_loc.json", 'PCCC_SPEC', "$T\so_do_bc2.json", 'INSUNITS', '6', 'PCCC_SPEC', "$T\so_do_m.json", 'INSUNITS', '4', '_.QSAVE',
   ('(progn (setq f (open "' + ($T -replace '\\', '/') + '/blk.txt" "w")) (setq e (cdr (assoc -2 (tblsearch "BLOCK" "BC_COI_DEN")))) ' +
    '(while e (write-line (cdr (assoc 0 (entget e))) f) (setq e (entnext e))) (setq l (tblsearch "LAYER" "PCCC_SODO_DAY_NGUON")) ' +
@@ -342,7 +346,21 @@ $chuSd = if ($ksl -and $ksl.doc) { @($ksl.doc[0].ds | ForEach-Object { $_.t }) }
 Kiem ($ksl -and $ksl.ve -eq 0 -and @($ksl.loi).Count -eq 1 -and $ksl.loi[0].ly_do -match 'OS&Y' -and
   ($chuSd -contains ([string][char]0xB1 + '0.000')) -and ($chuSd -contains '+4.200') -and ($chuSd -contains '+8.400') -and $chuSd.Count -eq 6) `
   "so_do: chu cao do +-0.000 / +4.200 / +8.400 + 3 ten tang; truc DN25 khong co van OS&Y thi bao loi, khong ve ($($chuSd -join ' | '))"
-$ksb = DocKq 'so_do_bc'; $ksbl = DocKq 'so_do_bc_loi'
+$ksb = DocKq 'so_do_bc'; $ksbl = DocKq 'so_do_bc_loi'; $ksng = DocKq 'so_do_bc_ng'
+$lng = @($ksng.loi | ForEach-Object { $_.ly_do })
+Kiem ($ksng -and $ksng.ve -eq 0 -and $lng.Count -eq 5 -and $lng[0] -match 'nguon\.hs.+> 0' -and $lng[1] -match 'nguon\.hs.+> 0' -and $lng[2] -match 'nguon\.tq".+> 0' -and
+  $lng[3] -match 'BC_NHIET.+sl.+>= 0' -and $lng[4] -match 'zone_tu.+\(5\).+\(12\)') `
+  "so_do bc (review 13/11 NEN SUA 2, 3): nguon hs -1,25 / hs 0 / tq -24 / sl -59 va zone_tu 5 < 12 zone bao loi, khong ve ($($lng -join ' | '))"
+# NEN SUA 1: so duoi thiet bi chi thi HL zone 4, 9 (chu "20" phia tren day) cach day zone >= 3 pt (1 pt = 33 mm). Day = goc nhan zone + 6 pt; chu cao 6 pt.
+$chuSd = if ($ksb -and $ksb.doc -and $ksb.doc.Count -gt 2) { @($ksb.doc[2].ds) } else { @() }
+$hlCach = foreach ($n in 4, 9) {
+  $nh = @($chuSd | Where-Object { $_.t -match "ZONE $n\s*$" -and $_.t -match 'M' })
+  if ($nh.Count -ne 1) { -99; continue }
+  $yd = $nh[0].p[1] + 6 * 33
+  $so = @($chuSd | Where-Object { $_.t -eq '20' -and $_.p[1] -gt $yd -and $_.p[1] -lt $yd + 40 * 33 })
+  if ($so.Count -ne 1) { -98 } else { [math]::Round(($so[0].p[1] - 6 * 33 - $yd) / 33, 1) }
+}
+Kiem (@($hlCach).Count -eq 2 -and @($hlCach | Where-Object { $_ -lt 3 }).Count -eq 0) "so_do bc thiet bi chi thi HL lech (-25, +25,6) pt nhu trang 11: day so cach day zone 4, 9 >= 3 pt (pt: $($hlCach -join ', '))"
 # Bang tinh nguon tinh tay (phu luc C TCVN 7568-14:2025, so lieu trang 11): IQ = 100 + (59 x 35 + 24 x 59) / 1000 = 103,481 mA;
 # IA = 100 + 59 x 40 + 24 x 40 + 28 x 14,5 + 3 x 30 + 11 x 15 = 4081 mA; C20 = 1,25 x (0,103481 x 24 + 2 x 4,081 x 0,5) = 8,20568 Ah;
 # IC = 1,25 x (0,103481 x 5 + 4,081 x 0,5) / 24 = 0,13322 A; IPSE = 0,103481 + 0,13322 = 0,2367 A (bang ghi 0.24).
