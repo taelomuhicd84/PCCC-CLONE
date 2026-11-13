@@ -487,9 +487,10 @@ namespace TKPCCC
                     xHet = xOm;
                     List<string> dong = new List<string>();
                     if (z.Kv != "") dong.Add(z.Kv);
-                    if (z.Dt > 0) { dong.Add("DIỆN TÍCH BẢO VỆ"); dong.Add(z.Ten + " : " + SoVN(z.Dt, "0.##") + " M²"); }
-                    else dong.Add(z.Ten);
-                    Chu(xOm + 10.8, y + 6, z.Ghi != "" ? z.Ghi : string.Join("\n", dong), 4.5, AttachmentPoint.TopCenter);
+                    if (z.Dt > 0) dong.Add("DIỆN TÍCH BẢO VỆ: " + SoVN(z.Dt, "0.##") + " M²");
+                    dong.Add(z.Ten);
+                    // Cỡ 4.0, tâm lùi trái: dòng "DIỆN TÍCH BẢO VỆ: xxx M²" không chạm cột còi đèn.
+                    Chu(xOm + 8, y + 6, z.Ghi != "" ? z.Ghi : string.Join("\n", dong), 4.0, AttachmentPoint.TopCenter);
                 }
                 NgangNgat(LayerDay(g, z.Day), y, xv + r, xHet, che);
                 double slCoi = z.Dem.Where(kv => LaCoi(kv.Key)).Sum(kv => kv.Value);

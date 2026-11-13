@@ -307,3 +307,16 @@ Bỏ theo lệnh điều phối (sẽ làm lại toàn bộ sơ đồ bc giống
 Kiểm chứng: `chay_thu.ps1` 75 DAT TAT CA DAT, `thu_mcp.ps1` 9 DAT TAT CA DAT, `build.bat` OK; ảnh `ket_qua/cad_mau/cad/so_do/anh/so_do_bc_3.png` đã đặt cạnh `trang11.png` so từng phần.
 Chưa kiểm: `thu_gui.ps1` (không chạy theo lệnh); chưa mở trong AutoCAD có giao diện; chưa review `cad-review`.
 Còn khác trang 11: màu theo layer (trang 11 đen trắng), tủ vẽ bằng nét không phải block, vị trí ký hiệu theo cột cố định, thiếu dòng "S trên trần" trong bảng ký hiệu, chú thích bó dây lấy tên dây `day_truc`.
+
+## 2026-11-13 — so_do bc: nhãn zone đúng 3 trường; kiểm kiểu chữ (agent cad-lap-trinh)
+- `SoDo.cs`: nhãn cuối zone về đúng lời dặn: khu vực (ghép tên tầng) / `DIỆN TÍCH BẢO VỆ: 88.11 M²` / `ZONE 1`; thiếu `dt` bỏ dòng giữa.
+  Cỡ chữ nhãn 4.5 → 4.0, tâm lùi trái (xOm + 8): dòng diện tích dài hơn trước, ở 4.5 chạm cột còi đèn.
+- `skills/vi_du/so_do_bc.json`: `kv` có tầng, lấy từ chữ "Zone n" trên mặt bằng báo cháy hồ sơ thật (`cong_trinh.pdf`, đọc chữ PyMuPDF):
+  trang 4/5 (dưới trần T1) zone 1, 2, 3, 8; trang 6 (trên trần T1) zone 4; trang 7 (dưới trần T2) zone 5, 6, 7 ("với zone 8 tại tầng 1"); trang 8 (trên trần T2) zone 9.
+  ⇒ `TẦNG 1 KARAOKE`: 1, 2, 3, 4, 8 (zone 8 là sảnh thông tầng, về tủ từ T1, T2 nối vào); `TẦNG 2 KARAOKE`: 5, 6, 7, 9.
+- Chữ mất dấu trong ảnh: KHÔNG do kiểu chữ. Phép kiểm mới (LISP `ssget` MTEXT/TEXT layer `PCCC_SODO*`) cho 262/262 chữ dùng `PCCC_ARIAL`.
+  Nguyên nhân: ảnh PNG tối đa 1600 px (`PublishToWeb PNG.pc3`), chữ cao 4–5 đơn vị chỉ vài pixel nên dấu trên chữ in hoa bị nuốt. Ảnh cắt vùng
+  (`anh/so_do_bc_3_bang.png`, `anh/so_do_bc_3_zone.png`) hiện đủ dấu. Xem dấu thì in ảnh theo `hop` nhỏ.
+- `test/chay_thu.ps1`: sửa phép kiểm nhãn zone; thêm phép kiểm kiểu chữ sơ đồ.
+Kiểm chứng: `chay_thu.ps1` 76 DAT TAT CA DAT, `thu_mcp.ps1` TAT CA DAT, `build.bat` OK; ảnh `so_do_bc_3.png` vẽ lại (spec `ket_qua/cad_mau/cad/so_do/so_do_bc_3.json` có 3 thao tác `anh`).
+Chưa kiểm: `thu_gui.ps1`; chưa đối chiếu lại chi tiết từng phần với `trang11.png` ngoài vùng nhãn zone.

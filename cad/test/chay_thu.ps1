@@ -219,7 +219,10 @@ $bamTv = (Get-FileHash "$T\PCCC_Blocks.dwg").Hash
   'PCCC_SPEC', "$T\so_do_loc.json", 'PCCC_SPEC', "$T\so_do_bc2.json", 'INSUNITS', '6', 'PCCC_SPEC', "$T\so_do_m.json", 'INSUNITS', '4', '_.QSAVE',
   ('(progn (setq f (open "' + ($T -replace '\\', '/') + '/blk.txt" "w")) (setq e (cdr (assoc -2 (tblsearch "BLOCK" "BC_COI_DEN")))) ' +
    '(while e (write-line (cdr (assoc 0 (entget e))) f) (setq e (entnext e))) (setq l (tblsearch "LAYER" "PCCC_SODO_DAY_NGUON")) ' +
-   '(write-line (strcat "LAYER " (itoa (cdr (assoc 62 l))) " " (cdr (assoc 6 l))) f) (close f))')) -join "`r`n" |
+   '(write-line (strcat "LAYER " (itoa (cdr (assoc 62 l))) " " (cdr (assoc 6 l))) f) ' +
+   '(setq ss (ssget "_X" (list (cons 0 "MTEXT,TEXT") (cons 8 "PCCC_SODO*"))) i 0 sai 0) ' +
+   '(repeat (sslength ss) (if (/= (strcase (cdr (assoc 7 (entget (ssname ss i))))) "PCCC_ARIAL") (setq sai (1+ sai))) (setq i (1+ i))) ' +
+   '(write-line (strcat "KIEU " (itoa (sslength ss)) " " (itoa sai)) f) (close f))')) -join "`r`n" |
   Set-Content -Encoding ascii "$T\kb2.scr"
 $p2 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb2.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb2.out.txt"
 if (-not $p2.WaitForExit(180000)) { Stop-Process -Id $p2.Id -Force; throw "accoreconsole qua 3 phut (PCCC_SPEC): $T\kb2.out.txt" }
@@ -358,6 +361,9 @@ $nLay = { param($t) $x = @($lay | Where-Object { $_.l -eq $t }); if ($x.Count) {
 Kiem ((& $nLay 'PCCC_SODO_DAY_TH') -ge 10 -and (& $nLay 'PCCC_SODO_DAY_TH_FR') -ge 16 -and (& $nLay 'PCCC_SODO_DAY_NGUON') -ge 8 -and (& $nLay 'PCCC_SODO_DAY_NGUON_FR') -eq 3) `
   "so_do bc moi loai day mot layer theo layer_so_do cua ma: zone 1-9 DAY_TH, bo day + zone van DAY_TH_FR, coi den DAY_NGUON, 2 nguon + mau DAY_NGUON_FR ($($lay | ForEach-Object { $_.l + '=' + $_.n }))"
 $blk = if (Test-Path "$T\blk.txt") { @(Get-Content "$T\blk.txt") } else { @() }
+$kieu = @($blk | Where-Object { $_ -match '^KIEU ' }); $blk = @($blk | Where-Object { $_ -notmatch '^KIEU ' })
+$kn = if ($kieu.Count -eq 1) { $kieu[0].Split(' ') } else { @('', '0', '1') }
+Kiem ([int]$kn[1] -gt 100 -and $kn[2] -eq '0') "so_do: moi MTEXT/TEXT tren layer PCCC_SODO* dung kieu chu PCCC_ARIAL co dau tieng Viet ($kieu)"
 Kiem ($blk.Count -eq 2 -and $blk[0] -eq 'CIRCLE' -and $blk[1] -match '^LAYER 3 continuous$') `
   "so_do bc dung ky hieu cua ban ve: block BC_COI_DEN co san (1 CIRCLE) khong bi thu vien ghi de; layer day nguon co san giu mau 3, net Continuous ($($blk -join ' | '))"
 Kiem ($ksbl -and $ksbl.ve -eq 0 -and @($ksbl.loi).Count -eq 2 -and $ksbl.loi[0].ly_do -match '26 .+toi_da 25' -and $ksbl.loi[1].ly_do -match 'toi_da') `
@@ -368,10 +374,10 @@ $c1 = @(& $dc 0); $c2 = @(& $dc 1); $c3 = @(& $dc 2); $c4 = @(& $dc 3)
 $dong = { param($ds, $dau) @($ds | Where-Object { ($_.t -split "`r?`n")[0] -eq $dau } | ForEach-Object { , @($_.t -split "`r?`n") }) }
 $lk = @(& $dong $c1 'T1 KARAOKE'); $lh = @(& $dong $c1 'T1 KHO'); $ld2 = @(& $dong $c2 'KHU B'); $l120 = @($c2 | Where-Object { $_.t -match ': 120 M' })
 Kiem ($kbc2 -and $kbc2.ok -eq $true) "so_do bc: dem co DAY_BC (chep tu ket qua dem) bo qua day, khong bao loi ($($kbc2.loi | ConvertTo-Json -Compress -Depth 3))"
-Kiem ($lk.Count -eq 1 -and $lk[0].Count -eq 3 -and $lk[0][1] -match '^DI.N T.CH B.O V.$' -and $lk[0][2] -match '^ZONE 1 : 88\.11 M' -and
+Kiem ($lk.Count -eq 1 -and $lk[0].Count -eq 3 -and $lk[0][1] -match '^DI.N T.CH B.O V.: 88\.11 M' -and $lk[0][2] -eq 'ZONE 1' -and
   $lh.Count -eq 1 -and $lh[0].Count -eq 2 -and $lh[0][1] -eq 'ZONE 2' -and $ld2.Count -eq 1 -and $ld2[0][1] -eq 'ZONE 2' -and
   $l120.Count -eq 1 -and @($l120[0].t -split "`r?`n").Count -eq 2) `
-  "so_do bc: nhan duoi dien tro cuoi day nhu trang 11: khu vuc / DIEN TICH BAO VE / ZONE n : dt M2; ghep ten tang + kv; thieu dt, thieu kv bo dong ($($c1 | ForEach-Object { $_.t -replace "`r?`n", ' / ' }))"
+  "so_do bc: nhan duoi dien tro cuoi day nhu trang 11: khu vuc / DIEN TICH BAO VE: dt M2 / ZONE n; ghep ten tang + kv; thieu dt, thieu kv bo dong ($($c1 | ForEach-Object { $_.t -replace "`r?`n", ' / ' }))"
 $yZ = { param($re) @($c3 | Where-Object { $_.t -match $re } | ForEach-Object { $_.p[1] }) }
 $z1 = & $yZ '^ZONE 1$'; $z2 = & $yZ '^ZONE 2$'; $z3 = & $yZ '^ZONE 3$'; $dp = @($c3 | Where-Object { $_.t -eq 'ZONE 4 DU PHONG' })
 Kiem ($z1.Count -eq 1 -and $z2.Count -eq 1 -and $z3.Count -eq 1 -and $z1[0] -lt $z2[0] -and $z2[0] -lt $z3[0] -and $dp.Count -eq 1 -and $dp[0].p[1] -gt $z1[0] -and $dp[0].p[1] -lt $z2[0] -and
