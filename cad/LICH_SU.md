@@ -350,3 +350,8 @@ CÒN (chưa làm, hết hạn mức):
 - Kiểm chứng: `build.bat` OK, `chay_thu.ps1` TAT CA DAT, `thu_mcp.ps1` TAT CA DAT. Chưa chạy `npm test` (vat_tu.json thêm 1 dòng).
 
 - 2026-11-13: so_do bc bang tinh nguon: cot dau (THIET BI) rong 1,7 lan cot so nhu trang 11 (x1 tinh theo so thiet bi); chay_thu TAT CA DAT.
+
+## 2026-11-13 cuối phiên — người dùng test sơ bộ trên AutoCAD, ghi nhận 4 việc
+- Người dùng tự test (NETLOAD, `PCCC_RAI`, panel `PCCC_BLOCK`), gửi 4 ảnh (`ket_qua/cad_test/2026-11-13/`). Ghi 4 việc vào đầu `cad/TIEN_DO.md`: rải sai cách tường (6771 > 5250 mm)
+  và tự lấy khoảng cách theo tiêu chuẩn; tự nhận diện trục/tường, click vùng để rải; làm lại giao diện panel Block; `PCCC_HELP` thành panel có sửa phím tắt.
+  Dặn: chỉ ghi nhận, làm song song với việc dở ở phiên reset 5 giờ kế tiếp. Lệnh tắt máy hẹn trước đó đã huỷ để người dùng test.

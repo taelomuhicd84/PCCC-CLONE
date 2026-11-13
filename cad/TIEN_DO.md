@@ -3,6 +3,20 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## NGƯỜI DÙNG TEST 13/11 — 4 VIỆC LÀM SONG SONG VỚI VIỆC DỞ Ở PHIÊN SAU (dặn: chỉ ghi nhận, phiên reset 5 giờ kế tiếp mới làm)
+Ảnh người dùng gửi: `ket_qua/cad_test/2026-11-13/` (không commit). Làm song song = chia agent theo file không chồng nhau (Rai.cs / module/ui / SoDo.cs), mỗi lúc chỉ một agent sửa một file.
+1. RẢI SAI KHOẢNG CÁCH (`1_rai_6771.png`): vùng đa giác lồi lõm, người dùng đặt bước tối đa 10,5 m, cách tường tối đa 1/2 bước (5,25 m), nhưng có đầu báo cách tường 6771 mm
+   (đo theo phương đứng tới cạnh xiên dưới). Sửa `rai` / `PCCC_RAI` để mọi điểm của vùng (kể cả góc nhọn, cạnh xiên) nằm trong bán kính phủ theo bước và cách tường; thêm phép kiểm với chính đa giác đó.
+   Kèm: KHÔNG hỏi người dùng khoảng cách hay m². Nối với tiêu chuẩn báo cháy (skill `tkpccc-tra-quy-chuan`, `knowledge/tcvn7568-14-2025.md`, `cad/rule/LUAT.md`): lấy bước, cách tường,
+   diện tích bảo vệ tối đa theo loại đầu báo + chiều cao trần (và sprinkler theo TCVN 7336) rồi tự thiết kế. Trị số vẫn đọc từ file luật/knowledge, không viết cứng trong mã C#.
+2. TỰ NHẬN DIỆN TRỤC / TƯỜNG (`2_mat_bang_khong_polyline.png`): người dùng rải trên mặt bằng kiến trúc thật mà không vẽ polyline kín thì plugin báo lỗi. Phải tự phân biệt đâu là trục
+   (nét chấm gạch, layer trục), đâu là tường (cặp nét song song, layer tường, cột), tự dựng polyline vùng từng phòng; người dùng CLICK vào một vùng là rải theo mục 1.
+3. GIAO DIỆN PANEL BLOCK (`4_panel_block_hien_tai.png` bị chê xấu, đơn điệu): tham khảo GIAO DIỆN (không chép tính năng) của `3_mau_ux_thong_ke_block.png`:
+   bảng có cột ảnh ký hiệu lớn, tên đậm, cột đơn vị, số lượng tô màu, nút thao tác tròn màu ở đầu dòng; khung "Hành động" bên phải với nút xanh đậm bo góc, ô chọn, ảnh xem trước,
+   ô tổng số nổi bật; thanh tìm kiếm trên đầu; tiêu đề nhóm nền xanh. File `cad/module/ui/BangBlock.cs`; sửa xong chạy `thu_gui.ps1` (chỉ khi không có AutoCAD nào mở).
+4. `PCCC_HELP` THÀNH PANEL: bảng danh sách mọi lệnh (tên lệnh, việc làm, cách dùng ngắn), tìm kiếm được, SỬA ĐƯỢC PHÍM TẮT (alias) ngay trong panel, lưu lại cho lần sau
+   (gợi ý: ghi alias vào file cạnh DLL hoặc acad.pgp của người dùng, có sao lưu; hỏi người dùng nếu phải sửa file cấu hình AutoCAD). Panel để ở `module/ui/`, cùng kiểu với panel Block mới.
+
 ## TRẠNG THÁI (cập nhật 2026-11-13, 09:30) — ĐỌC TRƯỚC KHI LÀM TIẾP
 - 13/11: `so_do` `bc` LÀM LẠI giống quy cách trang 11 hồ sơ thật (commit `b0af585`, `f07433c`): bảng ký hiệu (mẫu nét theo layer dây), ghi chú, bảng tính nguồn phụ lục C
   TCVN 7568-14:2025 (hệ số, dòng tĩnh/báo cháy từ spec; ra đúng 4081 mA, 8,20568 Ah), tủ có đèn zone, điện thoại, tiếp địa, nguồn 220 V/24 V, bó dây FR có elip, zone giám sát van,
