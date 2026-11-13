@@ -4,6 +4,9 @@ Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
 ## NGƯỜI DÙNG TEST 13/11 — 4 VIỆC LÀM SONG SONG VỚI VIỆC DỞ Ở PHIÊN SAU (dặn: chỉ ghi nhận, phiên reset 5 giờ kế tiếp mới làm)
+**XONG CẢ 4 VIỆC (13/11 chiều)**: 3 phiên song song trên 3 nhánh, đã gộp vào `main` (sửa tay xung đột `cad/skills/TU_VUNG.md`, `cad/test/chay_thu.ps1`;
+phép kiểm `vung_tu_dong` dời sang gốc x 2600000). Sau gộp: build đạt, `chay_thu.ps1` + `thu_mcp.ps1` TAT CA DAT. Chi tiết, việc còn lại từng mục: `cad/tien_do/viec1.md`,
+`viec2.md`, `viec3_4.md`. CHƯA: review Opus max cho mốc này; xem dim chéo góc và `vung_tu_dong` trên DWG thật của người dùng; `thu_gui.ps1` sau gộp chưa chạy lại.
 Ảnh người dùng gửi: `ket_qua/cad_test/2026-11-13/` (không commit). Làm song song = chia agent theo file không chồng nhau (Rai.cs / module/ui / SoDo.cs), mỗi lúc chỉ một agent sửa một file.
 1. RẢI SAI KHOẢNG CÁCH (`1_rai_6771.png`): vùng đa giác lồi lõm, người dùng đặt bước tối đa 10,5 m, cách tường tối đa 1/2 bước (5,25 m), nhưng có đầu báo cách tường 6771 mm
    (đo theo phương đứng tới cạnh xiên dưới). Sửa `rai` / `PCCC_RAI` để mọi điểm của vùng (kể cả góc nhọn, cạnh xiên) nằm trong bán kính phủ theo bước và cách tường; thêm phép kiểm với chính đa giác đó.

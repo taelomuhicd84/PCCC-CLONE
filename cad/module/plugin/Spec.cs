@@ -39,6 +39,7 @@ namespace TKPCCC
             public List<List<Point2d>> VungRai = new List<List<Point2d>>();                 // đa giác của từng vùng đó (cùng chỉ số): "tuyen" nhận "qua" theo vùng
             public List<object> KqAnh = new List<object>();                                 // đường dẫn PNG của thao tác "anh"
             public List<object> KqPdf = new List<object>();                                 // số đối tượng + layer của từng thao tác "pdf"
+            public List<object> KqVung = new List<object>();                                 // vùng tự dựng của "vung_tu_dong" (NhanVung.cs)
             public Dictionary<string, object> KqNguon;                                       // kết quả bảng tính nguồn của "so_do" bc (SoDo.cs)
         }
 
@@ -226,6 +227,7 @@ namespace TKPCCC
             if (g.KqAnh.Count > 0) kq["anh"] = g.KqAnh;
             if (g.KqPdf.Count > 0) kq["pdf"] = g.KqPdf;
             if (g.KqNguon != null) kq["nguon"] = g.KqNguon;
+            if (g.KqVung.Count > 0) kq["vung_tu_dong"] = g.KqVung;
             kq["ban_ve"] = Path.GetFileName(doc.Name);
             return kq;
         }
@@ -351,6 +353,7 @@ namespace TKPCCC
                 case "rai": OpRai(g, o); break;     // cad/module/plugin/Rai.cs
                 case "tuyen": OpTuyen(g, o); break; // cad/module/plugin/Rai.cs
                 case "so_do": OpSoDo(g, o); break;  // cad/module/plugin/SoDo.cs
+                case "vung_tu_dong": OpVungTuDong(g, o); break; // cad/module/plugin/NhanVung.cs
                 // "anh" không ở đây: ThucHienSpec chạy nó sau khi commit (InAnh)
                 default: throw new System.Exception("không có thao tác \"" + ten + "\" (xem cad/skills/TU_VUNG.md)");
             }

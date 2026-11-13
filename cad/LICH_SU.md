@@ -355,3 +355,9 @@ CÒN (chưa làm, hết hạn mức):
 - Người dùng tự test (NETLOAD, `PCCC_RAI`, panel `PCCC_BLOCK`), gửi 4 ảnh (`ket_qua/cad_test/2026-11-13/`). Ghi 4 việc vào đầu `cad/TIEN_DO.md`: rải sai cách tường (6771 > 5250 mm)
   và tự lấy khoảng cách theo tiêu chuẩn; tự nhận diện trục/tường, click vùng để rải; làm lại giao diện panel Block; `PCCC_HELP` thành panel có sửa phím tắt.
   Dặn: chỉ ghi nhận, làm song song với việc dở ở phiên reset 5 giờ kế tiếp. Lệnh tắt máy hẹn trước đó đã huỷ để người dùng test.
+
+## 2026-11-13 (chiều) — 4 việc người dùng test 13/11, làm song song 3 phiên
+Người dùng bảo chạy song song dù hạn mức tuần 89 %. 3 phiên, mỗi phiên một worktree: việc 1 (`rai` phủ kín vùng lồi lõm, trị số TCVN 7568-14 từ `data/khoang_cach_rai.json`, dim chéo góc),
+việc 2 (`NhanVung.cs`, thao tác `vung_tu_dong`, `PCCC_RAI` bấm điểm không cần polyline), việc 3+4 (panel `PCCC_BLOCK` mới, `PCCC_HELP` thành panel sửa phím tắt lưu `phim_tat.txt`).
+Gộp cả 3 vào `main`: xung đột `TU_VUNG.md` (giữ dòng `rai` của việc 1, thêm dòng `vung_tu_dong`), `chay_thu.ps1` (phép kiểm việc 2 dời gốc x 2500000 → 2600000 vì trùng chỗ hình việc 1).
+Sau gộp: build đạt, `chay_thu.ps1`, `thu_mcp.ps1` TAT CA DAT. Chi tiết từng việc: `cad/tien_do/viec*.md`.
