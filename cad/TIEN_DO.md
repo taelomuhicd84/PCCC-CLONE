@@ -13,6 +13,11 @@ Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.m
   1. XONG tối 12/11 (19:30): `so_do` `bc` theo trang 11 (bỏ vạch tầng, zone xếp trên tủ, bó dây trái, số dưới ký hiệu, `kv` + `dt` diện tích bảo vệ, zone giám sát van,
      `du_phong`, `lien_dong`); ảnh `ket_qua/cad_mau/cad/so_do/anh/so_do_bc_2.png`, chưa review. CÒN: bảng ký hiệu, bảng tính ắc quy, nguồn/tiếp địa/điện thoại,
      cột còi đèn riêng; mũi tên liên động đang đi xuống (bản gốc đi ngang). Làm tiếp các phần này rồi review Opus max cho G5.
+  1b. NGƯỜI DÙNG DẶN 13/11: sơ đồ nguyên lý phải GIỐNG 100% quy cách trang 11 của hồ sơ thật (ký hiệu thật lấy từ nét PDF, bó dây FR, cột còi đèn, liên động ngang,
+     nguồn + tiếp địa + điện thoại, bảng ký hiệu, bảng tính ắc quy, ghi chú, tiêu đề); bản đơn giản bị chê "quá đơn điệu". Áp dụng cả khi người dùng có MẶT BẰNG CAD BÁO CHÁY:
+     đọc mặt bằng (`dem` theo zone, diện tích vùng) lấy số thiết bị, khu vực, diện tích từng zone rồi sinh sơ đồ. Nhãn cuối zone 3 dòng: Khu vực bảo vệ / Diện tích bảo vệ / Zone.
+     KÝ HIỆU thiết bị tuỳ người, tuỳ bản vẽ (dặn 13/11): sơ đồ dùng đúng block của bản vẽ/mặt bằng hoặc thư viện người dùng; "giống 100%" là bố cục, bảng, chữ, dây. Bảng ký hiệu
+     trên sơ đồ in lại chính các block đó. Ký hiệu lấy từ nét PDF mẫu chỉ làm bộ mặc định trong `PCCC_Blocks.dwg`.
   2. HỎI NGƯỜI DÙNG: sơ đồ sprinkler vẽ kiểu không gian trục đo như hồ sơ thật (việc lớn) hay giữ nguyên lý phẳng.
   3. Đọc thêm trang 46 (âm thanh), 58 (hút khói), 63 (cấp điện) khi làm các sơ đồ đó; trang 23 (không gian vách tường).
   4. GHI CHÚ còn lại của review 12/11c, 12/11d; `thu_gui.ps1` + thử `cad-ve`/`cad-kiem` khi AutoCAD có giao diện.

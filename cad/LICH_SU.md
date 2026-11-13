@@ -281,3 +281,11 @@ Chưa kiểm: các phép kiểm mới chưa chạy đột biến ngược trên 
 - Ví dụ `skills/vi_du/so_do_bc.json` đổi sang dạng mới; `chay_thu.ps1` thay 2 phép kiểm bố cục cũ bằng 3 phép mới (thứ tự zone, số dưới ký hiệu, diện tích/liên động/không cao độ): 71/71; `thu_mcp.ps1` TAT CA DAT; `build.bat` OK.
 - Thử: `ket_qua/cad_mau/cad/so_do/so_do_bc_2.json` → `.dwg`, ảnh `anh/so_do_bc_2.png` đã xem.
 - Còn: bảng ký hiệu riêng, bảng tính ắc quy (phụ lục C TCVN 7568-14), nguồn 220 V/24 V + tiếp địa + điện thoại, cột còi đèn riêng, liên động đi ngang như bản mẫu; số lượng ghi "2" (bản mẫu ghi "02").
+
+## 2026-11-13 — so_do bc: nhãn cuối zone 3 dòng
+Người dùng dặn chữ cuối mỗi zone (cạnh điện trở cuối dây) đúng 3 dòng: khu vực / `DIỆN TÍCH BẢO VỆ: xx m²` / `ZONE n` (vd `TẦNG 1 KARAOKE` / `DIỆN TÍCH BẢO VỆ: 88.11 m²` / `ZONE 1`).
+- `module/plugin/SoDo.cs`: khu vực = `kv`; zone trong tầng có tên mà `kv` chưa chứa tên tầng thì ghép "tên tầng + kv"; không `kv` thì lấy tên tầng. Thiếu `dt` bỏ dòng diện tích. Diện tích ghi dấu chấm thập phân như bản gốc (không dùng `So` kiểu VN). Dòng zone luôn có.
+- `test/chay_thu.ps1`: `so_do_bc2` đổi tầng B1 thành tầng `T1` 2 zone (`KARAOKE` dt 88.11; `T1 KHO` không dt) + 1 `doc` riêng; phép kiểm mới đọc lại đúng 3 dòng / 2 dòng; các phép kiểm cũ lọc tên zone ở bó dây theo x.
+- `knowledge/so-do-nguyen-ly.md`: sửa mô tả nhãn.
+Kiểm chứng: `chay_thu.ps1` TAT CA DAT (72 DAT), `thu_mcp.ps1` TAT CA DAT (9), `build.bat` OK.
+Bỏ theo lệnh điều phối (sẽ làm lại toàn bộ sơ đồ bc giống 100 % trang 11, ký hiệu lấy từ nét PDF): liên động ngang, nguồn 220 V / 24 V / tiếp địa, cột còi đèn, bảng ký hiệu; chưa sửa `vi_du/so_do_bc.json`, `TU_VUNG.md`, chưa vẽ lại ảnh `so_do_bc_3.png`. Bảng tính ắc quy: việc sau (thiếu dòng tĩnh / dòng báo cháy từng thiết bị).

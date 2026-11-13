@@ -234,7 +234,11 @@ namespace TKPCCC
                     Dictionary<string, object> zd = x as Dictionary<string, object>;
                     Dictionary<string, object> dem = zd == null ? null : Lay(zd, "dem") as Dictionary<string, object>;
                     if (dem == null || dem.Count == 0) throw new System.Exception(t.Ten + ": mỗi zone phải là {\"ten\",\"dem\":{mã:số}}");
-                    ZoneSoDo z = new ZoneSoDo { Ten = LayChu(zd, "ten", "ZONE " + (zone.Count + 1)), Kv = LayChu(zd, "kv", t.Ten), Dt = LaySo(zd, "dt", 0) };
+                    // Khu vực = kv; zone trong tầng có tên mà kv chưa có tên tầng thì ghép "tầng + kv"; không kv thì lấy tên tầng.
+                    string kvz = LayChu(zd, "kv", "");
+                    if (kvz == "") kvz = t.Ten;
+                    else if (t.Ten != "" && !kvz.ToUpperInvariant().Contains(t.Ten.ToUpperInvariant())) kvz = t.Ten + " " + kvz;
+                    ZoneSoDo z = new ZoneSoDo { Ten = LayChu(zd, "ten", "ZONE " + (zone.Count + 1)), Kv = kvz, Dt = LaySo(zd, "dt", 0) };
                     double nDau = 0;
                     foreach (KeyValuePair<string, object> kv in dem)
                     {
@@ -294,13 +298,14 @@ namespace TKPCCC
                     Them(g, ms);
                 }
                 DatSoDo(g, dtcd, new Point3d(xR, yz, 0), k, lBc);
-                string ghi = (zone[z].Kv != "" ? zone[z].Kv + (zone[z].Dt > 0 ? "\n" : "") : "") + (zone[z].Dt > 0 ? "DIỆN TÍCH BẢO VỆ " + zone[z].Ten + ": " + So(zone[z].Dt) + " m²" : "");
-                if (ghi != "")
-                {
-                    MText mg = TaoChu(g, new Point3d(xR + 400 * k, yz, 0), ghi, 0.7 * cao, 0, false, lBc);
-                    mg.Attachment = AttachmentPoint.MiddleLeft;
-                    Them(g, mg);
-                }
+                // Chữ cuối zone 3 dòng (người dùng dặn 13/11): khu vực / DIỆN TÍCH BẢO VỆ: xx m² / tên zone; thiếu kv hoặc dt thì bỏ dòng đó.
+                List<string> dong = new List<string>();
+                if (zone[z].Kv != "") dong.Add(zone[z].Kv);
+                if (zone[z].Dt > 0) dong.Add("DIỆN TÍCH BẢO VỆ: " + zone[z].Dt.ToString("0.##", CultureInfo.InvariantCulture) + " m²"); // dấu chấm như bản gốc trang 11
+                dong.Add(zone[z].Ten);
+                MText mg = TaoChu(g, new Point3d(xR + 400 * k, yz, 0), string.Join("\n", dong), 0.7 * cao, 0, false, lBc);
+                mg.Attachment = AttachmentPoint.MiddleLeft;
+                Them(g, mg);
             }
             if (duPhong != "") Them(g, TaoChu(g, new Point3d(xLast + 200 * k, yHang(nz) + 0.2 * cao, 0), duPhong, 0.8 * cao, 0, false, lBc));
             // Tên thiết bị trên đầu mỗi cột (thay bảng ký hiệu).

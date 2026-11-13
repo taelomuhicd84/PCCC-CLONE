@@ -62,7 +62,7 @@ Vẽ thử: `ket_qua/cad_mau/cad/so_do/so_do_bc.json` (2 tầng + mái, 3 zone, 
 ### Bố cục `bc` theo hồ sơ thật (sửa 2026-11-12, nguồn `cad/knowledge/mau-so-do-that.md`, trang 11)
 `{"op":"so_do","he":"bc","toi_da":25,"zone":[{"ten":"ZONE 1","kv":"KARAOKE","dt":88.11,"dem":{"BC_TOHOP":1,"BC_NHIET":12}},{"ten":"ZONE 10","kv":"PHÒNG BƠM","dem":{"SPR_VAN_OSY_DN100":9,"SPR_VAN_BD":2}}],"du_phong":"ZONE 13 - 15 DỰ PHÒNG","lien_dong":["KẾT NỐI VAN MFD"]}`
 - Lấy từ bản mẫu: không vạch tầng/cao độ; tủ dưới, zone xếp từ dưới lên; bó dây đứng bên trái rẽ vào từng zone; số lượng DƯỚI ký hiệu;
-  cuối hàng điện trở cuối dây + tên khu vực + "DIỆN TÍCH BẢO VỆ ZONE n: xx m²"; zone giám sát van (van OS&Y + FS, phòng bơm van báo động); dòng zone dự phòng; mũi tên liên động từ tủ.
+  cuối hàng điện trở cuối dây + chữ 3 dòng (người dùng dặn 13/11): khu vực / "DIỆN TÍCH BẢO VỆ: xx m²" (dấu chấm thập phân) / "ZONE n" — khu vực = `kv`, zone trong tầng có tên mà `kv` chưa chứa tên tầng thì ghép "tên tầng + kv", không `kv` thì lấy tên tầng; thiếu `dt` bỏ dòng diện tích; zone giám sát van (van OS&Y + FS, phòng bơm van báo động); dòng zone dự phòng; mũi tên liên động từ tủ.
 - Tự đặt (khác bản mẫu): mũi tên liên động đi từ ĐÁY tủ xuống (bản mẫu đi ngang từ cạnh phải tủ); tên thiết bị ghi trên đầu cột thay bảng ký hiệu;
   còi đèn không tách cột riêng bên phải; chưa có bảng tính ắc quy, nguồn 220 V / 24 V, tiếp địa, điện thoại.
 - `h` = khoảng cách hai hàng zone (mặc định 1500, tối thiểu 700 + 2 cỡ chữ). Thử: `ket_qua/cad_mau/cad/so_do/so_do_bc_2.json` (12 zone như trang 11, toi_da 32 như bản gốc).
