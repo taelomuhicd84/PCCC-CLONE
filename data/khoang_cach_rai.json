@@ -1,0 +1,28 @@
+{
+  "_ghi_chu": "Trị số rải thiết bị theo mã vật tư (đơn vị m), plugin CAD đọc khi thao tác rai / lệnh PCCC_RAI không có \"s\" hay \"buoc\". Mỗi dòng chép từ file nguyên văn ở cột nguon, không viết theo trí nhớ. s = khoảng cách tối đa giữa hai thiết bị; tuong = khoảng cách tối đa từ hàng thiết bị tới tường; tuong_min = tối thiểu; r = khoảng cách tối đa từ điểm bất kỳ tới thiết bị gần nhất (kích thước chéo góc); h_max = chiều cao trần tối đa của dòng này. Sprinkler (TCVN 7336) chưa có: chép bảng khoảng cách đầu phun nguyên văn vào knowledge/ trước rồi mới thêm dòng.",
+  "thiet_bi": [
+    {
+      "ma": ["BC_KHOI", "BC_KHOI_TRAN"],
+      "ten": "Đầu báo cháy khói kiểu điểm, trần phẳng",
+      "s": 10.2, "tuong": 5.1, "tuong_min": 0.5, "r": 7.2, "h_max": 15,
+      "can_cu": "TCVN 7568-14:2025 5.9.1.1.1, 5.9.1.1.2, 5.9.1.1.4 a)",
+      "nguon": "knowledge/tcvn7568-14-2025.md",
+      "nguyen_van": [
+        "5.9.1.1.1 ... Đối với khu vực có chiều cao trần từ 4 m đến 15 m, khoảng cách từ bộ phận cảm biến đến trần không quá 0,6 m. CHÚ THÍCH: Đối với khu vực có chiều cao trần lớn hơn 15 m có thể tham khảo các loại đầu báo cháy khác.",
+        "5.9.1.1.2 ... Đối với các trần phẳng, khoảng cách từ điểm bất kỳ trên trần phẳng đến đầu báo cháy gần nhất không vượt quá 7,2 m và khoảng cách giữa các đầu báo cháy không được vượt quá 10,2 m (xem Hình 2).",
+        "5.9.1.1.4 a) Khoảng cách từ hàng của đầu báo cháy gần nhất tới tường hoặc vách ngăn không được vượt quá 5,1 m và không nhỏ hơn 0,5 m (xem Hình 2)."
+      ]
+    },
+    {
+      "ma": ["BC_NHIET"],
+      "ten": "Đầu báo cháy nhiệt kiểu điểm, trần phẳng",
+      "s": 7.2, "tuong": 3.6, "tuong_min": 0.3, "r": 5.1,
+      "can_cu": "TCVN 7568-14:2025 5.9.2.1.2, 5.9.2.1.4 a)",
+      "nguon": "knowledge/tcvn7568-14-2025.md",
+      "nguyen_van": [
+        "5.9.2.1.2 ... Đối với các bề mặt bằng phẳng, khoảng cách từ bất cứ điểm nào trên bề mặt bằng phẳng đến đầu báo cháy gần nhất cũng không được vượt quá 5,1 m và khoảng cách giữa các đầu báo cháy không được vượt quá 7,2 m (xem Hình 7).",
+        "5.9.2.1.4 a) Khoảng cách từ hàng đầu báo cháy gần nhất tới tường hoặc vách ngăn nằm trong khoảng từ 0,3 m đến 3,6 m (xem Hình 7)."
+      ]
+    }
+  ]
+}
