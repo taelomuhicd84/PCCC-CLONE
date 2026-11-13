@@ -102,23 +102,31 @@ namespace TKPCCC
             }
         }
 
+        /// Mọi lệnh gõ tay: { tên, việc làm, cách dùng }. Thêm lệnh mới thì thêm một dòng ở đây (bảng PCCC_HELP đọc mảng này).
+        public static readonly string[][] DS_LENH = {
+            new[] { "PCCC_HELP", "Bảng mọi lệnh PCCC, tìm lệnh, sửa phím tắt", "Gõ chữ vào ô tìm; sửa ô Phím tắt rồi Enter là lưu cho lần sau" },
+            new[] { "PCCC_BLOCK", "Bảng block PCCC: ký hiệu, tên, số lượng trong bản vẽ", "Bấm đúp hoặc nút xanh để đặt, nút cam để rải; chỉ có trong AutoCAD có giao diện" },
+            new[] { "PCCC_LIB", "Nạp, cập nhật block PCCC từ PCCC_Blocks.dwg", "Gõ lệnh; Taomoi = cất bản cũ, tạo lại thư viện mặc định" },
+            new[] { "PCCC_DAT", "Đặt thiết bị theo mã vật tư", "Nhập mã (? = danh sách, gõ một phần tên hoặc mã để tìm), bấm điểm đặt" },
+            new[] { "PCCC_ONG", "Vẽ ống, dây trên layer PCCC_<mã>", "Nhập mã ống, dây (vd ONG_DN50), bấm các điểm" },
+            new[] { "PCCC_RAI", "Rải thiết bị theo lưới trong phòng", "Nhập mã, bấm một điểm trong phòng hoặc chọn polyline kín, nhập bước tối đa S và diện tích bảo vệ" },
+            new[] { "PCCC_TUYEN", "Ống nhánh sprinkler kiểu xương cá", "Chọn đầu phun, chọn ống chính, bấm vị trí ống góp" },
+            new[] { "PCCC_THEMBLOCK", "Thêm block của bạn (kể cả block động) vào thư viện", "Chọn block, nhập mã vật tư mới, tên, hệ, đơn vị tính" },
+            new[] { "PCCC_GAN", "Gán block có sẵn trong bản vẽ vào mã vật tư", "Chọn block rồi nhập mã: bóc được bản vẽ không vẽ bằng plugin" },
+            new[] { "PCCC_BOC", "Bóc khối lượng, gửi lên web báo giá", "Chọn vùng (Enter = cả bản vẽ), tách theo tầng, khu nếu muốn" },
+            new[] { "PCCC_BANG", "Chèn bảng thống kê vào bản vẽ", "Chạy PCCC_BOC trước (bảng lấy kết quả gần nhất), bấm điểm chèn" },
+            new[] { "PCCC_VUNGBV", "Vẽ vùng bảo vệ bán kính R quanh thiết bị", "Nhập mã, bán kính R; báo thiết bị đứng lẻ" },
+            new[] { "PCCC_SPEC", "Chạy một file spec JSON (các thao tác như cad_chay)", "Nhập đường dẫn file .json; kết quả ghi <tên>.kq.json cạnh file" } };
+
+        /// TKPCCC.UI.dll gán khi nạp trong AutoCAD có giao diện: PCCC_HELP mở bảng lệnh thay cho in chữ.
+        public static Action MoBangLenh;
+
         static void TroGiup()
         {
+            if (MoBangLenh != null) { MoBangLenh(); return; }
             Editor ed = AcApp.DocumentManager.MdiActiveDocument.Editor;
-            string[] ds = {
-                "PCCC_LIB     Nạp/cập nhật block PCCC từ PCCC_Blocks.dwg (Taomoi = cất bản cũ, tạo lại thư viện mặc định)",
-                "PCCC_DAT     Đặt thiết bị theo mã vật tư (? = danh sách, gõ 1 phần tên/mã để tìm)",
-                "PCCC_ONG     Vẽ ống/dây trên layer PCCC_<mã> (vd PCCC_ONG_DN50)",
-                "PCCC_RAI     Rải thiết bị theo lưới trong phòng: bấm một điểm trong phòng hoặc chọn polyline kín, nhập bước tối đa S và diện tích bảo vệ",
-                "PCCC_TUYEN   Ống nhánh sprinkler kiểu xương cá: chọn đầu phun, chọn ống chính, bấm vị trí ống góp",
-                "PCCC_BLOCK   Mở bảng block PCCC (ảnh, mã, tên, hệ): bấm đúp để đặt thiết bị; chỉ có trong AutoCAD có giao diện",
-                "PCCC_THEMBLOCK  Thêm một block của bạn (kể cả block động) vào thư viện dưới một mã vật tư mới",
-                "PCCC_GAN     Gán block có sẵn trong bản vẽ -> mã vật tư (bóc được bản vẽ không vẽ bằng plugin)",
-                "PCCC_BOC     Bóc khối lượng (tách theo tầng/khu nếu muốn), gửi lên web báo giá",
-                "PCCC_BANG    Chèn bảng thống kê (kết quả PCCC_BOC gần nhất) vào bản vẽ",
-                "PCCC_VUNGBV  Vẽ vùng bảo vệ bán kính R quanh thiết bị, báo thiết bị đứng lẻ" };
             ed.WriteMessage("\n[TKPCCC] Thư mục dữ liệu: " + ThuMuc);
-            foreach (string s in ds) ed.WriteMessage("\n  " + s);
+            foreach (string[] l in DS_LENH) ed.WriteMessage("\n  " + l[0].PadRight(15) + l[1] + ": " + l[2]);
         }
 
         // ---------- Danh mục, tiện ích ----------

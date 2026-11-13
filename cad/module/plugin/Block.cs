@@ -138,6 +138,29 @@ namespace TKPCCC
             return dm.vat_tu.Where(v => v.loai == "block").ToList();
         }
 
+        /// Cho bảng PCCC_BLOCK: số lượng theo mã vật tư trong Model của bản vẽ (thiết bị: cái, ống/dây: m), cùng cách đếm với PCCC_BOC.
+        public static Dictionary<string, double> DemBanVe(Database db)
+        {
+            BoiCanh bc = new BoiCanh();
+            bc.Dm = DocDanhMuc();
+            bc.Alias = DocAlias();
+            bc.Khu = new List<Khu>();
+            bc.HeSo = HeSoMet(db);
+            bc.Kq = new KetQua();
+            using (Transaction tr = db.TransactionManager.StartTransaction())
+            {
+                bc.Tr = tr;
+                BlockTable bt = (BlockTable)tr.GetObject(db.BlockTableId, OpenMode.ForRead);
+                foreach (ObjectId id in (BlockTableRecord)tr.GetObject(bt[BlockTableRecord.ModelSpace], OpenMode.ForRead))
+                {
+                    Entity e = tr.GetObject(id, OpenMode.ForRead) as Entity;
+                    if (e != null) Duyet(e, Matrix3d.Identity, 0, 1, bc);
+                }
+                tr.Commit();
+            }
+            return bc.Kq.Tong;
+        }
+
         // ---------- Thêm block của người dùng ----------
 
         /// Hỏi một chuỗi. Trả null khi người dùng huỷ (Esc), chuỗi rỗng khi chỉ Enter.

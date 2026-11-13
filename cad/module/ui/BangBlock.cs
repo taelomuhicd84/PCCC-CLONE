@@ -1,10 +1,12 @@
-// Bảng block PCCC (lệnh PCCC_BLOCK): PaletteSet liệt kê block của thư viện kèm ảnh, mã, tên, hệ. Bấm đúp một dòng = PCCC_DAT <mã>.
-// DLL riêng (TKPCCC.UI.dll) vì cần acmgd.dll, thứ accoreconsole không nạp được. KHÔNG xử lý bản vẽ ở đây: danh mục, ảnh xem trước
-// và việc thêm block do TKPCCC.Cad.dll làm (cad/module/plugin/Block.cs), nhờ vậy phần đó thử được bằng cad/test/chay_thu.ps1.
+// Bảng block PCCC (lệnh PCCC_BLOCK): PaletteSet liệt kê block của thư viện theo nhóm hệ, kèm ký hiệu, tên, đơn vị, số lượng đang có trong bản vẽ.
+// Bấm đúp một dòng hoặc nút tròn xanh = PCCC_DAT <mã>; nút tròn cam = PCCC_RAI <mã>.
+// DLL riêng (TKPCCC.UI.dll) vì cần acmgd.dll, thứ accoreconsole không nạp được. KHÔNG xử lý bản vẽ ở đây: danh mục, ảnh xem trước,
+// đếm và việc thêm block do TKPCCC.Cad.dll làm (cad/module/plugin/Block.cs), nhờ vậy phần đó thử được bằng cad/test/chay_thu.ps1.
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.Runtime;
@@ -12,13 +14,23 @@ using Autodesk.AutoCAD.Windows;
 using AcApp = Autodesk.AutoCAD.ApplicationServices.Application;
 
 [assembly: CommandClass(typeof(TKPCCC.LenhUi))]
+[assembly: ExtensionApplication(typeof(TKPCCC.KhoiDongUi))]
 
 namespace TKPCCC
 {
     public class LenhUi
     {
-        static PaletteSet bang;
-        static BangBlock noiDung;
+        static PaletteSet bangBlock, bangLenh;
+        static BangBlock ndBlock;
+        static BangLenh ndLenh;
+
+        static PaletteSet TaoBang(string ten, string guid, string trang, Control nd)
+        {
+            PaletteSet b = new PaletteSet(ten, new Guid(guid));
+            b.MinimumSize = new Size(560, 360);
+            b.Add(trang, nd);
+            return b;
+        }
 
         [CommandMethod("PCCC_BLOCK")]
         public void MoBang()
@@ -26,72 +38,142 @@ namespace TKPCCC
             Document doc = AcApp.DocumentManager.MdiActiveDocument;
             try
             {
-                if (bang == null)
+                if (bangBlock == null)
                 {
-                    noiDung = new BangBlock();
-                    bang = new PaletteSet("TKPCCC - Block PCCC", new Guid("5D3C1E0A-7B42-4C9E-9A61-2F8E4B7D1C35"));
-                    bang.MinimumSize = new Size(280, 300);
-                    bang.Add("Block", noiDung);
+                    ndBlock = new BangBlock();
+                    bangBlock = TaoBang("TKPCCC - Block PCCC", "5D3C1E0A-7B42-4C9E-9A61-2F8E4B7D1C35", "Block", ndBlock);
+                    // Đổi bản vẽ thì số lượng đổi theo.
+                    AcApp.DocumentManager.DocumentActivated += delegate { if (bangBlock.Visible) GiaoDien.An(ndBlock.DemLai); };
                 }
-                int n = noiDung.Nap();
-                bang.Visible = true;
+                int n = ndBlock.Nap();
+                bangBlock.Visible = true;
                 doc.Editor.WriteMessage("\n[TKPCCC] PCCC_BLOCK: " + n + " block trong bảng. Bấm đúp một dòng để đặt thiết bị.");
             }
             catch (System.Exception ex) { doc.Editor.WriteMessage("\n[TKPCCC] Lỗi: " + ex.Message); }
         }
+
+        /// PCCC_HELP (lệnh ở TKPCCC.Cad.dll) gọi qua Lenh.MoBangLenh.
+        public static void MoBangLenh()
+        {
+            if (bangLenh == null)
+            {
+                ndLenh = new BangLenh();
+                bangLenh = TaoBang("TKPCCC - Lệnh PCCC", "A8E4F1C2-3D6B-4E7A-9C15-6B2D8F0E4A71", "Lệnh", ndLenh);
+            }
+            ndLenh.Nap();
+            bangLenh.Visible = true;
+        }
+    }
+
+    /// Nạp cùng TKPCCC.UI.dll: PCCC_HELP mở bảng lệnh, đăng ký phím tắt người dùng đã lưu.
+    public class KhoiDongUi : IExtensionApplication
+    {
+        public void Initialize()
+        {
+            Lenh.MoBangLenh = LenhUi.MoBangLenh;
+            string loi = PhimTat.Nap();
+            Document doc = AcApp.DocumentManager.MdiActiveDocument;
+            if (loi != "" && doc != null) doc.Editor.WriteMessage("\n[TKPCCC] Phím tắt bỏ qua: " + loi);
+        }
+
+        public void Terminate() { }
     }
 
     public class BangBlock : UserControl
     {
-        readonly ListView ds = new ListView();
+        readonly DataGridView ds = GiaoDien.Bang();
         readonly TextBox loc = new TextBox();
-        readonly ImageList anh = new ImageList();
+        readonly ComboBox chonHe = new ComboBox();
+        readonly CheckBox chiCo = new CheckBox();
+        readonly PictureBox xem = new PictureBox();
+        readonly Label tenXem = new Label();
+        readonly OTong tong = new OTong("Thiết bị trong bản vẽ");
+        readonly NutBo nutDat = new NutBo("Đặt thiết bị", GiaoDien.XanhDam);
+        readonly NutBo nutRai = new NutBo("Rải theo lưới", GiaoDien.XanhDam);
+        readonly Dictionary<string, Image> anh = new Dictionary<string, Image>();
         List<VatTu> tatCa = new List<VatTu>();
         Dictionary<string, string> he = new Dictionary<string, string>();
+        Dictionary<string, double> soLuong = new Dictionary<string, double>();
+
+        const int C_NUT = 0, C_ANH = 1, C_TEN = 2, C_DVT = 3, C_SL = 4;
 
         public BangBlock()
         {
-            anh.ImageSize = new Size(40, 40);
-            anh.ColorDepth = ColorDepth.Depth32Bit;
-            ds.View = View.Details;
-            ds.FullRowSelect = true;
-            ds.MultiSelect = false;
-            ds.HideSelection = false;
-            ds.SmallImageList = anh;
-            ds.Columns.Add("Mã", 170);
-            ds.Columns.Add("Tên", 230);
-            ds.Columns.Add("Hệ", 150);
-            ds.Dock = DockStyle.Fill;
-            ds.DoubleClick += delegate { Dat(); };
-            ds.KeyDown += delegate(object s, KeyEventArgs e) { if (e.KeyCode == Keys.Enter) Dat(); };
-            loc.Dock = DockStyle.Top;
+            Font = GiaoDien.Chu;
+            BackColor = Color.White;
+
+            ds.ReadOnly = true;
+            ds.RowTemplate.Height = 50;
+            ds.Columns.Add(GiaoDien.Cot("", 62, true));
+            DataGridViewImageColumn cAnh = new DataGridViewImageColumn();
+            cAnh.HeaderText = "Ký hiệu";
+            cAnh.Width = 62;
+            cAnh.ImageLayout = DataGridViewImageCellLayout.Zoom;
+            cAnh.DefaultCellStyle.NullValue = null; // block chưa có ảnh: ô trống, không hiện dấu X đỏ
+            cAnh.DefaultCellStyle.Padding = new Padding(4);
+            ds.Columns.Add(cAnh);
+            DataGridViewTextBoxColumn cTen = GiaoDien.Cot("Tên thiết bị", 200, false);
+            cTen.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            ds.Columns.Add(cTen);
+            ds.Columns.Add(GiaoDien.Cot("Đơn vị", 58, true));
+            DataGridViewTextBoxColumn cSl = GiaoDien.Cot("Số lượng", 70, true);
+            cSl.DefaultCellStyle.Font = GiaoDien.Dam;
+            ds.Columns.Add(cSl);
+            ds.RowPrePaint += VeNhom;
+            ds.CellPainting += VeO;
+            ds.CellMouseClick += BamO;
+            ds.CellToolTipTextNeeded += delegate(object s, DataGridViewCellToolTipTextNeededEventArgs e)
+            {
+                if (e.ColumnIndex == C_NUT && e.RowIndex >= 0) e.ToolTipText = "Xanh: đặt thiết bị (PCCC_DAT)\nCam: rải theo lưới trong phòng (PCCC_RAI)";
+            };
+            ds.CellDoubleClick += delegate(object s, DataGridViewCellEventArgs e) { if (e.RowIndex >= 0 && e.ColumnIndex != C_NUT) Dat(); };
+            ds.KeyDown += delegate(object s, KeyEventArgs e) { if (e.KeyCode == Keys.Enter) { Dat(); e.Handled = true; } };
+            ds.SelectionChanged += delegate { XemTruoc(); };
+
             loc.TextChanged += delegate { Loc(); };
 
-            Button them = new Button(), napLai = new Button();
-            them.Text = "Thêm từ bản vẽ";
-            them.AutoSize = true;
-            them.Click += delegate { GuiLenh("PCCC_THEMBLOCK\n", "PCCC_THEMBLOCK"); };
-            napLai.Text = "Nạp lại";
-            napLai.AutoSize = true;
-            napLai.Click += delegate { NapCoBaoLoi(); };
-            FlowLayoutPanel nut = new FlowLayoutPanel();
-            nut.Dock = DockStyle.Bottom;
-            nut.AutoSize = true;
-            nut.Controls.Add(them);
-            nut.Controls.Add(napLai);
-
             // Thứ tự Add quyết định cách xếp Dock: điều khiển Fill phải thêm trước.
-            Controls.Add(ds);
-            Controls.Add(loc);
-            Controls.Add(nut);
+            Panel trai = new Panel();
+            trai.Dock = DockStyle.Fill;
+            trai.Controls.Add(ds);
+            trai.Controls.Add(GiaoDien.OTim(loc, "Tìm block theo mã, tên hoặc hệ..."));
+            trai.Controls.Add(GiaoDien.TieuDe("Thư viện block PCCC"));
+            Controls.Add(trai);
+
+            FlowLayoutPanel hd = GiaoDien.KhungHanhDong(this, 190);
+            nutDat.Click += delegate { Dat(); };
+            nutRai.Click += delegate { Rai(); };
+            NutBo them = new NutBo("Thêm từ bản vẽ", GiaoDien.XanhDam);
+            them.Click += delegate { GiaoDien.GuiLenh("PCCC_THEMBLOCK\n", "PCCC_THEMBLOCK", delegate { Nap(); }); };
+            NutBo dem = new NutBo("Đếm lại", GiaoDien.XanhDam);
+            dem.Click += delegate { GiaoDien.An(DemLai); };
+            NutBo napLai = new NutBo("Nạp lại thư viện", GiaoDien.XanhDam);
+            napLai.Click += delegate { GiaoDien.An(delegate { Nap(); }); };
+            foreach (NutBo b in new[] { nutDat, nutRai, them, dem, napLai }) GiaoDien.Them(hd, b, 32);
+            chonHe.DropDownStyle = ComboBoxStyle.DropDownList;
+            chonHe.SelectedIndexChanged += delegate { Loc(); };
+            GiaoDien.Them(hd, chonHe, 0);
+            chiCo.Text = "Chỉ block có trong bản vẽ";
+            chiCo.CheckedChanged += delegate { Loc(); };
+            GiaoDien.Them(hd, chiCo, 24);
+            xem.SizeMode = PictureBoxSizeMode.Zoom;
+            xem.BorderStyle = BorderStyle.FixedSingle;
+            xem.BackColor = Color.White;
+            GiaoDien.Them(hd, xem, 150);
+            tenXem.Font = GiaoDien.Dam;
+            tenXem.ForeColor = GiaoDien.ChuDam;
+            tenXem.TextAlign = ContentAlignment.TopCenter;
+            GiaoDien.Them(hd, tenXem, 34);
+            GiaoDien.Them(hd, tong, 80);
         }
 
-        /// Đọc lại danh mục + ảnh xem trước từ TKPCCC.Cad.dll. Trả số block.
+        /// Đọc lại danh mục + ảnh xem trước từ TKPCCC.Cad.dll, đếm bản vẽ. Trả số block.
         public int Nap()
         {
             string thuMucAnh;
             tatCa = Lenh.DanhMucBlock(out he, out thuMucAnh);
-            anh.Images.Clear();
+            foreach (Image im in anh.Values) im.Dispose();
+            anh.Clear();
             foreach (VatTu v in tatCa)
             {
                 string f = Path.Combine(thuMucAnh, v.ma + ".png");
@@ -99,63 +181,157 @@ namespace TKPCCC
                 // Đọc qua bộ nhớ để không giữ khoá file: PCCC_LIB, PCCC_THEMBLOCK còn vẽ lại ảnh.
                 using (MemoryStream ms = new MemoryStream(File.ReadAllBytes(f)))
                 using (Image im = Image.FromStream(ms))
-                    anh.Images.Add(v.ma, new Bitmap(im));
+                    anh[v.ma] = new Bitmap(im);
             }
-            Loc();
+            string cu = chonHe.SelectedIndex > 0 ? (string)chonHe.SelectedItem : null;
+            chonHe.Items.Clear();
+            chonHe.Items.Add("Tất cả hệ");
+            foreach (string h in tatCa.Select(TenHe).Distinct()) chonHe.Items.Add(h);
+            chonHe.SelectedIndex = cu != null && chonHe.Items.Contains(cu) ? chonHe.Items.IndexOf(cu) : 0; // gọi Loc()
+            DemLai();
             return tatCa.Count;
         }
 
-        void NapCoBaoLoi()
+        /// Đếm lại số lượng theo mã trong bản vẽ đang mở.
+        public void DemLai()
         {
-            try { Nap(); }
-            catch (System.Exception ex) { MessageBox.Show(ex.Message, "TKPCCC"); }
+            Document doc = AcApp.DocumentManager.MdiActiveDocument;
+            soLuong = new Dictionary<string, double>();
+            if (doc != null)
+                using (doc.LockDocument())
+                    soLuong = Lenh.DemBanVe(doc.Database);
+            Loc();
         }
 
-        /// Lọc theo ô tìm: khớp một phần mã, tên hoặc tên hệ (không phân biệt hoa thường).
+        string TenHe(VatTu v)
+        {
+            string t;
+            return he.TryGetValue(v.he ?? "", out t) ? t : (v.he ?? "");
+        }
+
+        double SoLuong(VatTu v)
+        {
+            double n;
+            soLuong.TryGetValue(v.ma, out n);
+            return n;
+        }
+
+        /// Lọc theo ô tìm (một phần mã, tên hoặc tên hệ, không phân biệt hoa thường), hệ đang chọn, ô "chỉ block có trong bản vẽ".
         void Loc()
         {
+            VatTu dangChon = Chon();
             string k = loc.Text.Trim().ToLowerInvariant();
-            ds.BeginUpdate();
-            ds.Items.Clear();
-            foreach (VatTu v in tatCa)
+            string heChon = chonHe.SelectedIndex > 0 ? (string)chonHe.SelectedItem : null;
+            ds.SuspendLayout();
+            ds.Rows.Clear();
+            int soDong = 0;
+            double tongSl = 0;
+            int soLoai = 0;
+            foreach (IGrouping<string, VatTu> nhom in tatCa.GroupBy(TenHe))
             {
-                string tenHe;
-                if (!he.TryGetValue(v.he ?? "", out tenHe)) tenHe = v.he ?? "";
-                if (k != "" && !(v.ma + " " + v.ten + " " + tenHe).ToLowerInvariant().Contains(k)) continue;
-                ds.Items.Add(new ListViewItem(new string[] { v.ma, v.ten, tenHe }, v.ma));
+                List<VatTu> hien = nhom.Where(v => (heChon == null || nhom.Key == heChon)
+                    && (k == "" || (v.ma + " " + v.ten + " " + nhom.Key).ToLowerInvariant().Contains(k))
+                    && (!chiCo.Checked || SoLuong(v) > 0)).ToList();
+                if (hien.Count == 0) continue;
+                int r = ds.Rows.Add();
+                ds.Rows[r].Tag = nhom.Key + "  (" + hien.Count + ")";
+                ds.Rows[r].Height = 26;
+                foreach (VatTu v in hien)
+                {
+                    double sl = SoLuong(v);
+                    Image im;
+                    anh.TryGetValue(v.ma, out im);
+                    r = ds.Rows.Add("", im, v.ten, v.dvt ?? "", sl > 0 ? sl.ToString("0.##") : "0");
+                    DataGridViewRow d = ds.Rows[r];
+                    d.Tag = v;
+                    d.Cells[C_SL].Style.ForeColor = sl > 0 ? GiaoDien.Do : GiaoDien.ChuMo;
+                    if (v == dangChon) d.Selected = true;
+                    soDong++;
+                    tongSl += sl;
+                    if (sl > 0) soLoai++;
+                }
             }
-            ds.EndUpdate();
+            if (Chon() == null) ChonDongDau();
+            ds.ResumeLayout();
+            ds.AccessibleName = "Block: " + soDong; // thu_gui.ps1 đọc số dòng qua UI Automation
+            tong.Dat(tongSl.ToString("0.##"), soLoai + " loại / " + tatCa.Count + " block thư viện");
+            XemTruoc();
+        }
+
+        void ChonDongDau()
+        {
+            ds.ClearSelection();
+            foreach (DataGridViewRow d in ds.Rows)
+                if (d.Tag is VatTu) { d.Selected = true; ds.CurrentCell = d.Cells[C_TEN]; return; }
+        }
+
+        VatTu Chon()
+        {
+            return ds.SelectedRows.Count > 0 ? ds.SelectedRows[0].Tag as VatTu : null;
+        }
+
+        void XemTruoc()
+        {
+            VatTu v = Chon();
+            Image im = null;
+            if (v != null) anh.TryGetValue(v.ma, out im);
+            xem.Image = im;
+            tenXem.Text = v == null ? "" : v.ma;
+            nutDat.Enabled = nutRai.Enabled = v != null;
+        }
+
+        /// Dòng tiêu đề nhóm: dải nền xanh suốt chiều ngang, chữ trắng đậm.
+        void VeNhom(object s, DataGridViewRowPrePaintEventArgs e)
+        {
+            string ten = ds.Rows[e.RowIndex].Tag as string;
+            if (ten == null) return;
+            Rectangle r = new Rectangle(e.RowBounds.X, e.RowBounds.Y, ds.Columns.GetColumnsWidth(DataGridViewElementStates.Visible), e.RowBounds.Height);
+            using (SolidBrush b = new SolidBrush(GiaoDien.Xanh)) e.Graphics.FillRectangle(b, r);
+            r.X += 8;
+            TextRenderer.DrawText(e.Graphics, ten, GiaoDien.Dam, r, Color.White, TextFormatFlags.VerticalCenter | TextFormatFlags.Left);
+            e.Handled = true;
+        }
+
+        /// Cột nút: hai nút tròn màu; cột tên: tên đậm + mã nhỏ màu xám bên dưới.
+        void VeO(object s, DataGridViewCellPaintingEventArgs e)
+        {
+            if (e.RowIndex < 0 || (e.ColumnIndex != C_NUT && e.ColumnIndex != C_TEN)) return;
+            VatTu v = ds.Rows[e.RowIndex].Tag as VatTu;
+            if (v == null) return;
+            e.PaintBackground(e.ClipBounds, (e.State & DataGridViewElementStates.Selected) != 0);
+            Rectangle o = e.CellBounds;
+            if (e.ColumnIndex == C_NUT)
+            {
+                GiaoDien.Tron(e.Graphics, o.X + 6, o.Y + o.Height / 2, GiaoDien.XanhLa, "+");
+                GiaoDien.Tron(e.Graphics, o.X + 33, o.Y + o.Height / 2, GiaoDien.Cam, "R");
+            }
+            else
+            {
+                Rectangle tren = new Rectangle(o.X + 4, o.Y + 6, o.Width - 8, o.Height / 2 - 4);
+                Rectangle duoi = new Rectangle(o.X + 4, o.Y + o.Height / 2 + 1, o.Width - 8, o.Height / 2 - 6);
+                TextRenderer.DrawText(e.Graphics, v.ten, GiaoDien.Dam, tren, GiaoDien.ChuDam, TextFormatFlags.Left | TextFormatFlags.Bottom | TextFormatFlags.EndEllipsis);
+                TextRenderer.DrawText(e.Graphics, v.ma, GiaoDien.Nho, duoi, GiaoDien.ChuMo, TextFormatFlags.Left | TextFormatFlags.Top | TextFormatFlags.EndEllipsis);
+            }
+            e.Handled = true;
+        }
+
+        void BamO(object s, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex != C_NUT || !(ds.Rows[e.RowIndex].Tag is VatTu)) return;
+            if (e.X >= 4 && e.X <= 30) Dat();
+            else if (e.X >= 31 && e.X <= 58) Rai();
         }
 
         void Dat()
         {
-            if (ds.SelectedItems.Count > 0) GuiLenh("PCCC_DAT\n" + ds.SelectedItems[0].Text + "\n", null);
+            VatTu v = Chon();
+            if (v != null) GiaoDien.GuiLenh("PCCC_DAT\n" + v.ma + "\n", "PCCC_DAT", DemLai);
         }
 
-        /// Gửi lệnh cho bản vẽ đang mở. napSau = tên lệnh mà khi nó kết thúc thì nạp lại bảng (thêm block xong phải thấy block mới).
-        void GuiLenh(string lenh, string napSau)
+        void Rai()
         {
-            Document doc = AcApp.DocumentManager.MdiActiveDocument;
-            if (doc == null) return;
-            if (napSau != null)
-            {
-                CommandEventHandler xong = null;
-                xong = delegate(object s, CommandEventArgs e)
-                {
-                    if (e.GlobalCommandName != napSau) return;
-                    doc.CommandEnded -= xong;
-                    doc.CommandCancelled -= xong;
-                    doc.CommandFailed -= xong;
-                    NapCoBaoLoi();
-                };
-                doc.CommandEnded += xong;
-                doc.CommandCancelled += xong;
-                doc.CommandFailed += xong;
-            }
-            // \x03\x03 = Esc hai lần: huỷ lệnh đang dở trước khi chạy lệnh mới.
-            doc.SendStringToExecute("\x03\x03" + lenh, true, false, true);
-            try { Autodesk.AutoCAD.Internal.Utils.SetFocusToDwgView(); } // trả bàn phím về vùng vẽ để bấm điểm, gõ tiếp
-            catch (System.Exception) { }
+            VatTu v = Chon();
+            if (v != null) GiaoDien.GuiLenh("PCCC_RAI\n" + v.ma + "\n", "PCCC_RAI", DemLai);
         }
     }
 }
