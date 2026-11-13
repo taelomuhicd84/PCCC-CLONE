@@ -339,3 +339,12 @@ CÒN (chưa làm, hết hạn mức):
 - Ảnh `ket_qua/cad_mau/cad/so_do/anh/so_do_bc_3.png`, `_bang.png`, `_zone.png` vẽ lại (accoreconsole, spec `so_do_bc_3.json`).
 - Kiểm chứng: `chay_thu.ps1` TAT CA DAT, `thu_mcp.ps1` TAT CA DAT, `build.bat` OK.
 - CHƯA LÀM (hết hạn mức): việc kế (1) dòng ký hiệu "ĐẦU BÁO KHÓI KIỂU ĐIỂM TRÊN TRẦN" (mã mới trong `data/vat_tu.json`, hình từ PDF vào `cad/data/ky_hieu/hinh_bc.json`, `vi_du/so_do_bc.json` zone 4, 9 dùng mã đó).
+
+## 2026-11-13 — so_do bc: dòng ký hiệu "ĐẦU BÁO KHÓI KIỂU ĐIỂM TRÊN TRẦN" (việc kế 1)
+- `data/vat_tu.json`: mã mới `BC_KHOI_TRAN` ("Đầu báo khói kiểu điểm trên trần", ký hiệu S, cùng kiểu dòng `BC_KHOI`).
+- `hinh_tu_pdf.py`: hộp `BC_KHOI_TRAN` (55, 67, 75, 86) pt trang 11 (khung vuông 12 pt + vòng tròn + chữ S), gốc tâm vòng tròn; chạy lại ra `cad/data/ky_hieu/hinh_bc.json` (các mã cũ không đổi).
+- `SoDo.cs`: `THU_TU_KY_HIEU` thêm `BC_KHOI_TRAN` sau `BC_NHIET` (thứ tự như trang 11). Tỉ lệ ký hiệu dùng mặc định 1,75 như đầu báo.
+- `cad/skills/vi_du/so_do_bc.json`: zone 4, 9 dùng `BC_KHOI_TRAN` + `ten_tb`. Không dùng `PCCC_LIB`: block chưa có trong thư viện thì plugin tự tạo từ `hinh_bc.json`.
+- `cad/test/chay_thu.ps1`: thêm `doc chu` cột trái bảng ký hiệu và phép kiểm "bang ky hieu co dong DAU BAO KHOI KIEU DIEM TREN TRAN".
+- Ảnh `ket_qua/cad_mau/cad/so_do/anh/so_do_bc_3.png`, `_bang.png`, `_zone.png` vẽ lại (spec `so_do_bc_3.json` lấy op so_do từ ví dụ mới).
+- Kiểm chứng: `build.bat` OK, `chay_thu.ps1` TAT CA DAT, `thu_mcp.ps1` TAT CA DAT. Chưa chạy `npm test` (vat_tu.json thêm 1 dòng).

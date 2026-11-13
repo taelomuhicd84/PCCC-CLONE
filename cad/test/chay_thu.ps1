@@ -177,7 +177,7 @@ Copy-Item "$GOC\cad\skills\vi_du\so_do.json" "$T\so_do.json"
 # so_do he bc (vi du so_do_bc.json = trang 11 ho so that: 12 zone + du phong, bang tinh nguon): them doc layer day + doc chu vung bang tinh.
 # goi loi: zone 26 dau bao > toi_da 25, va thieu toi_da -> 2 loi, khong ve.
 [IO.File]::WriteAllText("$T\so_do_bc.json", ([IO.File]::ReadAllText("$GOC\cad\skills\vi_du\so_do_bc.json") -replace '\{"op":"dem"\}\]\}\s*$',
-  '{"op":"dem"},{"op":"doc","gi":"layer","l":"PCCC_SODO_DAY*"},{"op":"doc","gi":"chu","l":"PCCC_SODO_BC","hop":[-16600,8300,-700,15800]},{"op":"doc","gi":"chu","l":"PCCC_SODO_BC"}]}'))
+  '{"op":"dem"},{"op":"doc","gi":"layer","l":"PCCC_SODO_DAY*"},{"op":"doc","gi":"chu","l":"PCCC_SODO_BC","hop":[-16600,8300,-700,15800]},{"op":"doc","gi":"chu","l":"PCCC_SODO_BC"},{"op":"doc","gi":"chu","l":"PCCC_SODO_BC","hop":[-17500,15800,-8700,24500]}]}'))
 # Review 13/11 NEN SUA 2, 3: moi op so_do vi du doi 1 gia tri (hs -1.25, hs 0, tq -24, sl -59, zone_tu 5 < 12 zone) -> 5 loi, khong ve.
 $opBc = ([IO.File]::ReadAllText("$GOC\cad\skills\vi_du\so_do_bc.json")); $opBc = $opBc.Substring($opBc.IndexOf('{"op":"so_do"')); $opBc = $opBc.Substring(0, $opBc.LastIndexOf(','))
 [IO.File]::WriteAllText("$T\so_do_bc_ng.json", '{"goc":[1800000,0],"ops":[' + ((@(@('"hs":1.25', '"hs":-1.25'), @('"hs":1.25', '"hs":0'), @('"tq":24,', '"tq":-24,'),
@@ -381,6 +381,10 @@ Kiem ($ng -and [math]::Abs($ng.ia_ma - 4081) -lt 1e-6 -and [math]::Abs($ng.iq_ma
   [math]::Abs($ng.ic_a - 0.133224) -lt 1e-6 -and [math]::Abs($ng.ipse_a - 0.236705) -lt 1e-6) `
   "so_do bc bang tinh nguon dung trang 11: IA 4081 mA, IQ 103,481 mA, C20 8,20568 Ah, IC 0,133 A, IPSE 0,24 A (thay $($ng | ConvertTo-Json -Compress))"
 $chuBang = if ($ksb -and $ksb.doc -and $ksb.doc.Count -gt 1) { @($ksb.doc[1].ds | ForEach-Object { $_.t }) } else { @() }
+# Viec ke (1) 13/11: zone 4, 9 trang 11 dung dau bao khoi tren tran (S khung vuong, ma BC_KHOI_TRAN) -> bang ky hieu cot trai co dong rieng.
+$chuKh = if ($ksb -and $ksb.doc -and $ksb.doc.Count -gt 3) { @($ksb.doc[3].ds | ForEach-Object { $_.t }) } else { @() }
+Kiem (@($chuKh | Where-Object { $_ -like '*KH*I KI*U*TR*N TR*N*' }).Count -eq 1 -and $ksb.dem.BC_KHOI_TRAN -eq $null) `
+  "so_do bc bang ky hieu co dong DAU BAO KHOI KIEU DIEM TREN TRAN (BC_KHOI_TRAN, zone 4, 9) ($($chuKh.Count) chu cot trai)"
 Kiem ((@('4081', '8.20568', '103.481', '0.133', '0.24', '2360', '406', '(Kh*ng *ng k*)') | Where-Object { $p = $_; -not ($chuBang | Where-Object { $_ -like $p }) }).Count -eq 0) `
   "so_do bc bang tinh in so cham thap phan nhu trang 11: 4081, 8.20568, 103.481, 0.133, 0.24, 2360, 406, (Khong dang ke) ($($chuBang.Count) o chu)"
 Kiem ($ksb -and $ksb.ok -eq $true -and $ksb.ve -gt 300 -and $ksb.dem.BC_KHOI -eq $ksd.dem.BC_KHOI -and $ksb.dem.BC_NHIET -eq $ksd.dem.BC_NHIET -and -not $ksb.dem.BC_DTCD -and

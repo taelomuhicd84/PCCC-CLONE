@@ -213,7 +213,7 @@ namespace TKPCCC
         class TbNguon { public VatTu V; public string Ten; public double Sl, Iq, Ia; }
 
         // Thứ tự dòng bảng ký hiệu như trang 11 (mã khác xếp sau, theo danh mục).
-        static readonly string[] THU_TU_KY_HIEU = { "BC_NHIET", "BC_KHOI", "BC_CHI_THI", "BC_COI_DEN", "SPR_VAN_OSY", "SPR_CTDC", "SPR_VAN_BD", "BC_NUTAN", "BC_DTCD", "BC_CHI_THI_HL" };
+        static readonly string[] THU_TU_KY_HIEU = { "BC_NHIET", "BC_KHOI_TRAN", "BC_KHOI", "BC_CHI_THI", "BC_COI_DEN", "SPR_VAN_OSY", "SPR_CTDC", "SPR_VAN_BD", "BC_NUTAN", "BC_DTCD", "BC_CHI_THI_HL" };
 
         /// Ký hiệu trên sơ đồ to hơn trong bảng ký hiệu bao nhiêu lần (đo trên trang 11: đầu báo 1,75; Ω nhỏ hơn bảng).
         static double TlKyHieu(string ma)

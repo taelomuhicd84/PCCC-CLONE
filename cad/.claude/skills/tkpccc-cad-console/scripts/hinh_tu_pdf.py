@@ -10,6 +10,7 @@ import fitz
 # mã -> (hộp x0, y0, x1, y1), điểm gốc block: "giua" (tâm hộp nét), "tron" (tâm vòng tròn lớn nhất), "chan_trai" (đầu trái chân dưới)
 HOP = {
     "BC_NHIET": ((55, 45, 75, 63), "tron"),
+    "BC_KHOI_TRAN": ((55, 67, 75, 86), "tron"),
     "BC_KHOI": ((55, 90, 75, 108), "tron"),
     "BC_CHI_THI": ((55, 115, 75, 131), "giua"),
     "BC_COI_DEN": ((53, 134, 78, 153), "giua"),

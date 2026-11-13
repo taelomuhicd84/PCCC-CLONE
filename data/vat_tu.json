@@ -13,6 +13,7 @@
   "vat_tu": [
     { "ma": "BC_TT", "ten": "Tủ trung tâm báo cháy", "dvt": "bộ", "he": "BC", "loai": "block", "ky_hieu": "TT" },
     { "ma": "BC_KHOI", "ten": "Đầu báo khói", "dvt": "cái", "he": "BC", "loai": "block", "ky_hieu": "S" },
+    { "ma": "BC_KHOI_TRAN", "ten": "Đầu báo khói kiểu điểm trên trần", "dvt": "cái", "he": "BC", "loai": "block", "ky_hieu": "S" },
     { "ma": "BC_NHIET", "ten": "Đầu báo nhiệt", "dvt": "cái", "he": "BC", "loai": "block", "ky_hieu": "H" },
     { "ma": "BC_LUA", "ten": "Đầu báo lửa", "dvt": "cái", "he": "BC", "loai": "block", "ky_hieu": "F" },
     { "ma": "BC_BEAM", "ten": "Đầu báo khói tia chiếu", "dvt": "bộ", "he": "BC", "loai": "block", "ky_hieu": "B" },
