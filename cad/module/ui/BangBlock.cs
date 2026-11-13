@@ -1,4 +1,4 @@
-// Bảng block PCCC (lệnh PCCC_BLOCK): PaletteSet liệt kê block của thư viện theo nhóm hệ, kèm ký hiệu, tên, đơn vị, số lượng đang có trong bản vẽ.
+﻿// Bảng block PCCC (lệnh PCCC_BLOCK): PaletteSet liệt kê block của thư viện theo nhóm hệ, kèm ký hiệu, tên, đơn vị, số lượng đang có trong bản vẽ.
 // Bấm đúp một dòng hoặc nút tròn xanh = PCCC_DAT <mã>; nút tròn cam = PCCC_RAI <mã>.
 // DLL riêng (TKPCCC.UI.dll) vì cần acmgd.dll, thứ accoreconsole không nạp được. KHÔNG xử lý bản vẽ ở đây: danh mục, ảnh xem trước,
 // đếm và việc thêm block do TKPCCC.Cad.dll làm (cad/module/plugin/Block.cs), nhờ vậy phần đó thử được bằng cad/test/chay_thu.ps1.
@@ -24,10 +24,10 @@ namespace TKPCCC
         static BangBlock ndBlock;
         static BangLenh ndLenh;
 
-        static PaletteSet TaoBang(string ten, string guid, string trang, Control nd)
+        static PaletteSet TaoBang(string ten, string guid, string trang, Control nd, Size nhoNhat)
         {
             PaletteSet b = new PaletteSet(ten, new Guid(guid));
-            b.MinimumSize = new Size(560, 360);
+            b.MinimumSize = nhoNhat;
             b.Add(trang, nd);
             return b;
         }
@@ -41,7 +41,7 @@ namespace TKPCCC
                 if (bangBlock == null)
                 {
                     ndBlock = new BangBlock();
-                    bangBlock = TaoBang("TKPCCC - Block PCCC", "5D3C1E0A-7B42-4C9E-9A61-2F8E4B7D1C35", "Block", ndBlock);
+                    bangBlock = TaoBang("TKPCCC - Block PCCC", "5D3C1E0A-7B42-4C9E-9A61-2F8E4B7D1C35", "Block", ndBlock, new Size(560, 360));
                     // Đổi bản vẽ thì số lượng đổi theo.
                     AcApp.DocumentManager.DocumentActivated += delegate { if (bangBlock.Visible) GiaoDien.An(ndBlock.DemLai); };
                 }
@@ -58,7 +58,7 @@ namespace TKPCCC
             if (bangLenh == null)
             {
                 ndLenh = new BangLenh();
-                bangLenh = TaoBang("TKPCCC - Lệnh PCCC", "A8E4F1C2-3D6B-4E7A-9C15-6B2D8F0E4A71", "Lệnh", ndLenh);
+                bangLenh = TaoBang("TKPCCC - Lệnh PCCC", "A8E4F1C2-3D6B-4E7A-9C15-6B2D8F0E4A71", "Lệnh", ndLenh, new Size(880, 440));
             }
             ndLenh.Nap();
             bangLenh.Visible = true;
@@ -244,7 +244,7 @@ namespace TKPCCC
                     r = ds.Rows.Add("", im, v.ten, v.dvt ?? "", sl > 0 ? sl.ToString("0.##") : "0");
                     DataGridViewRow d = ds.Rows[r];
                     d.Tag = v;
-                    d.Cells[C_SL].Style.ForeColor = sl > 0 ? GiaoDien.Do : GiaoDien.ChuMo;
+                    d.Cells[C_SL].Style.ForeColor = d.Cells[C_SL].Style.SelectionForeColor = sl > 0 ? GiaoDien.Do : GiaoDien.ChuMo;
                     if (v == dangChon) d.Selected = true;
                     soDong++;
                     tongSl += sl;
@@ -253,7 +253,7 @@ namespace TKPCCC
             }
             if (Chon() == null) ChonDongDau();
             ds.ResumeLayout();
-            ds.AccessibleName = "Block: " + soDong; // thu_gui.ps1 đọc số dòng qua UI Automation
+            ds.Text = "Block: " + soDong; // thu_gui.ps1 đọc số dòng (chữ của cửa sổ) qua UI Automation
             tong.Dat(tongSl.ToString("0.##"), soLoai + " loại / " + tatCa.Count + " block thư viện");
             XemTruoc();
         }

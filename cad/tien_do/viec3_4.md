@@ -14,14 +14,13 @@ Nhánh `claude/cad-panel-ui-ca1a1e` (worktree `.claude/worktrees/cad-panel-ui-ca
   (`Autodesk.AutoCAD.Internal.Utils.AddCommand`, nhóm `TKPCCC_PHIMTAT`). KHÔNG sửa `acad.pgp`; từ chối phím tắt trùng lệnh AutoCAD hoặc trùng dòng trong `acad.pgp`.
 - `cad/module/plugin/Lenh.cs`: danh sách lệnh thành `Lenh.DS_LENH` (tên, việc làm, cách dùng; thêm `PCCC_SPEC`, `PCCC_HELP`, `PCCC_BLOCK`).
   `PCCC_HELP` gọi `Lenh.MoBangLenh` khi có giao diện, không thì in chữ như cũ (accoreconsole). Thêm lệnh mới: thêm một dòng vào `DS_LENH`.
-- `cad/test/thu_gui.ps1`: kiểm bảng block theo `AccessibleName` "Block: n" (DataGridView không còn LVM), 6 nút; ghi `phim_tat.txt` PHX=PCCC_HELP,
+- `cad/test/thu_gui.ps1`: kiểm bảng block theo chữ cửa sổ của bảng "Block: n" (GetWindowText; UI Automation không thấy `AccessibleName`), 6 nút; ghi `phim_tat.txt` PHX=PCCC_HELP,
   kịch bản gõ PHX, kiểm bảng lệnh hiện đủ dòng; chụp ảnh 2 bảng (PrintWindow) vào thư mục thử.
 
 ## Trạng thái kiểm
 - `cad\build.bat`: đạt.
 - `chay_thu.ps1`: TAT CA DAT (79 dòng DAT); `thu_mcp.ps1`: TAT CA DAT (13/11).
-- `thu_gui.ps1`: CHƯA chạy được: AutoCAD của người dùng đang mở bản vẽ (không tự tắt).
+- `thu_gui.ps1`: TAT CA DAT (13/11 14:20): bảng block 43 dòng, 6 nút; phím tắt PHX mở bảng lệnh 13 dòng, 3 nút. Ảnh: `ket_qua/cad_test/2026-11-13/6_panel_block_moi.png`, `7_panel_lenh_moi.png`. Bảng lệnh tối thiểu 880 x 440 px để cột Cách dùng không bị cắt.
 
 ## Việc tiếp theo
-1. Khi không còn AutoCAD nào mở: `powershell -ExecutionPolicy Bypass -File cad\test\thu_gui.ps1`, xem 2 ảnh `panel_block.png`, `panel_lenh.png` trong thư mục thử, gửi người dùng.
-2. Merge nhánh vào `main` (phiên chính quyết định; phiên `cad-rai-cach-tuong` có thể sửa prompt `PCCC_RAI`: nút R gửi `PCCC_RAI\n<mã>\n`, cần giữ câu hỏi mã đầu tiên).
+1. Merge nhánh vào `main` (phiên chính quyết định; phiên `cad-rai-cach-tuong` có thể sửa prompt `PCCC_RAI`: nút R gửi `PCCC_RAI\n<mã>\n`, cần giữ câu hỏi mã đầu tiên).

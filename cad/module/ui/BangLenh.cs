@@ -1,4 +1,4 @@
-// Bảng lệnh PCCC (lệnh PCCC_HELP trong AutoCAD có giao diện): mọi lệnh với việc làm, cách dùng, tìm được; sửa phím tắt ngay trong bảng.
+﻿// Bảng lệnh PCCC (lệnh PCCC_HELP trong AutoCAD có giao diện): mọi lệnh với việc làm, cách dùng, tìm được; sửa phím tắt ngay trong bảng.
 // Phím tắt lưu ở phim_tat.txt cạnh DLL (mỗi dòng PHIMTAT=LENH) và được đăng ký thành lệnh thật khi nạp plugin:
 // KHÔNG sửa acad.pgp của người dùng. Danh sách lệnh lấy từ Lenh.DS_LENH (TKPCCC.Cad.dll).
 using System;
@@ -142,10 +142,12 @@ namespace TKPCCC
             DataGridViewTextBoxColumn cViec = GiaoDien.Cot("Việc làm", 180, false);
             cViec.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             cViec.FillWeight = 45;
+            cViec.MinimumWidth = 160;
             ds.Columns.Add(cViec);
             DataGridViewTextBoxColumn cCach = GiaoDien.Cot("Cách dùng", 220, false);
             cCach.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             cCach.FillWeight = 55;
+            cCach.MinimumWidth = 220;
             cCach.DefaultCellStyle.ForeColor = GiaoDien.ChuMo;
             ds.Columns.Add(cCach);
             ds.CellPainting += delegate(object s, DataGridViewCellPaintingEventArgs e)
@@ -219,7 +221,7 @@ namespace TKPCCC
                 if (k != "" && !(l[0] + " " + a + " " + l[1] + " " + l[2]).ToLowerInvariant().Contains(k)) continue;
                 ds.Rows.Add("", l[0], a ?? "", l[1], l[2]);
             }
-            ds.AccessibleName = "Lenh: " + ds.Rows.Count; // thu_gui.ps1 đọc số dòng qua UI Automation
+            ds.Text = "Lenh: " + ds.Rows.Count; // thu_gui.ps1 đọc số dòng (chữ của cửa sổ) qua UI Automation
             tong.Dat(Lenh.DS_LENH.Length.ToString(), PhimTat.TheoLenh.Count + " phím tắt đã đặt");
         }
 

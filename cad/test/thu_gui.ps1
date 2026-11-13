@@ -78,10 +78,10 @@ try {
   $da2 = DocAnh ([string]@($k2.anh)[0])
   Kiem ($da2.rong -eq 640 -and $da2.mau -gt 1) "cad_anh toan ban ve: PNG 640 px co net: $($r.content[0].text)"
 
-  # Hai bang (PCCC_BLOCK, PCCC_HELP): tim khung theo ten trong cua so AutoCAD (UI Automation). So dong doc tu AccessibleName cua bang
-  # ("Block: n", "Lenh: n") vi DataGridView trong AutoCAD chi hien la "Pane". Chup anh tung bang bang PrintWindow (ca khi bi che).
+  # Hai bang (PCCC_BLOCK, PCCC_HELP): tim khung theo ten trong cua so AutoCAD (UI Automation). So dong doc tu chu cua cua so bang
+  # (chu cua cua so "Block: n", "Lenh: n", doc bang GetWindowText) vi DataGridView trong AutoCAD chi hien la "Pane". Chup anh tung bang bang PrintWindow (ca khi bi che).
   Add-Type -AssemblyName UIAutomationClient; Add-Type -AssemblyName UIAutomationTypes
-  Add-Type -Namespace Win -Name U -MemberDefinition '[DllImport("user32.dll")] public static extern bool PrintWindow(IntPtr h, IntPtr dc, uint f);'
+  Add-Type -Namespace Win -Name U -MemberDefinition '[DllImport("user32.dll")] public static extern bool PrintWindow(IntPtr h, IntPtr dc, uint f); [DllImport("user32.dll", CharSet = CharSet.Unicode)] public static extern int GetWindowText(IntPtr h, System.Text.StringBuilder s, int n);'
   $AE = [Windows.Automation.AutomationElement]; $TS = [Windows.Automation.TreeScope]
   function TimBang($ten) {
     $dk = New-Object Windows.Automation.AndCondition(
@@ -91,7 +91,9 @@ try {
     $kq = @{ khung = $k; dong = -1; nut = 0 }
     if ($k) {
       foreach ($e in $k.FindAll($TS::Descendants, [Windows.Automation.Condition]::TrueCondition)) {
-        if ($e.Current.Name -match '^(Block|Lenh): (\d+)$') { $kq.dong = [int]$Matches[2] }
+        $sb = New-Object Text.StringBuilder 64
+        [void][Win.U]::GetWindowText([IntPtr]$e.Current.NativeWindowHandle, $sb, 64)
+        if ($sb.ToString() -match '^(Block|Lenh): (\d+)$') { $kq.dong = [int]$Matches[2] }
         if ($e.Current.ClassName -match 'BUTTON') { $kq.nut++ }
       }
     }
