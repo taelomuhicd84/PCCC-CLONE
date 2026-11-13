@@ -361,6 +361,18 @@ $hlCach = foreach ($n in 4, 9) {
   if ($so.Count -ne 1) { -98 } else { [math]::Round(($so[0].p[1] - 6 * 33 - $yd) / 33, 1) }
 }
 Kiem (@($hlCach).Count -eq 2 -and @($hlCach | Where-Object { $_ -lt 3 }).Count -eq 0) "so_do bc thiet bi chi thi HL lech (-25, +25,6) pt nhu trang 11: day so cach day zone 4, 9 >= 3 pt (pt: $($hlCach -join ', '))"
+# Gian hang theo noi dung (viec 2, 13/11): ky hieu chi thi HL zone 4, 9 (dinh = so "20" + 3 + 17,2 pt ky hieu kem chu HL) khong cham day so cua hang tren (zone 5, 10).
+# Chi zone 4: doc chu tra toi da 40 chu nen khong toi nhan "ZONE 10"; zone 9 cung cach tinh.
+$hlTren = foreach ($n in @(4)) {
+  # nhan ten zone canh bo day: chu "ZONE n" dat tai day + 1,5 pt (zone giam sat van khong co nhan 3 dong)
+  $n5 = @($chuSd | Where-Object { $_.t -eq "ZONE $($n + 1)" }); $s20 = @($chuSd | Where-Object { $_.t -eq '20' })
+  if ($n5.Count -ne 1 -or $s20.Count -lt 2) { -99; continue }
+  $yd5 = $n5[0].p[1] - 1.5 * 33
+  $soTren = @($chuSd | Where-Object { $_.t -match '^\d{2}$' -and $_.p[1] -lt $yd5 -and $_.p[1] -gt $yd5 - 15 * 33 })
+  $p20 = @($s20 | Where-Object { $_.p[1] -lt $yd5 } | Sort-Object { $_.p[1] } -Descending)[0].p[1]
+  if ($soTren.Count -eq 0) { -98 } else { [math]::Round((($soTren | ForEach-Object { $_.p[1] } | Measure-Object -Minimum).Minimum - 6 * 33 - $p20) / 33 - 20.2, 1) }
+}
+Kiem (@($hlTren).Count -eq 1 -and @($hlTren | Where-Object { $_ -lt 2 }).Count -eq 0) "so_do bc gian hang theo noi dung: ky hieu chi thi HL zone 4 cach day so hang tren >= 2 pt (pt: $($hlTren -join ', '))"
 # Bang tinh nguon tinh tay (phu luc C TCVN 7568-14:2025, so lieu trang 11): IQ = 100 + (59 x 35 + 24 x 59) / 1000 = 103,481 mA;
 # IA = 100 + 59 x 40 + 24 x 40 + 28 x 14,5 + 3 x 30 + 11 x 15 = 4081 mA; C20 = 1,25 x (0,103481 x 24 + 2 x 4,081 x 0,5) = 8,20568 Ah;
 # IC = 1,25 x (0,103481 x 5 + 4,081 x 0,5) / 24 = 0,13322 A; IPSE = 0,103481 + 0,13322 = 0,2367 A (bang ghi 0.24).

@@ -333,3 +333,9 @@ Kiểm chứng: `chay_thu.ps1` 78 DAT TAT CA DAT, `thu_mcp.ps1` TAT CA DAT, `bui
 CÒN (chưa làm, hết hạn mức):
 - Bảng ký hiệu thiếu dòng "ĐẦU BÁO KHÓI KIỂU ĐIỂM TRÊN TRẦN" (S khung vuông zone 4, 9): cần mã mới trong `data/vat_tu.json` + hình từ nét PDF (`hinh_tu_pdf.py`, đo khung 21 × 21 pt trang 11) + sửa `vi_du/so_do_bc.json` zone 4, 9 + `THU_TU_KY_HIEU`.
 - Ảnh zone (đã xem): chữ "HL" của thiết bị chỉ thị zone 4 chạm số "32" zone 5 vì hàng zone cách đều 45,45 pt; trang 11 zone 4→5 cách xa hơn (mục Bố cục 3 của review).
+## 2026-11-13 — so_do bc: giãn hàng zone theo nội dung (việc kế 2)
+- `cad/module/plugin/SoDo.cs`: khoảng hàng zone không còn cách đều; zone có thiết bị chỉ thị HL (`BC_CHI_THI_HL`, lệch trái) cách hàng trên tối thiểu 60 pt, hàng khác giữ `dy`. Chữ "HL" zone 4, 9 hết chạm số "32"/số hàng trên (như trang 11).
+- `cad/test/chay_thu.ps1`: phép kiểm mới "gian hang theo noi dung" (ký hiệu HL zone 4 cách đáy số hàng trên >= 2 pt; đo được 4,5 pt). Chỉ kiểm zone 4 vì `doc chu` trả tối đa 40 chữ, không tới nhãn "ZONE 10".
+- Ảnh `ket_qua/cad_mau/cad/so_do/anh/so_do_bc_3.png`, `_bang.png`, `_zone.png` vẽ lại (accoreconsole, spec `so_do_bc_3.json`).
+- Kiểm chứng: `chay_thu.ps1` TAT CA DAT, `thu_mcp.ps1` TAT CA DAT, `build.bat` OK.
+- CHƯA LÀM (hết hạn mức): việc kế (1) dòng ký hiệu "ĐẦU BÁO KHÓI KIỂU ĐIỂM TRÊN TRẦN" (mã mới trong `data/vat_tu.json`, hình từ PDF vào `cad/data/ky_hieu/hinh_bc.json`, `vi_du/so_do_bc.json` zone 4, 9 dùng mã đó).

@@ -400,7 +400,11 @@ namespace TKPCCC
             int nz = zone.Count;
             if (Lay(o, "zone_tu") != null && LaySo(o, "zone_tu", 0) < nz) throw new System.Exception("\"zone_tu\" (" + LaySo(o, "zone_tu", 0) + ") nhỏ hơn số zone trên sơ đồ (" + nz + ")");
             double dy = Math.Max((Lay(o, "h") == null ? 1500 * k : h) / S, 38); // khoảng hàng zone (pt), tối thiểu đủ ký hiệu chỉ thị nâng lên + số lượng
-            Func<int, double> Yz = i => 547.0 - i * dy;
+            // Giãn hàng theo nội dung: zone có chỉ thị HL (lệch trái, nằm dưới cột nút ấn/đầu báo của hàng trên) cách hàng trên đủ chỗ cho số lượng hàng trên (trang 11).
+            // Chỉ thị thường lệch phải rơi vào khe giữa các cột nên giữ dy.
+            double[] yz = new double[nz];
+            for (int i = 0; i < nz; i++) yz[i] = i == 0 ? 547.0 : yz[i - 1] - (zone[i - 1].Dem.Any(kv => kv.Key.ma == "BC_CHI_THI_HL") ? Math.Max(dy, 60) : dy);
+            Func<int, double> Yz = i => yz[i];
             double bs = nz > 1 ? Math.Min(8.3, 91.0 / (nz - 1)) : 8.3; // bó dây đứng: zone 1 bên phải, zone sau lùi trái (không dây nào cắt nhau)
             Func<int, double> Xv = i => 661.2 - i * bs;
             double lts = 26 * k / (g.Db.Ltscale > 0 ? g.Db.Ltscale : 1);
