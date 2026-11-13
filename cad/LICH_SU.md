@@ -348,3 +348,5 @@ CÒN (chưa làm, hết hạn mức):
 - `cad/test/chay_thu.ps1`: thêm `doc chu` cột trái bảng ký hiệu và phép kiểm "bang ky hieu co dong DAU BAO KHOI KIEU DIEM TREN TRAN".
 - Ảnh `ket_qua/cad_mau/cad/so_do/anh/so_do_bc_3.png`, `_bang.png`, `_zone.png` vẽ lại (spec `so_do_bc_3.json` lấy op so_do từ ví dụ mới).
 - Kiểm chứng: `build.bat` OK, `chay_thu.ps1` TAT CA DAT, `thu_mcp.ps1` TAT CA DAT. Chưa chạy `npm test` (vat_tu.json thêm 1 dòng).
+
+- 2026-11-13: so_do bc bang tinh nguon: cot dau (THIET BI) rong 1,7 lan cot so nhu trang 11 (x1 tinh theo so thiet bi); chay_thu TAT CA DAT.

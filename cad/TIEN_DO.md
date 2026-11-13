@@ -12,7 +12,7 @@ Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.m
   Review Opus max (`ket_qua/cad_review/review_2026-11-13.md`): 0 CHẶN, 3 NÊN SỬA, 9 GHI CHÚ, 14 chỗ khác trang 11. ĐÃ SỬA 3 NÊN SỬA + cỡ thiết bị chỉ thị (tỉ lệ 1,47), dây nối nét đứt;
   `chay_thu.ps1` 78/78, `thu_mcp.ps1` 9/9.
   VIỆC KẾ: (1) XONG 13/11: mã `BC_KHOI_TRAN` (đầu báo khói trên trần, hình S khung vuông từ PDF), bảng ký hiệu có dòng này, ví dụ zone 4, 9 dùng mã này; (2) XONG 13/11: zone có chỉ thị HL cách hàng trên ≥ 60 pt
-  (phép kiểm chỉ đo zone 4 vì `doc chu` trả tối đa 40 chữ; zone 9 chưa kiểm, chưa xem ảnh); (3) các chỗ khác trang 11 còn lại trong review 13/11 (hàng zone không cách đều như bản gốc, ký hiệu theo cột cố định, cột bảng tính rộng đều); sinh sơ đồ từ MẶT BẰNG CAD
+  (phép kiểm chỉ đo zone 4 vì `doc chu` trả tối đa 40 chữ; zone 9 chưa kiểm, chưa xem ảnh); (3) XONG 13/11 cuối phiên: cột đầu bảng tính nguồn rộng gấp 1,7 cột số (chưa xem ảnh; BUNDLE CHƯA BUILD LẠI sau sửa này: đầu phiên chạy `caduild.bat`); (4) các chỗ khác trang 11 còn lại trong review 13/11 (hàng zone không cách đều như bản gốc, ký hiệu theo cột cố định, cột bảng tính rộng đều); sinh sơ đồ từ MẶT BẰNG CAD
   báo cháy (đọc `dem` theo zone + diện tích vùng); hỏi người dùng kiểu sơ đồ sprinkler (không gian trục đo hay nguyên lý phẳng); đọc trang 46, 58, 63 khi làm sơ đồ âm thanh, hút khói, cấp điện.
 
 ## TRẠNG THÁI (cập nhật 2026-11-12, 19:05) (cũ)

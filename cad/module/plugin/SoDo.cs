@@ -661,7 +661,7 @@ namespace TKPCCC
             double c20 = hs * (iq / 1000 * tq + fc * (ia / 1000 * ta)), ic = hs * (iq / 1000 * tqNap + ia / 1000 * ta) / tNap, ipse = iq / 1000 + ic;
             g.KqNguon = new Dictionary<string, object> { { "iq_ma", Math.Round(iq, 6) }, { "ia_ma", Math.Round(ia, 6) }, { "c20_ah", Math.Round(c20, 6) }, { "ic_a", Math.Round(ic, 6) }, { "ipse_a", Math.Round(ipse, 6) } };
 
-            double x0 = 49.3, x1 = 196.7, x2 = 526, cw = (x2 - x1) / tbs.Count;
+            double x0 = 49.3, x2 = 526, x1 = x0 + 1.7 * (x2 - x0) / (tbs.Count + 1.7), cw = (x2 - x1) / tbs.Count;
             double[] rh = { 28.3, 30, 11.7, 13, 12.6, 26, 10.7, 13, 26, 26.3, 24 };
             double[] y = new double[rh.Length + 1];
             y[0] = y0;
