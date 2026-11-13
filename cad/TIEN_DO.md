@@ -3,7 +3,18 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
-## TRẠNG THÁI (cập nhật 2026-11-12, 19:05) — ĐỌC TRƯỚC KHI LÀM TIẾP
+## TRẠNG THÁI (cập nhật 2026-11-13, 09:30) — ĐỌC TRƯỚC KHI LÀM TIẾP
+- 13/11: `so_do` `bc` LÀM LẠI giống quy cách trang 11 hồ sơ thật (commit `b0af585`, `f07433c`): bảng ký hiệu (mẫu nét theo layer dây), ghi chú, bảng tính nguồn phụ lục C
+  TCVN 7568-14:2025 (hệ số, dòng tĩnh/báo cháy từ spec; ra đúng 4081 mA, 8,20568 Ah), tủ có đèn zone, điện thoại, tiếp địa, nguồn 220 V/24 V, bó dây FR có elip, zone giám sát van,
+  cột còi đèn, zone dự phòng, liên động ngang, tiêu đề. Nhãn zone 3 dòng: khu vực có tầng / DIỆN TÍCH BẢO VỆ: x M² / ZONE n (zone theo tầng lấy từ trang 5–8).
+  Ký hiệu: block có sẵn trong bản vẽ được GIỮ (NapBlock không ghi đè, riêng PCCC_LIB cập nhật); bộ mặc định lấy từ nét PDF (`cad/data/ky_hieu/hinh_bc.json`, script
+  `cad/.claude/skills/tkpccc-cad-console/scripts/hinh_tu_pdf.py`). Mã mới: `BC_CHI_THI`, `BC_CHI_THI_HL`, `BC_COI_DEN`, `BC_DIEN_THOAI`, `DAY_BC_10`, `DAY_BC_10_FR`, `DAY_NGUON_15`, `DAY_NGUON_15_FR`.
+  Review Opus max (`ket_qua/cad_review/review_2026-11-13.md`): 0 CHẶN, 3 NÊN SỬA, 9 GHI CHÚ, 14 chỗ khác trang 11; agent đang sửa 3 NÊN SỬA + dòng "khói trên trần" của bảng
+  ký hiệu + cỡ thiết bị chỉ thị (xem mục cuối `cad/LICH_SU.md` để biết xong tới đâu).
+  VIỆC KẾ: các chỗ khác trang 11 còn lại trong review 13/11 (hàng zone không cách đều như bản gốc, ký hiệu theo cột cố định, cột bảng tính rộng đều); sinh sơ đồ từ MẶT BẰNG CAD
+  báo cháy (đọc `dem` theo zone + diện tích vùng); hỏi người dùng kiểu sơ đồ sprinkler (không gian trục đo hay nguyên lý phẳng); đọc trang 46, 58, 63 khi làm sơ đồ âm thanh, hút khói, cấp điện.
+
+## TRẠNG THÁI (cập nhật 2026-11-12, 19:05) (cũ)
 - 19:05 ngày 12/11: G5 `so_do` đã có 2 hệ: `he`:"spr" (sơ đồ nguyên lý phẳng sprinkler) và `he`:"bc" (báo cháy hệ thường). Thiết bị trên layer `PCCC_SODO*` không vào `dem`/`PCCC_BOC`.
   Review Opus max (`ket_qua/cad_review/review_2026-11-12d.md`) 0 CHẶN; 4 NÊN SỬA đã sửa (commit `24b876f`), `chay_thu.ps1` 70/70, `thu_mcp.ps1` 9/9. 6 GHI CHÚ của review 12/11d chưa sửa.
   Lưu ý agent sửa báo: `bc` tự tăng `h` khi nhỏ mà không báo; `MaSoDo` vẫn nạp block thừa vì `DAY_BC`.
