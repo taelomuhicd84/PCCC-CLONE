@@ -20,6 +20,8 @@ if exist "%OUT%\TKPCCC.Cad.dll" move /y "%OUT%\TKPCCC.Cad.dll" "%OUT%\TKPCCC.Cad
   "%~dp0module\plugin\*.cs" "%~dp0module\chung\HangDoi.cs" || exit /b 1
 
 copy /y "%~dp0..\data\vat_tu.json" "%OUT%\vat_tu.json" >nul
+rem Tri so rai thiet bi theo tieu chuan (rai / PCCC_RAI khong co "s"): nguon o data\khoang_cach_rai.json goc repo.
+copy /y "%~dp0..\data\khoang_cach_rai.json" "%OUT%\khoang_cach_rai.json" >nul
 rem PCCC_THEMBLOCK ghi ma moi vao ca file goc cua repo (nguon duy nhat cua danh muc): de lai duong dan cho plugin.
 echo %~dp0..\data\vat_tu.json>"%OUT%\nguon_vat_tu.txt"
 rem Mac dinh ky hieu truc, kich thuoc, chu: nguoi dung sua o cad\data\ky_hieu, plugin doc ban chep canh DLL.
