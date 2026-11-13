@@ -2,6 +2,7 @@
 // bảng thống kê, vùng bảo vệ.
 // Biên dịch bằng csc.exe có sẵn trong Windows (C# 5): không dùng $"", ?., nameof, out var.
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -31,6 +32,10 @@ namespace TKPCCC
         public string he { get; set; }
         public string loai { get; set; }
         public string ky_hieu { get; set; }
+        // Chỉ cho mã dây vẽ trên sơ đồ nguyên lý (SoDo.cs): tên layer, loại đường, màu ACI khi phải tạo layer mới.
+        public string layer_so_do { get; set; }
+        public string net { get; set; }
+        public int mau { get; set; }
     }
 
     public class FileDanhMuc
@@ -233,22 +238,82 @@ namespace TKPCCC
             ObjectId bid = bt.Add(b);
             tr.AddNewlyCreatedDBObject(b, true);
 
-            Circle c = new Circle(Point3d.Origin, Vector3d.ZAxis, 200);
-            b.AppendEntity(c); tr.AddNewlyCreatedDBObject(c, true);
+            IList hinh = HinhMacDinh(v.ma);
+            if (hinh != null) VeHinhMacDinh(tr, b, kieu, hinh);
+            else
+            {
+                Circle c = new Circle(Point3d.Origin, Vector3d.ZAxis, 200);
+                b.AppendEntity(c); tr.AddNewlyCreatedDBObject(c, true);
 
-            // MText căn giữa theo Location: không cần AdjustAlignment như DBText trong database phụ.
-            string kh = v.ky_hieu ?? v.ma;
-            MText t = new MText();
-            t.Contents = kh;
-            t.TextStyleId = kieu;
-            t.TextHeight = kh.Length > 2 ? 90 : 140;
-            t.Attachment = AttachmentPoint.MiddleCenter;
-            t.Location = Point3d.Origin;
-            b.AppendEntity(t); tr.AddNewlyCreatedDBObject(t, true);
+                // MText căn giữa theo Location: không cần AdjustAlignment như DBText trong database phụ.
+                string kh = v.ky_hieu ?? v.ma;
+                MText t = new MText();
+                t.Contents = kh;
+                t.TextStyleId = kieu;
+                t.TextHeight = kh.Length > 2 ? 90 : 140;
+                t.Attachment = AttachmentPoint.MiddleCenter;
+                t.Location = Point3d.Origin;
+                b.AppendEntity(t); tr.AddNewlyCreatedDBObject(t, true);
+            }
 
             ThemAttDef(b, tr, kieu, TAG_MA, v.ma, new Point3d(0, -300, 0));
             ThemAttDef(b, tr, kieu, "TEN", v.ten, new Point3d(0, -450, 0));
             return bid;
+        }
+
+        static Dictionary<string, object> hinhBc;
+        /// Hình block mặc định lấy từ nét vector bảng ký hiệu hồ sơ thật (hinh_bc.json cạnh DLL, sinh bằng scripts/hinh_tu_pdf.py của skill
+        /// tkpccc-cad-console); mã không có hình thì null = vòng tròn + chữ.
+        static IList HinhMacDinh(string ma)
+        {
+            if (hinhBc == null)
+            {
+                string f = Path.Combine(ThuMuc, "hinh_bc.json");
+                Dictionary<string, object> d = File.Exists(f) ? new JavaScriptSerializer().DeserializeObject(File.ReadAllText(f, Encoding.UTF8)) as Dictionary<string, object> : null;
+                hinhBc = d != null && d.ContainsKey("hinh") ? (Dictionary<string, object>)d["hinh"] : new Dictionary<string, object>();
+            }
+            string k = ma.ToUpperInvariant();
+            if (k.StartsWith("SPR_VAN_OSY_")) k = "SPR_VAN_OSY"; // một hình cho mọi cỡ van OS&Y
+            return hinhBc.ContainsKey(k) ? hinhBc[k] as IList : null;
+        }
+
+        static void VeHinhMacDinh(Transaction tr, BlockTableRecord b, ObjectId kieu, IList hinh)
+        {
+            Func<object, Point3d> P3 = q => { IList a = (IList)q; return new Point3d(Convert.ToDouble(a[0], CultureInfo.InvariantCulture), Convert.ToDouble(a[1], CultureInfo.InvariantCulture), 0); };
+            foreach (Dictionary<string, object> d in hinh.OfType<Dictionary<string, object>>())
+            {
+                List<Entity> moi = new List<Entity>();
+                if (d.ContainsKey("pl"))
+                {
+                    IList ps = (IList)d["pl"];
+                    Polyline pl = new Polyline();
+                    for (int i = 0; i < ps.Count; i++) { Point3d q = P3(ps[i]); pl.AddVertexAt(i, new Point2d(q.X, q.Y), 0, 0, 0); }
+                    pl.Closed = d.ContainsKey("kin") && (bool)d["kin"];
+                    if (ps.Count > 1) moi.Add(pl);
+                }
+                else if (d.ContainsKey("c"))
+                {
+                    IList c = (IList)d["c"];
+                    moi.Add(new Circle(P3(c), Vector3d.ZAxis, Convert.ToDouble(c[2], CultureInfo.InvariantCulture)));
+                }
+                else if (d.ContainsKey("to"))
+                {
+                    // Miền tô của PDF (các dải lồi nhỏ): quạt tam giác thành Solid.
+                    List<Point3d> ps = ((IList)d["to"]).Cast<object>().Select(P3).ToList();
+                    for (int i = 1; i + 1 < ps.Count; i++) moi.Add(new Solid(ps[0], ps[i], ps[i + 1]));
+                }
+                else if (d.ContainsKey("t"))
+                {
+                    MText t = new MText();
+                    t.Contents = Convert.ToString(d["t"], CultureInfo.InvariantCulture);
+                    t.TextStyleId = kieu;
+                    t.TextHeight = Convert.ToDouble(d["h"], CultureInfo.InvariantCulture);
+                    t.Attachment = AttachmentPoint.MiddleCenter;
+                    t.Location = P3(d["p"]);
+                    moi.Add(t);
+                }
+                foreach (Entity e in moi) { b.AppendEntity(e); tr.AddNewlyCreatedDBObject(e, true); }
+            }
         }
 
         static void ThemAttDef(BlockTableRecord b, Transaction tr, ObjectId kieu, string tag, string giaTri, Point3d p)
@@ -283,6 +348,20 @@ namespace TKPCCC
                     {
                         BlockTable bt = (BlockTable)tr.GetObject(db.BlockTableId, OpenMode.ForRead);
                         List<VatTu> thieu = dm.vat_tu.Where(x => x.loai == "block" && !bt.Has(x.ma)).ToList();
+                        // Block còn đúng hình mặc định cũ (vòng tròn R200 + chữ ký hiệu) mà nay có hình mới (hinh_bc.json): vẽ lại; block người dùng đã sửa giữ nguyên.
+                        foreach (VatTu v in dm.vat_tu.Where(x => x.loai == "block" && bt.Has(x.ma) && HinhMacDinh(x.ma) != null))
+                        {
+                            BlockTableRecord b = (BlockTableRecord)tr.GetObject(bt[v.ma], OpenMode.ForRead);
+                            List<Entity> ve = b.Cast<ObjectId>().Select(id => (Entity)tr.GetObject(id, OpenMode.ForRead)).Where(e => !(e is AttributeDefinition)).ToList();
+                            Circle c0 = ve.Count == 2 ? ve.OfType<Circle>().FirstOrDefault() : null;
+                            MText t0 = ve.OfType<MText>().FirstOrDefault();
+                            if (c0 == null || t0 == null || Math.Abs(c0.Radius - 200) > 1e-6 || c0.Center.DistanceTo(Point3d.Origin) > 1e-6 || t0.Text != (v.ky_hieu ?? v.ma)
+                                || Math.Abs(t0.TextHeight - ((v.ky_hieu ?? v.ma).Length > 2 ? 90 : 140)) > 1e-6) continue; // cỡ chữ của block mặc định cũ
+                            b.UpgradeOpen();
+                            foreach (Entity e in ve) { e.UpgradeOpen(); e.Erase(); }
+                            VeHinhMacDinh(tr, b, DamBaoKieuChu(db, tr), HinhMacDinh(v.ma));
+                            them++;
+                        }
                         if (thieu.Count > 0)
                         {
                             ObjectId kieu = DamBaoKieuChu(db, tr);
@@ -306,9 +385,18 @@ namespace TKPCCC
             return them;
         }
 
-        /// Chép định nghĩa block từ thư viện vào bản vẽ (Replace = cập nhật block đã có).
-        static int NapBlock(Database dich, FileDanhMuc dm)
+        /// Chép định nghĩa block từ thư viện vào bản vẽ. capNhat (chỉ lệnh PCCC_LIB) = thay cả block đã có; còn lại chỉ chép mã bản vẽ CHƯA có:
+        /// block mang mã thiết bị đã có trong bản vẽ là ký hiệu của bản vẽ đó, không ghi đè (người dùng dặn 13/11).
+        static int NapBlock(Database dich, FileDanhMuc dm, bool capNhat)
         {
+            HashSet<string> co = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            if (!capNhat)
+                using (Transaction tr = dich.TransactionManager.StartTransaction())
+                {
+                    foreach (ObjectId id in (BlockTable)tr.GetObject(dich.BlockTableId, OpenMode.ForRead))
+                        co.Add(((BlockTableRecord)tr.GetObject(id, OpenMode.ForRead)).Name);
+                    tr.Commit();
+                }
             using (Database src = new Database(false, true))
             {
                 src.ReadDwgFile(FileThuVien, FileOpenMode.OpenForReadAndAllShare, true, "");
@@ -317,7 +405,7 @@ namespace TKPCCC
                 {
                     BlockTable bt = (BlockTable)tr.GetObject(src.BlockTableId, OpenMode.ForRead);
                     foreach (VatTu v in dm.vat_tu.Where(x => x.loai == "block"))
-                        if (bt.Has(v.ma)) ids.Add(bt[v.ma]);
+                        if (bt.Has(v.ma) && !co.Contains(v.ma)) ids.Add(bt[v.ma]);
                     tr.Commit();
                 }
                 if (ids.Count > 0)
@@ -327,14 +415,14 @@ namespace TKPCCC
         }
 
         /// Đảm bảo thư viện đủ block rồi nạp vào bản vẽ hiện hành.
-        static void NapVaoBanVe(Document doc, FileDanhMuc dm)
+        static void NapVaoBanVe(Document doc, FileDanhMuc dm, bool capNhat = false)
         {
             Editor ed = doc.Editor;
             bool moi = !File.Exists(FileThuVien);
             int them = DamBaoThuVien(dm);
             if (moi) ed.WriteMessage("\nĐã tạo thư viện block mặc định: " + FileThuVien + "\nMở file này sửa hình block (BEDIT), lưu lại rồi chạy PCCC_LIB để cập nhật.");
             else if (them > 0) ed.WriteMessage("\nĐã thêm " + them + " block mặc định cho mã mới vào " + FileThuVien);
-            int n = NapBlock(doc.Database, dm);
+            int n = NapBlock(doc.Database, dm, capNhat);
             ed.WriteMessage("\nĐã nạp/cập nhật " + n + " block PCCC vào bản vẽ.\n");
             ed.Regen();
         }
@@ -357,7 +445,7 @@ namespace TKPCCC
                 File.Move(FileThuVien, cu);
                 ed.WriteMessage("\nĐã cất thư viện cũ: " + cu);
             }
-            NapVaoBanVe(doc, dm);
+            NapVaoBanVe(doc, dm, true);
             int anh = CapNhatAnhBlock(dm); // cad/module/plugin/Block.cs
             if (anh > 0) ed.WriteMessage("\nĐã vẽ " + anh + " ảnh xem trước block cho bảng PCCC_BLOCK.");
         }

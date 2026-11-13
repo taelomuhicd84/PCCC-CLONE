@@ -18,6 +18,6 @@ Trang có sơ đồ: 11 nguyên lý báo cháy (BC-08), 22 không gian sprinkler
   tuyến DN80 tới khu tính thủy lực có ghi điểm 1–5 và đầu phun chủ đạo; AAV ở đầu tuyến; cụm OS&Y + FS mỗi tầng ở cao độ ghi riêng (+1,300).
 - Kèm chi tiết cụm OS&Y + FS (ống đứng DN100, ống xả DN50) và bảng ký hiệu có SỐ LƯỢNG từng loại.
 
-## So với `so_do` hiện có (G5)
+## So với `so_do` hiện có (G5) — bc đã làm theo trang 11 ngày 2026-11-13 (`so-do-nguyen-ly.md`), phần dưới là ghi chép cũ
 - `bc` hiện vẽ theo tầng có vạch cao độ, số "xN" phía trên ký hiệu: hồ sơ thật không có vạch tầng, số ghi dưới ký hiệu, có diện tích bảo vệ từng zone, có zone giám sát van và zone dự phòng, có các đường kết nối liên động và bảng ký hiệu.
 - `spr` hiện là nguyên lý phẳng: hồ sơ thật dùng sơ đồ không gian trục đo; muốn giống thì cần thao tác mới (trục đo) — việc lớn, để sau khi người dùng chọn.

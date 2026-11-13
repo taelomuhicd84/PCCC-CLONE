@@ -289,3 +289,21 @@ Người dùng dặn chữ cuối mỗi zone (cạnh điện trở cuối dây) 
 - `knowledge/so-do-nguyen-ly.md`: sửa mô tả nhãn.
 Kiểm chứng: `chay_thu.ps1` TAT CA DAT (72 DAT), `thu_mcp.ps1` TAT CA DAT (9), `build.bat` OK.
 Bỏ theo lệnh điều phối (sẽ làm lại toàn bộ sơ đồ bc giống 100 % trang 11, ký hiệu lấy từ nét PDF): liên động ngang, nguồn 220 V / 24 V / tiếp địa, cột còi đèn, bảng ký hiệu; chưa sửa `vi_du/so_do_bc.json`, `TU_VUNG.md`, chưa vẽ lại ảnh `so_do_bc_3.png`. Bảng tính ắc quy: việc sau (thiếu dòng tĩnh / dòng báo cháy từng thiết bị).
+
+## 2026-11-13 — so_do bc giống quy cách trang 11 hồ sơ thật (agent cad-lap-trinh)
+- `module/plugin/SoDo.cs`: viết lại `SoDoBaoChay` theo toạ độ pt của trang 11 (S = 33 mm/pt): bảng ký hiệu 2 cặp cột (chỉ mã có trên sơ đồ + các loại dây, mẫu nét in bằng chính layer dây),
+  `*GHI CHÚ`, bảng tính nguồn phụ lục C TCVN 7568-14:2025 (`VeBangNguon`, mọi hệ số từ spec `nguon`, kết quả trả `nguon` trong kq) + "Kết luận"; tủ hình hộp có hàng đèn zone + "TỦ TRUNG TÂM BÁO CHÁY n ZONE",
+  điện thoại, tiếp địa, nguồn 220 V / 24 V; bó dây đứng (zone 1 phải, không dây nào cắt nhau, góc lượn) + elip + chú thích; hàng zone: nút ấn, đầu báo, thiết bị chỉ thị nâng lên nối xiên (HL lệch trái),
+  số DƯỚI ký hiệu, Ω + nhãn khu vực / DIỆN TÍCH BẢO VỆ / ZONE n : dt M²; zone giám sát van (OS&Y, FS, van báo động + chữ mô tả); cột còi đèn bên phải; dự phòng mũi tên trái; liên động ngang từ cạnh tủ; tiêu đề gạch chân.
+  Dây ngắt qua ký hiệu. Khoá spec mới: `day_truc`, `day_coi`, `day_nguon`, zone `day`/`ghi`, `nguon`, `ghi_chu`, `ghi_tu`, `dien_thoai`, `nguon_chinh`, `nguon_du_phong`, `tieu_de`, `zone_tu`, `ten_tb`.
+- `Lenh.cs`: `NapBlock` chỉ chép mã bản vẽ CHƯA có (block mang mã trong bản vẽ giữ nguyên), riêng `PCCC_LIB` vẫn cập nhật; block mặc định vẽ theo `hinh_bc.json`; thư viện còn block mặc định cũ (vòng R200 + chữ cỡ 90/140) thì vẽ lại.
+  `VatTu` thêm `layer_so_do`, `net`, `mau`.
+- `data/vat_tu.json`: mã mới `BC_CHI_THI`, `BC_CHI_THI_HL`, `BC_COI_DEN`, `BC_DIEN_THOAI`, `DAY_BC_10`, `DAY_BC_10_FR`, `DAY_NGUON_15`, `DAY_NGUON_15_FR` (dây có layer/nét/màu mặc định như trang 11).
+- `data/ky_hieu/hinh_bc.json` sinh bằng `.claude/skills/tkpccc-cad-console/scripts/hinh_tu_pdf.py` từ nét vector bảng ký hiệu trang 11; `build.bat`, `chay_thu.ps1` chép file này.
+  Đã chạy `PCCC_LIB` trên bundle: `PCCC_Blocks.dwg` thêm 4 mã mới + vẽ lại 11 block mặc định cũ (BC_NHIET, BC_KHOI, BC_NUTAN, BC_DTCD, SPR_CTDC, SPR_VAN_BD, SPR_VAN_OSY_DN*); BC_TT giữ. Bản trước: chưa lưu trong repo (git có bản cũ).
+- `skills/vi_du/so_do_bc.json` dựng lại trang 11 (12 zone + dự phòng 13–15, bảng tính `sl` như trang 11 vì trang 11 tính "trên 1 tầng", không khớp số trên sơ đồ).
+- `test/chay_thu.ps1`: thay các phép kiểm bc cũ; mới: bảng tính đúng trang 11 (tính tay ghi trong script), chữ số trong bảng, mỗi dây đúng layer, block BC_COI_DEN + layer dây nguồn có sẵn không bị ghi đè (LISP đọc bảng block/layer), nhãn, thứ tự zone, dự phòng, giám sát van, liên động ngang.
+- Tài liệu: `knowledge/so-do-nguyen-ly.md` (mục bố cục mới, cái gì tự đặt), `knowledge/mau-so-do-that.md`, `skills/TU_VUNG.md` (đầu 1887 / 1900), `README.md`, `data/README.md`.
+Kiểm chứng: `chay_thu.ps1` 75 DAT TAT CA DAT, `thu_mcp.ps1` 9 DAT TAT CA DAT, `build.bat` OK; ảnh `ket_qua/cad_mau/cad/so_do/anh/so_do_bc_3.png` đã đặt cạnh `trang11.png` so từng phần.
+Chưa kiểm: `thu_gui.ps1` (không chạy theo lệnh); chưa mở trong AutoCAD có giao diện; chưa review `cad-review`.
+Còn khác trang 11: màu theo layer (trang 11 đen trắng), tủ vẽ bằng nét không phải block, vị trí ký hiệu theo cột cố định, thiếu dòng "S trên trần" trong bảng ký hiệu, chú thích bó dây lấy tên dây `day_truc`.

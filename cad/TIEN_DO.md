@@ -18,6 +18,7 @@ Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.m
      đọc mặt bằng (`dem` theo zone, diện tích vùng) lấy số thiết bị, khu vực, diện tích từng zone rồi sinh sơ đồ. Nhãn cuối zone 3 dòng: Khu vực bảo vệ / Diện tích bảo vệ / Zone.
      KÝ HIỆU thiết bị tuỳ người, tuỳ bản vẽ (dặn 13/11): sơ đồ dùng đúng block của bản vẽ/mặt bằng hoặc thư viện người dùng; "giống 100%" là bố cục, bảng, chữ, dây. Bảng ký hiệu
      trên sơ đồ in lại chính các block đó. Ký hiệu lấy từ nét PDF mẫu chỉ làm bộ mặc định trong `PCCC_Blocks.dwg`.
+     DÂY tín hiệu, dây nguồn cũng vậy (dặn 13/11): mỗi loại dây một layer riêng (nét, màu) theo bản vẽ người dùng; sơ đồ vẽ dây đúng layer đó, bảng ký hiệu in mẫu nét theo layer đó.
   2. HỎI NGƯỜI DÙNG: sơ đồ sprinkler vẽ kiểu không gian trục đo như hồ sơ thật (việc lớn) hay giữ nguyên lý phẳng.
   3. Đọc thêm trang 46 (âm thanh), 58 (hút khói), 63 (cấp điện) khi làm các sơ đồ đó; trang 23 (không gian vách tường).
   4. GHI CHÚ còn lại của review 12/11c, 12/11d; `thu_gui.ps1` + thử `cad-ve`/`cad-kiem` khi AutoCAD có giao diện.

@@ -39,6 +39,7 @@ namespace TKPCCC
             public List<List<Point2d>> VungRai = new List<List<Point2d>>();                 // đa giác của từng vùng đó (cùng chỉ số): "tuyen" nhận "qua" theo vùng
             public List<object> KqAnh = new List<object>();                                 // đường dẫn PNG của thao tác "anh"
             public List<object> KqPdf = new List<object>();                                 // số đối tượng + layer của từng thao tác "pdf"
+            public Dictionary<string, object> KqNguon;                                       // kết quả bảng tính nguồn của "so_do" bc (SoDo.cs)
         }
 
         // ---------- Đọc JSON ----------
@@ -224,6 +225,7 @@ namespace TKPCCC
             if (g.KqTuyen.Count > 0) kq["tuyen"] = g.KqTuyen;
             if (g.KqAnh.Count > 0) kq["anh"] = g.KqAnh;
             if (g.KqPdf.Count > 0) kq["pdf"] = g.KqPdf;
+            if (g.KqNguon != null) kq["nguon"] = g.KqNguon;
             kq["ban_ve"] = Path.GetFileName(doc.Name);
             return kq;
         }

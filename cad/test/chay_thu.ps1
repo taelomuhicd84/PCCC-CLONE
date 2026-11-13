@@ -18,6 +18,7 @@ if ($LASTEXITCODE) { throw 'Bien dich loi' }
   /r:System.Core.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll /r:"$T\TKPCCC.Cad.dll" "$GOC\cad\module\ui\*.cs"
 if ($LASTEXITCODE) { throw 'Bien dich TKPCCC.UI.dll loi' }
 Copy-Item "$GOC\data\vat_tu.json" $T
+Copy-Item "$GOC\cad\data\ky_hieu\hinh_bc.json" $T  # hinh block mac dinh (lay tu PDF trang 11): PCCC_LIB tao thu vien moi theo hinh nay
 # File danh muc "goc" cua repo: tro toi ban chep tam (nhu build.bat ghi nguon_vat_tu.txt) de PCCC_THEMBLOCK ghi ca hai file ma khong dung repo.
 New-Item -ItemType Directory "$T\goc" | Out-Null
 Copy-Item "$GOC\data\vat_tu.json" "$T\goc"
@@ -173,8 +174,10 @@ if ($LASTEXITCODE) { throw 'tao_pdf_mau.py khong tao duoc PDF bao mat' }
 Copy-Item "$GOC\cad\skills\vi_du\so_do.json" "$T\so_do.json"
 '{"goc":[1200000,0],"ops":[{"op":"so_do","truc":["ONG_DN25"],"tang":[{"ten":"T1","cot":0,"dem":{"SPR_DAU_DOWN":4}}]},{"op":"doc","gi":"chu","l":"PCCC_SODO_TANG"}]}' |
   Set-Content -Encoding ascii "$T\so_do_loi.json"
-# so_do he bc (vi du so_do_bc.json): 2 tang + mai, 3 zone; goi loi: zone 26 dau bao > toi_da 25, va thieu toi_da -> 2 loi, khong ve.
-Copy-Item "$GOC\cad\skills\vi_du\so_do_bc.json" "$T\so_do_bc.json"
+# so_do he bc (vi du so_do_bc.json = trang 11 ho so that: 12 zone + du phong, bang tinh nguon): them doc layer day + doc chu vung bang tinh.
+# goi loi: zone 26 dau bao > toi_da 25, va thieu toi_da -> 2 loi, khong ve.
+[IO.File]::WriteAllText("$T\so_do_bc.json", ([IO.File]::ReadAllText("$GOC\cad\skills\vi_du\so_do_bc.json") -replace '\{"op":"dem"\}\]\}\s*$',
+  '{"op":"dem"},{"op":"doc","gi":"layer","l":"PCCC_SODO_DAY*"},{"op":"doc","gi":"chu","l":"PCCC_SODO_BC","hop":[-16600,8300,-700,15800]}]}'))
 '{"goc":[1400000,0],"ops":[{"op":"so_do","he":"bc","toi_da":25,"tang":[{"cot":0,"zone":[{"dem":{"BC_KHOI":20,"BC_NHIET":6,"BC_NUTAN":1}}]}]},{"op":"so_do","he":"bc","tang":[{"cot":0,"dem":{"BC_KHOI":2}}]}]}' |
   Set-Content -Encoding ascii "$T\so_do_bc_loi.json"
 # Review 12/11d NEN SUA 2: spr nhan dem chep tu ket qua dem (ca BC, ong, day) chi ghi ma SPR; ma la, so <= 0 bao loi.
@@ -187,9 +190,10 @@ $demDu = '"dem":{"BC_KHOI":10,"BC_NHIET":4,"DAY_BC":28.91,"ONG_DN25":183.32,"ONG
 # Nhan cuoi zone 3 dong (13/11): khu vuc (ten tang + kv) / DIEN TICH BAO VE: xx m2 / ZONE n; thieu dt bo dong dien tich; kv da co ten tang khong ghep lai.
 ('{"goc":[1700000,0],"ops":[{"op":"so_do","he":"bc","toi_da":25,"tang":[{"ten":"T1","cot":0,"zone":[{"kv":"KARAOKE","dt":88.11,"dem":{"BC_KHOI":10,"BC_NHIET":4,"DAY_BC":28.91,"BC_NUTAN":1}},' +
   '{"kv":"T1 KHO","dem":{"BC_KHOI":2}}]}]},' +
-  '{"op":"so_do","he":"bc","toi_da":25,"p":[0,20000],"du_phong":"ZONE 4 DU PHONG","lien_dong":["LD THU"],"zone":[{"dt":120,"dem":{"BC_KHOI":21}},' +
+  '{"op":"so_do","he":"bc","toi_da":25,"p":[0,40000],"du_phong":"ZONE 4 DU PHONG","lien_dong":["LD THU"],"zone":[{"dt":120,"dem":{"BC_KHOI":21}},' +
   '{"kv":"KHU B","dem":{"BC_KHOI":22,"BC_NUTAN":1}},{"dem":{"SPR_VAN_OSY_DN100":2,"SPR_CTDC":2}}]},' +
-  '{"op":"doc","gi":"chu","hop":[-10000,15000,30000,60000]},{"op":"doc","gi":"chu","hop":[-10000,-5000,30000,15000]}]}') | Set-Content -Encoding ascii "$T\so_do_bc2.json"
+  '{"op":"doc","gi":"chu","hop":[8500,4500,12000,9500]},{"op":"doc","gi":"chu","hop":[5500,45500,14000,50500]},' +
+  '{"op":"doc","gi":"chu","hop":[-3000,45500,5200,50500]},{"op":"doc","gi":"chu","hop":[3500,43500,9000,44800]}]}') | Set-Content -Encoding ascii "$T\so_do_bc2.json"
 # NEN SUA 1: ban ve don vi m (INSUNITS 6): co chu mac dinh nhan k, hop cua so do vai chuc m (truoc: 7 724 x 1 227 m).
 '{"goc":[1600,0],"ops":[{"op":"so_do","he":"spr","p":[0,0],"tang":[{"ten":"T1","cot":0,"dem":{"SPR_DAU_DOWN":64}},{"ten":"T2","cot":4200,"dem":{"SPR_DAU_DOWN":64}}]}]}' |
   Set-Content -Encoding ascii "$T\so_do_m.json"
@@ -205,12 +209,17 @@ $bamTv = (Get-FileHash "$T\PCCC_Blocks.dwg").Hash
 @('INSUNITS', '4', 'NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '_.SAVEAS', '2018', "`"$T\spec.dwg`"",
   'CIRCLE', '-500000,0', '150', '-BLOCK', 'VAN_TRUNG', '-500000,0', 'L', '', '-INSERT', 'VAN_TRUNG', '-500000,0', '1', '', '0',
   'PCCC_THEMBLOCK', 'L', 'van_trung', 'Van trung', 'SPR', '', 'PCCC_THEMBLOCK', 'L', 'van_ro', 'Van ro', 'SPR', '',
+  'CIRCLE', '-600000,0', '77', '-BLOCK', 'BC_COI_DEN', '-600000,0', 'L', '',
+  '-LAYER', 'M', 'PCCC_SODO_DAY_NGUON', 'C', '3', '', 'L', 'CONTINUOUS', '', 'S', '0', '',
   'PCCC_SPEC', "$T\spec.json", 'PCCC_SPEC', "$T\rai.json",
   'PCCC_SPEC', "$T\khoa_sai.json", 'PCCC_SPEC', "$T\khoa_dung.json", 'PCCC_SPEC', "$T\anh.json", 'PCCC_SPEC', "$T\pdf_sai.json", 'PCCC_SPEC', "$T\pdf.json",
   'PCCC_SPEC', "$T\pdf2.json", 'PCCC_SPEC', "$T\xoa2.json", 'PCCC_SPEC', "$T\rai_loi.json", 'PCCC_SPEC', "$T\tuyen_thu.json", 'PCCC_SPEC', "$T\nhan.json",
   'PCCC_SPEC', "$T\rai_moi.json", 'PCCC_SPEC', "$T\pdf_mk.json", 'PCCC_SPEC', "$T\rv_tuyen.json", 'PCCC_SPEC', "$T\hoa.json", 'PCCC_SPEC', "$T\hoa_doc.json",
   'PCCC_SPEC', "$T\rv_hang.json", 'PCCC_SPEC', "$T\rv2.json", 'PCCC_SPEC', "$T\van.json", 'PCCC_SPEC', "$T\so_do.json", 'PCCC_SPEC', "$T\so_do_loi.json", 'PCCC_SPEC', "$T\so_do_bc.json", 'PCCC_SPEC', "$T\so_do_bc_loi.json",
-  'PCCC_SPEC', "$T\so_do_loc.json", 'PCCC_SPEC', "$T\so_do_bc2.json", 'INSUNITS', '6', 'PCCC_SPEC', "$T\so_do_m.json", 'INSUNITS', '4', '_.QSAVE') -join "`r`n" |
+  'PCCC_SPEC', "$T\so_do_loc.json", 'PCCC_SPEC', "$T\so_do_bc2.json", 'INSUNITS', '6', 'PCCC_SPEC', "$T\so_do_m.json", 'INSUNITS', '4', '_.QSAVE',
+  ('(progn (setq f (open "' + ($T -replace '\\', '/') + '/blk.txt" "w")) (setq e (cdr (assoc -2 (tblsearch "BLOCK" "BC_COI_DEN")))) ' +
+   '(while e (write-line (cdr (assoc 0 (entget e))) f) (setq e (entnext e))) (setq l (tblsearch "LAYER" "PCCC_SODO_DAY_NGUON")) ' +
+   '(write-line (strcat "LAYER " (itoa (cdr (assoc 62 l))) " " (cdr (assoc 6 l))) f) (close f))')) -join "`r`n" |
   Set-Content -Encoding ascii "$T\kb2.scr"
 $p2 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb2.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb2.out.txt"
 if (-not $p2.WaitForExit(180000)) { Stop-Process -Id $p2.Id -Force; throw "accoreconsole qua 3 phut (PCCC_SPEC): $T\kb2.out.txt" }
@@ -331,32 +340,48 @@ Kiem ($ksl -and $ksl.ve -eq 0 -and @($ksl.loi).Count -eq 1 -and $ksl.loi[0].ly_d
   ($chuSd -contains ([string][char]0xB1 + '0.000')) -and ($chuSd -contains '+4.200') -and ($chuSd -contains '+8.400') -and $chuSd.Count -eq 6) `
   "so_do: chu cao do +-0.000 / +4.200 / +8.400 + 3 ten tang; truc DN25 khong co van OS&Y thi bao loi, khong ve ($($chuSd -join ' | '))"
 $ksb = DocKq 'so_do_bc'; $ksbl = DocKq 'so_do_bc_loi'
-Kiem ($ksb -and $ksb.ok -eq $true -and $ksb.ve -eq 59 -and $ksb.dem.BC_KHOI -eq $ksd.dem.BC_KHOI -and $ksb.dem.BC_NHIET -eq $ksd.dem.BC_NHIET -and -not $ksb.dem.BC_DTCD -and -not $ksb.dem.BC_TT) `
-  "so_do bc: 4 zone (1 giam sat van), 7 cot thiet bi + dien tro cuoi day, du phong, 3 lien dong, ve 59; block so do khong cong vao dem (thay ve $($ksb.ve), dem $($ksb.dem | ConvertTo-Json -Compress))"
+# Bang tinh nguon tinh tay (phu luc C TCVN 7568-14:2025, so lieu trang 11): IQ = 100 + (59 x 35 + 24 x 59) / 1000 = 103,481 mA;
+# IA = 100 + 59 x 40 + 24 x 40 + 28 x 14,5 + 3 x 30 + 11 x 15 = 4081 mA; C20 = 1,25 x (0,103481 x 24 + 2 x 4,081 x 0,5) = 8,20568 Ah;
+# IC = 1,25 x (0,103481 x 5 + 4,081 x 0,5) / 24 = 0,13322 A; IPSE = 0,103481 + 0,13322 = 0,2367 A (bang ghi 0.24).
+$ng = if ($ksb) { $ksb.nguon }
+Kiem ($ng -and [math]::Abs($ng.ia_ma - 4081) -lt 1e-6 -and [math]::Abs($ng.iq_ma - 103.481) -lt 1e-6 -and [math]::Abs($ng.c20_ah - 8.20568) -lt 1e-6 -and
+  [math]::Abs($ng.ic_a - 0.133224) -lt 1e-6 -and [math]::Abs($ng.ipse_a - 0.236705) -lt 1e-6) `
+  "so_do bc bang tinh nguon dung trang 11: IA 4081 mA, IQ 103,481 mA, C20 8,20568 Ah, IC 0,133 A, IPSE 0,24 A (thay $($ng | ConvertTo-Json -Compress))"
+$chuBang = if ($ksb -and $ksb.doc -and $ksb.doc.Count -gt 1) { @($ksb.doc[1].ds | ForEach-Object { $_.t }) } else { @() }
+Kiem ((@('4081', '8.20568', '103.481', '0.133', '0.24', '2360', '406', '(Kh*ng *ng k*)') | Where-Object { $p = $_; -not ($chuBang | Where-Object { $_ -like $p }) }).Count -eq 0) `
+  "so_do bc bang tinh in so cham thap phan nhu trang 11: 4081, 8.20568, 103.481, 0.133, 0.24, 2360, 406, (Khong dang ke) ($($chuBang.Count) o chu)"
+Kiem ($ksb -and $ksb.ok -eq $true -and $ksb.ve -gt 300 -and $ksb.dem.BC_KHOI -eq $ksd.dem.BC_KHOI -and $ksb.dem.BC_NHIET -eq $ksd.dem.BC_NHIET -and -not $ksb.dem.BC_DTCD -and
+  -not $ksb.dem.BC_COI_DEN -and -not $ksb.dem.BC_CHI_THI -and -not $ksb.dem.SPR_CTDC) `
+  "so_do bc trang 11 (12 zone, du phong, 5 lien dong, bang ky hieu, bang tinh): ve $($ksb.ve); block so do khong cong vao dem ($($ksb.dem | ConvertTo-Json -Compress))"
+$lay = if ($ksb -and $ksb.doc) { @($ksb.doc[0].ds) } else { @() }
+$nLay = { param($t) $x = @($lay | Where-Object { $_.l -eq $t }); if ($x.Count) { $x[0].n } else { 0 } }
+Kiem ((& $nLay 'PCCC_SODO_DAY_TH') -ge 10 -and (& $nLay 'PCCC_SODO_DAY_TH_FR') -ge 16 -and (& $nLay 'PCCC_SODO_DAY_NGUON') -ge 8 -and (& $nLay 'PCCC_SODO_DAY_NGUON_FR') -eq 3) `
+  "so_do bc moi loai day mot layer theo layer_so_do cua ma: zone 1-9 DAY_TH, bo day + zone van DAY_TH_FR, coi den DAY_NGUON, 2 nguon + mau DAY_NGUON_FR ($($lay | ForEach-Object { $_.l + '=' + $_.n }))"
+$blk = if (Test-Path "$T\blk.txt") { @(Get-Content "$T\blk.txt") } else { @() }
+Kiem ($blk.Count -eq 2 -and $blk[0] -eq 'CIRCLE' -and $blk[1] -match '^LAYER 3 continuous$') `
+  "so_do bc dung ky hieu cua ban ve: block BC_COI_DEN co san (1 CIRCLE) khong bi thu vien ghi de; layer day nguon co san giu mau 3, net Continuous ($($blk -join ' | '))"
 Kiem ($ksbl -and $ksbl.ve -eq 0 -and @($ksbl.loi).Count -eq 2 -and $ksbl.loi[0].ly_do -match '26 .+toi_da 25' -and $ksbl.loi[1].ly_do -match 'toi_da') `
   "so_do bc: zone 26 dau bao > toi_da 25 bao loi; thieu toi_da bao loi; khong ve ($($ksbl.loi | ConvertTo-Json -Compress -Depth 3))"
-$kloc = DocKq 'so_do_loc'
-$chuSpr = if ($kloc -and $kloc.doc) { @($kloc.doc[0].ds | Where-Object { $_.t -match '^SPRINKLER L' }) } else { @() }
-Kiem ($kloc -and @($kloc.loi).Count -eq 2 -and $kloc.loi[0].i -eq 1 -and $kloc.loi[0].ly_do -match 'SPR_DAU_DWN' -and $kloc.loi[1].i -eq 2 -and $kloc.loi[1].ly_do -match '> 0' -and
-  $chuSpr.Count -eq 2 -and @($chuSpr | Where-Object { @($_.t -split "`r?`n").Count -eq 4 }).Count -eq 2) `
-  "so_do spr: dem du (BC, ong, day) chi ghi 3 ma SPR; ma la va so -3 bao loi ($($chuSpr.Count) chu, $($kloc.loi | ConvertTo-Json -Compress -Depth 3))"
 $kbc2 = DocKq 'so_do_bc2'
-$cb = if ($kbc2 -and $kbc2.doc) { @($kbc2.doc[0].ds) } else { @() }
-$yC = { param($re) @($cb | Where-Object { $_.t -match $re -and $_.p[0] - 1700000 -lt 2000 } | ForEach-Object { $_.p[1] }) }  # ten zone o bo day (nhan cuoi hang o x > 4000)
-$nhan = { param($ds, $dau) @($ds | Where-Object { $_.p[0] - 1700000 -gt 4000 -and ($_.t -split "`r?`n")[0] -eq $dau } | ForEach-Object { $_.t }) }
-$cb1 = if ($kbc2 -and $kbc2.doc -and $kbc2.doc.Count -gt 1) { @($kbc2.doc[1].ds) } else { @() }
-$nk = @(& $nhan $cb1 'T1 KARAOKE'); $nh = @(& $nhan $cb1 'T1 KHO'); $nd = @($cb | Where-Object { $_.p[0] - 1700000 -gt 4000 -and $_.t -match '^DI.+: 120 m' })
-$lk = if ($nk.Count -eq 1) { @($nk[0] -split "`r?`n") } else { @() }; $lh = if ($nh.Count -eq 1) { @($nh[0] -split "`r?`n") } else { @() }
-Kiem ($lk.Count -eq 3 -and $lk[1] -match '^DI.+ B.O V.: 88\.11 m' -and $lk[2] -eq 'ZONE 1' -and
-  $lh.Count -eq 2 -and $lh[1] -eq 'ZONE 2' -and $nd.Count -eq 1 -and @($nd[0].t -split "`r?`n").Count -eq 2) `
-  "so_do bc: nhan cuoi zone 3 dong khu vuc / dien tich bao ve / zone; ghep ten tang + kv; thieu dt bo dong; khong kv thi 2 dong ($($cb1 | Where-Object { $_.p[0] - 1700000 -gt 4000 } | ForEach-Object { $_.t -replace "`r?`n", ' / ' }))"
-$z1 = & $yC '^ZONE 1$'; $z2 = & $yC '^ZONE 2$'; $z3 = & $yC '^ZONE 3$'; $dp = & $yC '^ZONE 4 DU PHONG$'; $n21 = @($cb | Where-Object { $_.t -eq '21' } | ForEach-Object { $_.p[1] }); $ld = & $yC '^LD THU$'
+$dc = { param($i) if ($kbc2 -and $kbc2.doc -and $kbc2.doc.Count -gt $i) { @($kbc2.doc[$i].ds) } else { @() } }
+$c1 = @(& $dc 0); $c2 = @(& $dc 1); $c3 = @(& $dc 2); $c4 = @(& $dc 3)
+$dong = { param($ds, $dau) @($ds | Where-Object { ($_.t -split "`r?`n")[0] -eq $dau } | ForEach-Object { , @($_.t -split "`r?`n") }) }
+$lk = @(& $dong $c1 'T1 KARAOKE'); $lh = @(& $dong $c1 'T1 KHO'); $ld2 = @(& $dong $c2 'KHU B'); $l120 = @($c2 | Where-Object { $_.t -match ': 120 M' })
 Kiem ($kbc2 -and $kbc2.ok -eq $true) "so_do bc: dem co DAY_BC (chep tu ket qua dem) bo qua day, khong bao loi ($($kbc2.loi | ConvertTo-Json -Compress -Depth 3))"
-Kiem ($z1.Count -eq 1 -and $z2.Count -eq 1 -and $z3.Count -eq 1 -and $dp.Count -eq 1 -and $z1[0] -lt $z2[0] -and $z2[0] -lt $z3[0] -and $z3[0] -lt $dp[0] -and $z1[0] -gt 20600) `
-  "so_do bc: zone truyen thang, xep tu duoi len tren khung tu, dong du phong tren cung ($z1 / $z2 / $z3 / $dp)"
-Kiem ($n21.Count -eq 1 -and $n21[0] -lt $z1[0] -and @($cb | Where-Object { $_.t -match '^x\d' }).Count -eq 0) "so_do bc: so luong ghi DUOI ky hieu, khong con chu x<so> ($n21 < $z1)"
-Kiem ($nd.Count -eq 1 -and @($cb | Where-Object { $_.t -match '^KHU B\r?\nZONE 2$' }).Count -eq 1 -and $ld.Count -eq 1 -and $ld[0] -lt 20000 -and
-  @($cb | Where-Object { $_.t -match '^[+-]\d\.\d{3}$|0\.000' }).Count -eq 0) "so_do bc: dien tich bao ve + khu vuc cuoi hang, lien dong duoi tu, khong cao do"
+Kiem ($lk.Count -eq 1 -and $lk[0].Count -eq 3 -and $lk[0][1] -match '^DI.N T.CH B.O V.$' -and $lk[0][2] -match '^ZONE 1 : 88\.11 M' -and
+  $lh.Count -eq 1 -and $lh[0].Count -eq 2 -and $lh[0][1] -eq 'ZONE 2' -and $ld2.Count -eq 1 -and $ld2[0][1] -eq 'ZONE 2' -and
+  $l120.Count -eq 1 -and @($l120[0].t -split "`r?`n").Count -eq 2) `
+  "so_do bc: nhan duoi dien tro cuoi day nhu trang 11: khu vuc / DIEN TICH BAO VE / ZONE n : dt M2; ghep ten tang + kv; thieu dt, thieu kv bo dong ($($c1 | ForEach-Object { $_.t -replace "`r?`n", ' / ' }))"
+$yZ = { param($re) @($c3 | Where-Object { $_.t -match $re } | ForEach-Object { $_.p[1] }) }
+$z1 = & $yZ '^ZONE 1$'; $z2 = & $yZ '^ZONE 2$'; $z3 = & $yZ '^ZONE 3$'; $dp = @($c3 | Where-Object { $_.t -eq 'ZONE 4 DU PHONG' })
+Kiem ($z1.Count -eq 1 -and $z2.Count -eq 1 -and $z3.Count -eq 1 -and $z1[0] -lt $z2[0] -and $z2[0] -lt $z3[0] -and $dp.Count -eq 1 -and $dp[0].p[1] -gt $z1[0] -and $dp[0].p[1] -lt $z2[0] -and
+  $dp[0].p[0] -lt 1700000 + 1000) "so_do bc: zone 1 duoi cung, xep len tren; dong du phong ben trai bo day giua zone 1 va 2 nhu trang 11 ($z1 / $z2 / $z3 / $($dp.p -join ','))"
+$n21 = @($c2 | Where-Object { $_.t -eq '21' } | ForEach-Object { $_.p[1] }); $gs = @($c2 | Where-Object { $_.t -match '^VAN C.NG OS&Y' })
+Kiem ($n21.Count -eq 1 -and $n21[0] -lt $z1[0] - 300 -and @($c2 + $c3 | Where-Object { $_.t -match '^x\d' }).Count -eq 0 -and $gs.Count -eq 1 -and $gs[0].t -match 'C.NG T.C D.NG CH.Y$') `
+  "so_do bc: so luong ghi DUOI ky hieu; zone giam sat van ghi ten van OS&Y + cong tac dong chay ben phai ($n21 < $z1; $($gs.t -replace "`r?`n", ' / '))"
+$ld = @($c4 | Where-Object { $_.t -eq 'LD THU' })
+Kiem ($ld.Count -eq 1 -and $ld[0].p[0] -gt 1703900 -and $ld[0].p[1] -gt 43800 -and @($c1 + $c2 + $c3 + $c4 | Where-Object { $_.t -match '^[+-]\d\.\d{3}$|0\.000' }).Count -eq 0) `
+  "so_do bc: lien dong di ngang sang phai tu canh tu (chu tren duong), khong cao do ($($ld.p -join ','))"
 $ksm = DocKq 'so_do_m'
 Kiem ($ksm -and $ksm.ok -eq $true -and $ksm.hop -and ($ksm.hop[2] - $ksm.hop[0]) -lt 50 -and ($ksm.hop[3] - $ksm.hop[1]) -lt 30) `
   "so_do ban ve don vi m: co chu nhan k, hop vai chuc m (thay $($ksm.hop -join ', '))"

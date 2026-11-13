@@ -1,5 +1,5 @@
 {
-  "_ghi_chu": "Danh mục vật tư PCCC — nguồn duy nhất cho plugin CAD, runner và báo giá. loai=block: đếm block có attribute MA_VT; loai=tuyen: cộng chiều dài đường trên layer PCCC_<ma> (m); loai=khac: không vẽ trong CAD, chỉ dùng cho báo giá sơ bộ. ky_hieu = chữ trong hình block mặc định (chỉ ASCII: font txt.shx không có dấu).",
+  "_ghi_chu": "Danh mục vật tư PCCC — nguồn duy nhất cho plugin CAD, runner và báo giá. loai=block: đếm block có attribute MA_VT; loai=tuyen: cộng chiều dài đường trên layer PCCC_<ma> (m); loai=khac: không vẽ trong CAD, chỉ dùng cho báo giá sơ bộ. ky_hieu = chữ trong hình block mặc định (chỉ ASCII: font txt.shx không có dấu); mã có hình trong cad/data/ky_hieu/hinh_bc.json thì block mặc định vẽ theo hình đó. layer_so_do, net (loại đường), mau (màu ACI): layer của dây trên sơ đồ nguyên lý (cad/module/plugin/SoDo.cs), chỉ tạo khi bản vẽ chưa có layer đó.",
   "he": {
     "BC": "Báo cháy tự động",
     "SPR": "Chữa cháy sprinkler",
@@ -22,6 +22,10 @@
     { "ma": "BC_DEN", "ten": "Đèn báo cháy", "dvt": "cái", "he": "BC", "loai": "block", "ky_hieu": "DL" },
     { "ma": "BC_MODULE", "ten": "Module giám sát/điều khiển", "dvt": "cái", "he": "BC", "loai": "block", "ky_hieu": "M" },
     { "ma": "BC_DTCD", "ten": "Điện trở cuối dây", "dvt": "cái", "he": "BC", "loai": "block", "ky_hieu": "R" },
+    { "ma": "BC_CHI_THI", "ten": "Thiết bị chỉ thị đầu báo trong phòng", "dvt": "cái", "he": "BC", "loai": "block", "ky_hieu": "CT" },
+    { "ma": "BC_CHI_THI_HL", "ten": "Thiết bị chỉ thị đầu báo trên trần khu hành lang", "dvt": "cái", "he": "BC", "loai": "block", "ky_hieu": "CTHL" },
+    { "ma": "BC_COI_DEN", "ten": "Còi đèn kết hợp báo cháy", "dvt": "cái", "he": "BC", "loai": "block", "ky_hieu": "CD" },
+    { "ma": "BC_DIEN_THOAI", "ten": "Điện thoại kết nối PCCC", "dvt": "cái", "he": "BC", "loai": "block", "ky_hieu": "DT" },
 
     { "ma": "SPR_DAU_UP", "ten": "Đầu phun sprinkler hướng lên", "dvt": "cái", "he": "SPR", "loai": "block", "ky_hieu": "U" },
     { "ma": "SPR_DAU_DOWN", "ten": "Đầu phun sprinkler hướng xuống", "dvt": "cái", "he": "SPR", "loai": "block", "ky_hieu": "D" },
@@ -65,6 +69,10 @@
     { "ma": "ONG_DN125", "ten": "Ống thép tráng kẽm DN125", "dvt": "m", "he": "ONG", "loai": "tuyen" },
     { "ma": "ONG_DN150", "ten": "Ống thép tráng kẽm DN150", "dvt": "m", "he": "ONG", "loai": "tuyen" },
     { "ma": "DAY_BC", "ten": "Dây tín hiệu báo cháy chống cháy 2x1.5", "dvt": "m", "he": "ONG", "loai": "tuyen" },
+    { "ma": "DAY_BC_10", "ten": "Dây tín hiệu 2C x 1,0mm2 Cu-PVC", "dvt": "m", "he": "ONG", "loai": "tuyen", "layer_so_do": "PCCC_SODO_DAY_TH", "net": "DASHED", "mau": 1 },
+    { "ma": "DAY_BC_10_FR", "ten": "Dây tín hiệu 2C x 1mm2 Cu-PVC/FR", "dvt": "m", "he": "ONG", "loai": "tuyen", "layer_so_do": "PCCC_SODO_DAY_TH_FR", "net": "PCCC_FR", "mau": 6 },
+    { "ma": "DAY_NGUON_15", "ten": "Dây nguồn 2C x 1,5mm2 Cu-PVC", "dvt": "m", "he": "ONG", "loai": "tuyen", "layer_so_do": "PCCC_SODO_DAY_NGUON", "net": "DASHDOT", "mau": 30 },
+    { "ma": "DAY_NGUON_15_FR", "ten": "Dây nguồn 2C x 1,5mm2 Cu-PVC/FR", "dvt": "m", "he": "ONG", "loai": "tuyen", "layer_so_do": "PCCC_SODO_DAY_NGUON_FR", "net": "CONTINUOUS", "mau": 2 },
     { "ma": "CAP_CC", "ten": "Cáp điện chống cháy cấp nguồn PCCC", "dvt": "m", "he": "ONG", "loai": "tuyen" },
     { "ma": "ONG_LUON", "ten": "Ống luồn dây PVC/thép", "dvt": "m", "he": "ONG", "loai": "tuyen" },
 

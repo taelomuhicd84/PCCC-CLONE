@@ -59,10 +59,22 @@ Vẽ thử: `ket_qua/cad_mau/cad/so_do/so_do_bc.json` (2 tầng + mái, 3 zone, 
 - Mã vật tư cho van xả; hình block van theo đúng ký hiệu bản mẫu.
 - Cao độ tầng đọc tự động từ mặt đứng PDF (hiện người/AI nhập `cot`).
 
-### Bố cục `bc` theo hồ sơ thật (sửa 2026-11-12, nguồn `cad/knowledge/mau-so-do-that.md`, trang 11)
-`{"op":"so_do","he":"bc","toi_da":25,"zone":[{"ten":"ZONE 1","kv":"KARAOKE","dt":88.11,"dem":{"BC_TOHOP":1,"BC_NHIET":12}},{"ten":"ZONE 10","kv":"PHÒNG BƠM","dem":{"SPR_VAN_OSY_DN100":9,"SPR_VAN_BD":2}}],"du_phong":"ZONE 13 - 15 DỰ PHÒNG","lien_dong":["KẾT NỐI VAN MFD"]}`
-- Lấy từ bản mẫu: không vạch tầng/cao độ; tủ dưới, zone xếp từ dưới lên; bó dây đứng bên trái rẽ vào từng zone; số lượng DƯỚI ký hiệu;
-  cuối hàng điện trở cuối dây + chữ 3 dòng (người dùng dặn 13/11): khu vực / "DIỆN TÍCH BẢO VỆ: xx m²" (dấu chấm thập phân) / "ZONE n" — khu vực = `kv`, zone trong tầng có tên mà `kv` chưa chứa tên tầng thì ghép "tên tầng + kv", không `kv` thì lấy tên tầng; thiếu `dt` bỏ dòng diện tích; zone giám sát van (van OS&Y + FS, phòng bơm van báo động); dòng zone dự phòng; mũi tên liên động từ tủ.
-- Tự đặt (khác bản mẫu): mũi tên liên động đi từ ĐÁY tủ xuống (bản mẫu đi ngang từ cạnh phải tủ); tên thiết bị ghi trên đầu cột thay bảng ký hiệu;
-  còi đèn không tách cột riêng bên phải; chưa có bảng tính ắc quy, nguồn 220 V / 24 V, tiếp địa, điện thoại.
-- `h` = khoảng cách hai hàng zone (mặc định 1500, tối thiểu 700 + 2 cỡ chữ). Thử: `ket_qua/cad_mau/cad/so_do/so_do_bc_2.json` (12 zone như trang 11, toi_da 32 như bản gốc).
+### Bố cục `bc` giống quy cách trang 11 hồ sơ thật (làm lại 2026-11-13, người dùng dặn "giống 100 %")
+Nguồn: `ket_qua/cad_mau/drive_goc/trang11.png` (PDF gốc `cong_trinh.pdf` trang 11, đọc nét vector bằng PyMuPDF), mô tả `mau-so-do-that.md`.
+Ví dụ dựng lại đúng số liệu trang 11: `cad/skills/vi_du/so_do_bc.json`. Ảnh so sánh: `ket_qua/cad_mau/cad/so_do/anh/so_do_bc_3.png`.
+- Toạ độ trong `SoDo.cs` viết theo pt của trang 11 (A3), đổi ra bản vẽ bằng S = 33 mm/pt × k (vòng H của bảng ký hiệu 12,12 pt = 400 mm như block thư viện).
+  Gốc `p` = góc dưới trái mặt tủ. Hàng zone cách `h` (mặc định 1500 mm, tối thiểu 38 pt). Phần bên phải bó dây cố định theo tủ; bảng ký hiệu đặt ở đỉnh trang hoặc cao hơn nếu nhiều zone.
+- Ký hiệu (quy tắc người dùng): dùng block mang mã thiết bị đã có trong bản vẽ, KHÔNG ghi đè bằng thư viện (`NapBlock` chỉ chép mã bản vẽ chưa có; riêng lệnh `PCCC_LIB` vẫn cập nhật).
+  Hình block mặc định các mã báo cháy lấy từ nét vector bảng ký hiệu trang 11: `cad/data/ky_hieu/hinh_bc.json`, sinh bằng `cad/.claude/skills/tkpccc-cad-console/scripts/hinh_tu_pdf.py`
+  (H, S, nút ấn, Ω, thiết bị chỉ thị + HL, còi đèn, OS&Y, FS, van báo động, điện thoại). Thư viện cũ còn block mặc định vòng tròn + chữ thì `PCCC_LIB` vẽ lại; block người dùng đã sửa giữ nguyên.
+  Trên sơ đồ ký hiệu phóng so với bảng ký hiệu theo `TlKyHieu` (đo trang 11: đầu báo 1,75; nút ấn 1,95; còi 1,83; FS 1,65; OS&Y 1,43; Ω 0,87).
+- Dây: mỗi mã dây một layer (`layer_so_do`, `net`, `mau` trong `data/vat_tu.json`): `DAY_BC_10` tín hiệu 2C×1,0 Cu-PVC nét đứt (DASHED), `DAY_BC_10_FR` 2C×1 Cu-PVC/FR nét có chữ FR
+  (loại đường `PCCC_FR` tạo trong mã), `DAY_NGUON_15` nguồn 2C×1,5 Cu-PVC nét gạch chấm (DASHDOT), `DAY_NGUON_15_FR` nguồn 2C×1,5 Cu-PVC/FR nét liền. Bản vẽ có sẵn layer thì giữ nét/màu người dùng.
+  Bảng ký hiệu in mẫu nét bằng chính layer đó. Dây ngắt qua ký hiệu (trang 11 ký hiệu che dây).
+- Bảng tính nguồn theo phụ lục C TCVN 7568-14:2025 (công thức C.1, C.2, C.3 ở `knowledge/tcvn7568-14-2025.md`): C20 = hs[(IQ×TQ)+FC(IA×TA)], IC = hs[(IQ×tq_nap)+(IA×TA)]/t_nap, IPSE = IQ+IC;
+  IQ, IA cộng dòng tủ `i_tu`. Mọi hệ số và dòng từng loại thiết bị truyền từ spec; số lượng cộng từ zone, `sl` ghi đè được (trang 11 tính "trên 1 tầng": 59 H, 24 S, 28 còi, 3 nút, 11 đèn —
+  KHÔNG khớp số trên sơ đồ, nên ví dụ ghi `sl`). Kiểm tay: IA 4081 mA, IQ 103,481 mA, C20 8,20568 Ah, IC 0,133 A, IPSE 0,24 A.
+- Tự đặt / khác trang 11: tủ vẽ bằng nét trong mã (số đèn zone theo `zone_tu`), không phải block; vị trí ký hiệu theo cột cố định (nút ấn 697 pt, đầu báo từ 763 pt) trong khi trang 11 đặt tay xê dịch;
+  chữ mô tả zone giám sát mặc định = tên các thiết bị + (khu vực), muốn y hệt trang 11 thì ghi `ghi`; bảng ký hiệu thiếu dòng "đầu báo khói kiểu điểm trên trần" (chưa có mã riêng);
+  màu theo layer (trang 11 in đen trắng); ghi chú bó dây lấy tên dây `day_truc`.
+

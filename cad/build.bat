@@ -24,6 +24,8 @@ rem PCCC_THEMBLOCK ghi ma moi vao ca file goc cua repo (nguon duy nhat cua danh 
 echo %~dp0..\data\vat_tu.json>"%OUT%\nguon_vat_tu.txt"
 rem Mac dinh ky hieu truc, kich thuoc, chu: nguoi dung sua o cad\data\ky_hieu, plugin doc ban chep canh DLL.
 copy /y "%~dp0data\ky_hieu\ky_hieu.json" "%OUT%\ky_hieu.json" >nul
+rem Hinh block mac dinh ky hieu bao chay (lay tu net vector PDF, scripts\hinh_tu_pdf.py): PCCC_LIB ve block moi theo hinh nay.
+copy /y "%~dp0data\ky_hieu\hinh_bc.json" "%OUT%\hinh_bc.json" >nul
 echo OK: %OUT%\TKPCCC.Cad.dll
 
 rem Bang block (lenh PCCC_BLOCK): DLL giao dien rieng vi can acmgd.dll, accoreconsole khong nap duoc nen chi dung trong AutoCAD co giao dien.
