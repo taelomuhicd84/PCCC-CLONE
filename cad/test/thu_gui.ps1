@@ -13,7 +13,9 @@ $T = Join-Path $env:TEMP ('tkpccc_gui_' + [guid]::NewGuid().ToString('N').Substr
 New-Item -ItemType Directory "$T\b" | Out-Null
 Copy-Item "$B\TKPCCC.Cad.dll", "$B\TKPCCC.UI.dll", "$B\vat_tu.json", "$B\ky_hieu.json" "$T\b"
 $env:TKPCCC_CAD_HANG_DOI = "$T\hd"   # ca AutoCAD lan Mcp.exe mo tu day deu thua huong bien nay
-@('NETLOAD', "`"$T\b\TKPCCC.Cad.dll`"", 'INSUNITS', '4', 'PCCC_BLOCK') -join "`r`n" | Set-Content -Encoding ascii "$T\gui.scr"
+# Phim tat PHX = PCCC_HELP (phim_tat.txt canh DLL): kich ban go PHX, bang lenh hien ra = phim tat da dang ky va PCCC_HELP mo bang.
+'PHX=PCCC_HELP' | Set-Content -Encoding ascii "$T\b\phim_tat.txt"
+@('NETLOAD', "`"$T\b\TKPCCC.Cad.dll`"", 'INSUNITS', '4', 'PCCC_BLOCK', 'PHX') -join "`r`n" | Set-Content -Encoding ascii "$T\gui.scr"
 $loi = 0
 function Kiem($dk, $ten) { if ($dk) { "DAT   $ten" } else { "LOI   $ten"; $script:loi++ } }
 Add-Type -AssemblyName System.Drawing
@@ -76,24 +78,44 @@ try {
   $da2 = DocAnh ([string]@($k2.anh)[0])
   Kiem ($da2.rong -eq 640 -and $da2.mau -gt 1) "cad_anh toan ban ve: PNG 640 px co net: $($r.content[0].text)"
 
-  # Bang PCCC_BLOCK: tim khung bang theo ten trong cua so AutoCAD (UI Automation), roi hoi ListView so dong bang thong diep LVM_GETITEMCOUNT.
-  # Trong AutoCAD cac dieu khien WinForms chi hien la "Pane" nen khong dem dong qua UI Automation duoc.
+  # Hai bang (PCCC_BLOCK, PCCC_HELP): tim khung theo ten trong cua so AutoCAD (UI Automation). So dong doc tu AccessibleName cua bang
+  # ("Block: n", "Lenh: n") vi DataGridView trong AutoCAD chi hien la "Pane". Chup anh tung bang bang PrintWindow (ca khi bi che).
   Add-Type -AssemblyName UIAutomationClient; Add-Type -AssemblyName UIAutomationTypes
-  Add-Type -Namespace Win -Name U -MemberDefinition '[DllImport("user32.dll")] public static extern IntPtr SendMessage(IntPtr h, int msg, IntPtr w, IntPtr l);'
+  Add-Type -Namespace Win -Name U -MemberDefinition '[DllImport("user32.dll")] public static extern bool PrintWindow(IntPtr h, IntPtr dc, uint f);'
   $AE = [Windows.Automation.AutomationElement]; $TS = [Windows.Automation.TreeScope]
-  $dkBang = New-Object Windows.Automation.AndCondition(
-    (New-Object Windows.Automation.PropertyCondition($AE::ProcessIdProperty, $acad.Id)),
-    (New-Object Windows.Automation.PropertyCondition($AE::NameProperty, 'TKPCCC - Block PCCC')))
-  $khung = $AE::RootElement.FindFirst($TS::Descendants, $dkBang)
-  $soDong = -1; $nut = @()
-  if ($khung) {
-    foreach ($e in $khung.FindAll($TS::Descendants, [Windows.Automation.Condition]::TrueCondition)) {
-      if ($e.Current.ClassName -match 'SysListView32') { $soDong = [Win.U]::SendMessage([IntPtr]$e.Current.NativeWindowHandle, 0x1004, [IntPtr]::Zero, [IntPtr]::Zero).ToInt32() }
-      if ($e.Current.ClassName -match 'BUTTON') { $nut += $e.Current.Name }
+  function TimBang($ten) {
+    $dk = New-Object Windows.Automation.AndCondition(
+      (New-Object Windows.Automation.PropertyCondition($AE::ProcessIdProperty, $acad.Id)),
+      (New-Object Windows.Automation.PropertyCondition($AE::NameProperty, $ten)))
+    $k = $AE::RootElement.FindFirst($TS::Descendants, $dk)
+    $kq = @{ khung = $k; dong = -1; nut = 0 }
+    if ($k) {
+      foreach ($e in $k.FindAll($TS::Descendants, [Windows.Automation.Condition]::TrueCondition)) {
+        if ($e.Current.Name -match '^(Block|Lenh): (\d+)$') { $kq.dong = [int]$Matches[2] }
+        if ($e.Current.ClassName -match 'BUTTON') { $kq.nut++ }
+      }
     }
+    $kq
+  }
+  function ChupBang($k, $file) {
+    $h = [IntPtr]$k.Current.NativeWindowHandle; $r = $k.Current.BoundingRectangle
+    if ($h -eq [IntPtr]::Zero -or $r.Width -lt 10) { return $false }
+    $bmp = New-Object Drawing.Bitmap ([int]$r.Width), ([int]$r.Height)
+    $g = [Drawing.Graphics]::FromImage($bmp); $dc = $g.GetHdc()
+    $ok = [Win.U]::PrintWindow($h, $dc, 2)
+    $g.ReleaseHdc($dc); $g.Dispose(); $bmp.Save($file); $bmp.Dispose()
+    $ok
   }
   $soBlock = @((Get-Content -Raw -Encoding UTF8 "$GOC\data\vat_tu.json" | ConvertFrom-Json).vat_tu | Where-Object { $_.loai -eq 'block' }).Count
-  Kiem ($khung -and -not $khung.Current.IsOffscreen -and $soDong -eq $soBlock -and $nut.Count -eq 2) "bang PCCC_BLOCK hien, $soDong dong (can $soBlock), $($nut.Count) nut"
+  $bb = TimBang 'TKPCCC - Block PCCC'
+  # 5 nut bo goc + 1 o chon "chi block co trong ban ve" (CheckBox cung lop BUTTON)
+  Kiem ($bb.khung -and -not $bb.khung.Current.IsOffscreen -and $bb.dong -eq $soBlock -and $bb.nut -eq 6) "bang PCCC_BLOCK hien, $($bb.dong) dong block (can $soBlock), $($bb.nut) nut (can 6)"
+  $soLenh = [regex]::Matches((Get-Content -Raw -Encoding UTF8 "$GOC\cad\module\plugin\Lenh.cs"), 'new\[\] \{ "PCCC_').Count
+  $bl = TimBang ('TKPCCC - L' + [char]0x1EC7 + 'nh PCCC')
+  Kiem ($bl.khung -and -not $bl.khung.Current.IsOffscreen -and $bl.dong -eq $soLenh -and $bl.nut -eq 3) "phim tat PHX mo bang PCCC_HELP: $($bl.dong) lenh (can $soLenh), $($bl.nut) nut (can 3)"
+  foreach ($c in @(@($bb, 'panel_block.png'), @($bl, 'panel_lenh.png'))) {
+    if ($c[0].khung) { Kiem (ChupBang $c[0].khung "$T\$($c[1])") "chup anh $T\$($c[1])" }
+  }
   $soAnh = @(Get-ChildItem "$T\b\anh_block\*.png" -ErrorAction SilentlyContinue).Count
   Kiem ($soAnh -eq $soBlock) "anh xem truoc: $soAnh file (can $soBlock)"
 }
