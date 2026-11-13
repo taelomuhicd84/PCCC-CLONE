@@ -22,6 +22,14 @@ phép kiểm `vung_tu_dong` dời sang gốc x 2600000). Sau gộp: build đạt
 4. `PCCC_HELP` THÀNH PANEL: bảng danh sách mọi lệnh (tên lệnh, việc làm, cách dùng ngắn), tìm kiếm được, SỬA ĐƯỢC PHÍM TẮT (alias) ngay trong panel, lưu lại cho lần sau
    (gợi ý: ghi alias vào file cạnh DLL hoặc acad.pgp của người dùng, có sao lưu; hỏi người dùng nếu phải sửa file cấu hình AutoCAD). Panel để ở `module/ui/`, cùng kiểu với panel Block mới.
 
+## GHI 13/11 CUỐI NGÀY (tuần của người dùng còn ~5 %, dừng, chưa làm thêm)
+- Chuỗi agent `cad-thiet-ke` → `cad-ve` → `cad-kiem` CHƯA chạy thử: cần AutoCAD có plugin. Nối tự động đã thử ĐƯỢC (không đổi cấu hình): PowerShell
+  `[Runtime.InteropServices.Marshal]::GetActiveObject("AutoCAD.Application").ActiveDocument.SendCommand('(command "_.NETLOAD" "D:/1_Claude/TKPCCC/cad/TKPCCC.bundle/Contents/TKPCCC.Cad.dll") ')`
+  rồi `cad_tt` ra `ok`. Lúc thử AutoCAD mở `PCCC HOÁ CHẤT.dwg` của người dùng (KHÔNG vẽ vào); chạy chuỗi trên bản chép `ket_qua/cad_mau/cad/t1_spr.dwg`.
+- G7 Hub (người dùng muốn "cài MCP một lần, sau mở CAD là có"): làm `module/hub/` → `TKPCCC.Hub.exe` bản đầu gồm (1) autoload plugin: registry HKCU
+  `Software\Autodesk\AutoCAD\R24.0\<ACAD-id>\Applications\TKPCCC` (LOADER, MANAGED=1, LOADCTRLS=2), có lệnh gỡ; (2) ghi `mcpServers` cho Claude Code/Desktop, sao lưu trước; (3) chẩn đoán + thử bắt tay MCP.
+  Chạy thử trên thư mục giả trước; ghi registry/cấu hình máy thật phải hỏi người dùng. Việc nhỏ hơn có thể làm trước: cho `TKPCCC.Mcp.exe` tự NETLOAD qua COM như trên (Bước 6).
+
 ## TRẠNG THÁI (cập nhật 2026-11-13, 09:30) — ĐỌC TRƯỚC KHI LÀM TIẾP
 - 13/11: `so_do` `bc` LÀM LẠI giống quy cách trang 11 hồ sơ thật (commit `b0af585`, `f07433c`): bảng ký hiệu (mẫu nét theo layer dây), ghi chú, bảng tính nguồn phụ lục C
   TCVN 7568-14:2025 (hệ số, dòng tĩnh/báo cháy từ spec; ra đúng 4081 mA, 8,20568 Ah), tủ có đèn zone, điện thoại, tiếp địa, nguồn 220 V/24 V, bó dây FR có elip, zone giám sát van,
