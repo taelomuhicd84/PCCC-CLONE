@@ -20,7 +20,7 @@ cad/
 │  ├─ ong/ · bom/          kích thước ống + phụ kiện, kích thước bơm (chờ catalog)
 │  └─ mau/                 bản vẽ mẫu, khung tên (chờ file của người dùng)
 ├─ module/                 mã chạy
-│  ├─ plugin/              Lenh.cs (lệnh PCCC_*) · Spec.cs (PCCC_SPEC, thao tác spec) · Rai.cs (rai, tuyen, PCCC_RAI, PCCC_TUYEN) · SoDo.cs (so_do, sơ đồ nguyên lý) · Block.cs (PCCC_THEMBLOCK, ảnh xem trước) · Cau.cs (cầu nối) -> TKPCCC.Cad.dll
+│  ├─ plugin/              Lenh.cs (lệnh PCCC_*) · Spec.cs (PCCC_SPEC, thao tác spec) · Rai.cs (rai, tuyen, PCCC_RAI, PCCC_TUYEN) · NhanVung.cs (vung_tu_dong: tự dựng vùng phòng từ nét tường, bỏ trục) · SoDo.cs (so_do, sơ đồ nguyên lý) · Block.cs (PCCC_THEMBLOCK, ảnh xem trước) · Cau.cs (cầu nối) -> TKPCCC.Cad.dll
 │  ├─ ui/                  BangBlock.cs (bảng PCCC_BLOCK) -> TKPCCC.UI.dll; chỗ DUY NHẤT được tham chiếu acmgd, không xử lý bản vẽ
 │  ├─ mcp/                 Mcp.cs -> bin/TKPCCC.Mcp.exe (công cụ cad_tt, cad_chay, cad_anh)
 │  ├─ chung/               HangDoi.cs: hàng đợi file dùng chung plugin + máy chủ MCP
@@ -43,6 +43,7 @@ AI chỉ viết một gói thao tác ngắn (spec JSON), plugin sinh hình. Mộ
 | Đổi cỡ chữ, bóng trục, tên và màu layer trục, khoảng cách kích thước mặc định | `data/ky_hieu/ky_hieu.json`, rồi chạy `build.bat` |
 | Thêm hoặc đổi một thao tác vẽ (`luoi_truc`, `dat`, `ong`...) | `module/plugin/Spec.cs` (hàm `Op...` + 1 dòng trong `MotOp`) và `skills/TU_VUNG.md` |
 | Đổi cách rải thiết bị, cách đi dây, đi ống (`rai`, `tuyen`, `PCCC_RAI`) | `module/plugin/Rai.cs`; cách vẽ gốc ở `knowledge/mau-ban-ve-pccc.md` |
+| Đổi cách tự nhận diện tường / trục, dựng vùng phòng khi bấm điểm (`vung_tu_dong`, `PCCC_RAI` bấm điểm) | `module/plugin/NhanVung.cs` (từ khoá layer `LOP_BO`, `LOP_TUONG`, khe cửa `HO_CUA_M`) |
 | Đổi câu hướng dẫn AI nhận lúc kết nối | phần đầu `skills/TU_VUNG.md`, trước dòng `---` (giữ dưới 1900 ký tự) |
 | Đổi tên, mô tả công cụ MCP | `module/mcp/Mcp.cs`, hàm `CongCu` |
 | Đổi cách vẽ sơ đồ nguyên lý (`so_do`) | `module/plugin/SoDo.cs`; cách vẽ, nguồn ở `knowledge/so-do-nguyen-ly.md` |

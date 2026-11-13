@@ -201,6 +201,19 @@ $demDu = '"dem":{"BC_KHOI":10,"BC_NHIET":4,"DAY_BC":28.91,"ONG_DN25":183.32,"ONG
 # NEN SUA 1: ban ve don vi m (INSUNITS 6): co chu mac dinh nhan k, hop cua so do vai chuc m (truoc: 7 724 x 1 227 m).
 '{"goc":[1600,0],"ops":[{"op":"so_do","he":"spr","p":[0,0],"tang":[{"ten":"T1","cot":0,"dem":{"SPR_DAU_DOWN":64}},{"ten":"T2","cot":4200,"dem":{"SPR_DAU_DOWN":64}}]}]}' |
   Set-Content -Encoding ascii "$T\so_do_m.json"
+# vung_tu_dong (viec 2 test 13/11): mat bang 2 phong tuong 2 net 200 (layer trung tinh KT_A), cua 1000 co ma tuong giua 2 phong, cot goc phong 2 la polyline,
+# cot goc phong 1 CHI CO HATCH (ve bang -HATCH trong kb2), cot giua phong 1 (dao), chu + kich thuoc trong phong; truc TRUC_T (luoi_truc) va mot truc CENTER
+# tren layer trung tinh NEN_A cat ngang ca hai phong (chi nhan ra truc nho kieu net). Phong 1 = 5,8 x 4,8 - goc 0,2 x 0,2 = 27,8 m2; phong 2 cung 27,8 m2.
+# ho 500 < cua 1000: hai phong + o cua thong nhau = 55,8 m2 (layer VUNG_THU, xoa ngay). Diem ngoai cong trinh: bao loi. PCCC_RAI bam diem phong 2 o kb2.
+'{"goc":[2500000,0],"ops":[{"op":"luoi_truc","x":[3000,6000],"y":[2500]},{"op":"net","l":"NEN_A","p":[[-1000,4000],[13000,4000]]},' +
+ '{"op":"net","l":"KT_A","p":[[-100,-100],[12100,-100],[12100,5100],[-100,5100]],"kin":true},{"op":"net","l":"KT_A","p":[[5900,2000],[5900,100],[100,100],[100,4700]]},' +
+ '{"op":"net","l":"KT_A","p":[[300,4900],[5900,4900],[5900,3000]]},{"op":"net","l":"KT_A","p":[[5900,2000],[6100,2000]]},{"op":"net","l":"KT_A","p":[[5900,3000],[6100,3000]]},' +
+ '{"op":"net","l":"KT_A","p":[[6100,3000],[6100,4900],[11700,4900],[11700,4700],[11900,4700],[11900,100],[6100,100],[6100,2000]]},' +
+ '{"op":"net","l":"KT_A","p":[[11700,4700],[12300,4700],[12300,5300],[11700,5300]],"kin":true},{"op":"net","l":"KT_A","p":[[3200,1500],[3600,1500],[3600,1900],[3200,1900]],"kin":true},' +
+ '{"op":"chu","l":"KT_A","p":[1500,3000],"t":"PHONG 1","cao":300},{"op":"kt","l":"KT_A","p1":[6500,1000],"p2":[11000,1000],"cach":300}]}' | Set-Content -Encoding ascii "$T\vung_ve.json"
+'{"goc":[2500000,0],"ops":[{"op":"vung_tu_dong","p":[[1500,1200]],"ho":500,"l":"VUNG_THU"},{"op":"xoa","l":"VUNG_THU"},' +
+ '{"op":"vung_tu_dong","p":[[1500,1200],[10500,3500]]},{"op":"rai","ma":"SPR_DAU_DOWN","l":"PCCC_VUNG","hop":[-500,-500,12500,5500],"s":4000},' +
+ '{"op":"vung_tu_dong","p":[[30000,30000]]}]}' | Set-Content -Encoding ascii "$T\vung_do.json"
 # Ma van sprinkler moi trong vat_tu.json (Buoc 5): dat 2 OS&Y + 1 XK, dem theo MA_VT ("mat bang" cho phep kiem chong dem trung cua so_do).
 '{"goc":[1100000,0],"ops":[{"op":"dat","ma":"SPR_VAN_OSY_DN100","p":[[0,0],[0,1000]],"goc":90},{"op":"dat","ma":"SPR_VAN_XK","p":[[1000,0]]},{"op":"dem"}]}' |
   Set-Content -Encoding ascii "$T\van.json"
@@ -220,7 +233,10 @@ $bamTv = (Get-FileHash "$T\PCCC_Blocks.dwg").Hash
   'PCCC_SPEC', "$T\pdf2.json", 'PCCC_SPEC', "$T\xoa2.json", 'PCCC_SPEC', "$T\rai_loi.json", 'PCCC_SPEC', "$T\tuyen_thu.json", 'PCCC_SPEC', "$T\nhan.json",
   'PCCC_SPEC', "$T\rai_moi.json", 'PCCC_SPEC', "$T\pdf_mk.json", 'PCCC_SPEC', "$T\rv_tuyen.json", 'PCCC_SPEC', "$T\hoa.json", 'PCCC_SPEC', "$T\hoa_doc.json",
   'PCCC_SPEC', "$T\rv_hang.json", 'PCCC_SPEC', "$T\rv2.json", 'PCCC_SPEC', "$T\van.json", 'PCCC_SPEC', "$T\so_do.json", 'PCCC_SPEC', "$T\so_do_loi.json", 'PCCC_SPEC', "$T\so_do_bc.json", 'PCCC_SPEC', "$T\so_do_bc_loi.json", 'PCCC_SPEC', "$T\so_do_bc_ng.json",
-  'PCCC_SPEC', "$T\so_do_loc.json", 'PCCC_SPEC', "$T\so_do_bc2.json", 'INSUNITS', '6', 'PCCC_SPEC', "$T\so_do_m.json", 'INSUNITS', '4', '_.QSAVE',
+  'PCCC_SPEC', "$T\so_do_loc.json", 'PCCC_SPEC', "$T\so_do_bc2.json", 'INSUNITS', '6', 'PCCC_SPEC', "$T\so_do_m.json", 'INSUNITS', '4',
+  '-LAYER', 'M', 'NEN_A', 'L', 'CENTER', '', 'M', 'KT_A', '', 'PCCC_SPEC', "$T\vung_ve.json",
+  '-HATCH', 'P', 'SOLID', 'W', 'N', '2499800,4700', '2500300,4700', '2500300,5200', '2499800,5200', 'C', '', '', '-LAYER', 'S', '0', '',
+  'PCCC_SPEC', "$T\vung_do.json", 'OSMODE', '0', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '', '', '', '2510500,1200', '', '_.QSAVE',
   ('(progn (setq f (open "' + ($T -replace '\\', '/') + '/blk.txt" "w")) (setq e (cdr (assoc -2 (tblsearch "BLOCK" "BC_COI_DEN")))) ' +
    '(while e (write-line (cdr (assoc 0 (entget e))) f) (setq e (entnext e))) (setq l (tblsearch "LAYER" "PCCC_SODO_DAY_NGUON")) ' +
    '(write-line (strcat "LAYER " (itoa (cdr (assoc 62 l))) " " (cdr (assoc 6 l))) f) ' +
@@ -430,6 +446,14 @@ Kiem ($kv -and $kv.ok -eq $true -and $kv.ve -eq 3 -and $kv.dem.SPR_VAN_OSY_DN100
   "dat ma van moi: 2 SPR_VAN_OSY_DN100 + 1 SPR_VAN_XK, dem theo MA_VT (thay ve $($kv.ve), dem $($kv.dem | ConvertTo-Json -Compress))"
 # PCCC_THEMBLOCK that bai o danh muc: thu vien DWG khong doi, khong file danh muc nao co ma moi
 $out2 = [Text.Encoding]::Unicode.GetString([IO.File]::ReadAllBytes("$T\kb2.out.txt")) -replace "`0", ''
+$kvd = DocKq 'vung_do'
+$vd = if ($kvd) { @($kvd.vung_tu_dong) } else { @() }
+Kiem ($kvd -and $vd.Count -eq 3 -and $vd[0].m2 -eq 55.8 -and $vd[1].m2 -eq 27.8 -and $vd[1].dinh -eq 6 -and $vd[2].m2 -eq 27.8 -and $vd[2].dinh -eq 6 -and
+  ($vd[1].hop -join ',') -eq '100,100,5900,4900' -and ($vd[2].hop -join ',') -eq '6100,100,11900,4900') `
+  "vung_tu_dong: bo truc (TRUC_T, CENTER tren NEN_A), cot hatch + cot polyline, noi o cua: 2 phong 27,8 m2; ho 500 thi 2 phong thong nhau 55,8 m2 ($($vd | ConvertTo-Json -Compress -Depth 3))"
+Kiem ($kvd -and @($kvd.rai).Count -eq 2 -and @($kvd.loi).Count -eq 1 -and $kvd.loi[0].i -eq 4 -and $kvd.loi[0].ly_do -match '\[30000,30000\]: ') `
+  "vung_tu_dong + rai l PCCC_VUNG: rai 2 phong; diem ngoai cong trinh bao loi ($($kvd.rai.n -join '/'), $($kvd.loi | ConvertTo-Json -Compress -Depth 3))"
+Kiem ($out2 -match 'm2=27\.8 \(6 [\s\S]{0,400}PCCC_RAI SPR_DAU_DOWN n=\d+') 'PCCC_RAI bam diem trong phong khong co polyline: tu dung vung 27,8 m2 (6 dinh) roi rai'
 $dm2 = Get-Content -Raw -Encoding UTF8 "$T\vat_tu.json" | ConvertFrom-Json
 $dmGoc2 = Get-Content -Raw -Encoding UTF8 $fGoc | ConvertFrom-Json
 Kiem ((Get-FileHash "$T\PCCC_Blocks.dwg").Hash -eq $bamTv -and $out2 -match 'VAN_TRUNG \S+ c. trong' -and $out2 -match 'kh\S+ng ghi \S+c' -and

@@ -57,7 +57,8 @@ namespace TKPCCC
             LayerTableRecord l = n.Tr.GetObject(id, OpenMode.ForRead) as LayerTableRecord;
             string t = l == null ? "" : ChuanTen(l.Name);
             if (l == null || l.IsFrozen || l.IsOff) k = 0;
-            else if (string.Equals(l.Name, LAYER_VUNG, StringComparison.OrdinalIgnoreCase)) k = 2; // vùng người dùng hoặc plugin đã dựng
+            // Vùng đã dựng là nét thường (không bật chế độ chỉ-tường): vùng lớn cả tầng không được nuốt phòng bấm bên trong.
+            else if (string.Equals(l.Name, LAYER_VUNG, StringComparison.OrdinalIgnoreCase)) k = 1;
             else if (l.Name.StartsWith("PCCC_", StringComparison.OrdinalIgnoreCase)) k = 0;        // thiết bị, ống, kích thước của plugin
             else if (LOP_BO.Any(x => t.Contains(x))) k = 0;
             else if (LOP_TUONG.Any(x => t.Contains(x))) k = 2;
