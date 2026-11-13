@@ -12,7 +12,7 @@ Thao tác (`op`):
 - `doc` gi:"layer"|"vung"|"chu", l, hop
 - `dem` (thiết bị cái, ống m)
 - `rai` ma, vùng = hop | vung:[[x,y],...] | l (polyline kín, mặc định PCCC_VUNG) | tim (tim hành lang), s (bước TỐI ĐA) + dt (m² tối đa/thiết bị) hoặc buoc:[bx,by] (bước đúng), le (cách tường), theo_hang:true (phòng chữ L), kt:true. Trả `rai`: n, bx, by, tuong, m2, ho (% hở)
-- `vung_tu_dong` p:[[x,y],...] điểm trong phòng, ho: dựng polyline kín PCCC_VUNG từ nét tường, bỏ trục. Trả m2, hop
+- `vung_tu_dong` p:[[x,y],...] (điểm trong phòng), ho: polyline kín PCCC_VUNG từ nét tường, bỏ trục
 - `tuyen` ma, kieu:"noi_tiep" (dây, tu/den) | "tia" (mỗi điểm một nét tới den) | "xuong_ca" | "cot" (mỗi cột một nhánh) | "nhanh" (3 kiểu sau cần truc ống chính), p (bỏ = điểm của `rai` trước), nhan:true ghi DN. Trả `tuyen`: doan, m
 - `so_do` sơ đồ nguyên lý, he:"spr" (truc, xa) | "bc" (toi_da, zone:[{ten,kv,dt,dem,day,ghi}], du_phong, lien_dong, nguon:{tq,ta,fc,hs,tq_nap,t_nap,i_tu,tb}, ghi_chu, ten_tb, day*), p, h, tang:[{ten,cot mm,dem}]
 - `anh` hop, rong (px): in PNG cuối gói
