@@ -9,6 +9,8 @@ Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.m
    (đo theo phương đứng tới cạnh xiên dưới). Sửa `rai` / `PCCC_RAI` để mọi điểm của vùng (kể cả góc nhọn, cạnh xiên) nằm trong bán kính phủ theo bước và cách tường; thêm phép kiểm với chính đa giác đó.
    Kèm: KHÔNG hỏi người dùng khoảng cách hay m². Nối với tiêu chuẩn báo cháy (skill `tkpccc-tra-quy-chuan`, `knowledge/tcvn7568-14-2025.md`, `cad/rule/LUAT.md`): lấy bước, cách tường,
    diện tích bảo vệ tối đa theo loại đầu báo + chiều cao trần (và sprinkler theo TCVN 7336) rồi tự thiết kế. Trị số vẫn đọc từ file luật/knowledge, không viết cứng trong mã C#.
+   Kèm (dặn 13/11, ảnh `5_dim_cheo_goc_7m2.png`): đầu báo GẦN GÓC phòng phải có kích thước CHÉO (aligned) từ đầu báo tới góc tường, ví dụ 7,2 m; KHÔNG vẽ vòng tròn bán kính.
+   Khoảng cách chéo góc tối đa lấy theo tiêu chuẩn báo cháy (skill `tkpccc-tra-quy-chuan` / `knowledge/`), không viết cứng. Ảnh mẫu còn ghi kích thước bước (10,2) và cách tường (5,1) theo hai phương.
 2. TỰ NHẬN DIỆN TRỤC / TƯỜNG (`2_mat_bang_khong_polyline.png`): người dùng rải trên mặt bằng kiến trúc thật mà không vẽ polyline kín thì plugin báo lỗi. Phải tự phân biệt đâu là trục
    (nét chấm gạch, layer trục), đâu là tường (cặp nét song song, layer tường, cột), tự dựng polyline vùng từng phòng; người dùng CLICK vào một vùng là rải theo mục 1.
 3. GIAO DIỆN PANEL BLOCK (`4_panel_block_hien_tai.png` bị chê xấu, đơn điệu): tham khảo GIAO DIỆN (không chép tính năng) của `3_mau_ux_thong_ke_block.png`:
