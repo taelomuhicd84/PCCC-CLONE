@@ -21,7 +21,7 @@ Nhánh: `claude/cad-nhan-dien-tuong-89708b` (worktree riêng, chưa merge vào m
 - `TU_VUNG.md` (tóm tắt + bảng chi tiết), `README.md`. Tóm tắt TU_VUNG đang đúng 1900 ký tự = trần của `thu_mcp.ps1`: thêm chữ vào tóm tắt thì phải rút chỗ khác.
 
 ## Kết quả kiểm
-- `cad\build.bat` đạt; `thu_mcp.ps1` TAT CA DAT; `chay_thu.ps1`: xem commit cuối (ghi kết quả ở đây khi chạy xong).
+- `cad\build.bat` đạt; `thu_mcp.ps1` TAT CA DAT; `chay_thu.ps1` TAT CA DAT (82 dòng DAT, 3 dòng mới của việc 2).
 
 ## Chưa làm / bước tiếp
 1. Chưa thử trên bản vẽ kiến trúc THẬT của người dùng (`ket_qua/cad_test/2026-11-13/2_mat_bang_khong_polyline.png` chỉ là ảnh). Khi có DWG: bấm vài phòng,
