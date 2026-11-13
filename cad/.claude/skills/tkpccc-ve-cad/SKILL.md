@@ -32,8 +32,8 @@ AI không vẽ từng nét. AI viết một gói spec ngắn, plugin C# sinh hì
 
 ## Rải thiết bị và đi tuyến (người dùng dạy 2026-11-11, đầy đủ ở `cad/knowledge/tu-duy-di-day-di-ong.md`)
 1. Phân khu vực TRƯỚC khi rải: vẽ hộp hoặc polyline kín từng khu vực (theo tường, dầm sàn, vì kèo) lên layer `PCCC_VUNG` bằng `net` với `kin`:true, kèm `{"op":"anh"}` rồi dừng để người dùng kiểm và sửa trong CAD.
-2. Người dùng báo xong: `doc` với `gi`:"vung" đọc lại vùng, rồi `rai` theo `l`. `s` (bước tối đa) và `dt` (m² tối đa một thiết bị) tra theo `cad/rule/LUAT.md` (BC-02, SP-02), ghi rõ căn cứ khi báo.
-   Kết quả `rai` có `m2` và `ho`: `ho` > 0 hoặc `m2` sát `dt` thì nêu cho người dùng.
+2. Người dùng báo xong: `doc` với `gi`:"vung" đọc lại vùng, rồi `rai` theo `l`. Đầu báo khói, nhiệt (`BC_KHOI`, `BC_KHOI_TRAN`, `BC_NHIET`): KHÔNG hỏi người dùng khoảng cách hay m², bỏ `s` để plugin lấy TCVN 7568-14 từ `data/khoang_cach_rai.json`, có chiều cao trần thì truyền `h` (m). Mã khác (sprinkler): `s` (bước tối đa) và `dt` (m² tối đa một thiết bị) tra theo `cad/rule/LUAT.md` (BC-02, SP-02), ghi rõ căn cứ khi báo.
+   Plugin tự phủ kín vùng lồi lõm, cạnh xiên (thêm thiết bị chỗ hở). Kết quả `rai` có `m2`, `ho`, `cheo`: `ho` > 0 hoặc `m2` sát `dt` thì nêu cho người dùng. `kt`:true vẽ kích thước bước, cách tường và chéo góc như TCVN 7568-14 Hình 2.
 3. Dây báo cháy hệ thường: chia zone trước (theo LUAT BC-04), mỗi zone một lần `rai` + `tuyen` `noi_tiep`; phòng có đèn báo phòng thì `tuyen` `tia` với `den` là vị trí đèn.
 4. Ống sprinkler: `tuyen` `xuong_ca` chỉ là phương án nháp. Vị trí ống góp do người dùng chọn: nhờ họ chạy lệnh `PCCC_TUYEN` trong CAD (chọn đầu phun, chọn ống chính, bấm chỗ đặt ống góp), hoặc truyền `qua` (một điểm cho mỗi vùng, điểm nằm trong vùng đó) khi họ cho toạ độ.
 

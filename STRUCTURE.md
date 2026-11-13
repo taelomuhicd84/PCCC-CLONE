@@ -68,6 +68,7 @@ TKPCCC/
 │
 ├─ data/                DỮ LIỆU CẤU HÌNH
 │  ├─ vat_tu.json          danh mục vật tư: nguồn DUY NHẤT cho plugin + báo giá (loai: block / tuyen / khac)
+│  ├─ khoang_cach_rai.json trị số rải đầu báo theo mã (TCVN 7568-14 chép nguyên văn): plugin CAD `rai` / `PCCC_RAI` đọc khi không có bước
 │  ├─ huong_dan.json       quy trình B0–B7: việc cần làm, tài liệu, lệnh CAD của từng bước
 │  └─ don_gia.json         đơn giá người dùng đã nhập (tự sinh, không commit)
 │
