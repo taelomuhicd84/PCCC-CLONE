@@ -718,8 +718,10 @@ namespace TKPCCC
                 }
                 else if (pr.Status == PromptStatus.OK)
                 {
+                    List<Point2d> tu = VungBam(doc, pr.Value); // NhanVung.cs: bỏ trục, dựng vùng từ nét tường, vẽ lên PCCC_VUNG
+                    if (tu != null) vung.Add(tu);
                     DBObjectCollection bao = null;
-                    try { bao = ed.TraceBoundary(pr.Value, false); } catch (System.Exception) { }
+                    if (tu == null) try { bao = ed.TraceBoundary(pr.Value, false); } catch (System.Exception) { }
                     if (bao != null)
                     {
                         Polyline lon = bao.Cast<DBObject>().OfType<Polyline>().OrderByDescending(x => x.Area).FirstOrDefault();
