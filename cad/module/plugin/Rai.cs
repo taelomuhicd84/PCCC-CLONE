@@ -840,8 +840,12 @@ namespace TKPCCC
         // ---------- Lệnh gõ tay ----------
 
         /// PCCC_RAI: hỏi mã thiết bị (và trị số khi mã chưa có tiêu chuẩn), quét chọn mặt bằng, Enter = mọi phòng hoặc bấm điểm từng phòng; vẽ vùng rồi rải.
+        /// Tóm tắt lượt PCCC_RAI gõ tay gần nhất (phân hệ Bố trí BC của palette hiện sau khi lệnh xong); "" = lượt đó không rải.
+        public static string KetQuaRaiCuoi = "";
+
         static void RaiTay()
         {
+            KetQuaRaiCuoi = "";
             Document doc = AcApp.DocumentManager.MdiActiveDocument;
             Database db = doc.Database;
             Editor ed = doc.Editor;
@@ -853,16 +857,29 @@ namespace TKPCCC
             if (tc != null)
             {
                 // Mã có trị số tiêu chuẩn (data/khoang_cach_rai.json): không hỏi khoảng cách hay m2, chỉ hỏi chiều cao trần để chọn dòng.
-                PromptDoubleOptions hc = new PromptDoubleOptions("\nChiều cao trần (m), Enter = không xét: ");
-                hc.AllowNegative = false; hc.AllowZero = false; hc.AllowNone = true;
-                PromptDoubleResult hcr = ed.GetDouble(hc);
+                // HeSo = mức tối ưu k 50–100 % (ý lấy từ addin mẫu, 14/11): bước và cách tường tối đa nhân k; k < 100 % là rải dày hơn mức tối đa.
+                int heSo = 100;
+                PromptDoubleResult hcr;
+                while (true)
+                {
+                    PromptDoubleOptions hc = new PromptDoubleOptions("\nChiều cao trần (m), Enter = không xét" + (heSo < 100 ? " (k = " + heSo + " %)" : ""));
+                    hc.Keywords.Add("HeSo"); // AutoCAD tự nối " [HeSo]: "
+                    hc.AllowNegative = false; hc.AllowZero = false; hc.AllowNone = true;
+                    hcr = ed.GetDouble(hc);
+                    if (hcr.Status != PromptStatus.Keyword) break;
+                    PromptIntegerOptions ko = new PromptIntegerOptions("\nMức tối ưu k (%) so với khoảng cách tối đa của tiêu chuẩn, 50–100: ");
+                    ko.LowerLimit = 50; ko.UpperLimit = 100; ko.DefaultValue = heSo; ko.UseDefaultValue = true;
+                    PromptIntegerResult kr = ed.GetInteger(ko);
+                    if (kr.Status != PromptStatus.OK) return;
+                    heSo = kr.Value;
+                }
                 if (hcr.Status != PromptStatus.OK && hcr.Status != PromptStatus.None) return;
                 if (hcr.Status == PromptStatus.OK) tc = TieuChuanRai(v.ma, hcr.Value);
-                s = D(Lay(tc, "s")) / m;
-                tuongMax = LaySo(tc, "tuong", 0) / m;
+                s = D(Lay(tc, "s")) * heSo / 100.0 / m;
+                tuongMax = LaySo(tc, "tuong", 0) * heSo / 100.0 / m;
                 cachMin = LaySo(tc, "tuong_min", 0) / m;
                 ed.WriteMessage("\n[TKPCCC] " + v.ma + " theo " + LayChu(tc, "can_cu", "") + ": bước tối đa " + Lt(s * m).ToString(CultureInfo.InvariantCulture)
-                    + " m, cách tường tối đa " + Lt(tuongMax * m).ToString(CultureInfo.InvariantCulture) + " m.");
+                    + " m, cách tường tối đa " + Lt(tuongMax * m).ToString(CultureInfo.InvariantCulture) + " m" + (heSo < 100 ? " (k = " + heSo + " %)" : "") + ".");
             }
             else
             {
@@ -946,7 +963,7 @@ namespace TKPCCC
                 }
             }
 
-            int tong = 0;
+            int tong = 0, soHo = 0;
             using (Transaction tr = db.TransactionManager.StartTransaction())
             {
                 BlockTableRecord ms = (BlockTableRecord)tr.GetObject(db.CurrentSpaceId, OpenMode.ForWrite);
@@ -964,6 +981,7 @@ namespace TKPCCC
                     LuoiRai r = LuoiVung(d, s, s, 0, 0, le, le, 0.05 / m, dt, 0, theoHang, tuongMax, cachMin);
                     foreach (Point3d p in r.Diem) ChenThietBi(db, tr, v, p, k, 0);
                     tong += r.Diem.Count;
+                    if (r.Ho > 0) soHo++;
                     ed.WriteMessage("\n[TKPCCC] PCCC_RAI " + v.ma + " n=" + r.Diem.Count + " luoi=" + r.Nx + "x" + r.Ny
                         + " buoc=" + Lt(r.Bx).ToString(CultureInfo.InvariantCulture) + "x" + Lt(r.By).ToString(CultureInfo.InvariantCulture)
                         + " m2=" + Math.Round(r.O * m * m, 2).ToString(CultureInfo.InvariantCulture)
@@ -972,6 +990,8 @@ namespace TKPCCC
                 tr.Commit();
             }
             ed.WriteMessage("\nĐã rải tổng " + tong + " " + v.ten + " trong " + vung.Count + " phòng.");
+            KetQuaRaiCuoi = "Lượt cuối: " + tong + " " + v.ma + " trong " + vung.Count + " phòng"
+                + (soHo > 0 ? " · " + soHo + " phòng chưa phủ hết (HO, xem dòng lệnh)" : " · phủ kín");
         }
 
         /// PCCC_TUYEN: ống nhánh sprinkler kiểu xương cá cho một phòng. Chọn đầu phun, chọn ống chính, rồi BẤM chỗ đặt ống góp

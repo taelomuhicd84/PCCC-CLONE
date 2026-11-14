@@ -402,3 +402,12 @@ Người dùng (ảnh PCCC_RAI): gõ `?` thì hiện bảng danh sách, không i
   `thu_mcp.ps1` đạt, build vào bundle. Song song: phiên khác bỏ phép thử `PCCC_RAI` qua COM trong `thu_gui.ps1` (commit `ef58af6`).
 - 14:35: `thu_gui.ps1` 19/19 trên AutoCAD thật. Hộp thoại modal mở từ kịch bản không có trong cây UIA `RootElement` (thấy qua `EnumWindows`): test tìm bảng bằng `WinU.TimCuaSo`,
   điền ô tìm `WM_SETTEXT`, bấm Chọn `BM_CLICK`. `PHX` dời cuối kịch bản (phím tắt gửi `PCCC_HELP` bất đồng bộ, bị `PCCC_DAT` chen). `chay_thu.ps1` 96/96, `thu_mcp.ps1` đạt.
+
+## 2026-11-14 tối — Chép ý hay từ video addin mẫu ("video addin cad.mp4")
+Người dùng gửi video 3 phút một addin PCCC CAD khác, dặn "cái gì hay thì copy, phát triển, kết hợp và tối ưu". Tách khung bằng ffmpeg của `imageio_ffmpeg` (máy không có ffmpeg).
+Video có: lưới tiện ích nhóm 1–6 có phím tắt; trang Báo cháy "Bố trí tự động" (preset, tiêu chuẩn, mặt bằng, thiết bị SMK/HEAT/BEAM/MCP/BELL, mức tối ưu k, vật cản trần,
+BỐ TRÍ, hoàn tác, vẽ loop, kiểm tra, báo cáo); Dim đối tượng 5 bước. Dim và phím tắt mình đã có (`PCCC_ADIM`, `PCCC_HELP`), nên làm:
+- `Rai.cs` `RaiTay`: dấu nhắc trần thêm từ khoá `HeSo` (k 50–100 %): bước và cách tường tối đa nhân k; `KetQuaRaiCuoi` tóm tắt lượt rải cho palette.
+- `module/ui/BangBoTri.cs` (mới) + `PCCC_BOTRI`: phân hệ Bố trí BC (đọc `khoang_cach_rai.json` cạnh DLL, nhớ lựa chọn trong `cai_dat.json` khoá `bt_*`).
+- `BangChinh.cs`: nút dọc "Bố trí BC", thẻ bước 4 có huy hiệu mở trang; huy hiệu lệnh kèm phím tắt, tìm theo phím tắt.
+- Test: `chay_thu.ps1` thêm `HeSo 50`; `thu_gui.ps1` chép `khoang_cach_rai.json`, gõ `PCCC_BOTRI`, đếm thiết bị trên trang.

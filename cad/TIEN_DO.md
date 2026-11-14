@@ -3,6 +3,14 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## VIỆC 14/11 TỐI — CHÉP Ý HAY TỪ VIDEO ADDIN MẪU: XONG MÃ + TEST (chi tiết `cad/LICH_SU.md` 14/11 tối)
+Phân hệ mới **Bố trí BC** của palette `PCCC` (lệnh `PCCC_BOTRI`, `module/ui/BangBoTri.cs`): chọn thiết bị kèm trị số `data/khoang_cach_rai.json`, chiều cao trần,
+thanh **mức tối ưu k** 50–100 % (ô Bước, Cách tường, R nhân k; ước số thiết bị / 100 m²), chia theo hàng; BỐ TRÍ gửi `PCCC_RAI` điền sẵn (`HeSo` mới ở dấu nhắc trần),
+xong lệnh thì hiện "Lượt cuối: n mã trong m phòng · phủ kín / HO"; nút Hoàn tác lượt (`U`), Kiểm tra phủ R (`PCCC_VUNGBV` R tiêu chuẩn), Dim, Đi dây, Đặt khác, Thống kê.
+Huy hiệu thẻ quy trình kèm phím tắt, ô tìm tìm được theo phím tắt. `chay_thu.ps1` 97/97 (thêm k = 50 % ra 6 x 4 bước 5100, video mẫu cũng 24 cái), `thu_mcp.ps1`, `thu_gui.ps1` TAT CA DAT
+(`thu_gui` lần đầu lỗi `cad_tt` hết giờ, chạy lại đạt). CÒN: người dùng mở AutoCAD thử trang Bố trí BC trên bản vẽ thật; review Opus max chưa làm.
+Ý video CHƯA chép (cần trị số nguyên văn trước): vật cản trần (dầm, ống gió, loại trần), đầu báo beam, xem trước số lượng khi đã chọn vùng.
+
 ## VIỆC 14/11 CHIỀU — PCCC_RAI TREO CAD: XONG MÃ + TEST (chi tiết `cad/LICH_SU.md` 14/11 chiều)
 `PCCC_RAI` mới: mã → (trần | S, m², cách tường) → theo hàng → QUÉT CHỌN mặt bằng → bấm NÉT PHÂN VÙNG MẪU (mỗi màu một lần, bấm được nét trong block; Enter = tự nhận từ tường)
 → "Bấm điểm trong phòng cần rải, Enter = mọi phòng [TatCa]" → vẽ vùng `PCCC_VUNG` rồi rải. Polyline kín layer `PCCC_VUNG` trong vùng chọn dùng thẳng.

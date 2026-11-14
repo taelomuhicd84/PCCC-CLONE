@@ -1,5 +1,5 @@
 // Palette chính (lệnh PCCC; PCCC_BLOCK, PCCC_HELP mở đúng phân hệ): đầu trang [PCCC] + tên + phiên bản, ô tìm lọc thẻ, thanh dọc chọn phân hệ
-// (Quy trình vẽ · Thư viện · Lệnh · Bot chat · Cài đặt), chân trang trạng thái cầu nối MCP + bản vẽ. Chỉ giao diện: lệnh vẽ gửi bằng tên qua GiaoDien.GuiLenh.
+// (Quy trình vẽ · Bố trí BC · Thư viện · Lệnh · Bot chat · Cài đặt), chân trang trạng thái cầu nối MCP + bản vẽ. Chỉ giao diện: lệnh vẽ gửi bằng tên qua GiaoDien.GuiLenh.
 // Bot chat gọi `claude -p` (đăng nhập Claude Code, không API key) chạy NỀN ở <repo>\cad với MCP cad: luồng AutoCAD không bị khoá nên cầu nối Cau.cs
 // vẫn chạy hàng đợi trong lúc chờ.
 using System;
@@ -20,7 +20,7 @@ namespace TKPCCC
 {
     public class BangChinh : UserControl
     {
-        public const string QUY_TRINH = "Quy trình vẽ", THU_VIEN = "Thư viện", LENH = "Lệnh", BOT = "Bot chat", CAI_DAT = "Cài đặt";
+        public const string QUY_TRINH = "Quy trình vẽ", BO_TRI = "Bố trí BC", THU_VIEN = "Thư viện", LENH = "Lệnh", BOT = "Bot chat", CAI_DAT = "Cài đặt";
         static PaletteSet ps;
         static BangChinh nd;
 
@@ -75,7 +75,7 @@ namespace TKPCCC
             ben.WrapContents = false;
             ben.BackColor = GiaoDien.Nen;
             ben.Padding = new Padding(0, 6, 0, 0);
-            foreach (string t in new[] { QUY_TRINH, THU_VIEN, LENH, BOT, CAI_DAT })
+            foreach (string t in new[] { QUY_TRINH, BO_TRI, THU_VIEN, LENH, BOT, CAI_DAT })
             {
                 string ten = t;
                 NutBen n = new NutBen(ten);
@@ -174,6 +174,7 @@ namespace TKPCCC
             if (ten == LENH) return bangLenh = new BangLenh();
             if (ten == BOT) return bot = new BotChat();
             if (ten == CAI_DAT) return TrangCaiDat();
+            if (ten == BO_TRI) return new BangBoTri();
             return dsThe;
         }
 
@@ -190,8 +191,8 @@ namespace TKPCCC
             Them(1, "Trục", "Lưới trục theo nhịp X, Y; có PDF thì nhập làm nền trước", new[] { "PCCC_TRUC", "PDFIMPORT" }, null);
             Them(2, "Tường", "Tường theo tim, nhập chiều dày", new[] { "PCCC_TUONG" }, null);
             Them(3, "Mặt bằng chi tiết", "Vách ngăn (PCCC_TUONG, chọn Vách), cửa đi trên tường", new[] { "PCCC_TUONG", "PCCC_CUA" }, null);
-            Them(4, "Thiết bị PCCC", "Rải đầu báo, đầu phun theo lưới; đặt từng thiết bị", new[] { "PCCC_RAI", "PCCC_DAT", THU_VIEN },
-                new Action[] { null, null, delegate { ChonTrang(THU_VIEN); } });
+            Them(4, "Thiết bị PCCC", "Rải đầu báo, đầu phun theo lưới; đặt từng thiết bị", new[] { BO_TRI, "PCCC_RAI", "PCCC_DAT" },
+                new Action[] { delegate { ChonTrang(BO_TRI); }, null, null }); // Thư viện đã có ở thanh dọc: bỏ huy hiệu cho thẻ không tràn
             Them(5, "Dây, ống", "Dây báo cháy, ống nhánh theo thiết bị đã rải; vẽ ống, dây tay", new[] { "PCCC_TUYEN", "PCCC_ONG" }, null);
             Them(6, "Sơ đồ nguyên lý", "Nhờ bot chat vẽ từ mặt bằng đang mở", new[] { BOT },
                 new Action[] { delegate { ChonTrang(BOT); bot.DatCau(BotChat.MAU_SO_DO); } });
@@ -332,7 +333,9 @@ namespace TKPCCC
             So = so;
             Ten = ten;
             MoTa = moTa;
-            ChuTim = (ten + " " + moTa + " " + string.Join(" ", nhan)).ToLowerInvariant();
+            // Huy hiệu kèm phím tắt người dùng (ý lấy từ addin mẫu 14/11: tìm được theo phím tắt). shortcut: sửa phím tắt thì mở lại palette thẻ mới đổi.
+            string[] phim = nhan.Select(l => { string pt; return PhimTat.TheoLenh.TryGetValue(l, out pt) ? pt : ""; }).ToArray();
+            ChuTim = (ten + " " + moTa + " " + string.Join(" ", nhan) + " " + string.Join(" ", phim)).ToLowerInvariant();
             Height = 64;
             Margin = new Padding(0, 0, 0, 6);
             DoubleBuffered = true;
@@ -343,7 +346,7 @@ namespace TKPCCC
             for (int i = nhan.Length - 1; i >= 0; i--) // xếp từ phải sang trái
             {
                 Label h = new Label();
-                h.Text = nhan[i];
+                h.Text = nhan[i] + (phim[i] != "" ? " · " + phim[i] : "");
                 h.Font = GiaoDien.Nho;
                 h.AutoSize = true;
                 h.Padding = new Padding(4, 1, 4, 1);
