@@ -22,7 +22,7 @@ namespace TKPCCC
         // Đổi cách vẽ ảnh thì đổi chuỗi này: ảnh cũ (vd nền trắng nét đen) tự vẽ lại một lần, người dùng không phải xoá tay.
         const string KIEU_ANH = "nen_den_mau_that_1";
 
-        static string ThuMucAnh { get { return Path.Combine(ThuMuc, "anh_block"); } }
+        public static string ThuMucAnh { get { return Path.Combine(ThuMuc, "anh_block"); } }
 
         class ChuAnh { public Point3d P; public double Cao; public string T; public int Ngang, Dung; public Gdi.Color Mau; }
         class NetAnh { public Point3d[] P; public Gdi.Color Mau; }

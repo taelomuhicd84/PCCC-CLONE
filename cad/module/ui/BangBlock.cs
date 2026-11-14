@@ -45,6 +45,7 @@ namespace TKPCCC
         public void Initialize()
         {
             Lenh.MoBangLenh = LenhUi.MoBangLenh;
+            Lenh.ChonVatTu = BangChonVatTu.Chon;
             string loi = PhimTat.Nap();
             Document doc = AcApp.DocumentManager.MdiActiveDocument;
             if (loi != "" && doc != null) doc.Editor.WriteMessage("\n[TKPCCC] Phím tắt bỏ qua: " + loi);

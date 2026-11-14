@@ -128,6 +128,8 @@ namespace TKPCCC
 
         /// TKPCCC.UI.dll gán khi nạp trong AutoCAD có giao diện: PCCC_HELP mở bảng lệnh thay cho in chữ.
         public static Action MoBangLenh;
+        /// TKPCCC.UI.dll gán: hỏi mã mà gõ "?" (hoặc chữ khớp nhiều mã) thì mở bảng chọn (tiêu đề, danh sách, chữ lọc sẵn); trả null = đóng không chọn.
+        public static Func<string, List<VatTu>, string, VatTu> ChonVatTu;
 
         static void TroGiup()
         {
@@ -152,7 +154,7 @@ namespace TKPCCC
         }
 
         /// Chữ thường không dấu để tìm "dau bao khoi" ra "Đầu báo khói".
-        static string BoDau(string s)
+        public static string BoDau(string s)
         {
             StringBuilder sb = new StringBuilder();
             foreach (char ch in (s ?? "").Normalize(NormalizationForm.FormD))
@@ -230,15 +232,31 @@ namespace TKPCCC
                 if (r.Status != PromptStatus.OK) return null;
                 string s = r.StringResult.Trim();
                 if (s == "") return null;
-                if (s == "?") { InDanhSach(ed, cung); continue; }
+                if (s == "?") { VatTu c = XemDanhSach(ed, dm, cung, cung, loiNhac, ""); if (c != null) return c; continue; }
                 VatTu v = cung.FirstOrDefault(x => string.Equals(x.ma, s, StringComparison.OrdinalIgnoreCase));
                 if (v != null) return v;
                 string k = BoDau(s);
                 List<VatTu> tim = cung.Where(x => BoDau(x.ma).Contains(k) || BoDau(x.ten).Contains(k)).ToList();
                 if (tim.Count == 1) { ed.WriteMessage("\n  -> " + tim[0].ma + "  " + tim[0].ten); return tim[0]; }
                 if (tim.Count == 0) ed.WriteMessage("\nKhông có mã/tên nào chứa \"" + s + "\". Gõ ? để xem danh sách.");
-                else { ed.WriteMessage("\nCó " + tim.Count + " mã khớp, gõ đúng mã:"); InDanhSach(ed, tim); }
+                else
+                {
+                    ed.WriteMessage("\nCó " + tim.Count + " mã khớp" + (ChonVatTu == null ? ", gõ đúng mã:" : "."));
+                    VatTu c = XemDanhSach(ed, dm, cung, tim, loiNhac, s);
+                    if (c != null) return c;
+                }
             }
+        }
+
+        /// Có TKPCCC.UI.dll: mở bảng chọn cả danh sách, lọc sẵn theo chữ đã gõ; accoreconsole: in các mã khớp ra dòng lệnh. Trả null = hỏi lại.
+        static VatTu XemDanhSach(Editor ed, FileDanhMuc dm, List<VatTu> tatCa, List<VatTu> khop, string loiNhac, string loc)
+        {
+            if (ChonVatTu == null) { InDanhSach(ed, khop); return null; }
+            if (tatCa.Any(x => x.loai == "block"))
+                try { CapNhatAnhBlock(dm); } catch (System.Exception) { } // ảnh xem trước lỗi vẫn cho chọn, chỉ thiếu ký hiệu
+            VatTu v = ChonVatTu(loiNhac, tatCa, loc);
+            if (v != null) ed.WriteMessage("\n  -> " + v.ma + "  " + v.ten);
+            return v;
         }
 
         // ---------- Thư viện block ----------

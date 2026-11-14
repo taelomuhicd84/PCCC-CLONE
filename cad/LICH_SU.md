@@ -375,3 +375,10 @@ Kế hoạch + hợp đồng key: `cad/tien_do/viec_14_11.md`. 3 agent Opus song
   Build 4 file đạt; `chay_thu.ps1`, `thu_mcp.ps1`, `thu_ban_quyen.ps1` TAT CA DAT; pytest 13/13; `npm test` 401/401. Usage 5 giờ 57 % lúc ghi.
 - 10:40: người dùng đóng AutoCAD, chạy `thu_gui.ps1` trên AutoCAD thật: 12/12 sau 2 sửa (kịch bản đếm sót lệnh `PCCC`; palette hẹp 400 px: `GiaoDien.KhungHanhDong`
   tự dời khung Hành động xuống đáy khi rộng < 640, `BangBlock` ẩn cột Đơn vị + cột SL hẹp, `BangLenh` ẩn cột nút chạy + Cách dùng). Đã xem ảnh 2 phân hệ.
+
+## 2026-11-14 — Bảng chọn thiết bị khi gõ `?`
+Người dùng (ảnh PCCC_RAI): gõ `?` thì hiện bảng danh sách, không in ra dòng lệnh.
+- `plugin/Lenh.cs`: delegate `Lenh.ChonVatTu` (UI gán, cùng kiểu `MoBangLenh`); `HoiMa` gõ `?` hoặc chữ khớp nhiều mã gọi `XemDanhSach`: có UI thì cập nhật ảnh block
+  rồi mở bảng (lọc sẵn chữ đã gõ), Esc thì hỏi lại; accoreconsole vẫn in dòng lệnh như cũ. `BoDau`, `ThuMucAnh` thành public cho UI dùng.
+- `ui/BangChonVatTu.cs` (mới): Form modal `AcApp.ShowModalDialog`, ô tìm không dấu, cột ký hiệu nền đen (ẩn khi là ống/dây), tên đậm + mã xám, đơn vị; lên/xuống, Enter, Esc.
+- `chay_thu.ps1`, `thu_mcp.ps1` TAT CA DAT; `build.bat` vào bundle đạt. Chưa chạy `thu_gui.ps1` (AutoCAD người dùng đang mở).

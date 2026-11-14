@@ -22,7 +22,7 @@ cad/
 │  └─ mau/                 bản vẽ mẫu, khung tên (chờ file của người dùng)
 ├─ module/                 mã chạy
 │  ├─ plugin/              Lenh.cs (lệnh PCCC_*) · Spec.cs (PCCC_SPEC, thao tác spec) · Rai.cs (rai, tuyen, PCCC_RAI, PCCC_TUYEN) · NhanVung.cs (vung_tu_dong: tự dựng vùng phòng từ nét tường, bỏ trục) · KienTruc.cs (tuong, cua, kt_chuoi, PCCC_TRUC, PCCC_TUONG, PCCC_CUA) · Dim.cs (PCCC_ADIM, PCCC_CDIM) · SoDo.cs (so_do, sơ đồ nguyên lý) · Block.cs (PCCC_THEMBLOCK, ảnh xem trước) · Cau.cs (cầu nối) -> TKPCCC.Cad.dll
-│  ├─ ui/                  BangChinh.cs (palette chính lệnh PCCC: Quy trình vẽ, Thư viện, Lệnh, Bot chat, Cài đặt) · BangBlock.cs (phân hệ Thư viện, PCCC_BLOCK) · BangLenh.cs (phân hệ Lệnh, PCCC_HELP) · GiaoDien.cs (3 kiểu màu, cai_dat.json) -> TKPCCC.UI.dll; chỗ DUY NHẤT được tham chiếu acmgd, không xử lý bản vẽ
+│  ├─ ui/                  BangChinh.cs (palette chính lệnh PCCC: Quy trình vẽ, Thư viện, Lệnh, Bot chat, Cài đặt) · BangBlock.cs (phân hệ Thư viện, PCCC_BLOCK) · BangLenh.cs (phân hệ Lệnh, PCCC_HELP) · BangChonVatTu.cs (gõ ? khi hỏi mã: bảng chọn thiết bị) · GiaoDien.cs (3 kiểu màu, cai_dat.json) -> TKPCCC.UI.dll; chỗ DUY NHẤT được tham chiếu acmgd, không xử lý bản vẽ
 │  ├─ banquyen/            KeyGen.cs -> bin/TKPCCC.KeyGen.exe (chủ plugin tạo khoá, ký key) · apps_script/Code.gs (Google Sheet tự cấp key) · HUONG_DAN.md · plugin/BanQuyen.cs + ui/BanQuyenUi.cs (PCCC_BANQUYEN)
 │  ├─ mcp/                 Mcp.cs -> bin/TKPCCC.Mcp.exe (công cụ cad_tt, cad_chay, cad_anh)
 │  ├─ chung/               HangDoi.cs: hàng đợi file dùng chung plugin + máy chủ MCP
