@@ -169,6 +169,7 @@ namespace TKPCCC
             phuR = NutNho(nut, "Kiểm tra phủ R", delegate { ThietBi t = Dang(); if (t != null && t.R > 0) GiaoDien.GuiLenh("PCCC_VUNGBV\n" + t.Ma + "\n" + Ct(t.R) + "\n", null, null); });
             NutNho(nut, "⚡ Bố trí nhanh", delegate { GiaoDien.An(delegate { BoTri(false, "RECTANG"); }); });
             NutNho(nut, "⬡ Đa giác đều", delegate { GiaoDien.An(delegate { BoTri(false, "POLYGON"); }); });
+            NutNho(nut, "◯ Tròn", delegate { GiaoDien.An(delegate { BoTri(false, "CIRCLE"); }); });
             NutNho(nut, "Vẽ vùng tay", delegate { GiaoDien.GuiLenh("_.-LAYER\n_M\nPCCC_VUNG\n\n_.PLINE\n", null, null); });
             NutNho(nut, "Vùng loại trừ", delegate { GiaoDien.GuiLenh("_.-LAYER\n_M\nPCCC_LOAITRU\n\n_.PLINE\n", null, null); });
             f.Controls.Add(nut);

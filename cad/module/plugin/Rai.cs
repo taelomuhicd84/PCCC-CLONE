@@ -1063,10 +1063,13 @@ namespace TKPCCC
             {
                 foreach (ObjectId id in ids)
                 {
-                    Polyline pl = tr.GetObject(id, OpenMode.ForRead) as Polyline;
-                    if (pl != null && string.Equals(pl.Layer, LAYER_LOAI_TRU, StringComparison.OrdinalIgnoreCase))
+                    Entity e = tr.GetObject(id, OpenMode.ForRead) as Entity;
+                    Polyline pl = e as Polyline;
+                    Circle ci = e as Circle;
+                    if (e != null && (pl != null || ci != null) && string.Equals(e.Layer, LAYER_LOAI_TRU, StringComparison.OrdinalIgnoreCase))
                     {
-                        if (pl.Closed && pl.NumberOfVertices >= 3) kq.Add(DinhPl(pl));
+                        if (ci != null) kq.Add(DaGiacTron(ci, 72));
+                        else if (pl.Closed && pl.NumberOfVertices >= 3) kq.Add(DinhPl(pl));
                     }
                     else con.Add(id);
                 }

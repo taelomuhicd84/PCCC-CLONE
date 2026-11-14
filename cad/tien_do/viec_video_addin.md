@@ -29,7 +29,7 @@ Lệnh mới cần viết (plugin):
 - [x] DN `PCCC_DOIDN` đổi cỡ ống (layer PCCC_ONG_DNxx)
 - [x] RN `RENAME`, LM `LAYER`, PD `PCCC_ONG`, REP `PCCC_BOC`, BAK mở chỗ `cai_dat.json`, SP `BOUNDARY`
 - [x] CKO = `PCCC_KT`
-- [ ] TZ tách khu vực, MZ quản lý khu vực: chưa có
+- [x] TZ `PCCC_TACHVUNG`, MZ `PCCC_KHUVUC` (đặt tên vùng: chữ tên + m² layer PCCC_VUNG_TEN)
 
 ## Đợt 3 — Báo cháy còn lại: XONG 14/11 tối
 - [x] Vùng loại trừ (lỗ thang, giếng trời): PCCC_RAI bỏ điểm nằm trong polyline loại trừ
@@ -44,7 +44,6 @@ phương X/Y/Tự động qua `Lenh.AdimPhuong`; `PCCC_ADIM` thêm lọc Mline).
 (Đường ống, Sơ đồ, Hồ sơ của spec gộp vào Chữa cháy, Thống kê; thẻ ở `ui/PhanHe.cs`, khung lưới dùng chung `BangTienIch`). Bố trí nhanh thêm Đa giác đều (POLYGON).
 
 ## Còn lại (chưa làm, cần người dùng chốt hoặc làm sau)
-- TZ tách khu vực, MZ quản lý khu vực (tên phòng, công năng trong XData).
 - Báo cháy bước 1 "Tiêu chuẩn & công năng" (dropdown công năng → loại đầu báo): người dùng dặn không tra TCVN; cần bảng chọn loại đầu báo theo công năng.
-- Mặt bằng dạng Tròn (rai chưa nhận CIRCLE làm vùng), ADIM hiện toạ độ 2 mép tường lên trang, Vật cản: ống gió dịch đầu báo.
+- ADIM hiện toạ độ 2 mép tường lên trang, Vật cản: ống gió dịch đầu báo.
 - Xem trên AutoCAD thật bằng mắt (người dùng), Fable kiểm toàn dự án (người dùng tự chạy).

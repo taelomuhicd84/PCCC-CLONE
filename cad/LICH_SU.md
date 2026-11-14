@@ -428,3 +428,6 @@ BỐ TRÍ, hoàn tác, vẽ loop, kiểm tra, báo cáo); Dim đối tượng 5 
   Test 114/114 (Mline 3 đỉnh ra 2 dim). Người dùng đổi ngưỡng hạn mức CAD thành 95 %, cho tự làm tiếp lúc reset 19h (ghi vào `CLAUDE.md`, `cad/CLAUDE.md`).
 - Đợt 5: thanh dọc 9 phân hệ (thêm Chữa cháy, Thống kê, nút cao 40 px, cuộn khi palette thấp); `BangTienIch` thành khung lưới thẻ dùng chung (mảng thẻ, nhóm,
   nút lọc truyền vào), thẻ Chữa cháy, Thống kê ở `ui/PhanHe.cs`; ô tìm lọc cả 2 trang mới; Bố trí nhanh thêm "Đa giác đều" (POLYGON). Test 114/114, thu_gui đạt.
+- Thêm: `PCCC_TACHVUNG` (TZ, cắt vùng bằng nửa mặt phẳng), `PCCC_KHUVUC` (MZ, chữ tên + m² ở điểm bấm, tổng m²); CIRCLE trên PCCC_VUNG / PCCC_LOAITRU
+  thành đa giác 72 cạnh (rải, loại trừ, kiểm vùng mù); trang Báo cháy thêm Bố trí nhanh "Tròn"; Tiện ích 30 thẻ. Test 117/117 (vòng r 10 m ra 2 x 2 bước 10 m, phủ kín;
+  tách 20 x 10 m tại x 8 m ra 80 + 120 m²).

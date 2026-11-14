@@ -18,6 +18,8 @@ namespace TKPCCC
         static readonly string[][] THE = {
             new[] { "1", "SZ", "Chọn khu vực", "Vẽ polyline kín vùng rải (PCCC_VUNG)", "_.-LAYER\n_M\nPCCC_VUNG\n\n_.PLINE\n" },
             new[] { "1", "SP", "Nhận diện mặt bằng", "Bấm điểm trong phòng: dựng biên kín", "_.BOUNDARY\n" },
+            new[] { "1", "TZ", "Tách khu vực", "Cắt vùng bằng đường qua 2 điểm", "PCCC_TACHVUNG\n" },
+            new[] { "1", "MZ", "Quản lý khu vực", "Đặt tên vùng, ghi m², tổng m²", "PCCC_KHUVUC\n" },
             new[] { "1", "RAI", "Rải theo phòng", "Quét mặt bằng, tự nhận phòng rồi rải", "PCCC_RAI\n" },
             new[] { "2", "SB", "Đổi Block", "Thay block, giữ điểm, góc, tỉ lệ", "PCCC_DOIBLOCK\n" },
             new[] { "2", "RN", "Đổi tên Block", "Đổi tên định nghĩa block", "_.RENAME\n" },

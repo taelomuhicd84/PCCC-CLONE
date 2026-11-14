@@ -515,7 +515,9 @@ namespace TKPCCC
                 {
                     Entity e = tr.GetObject(id, OpenMode.ForRead) as Entity;
                     Polyline pl = e as Polyline;
+                    Circle ci = e as Circle;
                     if (pl != null && pl.Closed && pl.NumberOfVertices >= 3 && string.Equals(pl.Layer, LAYER_VUNG, StringComparison.OrdinalIgnoreCase)) co.Add(DinhPl(pl));
+                    else if (ci != null && string.Equals(ci.Layer, LAYER_VUNG, StringComparison.OrdinalIgnoreCase)) co.Add(DaGiacTron(ci, 72)); // vùng tròn (Bố trí nhanh "Tròn")
                     else if (e != null && !(e is Table)) ds.Add(e);
                 }
                 bool coTuong = mau == null && ds.Any(e => LoaiLop(n, e.LayerId) == 2);

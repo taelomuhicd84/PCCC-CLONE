@@ -59,6 +59,7 @@ AI chỉ viết một gói thao tác ngắn (spec JSON), plugin sinh hình. Mộ
 | Dim tự động (`PCCC_ADIM`, `PCCC_CDIM`, lõi chuỗi dim của `kt_chuoi`) | `module/plugin/Dim.cs` |
 | Thêm vật tư, thiết bị | `data/vat_tu.json` ở GỐC repo (dùng chung với báo giá), rồi `build.bat`, `PCCC_LIB` |
 | Đưa block của mình (kể cả block động) vào thư viện dưới một mã mới | trong AutoCAD: `PCCC_THEMBLOCK` hoặc nút "Thêm từ bản vẽ" của bảng `PCCC_BLOCK`; mã nguồn `module/plugin/Block.cs` |
+| Tách khu vực `PCCC_TACHVUNG`, đặt tên vùng `PCCC_KHUVUC`, vòng tròn làm vùng (`DaGiacTron`) | `module/plugin/TienIch.cs`; vùng tròn đọc ở `NhanVung.cs` `MatChon` |
 | Kiểm vùng mù đầu báo (`PCCC_KT`) và các tiện ích chỉnh sửa, kiểm tra (`PCCC_TRUNG`, `PCCC_LOPCHUAN`, `PCCC_DANHSO`, `PCCC_XOAY`, `PCCC_TYLE`, `PCCC_DOIBLOCK`, `PCCC_CANDIM`, `PCCC_DOIDN`) | `module/plugin/TienIch.cs` |
 | Trang con ADIM 5 bước (layer, DimStyle, lọc, phương) | `module/ui/BangAdim.cs`; lệnh `module/plugin/Dim.cs` (`AdimPhuong`) |
 | Thẻ phân hệ Chữa cháy, Thống kê (lưới thẻ) | `module/ui/PhanHe.cs` (thêm thẻ = 1 dòng) |

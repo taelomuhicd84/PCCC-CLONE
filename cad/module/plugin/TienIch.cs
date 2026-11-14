@@ -36,7 +36,7 @@ namespace TKPCCC
             Database db = doc.Database;
             Editor ed = doc.Editor;
             double m = HeSoMet(db), b = 0.5 / m;
-            SelectionFilter loc = new SelectionFilter(new[] { new TypedValue((int)DxfCode.Start, "LWPOLYLINE,INSERT") });
+            SelectionFilter loc = new SelectionFilter(new[] { new TypedValue((int)DxfCode.Start, "LWPOLYLINE,CIRCLE,INSERT") });
             PromptSelectionOptions o = new PromptSelectionOptions();
             o.MessageForAdding = "\nChọn vùng kiểm (phòng PCCC_VUNG + thiết bị; Enter = cả bản vẽ): ";
             PromptSelectionResult r = ed.GetSelection(o, loc);
@@ -55,10 +55,12 @@ namespace TKPCCC
                     Entity e = tr.GetObject(id, OpenMode.ForRead) as Entity;
                     Polyline pl = e as Polyline;
                     BlockReference br = e as BlockReference;
-                    if (pl != null && pl.Closed && pl.NumberOfVertices >= 3)
+                    Circle ci = e as Circle;
+                    List<Point2d> dg = pl != null && pl.Closed && pl.NumberOfVertices >= 3 ? DinhPl(pl) : ci != null ? DaGiacTron(ci, 72) : null;
+                    if (dg != null)
                     {
-                        if (string.Equals(pl.Layer, LAYER_VUNG, StringComparison.OrdinalIgnoreCase)) phong.Add(DinhPl(pl));
-                        else if (string.Equals(pl.Layer, LAYER_LOAI_TRU, StringComparison.OrdinalIgnoreCase)) loaiTru.Add(DinhPl(pl));
+                        if (string.Equals(e.Layer, LAYER_VUNG, StringComparison.OrdinalIgnoreCase)) phong.Add(dg);
+                        else if (string.Equals(e.Layer, LAYER_LOAI_TRU, StringComparison.OrdinalIgnoreCase)) loaiTru.Add(dg);
                     }
                     else if (br != null && !(br is Table))
                     {
@@ -113,6 +115,129 @@ namespace TKPCCC
             }
             ed.WriteMessage("\n[TKPCCC] PCCC_KT phong=" + soPhong + " mu=" + PhanTram(tongMu, tongDiem) + "% diem_mu=" + tongMu
                 + (tongMu > 0 ? " (khoanh đỏ trên " + LAYER_KIEM_MU + ", không in; rải bù bằng PCCC_DAT hoặc giảm k)" : " (phủ kín)"));
+        }
+
+        [CommandMethod("PCCC_TACHVUNG")] public void LenhTachVung() { Chay(TachVung); }
+        [CommandMethod("PCCC_KHUVUC")] public void LenhKhuVuc() { Chay(KhuVuc); }
+        const string LAYER_TEN_VUNG = "PCCC_VUNG_TEN";
+
+        /// Vòng tròn thành đa giác n cạnh (vùng rải, vùng loại trừ, kiểm vùng mù dùng chung).
+        static List<Point2d> DaGiacTron(Circle c, int n)
+        {
+            List<Point2d> d = new List<Point2d>();
+            for (int i = 0; i < n; i++) d.Add(new Point2d(c.Center.X + c.Radius * Math.Cos(2 * Math.PI * i / n), c.Center.Y + c.Radius * Math.Sin(2 * Math.PI * i / n)));
+            return d;
+        }
+
+        /// Cắt đa giác bằng nửa mặt phẳng phía trái đường a→b (Sutherland–Hodgman một cạnh cắt).
+        /// shortcut: phòng lõm bị đường cắt chia thành 2 mảnh cùng một phía thì ra một đa giác có cầu nối dày 0; khi cần thì tách thành nhiều đa giác.
+        static List<Point2d> CatNua(List<Point2d> d, Point2d a, Point2d b)
+        {
+            Func<Point2d, double> f = p => (b.X - a.X) * (p.Y - a.Y) - (b.Y - a.Y) * (p.X - a.X);
+            List<Point2d> kq = new List<Point2d>();
+            for (int i = 0; i < d.Count; i++)
+            {
+                Point2d p = d[i], q = d[(i + 1) % d.Count];
+                double fp = f(p), fq = f(q);
+                if (fp >= 0) kq.Add(p);
+                if ((fp > 0 && fq < 0) || (fp < 0 && fq > 0)) kq.Add(p + (q - p) * (fp / (fp - fq)));
+            }
+            return kq;
+        }
+
+        /// TZ: tách một vùng PCCC_VUNG (polyline kín) bằng đường qua 2 điểm thành 2 vùng (giữ layer), xoá vùng cũ.
+        static void TachVung()
+        {
+            Document doc = AcApp.DocumentManager.MdiActiveDocument;
+            Database db = doc.Database;
+            Editor ed = doc.Editor;
+            PromptSelectionOptions o = new PromptSelectionOptions();
+            o.MessageForAdding = "\nChọn vùng cần tách (polyline kín): ";
+            o.SingleOnly = true;
+            PromptSelectionResult r = ed.GetSelection(o, new SelectionFilter(new[] { new TypedValue((int)DxfCode.Start, "LWPOLYLINE") }));
+            if (r.Status != PromptStatus.OK) return;
+            PromptPointResult p1 = ed.GetPoint("\nĐiểm thứ nhất của đường tách: ");
+            if (p1.Status != PromptStatus.OK) return;
+            PromptPointOptions o2 = new PromptPointOptions("\nĐiểm thứ hai: ");
+            o2.BasePoint = p1.Value; o2.UseBasePoint = true;
+            PromptPointResult p2 = ed.GetPoint(o2);
+            if (p2.Status != PromptStatus.OK) return;
+            Matrix3d ucs = ed.CurrentUserCoordinateSystem;
+            Point3d a3 = p1.Value.TransformBy(ucs), b3 = p2.Value.TransformBy(ucs);
+            Point2d a = new Point2d(a3.X, a3.Y), b = new Point2d(b3.X, b3.Y);
+            double m = HeSoMet(db);
+            List<double> dt = new List<double>();
+            using (Transaction tr = db.TransactionManager.StartTransaction())
+            {
+                Polyline pl = (Polyline)tr.GetObject(r.Value.GetObjectIds()[0], OpenMode.ForRead);
+                if (!pl.Closed) throw new System.Exception("vùng phải là polyline kín");
+                List<Point2d> d = DinhPl(pl);
+                List<Point2d>[] hai = { CatNua(d, a, b), CatNua(d, b, a) };
+                if (hai.Any(x => x.Count < 3 || DienTichDaGiac(x) * m * m < 0.01)) throw new System.Exception("đường tách không cắt qua vùng");
+                BlockTableRecord ms = (BlockTableRecord)tr.GetObject(db.CurrentSpaceId, OpenMode.ForWrite);
+                foreach (List<Point2d> x in hai)
+                {
+                    Polyline moi = PlVung(x, pl.LayerId);
+                    ms.AppendEntity(moi);
+                    tr.AddNewlyCreatedDBObject(moi, true);
+                    dt.Add(Math.Round(DienTichDaGiac(x) * m * m, 2));
+                }
+                pl.UpgradeOpen();
+                pl.Erase();
+                tr.Commit();
+            }
+            ed.WriteMessage("\n[TKPCCC] PCCC_TACHVUNG vung=2 m2=" + string.Join("+", dt.Select(x => x.ToString(CultureInfo.InvariantCulture))));
+        }
+
+        /// MZ: đặt tên vùng (bấm điểm trong vùng PCCC_VUNG, gõ tên: ghi chữ "Tên / m²" ở giữa vùng, layer PCCC_VUNG_TEN), Enter = xong, rồi in danh sách vùng.
+        static void KhuVuc()
+        {
+            Document doc = AcApp.DocumentManager.MdiActiveDocument;
+            Database db = doc.Database;
+            Editor ed = doc.Editor;
+            double m = HeSoMet(db), cao = LaySo(NhomKyHieu("chu"), "cao", 250) * 0.001 / m;
+            List<List<Point2d>> vung = new List<List<Point2d>>();
+            using (Transaction tr = db.TransactionManager.StartTransaction())
+            {
+                foreach (ObjectId id in (BlockTableRecord)tr.GetObject(db.CurrentSpaceId, OpenMode.ForRead))
+                {
+                    Polyline pl = tr.GetObject(id, OpenMode.ForRead) as Polyline;
+                    if (pl != null && pl.Closed && pl.NumberOfVertices >= 3 && string.Equals(pl.Layer, LAYER_VUNG, StringComparison.OrdinalIgnoreCase)) vung.Add(DinhPl(pl));
+                }
+                tr.Commit();
+            }
+            if (vung.Count == 0) { ed.WriteMessage("\n[TKPCCC] PCCC_KHUVUC: bản vẽ chưa có vùng (polyline kín layer " + LAYER_VUNG + ")."); return; }
+            int daDat = 0;
+            while (true)
+            {
+                PromptPointOptions po = new PromptPointOptions("\nBấm điểm trong vùng cần đặt tên, Enter = xong: ");
+                po.AllowNone = true;
+                PromptPointResult pr = ed.GetPoint(po);
+                if (pr.Status != PromptStatus.OK) break;
+                Point3d q = pr.Value.TransformBy(ed.CurrentUserCoordinateSystem);
+                List<Point2d> v = vung.Where(x => TrongDaGiac(x, new Point2d(q.X, q.Y))).OrderBy(x => DienTichDaGiac(x)).FirstOrDefault();
+                if (v == null) { ed.WriteMessage("\nĐiểm không nằm trong vùng nào."); continue; }
+                PromptStringOptions so = new PromptStringOptions("\nTên vùng (vd Kho A, Văn phòng 1): ");
+                so.AllowSpaces = true;
+                PromptResult sr = ed.GetString(so);
+                if (sr.Status != PromptStatus.OK || sr.StringResult.Trim() == "") continue;
+                using (Transaction tr = db.TransactionManager.StartTransaction())
+                {
+                    BlockTableRecord ms = (BlockTableRecord)tr.GetObject(db.CurrentSpaceId, OpenMode.ForWrite);
+                    MText t = new MText();
+                    t.Contents = sr.StringResult.Trim().Replace("\\", "\\\\") + "\\P" + Math.Round(DienTichDaGiac(v) * m * m, 1).ToString(CultureInfo.InvariantCulture) + " m²";
+                    t.TextHeight = cao;
+                    t.Attachment = AttachmentPoint.MiddleCenter;
+                    t.Location = new Point3d(q.X, q.Y, 0); // chữ đặt tại điểm bấm: người dùng chọn chỗ trống trong phòng
+                    t.LayerId = DamBaoLayer(db, tr, LAYER_TEN_VUNG, 7);
+                    ms.AppendEntity(t);
+                    tr.AddNewlyCreatedDBObject(t, true);
+                    tr.Commit();
+                }
+                daDat++;
+            }
+            double tong = vung.Sum(x => DienTichDaGiac(x)) * m * m;
+            ed.WriteMessage("\n[TKPCCC] PCCC_KHUVUC vung=" + vung.Count + " dat_ten=" + daDat + " tong_m2=" + Math.Round(tong, 1).ToString(CultureInfo.InvariantCulture));
         }
 
         static string PhanTram(int a, int b) { return (b == 0 ? 0 : Math.Round(100.0 * a / b, 1)).ToString(CultureInfo.InvariantCulture); }
