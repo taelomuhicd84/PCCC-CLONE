@@ -38,6 +38,13 @@ namespace TKPCCC
                 if (f == null) return;
                 // Người dùng đang dở lệnh khác: chờ. Máy chủ MCP tự báo "đang bận" khi quá giờ.
                 if (Convert.ToInt32(AcApp.GetSystemVariable("CMDACTIVE")) != 0) return;
+                if (!BanQuyen.ChoChay())
+                {
+                    // Trả lỗi ngay để máy chủ MCP không chờ tới hết giờ.
+                    HangDoi.GhiAnToan(Path.Combine(HangDoi.Ra, Path.GetFileName(f)), "{\"ok\":false,\"ve\":0,\"xoa\":0,\"loi\":[{\"i\":-1,\"op\":\"spec\",\"ly_do\":\"Chưa có bản quyền TKPCCC: gõ PCCC_BANQUYEN trong AutoCAD.\"}]}");
+                    File.Delete(f);
+                    return;
+                }
                 string dang = Path.Combine(HangDoi.Dang, Path.GetFileName(f));
                 File.Move(f, dang); // chuyển trước khi chạy để một việc không chạy hai lần
                 doc.SendStringToExecute("PCCC_SPEC\n" + dang + "\n", true, false, false);

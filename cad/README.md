@@ -15,6 +15,7 @@ cad/
 ├─ rule/                   LUAT.md: việc trên CAD ↔ file quy chuẩn nguyên văn ↔ skill, agent liên quan
 ├─ layer/                  file .md chuẩn layer (tên, màu, loại đường) để tạo layer đúng chuẩn
 ├─ data/                   dữ liệu vẽ (xem data/README.md)
+│  ├─ ban_quyen/           cau_hinh_ban_quyen.json (URL web app, Google Form) · khoa_cong_khai.xml (KeyGen tạo; khoá riêng KHÔNG ở repo)
 │  ├─ ky_hieu/             ky_hieu.json: mặc định ký hiệu trục, kích thước, chữ (plugin đọc) · hinh_bc.json: hình block mặc định báo cháy lấy từ nét PDF hồ sơ thật (sinh bằng tkpccc-cad-console/scripts/hinh_tu_pdf.py)
 │  ├─ block/               thư viện block, block động co, tê (chờ file của người dùng)
 │  ├─ ong/ · bom/          kích thước ống + phụ kiện, kích thước bơm (chờ catalog)
@@ -22,10 +23,11 @@ cad/
 ├─ module/                 mã chạy
 │  ├─ plugin/              Lenh.cs (lệnh PCCC_*) · Spec.cs (PCCC_SPEC, thao tác spec) · Rai.cs (rai, tuyen, PCCC_RAI, PCCC_TUYEN) · NhanVung.cs (vung_tu_dong: tự dựng vùng phòng từ nét tường, bỏ trục) · SoDo.cs (so_do, sơ đồ nguyên lý) · Block.cs (PCCC_THEMBLOCK, ảnh xem trước) · Cau.cs (cầu nối) -> TKPCCC.Cad.dll
 │  ├─ ui/                  BangBlock.cs (bảng PCCC_BLOCK) -> TKPCCC.UI.dll; chỗ DUY NHẤT được tham chiếu acmgd, không xử lý bản vẽ
+│  ├─ banquyen/            KeyGen.cs -> bin/TKPCCC.KeyGen.exe (chủ plugin tạo khoá, ký key) · apps_script/Code.gs (Google Sheet tự cấp key) · HUONG_DAN.md · plugin/BanQuyen.cs + ui/BanQuyenUi.cs (PCCC_BANQUYEN)
 │  ├─ mcp/                 Mcp.cs -> bin/TKPCCC.Mcp.exe (công cụ cad_tt, cad_chay, cad_anh)
 │  ├─ chung/               HangDoi.cs: hàng đợi file dùng chung plugin + máy chủ MCP
 │  └─ lisp/                LISP của người dùng (nạp tay bằng APPLOAD)
-├─ test/                   chay_thu.ps1 (plugin + PCCC_SPEC) · thu_mcp.ps1 (máy chủ MCP), không cần mở AutoCAD · mau_kt.pdf (PDF thử 1:200, sinh bằng tao_pdf_mau.py) · thu_gui.ps1 (tự mở AutoCAD thật, không bắt buộc)
+├─ test/                   chay_thu.ps1 (plugin + PCCC_SPEC) · thu_mcp.ps1 (máy chủ MCP), không cần mở AutoCAD · mau_kt.pdf (PDF thử 1:200, sinh bằng tao_pdf_mau.py) · thu_gui.ps1 (tự mở AutoCAD thật, không bắt buộc) · thu_ban_quyen.ps1 (key KeyGen + Apps Script giả lập)
 ├─ build.bat               build DLL + exe, chép dữ liệu vào bundle
 ├─ bin/                    kết quả build máy chủ MCP (không commit)
 └─ TKPCCC.bundle/          gói AutoCAD tự nạp: PackageContents.xml, Contents/ (DLL, PCCC_Blocks.dwg, block_alias.json)
@@ -57,6 +59,7 @@ AI chỉ viết một gói thao tác ngắn (spec JSON), plugin sinh hình. Mộ
 | Đưa block của mình (kể cả block động) vào thư viện dưới một mã mới | trong AutoCAD: `PCCC_THEMBLOCK` hoặc nút "Thêm từ bản vẽ" của bảng `PCCC_BLOCK`; mã nguồn `module/plugin/Block.cs` |
 | Đổi bảng block (cột, ô lọc, nút) | `module/ui/BangBlock.cs`; cách vẽ ảnh xem trước ở `module/plugin/Block.cs`, hàm `VeAnhBlock` |
 | Sửa hình block thiết bị | `TKPCCC.bundle/Contents/PCCC_Blocks.dwg` bằng BEDIT, rồi `PCCC_LIB` |
+| Bản quyền: key, mã máy, chặn lệnh, cấp key qua Google Sheet | `module/plugin/BanQuyen.cs`, `module/banquyen/` (đọc `HUONG_DAN.md`); build khoá lệnh: `build.bat phat_hanh` |
 | Thêm một luật vẽ, nối tới quy chuẩn | 1 dòng trong `rule/LUAT.md` |
 | Ghi bài học khi vẽ | `knowledge/hoc/` |
 
