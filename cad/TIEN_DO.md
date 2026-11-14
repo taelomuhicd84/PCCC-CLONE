@@ -3,24 +3,14 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
-## VIỆC 14/11 CHIỀU — PCCC_RAI TREO CAD, ĐỔI SANG QUÉT CHỌN MẶT BẰNG (người dùng báo, ảnh: bấm điểm trong kho `PCCC HOÁ CHẤT.dwg` thì AutoCAD đứng)
-Nguyên nhân: nhánh bấm điểm gọi `VungBam` (`NhanVung.cs`) đọc MỌI đối tượng model space (`DocDs`, `GeometricExtents`, explode mọi block), nới ô dò gấp đôi
-tới cả bản vẽ khi phòng lớn hoặc hở, `MatChua` cắt đoạn cỡ O(m²), dò 2 lượt (chỉ tường rồi mọi nét); hỏng thì rơi xuống `Editor.TraceBoundary` trên cả bản vẽ (treo kinh điển).
-Cách làm (người dùng chốt): sau mã + trần + theo hàng, `GetSelection` "Quét chọn mặt bằng"; chỉ dựng đoạn từ đối tượng đã chọn (một lần), tính mọi mặt kín một lần;
-polyline kín layer `PCCC_VUNG` trong vùng chọn dùng thẳng làm vùng; dấu nhắc "Bấm điểm trong phòng [TatCa] <TatCa>": Enter ngay = mọi phòng (bỏ mặt hẹp là lòng tường,
-2A/P < 0,5 m hoặc < 1 m²), bấm điểm = chỉ phòng đó; vẽ vùng lên `PCCC_VUNG` rồi rải. Bỏ `TraceBoundary`, bỏ `VungBam`. Test: bỏ đáp 'D' trong `chay_thu.ps1` (dòng RAI) và `thu_gui.ps1`;
-dòng `2610500,1200` thêm khung chọn quanh 2 phòng ở gốc 2600000. Đổi model 14/11: `cad-ve` Sonnet (bỏ Haiku), Gemini mặc định `gemini-4-argon-medium` (bỏ 3.8 Flash).
-TRẠNG THÁI (dừng 90 % lúc ~11:05 14/11): MÃ ĐÃ VIẾT, build đạt (`MatChon`, `PhongThat`, `CacMat`, `BoThangHang` ở `NhanVung.cs`; vòng mới ở `Rai.cs` `RaiTay`), CHƯA ĐẠT TEST:
-`chay_thu.ps1` 89 DAT / 4 LOI. Lỗi gốc: "PCCC_RAI bam diem trong phong khong co polyline" (bản sao `vung_ve2.json` gốc 2700000, đáp `'C','2699000,-1000','2714000,6000','','2710500,1200',''`);
-3 lỗi còn lại (`rai da giac canh xien` 0 đầu báo, `so_do` kiểu chữ, `BC_COI_DEN`) đọc file LISP ghi SAU dòng đó ⇒ nhiều khả năng kịch bản lệch đáp án ở `PCCC_RAI`, không phải lỗi riêng.
-VIỆC KẾ: in `$out2` quanh "Quét chọn" để xem dấu nhắc nào nuốt đáp án (ngờ: `GetPoint` có từ khoá `TatCa` + `AllowNone`; hoặc `MatChon` không ra mặt vì `vung_ve2` khác), sửa, chạy lại
-`chay_thu.ps1` + `thu_mcp.ps1` tới TAT CA DAT.
-NGƯỜI DÙNG BÁO THÊM 14/11 (ảnh `ket_qua/cad_test/2026-11-14/2_ca_ban_ve_mot_block.png`, không commit): bản vẽ mặt bằng xưởng bao bì là MỘT BLOCK duy nhất (cả khung tên, bảng thống kê);
-plugin coi cả block là một vùng, rải đầu báo đều khắp tờ giấy (cả khung tên, ngoài nhà). Người dùng đã KẺ NÉT PHÂN VÙNG: polyline dày màu XANH LÁ (Xưởng 1, Xưởng 2, phòng nhỏ)
-và ĐỎ (khối văn phòng). Sửa (làm NGAY sau khi test đạt): sau quét chọn hỏi "Chọn một nét phân vùng mẫu, Enter = tự nhận từ tường"; có mẫu thì chỉ lấy nét (kể cả nét trong block,
-explode đệ quy như `ThuNet`) cùng layer + màu thật (ByLayer/ByBlock quy ra màu) với mẫu, cho phép nhiều màu (chọn mẫu xanh rồi đỏ), dựng mặt kín từ các nét đó rồi rải từng mặt;
-bỏ mặt bao ngoài / khung giấy. Trước khi viết: dùng MCP `doc` gi:"layer" trên bản vẽ đang mở xem layer, màu, độ dày thật của nét xanh, đỏ (bản vẽ chưa biết đường dẫn: hỏi người dùng nếu cần).
-Phép kiểm: dựng block chứa khung + 2 polyline xanh + 1 đỏ, rải chỉ ra đầu báo trong 3 vùng, 0 đầu báo ngoài. Tiếp: thêm 1 phép kiểm nhánh Enter = mọi phòng trên mặt bằng 2 phòng (ra 2 vùng, bỏ mặt bao ngoài); `cad\build.bat` vào bundle; báo người dùng tắt hẳn AutoCAD, mở lại, thử trên `PCCC HOÁ CHẤT.dwg`.
+## VIỆC 14/11 CHIỀU — PCCC_RAI TREO CAD: XONG MÃ + TEST (chi tiết `cad/LICH_SU.md` 14/11 chiều)
+`PCCC_RAI` mới: mã → (trần | S, m², cách tường) → theo hàng → QUÉT CHỌN mặt bằng → bấm NÉT PHÂN VÙNG MẪU (mỗi màu một lần, bấm được nét trong block; Enter = tự nhận từ tường)
+→ "Bấm điểm trong phòng cần rải, Enter = mọi phòng [TatCa]" → vẽ vùng `PCCC_VUNG` rồi rải. Polyline kín layer `PCCC_VUNG` trong vùng chọn dùng thẳng.
+Hết treo: chỉ đọc đối tượng đã chọn, dựng mặt một lần (`MatChon`, `CacMat`), bỏ `VungBam` + `TraceBoundary`. Enter = mọi phòng (`PhongThat`): bỏ mặt 2A/P < 1 m hoặc < 1 m², bỏ mặt CHỨA phòng khác
+(khung giấy, vòng tường ngoài; sảnh có lõi thang ở giữa thì bấm điểm). `chay_thu.ps1` 96/96 (thêm: bản vẽ 1 block + nét xanh/đỏ ra đúng 3 vùng; khung giấy chứa 2 phòng ra 2 phòng),
+`thu_mcp.ps1` TAT CA DAT, `build.bat` đã build vào bundle. Đổi model 14/11: `cad-ve` Sonnet, Gemini mặc định `gemini-4-argon-medium`.
+CÒN: người dùng tắt hẳn AutoCAD, mở lại, thử trên `PCCC HOÁ CHẤT.dwg` và bản vẽ xưởng bao bì (ảnh `ket_qua/cad_test/2026-11-14/`); chưa biết nét xanh/đỏ thật là màu ACI hay
+true color, ByLayer hay đặt riêng (khoá so khớp = layer + màu thật). Mẫu chỉ lấy nét liền (nét đứt đỏ ranh đất bị bỏ), không lấy hatch. Review Opus max chưa làm.
 
 ## VIỆC 14/11 — XONG PHẦN MÃ, đã gộp vào `main` (kế hoạch, hợp đồng key: `cad/tien_do/viec_14_11.md`; nhật ký `cad/LICH_SU.md`)
 Quy trình vẽ 6 bước + `tuong`/`cua`/`kt_chuoi` + `PCCC_TRUC/TUONG/CUA/ADIM/CDIM`; palette `PCCC` (bot chat, Cài đặt 3 giao diện); ảnh block nền đen;

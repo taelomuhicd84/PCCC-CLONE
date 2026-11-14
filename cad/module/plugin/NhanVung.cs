@@ -10,6 +10,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using Autodesk.AutoCAD.ApplicationServices;
+using Autodesk.AutoCAD.Colors;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Geometry;
@@ -36,6 +37,48 @@ namespace TKPCCC
             public Dictionary<ObjectId, int> Lop = new Dictionary<ObjectId, int>();      // 0 bỏ, 1 thường, 2 tường
             public Dictionary<ObjectId, bool> Lien = new Dictionary<ObjectId, bool>();   // kiểu nét không có gạch
             public Dictionary<ObjectId, List<Point2d[]>> NetCua = new Dictionary<ObjectId, List<Point2d[]>>(); // đoạn của từng đối tượng, theo chế độ
+            public HashSet<string> Mau;                                                   // nét phân vùng mẫu "LAYER|màu" (null = tự nhận từ tường)
+        }
+
+        /// Màu thật của nét: ByLayer theo layer thật, ByBlock theo màu block chứa nó (chaMau; ngoài block coi như 7). "A3" = ACI 3, "R0,255,0" = màu thật.
+        static string MauKhoa(NenVung n, Entity e, ObjectId lop, string chaMau)
+        {
+            Color c = e.Color;
+            if (c.IsByBlock) return chaMau ?? "A7";
+            if (c.IsByLayer)
+            {
+                LayerTableRecord l = n.Tr.GetObject(lop, OpenMode.ForRead) as LayerTableRecord;
+                if (l != null) c = l.Color;
+            }
+            return c.ColorMethod == ColorMethod.ByAci || c.IsByLayer ? "A" + c.ColorIndex : "R" + c.Red + "," + c.Green + "," + c.Blue;
+        }
+
+        static string KhoaNet(NenVung n, ObjectId lop, string mau)
+        {
+            LayerTableRecord l = n.Tr.GetObject(lop, OpenMode.ForRead) as LayerTableRecord;
+            return (l == null ? "" : l.Name.ToUpperInvariant()) + "|" + mau;
+        }
+
+        /// Khoá "LAYER|màu" của nét người dùng bấm làm mẫu (có thể nằm sâu trong block, như bản vẽ cả tờ là một block).
+        static string KhoaNetMau(Database db, PromptNestedEntityResult r)
+        {
+            using (Transaction tr = db.TransactionManager.StartTransaction())
+            {
+                NenVung n = new NenVung();
+                n.Db = db; n.Tr = tr;
+                ObjectId[] cha = r.GetContainers(); // block chứa trực tiếp đứng đầu: đi từ ngoài vào trong
+                ObjectId lop = ObjectId.Null;
+                string mau = null;
+                for (int i = cha.Length - 1; i >= -1; i--)
+                {
+                    Entity e = (Entity)tr.GetObject(i >= 0 ? cha[i] : r.ObjectId, OpenMode.ForRead);
+                    lop = !lop.IsNull && e.LayerId == db.LayerZero ? lop : e.LayerId;
+                    mau = MauKhoa(n, e, lop, mau);
+                }
+                string k = KhoaNet(n, lop, mau);
+                tr.Commit();
+                return k;
+            }
         }
 
         static string ChuanTen(string s)
@@ -106,14 +149,15 @@ namespace TKPCCC
             else ThemDay(n, ra, c.GetSamplePoints(13));
         }
 
-        /// Đoạn thẳng của một đối tượng (cung chia nhỏ). chaLop, chaNet: layer, kiểu nét của block chứa nó (Null ở model space).
-        static void ThuNet(NenVung n, Entity e, ObjectId chaLop, ObjectId chaNet, int sau, List<Point2d[]> ra)
+        /// Đoạn thẳng của một đối tượng (cung chia nhỏ). chaLop, chaNet, chaMau: layer, kiểu nét, màu thật của block chứa nó (Null ở model space).
+        static void ThuNet(NenVung n, Entity e, ObjectId chaLop, ObjectId chaNet, string chaMau, int sau, List<Point2d[]> ra)
         {
             if (!e.Visible) return;
             ObjectId lop = !chaLop.IsNull && e.LayerId == n.Db.LayerZero ? chaLop : e.LayerId;
             int loai = LoaiLop(n, lop);
-            if (loai == 0) return;
+            if (loai == 0 && n.Mau == null) return; // có nét mẫu thì chỉ lọc theo mẫu (nét vùng có thể nằm trên layer bất kỳ)
             ObjectId net = KieuNet(n, e, lop, chaNet);
+            string mau = n.Mau == null ? null : MauKhoa(n, e, lop, chaMau);
             BlockReference br = e as BlockReference;
             if (br != null)
             {
@@ -123,11 +167,12 @@ namespace TKPCCC
                 foreach (DBObject x in con)
                 {
                     Entity c = x as Entity;
-                    if (c != null) ThuNet(n, c, lop, net, sau + 1, ra);
+                    if (c != null) ThuNet(n, c, lop, net, mau, sau + 1, ra);
                     x.Dispose();
                 }
                 return;
             }
+            if (n.Mau != null && (e is Hatch || !n.Mau.Contains(KhoaNet(n, lop, mau)))) return;
             if (n.ChiTuong && loai != 2) return;
             if (!NetLien(n, net)) return; // trục (CENTER, DASHDOT), nét khuất
             try
@@ -433,7 +478,7 @@ namespace TKPCCC
                         if (!n.NetCua.TryGetValue(kv.Key, out net))
                         {
                             net = new List<Point2d[]>();
-                            ThuNet(n, (Entity)tr.GetObject(kv.Key, OpenMode.ForRead), ObjectId.Null, ObjectId.Null, 0, net);
+                            ThuNet(n, (Entity)tr.GetObject(kv.Key, OpenMode.ForRead), ObjectId.Null, ObjectId.Null, null, 0, net);
                             n.NetCua[kv.Key] = net;
                         }
                         doan.AddRange(net);
@@ -455,15 +500,16 @@ namespace TKPCCC
 
         /// PCCC_RAI quét chọn mặt bằng (người dùng dặn 14/11: bấm điểm dò cả bản vẽ rồi TraceBoundary làm treo AutoCAD):
         /// chỉ dựng đoạn từ các đối tượng đã chọn, một lần. co: polyline kín layer PCCC_VUNG trong vùng chọn (dùng thẳng, khi đó không dựng mặt).
-        /// mat: mọi mặt kín dựng từ nét tường (WCS, đã bỏ đỉnh thẳng hàng).
-        static void MatChon(Database db, ObjectId[] ids, out List<List<Point2d>> co, out List<List<Point2d>> mat)
+        /// mat: mọi mặt kín dựng từ nét tường (WCS, đã bỏ đỉnh thẳng hàng). mau: khoá nét phân vùng mẫu (KhoaNetMau), có thì chỉ dựng mặt từ các nét
+        /// cùng layer + màu thật với mẫu, kể cả nét trong block (người dùng 14/11: cả tờ là một block, vùng kẻ bằng nét xanh lá, đỏ).
+        static void MatChon(Database db, ObjectId[] ids, HashSet<string> mau, out List<List<Point2d>> co, out List<List<Point2d>> mat)
         {
             co = new List<List<Point2d>>();
             mat = new List<List<Point2d>>();
             using (Transaction tr = db.TransactionManager.StartTransaction())
             {
                 NenVung n = new NenVung();
-                n.Db = db; n.Tr = tr; n.Tol = 2 * 0.001 / HeSoMet(db);
+                n.Db = db; n.Tr = tr; n.Tol = 2 * 0.001 / HeSoMet(db); n.Mau = mau;
                 List<Entity> ds = new List<Entity>();
                 foreach (ObjectId id in ids)
                 {
@@ -472,36 +518,36 @@ namespace TKPCCC
                     if (pl != null && pl.Closed && pl.NumberOfVertices >= 3 && string.Equals(pl.Layer, LAYER_VUNG, StringComparison.OrdinalIgnoreCase)) co.Add(DinhPl(pl));
                     else if (e != null && !(e is Table)) ds.Add(e);
                 }
-                bool coTuong = ds.Any(e => LoaiLop(n, e.LayerId) == 2);
+                bool coTuong = mau == null && ds.Any(e => LoaiLop(n, e.LayerId) == 2);
                 // Có layer tường / cột thì dựng bằng các layer đó trước, không ra phòng nào mới dùng mọi nét liền (như VungTaiDiem).
                 foreach (bool chiTuong in new[] { true, false })
                 {
                     if (co.Count > 0 || mat.Count > 0 || (chiTuong && !coTuong)) continue;
                     n.ChiTuong = chiTuong;
                     List<Point2d[]> doan = new List<Point2d[]>();
-                    foreach (Entity e in ds) ThuNet(n, e, ObjectId.Null, ObjectId.Null, 0, doan);
+                    foreach (Entity e in ds) ThuNet(n, e, ObjectId.Null, ObjectId.Null, null, 0, doan);
                     if (doan.Count >= 3) mat = CacMat(doan, n.Tol, HO_CUA_M / HeSoMet(db)).Select(v => BoThangHang(v, n.Tol)).ToList();
                 }
                 tr.Commit();
             }
         }
 
-        // shortcut: ngưỡng phòng cố định (rộng trung bình 2A/P ≥ 0,5 m, ≥ 1 m²); hộp kỹ thuật nhỏ hơn thì bấm điểm hoặc vẽ polyline PCCC_VUNG.
-        /// Mặt là phòng thật: bỏ lòng tường, cột; bỏ mặt bao ngoài có quá nửa diện tích là phòng khác (vòng tường ngoài tách rời các tường trong).
+        // shortcut: ngưỡng phòng cố định (rộng trung bình 2A/P ≥ 1 m, ≥ 1 m²); WC, hộp kỹ thuật hẹp hơn thì bấm điểm hoặc vẽ polyline PCCC_VUNG.
+        /// Mặt là phòng thật: bỏ lòng tường, cột; bỏ mặt CHỨA phòng khác (khung giấy, vòng tường ngoài tách rời; sảnh có lõi thang ở giữa thì bấm điểm).
         static List<List<Point2d>> PhongThat(List<List<Point2d>> mat, double m)
         {
             List<List<Point2d>> ung = mat.Where(v =>
             {
                 double a = DienTichDaGiac(v) * m * m, p = 0;
                 for (int i = 0; i < v.Count; i++) p += v[i].GetDistanceTo(v[(i + 1) % v.Count]) * m;
-                return a >= 1 && 2 * a / p >= 0.5;
+                return a >= 1 && 2 * a / p >= 1;
             }).ToList();
             Func<List<Point2d>, Point2d> diemTrong = g =>
             {
                 Vector2d c = g[1] - g[0]; // mặt ngược chiều kim đồng hồ: lòng mặt ở bên trái cạnh
                 return g[0] + c * 0.5 + new Vector2d(-c.Y, c.X) * 0.01;
             };
-            return ung.Where(f => ung.Where(g => g != f && TrongDaGiac(f, diemTrong(g))).Sum(g => DienTichDaGiac(g)) <= 0.5 * DienTichDaGiac(f)).ToList();
+            return ung.Where(f => !ung.Any(g => g != f && TrongDaGiac(f, diemTrong(g)))).ToList();
         }
 
         /// Thao tác spec "vung_tu_dong": p [[x,y],...] điểm trong từng phòng -> polyline kín trên layer "l" (mặc định PCCC_VUNG).

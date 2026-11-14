@@ -49,9 +49,9 @@ $kb = @('INSUNITS', '4', 'NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '_.SAVEAS', '2018',
   'PCCC_BOC', 'Co', 'L', '', '', 'ThuPlugin',
   'PCCC_VUNGBV', 'BC_KHOI', '3', 'PCCC_VUNGBV', 'BC_KHOI', '3',
   'PCCC_BANG', '0,-3000', '250',
-  'RECTANG', '50000,0', '66000,12000', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '12', '', '', 'L', '', '',
-  'RECTANG', '100000,0', '114000,10000', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '', '1.5', '', 'L', '', '',
-  'PLINE', '200000,0', '212000,0', '212000,8000', '203000,8000', '203000,5000', '200000,5000', 'C', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '', '', 'Co', 'L', '', '',
+  'RECTANG', '50000,0', '66000,12000', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '12', '', '', 'L', '', '', '',
+  'RECTANG', '100000,0', '114000,10000', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '', '1.5', '', 'L', '', '', '',
+  'PLINE', '200000,0', '212000,0', '212000,8000', '203000,8000', '203000,5000', '200000,5000', 'C', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '', '', 'Co', 'L', '', '', '',
   'PLINE', '49000,-1000', '67000,-1000', '', '_.ZOOM', '_E', 'OSMODE', '0', 'PCCC_TUYEN', 'ONG_DN25', 'W', '50000,0', '66000,12000', '', 'L', '65000,2000',
   'CIRCLE', '80000,0', '150', '-BLOCK', 'VAN_KHACH', '80000,0', 'L', '', '-INSERT', 'VAN_KHACH', '80000,0', '1', '', '0',
   'PCCC_THEMBLOCK', 'L', 'van_khach', 'Van khach them', 'SPR', '', 'PCCC_DAT', 'VAN_KHACH', '81000,0', '',
@@ -222,6 +222,18 @@ $XIEN = @(@(1100, 36000), @(13900, 40300), @(52500, 25100), @(16000, 0), @(0, 20
  '{"op":"chu","l":"KT_A","p":[1500,3000],"t":"PHONG 1","cao":300},{"op":"kt","l":"KT_A","p1":[6500,1000],"p2":[11000,1000],"cach":300}]}' | Set-Content -Encoding ascii "$T\vung_ve.json"
 # PCCC_RAI quet chon (14/11): ban sao mat bang 2 phong o goc 2700000 (chua co PCCC_VUNG), khung chon C quanh no roi bam diem phong 2.
 (Get-Content "$T\vung_ve.json") -replace '2600000', '2700000' | Set-Content -Encoding ascii "$T\vung_ve2.json"
+# Nguoi dung 14/11 (anh 2_ca_ban_ve_mot_block): ca to la MOT block, vung ke bang net xanh la, do. Block KHOI_MB o goc 2900000: khung giay trang,
+# vung A, B xanh (VUNG_XANH mau 3, chung canh x 25000), vung C do (VUNG_DO mau 1), o khung ten do tren layer KHAC (KHUNG_TEN mau 1). Bam mau xanh + do => dung 3 vung.
+('{"goc":[2900000,0],"ops":[{"op":"net","l":"KT_A","p":[[0,0],[60000,0],[60000,40000],[0,40000]],"kin":true},' +
+ '{"op":"net","l":"VUNG_XANH","mau":3,"p":[[5000,5000],[25000,5000],[25000,20000],[5000,20000]],"kin":true},' +
+ '{"op":"net","l":"VUNG_XANH","mau":3,"p":[[25000,5000],[45000,5000],[45000,20000],[25000,20000]],"kin":true},' +
+ '{"op":"net","l":"VUNG_DO","mau":1,"p":[[5000,25000],[20000,25000],[20000,35000],[5000,35000]],"kin":true},' +
+ '{"op":"net","l":"KHUNG_TEN","mau":1,"p":[[50000,0],[60000,0],[60000,10000],[50000,10000]],"kin":true},{"op":"net","l":"KHUNG_TEN","mau":1,"p":[[50000,5000],[60000,5000]]}]}') |
+  Set-Content -Encoding ascii "$T\vung_mau.json"
+# Enter = moi phong, tu nhan tu tuong: khung giay chua 2 phong (10 x 8 m) bi bo, chi rai 2 phong.
+('{"goc":[3100000,0],"ops":[{"op":"net","l":"KT_A","p":[[0,0],[60000,0],[60000,40000],[0,40000]],"kin":true},' +
+ '{"op":"net","l":"KT_A","p":[[5000,5000],[15000,5000],[15000,13000],[5000,13000]],"kin":true},' +
+ '{"op":"net","l":"KT_A","p":[[20000,5000],[30000,5000],[30000,13000],[20000,13000]],"kin":true}]}') | Set-Content -Encoding ascii "$T\vung_khung.json"
 '{"goc":[2600000,0],"ops":[{"op":"vung_tu_dong","p":[[1500,1200]],"ho":500,"l":"VUNG_THU"},{"op":"xoa","l":"VUNG_THU"},' +
  '{"op":"vung_tu_dong","p":[[1500,1200],[10500,3500]]},{"op":"rai","ma":"SPR_DAU_DOWN","l":"PCCC_VUNG","hop":[-500,-500,12500,5500],"s":4000},' +
  '{"op":"vung_tu_dong","p":[[30000,30000]]}]}' | Set-Content -Encoding ascii "$T\vung_do.json"
@@ -245,10 +257,13 @@ $bamTv = (Get-FileHash "$T\PCCC_Blocks.dwg").Hash
   'PCCC_SPEC', "$T\rai_moi.json", 'PCCC_SPEC', "$T\pdf_mk.json", 'PCCC_SPEC', "$T\rv_tuyen.json", 'PCCC_SPEC', "$T\hoa.json", 'PCCC_SPEC', "$T\hoa_doc.json",
   'PCCC_SPEC', "$T\rv_hang.json", 'PCCC_SPEC', "$T\rv2.json", 'PCCC_SPEC', "$T\van.json", 'PCCC_SPEC', "$T\so_do.json", 'PCCC_SPEC', "$T\so_do_loi.json", 'PCCC_SPEC', "$T\so_do_bc.json", 'PCCC_SPEC', "$T\so_do_bc_loi.json", 'PCCC_SPEC', "$T\so_do_bc_ng.json",
   'PCCC_SPEC', "$T\so_do_loc.json", 'PCCC_SPEC', "$T\so_do_bc2.json", 'INSUNITS', '6', 'PCCC_SPEC', "$T\so_do_m.json", 'INSUNITS', '4', 'PCCC_SPEC', "$T\rai_xien.json",
-  'RECTANG', '3000000,0', '3030600,20400', 'PCCC_RAI', 'BC_KHOI', '', '', 'L', '', '',
+  'RECTANG', '3000000,0', '3030600,20400', 'PCCC_RAI', 'BC_KHOI', '', '', 'L', '', '', '',
   '-LAYER', 'M', 'NEN_A', 'L', 'CENTER', '', 'M', 'KT_A', '', 'PCCC_SPEC', "$T\vung_ve.json",
   '-HATCH', 'P', 'SOLID', 'W', 'N', '2599800,4700', '2600300,4700', '2600300,5200', '2599800,5200', 'C', '', '', '-LAYER', 'S', '0', '',
-  'PCCC_SPEC', "$T\vung_do.json", 'PCCC_SPEC', "$T\vung_ve2.json", 'OSMODE', '0', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '', '', '', 'C', '2699000,-1000', '2714000,6000', '', '2710500,1200', '', '_.QSAVE',
+  'PCCC_SPEC', "$T\vung_do.json", 'PCCC_SPEC', "$T\vung_ve2.json", 'OSMODE', '0', '_.ZOOM', 'W', '2699000,-1000', '2714000,6000', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '', '', '', 'C', '2699000,-1000', '2714000,6000', '', '', '2710500,1200', '',
+  'PCCC_SPEC', "$T\vung_mau.json", '_.ZOOM', 'W', '2899000,-1000', '2961000,41000', '-BLOCK', 'KHOI_MB', '2900000,0', 'C', '2899000,-1000', '2961000,41000', '',
+  '-INSERT', 'KHOI_MB', '2900000,0', '1', '', '0', 'PCCC_RAI', 'BC_KHOI', '', '', 'L', '', '2905000,12000', '2905000,30000', '', '',
+  'PCCC_SPEC', "$T\vung_khung.json", '_.ZOOM', 'W', '3099000,-1000', '3161000,41000', 'PCCC_RAI', 'BC_KHOI', '', '', 'C', '3099000,-1000', '3161000,41000', '', '', '', '_.QSAVE',
   ('(progn (setq f (open "' + ($T -replace '\\', '/') + '/blk.txt" "w")) (setq e (cdr (assoc -2 (tblsearch "BLOCK" "BC_COI_DEN")))) ' +
    '(while e (write-line (cdr (assoc 0 (entget e))) f) (setq e (entnext e))) (setq l (tblsearch "LAYER" "PCCC_SODO_DAY_NGUON")) ' +
    '(write-line (strcat "LAYER " (itoa (cdr (assoc 62 l))) " " (cdr (assoc 6 l))) f) ' +
@@ -493,6 +508,11 @@ Kiem ($kvd -and $vd.Count -eq 3 -and $vd[0].m2 -eq 55.8 -and $vd[1].m2 -eq 27.8 
 Kiem ($kvd -and @($kvd.rai).Count -eq 2 -and @($kvd.loi).Count -eq 1 -and $kvd.loi[0].i -eq 4 -and $kvd.loi[0].ly_do -match '\[30000,30000\]: ') `
   "vung_tu_dong + rai l PCCC_VUNG: rai 2 phong; diem ngoai cong trinh bao loi ($($kvd.rai.n -join '/'), $($kvd.loi | ConvertTo-Json -Compress -Depth 3))"
 Kiem ($out2 -match 'm2=27\.8 \(6 [\s\S]{0,400}PCCC_RAI SPR_DAU_DOWN n=\d+') 'PCCC_RAI bam diem trong phong khong co polyline: tu dung vung 27,8 m2 (6 dinh) roi rai'
+$vm = [regex]::Match($out2, 'layer VUNG_XANH[\s\S]*?trong (\d+) ph')
+$vmXanh = ([regex]::Matches($vm.Value, 'm2=300 \(4 ')).Count; $vmDo = ([regex]::Matches($vm.Value, 'm2=150 \(4 ')).Count
+Kiem ($vm.Success -and $vm.Groups[1].Value -eq '3' -and $vmXanh -eq 2 -and $vmDo -eq 1 -and $vm.Value -match 'layer VUNG_DO') "PCCC_RAI ban ve la 1 block, bam net mau xanh + do: dung dung 3 vung (2 x 300 + 150 m2), bo khung giay, o khung ten do layer khac ($($vm.Groups[1].Value) vung, xanh $vmXanh, do $vmDo)"
+$vk = [regex]::Match($out2, 'File spec JSON: [^\r\n]*vung_khung\.json[\s\S]*?trong (\d+) ph')
+Kiem ($vk.Success -and $vk.Groups[1].Value -eq '2' -and ([regex]::Matches($vk.Value, 'm2=80 \(4 ')).Count -eq 2) "PCCC_RAI Enter = moi phong (tu nhan tu tuong): khung giay chua 2 phong bi bo, rai dung 2 phong 80 m2 ($($vk.Groups[1].Value) vung)"
 $dm2 = Get-Content -Raw -Encoding UTF8 "$T\vat_tu.json" | ConvertFrom-Json
 $dmGoc2 = Get-Content -Raw -Encoding UTF8 $fGoc | ConvertFrom-Json
 Kiem ((Get-FileHash "$T\PCCC_Blocks.dwg").Hash -eq $bamTv -and $out2 -match 'VAN_TRUNG \S+ c. trong' -and $out2 -match 'kh\S+ng ghi \S+c' -and

@@ -906,14 +906,27 @@ namespace TKPCCC
             qc.MessageForAdding = "\nQuét chọn mặt bằng cần rải (tường các phòng; polyline kín layer " + LAYER_VUNG + " có sẵn thì dùng luôn): ";
             PromptSelectionResult qr = ed.GetSelection(qc);
             if (qr.Status != PromptStatus.OK) return;
+            // Nét phân vùng mẫu (người dùng 14/11: cả tờ là một block, vùng kẻ bằng nét xanh lá, đỏ): bấm được nét nằm trong block.
+            HashSet<string> mau = new HashSet<string>();
+            while (true)
+            {
+                PromptNestedEntityOptions no = new PromptNestedEntityOptions(mau.Count == 0
+                    ? "\nBấm một nét phân vùng mẫu (mỗi màu một lần), Enter = tự nhận từ tường: " : "\nBấm nét phân vùng mẫu màu khác, Enter = xong: ");
+                no.AllowNone = true;
+                PromptNestedEntityResult nr = ed.GetNestedEntity(no);
+                if (nr.Status == PromptStatus.None) break;
+                if (nr.Status != PromptStatus.OK) return;
+                string kh = KhoaNetMau(db, nr);
+                if (mau.Add(kh)) ed.WriteMessage("\n[TKPCCC] Nét phân vùng mẫu: layer " + kh.Replace("|", ", màu ") + ".");
+            }
             List<List<Point2d>> vung, mat;
-            MatChon(db, qr.Value.GetObjectIds(), out vung, out mat);
+            MatChon(db, qr.Value.GetObjectIds(), mau.Count > 0 ? mau : null, out vung, out mat);
             bool veVung = vung.Count == 0;
             if (veVung)
             {
                 if (mat.Count == 0)
                 {
-                    ed.WriteMessage("\nKhông dựng được phòng kín nào từ các đối tượng đã chọn (chưa chọn đủ tường, hoặc phòng hở khe rộng hơn "
+                    ed.WriteMessage("\nKhông dựng được phòng kín nào từ các " + (mau.Count > 0 ? "nét cùng layer, màu với nét mẫu" : "đối tượng đã chọn") + " (chưa chọn đủ, hoặc vùng hở khe rộng hơn "
                         + HO_CUA_M.ToString(CultureInfo.InvariantCulture) + " m: vẽ polyline kín layer " + LAYER_VUNG + " rồi chọn lại).");
                     return;
                 }

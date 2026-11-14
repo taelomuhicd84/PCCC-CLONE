@@ -396,3 +396,7 @@ Người dùng (ảnh PCCC_RAI): gõ `?` thì hiện bảng danh sách, không i
   Phiên khác commit `d20e5a9` (làm lại PCCC_RAI) gộp luôn phần thử dở của `thu_gui.ps1`. Dừng ở 93 % hạn mức 5 giờ, việc kế ghi `cad/TIEN_DO.md` mục 6.
 - 14/11 chiều (sau reset): `thu_gui.ps1` bỏ COM + `Start-Job`, phép kiểm bảng chọn chạy bằng kịch bản khởi động `PCCC_DAT ?` (kiểm ngay sau `song.json`, lọc không dấu, bấm Chọn, `dem` BC_KHOI = 6).
   Chưa chạy vì AutoCAD người dùng đang mở. `thu_mcp.ps1` TAT CA DAT; `chay_thu.ps1` không build do `NhanVung.cs` của phiên khác đang sửa dở.
+- 14/11 sau reset: lỗi test cũ do accoreconsole không có màn hình, khung chọn `C` ra "0 found" ⇒ test `ZOOM W` trước. Người dùng gửi thêm bản vẽ cả tờ là MỘT block,
+  rải tràn cả tờ: thêm bước bấm NÉT PHÂN VÙNG MẪU (`GetNestedEntity`, bấm được nét trong block; khoá layer + màu thật, ByLayer/ByBlock quy ra màu; `ThuNet` thêm `chaMau`,
+  lọc theo mẫu, bỏ hatch, chỉ nét liền). `PhongThat`: ngưỡng 2A/P ≥ 1 m, bỏ mặt chứa phòng khác (thay luật > 50 %). Test thêm 2 phép kiểm; `chay_thu.ps1` 96/96,
+  `thu_mcp.ps1` đạt, build vào bundle. Song song: phiên khác bỏ phép thử `PCCC_RAI` qua COM trong `thu_gui.ps1` (commit `ef58af6`).
