@@ -188,3 +188,12 @@
   Gemini 3.8 Flash qua `agy`: 43 327 token Gemini, 1 phút 51 giây; phía Claude chỉ đọc JSON 610 ký tự. Claude Sonnet (agent) tự đọc ảnh 200 dpi, cắt phóng: 79 290 token Claude, 53 giây.
   Chữ: cả hai đúng hết (12 trục 1, 1'', 1', 2…7; A–F; 11 kích thước trên + tổng 41000; 6 kích thước trái; tên bản vẽ; 4 zone). Đếm ký hiệu: Gemini sai (H 47/59, F 12/9), Claude đúng.
   Kết luận ghi vào skill `tkpccc-phoi-hop-model`: Gemini đọc chữ, không đếm ký hiệu; đếm bằng chữ vector khi PDF vector. Đáp án đầu tiên của tôi thiếu trục phụ 1', 1''... (sửa sau khi cả hai model cùng đọc ra).
+
+## 2026-11-15
+- Người dùng giao TỔNG RÀ SOÁT TOÀN DỰ ÁN (9 việc, xem đầu `TIEN_DO.md`): review bằng Fable 5.2, đầu não điều phối agent sửa, liên kết dữ liệu mọi mảng,
+  `frontend/` + `backend/`, keygen theo seri ổ cứng, CAD vẽ mượt, lisp nạp DLL, UI palette (ảnh block màu layer), soát tư duy đọc PDF, bảng agent ↔ model.
+  Luật mới: cửa sổ 5 giờ 85–95 % thì dừng ở task gần nhất, ghi tiến độ + lịch sử, tự chạy tiếp khi reset (lặp lại); ngữ cảnh > 50 % thì đẩy sang phiên nhánh.
+- 02:10–03:00: mở 6 phiên nhánh review chỉ đọc (R1 đầu vào PDF, R2 liên kết dữ liệu, R3a CAD lõi vẽ, R3b CAD giao diện / nạp / bản quyền, R4 web, R5 máy kiểm luật);
+  kết quả ở `ket_qua/review_1115/` (không commit). "anti" = Antigravity CLI `agy`, "carbon" = `gemini-4-carbon-medium` (`agy models`).
+  Bài học: phiên nhánh thừa hưởng model app ghi cho phiên mẹ (Opus 5.5), không phải Fable 5.2 ⇒ vòng 1 chạy Opus 5.5; đã `set_session_model` Fable 5.2 cho lượt sau.
+  Sáu phiên song song tốn ≈ 78 % cửa sổ 5 giờ (20 % → 98 %) ⇒ mỗi đợt chỉ 2–3 phiên. Dừng ở 98 %, hẹn CronCreate 05:04 chạy tiếp.

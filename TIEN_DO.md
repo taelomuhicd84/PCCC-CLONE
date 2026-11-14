@@ -2,7 +2,41 @@
 
 File này cập nhật sau mỗi mốc việc và trước khi hết usage. Phiên mới đọc mục "ĐANG LÀM / VIỆC TIẾP THEO" trước.
 
-## ĐANG LÀM / VIỆC TIẾP THEO (cập nhật 2026-11-06)
+## ĐANG LÀM / VIỆC TIẾP THEO (cập nhật 2026-11-15)
+### TỔNG RÀ SOÁT TOÀN DỰ ÁN (người dùng giao 15/11; đầu não TỰ làm tiếp sau mỗi lần reset, không hỏi, không xin quyền)
+Yêu cầu gốc: (1) review toàn dự án bằng Fable 5.2 effort cao + góp ý phát triển; (2) đầu não điều phối agent sửa, mọi mảng (khảo sát, sơ bộ thiết kế,
+thẩm định, CAD, web, skill, knowledge) liên kết dữ liệu không lỗi; (3) tạo `frontend/`, `backend/` + agent web; (4) app `.exe` / `.py` sinh key theo
+seri ổ cứng; (5) CAD vẽ mượt, hết lag; (6) file `.lsp` nạp DLL thay NETLOAD; (7) UI palette CAD, ảnh block đúng màu layer (giao Antigravity `agy`,
+model `gemini-4-carbon-medium`, tra mạng + dựng giao diện); (8) soát kỹ tư duy đọc PDF / nhận biết (đầu vào); (9) bảng agent ↔ model ↔ effort theo quy trình.
+Luật chạy (15/11): cửa sổ 5 giờ 85–95 % ⇒ dừng ở task gần nhất, ghi file này + `LICH_SU.md`, commit, CronCreate tới giờ reset, tự chạy tiếp; lặp lại.
+Ngữ cảnh phiên > 50 % ⇒ đẩy việc sang phiên nhánh (mỗi agent một phiên nhánh, song song), không được thì compact.
+
+**Đã xong (15/11, 02:10–03:00):** review vòng 1, 6 phiên nhánh chỉ đọc, kết quả ở `ket_qua/review_1115/R1…R5*.md` (không commit; luật chung `00_CHUNG.md`):
+R1 đầu vào PDF (4 nghiêm trọng, 12 cao), R2 liên kết dữ liệu, R3a CAD lõi vẽ, R3b CAD giao diện + nạp + bản quyền, R4 web (`npm test` 230 ca đạt), R5 máy kiểm luật (pytest 13 đạt).
+Vòng 1 chạy bằng Opus 5.5 (xhigh / high) vì phiên nhánh thừa hưởng model app ghi cho phiên mẹ; 6 phiên đã được đặt Fable 5.2 cho lượt sau
+(`set_session_model`). Sáu phiên song song tốn ≈ 78 % cửa sổ 5 giờ (≈ 13 % mỗi phiên) ⇒ lần sau mở tối đa 2–3 phiên một đợt.
+Phát hiện lớn nhất: chiều cao PCCC định nghĩa sai ở 4 nơi; trích sai QCVN 10 Bảng A.1 chú thích (2); 3 luật YAML dựa trên đoạn SĐ1:2023 đã gạch;
+thiếu số liệu vẫn ra D / KD thay vì XM; trang xoay làm sập máy kiểm luật; `bang_doi_chieu.py job` trích sai văn bản 14 dòng; B4 / B5 căn cứ cũ;
+`PCCC_KT` tính phủ xuyên tường; khoang dầm gom khoang nhỏ của mọi phòng; INSUNITS Unitless vẽ theo mét; web đổi dự án giữa chừng ghi đè dự án khác;
+`docSoVN("12,375")` = 12375; runner không kiểm Host / Origin; vitest quét cả `.claude/worktrees/`; ảnh block sai màu do vẽ theo layer `0`.
+
+**Bước tiếp theo (làm theo thứ tự, mỗi bước kiểm `get_usage`):**
+1. Fable 5.2 vòng 2: nhắn (SendMessage tới id phiên) từng phiên R1, R5, R2, R3a, R4, R3b "soát lại file kết quả của mình: đọc lại mã xác minh từng lỗi
+   NGHIÊM TRỌNG / CAO, đánh dấu ĐÃ XÁC MINH hoặc SAI, bổ sung chỗ sót". Mỗi đợt 2 phiên. Id: R1 `local_8e4a5e88-a66b-4541-b234-a3a22e67a9d3`,
+   R2 `local_610e944b-1193-4ab6-a81e-fa8d44dc1588`, R3a `local_59a64d70-ef69-484d-b559-27f25553ffaf`, R3b `local_cca9d51c-fab8-4995-bc93-bb7e0e0e7727`,
+   R4 `local_c5a325fe-1ee4-417b-a539-f900c7d0cdc5`, R5 `local_4d354af3-8683-4592-83b8-e73d4823611c`.
+2. Đầu não đọc 6 file, viết `KE_HOACH_TONG.md` (góp ý phát triển, danh sách việc theo mức, bảng agent ↔ model ↔ effort), gửi người dùng (SendUserFile).
+3. Sửa theo đợt, mỗi đợt một phiên nhánh, hai phiên không đụng cùng file; phiên mới: tạo với lời nhắn ngắn, `set_session_model` rồi mới gửi brief nếu cần model khác:
+   a. Kết quả PCCC sai (ưu tiên 1): các phát hiện NGHIÊM TRỌNG của R1, R5, R2 (skill, knowledge, YAML, `bang_doi_chieu.py`, bảng B4 / B5).
+   b. `thong_so_cong_trinh.json` nguồn chung có trích nguồn + `scripts/kiem_lien_ket.py` chạy trong bộ test.
+   c. Web: đổi dự án ghi đè, `docSoVN`, Host / Origin, cấu hình vitest; rồi tách `frontend/` + `backend/` theo bản đồ trong `R4_web.md`; tạo agent `web-frontend`, `web-backend`.
+   d. CAD đúng: `PCCC_KT` xuyên tường, khoang dầm theo từng phòng + kiểm phủ lại, INSUNITS, ngưỡng dầm đưa vào `data/khoang_cach_rai.json`.
+   e. CAD mượt: Esc + thanh tiến độ, `PhuKin` / `DiemHo`, `CacMat`, nhớ kết quả explode block, `DemBanVe` khi đổi tab.
+   f. CAD giao diện: `agy --model gemini-4-carbon-medium` tra mạng UX palette + đề xuất, Claude sửa ảnh block (màu layer `PCCC_<hệ>`, tô Solid / Hatch, nền theo chủ đề), build, test.
+   g. `cad/module/lisp/TKPCCC.lsp` nạp DLL + file cài bundle; thử bằng accoreconsole.
+   h. Bản quyền: mã máy theo seri ổ cứng (giữ nhận key cũ theo MachineGuid), keygen `.exe` + `.py`; vá Apps Script chèn công thức.
+   i. `CLAUDE.md` + memory `luu-tien-do-truoc-het-usage`: luật 85–95 % và ngữ cảnh 50 % cho mọi việc; dọn `.claude/worktrees/` cũ (hỏi người dùng trước khi xoá nhánh).
+4. Mỗi đợt xong: `npm test`, pytest, `cad\test\chay_thu.ps1` (khi đụng CAD), cập nhật file này + `LICH_SU.md`, commit. `git push` vẫn treo ở tab Terminal (chờ người dùng đăng nhập).
 **CAD tự động (MCP CAD, từ 2026-11-10): tiến độ và nhật ký RIÊNG ở `cad/TIEN_DO.md`, `cad/LICH_SU.md`; kế hoạch `cad/KE_HOACH.md`.**
 **XONG 06/11 (sáng): BCKS "Văn phòng Q.7 – Tân Quy Đông 1"** ở `ket_qua/tanquydong1/` (BCKS_Van_phong_Tan_Quy_Dong_1.xlsx/.pdf, ban_ve_ghi_chu.pdf, doi_chieu.xlsx, bang_doi_chieu.md; không commit; `dien.py`, `ghichu.py` dựng lại). 4 tầng nổi + hầm, cao PCCC ≈ 12 m (ước lượng), sàn ≈ 1.170 m², F4.3 theo tên hồ sơ (bản vẽ: trệt văn phòng, tầng trên căn A/B/E). Còn 👤: công năng thật (nhà ở KD thì hầm xe/báo cháy khác), vị trí tường/cửa PA1 (ước lượng từ ảnh), số người, mặt bằng mái. Usage tuần ≈ 97 % lúc làm.
 **XONG 06/11 tối: BCKS "Nhà phố – Căn hộ dịch vụ 8 m" (Q.2)** ở `ket_qua/canho8m/v7/` (BCKS xlsx, ban_ve_ghi_chu.pdf, doi_chieu.xlsx, bang_doi_chieu.md; không commit). Công năng giả định F1.2 theo tên file; 5 tầng nổi + hầm; cao PCCC ≈ 15,0 m.
