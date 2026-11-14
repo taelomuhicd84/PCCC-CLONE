@@ -26,9 +26,10 @@ cad/
 │  ├─ banquyen/            KeyGen.cs -> bin/TKPCCC.KeyGen.exe (chủ plugin tạo khoá, ký key) · apps_script/Code.gs (Google Sheet tự cấp key) · HUONG_DAN.md · plugin/BanQuyen.cs + ui/BanQuyenUi.cs (PCCC_BANQUYEN)
 │  ├─ mcp/                 Mcp.cs -> bin/TKPCCC.Mcp.exe (công cụ cad_tt, cad_chay, cad_anh)
 │  ├─ chung/               HangDoi.cs: hàng đợi file dùng chung plugin + máy chủ MCP
-│  └─ lisp/                LISP của người dùng (nạp tay bằng APPLOAD)
+│  └─ lisp/                TKPCCC.lsp (nạp DLL thay NETLOAD) + LISP của người dùng (nạp tay bằng APPLOAD)
 ├─ test/                   chay_thu.ps1 (plugin + PCCC_SPEC) · thu_mcp.ps1 (máy chủ MCP), không cần mở AutoCAD · mau_kt.pdf (PDF thử 1:200, sinh bằng tao_pdf_mau.py) · thu_gui.ps1 (tự mở AutoCAD thật, không bắt buộc) · thu_ban_quyen.ps1 (key KeyGen + Apps Script giả lập)
 ├─ build.bat               build DLL + exe, chép dữ liệu vào bundle
+├─ cai_dat.bat             cài một lần: liên kết bundle vào %APPDATA%\Autodesk\ApplicationPlugins (AutoCAD tự nạp, khỏi NETLOAD); `/go` để gỡ
 ├─ bin/                    kết quả build máy chủ MCP (không commit)
 └─ TKPCCC.bundle/          gói AutoCAD tự nạp: PackageContents.xml, Contents/ (DLL, PCCC_Blocks.dwg, block_alias.json)
 ```
@@ -88,6 +89,7 @@ AI chỉ viết một gói thao tác ngắn (spec JSON), plugin sinh hình. Mộ
 - Cả hai phải ra `TAT CA DAT`.
 
 ## Dùng
-1. Chạy `cad\build.bat`, mở AutoCAD (bundle tự nạp, hoặc `NETLOAD` file `TKPCCC.Cad.dll`; file này tự nạp luôn `TKPCCC.UI.dll`). Gõ `PCCC` để mở palette chính (`PCCC_BLOCK` mở thẳng phân hệ Thư viện, `PCCC_HELP` phân hệ Lệnh).
+1. Chạy `cad\build.bat`, rồi `cad\cai_dat.bat` MỘT lần (liên kết bundle để AutoCAD tự nạp mỗi lần mở; accoreconsole không tự nạp bundle nên bộ test không bị ảnh hưởng).
+   Cách khác: `APPLOAD` file `module\lisp\TKPCCC.lsp`, hoặc `NETLOAD` file `TKPCCC.Cad.dll` (file này tự nạp luôn `TKPCCC.UI.dll`). Gõ `PCCC` để mở palette chính (`PCCC_BLOCK` mở thẳng phân hệ Thư viện, `PCCC_HELP` phân hệ Lệnh).
 2. Mở Claude Code ở gốc repo hoặc tại `cad/`: file `.mcp.json` khai máy chủ `cad`. AI khác thì khai lệnh chạy là đường dẫn tới `cad\bin\TKPCCC.Mcp.exe`.
 3. Gõ yêu cầu vẽ. Chạy tay một spec: trong AutoCAD gõ `PCCC_SPEC` rồi dán đường dẫn file `.json`; kết quả nằm ở `<tên>.kq.json`.

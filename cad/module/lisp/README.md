@@ -7,4 +7,4 @@ Chỗ đặt file `.lsp` của người dùng (lệnh tắt, tiện ích vẽ qu
 
 | File | Lệnh | Làm gì |
 |---|---|---|
-| (chưa có) | | |
+| `TKPCCC.lsp` | `TKPCCC` | Nạp `TKPCCC.Cad.dll` thay cho gõ `NETLOAD` (một lần mỗi phiên AutoCAD). `APPLOAD` file này, thêm vào Startup Suite để tự nạp. Tìm DLL theo biến môi trường `TKPCCC_DLL` (do `cad\cai_dat.bat` đặt) → bundle trong `ApplicationPlugins` → Support File Search Path. Đã thử bằng accoreconsole 15/11; đường Startup Suite trong AutoCAD có giao diện chưa thử. |

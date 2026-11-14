@@ -12,6 +12,12 @@ Bộ công cụ thiết kế PCCC: plugin AutoCAD 2021 + runner Node + web nội
 - Việc CAD (thư mục `cad/`, người dùng dặn 2026-11-10): tiến độ và nhật ký lưu RIÊNG ở `cad/TIEN_DO.md`, `cad/LICH_SU.md`
   (`TIEN_DO.md` gốc chỉ trỏ tới); tới 95 % (người dùng dặn 2026-11-14, thay mức 90 % ngày 11/11 cho việc CAD) thì dừng, ghi 2 file đó, commit, push, hẹn giờ tới lúc reset rồi TỰ làm tiếp, không hỏi người dùng.
   `cad/` là dự án con (người dùng dặn 2026-11-11): luật riêng `cad/CLAUDE.md`, bản đồ thư mục `cad/README.md`, skill và agent riêng trong `cad/.claude/`.
+- Cập nhật 2026-11-15, áp cho MỌI việc (thắng các mức ở trên khi mâu thuẫn): cửa sổ 5 giờ tới 85–95 % mà chưa xong ⇒ dừng ở task gần nhất,
+  ghi tiến độ + lịch sử (đủ để làm tiếp), commit, hẹn giờ (CronCreate một lần, vài phút sau `resetsAt`) rồi TỰ làm tiếp khi reset, không hỏi,
+  không xin quyền; lặp lại tới khi xong. Ngữ cảnh phiên > 50 % ⇒ đẩy việc sang phiên nhánh (mỗi agent một phiên nhánh, chạy song song;
+  phiên nhánh > 50 % thì compact); không đẩy được thì compact phiên rồi chạy tiếp.
+  Phiên nhánh thừa hưởng model app ghi cho phiên mẹ: cần model khác thì `set_session_model` TRƯỚC khi gửi việc. Mỗi đợt chỉ mở 2–3 phiên
+  (15/11: sáu phiên review song song tốn ≈ 78 % cửa sổ 5 giờ).
 
 ## Mỗi module là một skill (người dùng dặn 2026-11-02: sửa module nào thì chỉ vào đó, đỡ tốn token)
 Làm module nào: đọc `.claude/skills/<skill>/SKILL.md` của module đó và các file nó liệt kê; không đọc cả repo.
