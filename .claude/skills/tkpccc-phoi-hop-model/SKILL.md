@@ -31,6 +31,10 @@ python .claude/skills/tkpccc-phoi-hop-model/scripts/goi_gemini.py --file <pdf> -
 - `--model gemini-3.8-flash-medium` cho việc bóc đơn giản (một trang ≈ 10–25 nghìn token Gemini, ≈ 30 giây); việc khó dùng `gemini-4-*`.
 - Thử 14/11 trên `cad/test/mau_kt.pdf` (có đáp án, một nhãn cố tình ghi sai): 150 dpi + hỏi "nhịp mm" sai 2/10 (tự "sửa" nhãn); 200 dpi + hỏi "chữ in nguyên văn" đúng 10/10.
   ⇒ luôn hỏi CHỮ IN NGUYÊN VĂN, không hỏi số đã suy ra.
+- Đo 14/11 trên hồ sơ thật (`cong_trinh.pdf` trang 5, mặt bằng báo cháy, đáp án từ chữ vector, chi tiết `LICH_SU.md`):
+  Gemini Flash 43 nghìn token Gemini, Claude chỉ đọc JSON 610 ký tự; Claude Sonnet tự đọc ảnh 79 nghìn token Claude. Chữ (12 trục có phụ, 11 + 6 kích thước,
+  tên bản vẽ, zone) cả hai đúng hết. ĐẾM KÝ HIỆU: Gemini sai (H 47/59, F 12/9), Claude đúng.
+  ⇒ Gemini: đọc chữ (trục, kích thước, tên phòng, ghi chú). KHÔNG giao Gemini đếm ký hiệu: PDF vector thì đếm bằng chữ vector (0 token, đúng), PDF scan thì Claude.
 
 ## Mẫu yêu cầu bóc (luôn đòi trích nguồn để kiểm)
 `--yeu-cau` liệt kê trường cần lấy, mỗi giá trị kèm `trang` và `trich` (chữ nguyên văn trên bản vẽ), không đọc được thì `null`. Ví dụ CAD bước 1:

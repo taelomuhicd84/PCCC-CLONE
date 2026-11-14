@@ -184,3 +184,7 @@
 - Gemini: Gemini CLI đăng nhập Google cá nhân bị từ chối (`IneligibleTierError`); chuyển `goi_gemini.py` sang Antigravity CLI `agy -p --output-format json --mode plan`
   (đăng nhập Google AI của người dùng). Agy không đọc PDF nếu không chạy shell ⇒ script đổi trang ra PNG 200 dpi, bảo dùng `view_file`. Thử `cad/test/mau_kt.pdf`:
   hỏi "chữ in nguyên văn" đúng 10/10 nhịp (cả nhãn cố tình ghi sai), hỏi "nhịp mm" ở 150 dpi sai 2/10. Gemini Flash ≈ 10–25 nghìn token/trang.
+- Đo phối hợp model (người dùng giao "Đo ngay"): `cong_trinh.pdf` trang 5 (MB báo cháy dưới trần T1), đáp án lấy từ chữ vector (`ket_qua/cad_mau/do_token/`, không commit).
+  Gemini 3.8 Flash qua `agy`: 43 327 token Gemini, 1 phút 51 giây; phía Claude chỉ đọc JSON 610 ký tự. Claude Sonnet (agent) tự đọc ảnh 200 dpi, cắt phóng: 79 290 token Claude, 53 giây.
+  Chữ: cả hai đúng hết (12 trục 1, 1'', 1', 2…7; A–F; 11 kích thước trên + tổng 41000; 6 kích thước trái; tên bản vẽ; 4 zone). Đếm ký hiệu: Gemini sai (H 47/59, F 12/9), Claude đúng.
+  Kết luận ghi vào skill `tkpccc-phoi-hop-model`: Gemini đọc chữ, không đếm ký hiệu; đếm bằng chữ vector khi PDF vector. Đáp án đầu tiên của tôi thiếu trục phụ 1', 1''... (sửa sau khi cả hai model cùng đọc ra).
