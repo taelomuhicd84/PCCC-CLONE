@@ -10,6 +10,11 @@ Cách làm (người dùng chốt): sau mã + trần + theo hàng, `GetSelection
 polyline kín layer `PCCC_VUNG` trong vùng chọn dùng thẳng làm vùng; dấu nhắc "Bấm điểm trong phòng [TatCa] <TatCa>": Enter ngay = mọi phòng (bỏ mặt hẹp là lòng tường,
 2A/P < 0,5 m hoặc < 1 m²), bấm điểm = chỉ phòng đó; vẽ vùng lên `PCCC_VUNG` rồi rải. Bỏ `TraceBoundary`, bỏ `VungBam`. Test: bỏ đáp 'D' trong `chay_thu.ps1` (dòng RAI) và `thu_gui.ps1`;
 dòng `2610500,1200` thêm khung chọn quanh 2 phòng ở gốc 2600000. Đổi model 14/11: `cad-ve` Sonnet (bỏ Haiku), Gemini mặc định `gemini-4-argon-medium` (bỏ 3.8 Flash).
+TRẠNG THÁI (dừng 90 % lúc ~11:05 14/11): MÃ ĐÃ VIẾT, build đạt (`MatChon`, `PhongThat`, `CacMat`, `BoThangHang` ở `NhanVung.cs`; vòng mới ở `Rai.cs` `RaiTay`), CHƯA ĐẠT TEST:
+`chay_thu.ps1` 89 DAT / 4 LOI. Lỗi gốc: "PCCC_RAI bam diem trong phong khong co polyline" (bản sao `vung_ve2.json` gốc 2700000, đáp `'C','2699000,-1000','2714000,6000','','2710500,1200',''`);
+3 lỗi còn lại (`rai da giac canh xien` 0 đầu báo, `so_do` kiểu chữ, `BC_COI_DEN`) đọc file LISP ghi SAU dòng đó ⇒ nhiều khả năng kịch bản lệch đáp án ở `PCCC_RAI`, không phải lỗi riêng.
+VIỆC KẾ: in `$out2` quanh "Quét chọn" để xem dấu nhắc nào nuốt đáp án (ngờ: `GetPoint` có từ khoá `TatCa` + `AllowNone`; hoặc `MatChon` không ra mặt vì `vung_ve2` khác), sửa, chạy lại
+`chay_thu.ps1` + `thu_mcp.ps1` tới TAT CA DAT; thêm 1 phép kiểm nhánh Enter = mọi phòng trên mặt bằng 2 phòng (ra 2 vùng, bỏ mặt bao ngoài); `cad\build.bat` vào bundle; báo người dùng tắt hẳn AutoCAD, mở lại, thử trên `PCCC HOÁ CHẤT.dwg`.
 
 ## VIỆC 14/11 — XONG PHẦN MÃ, đã gộp vào `main` (kế hoạch, hợp đồng key: `cad/tien_do/viec_14_11.md`; nhật ký `cad/LICH_SU.md`)
 Quy trình vẽ 6 bước + `tuong`/`cua`/`kt_chuoi` + `PCCC_TRUC/TUONG/CUA/ADIM/CDIM`; palette `PCCC` (bot chat, Cài đặt 3 giao diện); ảnh block nền đen;

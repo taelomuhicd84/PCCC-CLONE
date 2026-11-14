@@ -839,7 +839,7 @@ namespace TKPCCC
 
         // ---------- Lệnh gõ tay ----------
 
-        /// PCCC_RAI: hỏi mã thiết bị và bước tối đa S, rồi lặp: bấm một điểm trong phòng (tự dò đường bao) hoặc Doituong để chọn polyline kín.
+        /// PCCC_RAI: hỏi mã thiết bị (và trị số khi mã chưa có tiêu chuẩn), quét chọn mặt bằng, Enter = mọi phòng hoặc bấm điểm từng phòng; vẽ vùng rồi rải.
         static void RaiTay()
         {
             Document doc = AcApp.DocumentManager.MdiActiveDocument;
@@ -900,67 +900,65 @@ namespace TKPCCC
             }
             if (!coBlock) NapVaoBanVe(doc, dm);
 
-            int tong = 0;
-            while (true)
+            // Quét chọn mặt bằng (người dùng dặn 14/11): bấm điểm từng dò cả bản vẽ rồi TraceBoundary làm treo AutoCAD;
+            // nay chỉ dựng phòng từ các đối tượng đã chọn, một lần (NhanVung.cs MatChon), vẽ vùng lên PCCC_VUNG rồi rải.
+            PromptSelectionOptions qc = new PromptSelectionOptions();
+            qc.MessageForAdding = "\nQuét chọn mặt bằng cần rải (tường các phòng; polyline kín layer " + LAYER_VUNG + " có sẵn thì dùng luôn): ";
+            PromptSelectionResult qr = ed.GetSelection(qc);
+            if (qr.Status != PromptStatus.OK) return;
+            List<List<Point2d>> vung, mat;
+            MatChon(db, qr.Value.GetObjectIds(), out vung, out mat);
+            bool veVung = vung.Count == 0;
+            if (veVung)
             {
-                PromptPointOptions po = new PromptPointOptions("\nBấm một điểm trong phòng"); // AutoCAD tự nối " [Doituong]: "
-                po.Keywords.Add("Doituong");
-                po.AllowNone = true;
-                PromptPointResult pr = ed.GetPoint(po);
-                List<List<Point2d>> vung = new List<List<Point2d>>();
-                if (pr.Status == PromptStatus.Keyword)
+                if (mat.Count == 0)
                 {
-                    PromptSelectionOptions tuyChon = new PromptSelectionOptions();
-                    tuyChon.MessageForAdding = "\nChọn polyline kín (mỗi polyline là một phòng): ";
-                    PromptSelectionResult chon = ed.GetSelection(tuyChon, new SelectionFilter(new TypedValue[] { new TypedValue((int)DxfCode.Start, "LWPOLYLINE") }));
-                    if (chon.Status != PromptStatus.OK) break;
-                    using (Transaction tr = db.TransactionManager.StartTransaction())
-                    {
-                        foreach (ObjectId id in chon.Value.GetObjectIds())
-                        {
-                            Polyline pl = tr.GetObject(id, OpenMode.ForRead) as Polyline;
-                            if (pl != null && pl.Closed && pl.NumberOfVertices >= 3) vung.Add(DinhPl(pl));
-                        }
-                        tr.Commit();
-                    }
-                    if (vung.Count == 0) { ed.WriteMessage("\nKhông có polyline kín nào trong các đối tượng vừa chọn."); continue; }
+                    ed.WriteMessage("\nKhông dựng được phòng kín nào từ các đối tượng đã chọn (chưa chọn đủ tường, hoặc phòng hở khe rộng hơn "
+                        + HO_CUA_M.ToString(CultureInfo.InvariantCulture) + " m: vẽ polyline kín layer " + LAYER_VUNG + " rồi chọn lại).");
+                    return;
                 }
-                else if (pr.Status == PromptStatus.OK)
+                while (true)
                 {
-                    List<Point2d> tu = VungBam(doc, pr.Value); // NhanVung.cs: bỏ trục, dựng vùng từ nét tường, vẽ lên PCCC_VUNG
-                    if (tu != null) vung.Add(tu);
-                    DBObjectCollection bao = null;
-                    if (tu == null) try { bao = ed.TraceBoundary(pr.Value, false); } catch (System.Exception) { }
-                    if (bao != null)
-                    {
-                        Polyline lon = bao.Cast<DBObject>().OfType<Polyline>().OrderByDescending(x => x.Area).FirstOrDefault();
-                        if (lon != null) vung.Add(DinhPl(lon));
-                        foreach (DBObject x in bao) x.Dispose();
-                    }
-                    if (vung.Count == 0)
-                    {
-                        ed.WriteMessage("\nKhông dò được đường bao kín quanh điểm này (phòng hở, hoặc chưa zoom thấy hết phòng). Dùng Doituong để chọn polyline kín.");
-                        continue;
-                    }
-                }
-                else break;
-
-                using (Transaction tr = db.TransactionManager.StartTransaction())
-                {
-                    foreach (List<Point2d> d in vung)
-                    {
-                        LuoiRai r = LuoiVung(d, s, s, 0, 0, le, le, 0.05 / m, dt, 0, theoHang, tuongMax, cachMin);
-                        foreach (Point3d p in r.Diem) ChenThietBi(db, tr, v, p, k, 0);
-                        tong += r.Diem.Count;
-                        ed.WriteMessage("\n[TKPCCC] PCCC_RAI " + v.ma + " n=" + r.Diem.Count + " luoi=" + r.Nx + "x" + r.Ny
-                            + " buoc=" + Lt(r.Bx).ToString(CultureInfo.InvariantCulture) + "x" + Lt(r.By).ToString(CultureInfo.InvariantCulture)
-                            + " m2=" + Math.Round(r.O * m * m, 2).ToString(CultureInfo.InvariantCulture)
-                            + (r.Ho > 0 ? " HO=" + r.Ho.ToString(CultureInfo.InvariantCulture) + "% (vùng chưa phủ hết, kiểm lại)" : ""));
-                    }
-                    tr.Commit();
+                    PromptPointOptions po = new PromptPointOptions(vung.Count == 0 ? "\nBấm điểm trong phòng cần rải, Enter = mọi phòng" : "\nBấm điểm trong phòng tiếp theo, Enter = xong");
+                    if (vung.Count == 0) po.Keywords.Add("TatCa"); // AutoCAD tự nối " [TatCa]: "
+                    po.AllowNone = true;
+                    PromptPointResult pr = ed.GetPoint(po);
+                    if (pr.Status == PromptStatus.Cancel) return;
+                    if (pr.Status == PromptStatus.Keyword || (pr.Status == PromptStatus.None && vung.Count == 0)) { vung = PhongThat(mat, m); break; }
+                    if (pr.Status != PromptStatus.OK) break;
+                    Point3d q = pr.Value.TransformBy(ed.CurrentUserCoordinateSystem);
+                    List<Point2d> f = mat.Where(x => TrongDaGiac(x, new Point2d(q.X, q.Y))).OrderBy(x => DienTichDaGiac(x)).FirstOrDefault();
+                    if (f == null) ed.WriteMessage("\nĐiểm không nằm trong phòng kín nào của vùng đã chọn.");
+                    else if (!vung.Contains(f)) vung.Add(f);
                 }
             }
-            ed.WriteMessage("\nĐã rải tổng " + tong + " " + v.ten + ".");
+
+            int tong = 0;
+            using (Transaction tr = db.TransactionManager.StartTransaction())
+            {
+                BlockTableRecord ms = (BlockTableRecord)tr.GetObject(db.CurrentSpaceId, OpenMode.ForWrite);
+                ObjectId lop = veVung ? DamBaoLayer(db, tr, LAYER_VUNG, 6) : ObjectId.Null;
+                foreach (List<Point2d> d in vung)
+                {
+                    if (veVung)
+                    {
+                        Polyline pl = PlVung(d, lop);
+                        ms.AppendEntity(pl);
+                        tr.AddNewlyCreatedDBObject(pl, true);
+                        ed.WriteMessage("\n[TKPCCC] Vùng tự dựng m2=" + Math.Round(DienTichDaGiac(d) * m * m, 2).ToString(CultureInfo.InvariantCulture)
+                            + " (" + d.Count + " đỉnh) trên layer " + LAYER_VUNG + ".");
+                    }
+                    LuoiRai r = LuoiVung(d, s, s, 0, 0, le, le, 0.05 / m, dt, 0, theoHang, tuongMax, cachMin);
+                    foreach (Point3d p in r.Diem) ChenThietBi(db, tr, v, p, k, 0);
+                    tong += r.Diem.Count;
+                    ed.WriteMessage("\n[TKPCCC] PCCC_RAI " + v.ma + " n=" + r.Diem.Count + " luoi=" + r.Nx + "x" + r.Ny
+                        + " buoc=" + Lt(r.Bx).ToString(CultureInfo.InvariantCulture) + "x" + Lt(r.By).ToString(CultureInfo.InvariantCulture)
+                        + " m2=" + Math.Round(r.O * m * m, 2).ToString(CultureInfo.InvariantCulture)
+                        + (r.Ho > 0 ? " HO=" + r.Ho.ToString(CultureInfo.InvariantCulture) + "% (vùng chưa phủ hết, kiểm lại)" : ""));
+                }
+                tr.Commit();
+            }
+            ed.WriteMessage("\nĐã rải tổng " + tong + " " + v.ten + " trong " + vung.Count + " phòng.");
         }
 
         /// PCCC_TUYEN: ống nhánh sprinkler kiểu xương cá cho một phòng. Chọn đầu phun, chọn ống chính, rồi BẤM chỗ đặt ống góp

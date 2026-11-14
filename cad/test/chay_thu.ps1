@@ -49,9 +49,9 @@ $kb = @('INSUNITS', '4', 'NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '_.SAVEAS', '2018',
   'PCCC_BOC', 'Co', 'L', '', '', 'ThuPlugin',
   'PCCC_VUNGBV', 'BC_KHOI', '3', 'PCCC_VUNGBV', 'BC_KHOI', '3',
   'PCCC_BANG', '0,-3000', '250',
-  'RECTANG', '50000,0', '66000,12000', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '12', '', '', 'D', 'L', '', '',
-  'RECTANG', '100000,0', '114000,10000', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '', '1.5', '', 'D', 'L', '', '',
-  'PLINE', '200000,0', '212000,0', '212000,8000', '203000,8000', '203000,5000', '200000,5000', 'C', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '', '', 'Co', 'D', 'L', '', '',
+  'RECTANG', '50000,0', '66000,12000', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '12', '', '', 'L', '', '',
+  'RECTANG', '100000,0', '114000,10000', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '', '1.5', '', 'L', '', '',
+  'PLINE', '200000,0', '212000,0', '212000,8000', '203000,8000', '203000,5000', '200000,5000', 'C', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '', '', 'Co', 'L', '', '',
   'PLINE', '49000,-1000', '67000,-1000', '', '_.ZOOM', '_E', 'OSMODE', '0', 'PCCC_TUYEN', 'ONG_DN25', 'W', '50000,0', '66000,12000', '', 'L', '65000,2000',
   'CIRCLE', '80000,0', '150', '-BLOCK', 'VAN_KHACH', '80000,0', 'L', '', '-INSERT', 'VAN_KHACH', '80000,0', '1', '', '0',
   'PCCC_THEMBLOCK', 'L', 'van_khach', 'Van khach them', 'SPR', '', 'PCCC_DAT', 'VAN_KHACH', '81000,0', '',
@@ -220,6 +220,8 @@ $XIEN = @(@(1100, 36000), @(13900, 40300), @(52500, 25100), @(16000, 0), @(0, 20
  '{"op":"net","l":"KT_A","p":[[6100,3000],[6100,4900],[11700,4900],[11700,4700],[11900,4700],[11900,100],[6100,100],[6100,2000]]},' +
  '{"op":"net","l":"KT_A","p":[[11700,4700],[12300,4700],[12300,5300],[11700,5300]],"kin":true},{"op":"net","l":"KT_A","p":[[3200,1500],[3600,1500],[3600,1900],[3200,1900]],"kin":true},' +
  '{"op":"chu","l":"KT_A","p":[1500,3000],"t":"PHONG 1","cao":300},{"op":"kt","l":"KT_A","p1":[6500,1000],"p2":[11000,1000],"cach":300}]}' | Set-Content -Encoding ascii "$T\vung_ve.json"
+# PCCC_RAI quet chon (14/11): ban sao mat bang 2 phong o goc 2700000 (chua co PCCC_VUNG), khung chon C quanh no roi bam diem phong 2.
+(Get-Content "$T\vung_ve.json") -replace '2600000', '2700000' | Set-Content -Encoding ascii "$T\vung_ve2.json"
 '{"goc":[2600000,0],"ops":[{"op":"vung_tu_dong","p":[[1500,1200]],"ho":500,"l":"VUNG_THU"},{"op":"xoa","l":"VUNG_THU"},' +
  '{"op":"vung_tu_dong","p":[[1500,1200],[10500,3500]]},{"op":"rai","ma":"SPR_DAU_DOWN","l":"PCCC_VUNG","hop":[-500,-500,12500,5500],"s":4000},' +
  '{"op":"vung_tu_dong","p":[[30000,30000]]}]}' | Set-Content -Encoding ascii "$T\vung_do.json"
@@ -243,10 +245,10 @@ $bamTv = (Get-FileHash "$T\PCCC_Blocks.dwg").Hash
   'PCCC_SPEC', "$T\rai_moi.json", 'PCCC_SPEC', "$T\pdf_mk.json", 'PCCC_SPEC', "$T\rv_tuyen.json", 'PCCC_SPEC', "$T\hoa.json", 'PCCC_SPEC', "$T\hoa_doc.json",
   'PCCC_SPEC', "$T\rv_hang.json", 'PCCC_SPEC', "$T\rv2.json", 'PCCC_SPEC', "$T\van.json", 'PCCC_SPEC', "$T\so_do.json", 'PCCC_SPEC', "$T\so_do_loi.json", 'PCCC_SPEC', "$T\so_do_bc.json", 'PCCC_SPEC', "$T\so_do_bc_loi.json", 'PCCC_SPEC', "$T\so_do_bc_ng.json",
   'PCCC_SPEC', "$T\so_do_loc.json", 'PCCC_SPEC', "$T\so_do_bc2.json", 'INSUNITS', '6', 'PCCC_SPEC', "$T\so_do_m.json", 'INSUNITS', '4', 'PCCC_SPEC', "$T\rai_xien.json",
-  'RECTANG', '3000000,0', '3030600,20400', 'PCCC_RAI', 'BC_KHOI', '', '', 'D', 'L', '', '',
+  'RECTANG', '3000000,0', '3030600,20400', 'PCCC_RAI', 'BC_KHOI', '', '', 'L', '', '',
   '-LAYER', 'M', 'NEN_A', 'L', 'CENTER', '', 'M', 'KT_A', '', 'PCCC_SPEC', "$T\vung_ve.json",
   '-HATCH', 'P', 'SOLID', 'W', 'N', '2599800,4700', '2600300,4700', '2600300,5200', '2599800,5200', 'C', '', '', '-LAYER', 'S', '0', '',
-  'PCCC_SPEC', "$T\vung_do.json", 'OSMODE', '0', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '', '', '', '2610500,1200', '', '_.QSAVE',
+  'PCCC_SPEC', "$T\vung_do.json", 'PCCC_SPEC', "$T\vung_ve2.json", 'OSMODE', '0', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '', '', '', 'C', '2699000,-1000', '2714000,6000', '', '2710500,1200', '', '_.QSAVE',
   ('(progn (setq f (open "' + ($T -replace '\\', '/') + '/blk.txt" "w")) (setq e (cdr (assoc -2 (tblsearch "BLOCK" "BC_COI_DEN")))) ' +
    '(while e (write-line (cdr (assoc 0 (entget e))) f) (setq e (entnext e))) (setq l (tblsearch "LAYER" "PCCC_SODO_DAY_NGUON")) ' +
    '(write-line (strcat "LAYER " (itoa (cdr (assoc 62 l))) " " (cdr (assoc 6 l))) f) ' +

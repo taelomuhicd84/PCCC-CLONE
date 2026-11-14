@@ -127,8 +127,46 @@ public static class WinU {
     $bmp = New-Object Drawing.Bitmap $anh[0].FullName; $p = $bmp.GetPixel(0, 0); $bmp.Dispose()
     Kiem ($p.R -eq 0 -and $p.G -eq 0 -and $p.B -eq 0) "anh xem truoc nen den nhu man hinh CAD ($($anh[0].Name) goc = $p)"
   }
+
+  # Go ? o dau nhac ma cua PCCC_RAI: mo bang chon (ui/BangChonVatTu.cs) thay cho in dong lenh. Lenh gui qua COM SendCommand trong job rieng
+  # (SendCommand chi tra ve khi lenh xong, ma bang chon la hop thoai modal); cac cau tra loi sau "?" nam san trong hang nhap, dung sau khi bang dong.
+  $job = Start-Job {
+    $app = $null
+    for ($i = 0; $i -lt 30 -and -not $app; $i++) { try { $app = [Runtime.InteropServices.Marshal]::GetActiveObject('AutoCAD.Application') } catch { Start-Sleep 1 } }
+    $app.ActiveDocument.SendCommand("RECTANG`n3000000,0`n3030600,20400`nPCCC_RAI`n?`n`n`nL`n`n`n")
+  }
+  $dkTien = New-Object Windows.Automation.PropertyCondition($AE::ProcessIdProperty, $acad.Id)
+  $hop = $null
+  for ($i = 0; $i -lt 60 -and -not $hop; $i++) {
+    Start-Sleep -Milliseconds 500
+    $hop = @($AE::RootElement.FindAll($TS::Children, $dkTien)) | Where-Object { $_.Current.Name -like 'TKPCCC - M*' } | Select-Object -First 1
+  }
+  function SoDong($e) { foreach ($c in [WinU]::ChuCon([IntPtr]$e.Current.NativeWindowHandle)) { if ($c -match '^V.t t.: (\d+)$') { return [int]$Matches[1] } }; -1 }
+  Kiem $hop "PCCC_RAI go ? mo bang chon '$(if ($hop) { $hop.Current.Name })' (sau $([int]($i / 2)) giay)"
+  if (-not $hop) { "      job $($job.State): $((Receive-Job $job -Keep 2>&1) -join ' | ')"; @($AE::RootElement.FindAll($TS::Children, $dkTien)) | ForEach-Object { "      cua so: '$($_.Current.Name)' $($_.Current.ClassName) [$(([WinU]::ChuCon([IntPtr]$_.Current.NativeWindowHandle) | Where-Object { $_ } | Select-Object -First 8) -join '; ')]" } }
+  if ($hop) {
+    $n0 = SoDong $hop
+    Kiem ($n0 -eq $soBlock) "bang chon: $n0 dong (can $soBlock block)"
+    $o = $hop.FindFirst($TS::Descendants, (New-Object Windows.Automation.PropertyCondition($AE::ControlTypeProperty, [Windows.Automation.ControlType]::Edit)))
+    $o.GetCurrentPattern([Windows.Automation.ValuePattern]::Pattern).SetValue('dau bao khoi')
+    Start-Sleep -Milliseconds 500
+    $n1 = SoDong $hop
+    Kiem ($n1 -ge 2 -and $n1 -lt $n0) "bang chon loc khong dau 'dau bao khoi': $n1 dong"
+    $h = [IntPtr]$hop.Current.NativeWindowHandle; $r = $hop.Current.BoundingRectangle
+    $bmp = New-Object Drawing.Bitmap ([int]$r.Width), ([int]$r.Height)
+    $g = [Drawing.Graphics]::FromImage($bmp); $dc = $g.GetHdc(); [void][WinU]::PrintWindow($h, $dc, 2); $g.ReleaseHdc($dc); $g.Dispose()
+    $bmp.Save("$T\bang_chon.png"); $bmp.Dispose()
+    $dkNut = New-Object Windows.Automation.PropertyCondition($AE::ControlTypeProperty, [Windows.Automation.ControlType]::Button)
+    $nut = @($hop.FindAll($TS::Descendants, $dkNut)) | Where-Object { $_.Current.Name -like 'Ch*' } | Select-Object -First 1
+    if ($nut) { $nut.GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern).Invoke() }
+  }
+  $xong = Wait-Job $job -Timeout 60
+  $r = GoiCongCu 5 'cad_chay' @{ ops = @(@{ op = 'dem' }) }
+  $k3 = if ($r.isError) { $null } else { $r.content[0].text | ConvertFrom-Json }
+  Kiem ($xong -and $k3 -and $k3.dem.BC_KHOI -eq 10) "nut Chon nhan BC_KHOI (dong dau sau loc), PCCC_RAI rai tiep 6 dau bao: BC_KHOI = $(if ($k3) { $k3.dem.BC_KHOI }) (can 4 + 6)"
 }
 finally {
+  if ($job) { Remove-Job $job -Force }
   if ($mcp) { try { $mcp.StandardInput.Close() } catch { }; if (-not $mcp.WaitForExit(5000)) { $mcp.Kill() } }
   # AutoCAD rieng cua lan thu: tat han, khong luu Drawing1.
   if (-not $acad.HasExited) { Stop-Process -Id $acad.Id -Force }

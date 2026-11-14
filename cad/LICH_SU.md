@@ -382,3 +382,13 @@ Người dùng (ảnh PCCC_RAI): gõ `?` thì hiện bảng danh sách, không i
   rồi mở bảng (lọc sẵn chữ đã gõ), Esc thì hỏi lại; accoreconsole vẫn in dòng lệnh như cũ. `BoDau`, `ThuMucAnh` thành public cho UI dùng.
 - `ui/BangChonVatTu.cs` (mới): Form modal `AcApp.ShowModalDialog`, ô tìm không dấu, cột ký hiệu nền đen (ẩn khi là ống/dây), tên đậm + mã xám, đơn vị; lên/xuống, Enter, Esc.
 - `chay_thu.ps1`, `thu_mcp.ps1` TAT CA DAT; `build.bat` vào bundle đạt. Chưa chạy `thu_gui.ps1` (AutoCAD người dùng đang mở).
+
+## 2026-11-14 chiều — PCCC_RAI treo CAD: đổi sang quét chọn mặt bằng; đổi model
+- Người dùng báo (ảnh, `PCCC HOÁ CHẤT.dwg`): bấm điểm trong kho ở `PCCC_RAI` thì AutoCAD đứng. Nguyên nhân: `VungBam` đọc mọi đối tượng model space, explode mọi block,
+  nới ô dò gấp đôi tới cả bản vẽ, `MatChua` O(m²), rồi rơi xuống `Editor.TraceBoundary` cả bản vẽ.
+- Sửa (người dùng chốt): `PCCC_RAI` hỏi mã, trần, theo hàng, rồi QUÉT CHỌN mặt bằng; `MatChon` (`NhanVung.cs`) dựng đoạn chỉ từ đối tượng đã chọn, tính mọi mặt kín MỘT lần (`CacMat`,
+  `MatChua` giờ gọi `CacMat` + `BoThangHang`); polyline kín layer `PCCC_VUNG` trong vùng chọn dùng thẳng; "Bấm điểm trong phòng cần rải, Enter = mọi phòng [TatCa]":
+  Enter = mọi phòng (`PhongThat`: bỏ lòng tường 2A/P < 0,5 m hoặc < 1 m², bỏ mặt bao ngoài có > 50 % diện tích là phòng khác), bấm điểm = từng phòng; vẽ vùng `PCCC_VUNG` rồi rải.
+  Bỏ `VungBam`, bỏ `TraceBoundary`, bỏ từ khoá `Doituong`. Test: bỏ đáp 'D' (4 chỗ `chay_thu.ps1`, 1 chỗ `thu_gui.ps1`); phép kiểm bấm điểm dùng bản sao mặt bằng ở gốc 2700000 + khung chọn C.
+- Đổi model (người dùng dặn): `cad-ve` Haiku → Sonnet; Gemini mặc định `gemini-4-argon-medium` (bỏ 3.8 Flash), việc khó Carbon/Hydrogen (`agy models`).
+- Dừng ở 90 % hạn mức 5 giờ. Kết quả `chay_thu.ps1` lần đầu sau sửa: xem `cad/TIEN_DO.md`.

@@ -2,7 +2,7 @@
 // Bỏ trục và nét không phải tường: kiểu nét có gạch (CENTER, DASHDOT, nét khuất), layer trục / kích thước / cửa / nội thất,
 // chữ, kích thước. Lấy nét liền của tường, cột (kể cả nét trong block và biên hatch cột), nối khe THẲNG HÀNG ≤ "ho"
 // (ô cửa giữa hai má tường, cột chỉ có hatch), rồi lấy mặt kín NHỎ NHẤT chứa điểm bấm.
-// Dùng cho thao tác spec "vung_tu_dong" và nhánh bấm điểm của PCCC_RAI (Rai.cs). Chỉ đọc bản vẽ qua DatabaseServices:
+// Dùng cho thao tác spec "vung_tu_dong" và PCCC_RAI quét chọn mặt bằng (Rai.cs). Chỉ đọc bản vẽ qua DatabaseServices:
 // chạy được trong accoreconsole, không phụ thuộc vùng đang zoom như Editor.TraceBoundary.
 using System;
 using System.Collections.Generic;
@@ -222,6 +222,19 @@ namespace TKPCCC
         /// Mặt kín nhỏ nhất (ngược chiều kim đồng hồ) chứa p dựng từ các đoạn. null nếu p ở ngoài mọi mặt kín.
         static List<Point2d> MatChua(List<Point2d[]> doan0, Point2d p, double tol, double ho)
         {
+            List<Point2d> tot = null;
+            double dtTot = double.MaxValue;
+            foreach (List<Point2d> v in CacMat(doan0, tol, ho))
+            {
+                double dt = DienTichDaGiac(v);
+                if (dt < dtTot && TrongDaGiac(v, p)) { tot = v; dtTot = dt; }
+            }
+            return tot == null ? null : BoThangHang(tot, tol);
+        }
+
+        /// Mọi mặt kín (ngược chiều kim đồng hồ, diện tích dương, chưa bỏ đỉnh thẳng hàng) dựng từ các đoạn.
+        static List<List<Point2d>> CacMat(List<Point2d[]> doan0, double tol, double ho)
+        {
             List<Point2d[]> doan = new List<Point2d[]>(doan0);
             double tolTh = tol * 5; // lệch khỏi đường thẳng vẫn coi là thẳng hàng (10 mm)
 
@@ -344,8 +357,7 @@ namespace TKPCCC
 
             // 5. Đi từng mặt (mặt bên trái nửa cạnh); mặt kín đi ngược chiều kim đồng hồ, diện tích dương.
             HashSet<long> daDi = new HashSet<long>();
-            List<Point2d> tot = null;
-            double dtTot = double.MaxValue;
+            List<List<Point2d>> mat = new List<List<Point2d>>();
             int tran = canh.Count * 2 + 2;
             for (int u0 = 0; u0 < nd; u0++)
                 foreach (int v0 in ke[u0])
@@ -363,12 +375,14 @@ namespace TKPCCC
                         if ((a == u0 && b == v0) || ++dem > tran) break;
                     }
                     if (dem > tran) continue;
-                    double dt = DienTichDaGiac(vong);
-                    if (dt > tol * tol && dt < dtTot && TrongDaGiac(vong, p)) { tot = vong; dtTot = dt; }
+                    if (DienTichDaGiac(vong) > tol * tol) mat.Add(vong);
                 }
-            if (tot == null) return null;
+            return mat;
+        }
 
-            // 6. Bỏ đỉnh thẳng hàng (chỗ cắt, chỗ cầu nối).
+        /// Bỏ đỉnh thẳng hàng (chỗ cắt, chỗ cầu nối).
+        static List<Point2d> BoThangHang(List<Point2d> tot, double tol)
+        {
             bool doi = true;
             while (doi && tot.Count > 3)
             {
@@ -439,31 +453,55 @@ namespace TKPCCC
             return TaoPline(d.Select(q => new Point3d(q.X, q.Y, 0)).ToList(), true, lop);
         }
 
-        /// PCCC_RAI bấm điểm: dựng vùng quanh điểm bấm (UCS) từ nét tường, bỏ trục, vẽ polyline kín lên PCCC_VUNG.
-        /// null khi không dò được (Rai.cs thử tiếp Editor.TraceBoundary như trước).
-        static List<Point2d> VungBam(Document doc, Point3d diemUcs)
+        /// PCCC_RAI quét chọn mặt bằng (người dùng dặn 14/11: bấm điểm dò cả bản vẽ rồi TraceBoundary làm treo AutoCAD):
+        /// chỉ dựng đoạn từ các đối tượng đã chọn, một lần. co: polyline kín layer PCCC_VUNG trong vùng chọn (dùng thẳng, khi đó không dựng mặt).
+        /// mat: mọi mặt kín dựng từ nét tường (WCS, đã bỏ đỉnh thẳng hàng).
+        static void MatChon(Database db, ObjectId[] ids, out List<List<Point2d>> co, out List<List<Point2d>> mat)
         {
-            Database db = doc.Database;
-            Editor ed = doc.Editor;
-            Point3d p = diemUcs.TransformBy(ed.CurrentUserCoordinateSystem);
+            co = new List<List<Point2d>>();
+            mat = new List<List<Point2d>>();
             using (Transaction tr = db.TransactionManager.StartTransaction())
             {
-                string lyDo;
-                List<Point2d> d = VungTaiDiem(db, tr, new Point2d(p.X, p.Y), HO_CUA_M / HeSoMet(db), out lyDo);
-                if (d != null)
+                NenVung n = new NenVung();
+                n.Db = db; n.Tr = tr; n.Tol = 2 * 0.001 / HeSoMet(db);
+                List<Entity> ds = new List<Entity>();
+                foreach (ObjectId id in ids)
                 {
-                    BlockTableRecord ms = (BlockTableRecord)tr.GetObject(db.CurrentSpaceId, OpenMode.ForWrite);
-                    Polyline pl = PlVung(d, DamBaoLayer(db, tr, LAYER_VUNG, 6));
-                    ms.AppendEntity(pl);
-                    tr.AddNewlyCreatedDBObject(pl, true);
-                    double m = HeSoMet(db);
-                    ed.WriteMessage("\n[TKPCCC] Vùng tự dựng m2=" + Math.Round(DienTichDaGiac(d) * m * m, 2).ToString(CultureInfo.InvariantCulture)
-                        + " (" + d.Count + " đỉnh) trên layer " + LAYER_VUNG + ".");
+                    Entity e = tr.GetObject(id, OpenMode.ForRead) as Entity;
+                    Polyline pl = e as Polyline;
+                    if (pl != null && pl.Closed && pl.NumberOfVertices >= 3 && string.Equals(pl.Layer, LAYER_VUNG, StringComparison.OrdinalIgnoreCase)) co.Add(DinhPl(pl));
+                    else if (e != null && !(e is Table)) ds.Add(e);
                 }
-                else ed.WriteMessage("\n[TKPCCC] Không tự dựng được vùng: " + lyDo + ".");
+                bool coTuong = ds.Any(e => LoaiLop(n, e.LayerId) == 2);
+                // Có layer tường / cột thì dựng bằng các layer đó trước, không ra phòng nào mới dùng mọi nét liền (như VungTaiDiem).
+                foreach (bool chiTuong in new[] { true, false })
+                {
+                    if (co.Count > 0 || mat.Count > 0 || (chiTuong && !coTuong)) continue;
+                    n.ChiTuong = chiTuong;
+                    List<Point2d[]> doan = new List<Point2d[]>();
+                    foreach (Entity e in ds) ThuNet(n, e, ObjectId.Null, ObjectId.Null, 0, doan);
+                    if (doan.Count >= 3) mat = CacMat(doan, n.Tol, HO_CUA_M / HeSoMet(db)).Select(v => BoThangHang(v, n.Tol)).ToList();
+                }
                 tr.Commit();
-                return d;
             }
+        }
+
+        // shortcut: ngưỡng phòng cố định (rộng trung bình 2A/P ≥ 0,5 m, ≥ 1 m²); hộp kỹ thuật nhỏ hơn thì bấm điểm hoặc vẽ polyline PCCC_VUNG.
+        /// Mặt là phòng thật: bỏ lòng tường, cột; bỏ mặt bao ngoài có quá nửa diện tích là phòng khác (vòng tường ngoài tách rời các tường trong).
+        static List<List<Point2d>> PhongThat(List<List<Point2d>> mat, double m)
+        {
+            List<List<Point2d>> ung = mat.Where(v =>
+            {
+                double a = DienTichDaGiac(v) * m * m, p = 0;
+                for (int i = 0; i < v.Count; i++) p += v[i].GetDistanceTo(v[(i + 1) % v.Count]) * m;
+                return a >= 1 && 2 * a / p >= 0.5;
+            }).ToList();
+            Func<List<Point2d>, Point2d> diemTrong = g =>
+            {
+                Vector2d c = g[1] - g[0]; // mặt ngược chiều kim đồng hồ: lòng mặt ở bên trái cạnh
+                return g[0] + c * 0.5 + new Vector2d(-c.Y, c.X) * 0.01;
+            };
+            return ung.Where(f => ung.Where(g => g != f && TrongDaGiac(f, diemTrong(g))).Sum(g => DienTichDaGiac(g)) <= 0.5 * DienTichDaGiac(f)).ToList();
         }
 
         /// Thao tác spec "vung_tu_dong": p [[x,y],...] điểm trong từng phòng -> polyline kín trên layer "l" (mặc định PCCC_VUNG).
