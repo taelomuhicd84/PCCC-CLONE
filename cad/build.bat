@@ -11,10 +11,20 @@ set OUT=%~dp0TKPCCC.bundle\Contents
 if not exist "%OUT%" mkdir "%OUT%"
 
 rem AutoCAD dang mo thi DLL bi khoa ghi nhung van doi ten duoc: doi ten ban cu, AutoCAD mo lai se nap ban moi.
+rem "build.bat phat_hanh": ban phat hanh co chan ban quyen (/define:BAN_QUYEN) va nhung khoa cong khai vao DLL.
+set DEF=
+set RES=
+set KCK=%~dp0data\ban_quyen\khoa_cong_khai.xml
+if /i "%~1"=="phat_hanh" (
+  if not exist "%KCK%" goto khong_khoa
+  set DEF=/define:BAN_QUYEN
+  set RES="/resource:%KCK%,khoa_cong_khai.xml"
+)
+
 del /q "%OUT%\TKPCCC.Cad.dll.cu*" >nul 2>&1
 if exist "%OUT%\TKPCCC.Cad.dll" move /y "%OUT%\TKPCCC.Cad.dll" "%OUT%\TKPCCC.Cad.dll.cu%RANDOM%" >nul
 
-"%FW%\csc.exe" /nologo /target:library /platform:x64 /codepage:65001 /optimize+ /out:"%OUT%\TKPCCC.Cad.dll" ^
+"%FW%\csc.exe" /nologo /target:library /platform:x64 /codepage:65001 /optimize+ %DEF% %RES% /out:"%OUT%\TKPCCC.Cad.dll" ^
   /r:"%ACAD%\acdbmgd.dll" /r:"%ACAD%\accoremgd.dll" ^
   /r:"%FW%\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll ^
   "%~dp0module\plugin\*.cs" "%~dp0module\chung\HangDoi.cs" || exit /b 1
@@ -28,6 +38,8 @@ rem Mac dinh ky hieu truc, kich thuoc, chu: nguoi dung sua o cad\data\ky_hieu, p
 copy /y "%~dp0data\ky_hieu\ky_hieu.json" "%OUT%\ky_hieu.json" >nul
 rem Hinh block mac dinh ky hieu bao chay (lay tu net vector PDF, scripts\hinh_tu_pdf.py): PCCC_LIB ve block moi theo hinh nay.
 copy /y "%~dp0data\ky_hieu\hinh_bc.json" "%OUT%\hinh_bc.json" >nul
+rem Dia chi web app Apps Script cap key, link Google Form (PCCC_BANQUYEN doc canh DLL).
+copy /y "%~dp0data\ban_quyen\cau_hinh_ban_quyen.json" "%OUT%\cau_hinh_ban_quyen.json" >nul
 echo OK: %OUT%\TKPCCC.Cad.dll
 
 rem Bang block (lenh PCCC_BLOCK): DLL giao dien rieng vi can acmgd.dll, accoreconsole khong nap duoc nen chi dung trong AutoCAD co giao dien.
@@ -50,4 +62,15 @@ if exist "%BIN%\TKPCCC.Mcp.exe" move /y "%BIN%\TKPCCC.Mcp.exe" "%BIN%\TKPCCC.Mcp
   "%~dp0module\mcp\Mcp.cs" "%~dp0module\chung\HangDoi.cs" || exit /b 1
 copy /y "%~dp0skills\TU_VUNG.md" "%BIN%\TU_VUNG.md" >nul
 echo OK: %BIN%\TKPCCC.Mcp.exe
+
+rem App tao key ban quyen cho chu plugin (khong phat hanh cho khach).
+"%FW%\csc.exe" /nologo /target:winexe /codepage:65001 /optimize+ /out:"%BIN%\TKPCCC.KeyGen.exe" ^
+  /r:"%FW%\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll ^
+  "%~dp0module\banquyen\KeyGen.cs" "%~dp0module\plugin\BanQuyen.cs" || exit /b 1
+echo OK: %BIN%\TKPCCC.KeyGen.exe
 echo Neu AutoCAD dang mo: tat han AutoCAD roi mo lai de nap ban moi.
+exit /b 0
+
+:khong_khoa
+echo LOI: chua co %KCK% - chay cad\bin\TKPCCC.KeyGen.exe, bam "Tao cap khoa moi".
+exit /b 1
