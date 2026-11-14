@@ -18,6 +18,16 @@ Người dùng chốt (14/11 đêm):
 6. Rải luôn + viết thuyết minh công trình (bảng phòng, m², loại đầu báo, số lượng, zone, căn cứ). Tên file "BEAM": xưởng cao dùng đầu báo tia chiếu `BC_BEAM` (vẽ tia), văn phòng đầu khói điểm.
 Bước: (1) dump layer/màu/hình trong block bằng LISP; (2) thêm luật ô X (NhanVung.cs + test); (3) PCCC_RAI trên bản chép (bấm nét mẫu xanh lá + xanh dương);
 (4) gom zone, viết `thuyet_minh.md` ở thư mục kết quả, gửi người dùng; (5) ghi file này + LICH_SU, commit, push.
+DỞ Ở ĐÂU (14/11 ~16h30, hạn mức 93 %, dừng theo luật; hẹn CronCreate 19h03 tự làm tiếp; người dùng dặn: tới 95 % ghi tiến độ, KHÔNG push):
+- Đã chép file gốc thành `ket_qua/cad_test/2026-11-14/quyet_thang/goc.dwg`; `dump.lsp` + `dump.scr` (accoreconsole /i goc.dwg /s dump.scr) ghi `dump.txt`:
+  dòng `L|layer|màu|nét`, `M|...` đối tượng model space, `B:<block>|...` nội dung block (kiểu|layer|màu|truecolor|nét|tên block|p10|p11|...).
+  Tóm tắt bằng python đọc mã `mbcs`. INSUNITS 4 (mm). Model space 5 500 đối tượng (1 607 sprinkler `*U313`, 197 đầu khói, ống DN…), 99 block; bản vẽ nhiều tờ.
+- Chữ "XƯỞNG 1", "XƯỞNG 2" của ảnh người dùng: MTEXT model space màu 9 tại (1583239, -126826), (1552172, -124044).
+- Ứng viên block nền (ảnh: nét xanh dương + xanh lá): `A$Cbcabb6d6` (243 đối tượng: màu 7: 67, xanh lá 3: 62, 8: 36, 9: 13, 5: 10), chèn 5 lần trên layer
+  `0.10-140` (màu 140 xanh dương: nét layer 0 ByLayer trong block ăn màu này), ví dụ điểm chèn (1080015, -559902), (1076602, -176384). CHƯA xác nhận lần chèn nào
+  phủ vùng ảnh (tính khung bao block ra số lạ, có thể block chứa đối tượng ở xa).
+- BƯỚC KẾ: in PNG cửa sổ quanh chữ XƯỞNG bằng PCCC_SPEC `{"ops":[{"op":"anh","hop":[1480000,-200000,1680000,-50000],"rong":1600}]}` trong accoreconsole
+  (NETLOAD bundle\Contents\TKPCCC.Cad.dll), xem ảnh, xác định block + 2 điểm nằm trên nét xanh lá, xanh dương (bấm nét mẫu); rồi luật ô X, PCCC_RAI, zone, thuyết minh.
 
 ## VIỆC 14/11 TỐI — HỢP NHẤT ADDIN MẪU (video + spec người dùng): ĐANG LÀM, danh sách việc `cad/tien_do/viec_video_addin.md`
 Người dùng dặn: làm HẾT theo spec `PROMPT_HOP_NHAT_PLUGIN_PCCC_CAD.md` (ngoài repo, đường dẫn trong file việc), không tra TCVN 7568 (trị số đã có trong

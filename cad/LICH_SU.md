@@ -438,3 +438,8 @@ BỐ TRÍ, hoàn tác, vẽ loop, kiểm tra, báo cáo); Dim đối tượng 5 
 - Thêm: ống gió (spec "vật cản trần"): `PCCC_RAI` tách polyline kín / vòng tròn layer tên có ONG_GIO, ONG-GIO, ONGGIO, DUCT khỏi vùng chọn; đầu báo rơi vào
   ống dịch tới cạnh gần nhất + 0,1 m (còn trong phòng, không vào ống khác), không dịch được thì báo `ket`. Test 119/119 (ống 2 x 2 m trùm 1 đầu: dịch, vẫn 6 đầu).
   Hết danh sách spec làm được; còn việc của người dùng: xem trên AutoCAD thật, Fable kiểm toàn dự án.
+
+## 2026-11-14 đêm — Rải thử bản vẽ thật xưởng bao bì Quyết Thắng (đang làm)
+Người dùng gửi `BEAM QUYẾT THẮNG.dwg` (cả tờ là block), chốt 5 quy tắc (ô X = lỗ thông tầng bỏ; mái che vẫn rải; công trình hiện hữu bỏ; 2 xưởng tách;
+zone theo TCVN 7568-14 5.7.2.1) và yêu cầu rải + thuyết minh. Đã chép file, dump cấu trúc bằng LISP, tìm được chữ XƯỞNG 1/2 và block nền ứng viên
+`A$Cbcabb6d6`; dừng ở 93 % hạn mức (chi tiết + bước kế: `cad/TIEN_DO.md`). Đặt lịch 19h03 tự làm tiếp; theo lời người dùng không push lúc dừng.
