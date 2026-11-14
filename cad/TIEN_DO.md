@@ -11,7 +11,9 @@ Người dùng chốt (14/11 đêm):
 1. Ô có dấu X (hai đường chéo) = LỖ THÔNG TẦNG: không bố trí → plugin nhận ô X (2 đoạn cắt nhau gần trung điểm, 4 đầu mút là 4 góc) thành vùng loại trừ, bỏ 2 đường chéo khỏi dựng phòng.
 2. Mái che không công năng: VẪN RẢI (người dùng tự xoá nếu thấy không ổn).
 3. Công trình hiện hữu (gạch chéo): KHÔNG rải.
-4. "Cửa > 3 m": người dùng chưa hiểu → giải thích: khe hở nét tường ≤ 3 m (`HO_CUA_M`, NhanVung.cs) tự khép như cửa; cửa xưởng rộng hơn thì phòng hở, không thành vùng.
+4. CỬA: người dùng chốt (14/11 đêm, sau khi nghe giải thích ngưỡng `HO_CUA_M` 3 m) "cứ có cửa mình khép lại 1 vùng": khe tường có ký hiệu cửa (cung cánh,
+   block cửa, kể cả cửa cuốn xưởng > 3 m) thì khép vùng qua khe cửa, không phụ thuộc bề rộng; khe không có cửa vẫn theo ngưỡng 3 m.
+   XONG việc rải + thuyết minh thì DỪNG, chờ người dùng xem, chốt duyệt hoặc tự chỉnh tiếp; không làm thêm việc khác.
 5. Phân vùng: 2 xưởng riêng (tách bởi lỗ thông tầng); có tường ngăn cháy thì tách; dính nhau thì rải chung; phòng cách bởi tường / vách → vùng riêng,
    gom zone báo cháy theo TCVN 7568-14:2025 5.7.2.1 (người dùng gửi ảnh): zone ≤ 2000 m², kích thước ≤ 100 m, một tầng; phòng không liền kề gom một zone
    khi lối vào cách nhau ≤ 10 m và nhìn thấy nhau; 5.7.2.3 không gian che kín ≤ 500 m² gộp được nếu tổng đầu báo ≤ 40; 5.7.2.5 một vùng phát hiện thuộc một vùng báo động.
