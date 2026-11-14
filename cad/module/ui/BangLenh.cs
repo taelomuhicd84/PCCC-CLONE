@@ -121,7 +121,7 @@ namespace TKPCCC
         public BangLenh()
         {
             Font = GiaoDien.Chu;
-            BackColor = Color.White;
+            BackColor = GiaoDien.The;
 
             ds.RowTemplate.Height = 40;
             ds.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;

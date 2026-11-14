@@ -18,51 +18,25 @@ using AcApp = Autodesk.AutoCAD.ApplicationServices.Application;
 
 namespace TKPCCC
 {
+    /// PCCC, PCCC_BLOCK, PCCC_HELP đều mở palette chính (BangChinh.cs), khác nhau ở phân hệ hiện ra.
     public class LenhUi
     {
-        static PaletteSet bangBlock, bangLenh;
-        static BangBlock ndBlock;
-        static BangLenh ndLenh;
-
-        static PaletteSet TaoBang(string ten, string guid, string trang, Control nd, Size nhoNhat)
-        {
-            PaletteSet b = new PaletteSet(ten, new Guid(guid));
-            b.MinimumSize = nhoNhat;
-            b.Add(trang, nd);
-            return b;
-        }
-
-        [CommandMethod("PCCC_BLOCK")]
-        public void MoBang()
+        static void Mo(string trang, string lenh)
         {
             Document doc = AcApp.DocumentManager.MdiActiveDocument;
             try
             {
-                if (bangBlock == null)
-                {
-                    ndBlock = new BangBlock();
-                    bangBlock = TaoBang("TKPCCC - Block PCCC", "5D3C1E0A-7B42-4C9E-9A61-2F8E4B7D1C35", "Block", ndBlock, new Size(560, 360));
-                    // Đổi bản vẽ thì số lượng đổi theo.
-                    AcApp.DocumentManager.DocumentActivated += delegate { if (bangBlock.Visible) GiaoDien.An(ndBlock.DemLai); };
-                }
-                int n = ndBlock.Nap();
-                bangBlock.Visible = true;
-                doc.Editor.WriteMessage("\n[TKPCCC] PCCC_BLOCK: " + n + " block trong bảng. Bấm đúp một dòng để đặt thiết bị.");
+                string tb = BangChinh.Mo(trang);
+                if (doc != null && lenh != null) doc.Editor.WriteMessage("\n[TKPCCC] " + lenh + ": " + tb);
             }
-            catch (System.Exception ex) { doc.Editor.WriteMessage("\n[TKPCCC] Lỗi: " + ex.Message); }
+            catch (System.Exception ex) { if (doc != null) doc.Editor.WriteMessage("\n[TKPCCC] Lỗi: " + ex.Message); }
         }
 
+        [CommandMethod("PCCC")] public void MoPccc() { Mo(null, "PCCC"); }
+        [CommandMethod("PCCC_BLOCK")] public void MoBang() { Mo(BangChinh.THU_VIEN, "PCCC_BLOCK"); }
+
         /// PCCC_HELP (lệnh ở TKPCCC.Cad.dll) gọi qua Lenh.MoBangLenh.
-        public static void MoBangLenh()
-        {
-            if (bangLenh == null)
-            {
-                ndLenh = new BangLenh();
-                bangLenh = TaoBang("TKPCCC - Lệnh PCCC", "A8E4F1C2-3D6B-4E7A-9C15-6B2D8F0E4A71", "Lệnh", ndLenh, new Size(880, 440));
-            }
-            ndLenh.Nap();
-            bangLenh.Visible = true;
-        }
+        public static void MoBangLenh() { Mo(BangChinh.LENH, null); }
     }
 
     /// Nạp cùng TKPCCC.UI.dll: PCCC_HELP mở bảng lệnh, đăng ký phím tắt người dùng đã lưu.
@@ -100,7 +74,7 @@ namespace TKPCCC
         public BangBlock()
         {
             Font = GiaoDien.Chu;
-            BackColor = Color.White;
+            BackColor = GiaoDien.The;
 
             ds.ReadOnly = true;
             ds.RowTemplate.Height = 50;
@@ -111,6 +85,7 @@ namespace TKPCCC
             cAnh.ImageLayout = DataGridViewImageCellLayout.Zoom;
             cAnh.DefaultCellStyle.NullValue = null; // block chưa có ảnh: ô trống, không hiện dấu X đỏ
             cAnh.DefaultCellStyle.Padding = new Padding(4);
+            cAnh.DefaultCellStyle.BackColor = cAnh.DefaultCellStyle.SelectionBackColor = Color.Black; // ảnh nền đen như màn hình CAD
             ds.Columns.Add(cAnh);
             DataGridViewTextBoxColumn cTen = GiaoDien.Cot("Tên thiết bị", 200, false);
             cTen.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -151,6 +126,9 @@ namespace TKPCCC
             napLai.Click += delegate { GiaoDien.An(delegate { Nap(); }); };
             foreach (NutBo b in new[] { nutDat, nutRai, them, dem, napLai }) GiaoDien.Them(hd, b, 32);
             chonHe.DropDownStyle = ComboBoxStyle.DropDownList;
+            chonHe.FlatStyle = FlatStyle.Flat;
+            chonHe.BackColor = GiaoDien.The;
+            chonHe.ForeColor = chiCo.ForeColor = GiaoDien.ChuDam;
             chonHe.SelectedIndexChanged += delegate { Loc(); };
             GiaoDien.Them(hd, chonHe, 0);
             chiCo.Text = "Chỉ block có trong bản vẽ";
@@ -158,7 +136,7 @@ namespace TKPCCC
             GiaoDien.Them(hd, chiCo, 24);
             xem.SizeMode = PictureBoxSizeMode.Zoom;
             xem.BorderStyle = BorderStyle.FixedSingle;
-            xem.BackColor = Color.White;
+            xem.BackColor = Color.Black; // ảnh block vẽ nền đen như màn hình CAD
             GiaoDien.Them(hd, xem, 150);
             tenXem.Font = GiaoDien.Dam;
             tenXem.ForeColor = GiaoDien.ChuDam;

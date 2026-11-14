@@ -19,20 +19,41 @@ namespace TKPCCC
     public partial class Lenh
     {
         const int CO_ANH = 64; // cạnh ảnh xem trước (px)
+        // Đổi cách vẽ ảnh thì đổi chuỗi này: ảnh cũ (vd nền trắng nét đen) tự vẽ lại một lần, người dùng không phải xoá tay.
+        const string KIEU_ANH = "nen_den_mau_that_1";
 
         static string ThuMucAnh { get { return Path.Combine(ThuMuc, "anh_block"); } }
 
-        class ChuAnh { public Point3d P; public double Cao; public string T; public int Ngang, Dung; }
+        class ChuAnh { public Point3d P; public double Cao; public string T; public int Ngang, Dung; public Gdi.Color Mau; }
+        class NetAnh { public Point3d[] P; public Gdi.Color Mau; }
+
+        /// Màu nét như trên màn hình CAD nền đen: ByLayer lấy màu layer (layer 0 trong block lồng lấy layer của block cha),
+        /// ByBlock lấy màu block cha (cấp ngoài cùng: trắng), ACI 7 vẽ trắng, true color giữ nguyên.
+        static Gdi.Color MauAnh(Transaction tr, Entity e, Gdi.Color mauCha, Gdi.Color? lopCha)
+        {
+            Autodesk.AutoCAD.Colors.Color c = e.Color;
+            if (c.IsByBlock) return mauCha;
+            if (c.IsByLayer) return MauLop((LayerTableRecord)tr.GetObject(e.LayerId, OpenMode.ForRead), lopCha);
+            return MauRgb(c);
+        }
+
+        static Gdi.Color MauRgb(Autodesk.AutoCAD.Colors.Color c)
+        {
+            if (c.IsByAci && c.ColorIndex == 7) return Gdi.Color.White;
+            if (c.IsByAci || c.IsByColor) return Gdi.Color.FromArgb(255, c.ColorValue);
+            return Gdi.Color.White; // ByPen, None...: vẽ trắng như màu mặc định của CAD
+        }
 
         // ---------- Ảnh xem trước ----------
 
-        /// Gom nét của block (toạ độ block): mọi đường cong lấy mẫu theo tham số, block lồng tới 2 cấp, chữ giữ điểm đặt + chiều cao.
-        static void GomNet(Transaction tr, BlockTableRecord b, Matrix3d m, int sau, List<Point3d[]> net, List<ChuAnh> chu)
+        /// Gom nét của block (toạ độ block): mọi đường cong lấy mẫu theo tham số, block lồng tới 2 cấp, chữ giữ điểm đặt + chiều cao, kèm màu.
+        static void GomNet(Transaction tr, BlockTableRecord b, Matrix3d m, int sau, Gdi.Color mauCha, Gdi.Color? lopCha, List<NetAnh> net, List<ChuAnh> chu)
         {
             foreach (ObjectId id in b)
             {
                 Entity e = tr.GetObject(id, OpenMode.ForRead) as Entity;
                 if (e == null || !e.Visible || e is AttributeDefinition) continue;
+                Gdi.Color mau = MauAnh(tr, e, mauCha, lopCha);
                 Curve c = e as Curve;
                 BlockReference br = e as BlockReference;
                 MText mt = e as MText;
@@ -46,31 +67,42 @@ namespace TKPCCC
                         double t0 = c.StartParam, t1 = c.EndParam;
                         Point3d[] ps = new Point3d[n + 1];
                         for (int i = 0; i <= n; i++) ps[i] = c.GetPointAtParameter(t0 + (t1 - t0) * i / n).TransformBy(m);
-                        net.Add(ps);
+                        net.Add(new NetAnh { P = ps, Mau = mau });
                     }
                     else if (br != null && sau < 2)
-                        GomNet(tr, (BlockTableRecord)tr.GetObject(br.BlockTableRecord, OpenMode.ForRead), m * br.BlockTransform, sau + 1, net, chu);
+                    {
+                        // Nét layer 0 trong block con lấy màu layer của block con đó (block con cũng ở layer 0 thì lấy tiếp của cha).
+                        Gdi.Color lop = MauLop((LayerTableRecord)tr.GetObject(br.LayerId, OpenMode.ForRead), lopCha);
+                        GomNet(tr, (BlockTableRecord)tr.GetObject(br.BlockTableRecord, OpenMode.ForRead), m * br.BlockTransform, sau + 1, mau, lop, net, chu);
+                    }
                     else if (mt != null || dt != null)
                     {
                         double k = Vector3d.YAxis.TransformBy(m).Length;
                         int a = mt != null ? (int)mt.Attachment - 1 : 6; // MText: 0..8 = trên-trái .. dưới-phải; DBText coi là dưới-trái
                         chu.Add(new ChuAnh { P = (mt != null ? mt.Location : dt.Position).TransformBy(m), Cao = (mt != null ? mt.TextHeight : dt.Height) * k,
-                            T = mt != null ? mt.Text : dt.TextString, Ngang = a % 3, Dung = a / 3 });
+                            T = mt != null ? mt.Text : dt.TextString, Ngang = a % 3, Dung = a / 3, Mau = mau });
                     }
                 }
                 catch (System.Exception) { } // nét lạ (tham số hỏng...): bỏ qua, ảnh chỉ để nhận mặt ký hiệu
             }
         }
 
-        /// Ảnh xem trước của một block: nét đen trên nền trắng, vừa khít ô CO_ANH.
+        /// Màu của layer l như vẽ trên nền đen (layer 0 lồng thì theo cha).
+        static Gdi.Color MauLop(LayerTableRecord l, Gdi.Color? lopCha)
+        {
+            if (l.Name == "0" && lopCha.HasValue) return lopCha.Value;
+            return MauRgb(l.Color);
+        }
+
+        /// Ảnh xem trước của một block như trên màn hình CAD: nền đen, nét đúng màu, vừa khít ô CO_ANH.
         /// shortcut: không vẽ hatch, không xoay chữ, block động vẽ theo trạng thái đang lưu trong định nghĩa; cần đẹp hơn thì dùng ảnh của AutoCAD.
         static void VeAnhBlock(Transaction tr, BlockTableRecord b, string file)
         {
-            List<Point3d[]> net = new List<Point3d[]>();
+            List<NetAnh> net = new List<NetAnh>();
             List<ChuAnh> chu = new List<ChuAnh>();
-            GomNet(tr, b, Matrix3d.Identity, 0, net, chu);
+            GomNet(tr, b, Matrix3d.Identity, 0, Gdi.Color.White, null, net, chu);
             double x0 = double.MaxValue, y0 = double.MaxValue, x1 = double.MinValue, y1 = double.MinValue;
-            foreach (Point3d p in net.SelectMany(ps => ps).Concat(chu.SelectMany(c => new Point3d[] {
+            foreach (Point3d p in net.SelectMany(n => n.P).Concat(chu.SelectMany(c => new Point3d[] {
                 new Point3d(c.P.X - c.Cao / 2, c.P.Y - c.Cao / 2, 0), new Point3d(c.P.X + c.Cao / 2, c.P.Y + c.Cao / 2, 0) })))
             {
                 x0 = Math.Min(x0, p.X); y0 = Math.Min(y0, p.Y); x1 = Math.Max(x1, p.X); y1 = Math.Max(y1, p.Y);
@@ -78,22 +110,24 @@ namespace TKPCCC
             using (Gdi.Bitmap bmp = new Gdi.Bitmap(CO_ANH, CO_ANH))
             using (Gdi.Graphics g = Gdi.Graphics.FromImage(bmp))
             {
-                g.Clear(Gdi.Color.White);
+                g.Clear(Gdi.Color.Black);
                 g.SmoothingMode = Gdi.Drawing2D.SmoothingMode.AntiAlias;
                 double rong = Math.Max(x1 - x0, y1 - y0);
                 if (rong > 1e-9)
                 {
                     double k = (CO_ANH - 8) / rong, ox = (CO_ANH - (x1 - x0) * k) / 2, oy = (CO_ANH - (y1 - y0) * k) / 2;
                     Func<Point3d, Gdi.PointF> doi = p => new Gdi.PointF((float)(ox + (p.X - x0) * k), (float)(CO_ANH - oy - (p.Y - y0) * k));
-                    using (Gdi.Pen but = new Gdi.Pen(Gdi.Color.Black, 1.2f))
-                        foreach (Point3d[] ps in net) g.DrawLines(but, ps.Select(doi).ToArray());
+                    foreach (NetAnh n in net)
+                        using (Gdi.Pen but = new Gdi.Pen(n.Mau, 1.2f))
+                            g.DrawLines(but, n.P.Select(doi).ToArray());
                     foreach (ChuAnh c in chu)
                         using (Gdi.Font f = new Gdi.Font("Arial", (float)Math.Max(6, Math.Min(40, c.Cao * k)), Gdi.GraphicsUnit.Pixel))
                         using (Gdi.StringFormat sf = new Gdi.StringFormat())
                         {
                             sf.Alignment = (Gdi.StringAlignment)c.Ngang;   // 0 trái, 1 giữa, 2 phải
                             sf.LineAlignment = (Gdi.StringAlignment)c.Dung; // 0 trên, 1 giữa, 2 dưới
-                            g.DrawString(c.T, f, Gdi.Brushes.Black, doi(c.P), sf);
+                            using (Gdi.SolidBrush bc = new Gdi.SolidBrush(c.Mau))
+                                g.DrawString(c.T, f, bc, doi(c.P), sf);
                         }
                 }
                 bmp.Save(file, Gdi.Imaging.ImageFormat.Png);
@@ -106,8 +140,10 @@ namespace TKPCCC
             if (!File.Exists(FileThuVien)) return 0;
             Directory.CreateDirectory(ThuMucAnh);
             DateTime luc = File.GetLastWriteTimeUtc(FileThuVien);
+            string fKieu = Path.Combine(ThuMucAnh, "kieu_anh.txt");
+            if (!File.Exists(fKieu) || File.ReadAllText(fKieu).Trim() != KIEU_ANH) luc = DateTime.MaxValue; // ảnh kiểu cũ: vẽ lại hết
             List<VatTu> can = dm.vat_tu.Where(v => v.loai == "block" && File.GetLastWriteTimeUtc(Path.Combine(ThuMucAnh, v.ma + ".png")) < luc).ToList(); // file chưa có thì giờ ghi = năm 1601
-            if (can.Count == 0) return 0;
+            if (can.Count == 0) { File.WriteAllText(fKieu, KIEU_ANH); return 0; }
             int n = 0;
             using (Database db = new Database(false, true))
             {
@@ -124,6 +160,7 @@ namespace TKPCCC
                     tr.Commit();
                 }
             }
+            File.WriteAllText(fKieu, KIEU_ANH);
             return n;
         }
 
