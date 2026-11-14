@@ -36,4 +36,6 @@ python .claude/skills/tkpccc-phoi-hop-model/scripts/goi_gemini.py --file <pdf> -
 - Số Gemini bóc ra là CHƯA KIỂM: trước khi vào bảng đối chiếu, spec CAD hay kết luận phải đối chiếu bằng script (chữ vector, tỉ lệ) hoặc Claude xem ảnh đúng trang đó. Trị số quy chuẩn vẫn lấy nguyên văn từ `knowledge/`, `skills/`, không lấy từ Gemini.
 - Hồ sơ khách: gói miễn phí của Google có thể dùng nội dung để cải thiện sản phẩm. Chỉ gửi trang cần thiết (`--trang`); người dùng chịu trách nhiệm về điều khoản tài khoản.
 - Gemini lỗi đăng nhập / hết hạn mức: quay về bước 3 (Claude đọc đúng trang), không chờ.
+- 14/11: đăng nhập Google cá nhân bị Google từ chối (`IneligibleTierError`: Code Assist cho cá nhân không còn hỗ trợ Gemini CLI, chuyển sang Antigravity).
+  Gemini CLI chỉ chạy được bằng `GEMINI_API_KEY` (Google AI Studio) do người dùng tự tạo; chưa có key thì bỏ bước 2.
 - Đo hiệu quả: ghi token Gemini (script in ra) và token Claude của lượt đó vào `LICH_SU.md` khi thử trên hồ sơ thật.
