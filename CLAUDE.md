@@ -29,6 +29,7 @@ Làm module nào: đọc `.claude/skills/<skill>/SKILL.md` của module đó và
 | Vẽ CAD tự động qua MCP CAD (`cad_tt`, `cad_chay`, spec ngắn) | `tkpccc-ve-cad` (ở `cad/.claude/skills/`) | |
 | Tra quy chuẩn (chọn file, chỉ văn bản hiện hành) | `tkpccc-tra-quy-chuan` | |
 | Khép đầu mục: kiểm → TIEN_DO/LICH_SU → commit → push | `tkpccc-xong-dau-muc` | |
+| Phối hợp Gemini + Claude: Gemini CLI bóc PDF dài/scan, Claude đọc JSON nhỏ | `tkpccc-phoi-hop-model` | |
 - Model + effort (người dùng dặn 2026-11-03: việc phức tạp cần tỉ mỉ, chính xác cực cao → Opus effort high; việc nhẹ → Sonnet effort thấp)
   ghi trong frontmatter `model:`, `effort:` của SKILL.md và agent; nguồn duy nhất là frontmatter. Skill phụ trợ gọi giữa luồng
   (`tkpccc-bang-doi-chieu`, `tkpccc-ghi-chu-ban-ve`, `tkpccc-tra-quy-chuan`) KHÔNG đặt: model của skill áp cho cả phần còn lại của lượt.

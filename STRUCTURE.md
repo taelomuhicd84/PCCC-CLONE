@@ -23,6 +23,7 @@ TKPCCC/
 │     │                           scripts/bang_doi_chieu.py (chon, khung, dong, tim, lamviec, job, gop, kiem, xlsx, md), test/
 │     ├─ tkpccc-ghi-chu-ban-ve/   scripts/ghi_chu_pdf.py (ve, luoi, tim: annotation khung/callout/leader/nét/tường/cửa), test/
 │     ├─ tkpccc-kiem-luat-pdf/ · tkpccc-thuy-luc/ · tkpccc-bao-gia/ · tkpccc-huong-dan/   thẻ module (code ở shared/ runner/ thamdinh/ web/)
+│     ├─ tkpccc-phoi-hop-model/   scripts/goi_gemini.py: gọi Gemini CLI không giao diện bóc PDF, Claude chỉ đọc JSON kết quả
 │     └─ tkpccc-tra-quy-chuan/ · tkpccc-xong-dau-muc/   quy trình chung
 │
 ├─ shared/              LÕI NGHIỆP VỤ dùng chung, hàm thuần (không đọc/ghi file, không server)
