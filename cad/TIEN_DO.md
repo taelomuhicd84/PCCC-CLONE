@@ -3,6 +3,19 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## VIỆC 14/11 — XONG PHẦN MÃ, đã gộp vào `main` (kế hoạch, hợp đồng key: `cad/tien_do/viec_14_11.md`; nhật ký `cad/LICH_SU.md`)
+Quy trình vẽ 6 bước + `tuong`/`cua`/`kt_chuoi` + `PCCC_TRUC/TUONG/CUA/ADIM/CDIM`; palette `PCCC` (bot chat, Cài đặt 3 giao diện); ảnh block nền đen;
+bản quyền (`PCCC_BANQUYEN`, KeyGen, Apps Script). Test tự động đạt hết. VIỆC KẾ, theo thứ tự:
+1. Khi KHÔNG có AutoCAD nào mở: `cad\build.bat` rồi `cad\test\thu_gui.ps1`; xem tận mắt palette `PCCC` dock trái, đổi giao diện tại chỗ, bot chat chạy cùng cầu nối,
+   `PCCC_BANQUYEN`, chặn lệnh ở bản `phat_hanh` (giả định `GlobalCommandName` có "#" khi lệnh kết thúc chưa thử). Bot chat cần `claude` CLI đăng nhập lại (`claude` → `/login`; 14/11 báo OAuth hết hạn).
+2. Review Opus max (`cad-review`) cho mốc 13/11 + 14/11 (`git diff 4ba0ba7..HEAD -- cad`).
+3. Người dùng làm 1 lần theo `cad/module/banquyen/HUONG_DAN.md` (tạo khoá, Sheet, Apps Script, web app, URL vào `cad/data/ban_quyen/cau_hinh_ban_quyen.json`), rồi thử Apps Script thật.
+4. Rủi ro gói A: tường giao chữ T còn nét thò qua mặt tường; `cua` chỉ cắt tường hai nét thẳng; CDIM nhớ chuỗi cho cả phiên. Gói B: phân hệ Lệnh (bảng 880 px) chật trong palette 400 px;
+   nút Dừng bot chỉ tắt `claude.cmd`, không tắt tiến trình con; chưa có block màu để thử nhánh ByLayer/ByBlock/true color.
+5. Để sau (ý của file tham khảo): phân hệ Báo cháy có thanh trượt k % + KPI, xem trước TransientGraphics, hoàn tác lượt bố trí, tiện ích đánh số / kiểm trùng / kiểm layer.
+6. Gemini (skill `tkpccc-phoi-hop-model` gốc repo): sau khi người dùng đăng nhập Google trong `gemini`, chạy `goi_gemini.py --kiem`, rồi đo token trước/sau trên
+   `ket_qua/cad_mau/drive_goc/cong_trinh.pdf` (bóc trục, kích thước trang mặt bằng), ghi `LICH_SU.md`.
+
 ## NGƯỜI DÙNG TEST 13/11 — 4 VIỆC LÀM SONG SONG VỚI VIỆC DỞ Ở PHIÊN SAU (dặn: chỉ ghi nhận, phiên reset 5 giờ kế tiếp mới làm)
 **XONG CẢ 4 VIỆC (13/11 chiều)**: 3 phiên song song trên 3 nhánh, đã gộp vào `main` (sửa tay xung đột `cad/skills/TU_VUNG.md`, `cad/test/chay_thu.ps1`;
 phép kiểm `vung_tu_dong` dời sang gốc x 2600000). Sau gộp: build đạt, `chay_thu.ps1` + `thu_mcp.ps1` TAT CA DAT. Chi tiết, việc còn lại từng mục: `cad/tien_do/viec1.md`,

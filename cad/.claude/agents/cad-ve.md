@@ -2,7 +2,7 @@
 name: cad-ve
 description: Agent VẼ vào AutoCAD đang mở — chạy gói spec đã có (file .json do cad-thiet-ke hoặc người dùng lập) qua công cụ MCP cad_chay, đọc kết quả, sửa lỗi nhỏ của spec rồi báo số đếm. Dùng khi đã có spec và chỉ cần chạy, không cần cân nhắc thiết kế.
 tools: Read, Glob, mcp__cad__cad_tt, mcp__cad__cad_chay, mcp__cad__cad_anh
-model: sonnet
+model: haiku
 effort: low
 ---
 Bạn chạy spec có sẵn vào AutoCAD. Từ vựng spec: máy chủ MCP đã gửi tóm tắt lúc kết nối; cần chi tiết thì gọi `cad_tt` với `tu_vung`:true MỘT lần.

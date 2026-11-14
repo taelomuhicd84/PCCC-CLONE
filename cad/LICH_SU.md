@@ -361,3 +361,15 @@ Người dùng bảo chạy song song dù hạn mức tuần 89 %. 3 phiên, m�
 việc 2 (`NhanVung.cs`, thao tác `vung_tu_dong`, `PCCC_RAI` bấm điểm không cần polyline), việc 3+4 (panel `PCCC_BLOCK` mới, `PCCC_HELP` thành panel sửa phím tắt lưu `phim_tat.txt`).
 Gộp cả 3 vào `main`: xung đột `TU_VUNG.md` (giữ dòng `rai` của việc 1, thêm dòng `vung_tu_dong`), `chay_thu.ps1` (phép kiểm việc 2 dời gốc x 2500000 → 2600000 vì trùng chỗ hình việc 1).
 Sau gộp: build đạt, `chay_thu.ps1`, `thu_mcp.ps1` TAT CA DAT. Chi tiết từng việc: `cad/tien_do/viec*.md`.
+
+## 2026-11-14 — quy trình vẽ 6 bước, palette PCCC, bản quyền, 3 giao diện, ảnh block nền đen
+Người dùng giao (14/11): quy trình vẽ từ PDF Trục → Tường → Mặt bằng chi tiết → Thiết bị PCCC → Dây, ống → Sơ đồ nguyên lý; tham khảo file
+`PROMPT_HOP_NHAT_PLUGIN_PCCC_CAD.md` (palette 8 phân hệ, ADIM); ảnh block nền đen đúng màu; bản quyền + app tạo key + Google Sheet tự cấp key; giao diện tối/sáng/Claude.
+Kế hoạch + hợp đồng key: `cad/tien_do/viec_14_11.md`. 3 agent Opus song song trong worktree (A high, B, C medium), phiên chính gộp vào `main`.
+- Gói A (`3234ad5`): `KienTruc.cs` (op `tuong`, `cua`, lệnh `PCCC_TRUC`, `PCCC_TUONG`, `PCCC_CUA`), `Dim.cs` (op `kt_chuoi`, `PCCC_ADIM`, `PCCC_CDIM`, gom điểm trùng hàng 10 mm),
+  `layer/kien_truc.md`, nhóm `kien_truc` trong `ky_hieu.json`; skill `tkpccc-ve-cad` mục "Quy trình 6 bước"; agent `cad-thiet-ke`/`cad-ve`/`cad-kiem` theo từng bước. 6 phép kiểm mới.
+- Gói B (`dbb2e7f`): `ui/BangChinh.cs` palette `PCCC` (Quy trình vẽ · Thư viện · Lệnh · Bot chat · Cài đặt); `PCCC_BLOCK`/`PCCC_HELP` mở palette này;
+  `GiaoDien.DatChuDe` 3 kiểu lưu `%APPDATA%\TKPCCC\cai_dat.json`, đổi tại chỗ; bot chat gọi `claude -p` stream-json chạy nền, `--resume`; ảnh block nền đen, màu ByLayer/ByBlock/ACI/true color.
+- Gói C (`0dc394c`): `BanQuyen.cs`, `ui/BanQuyenUi.cs` (`PCCC_BANQUYEN`), `module/banquyen/` (KeyGen.exe, Apps Script `Code.gs`, `HUONG_DAN.md`), `build.bat phat_hanh` chặn lệnh, `test/thu_ban_quyen.ps1` 16 phép.
+- Sau gộp: thêm 8 dòng `DS_LENH` + 7 `<Command>` trong `PackageContents.xml`; `cad-ve` sang Haiku (phối hợp model, skill `tkpccc-phoi-hop-model` ở gốc).
+  Build 4 file đạt; `chay_thu.ps1`, `thu_mcp.ps1`, `thu_ban_quyen.ps1` TAT CA DAT; pytest 13/13; `npm test` 401/401. Usage 5 giờ 57 % lúc ghi.

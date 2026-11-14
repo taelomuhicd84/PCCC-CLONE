@@ -174,3 +174,10 @@
 
 ## 2026-11-09
 - BCKS Khach san Duy Anh (ket_qua/tkcs_kientruc): xong, them thoat nan tang ham (2 loi, ~21 m, phan tan ~6,7 m < 11,5 m). ghi_chu_pdf.py them `quay` (xoay chu); bang_doi_chieu.py COT_I_PX 430. Con ap quy tac 3.2.8 hanh lang (MOD_tinh_toan_khoang_cach.md) cho khoang cach 2 thang.
+
+## 2026-11-14
+- CAD: quy trình vẽ 6 bước, palette `PCCC`, bản quyền, 3 giao diện, ảnh block nền đen — chi tiết `cad/LICH_SU.md`.
+- Web: tab "Dự án" (`runner/src/thong_ke_du_an.ts`, `GET /api/du-an/thong-ke`): thẻ tổng tệp/skill/agent/quy chuẩn, hạng mục theo bảng module
+  (mỗi tệp một hạng mục, đường dẫn cụ thể nhất thắng), chip quy chuẩn trích dẫn, bảng skill/agent. Agent Sonnet.
+- Skill `tkpccc-phoi-hop-model` + `scripts/goi_gemini.py`: Gemini CLI 0.68.0 (đã cài `npm i -g`) bóc PDF dài/scan ở thư mục tạm, chế độ plan, Claude đọc JSON nhỏ.
+  CHƯA thử: người dùng chưa đăng nhập Google trong Gemini CLI.
