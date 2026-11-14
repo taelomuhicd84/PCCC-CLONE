@@ -36,7 +36,7 @@ if exist "%OUT%\TKPCCC.UI.dll" move /y "%OUT%\TKPCCC.UI.dll" "%OUT%\TKPCCC.UI.dl
 "%FW%\csc.exe" /nologo /target:library /platform:x64 /codepage:65001 /optimize+ /out:"%OUT%\TKPCCC.UI.dll" ^
   /r:"%ACAD%\acdbmgd.dll" /r:"%ACAD%\accoremgd.dll" /r:"%ACAD%\acmgd.dll" /r:"%ACAD%\AdWindows.dll" ^
   /r:"%FW%\WPF\PresentationCore.dll" /r:"%FW%\WPF\WindowsBase.dll" /r:"%FW%\System.Xaml.dll" ^
-  /r:System.Core.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll /r:"%OUT%\TKPCCC.Cad.dll" ^
+  /r:"%FW%\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll /r:"%OUT%\TKPCCC.Cad.dll" ^
   "%~dp0module\ui\*.cs" || exit /b 1
 echo OK: %OUT%\TKPCCC.UI.dll
 

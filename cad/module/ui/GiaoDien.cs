@@ -1,7 +1,12 @@
-// Kiểu giao diện chung của các bảng TKPCCC (PCCC_BLOCK, PCCC_HELP): tiêu đề nền xanh, ô tìm có chữ gợi ý, bảng dòng cao kẻ ngang,
-// khung "Hành động" bên phải với nút xanh đậm bo góc và ô tổng số. Chỉ vẽ giao diện, không đụng bản vẽ.
+// Kiểu giao diện chung của các bảng TKPCCC (palette PCCC, PCCC_BLOCK, PCCC_HELP): tiêu đề nền nhấn, ô tìm có chữ gợi ý, bảng dòng cao kẻ ngang,
+// khung "Hành động" bên phải với nút bo góc và ô tổng số. Chỉ vẽ giao diện, không đụng bản vẽ.
+// 3 kiểu màu (toi mặc định, sang, claude) lưu ở %APPDATA%\TKPCCC\cai_dat.json; đổi kiểu thì control đang mở đổi màu ngay (DatChuDe).
 using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Drawing.Drawing2D;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -13,20 +18,148 @@ namespace TKPCCC
 {
     static class GiaoDien
     {
-        public static readonly Color Xanh = Color.FromArgb(37, 117, 204);      // tiêu đề nhóm, tiêu đề khung
-        public static readonly Color XanhDam = Color.FromArgb(0, 82, 163);     // nút
-        public static readonly Color XanhNhat = Color.FromArgb(222, 236, 252); // dòng đang chọn
-        public static readonly Color Nen = Color.FromArgb(242, 246, 251);
-        public static readonly Color Vien = Color.FromArgb(196, 212, 232);
-        public static readonly Color ChuDam = Color.FromArgb(24, 38, 74);
-        public static readonly Color ChuMo = Color.FromArgb(120, 130, 145);
-        public static readonly Color Do = Color.FromArgb(200, 30, 40);
-        public static readonly Color XanhLa = Color.FromArgb(46, 160, 67);
-        public static readonly Color Cam = Color.FromArgb(232, 130, 20);
+        // Tên giữ từ kiểu "sang" cũ (mã khác dùng), giá trị theo kiểu đang chọn: Xanh = màu nhấn (tiêu đề), XanhDam = nút, XanhNhat = dòng chọn,
+        // Nen = nền, The = nền thẻ/bảng, Vien = viền, LuoiKe = kẻ bảng. Không readonly vì đổi được lúc chạy.
+        public static Color Xanh, XanhDam, XanhNhat, Nen, The, Vien, LuoiKe, ChuDam, ChuMo, Do, XanhLa, Cam;
+        public static string ChuDe = "toi";
+        /// Các control gốc đang mở: DatChuDe đổi màu cả cây con của chúng.
+        public static readonly List<Control> DangMo = new List<Control>();
+        /// Gọi sau khi đổi kiểu (control tự giữ màu riêng thì cập nhật ở đây).
+        public static event Action DaDoiChuDe;
         public static readonly Font Chu = new Font("Segoe UI", 9f);
         public static readonly Font Dam = new Font("Segoe UI", 9f, FontStyle.Bold);
         public static readonly Font Nho = new Font("Segoe UI", 8f);
         public static readonly Font To = new Font("Segoe UI", 18f, FontStyle.Bold);
+
+        static GiaoDien() { BangMau(DocCaiDat("chu_de", "toi")); }
+
+        static Color H(int rgb) { return Color.FromArgb(255, Color.FromArgb(rgb)); }
+
+        static void BangMau(string ten)
+        {
+            if (ten == "sang")
+            {
+                Xanh = Color.FromArgb(37, 117, 204); XanhDam = Color.FromArgb(0, 82, 163); XanhNhat = Color.FromArgb(222, 236, 252);
+                Nen = Color.FromArgb(242, 246, 251); The = Color.FromArgb(255, 255, 255); Vien = Color.FromArgb(196, 212, 232); LuoiKe = Color.FromArgb(228, 233, 240);
+                ChuDam = Color.FromArgb(24, 38, 74); ChuMo = Color.FromArgb(120, 130, 145);
+                Do = Color.FromArgb(200, 30, 40); XanhLa = Color.FromArgb(46, 160, 67); Cam = Color.FromArgb(232, 130, 20);
+            }
+            else if (ten == "claude")
+            {
+                Xanh = H(0xD97757); XanhDam = H(0xC6613F); XanhNhat = H(0xF5E1D6);
+                Nen = H(0xFAF9F5); The = H(0xF0EEE6); Vien = H(0xE8E6DC); LuoiKe = H(0xE3E1D7);
+                ChuDam = H(0x141413); ChuMo = H(0x73726C);
+                Do = H(0xB53333); XanhLa = H(0x5A8A3C); Cam = H(0xC88A2E);
+            }
+            else
+            {
+                ten = "toi";
+                Xanh = H(0x10B981); XanhDam = H(0x059669); XanhNhat = H(0x134E4A);
+                Nen = H(0x0F172A); The = H(0x1E293B); Vien = H(0x334155); LuoiKe = H(0x2B3648);
+                ChuDam = H(0xE5E7EB); ChuMo = H(0x94A3B8);
+                Do = H(0xF87171); XanhLa = H(0x34D399); Cam = H(0xFBBF24);
+            }
+            ChuDe = ten;
+        }
+
+        // Thứ tự = vai trò: màu cũ ở vị trí i đổi thành màu mới ở vị trí i. Màu chữ trắng trên nền nhấn không nằm trong bộ chữ nên giữ nguyên.
+        static Color[] BoNen() { return new[] { Xanh, XanhDam, XanhNhat, Nen, The, Vien, LuoiKe, ChuDam, ChuMo, Do, XanhLa, Cam }; }
+        static Color[] BoChu() { return new[] { ChuDam, ChuMo, Do, XanhLa, Cam, Xanh }; }
+
+        /// Đổi kiểu màu, lưu cài đặt, đổi màu ngay mọi control trong DangMo.
+        public static void DatChuDe(string ten)
+        {
+            Color[] nen0 = BoNen(), chu0 = BoChu();
+            BangMau(ten);
+            LuuCaiDat("chu_de", ChuDe);
+            Dictionary<int, Color> nen = AnhXa(nen0, BoNen()), chu = AnhXa(chu0, BoChu());
+            foreach (Control c in DangMo) DoiMau(c, nen, chu);
+            if (DaDoiChuDe != null) DaDoiChuDe();
+        }
+
+        static Dictionary<int, Color> AnhXa(Color[] cu, Color[] moi)
+        {
+            Dictionary<int, Color> m = new Dictionary<int, Color>();
+            for (int i = 0; i < cu.Length; i++) if (!m.ContainsKey(cu[i].ToArgb())) m[cu[i].ToArgb()] = moi[i];
+            return m;
+        }
+
+        static Color Doi(Dictionary<int, Color> m, Color c)
+        {
+            Color d;
+            return c.A == 255 && m.TryGetValue(c.ToArgb(), out d) ? d : c;
+        }
+
+        static void DoiKieu(DataGridViewCellStyle s, Dictionary<int, Color> nen, Dictionary<int, Color> chu)
+        {
+            if (!s.BackColor.IsEmpty) s.BackColor = Doi(nen, s.BackColor);
+            if (!s.SelectionBackColor.IsEmpty) s.SelectionBackColor = Doi(nen, s.SelectionBackColor);
+            if (!s.ForeColor.IsEmpty) s.ForeColor = Doi(chu, s.ForeColor);
+            if (!s.SelectionForeColor.IsEmpty) s.SelectionForeColor = Doi(chu, s.SelectionForeColor);
+        }
+
+        static void DoiMau(Control c, Dictionary<int, Color> nen, Dictionary<int, Color> chu)
+        {
+            c.BackColor = Doi(nen, c.BackColor);
+            c.ForeColor = Doi(chu, c.ForeColor);
+            NutBo nut = c as NutBo;
+            if (nut != null) nut.Mau = Doi(nen, nut.Mau);
+            DataGridView g = c as DataGridView;
+            if (g != null)
+            {
+                g.BackgroundColor = Doi(nen, g.BackgroundColor);
+                g.GridColor = Doi(nen, g.GridColor);
+                DoiKieu(g.DefaultCellStyle, nen, chu);
+                DoiKieu(g.ColumnHeadersDefaultCellStyle, nen, chu);
+                foreach (DataGridViewColumn cot in g.Columns) DoiKieu(cot.DefaultCellStyle, nen, chu);
+                foreach (DataGridViewRow d in g.Rows)
+                    foreach (DataGridViewCell o in d.Cells)
+                        if (o.HasStyle) DoiKieu(o.Style, nen, chu);
+            }
+            foreach (Control con in c.Controls) DoiMau(con, nen, chu);
+            c.Invalidate();
+        }
+
+        // ---------- Cài đặt %APPDATA%\TKPCCC\cai_dat.json: JSON phẳng, giá trị là chuỗi ----------
+
+        public static string FileCaiDat
+        {
+            get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TKPCCC", "cai_dat.json"); }
+        }
+
+        static Dictionary<string, string> DocTatCa()
+        {
+            Dictionary<string, string> d = new Dictionary<string, string>();
+            try
+            {
+                if (File.Exists(FileCaiDat))
+                    foreach (Match m in Regex.Matches(File.ReadAllText(FileCaiDat, Encoding.UTF8), "\"([A-Za-z_]+)\"\\s*:\\s*\"([^\"\\\\]*)\""))
+                        d[m.Groups[1].Value] = m.Groups[2].Value;
+            }
+            catch (System.Exception) { } // file hỏng: dùng mặc định
+            return d;
+        }
+
+        public static string DocCaiDat(string khoa, string macDinh)
+        {
+            string v;
+            return DocTatCa().TryGetValue(khoa, out v) && v != "" ? v : macDinh;
+        }
+
+        /// Ghi một khoá, giữ các khoá khác (giá trị bỏ dấu " và \ để JSON luôn hợp lệ).
+        public static void LuuCaiDat(string khoa, string giaTri)
+        {
+            Dictionary<string, string> d = DocTatCa();
+            d[khoa] = (giaTri ?? "").Replace("\"", "").Replace("\\", "");
+            List<string> dong = new List<string>();
+            foreach (KeyValuePair<string, string> p in d) dong.Add("  \"" + p.Key + "\": \"" + p.Value + "\"");
+            try
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(FileCaiDat));
+                File.WriteAllText(FileCaiDat, "{\r\n" + string.Join(",\r\n", dong) + "\r\n}\r\n", new UTF8Encoding(false));
+            }
+            catch (System.Exception) { } // không ghi được: kiểu vẫn đổi trong phiên này
+        }
 
         public static Label TieuDe(string t)
         {
@@ -54,6 +187,8 @@ namespace TKPCCC
             p.BackColor = Nen;
             p.Padding = new Padding(6, 6, 6, 6);
             o.Dock = DockStyle.Fill;
+            o.BackColor = The;
+            o.ForeColor = ChuDam;
             o.Font = new Font("Segoe UI", 10f);
             o.BorderStyle = BorderStyle.FixedSingle;
             o.HandleCreated += delegate { SendMessage(o.Handle, 0x1501, (IntPtr)1, goiY); };
@@ -65,7 +200,7 @@ namespace TKPCCC
         {
             DataGridView g = new DataGridView();
             g.Dock = DockStyle.Fill;
-            g.BackgroundColor = Color.White;
+            g.BackgroundColor = The;
             g.BorderStyle = BorderStyle.None;
             g.AllowUserToAddRows = false;
             g.AllowUserToDeleteRows = false;
@@ -75,7 +210,7 @@ namespace TKPCCC
             g.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             g.MultiSelect = false;
             g.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-            g.GridColor = Color.FromArgb(228, 233, 240);
+            g.GridColor = LuoiKe;
             g.EnableHeadersVisualStyles = false;
             g.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
             g.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
@@ -86,6 +221,7 @@ namespace TKPCCC
             g.ColumnHeadersDefaultCellStyle.Font = Dam;
             g.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             g.DefaultCellStyle.Font = Chu;
+            g.DefaultCellStyle.BackColor = The;
             g.DefaultCellStyle.ForeColor = ChuDam;
             g.DefaultCellStyle.SelectionBackColor = XanhNhat;
             g.DefaultCellStyle.SelectionForeColor = ChuDam;
@@ -148,7 +284,7 @@ namespace TKPCCC
             f.FlowDirection = FlowDirection.TopDown;
             f.WrapContents = false;
             f.AutoScroll = true;
-            f.BackColor = Color.White;
+            f.BackColor = The;
             f.Padding = new Padding(8, 8, 8, 8);
             k.Controls.Add(f);
             k.Controls.Add(TieuDe("Hành động"));
@@ -207,11 +343,11 @@ namespace TKPCCC
     class NutBo : Button
     {
         bool tren;
-        readonly Color mau;
+        public Color Mau; // GiaoDien.DatChuDe đổi khi đổi kiểu màu
 
         public NutBo(string chu, Color mau)
         {
-            this.mau = mau;
+            Mau = mau;
             Text = chu;
             Font = GiaoDien.Dam;
             FlatStyle = FlatStyle.Flat;
@@ -226,7 +362,7 @@ namespace TKPCCC
             Graphics g = e.Graphics;
             g.Clear(Parent != null ? Parent.BackColor : Color.White);
             g.SmoothingMode = SmoothingMode.AntiAlias;
-            Color c = !Enabled ? Color.FromArgb(160, 170, 185) : tren ? ControlPaint.Light(mau, 0.25f) : mau;
+            Color c = !Enabled ? Color.FromArgb(160, 170, 185) : tren ? ControlPaint.Light(Mau, 0.25f) : Mau;
             using (GraphicsPath p = GiaoDien.BoGoc(new Rectangle(0, 0, Width - 1, Height - 1), 6))
             using (SolidBrush b = new SolidBrush(c))
                 g.FillPath(b, p);
@@ -246,7 +382,7 @@ namespace TKPCCC
             So = "0";
             Phu = "";
             DoubleBuffered = true;
-            BackColor = Color.White;
+            BackColor = GiaoDien.The;
         }
 
         public void Dat(string so, string phu)
@@ -263,8 +399,8 @@ namespace TKPCCC
             g.SmoothingMode = SmoothingMode.AntiAlias;
             using (GraphicsPath p = GiaoDien.BoGoc(new Rectangle(0, 0, Width - 1, Height - 1), 8))
             {
-                using (SolidBrush b = new SolidBrush(Color.FromArgb(255, 248, 240))) g.FillPath(b, p);
-                using (Pen v = new Pen(Color.FromArgb(240, 190, 140))) g.DrawPath(v, p);
+                using (SolidBrush b = new SolidBrush(GiaoDien.Nen)) g.FillPath(b, p);
+                using (Pen v = new Pen(GiaoDien.Cam)) g.DrawPath(v, p);
             }
             TextFormatFlags giua = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter;
             TextRenderer.DrawText(g, Nhan, GiaoDien.Dam, new Rectangle(0, 4, Width, 20), GiaoDien.Do, giua);
