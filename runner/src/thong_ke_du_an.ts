@@ -68,24 +68,31 @@ export function thongKe(goc: string) {
     return { ten: f.name ?? path.basename(t.rel, ".md"), model: f.model ?? "", effort: f.effort ?? "" };
   });
 
-  const daThuoc = new Set<string>();
-  const hangMuc = docModule(readFileSync(path.join(goc, "CLAUDE.md"), "utf8")).map(({ ten, skill: sk }) => {
+  // mỗi tệp thuộc 1 hạng mục: đường dẫn khai cụ thể nhất (nhiều đoạn nhất) thắng; hoà thì module khai trước thắng
+  const modules = docModule(readFileSync(path.join(goc, "CLAUDE.md"), "utf8"));
+  const khai = modules.map(({ skill: sk }) => {
     const dir = thuMucSkill(sk);
-    const nhom = new Map<string, Set<string>>();
-    const them = (k: string, rel: string) => { (nhom.get(k) ?? nhom.set(k, new Set()).get(k)!).add(rel); daThuoc.add(rel); };
-    if (dir) {
-      for (const t of demTheo([dir])) { const r = t.rel.slice(dir.length + 1); them(r.includes("/") ? r.split("/")[0] : "SKILL.md", t.rel); }
+    const ds = dir ? [dir] : [];
+    if (dir && sk !== "tkpccc-xong-dau-muc" && sk !== "tkpccc-tra-quy-chuan") {
       const md = readFileSync(path.join(goc, dir, "SKILL.md"), "utf8");
-      const lietKe = new Set<string>();
-      for (const m of md.matchAll(/`((?:shared|runner|thamdinh|cad|web|data|knowledge|skills|bang_tinh|scripts)\/[^`\s*]*)`/g)) lietKe.add(m[1].replace(/\/$/, ""));
-      for (const p of lietKe) for (const t of demTheo([p])) them(p.split("/")[0], t.rel);
+      for (const m of md.matchAll(/`((?:shared|runner|thamdinh|cad|web|data|knowledge|skills|bang_tinh|scripts)\/[^`\s*]*)`/g)) ds.push(m[1].replace(/\/$/, ""));
     }
-    const tong = new Set([...nhom.values()].flatMap((s) => [...s]));
-    return { ten, skill: sk, tep: tong.size, nhom: [...nhom].map(([k, s]) => ({ ten: k, so: s.size })).sort((a, b) => b.so - a.so) };
+    if (sk === "tkpccc-tra-quy-chuan") ds.push("knowledge", "skills");
+    return { dir, ds };
   });
+  const nhomHM = modules.map(() => new Map<string, number>());
   const khac = new Map<string, number>();
-  for (const t of tep) if (!daThuoc.has(t.rel)) { const k = t.rel.includes("/") ? t.rel.split("/")[0] : "(gốc)"; khac.set(k, (khac.get(k) ?? 0) + 1); }
-  hangMuc.push({ ten: "Ngoài module", skill: "", tep: [...khac.values()].reduce((a, b) => a + b, 0), nhom: [...khac].map(([k, so]) => ({ ten: k, so })).sort((a, b) => b.so - a.so) });
+  const cong = (m: Map<string, number>, k: string) => m.set(k, (m.get(k) ?? 0) + 1);
+  for (const t of tep) {
+    let tot = -1, dang = 0;
+    khai.forEach((k, i) => { for (const d of k.ds) if (duoi(t.rel, d) && d.split("/").length > dang) { dang = d.split("/").length; tot = i; } });
+    if (tot < 0) cong(khac, t.rel.includes("/") ? t.rel.split("/")[0] : "(gốc)");
+    else { const dir = khai[tot].dir; const r = dir && duoi(t.rel, dir) ? t.rel.slice(dir.length + 1) : ""; cong(nhomHM[tot], dir && duoi(t.rel, dir) ? (r.includes("/") ? r.split("/")[0] : "SKILL.md") : t.rel.split("/")[0]); }
+  }
+  const dsNhom = (m: Map<string, number>) => [...m].map(([ten, so]) => ({ ten, so })).sort((a, b) => b.so - a.so);
+  const tongNhom = (m: Map<string, number>) => [...m.values()].reduce((a, b) => a + b, 0);
+  const hangMuc = modules.map(({ ten, skill: sk }, i) => ({ ten, skill: sk, tep: tongNhom(nhomHM[i]), nhom: dsNhom(nhomHM[i]) }));
+  hangMuc.push({ ten: "Ngoài module", skill: "", tep: tongNhom(khac), nhom: dsNhom(khac) });
 
   const dem = new Map<string, number>();
   for (const t of tep) {

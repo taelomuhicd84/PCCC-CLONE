@@ -13,6 +13,7 @@ describe("thống kê dự án", () => {
     expect(k.tong.tep).toBeGreaterThan(100);
     expect(k.skill.length).toBeGreaterThanOrEqual(12);
     expect(k.hang_muc.find((h) => h.skill === "tkpccc-thuy-luc")!.tep).toBeGreaterThan(0);
+    expect(k.hang_muc.reduce((a, h) => a + h.tep, 0)).toBe(k.tong.tep); // mỗi tệp đúng 1 hạng mục
     expect(k.quy_chuan.some((q) => q.ma === "QCVN 06:2022")).toBe(true);
   });
 });
