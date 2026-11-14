@@ -139,6 +139,8 @@ namespace TKPCCC
             new[] { "PCCC_GAN", "Gán block có sẵn trong bản vẽ vào mã vật tư", "Chọn block rồi nhập mã: bóc được bản vẽ không vẽ bằng plugin" },
             new[] { "PCCC_BOC", "Bóc khối lượng, gửi lên web báo giá", "Chọn vùng (Enter = cả bản vẽ), tách theo tầng, khu nếu muốn" },
             new[] { "PCCC_BANG", "Chèn bảng thống kê vào bản vẽ", "Chạy PCCC_BOC trước (bảng lấy kết quả gần nhất), bấm điểm chèn" },
+            new[] { "PCCC_KYHIEU", "Chèn bảng KÝ HIỆU cho mặt bằng (chỉ thiết bị có trên tờ)", "Chọn mặt bằng (Enter = cả bản vẽ), bấm góc trên trái, cao chữ" },
+            new[] { "PCCC_QUYDINH", "Chèn bảng quy định lắp đặt đầu báo (TCVN 7568-14:2025)", "Bấm góc trên trái, cao chữ; trị số lấy từ khoang_cach_rai.json" },
             new[] { "PCCC_VUNGBV", "Vẽ vùng bảo vệ bán kính R quanh thiết bị", "Nhập mã, bán kính R; báo thiết bị đứng lẻ" },
             new[] { "PCCC_SPEC", "Chạy một file spec JSON (các thao tác như cad_chay)", "Nhập đường dẫn file .json; kết quả ghi <tên>.kq.json cạnh file" } };
 

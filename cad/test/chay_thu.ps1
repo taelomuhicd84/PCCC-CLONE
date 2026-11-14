@@ -55,6 +55,7 @@ $kb = @('INSUNITS', '4', 'NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '_.SAVEAS', '2018',
   'PLINE', '49000,-1000', '67000,-1000', '', '_.ZOOM', '_E', 'OSMODE', '0', 'PCCC_TUYEN', 'ONG_DN25', 'W', '50000,0', '66000,12000', '', 'L', '65000,2000',
   'CIRCLE', '80000,0', '150', '-BLOCK', 'VAN_KHACH', '80000,0', 'L', '', '-INSERT', 'VAN_KHACH', '80000,0', '1', '', '0',
   'PCCC_THEMBLOCK', 'L', 'van_khach', 'Van khach them', 'SPR', '', 'PCCC_DAT', 'VAN_KHACH', '81000,0', '',
+  'PCCC_KYHIEU', '', '0,-20000', '', 'PCCC_QUYDINH', '0,-40000', '',
   'PCCC_BOC', 'Khong', '', 'ThuPlugin', '_.QSAVE')
 $kb -join "`r`n" | Set-Content -Encoding ascii "$T\kb.scr"
 $p = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb.out.txt"
@@ -76,7 +77,9 @@ $can = @(
   @('PCCC_RAI SPR_DAU_DOWN n=7 luoi=3x2 buoc=4000x4000 m2=16(\r|\n)', 'PCCC_RAI go tay tra loi Co (theo_hang): phong chu L phu kin 7 dau, khong HO'),
   @('PCCC_TUYEN ONG_DN25 doan=5 m=63\.5\b', 'PCCC_TUYEN: ong gop qua diem bam x = 65000 (ngoai cac cot) + 4 nhanh, dai 63,5 m'),
   @('PCCC_THEMBLOCK VAN_KHACH', 'PCCC_THEMBLOCK: block ten VAN_KHACH them duoi ma van_khach (ma trung ten block khong bi bao trung)'),
-  @('VAN_KHACH\s+2 ', 'block moi them: PCCC_DAT dat duoc, PCCC_BOC dem 2 cai (ban chen tay + ban PCCC_DAT)'))
+  @('VAN_KHACH\s+2 ', 'block moi them: PCCC_DAT dat duoc, PCCC_BOC dem 2 cai (ban chen tay + ban PCCC_DAT)'),
+  @('PCCC_KYHIEU dong=\d+ [^\r\n]*BC_KHOI[^\r\n]*BC_NHIET', 'PCCC_KYHIEU: bang ky hieu liet ke thiet bi co trong ban ve (dau khoi, dau nhiet)'),
+  @('PCCC_QUYDINH dong=3\b', 'PCCC_QUYDINH: bang quy dinh lap dat 3 loai dau bao tu khoang_cach_rai.json'))
 $loi = 0
 foreach ($c in $can) { if ($out -match $c[0]) { "DAT   $($c[1])" } else { "LOI   $($c[1])"; $loi++ } }
 # Lan boc thu 2 (sau khi chen bang + vung bao ve) van phai ra 2 / 7: bang thong ke va vong tron khong bi dem.
@@ -240,6 +243,9 @@ $XIEN = @(@(1100, 36000), @(13900, 40300), @(52500, 25100), @(16000, 0), @(0, 20
 # Ma van sprinkler moi trong vat_tu.json (Buoc 5): dat 2 OS&Y + 1 XK, dem theo MA_VT ("mat bang" cho phep kiem chong dem trung cua so_do).
 '{"goc":[1100000,0],"ops":[{"op":"dat","ma":"SPR_VAN_OSY_DN100","p":[[0,0],[0,1000]],"goc":90},{"op":"dat","ma":"SPR_VAN_XK","p":[[1000,0]]},{"op":"dem"}]}' |
   Set-Content -Encoding ascii "$T\van.json"
+# Bang tren mat bang (hoc ban ve mau 14/11): quy dinh lap dat + ky hieu cac van trong vung van.json
+'{"ops":[{"op":"bang","loai":"quy_dinh","p":[5200000,0]},{"op":"bang","loai":"ky_hieu","p":[5200000,-8000],"hop":[1099000,-1000,1102000,2000]}]}' |
+  Set-Content -Encoding ascii "$T\bang_mb.json"
 # PCCC_THEMBLOCK khong ghi gi khi danh muc khong ghi duoc: file goc da co VAN_TRUNG (them tay) va la file chi doc.
 # van_trung: trung ma trong file goc; van_ro: file goc chi doc. Ca hai phai dung TRUOC khi luu PCCC_Blocks.dwg.
 $fGoc = "$T\goc\vat_tu.json"
@@ -255,14 +261,16 @@ $bamTv = (Get-FileHash "$T\PCCC_Blocks.dwg").Hash
   'PCCC_SPEC', "$T\khoa_sai.json", 'PCCC_SPEC', "$T\khoa_dung.json", 'PCCC_SPEC', "$T\anh.json", 'PCCC_SPEC', "$T\pdf_sai.json", 'PCCC_SPEC', "$T\pdf.json",
   'PCCC_SPEC', "$T\pdf2.json", 'PCCC_SPEC', "$T\xoa2.json", 'PCCC_SPEC', "$T\rai_loi.json", 'PCCC_SPEC', "$T\tuyen_thu.json", 'PCCC_SPEC', "$T\nhan.json",
   'PCCC_SPEC', "$T\rai_moi.json", 'PCCC_SPEC', "$T\pdf_mk.json", 'PCCC_SPEC', "$T\rv_tuyen.json", 'PCCC_SPEC', "$T\hoa.json", 'PCCC_SPEC', "$T\hoa_doc.json",
-  'PCCC_SPEC', "$T\rv_hang.json", 'PCCC_SPEC', "$T\rv2.json", 'PCCC_SPEC', "$T\van.json", 'PCCC_SPEC', "$T\so_do.json", 'PCCC_SPEC', "$T\so_do_loi.json", 'PCCC_SPEC', "$T\so_do_bc.json", 'PCCC_SPEC', "$T\so_do_bc_loi.json", 'PCCC_SPEC', "$T\so_do_bc_ng.json",
+  'PCCC_SPEC', "$T\rv_hang.json", 'PCCC_SPEC', "$T\rv2.json", 'PCCC_SPEC', "$T\van.json", 'PCCC_SPEC', "$T\bang_mb.json", 'PCCC_SPEC', "$T\so_do.json", 'PCCC_SPEC', "$T\so_do_loi.json", 'PCCC_SPEC', "$T\so_do_bc.json", 'PCCC_SPEC', "$T\so_do_bc_loi.json", 'PCCC_SPEC', "$T\so_do_bc_ng.json",
   'PCCC_SPEC', "$T\so_do_loc.json", 'PCCC_SPEC', "$T\so_do_bc2.json", 'INSUNITS', '6', 'PCCC_SPEC', "$T\so_do_m.json", 'INSUNITS', '4', 'PCCC_SPEC', "$T\rai_xien.json",
   'RECTANG', '3000000,0', '3030600,20400', 'PCCC_RAI', 'BC_KHOI', '', '', 'L', '', '', '',
   'RECTANG', '3200000,0', '3230600,20400', 'PCCC_RAI', 'BC_KHOI', 'HeSo', '50', '', '', 'L', '', '', '',
   'RECTANG', '3300000,0', '3330000,20000', 'PCCC_RAI', 'BC_BEAM', '', '', 'L', '', '', '',
   'RECTANG', '3400000,0', '3430600,20400', 'PCCC_RAI', 'BC_KHOI', 'XemTruoc', '', '', 'L', '', '', '',
   'RECTANG', '3500000,0', '3514400,7200', 'PCCC_RAI', 'BC_NHIET', 'Dam', '', '', 'L', '', '', '',
-  '_.ZOOM', 'W', '3199000,-1000', '3231000,21000', 'PCCC_DAY', 'DAY_BC', 'C', '3199000,-1000', '3231000,21000', '', '3200000,-500', 'Vong',
+  '_.ZOOM', 'W', '3199000,-1000', '3231000,21000', 'PCCC_DAY', 'DAY_BC', 'C', '3199000,-1000', '3231000,21000', '', '3200000,-500', 'Vong', 'ZONE 1',
+  # Hoc ban ve mau 14/11: day ho (khong vong) cua dau bao co dien tro cuoi day o mut; khong ghi zone
+  'PCCC_DAY', 'DAY_BC', 'C', '3199000,-1000', '3231000,21000', '', '', '', '',
   # Tien ich (14/11 toi): 4 dau khoi, 2 cai trung diem, 1 cai doi sang layer 0; roi kiem trung, sua layer, danh so, xoay, ty le, doi block, can dim, doi DN
   '_.ZOOM', 'W', '3599000,-1000', '3604000,10000', 'PCCC_DAT', 'BC_KHOI', '3600000,0', '3600000,0', '3603000,0', '3603000,3000', '',
   '_.CHPROP', 'C', '3602900,2900', '3603100,3100', '', '_LA', '0', '',
@@ -360,6 +368,8 @@ $ksai = if (Test-Path "$T\khoa_sai.kq.json") { Get-Content -Raw -Encoding UTF8 "
 $kdung = if (Test-Path "$T\khoa_dung.kq.json") { Get-Content -Raw -Encoding UTF8 "$T\khoa_dung.kq.json" | ConvertFrom-Json }
 if ($ksai -and $ksai.ok -eq $false -and $ksai.ve -eq 0 -and $ksai.loi[0].i -eq -1) { 'DAT   ban_ve sai ten: tu choi ca goi, khong ve' } else { 'LOI   ban_ve sai ten van ve'; $loi++ }
 if ($kdung -and $kdung.ok -eq $true -and $kdung.ve -eq 1) { 'DAT   ban_ve dung ten: ve binh thuong' } else { 'LOI   ban_ve dung ten ma khong ve'; $loi++ }
+$kbm = if (Test-Path "$T\bang_mb.kq.json") { Get-Content -Raw -Encoding UTF8 "$T\bang_mb.kq.json" | ConvertFrom-Json }
+if ($kbm -and $kbm.ok -eq $true -and $kbm.ve -eq 2 -and -not $kbm.loi) { 'DAT   spec bang: quy_dinh + ky_hieu (van trong hop) ve 2 bang' } else { 'LOI   spec bang: ' + ($kbm | ConvertTo-Json -Compress); $loi++ }
 # --- anh: PNG rong 800 px, co net ve (anh trang tron chi co 1 gia tri byte: vung trong, hoac in truoc khi ve xong) ---
 $ka = if (Test-Path "$T\anh.kq.json") { Get-Content -Raw -Encoding UTF8 "$T\anh.kq.json" | ConvertFrom-Json }
 $fa = if ($ka) { [string]@($ka.anh)[0] }
@@ -572,10 +582,11 @@ Set-ItemProperty $fGoc IsReadOnly $false
 # Viec 1: PCCC_RAI BC_KHOI khong hoi S, m2, cach tuong (chi hoi chieu cao tran, Enter), lay TCVN 7568-14 tu khoang_cach_rai.json: 30600 x 20400 ra 3 x 2 buoc 10200.
 Kiem ($out2 -match 'PCCC_RAI BC_KHOI n=6 luoi=3x2 buoc=10200x10200 m2=104\.04(\r|\n)') 'PCCC_RAI BC_KHOI: tri so TCVN 7568-14 tu file, khong hoi S, ra 3 x 2 buoc 10200'
 Kiem ($out2 -match 'PCCC_RAI BC_KHOI n=24 luoi=6x4 buoc=5100x5100 ') 'PCCC_RAI HeSo 50 (muc toi uu k, PCCC_BOTRI gui): cung phong ra 6 x 4 buoc 5100, gap 4 lan k = 100 %'
-Kiem ($out2 -match 'PCCC_RAI BC_BEAM tia=2 buoc=10000 tuong=5000') 'PCCC_RAI BC_BEAM (TCVN 7568-14 5.9.1.3.2): phong 30 x 20 m ra 2 tia song song canh dai, cach nhau 10 m, cach tuong 5 m'
+Kiem ($out2 -match 'PCCC_RAI BC_BEAM tia=2 buoc=10000 tuong=5000 kt=3') 'PCCC_RAI BC_BEAM (TCVN 7568-14 5.9.1.3.2): phong 30 x 20 m ra 2 tia song song canh dai, cach nhau 10 m, cach tuong 5 m; chuoi dim 5000/10000/5000'
 Kiem ($out2 -match 'PCCC_RAI BC_KHOI n=6 luoi=3x2 buoc=10200x10200 m2=104\.04 \(xem') 'PCCC_RAI XemTruoc: dem 6 dau bao, bao (xem truoc, chua ve)'
 Kiem ($out2 -match 'PCCC_RAI BC_NHIET n=6 luoi=3x2 buoc=4800x3600 ') 'PCCC_RAI Dam (5.9.2.1.5): dau nhiet buoc 7,2 x 0,7 = 5,04 m, phong 14,4 x 7,2 ra 3 x 2 (khong dam: 2 x 1)'
-Kiem ($out2 -match 'PCCC_DAY DAY_BC thiet_bi=24 vong m=') 'PCCC_DAY: day loop noi 24 dau bao cua phong HeSo 50, vong ve diem dau'
+Kiem ($out2 -match 'PCCC_DAY DAY_BC thiet_bi=24 vong m=[\d.]+ zone=ZONE 1 m2=[1-9]') 'PCCC_DAY: day loop noi 24 dau bao cua phong HeSo 50, vong ve diem dau, nhan ZONE 1 + dien tich vung PCCC_VUNG'
+Kiem ($out2 -match 'PCCC_DAY DAY_BC thiet_bi=24 m=[\d.]+ dtcd=1(\r|\n)') 'PCCC_DAY day ho: 1 dien tro cuoi day o mut, khong ghi zone'
 Kiem ($out2 -match 'PCCC_TRUNG trung=1 thua=1') 'PCCC_TRUNG (CKC): 2 dau khoi trung diem ra 1 cum, 1 ban thua'
 Kiem ($out2 -match 'PCCC_LOPCHUAN sai=1 sua=1') 'PCCC_LOPCHUAN (CKL, APL): dau khoi o layer 0 ve lai PCCC_BC'
 Kiem ($out2 -match 'PCCC_DANHSO n=4\b') 'PCCC_DANHSO (AN): danh so 4 thiet bi'

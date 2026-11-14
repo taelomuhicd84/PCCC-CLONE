@@ -1025,11 +1025,16 @@ namespace TKPCCC
                     {
                         double bt, tt;
                         List<Point2d[]> ts = TiaVung(d, s, 0.2 / m, out bt, out tt);
-                        if (!xem) foreach (Point2d[] a in ts) VeTia(db, tr, ms, v, a, k, lopTia, 0.3 / m);
+                        int soKt = 0;
+                        if (!xem)
+                        {
+                            foreach (Point2d[] a in ts) VeTia(db, tr, ms, v, a, k, lopTia, 0.3 / m);
+                            soKt = KtTia(db, tr, ms, d, ts, DamBaoLayer(db, tr, LAYER_TIA_KT, MauHe(v.he)));
+                        }
                         else foreach (Point2d[] a in ts) soTam += VeTam(tr, ms, new Line(new Point3d(a[0].X, a[0].Y, 0), new Point3d(a[1].X, a[1].Y, 0)), lopTam);
                         tong += ts.Count;
                         ed.WriteMessage("\n[TKPCCC] PCCC_RAI " + v.ma + " tia=" + ts.Count + " buoc=" + Lt(bt).ToString(CultureInfo.InvariantCulture)
-                            + " tuong=" + Lt(tt).ToString(CultureInfo.InvariantCulture) + duoi);
+                            + " tuong=" + Lt(tt).ToString(CultureInfo.InvariantCulture) + (xem ? "" : " kt=" + soKt) + duoi);
                         continue;
                     }
                     if (veVung && !xem)
@@ -1205,6 +1210,37 @@ namespace TKPCCC
             return kq;
         }
 
+        const string LAYER_TIA_KT = "PCCC_BC_TIA_KT";
+
+        /// Chuỗi kích thước bước tia như bộ bản vẽ mẫu (cad/knowledge/hoc-ban-ve-mau-dwg.md mục 2): tường – tia – … – tia – tường, đo vuông góc tia,
+        /// đặt ngang giữa tia dài nhất, trong khoảng của phòng chứa nhiều tia nhất. Trả số dim.
+        static int KtTia(Database db, Transaction tr, BlockTableRecord ms, List<Point2d> d, List<Point2d[]> ts, ObjectId lop)
+        {
+            if (ts.Count == 0) return 0;
+            bool doc = Math.Abs(ts[0][1].X - ts[0][0].X) < Math.Abs(ts[0][1].Y - ts[0][0].Y); // tia dọc: đo theo X
+            Func<Point2d, double> doc0 = p => doc ? p.X : p.Y, ngang = p => doc ? p.Y : p.X; // toạ độ theo phương đo / theo phương tia
+            Point2d[] dai = ts.OrderByDescending(a => a[0].GetDistanceTo(a[1])).First();
+            double c = (ngang(dai[0]) + ngang(dai[1])) / 2;
+            List<double> v = ts.Where(a => Math.Min(ngang(a[0]), ngang(a[1])) <= c && Math.Max(ngang(a[0]), ngang(a[1])) >= c).Select(a => doc0(a[0])).ToList();
+            List<Point2d> q = doc ? d : d.Select(p => new Point2d(p.Y, p.X)).ToList();
+            double[] kh = KhoangNgang(q, c).OrderByDescending(k => v.Count(x => x > k[0] && x < k[1])).FirstOrDefault();
+            if (kh == null) return 0;
+            List<double> moc = new List<double> { kh[0] };
+            moc.AddRange(v.Where(x => x > kh[0] && x < kh[1]).OrderBy(x => x));
+            moc.Add(kh[1]);
+            if (moc.Count < 3) return 0;
+            List<Point3d> ps = moc.Select(x => doc ? new Point3d(x, c, 0) : new Point3d(c, x, 0)).ToList();
+            int n = 0;
+            foreach (RotatedDimension dm in ChuoiKt(ps, doc, ps[0], db.Dimstyle))
+            {
+                dm.LayerId = lop;
+                ms.AppendEntity(dm);
+                tr.AddNewlyCreatedDBObject(dm, true);
+                n++;
+            }
+            return n;
+        }
+
         /// Một tia: block đầu phát ở đầu a (quay về phía đầu thu, một block = một bộ khi bóc khối lượng), nét tia a–c và vạch ngang ở đầu thu c.
         static void VeTia(Database db, Transaction tr, BlockTableRecord ms, VatTu v, Point2d[] a, double k, ObjectId lop, double vach)
         {
@@ -1304,9 +1340,24 @@ namespace TKPCCC
             if (pr2.Status == PromptStatus.Cancel) return;
             bool vong = pr2.Status == PromptStatus.Keyword;
             Point3d? den = pr2.Status == PromptStatus.OK ? pr2.Value.TransformBy(ed.CurrentUserCoordinateSystem) : vong ? tu : (Point3d?)null;
+            // Nhãn zone như bộ bản vẽ mẫu (hoc-ban-ve-mau-dwg.md mục 3): "VỀ TỦ TTBC – ZONE n" + "DIỆN TÍCH BẢO VỆ: … m²" ở đầu dây.
+            PromptStringOptions zo = new PromptStringOptions("\nTên zone ghi ở đầu dây (vd ZONE 1), Enter = không ghi: ");
+            zo.AllowSpaces = true;
+            PromptResult zr = ed.GetString(zo);
+            if (zr.Status != PromptStatus.OK) return;
+            string zone = zr.StringResult.Trim();
+            // Điện trở cuối dây ở cuối mạch hở của dây báo cháy (mạch vòng không cần).
+            VatTu dtcd = !vong && (v.he == "BC" || v.ma.StartsWith("DAY_BC", StringComparison.OrdinalIgnoreCase)) ? TimMa(dm, "BC_DTCD") : null; // DAY_BC xếp hệ ONG trong vat_tu.json
+            if (dtcd != null)
+                using (Transaction tr = db.TransactionManager.StartTransaction())
+                {
+                    bool co = ((BlockTable)tr.GetObject(db.BlockTableId, OpenMode.ForRead)).Has(dtcd.ma);
+                    tr.Commit();
+                    if (!co) NapVaoBanVe(doc, dm);
+                }
 
-            double m = HeSoMet(db), dai = 0;
-            int n = 0;
+            double m = HeSoMet(db), dai = 0, m2 = 0;
+            int n = 0, soDtcd = 0;
             using (Transaction tr = db.TransactionManager.StartTransaction())
             {
                 List<Point3d> ps = new List<Point3d>();
@@ -1320,17 +1371,48 @@ namespace TKPCCC
                 n = ps.Count;
                 ObjectId layer = DamBaoLayer(db, tr, TIEN_TO_LAYER + v.ma, MauHe(v.he));
                 BlockTableRecord ms = (BlockTableRecord)tr.GetObject(db.CurrentSpaceId, OpenMode.ForWrite);
-                foreach (List<Point3d> d in TuyenNoiTiep(new List<List<Point3d>> { ps }, tu, den, 0.1 / m))
+                List<List<Point3d>> tuyen = TuyenNoiTiep(new List<List<Point3d>> { ps }, tu, den, 0.1 / m);
+                foreach (List<Point3d> d in tuyen)
                 {
                     if (vong && !tu.HasValue) d.Add(d[0]); // không có điểm đầu: vòng về thiết bị đầu
+                    if (dtcd != null && d == tuyen[tuyen.Count - 1] && d.Count >= 2)
+                    {
+                        // Kéo dây thêm 0,5 m theo hướng đoạn cuối, đặt điện trở ở mút.
+                        Vector3d h = (d[d.Count - 1] - d[d.Count - 2]);
+                        Point3d mut = d[d.Count - 1] + (h.Length > 1e-9 ? h.GetNormal() : Vector3d.XAxis) * (0.5 / m);
+                        d.Add(mut);
+                        ChenThietBi(db, tr, dtcd, mut, 0.001 / m, 0);
+                        soDtcd++;
+                    }
                     Polyline day = TaoPline(d, false, layer);
                     ms.AppendEntity(day);
                     tr.AddNewlyCreatedDBObject(day, true);
                     dai += day.Length;
                 }
+                if (zone != "")
+                {
+                    // Diện tích bảo vệ = tổng vùng PCCC_VUNG chứa ít nhất một thiết bị của dây.
+                    foreach (ObjectId id in ms)
+                    {
+                        Polyline pl = tr.GetObject(id, OpenMode.ForRead) as Polyline;
+                        if (pl == null || !pl.Closed || !string.Equals(pl.Layer, LAYER_VUNG, StringComparison.OrdinalIgnoreCase)) continue;
+                        List<Point2d> vg = DinhPl(pl);
+                        if (ps.Any(p => TrongDaGiac(vg, new Point2d(p.X, p.Y)))) m2 += Math.Abs(pl.Area) * m * m;
+                    }
+                    Point3d dau = tuyen.Count > 0 && tuyen[0].Count > 0 ? tuyen[0][0] : ps[0];
+                    MText nh = new MText();
+                    nh.Location = dau + new Vector3d(0.3 / m, 0.6 / m, 0);
+                    nh.Attachment = AttachmentPoint.BottomLeft;
+                    nh.TextHeight = 0.35 / m;
+                    nh.Contents = "VỀ TỦ TTBC - " + zone.ToUpperInvariant() + (m2 > 0 ? "\\PDIỆN TÍCH BẢO VỆ: " + Math.Round(m2, 1).ToString(CultureInfo.GetCultureInfo("vi-VN")) + " m²" : "");
+                    nh.LayerId = DamBaoLayer(db, tr, "PCCC_ZONE", 1);
+                    ms.AppendEntity(nh);
+                    tr.AddNewlyCreatedDBObject(nh, true);
+                }
                 tr.Commit();
             }
-            ed.WriteMessage("\n[TKPCCC] PCCC_DAY " + v.ma + " thiet_bi=" + n + (vong ? " vong" : "") + " m=" + Math.Round(dai * m, 2).ToString(CultureInfo.InvariantCulture));
+            ed.WriteMessage("\n[TKPCCC] PCCC_DAY " + v.ma + " thiet_bi=" + n + (vong ? " vong" : "") + " m=" + Math.Round(dai * m, 2).ToString(CultureInfo.InvariantCulture)
+                + (soDtcd > 0 ? " dtcd=" + soDtcd : "") + (zone != "" ? " zone=" + zone + " m2=" + Math.Round(m2, 1).ToString(CultureInfo.InvariantCulture) : ""));
         }
     }
 }

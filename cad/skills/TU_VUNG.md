@@ -11,6 +11,7 @@ Thao tác (`op`):
 - `chu` l, p:[x,y], t, cao, goc, can:"giua"
 - `kt` l, p1, p2, cach (+ trái, - phải), cao
 - `kt_chuoi` p:[[x,y],...], phuong "x"|"y" (bỏ = tự nhận), qua:[x,y] (đường dim qua); điểm trùng hàng gom 1 mốc
+- `bang` loai:"ky_hieu" (thiết bị trong hop, bỏ = cả bản vẽ) | "quy_dinh" (quy định lắp đặt đầu báo TCVN 7568-14), p (góc trên trái), cao
 - `xoa` l (đuôi * được) và/hoặc hop:[x1,y1,x2,y2]
 - `doc` gi:"layer"|"vung"|"chu", l, hop
 - `dem` (cái, m)
