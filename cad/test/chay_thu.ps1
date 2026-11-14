@@ -500,6 +500,54 @@ Set-ItemProperty $fGoc IsReadOnly $false
 # Viec 1: PCCC_RAI BC_KHOI khong hoi S, m2, cach tuong (chi hoi chieu cao tran, Enter), lay TCVN 7568-14 tu khoang_cach_rai.json: 30600 x 20400 ra 3 x 2 buoc 10200.
 Kiem ($out2 -match 'PCCC_RAI BC_KHOI n=6 luoi=3x2 buoc=10200x10200 m2=104\.04(\r|\n)') 'PCCC_RAI BC_KHOI: tri so TCVN 7568-14 tu file, khong hoi S, ra 3 x 2 buoc 10200'
 
+# --- Kien truc (goi A 14/11): tuong, vach, cua, kt_chuoi, vung_tu_dong tren phong ve bang tuong; lenh PCCC_TRUC, PCCC_TUONG, PCCC_CUA, PCCC_ADIM, PCCC_CDIM ---
+# Phong 6000 x 4000 (tim), tuong 200 kin + vach 100 o x 4000 (2 dau cham tim tuong ngoai), cua 900 tuong duoi, cua 800 tren vach.
+# Mat trong: phong trai 3850 x 3800 = 14,63 m2, phong phai 1850 x 3800 = 7,03 m2; ho 500 < cua 900 thi phong trai ho ra ngoai: bao loi.
+# kt_chuoi luoi 4 cot x 3 hang (1 diem lech 5 mm): phuong tu nhan X (qua o tren) ra 3 dim; phuong y ra 2 dim.
+$ktG = @(1000, 4000, 7000, 10000) | ForEach-Object { $x = $_; @(10000, 12000, 14000) | ForEach-Object { , @($x, $_) } }
+$ktG[3] = @(4005, 10000)
+$ktP = ConvertTo-Json -Compress $ktG
+('{"ops":[{"op":"tuong","p":[[0,0],[6000,0],[6000,4000],[0,4000]],"kin":true},{"op":"tuong","vach":true,"p":[[4000,0],[4000,4000]]},' +
+ '{"op":"cua","p":[3000,0],"w":900,"ve":[3000,2000]},{"op":"cua","p":[4000,2000],"w":800,"ve":[5000,2000],"mo":"phai"},' +
+ '{"op":"kt_chuoi","p":[[0,0],[4000,0],[6000,0],[6000,4000]],"qua":[0,-1000]},{"op":"kt_chuoi","p":[[0,0],[0,4000]],"phuong":"y","qua":[-1000,0]},' +
+ '{"op":"vung_tu_dong","p":[[2000,2000]],"ho":500,"l":"VUNG_X"},{"op":"vung_tu_dong","p":[[2000,2000],[5000,2000]]},' +
+ '{"op":"kt_chuoi","l":"DIM_C","p":' + $ktP + ',"qua":[0,16000]},{"op":"kt_chuoi","l":"DIM_D","p":' + $ktP + ',"phuong":"y"},' +
+ '{"op":"doc","gi":"layer","l":"DIM*"},{"op":"doc","gi":"layer","l":"CUA"},{"op":"anh","hop":[-2500,-2500,8000,5500],"rong":800}]}') | Set-Content -Encoding ascii "$T\kt.json"
+# ADIM: luoi BC_KHOI 3 cot x 4 hang (1 dau lech 3 mm), 2 moc tuong x 19500 / 28500 -> 5 moc, 4 dim; CDIM them 1 (diem trung moc cuoi bo qua);
+# ADIM lan 2 khong moc tuong, phuong Y -> 3 dim. Tat ca tren layer hien hanh ADIM_L.
+$adG = @(21000, 24000, 27000) | ForEach-Object { $x = $_; @(11000, 13000, 15000, 17000) | ForEach-Object { , @($x, $_) } }
+$adG[5] = @(24003, 13000)
+('{"ops":[{"op":"dat","ma":"BC_KHOI","p":' + (ConvertTo-Json -Compress $adG) + '}]}') | Set-Content -Encoding ascii "$T\kt_dat.json"
+'{"ops":[{"op":"doc","gi":"layer","l":"ADIM_L"},{"op":"vung_tu_dong","p":[[43000,2000]]}]}' | Set-Content -Encoding ascii "$T\kt_tay.json"
+@('INSUNITS', '4', 'NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '_.SAVEAS', '2018', "`"$T\kt.dwg`"",
+  'PCCC_SPEC', "$T\kt.json", 'PCCC_SPEC', "$T\kt_dat.json", '-LAYER', 'M', 'ADIM_L', '', '_.ZOOM', '_E', 'OSMODE', '0',
+  'PCCC_ADIM', '', 'W', '19000,9000', '30000,20000', '', '19500,10000', '28500,10000', '', '20000,19000',
+  'PCCC_CDIM', '30000,19000', '30000,25000', '',
+  'PCCC_ADIM', 'Block', 'W', '19000,9000', '30000,20000', '', '', 'Y', '18000,12000', '-LAYER', 'S', '0', '',
+  'PCCC_TRUC', '6000,6000,4500', '5000', '-30000,0',
+  'PCCC_TUONG', '', '', '40000,0', '46000,0', '46000,4000', '40000,4000', 'D',
+  'PCCC_CUA', '43000,0', '', '43000,2000', '',
+  'PCCC_SPEC', "$T\kt_tay.json", '_.QSAVE') -join "`r`n" | Set-Content -Encoding ascii "$T\kb3.scr"
+$p3 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb3.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb3.out.txt"
+if (-not $p3.WaitForExit(180000)) { Stop-Process -Id $p3.Id -Force; throw "accoreconsole qua 3 phut (kien truc): $T\kb3.out.txt" }
+$out3 = [Text.Encoding]::Unicode.GetString([IO.File]::ReadAllBytes("$T\kb3.out.txt")) -replace "`0", ''
+$kk = DocKq 'kt'
+$vk = if ($kk) { @($kk.vung_tu_dong) } else { @() }
+$nDim = @{}; if ($kk -and $kk.doc) { foreach ($d in @($kk.doc[0].ds)) { $nDim[$d.l] = $d.n } }
+Kiem ($kk -and $vk.Count -eq 2 -and $vk[0].m2 -eq 14.63 -and $vk[0].dinh -eq 4 -and $vk[1].m2 -eq 7.03 -and $vk[1].dinh -eq 4) `
+  "tuong + vach + cua: vung_tu_dong dung 2 phong 14,63 / 7,03 m2, 4 dinh ($($vk | ConvertTo-Json -Compress -Depth 3))"
+Kiem ($kk -and $kk.loi -and @($kk.loi).Count -eq 1 -and $kk.loi[0].i -eq 6) "cua 900 > ho 500: phong ho, vung_tu_dong bao loi ($($kk.loi | ConvertTo-Json -Compress -Depth 3))"
+Kiem ($kk -and $kk.xoa -eq 3 -and $kk.doc[1].ds[0].n -eq 4) "cua: thay 3 polyline tuong (2 vong tuong ngoai + vach), 2 canh + 2 cung tren CUA (xoa $($kk.xoa))"
+Kiem ($nDim['DIM'] -eq 3 -and $nDim['DIM_C'] -eq 3 -and $nDim['DIM_D'] -eq 2) "kt_chuoi: luoi 4 x 3 lech 5 mm phuong X ra 3 dim, Y ra 2 dim, khong dim 0 ($($nDim | ConvertTo-Json -Compress))"
+$fk = if ($kk) { [string]@($kk.anh)[0] }
+Kiem ($fk -and (Test-Path $fk) -and (DocAnh $fk).mau -gt 1) "anh phong tuong + cua + chuoi dim: $fk"
+$kt2 = DocKq 'kt_tay'
+Kiem ($out3 -match 'PCCC_ADIM n=4 phuong=X moc=5' -and $out3 -match 'PCCC_CDIM n=1' -and $out3 -match 'PCCC_ADIM n=3 phuong=Y' -and $kt2 -and $kt2.doc[0].ds[0].n -eq 8) `
+  'PCCC_ADIM quet luoi 3 x 4 + 2 moc tuong ra 4 dim (1 cot 1 moc), CDIM noi 1, ADIM phuong Y ra 3 dim'
+Kiem ($out3 -match 'PCCC_TRUC 4x2 truc ve=' -and $out3 -match 'PCCC_TUONG tuong d=200 ve=2' -and $out3 -match 'PCCC_CUA ve=\d+ thay=2' -and
+  $kt2 -and @($kt2.vung_tu_dong).Count -eq 1 -and $kt2.vung_tu_dong[0].m2 -eq 22.04) `
+  "PCCC_TRUC, PCCC_TUONG (kin), PCCC_CUA: phong 5800 x 3800 = 22,04 m2 dung duoc vung ($($kt2.vung_tu_dong | ConvertTo-Json -Compress -Depth 3))"
+
 # chay_spec.ps1: -Dwg tuong doi tinh theo thu muc hien tai cua PowerShell; thu muc co dau (chu a huyen) va dau cach.
 $tmVN = "$T\Nh$([char]0xE0) A"
 New-Item -ItemType Directory $tmVN | Out-Null

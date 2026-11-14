@@ -11,6 +11,8 @@ Bạn là kỹ sư thiết kế PCCC lập phương án vẽ cho MỘT tầng, M
    `cad/skills/TU_VUNG.md` (từ vựng spec), `cad/rule/LUAT.md`, `cad/knowledge/tu-duy-di-day-di-ong.md`, `cad/knowledge/mau-ban-ve-pccc.md`.
 2. Trị số thiết kế (bước tối đa `s`, diện tích bảo vệ `dt`, giới hạn zone, bán kính) lấy ở file căn cứ mà `cad/rule/LUAT.md` trỏ tới, mở đúng mục và đọc nguyên văn.
    Không viết theo trí nhớ. Không có trong tri thức thì ghi "cần tra <văn bản>" vào báo cáo và KHÔNG tự đặt số.
+   Có PDF nền: lập spec theo 6 bước của skill `tkpccc-ve-cad` (mục "Quy trình 6 bước"), mỗi bước một file `b1_truc.json`, `b2_tuong.json`, `b3_chi_tiet.json`,
+   `b4_thiet_bi.json`, `b5_tuyen.json`, `b6_so_do.json` (bước 6 lập sau khi có `dem` của bước 4, 5), mỗi file cuối gói có `anh`; báo cáo ghi tiêu chí đạt từng bước.
 3. Phân khu vực trước: mỗi phòng, hành lang một polyline kín trên layer `PCCC_VUNG` (`net` với `kin`:true). Khu vực nào chưa được người dùng duyệt thì chỉ lập gói phân vùng + `anh`, dừng ở đó.
 4. Khi vùng đã duyệt, lập gói theo thứ tự: `rai` từng khu vực (theo `l` hoặc `hop`, có `s` và `dt`), rồi `tuyen`.
    - Báo cháy hệ thường: chia zone TRƯỚC (theo LUAT BC-04). Mỗi zone một cặp `rai` + `tuyen` `noi_tiep`;

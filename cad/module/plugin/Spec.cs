@@ -354,6 +354,9 @@ namespace TKPCCC
                 case "tuyen": OpTuyen(g, o); break; // cad/module/plugin/Rai.cs
                 case "so_do": OpSoDo(g, o); break;  // cad/module/plugin/SoDo.cs
                 case "vung_tu_dong": OpVungTuDong(g, o); break; // cad/module/plugin/NhanVung.cs
+                case "tuong": OpTuong(g, o); break;         // cad/module/plugin/KienTruc.cs
+                case "cua": OpCua(g, o); break;             // cad/module/plugin/KienTruc.cs
+                case "kt_chuoi": OpKtChuoi(g, o); break;    // cad/module/plugin/KienTruc.cs (lõi Dim.cs)
                 // "anh" không ở đây: ThucHienSpec chạy nó sau khi commit (InAnh)
                 default: throw new System.Exception("không có thao tác \"" + ten + "\" (xem cad/skills/TU_VUNG.md)");
             }

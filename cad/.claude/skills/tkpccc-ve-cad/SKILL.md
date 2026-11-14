@@ -30,6 +30,21 @@ AI không vẽ từng nét. AI viết một gói spec ngắn, plugin C# sinh hì
 4. Số kích thước ghi trên bản vẽ có thể lệch nét vẽ (bản mẫu: nhịp ghi 1700 nhưng vẽ 1785): khi hai chỗ mâu thuẫn thì báo người dùng, không tự chọn.
 5. Nhận phòng: xem ảnh rồi đưa hộp từng phòng lên `PCCC_VUNG` (mục dưới), người dùng kiểm lại.
 
+## Quy trình 6 bước khi người dùng đưa PDF (người dùng chốt 14/11)
+Nền trước (mục trên). Rồi mỗi bước MỘT spec `ket_qua/<dự án>/cad/skills/b<n>_<tên>.json`, MỘT `cad_chay` (`file`, từ lượt hai có `ban_ve`), cuối gói `{"op":"anh",...}`.
+`loi` rỗng và soát (`doc`, `dem` trong gói kế, hoặc gói soát riêng) đạt tiêu chí mới sang bước sau; chưa đạt thì sửa đúng bước đó. Cú pháp op: `cad/skills/TU_VUNG.md`.
+
+| Bước (spec) | Đọc trên PDF | Op | Đạt khi |
+|---|---|---|---|
+| 1 Trục (`b1_truc`) | tên trục, chuỗi kích thước nhịp X, Y | `luoi_truc` (`p` = giao trục đầu trên nền) | bóng trục trùng nền, tổng nhịp khớp chuỗi kích thước |
+| 2 Tường (`b2_tuong`) | tường bao, tường theo trục, cột, độ dày | `tuong` (tim theo trục, vòng bao `kin`), cột `net` `kin` layer `COT` | ảnh: hai nét tường trùng nền; `doc` layer `TUONG` có đủ đoạn |
+| 3 Mặt bằng chi tiết (`b3_chi_tiet`) | vách, cửa (vị trí, rộng, chiều mở), thang, tên phòng | `tuong` `vach`:true, `cua`, `chu`, `kt_chuoi` | `vung_tu_dong` một điểm mỗi phòng ra đủ vùng, m² khớp PDF (±5 %) |
+| 4 Thiết bị PCCC (`b4_thiet_bi`) | công năng, chiều cao trần từng phòng; zone | `rai` theo vùng (luật ở mục dưới), `dat` thiết bị lẻ (nút ấn, chuông, họng) | `rai` `ho` = 0, `dem` khớp số dự kiến, zone không vượt `rule/LUAT.md` BC-04 |
+| 5 Dây, ống (`b5_tuyen`) | tuyến dây theo zone, trục ống chính | `tuyen` (`noi_tiep` mỗi zone; ống `xuong_ca` / `cot` theo `truc`) | `dem` có m dây, ống; ảnh không tuyến cắt ngang phòng khác |
+| 6 Sơ đồ nguyên lý (`b6_so_do`) | (lấy số từ bước 4, 5) | `so_do` từ `dem` theo zone / tầng | `loi` rỗng, ảnh đúng quy cách `cad/knowledge/so-do-nguyen-ly.md` |
+
+Tường vẽ bằng `tuong` nên `vung_tu_dong` chỉ dò layer tường, không lẫn nét PDF nền; cửa rộng hơn 3 m (cửa cuốn) thì truyền `ho`.
+
 ## Rải thiết bị và đi tuyến (người dùng dạy 2026-11-11, đầy đủ ở `cad/knowledge/tu-duy-di-day-di-ong.md`)
 1. Phân khu vực TRƯỚC khi rải: vẽ hộp hoặc polyline kín từng khu vực (theo tường, dầm sàn, vì kèo) lên layer `PCCC_VUNG` bằng `net` với `kin`:true, kèm `{"op":"anh"}` rồi dừng để người dùng kiểm và sửa trong CAD.
 2. Người dùng báo xong: `doc` với `gi`:"vung" đọc lại vùng, rồi `rai` theo `l`. Đầu báo khói, nhiệt (`BC_KHOI`, `BC_KHOI_TRAN`, `BC_NHIET`): KHÔNG hỏi người dùng khoảng cách hay m², bỏ `s` để plugin lấy TCVN 7568-14 từ `data/khoang_cach_rai.json`, có chiều cao trần thì truyền `h` (m). Mã khác (sprinkler): `s` (bước tối đa) và `dt` (m² tối đa một thiết bị) tra theo `cad/rule/LUAT.md` (BC-02, SP-02), ghi rõ căn cứ khi báo.
