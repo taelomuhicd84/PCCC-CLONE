@@ -455,3 +455,10 @@ Người dùng đưa 5 bộ DWG mẫu (`file_cad_test/`, thư mục hồ sơ tr�
 `dump2.lsp` (sửa: MTEXT dài nối các đoạn mã 3, trước đây mất phần đầu), gom 82 đoạn ghi chú dài, in PNG 9 tờ. Viết
 `cad/knowledge/hoc-ban-ve-mau-dwg.md` và `cad/knowledge/mau-thuyet-minh-pccc.md` (văn mẫu, đã lọc tên khách, địa chỉ, số GCN). Thêm `file_cad_test/` vào `.gitignore`.
 Bài học công cụ: model space xếp tờ theo hàng, tờ thường là block nên gom cụm theo điểm chèn không ra khung; tên tờ nằm DƯỚI hình; bash heredoc làm hỏng `\U` trong python (viết bằng Write).
+
+## 2026-11-15 rạng sáng — 7 việc plugin còn thiếu so với bộ bản vẽ mẫu
+Người dùng chọn làm hết 7 việc ở mục 6 `cad/knowledge/hoc-ban-ve-mau-dwg.md`. Thêm `module/plugin/BangMb.cs` (`PCCC_KYHIEU`, `PCCC_QUYDINH`, spec `bang`,
+`PCCC_THUYETMINH`), dim bước tia beam trong `PCCC_RAI`, nhãn zone + diện tích + điện trở cuối dây trong `PCCC_DAY`, rải theo khoang dầm (từ khoá Dam,
+5.9.1.1.6 c–f), `PCCC_THOATNAN`, vòng tủ vách tường in được. Test mới trong `chay_thu.ps1` (bảng, spec bang, dim tia kt=3, dây vòng + zone, dây hở + điện trở,
+thoát nạn, vòng HVT, khoang dầm 4 lớn + 18 nhỏ, thuyết minh 3 hệ 7 mục): TAT CA DAT; `thu_mcp` đạt.
+Lỗi gặp: `DAY_BC` có hệ ONG (không phải BC) nên điều kiện điện trở cuối dây xét theo mã; PowerShell 5 `@($null).Count` = 1 (kiểm `-not $x.loi`).

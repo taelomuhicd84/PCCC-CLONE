@@ -169,6 +169,89 @@ namespace TKPCCC
             }
         }
 
+        [CommandMethod("PCCC_THUYETMINH")] public void LenhThuyetMinh() { Chay(ThuyetMinhTay); }
+
+        // Mục văn mẫu tổng quát theo hệ (tiêu đề "## ..." trong mau-thuyet-minh-pccc.md). Bỏ các mục có số liệu riêng của công trình mẫu
+        // (lưu lượng, bể, bơm, họng nước kèm khối tích bể): những mục đó phải tính cho từng công trình.
+        static readonly string[][] MUC_THEO_HE = {
+            new[] { "BC", "Báo cháy — thuyết minh chung, trung tâm, nút ấn, đầu báo", "Báo cháy — thiết bị chỉ thị, âm thanh, cáp tín hiệu, ghi chú khác",
+                "Báo cháy — tủ trung tâm (5.12.3–5.12.7)", "Báo cháy — cắt điện khi cháy" },
+            new[] { "SPR", "Chữa cháy — lý do chọn sprinkler nước", "Chữa cháy — ghi chú chung đường ống, đai giữ" },
+            new[] { "HVT", "Chữa cháy — vách tường, van giảm áp" },
+            new[] { "NUOC", "Trạm bơm — thuyết minh phòng bơm", "Trạm bơm — nguyên lý hoạt động cụm bơm (auto, cưỡng bức)" },
+            new[] { "DEN", "Đèn EXIT — EM — thuyết minh, tính độ rọi", "Đèn EXIT — EM — thông số đèn", "Đèn EXIT — EM — thông số đèn exit" },
+            new[] { "BINH", "Bình chữa cháy xách tay" } };
+
+        /// Đọc các mục "## tiêu đề" + khối ```text``` của file văn mẫu (build.bat chép cạnh DLL).
+        static Dictionary<string, string> DocVanMau()
+        {
+            string f = Path.Combine(ThuMuc, "mau-thuyet-minh-pccc.md");
+            if (!File.Exists(f)) throw new System.Exception("thiếu mau-thuyet-minh-pccc.md cạnh DLL (chạy cad\\build.bat)");
+            Dictionary<string, string> kq = new Dictionary<string, string>();
+            string muc = null;
+            StringBuilder b = null;
+            foreach (string l in File.ReadAllLines(f, Encoding.UTF8))
+            {
+                if (l.StartsWith("## ")) { muc = l.Substring(3).Trim(); continue; }
+                if (muc == null) continue;
+                if (b == null && l.StartsWith("```text")) { b = new StringBuilder(); continue; }
+                if (b != null && l.StartsWith("```")) { kq[muc] = b.ToString().TrimEnd(); b = null; muc = null; continue; }
+                if (b != null) b.AppendLine(l);
+            }
+            return kq;
+        }
+
+        /// PCCC_THUYETMINH: chèn thuyết minh theo các hệ có thiết bị trong model space (đếm như PCCC_BOC), mỗi hệ một cột MText trên layer PCCC_THUYET_MINH.
+        static void ThuyetMinhTay()
+        {
+            Document doc = AcApp.DocumentManager.MdiActiveDocument;
+            Database db = doc.Database;
+            Editor ed = doc.Editor;
+            FileDanhMuc dm = DocDanhMuc();
+            Dictionary<string, string> mau = DocVanMau();
+            PromptPointResult pp = ed.GetPoint("\nĐiểm chèn thuyết minh (góc trên trái): ");
+            if (pp.Status != PromptStatus.OK) return;
+            PromptDoubleOptions ho = new PromptDoubleOptions("\nChiều cao chữ (đơn vị bản vẽ): ");
+            ho.DefaultValue = 0.25 / HeSoMet(db);
+            ho.UseDefaultValue = true;
+            ho.AllowNegative = false; ho.AllowZero = false;
+            PromptDoubleResult hr = ed.GetDouble(ho);
+            if (hr.Status != PromptStatus.OK) return;
+            double h = hr.Value;
+            List<string> he = new List<string>();
+            int soMuc = 0;
+            using (Transaction tr = db.TransactionManager.StartTransaction())
+            {
+                BlockTableRecord ms = (BlockTableRecord)tr.GetObject(((BlockTable)tr.GetObject(db.BlockTableId, OpenMode.ForRead))[BlockTableRecord.ModelSpace], OpenMode.ForRead);
+                HashSet<string> coHe = new HashSet<string>(MaTrongVung(db, tr, ms.Cast<ObjectId>().ToList(), dm).Select(x => TimMa(dm, x)).Where(x => x != null).Select(x => x.he));
+                BlockTableRecord space = (BlockTableRecord)tr.GetObject(db.CurrentSpaceId, OpenMode.ForWrite);
+                ObjectId lop = DamBaoLayer(db, tr, "PCCC_THUYET_MINH", 7);
+                Point3d p = pp.Value.TransformBy(ed.CurrentUserCoordinateSystem);
+                double rong = 90 * h;
+                foreach (string[] dong in MUC_THEO_HE)
+                {
+                    if (!coHe.Contains(dong[0])) continue;
+                    List<string> doan = dong.Skip(1).Where(x => mau.ContainsKey(x)).Select(x => mau[x]).ToList();
+                    if (doan.Count == 0) continue;
+                    MText t = new MText();
+                    t.Location = p + new Vector3d(he.Count * (rong + 5 * h), 0, 0);
+                    t.Attachment = AttachmentPoint.TopLeft;
+                    t.Width = rong;
+                    t.TextHeight = h;
+                    t.LayerId = lop;
+                    t.Contents = E(string.Join("\n\n", doan).Replace("\r", ""));
+                    space.AppendEntity(t);
+                    tr.AddNewlyCreatedDBObject(t, true);
+                    he.Add(dong[0]);
+                    soMuc += doan.Count;
+                }
+                tr.Commit();
+            }
+            if (he.Count == 0) { ed.WriteMessage("\nBản vẽ chưa có thiết bị PCCC nào (đếm như PCCC_BOC): không có hệ để viết thuyết minh."); return; }
+            ed.WriteMessage("\n[TKPCCC] PCCC_THUYETMINH he=" + string.Join(",", he) + " muc=" + soMuc
+                + " (văn mẫu của bộ bản vẽ người dùng: đọc lại, sửa số liệu, điều khoản cho đúng công trình)");
+        }
+
         /// Thao tác spec "bang": loai "ky_hieu" (thiết bị trong "hop" [x1,y1,x2,y2], bỏ = cả bản vẽ) | "quy_dinh"; p góc trên trái; cao (chữ, mặc định 2,5 mm × 100).
         static void OpBang(GoiSpec g, Dictionary<string, object> o)
         {

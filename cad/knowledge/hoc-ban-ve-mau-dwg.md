@@ -222,11 +222,11 @@ Model space xếp tờ theo hàng; mỗi hàng là một hệ, có nhãn đỏ b
   - Tín hiệu báo cháy cắt điện sinh hoạt, giữ nguồn PCCC.
   - Bảo vệ quá tải máy phát chỉ báo động, không cắt.
 
-## 6. So với plugin TKPCCC (gợi ý việc sau, CHƯA làm)
+## 6. So với plugin TKPCCC — 7 việc ĐÃ LÀM 15/11 (người dùng chọn làm hết)
 
 Đã có: rải đầu điểm, beam, zone, sơ đồ nguyên lý BC (`so_do he:"bc"`, theo PDF mẫu trang 11), bảng khối lượng, dim tự động.
 
-Còn thiếu so với bản mẫu:
+Đã làm, lệnh / chỗ sửa ghi ở `cad/README.md` bảng "Sửa gì vào đâu":
 1. Chèn bảng KÝ HIỆU cho mặt bằng (chỉ thiết bị có trên tờ).
 2. Chèn bảng "Quy định lắp đặt đầu báo cháy theo TCVN 7568-14:2025" (bảng 3 dòng ở trên, lấy số từ `data/khoang_cach_rai.json`).
 3. Dim bước tia và dim tia tới tường cho `BC_BEAM`.
@@ -234,3 +234,6 @@ Còn thiếu so với bản mẫu:
 5. Rải theo khoang dầm: khoang > 9 m² và trần > 4 m thì mỗi khoang một đầu (5.9.1.1.6 f); mặt bằng dầm làm nét phân vùng mẫu.
 6. Vòng bán kính bảo vệ cho tủ vách tường; hatch đường thoát nạn trên tờ chữa cháy.
 7. Sinh thuyết minh theo `mau-thuyet-minh-pccc.md`: chọn đoạn theo hệ có thật, điền số liệu công trình.
+
+Kết quả: 1–2 `PCCC_KYHIEU`, `PCCC_QUYDINH` (+ spec `bang`); 3 dim tia `kt=` trong `PCCC_RAI`; 4 `PCCC_DAY` hỏi tên zone, ghi diện tích, điện trở cuối dây mạch hở;
+5 `PCCC_RAI` từ khoá Dam (khoang nhỏ gom); 6 `PCCC_THOATNAN`, `PCCC_VUNGBV` tủ vách tường nét đứt in được; 7 `PCCC_THUYETMINH`. Test `chay_thu.ps1` đạt.

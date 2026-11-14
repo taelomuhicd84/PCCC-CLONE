@@ -19,6 +19,7 @@ if ($LASTEXITCODE) { throw 'Bien dich loi' }
 if ($LASTEXITCODE) { throw 'Bien dich TKPCCC.UI.dll loi' }
 Copy-Item "$GOC\data\vat_tu.json" $T
 Copy-Item "$GOC\data\khoang_cach_rai.json" $T  # tri so rai theo tieu chuan (rai / PCCC_RAI khong co s)
+Copy-Item "$GOC\cad\knowledge\mau-thuyet-minh-pccc.md" $T  # van thuyet minh mau (PCCC_THUYETMINH)
 Copy-Item "$GOC\cad\data\ky_hieu\hinh_bc.json" $T  # hinh block mac dinh (lay tu PDF trang 11): PCCC_LIB tao thu vien moi theo hinh nay
 # File danh muc "goc" cua repo: tro toi ban chep tam (nhu build.bat ghi nguon_vat_tu.txt) de PCCC_THEMBLOCK ghi ca hai file ma khong dung repo.
 New-Item -ItemType Directory "$T\goc" | Out-Null
@@ -57,6 +58,7 @@ $kb = @('INSUNITS', '4', 'NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '_.SAVEAS', '2018',
   'PCCC_THEMBLOCK', 'L', 'van_khach', 'Van khach them', 'SPR', '', 'PCCC_DAT', 'VAN_KHACH', '81000,0', '',
   'PCCC_KYHIEU', '', '0,-20000', '', 'PCCC_QUYDINH', '0,-40000', '',
   'RECTANG', '0,-60000', '10000,-58000', 'PCCC_THOATNAN', 'L', '', 'PCCC_DAT', 'HVT_TU', '20000,-60000', '', 'PCCC_VUNGBV', 'HVT_TU', '26',
+  'PCCC_THUYETMINH', '0,-80000', '',
   'PCCC_BOC', 'Khong', '', 'ThuPlugin', '_.QSAVE')
 $kb -join "`r`n" | Set-Content -Encoding ascii "$T\kb.scr"
 $p = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb.out.txt"
@@ -82,6 +84,7 @@ $can = @(
   @('PCCC_KYHIEU dong=\d+ [^\r\n]*BC_KHOI[^\r\n]*BC_NHIET', 'PCCC_KYHIEU: bang ky hieu liet ke thiet bi co trong ban ve (dau khoi, dau nhiet)'),
   @('PCCC_QUYDINH dong=3\b', 'PCCC_QUYDINH: bang quy dinh lap dat 3 loai dau bao tu khoang_cach_rai.json'),
   @('PCCC_THOATNAN vung=1 m2=20\b', 'PCCC_THOATNAN: hatch ANSI31 duong thoat nan trong polyline 10 x 2 m'),
+  @('PCCC_THUYETMINH he=BC,SPR,HVT muc=7\b', 'PCCC_THUYETMINH: ban ve co bao chay, sprinkler, vach tuong ra 3 cot, 7 muc van mau'),
   @('R = 26 m tr.n layer PCCC_VUNGBV_HVT_TU \(n.t ..t, in [^)]+\)', 'PCCC_VUNGBV tu vach tuong: vong net dut, layer in duoc'))
 $loi = 0
 foreach ($c in $can) { if ($out -match $c[0]) { "DAT   $($c[1])" } else { "LOI   $($c[1])"; $loi++ } }

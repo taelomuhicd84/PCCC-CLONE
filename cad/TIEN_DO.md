@@ -3,7 +3,15 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
-## VIỆC 14/11 KHUYA — HỌC BỘ BẢN VẼ PCCC MẪU (DWG): XONG, chờ người dùng chọn việc ở mục 6 file học
+## VIỆC 15/11 RẠNG SÁNG — 7 VIỆC PLUGIN CÒN THIẾU SO VỚI BẢN VẼ MẪU: XONG (người dùng chọn làm hết; dặn tới 95 % ghi tiến độ, không push, đợi reset 5:00 tự làm tiếp)
+1–2 `PCCC_KYHIEU`, `PCCC_QUYDINH` + spec `bang` (`module/plugin/BangMb.cs`); 3 dim bước tia beam (`KtTia`, layer `PCCC_BC_TIA_KT`, thông báo `kt=`);
+4 `PCCC_DAY` hỏi tên zone (nhãn "VỀ TỦ TTBC - ZONE n" + diện tích vùng PCCC_VUNG), điện trở cuối dây ở mút mạch hở dây báo cháy;
+5 `PCCC_RAI` từ khoá Dam với đầu khói: khoang ≥ 9 m² (trần ≥ 4 m) / 4 m² (2–4 m) rải từng khoang, khoang nhỏ gom rải như trần phẳng (5.9.1.1.6 c–f);
+6 `PCCC_THOATNAN` (hatch ANSI31 layer PCCC_THOAT_NAN; luật gạch chéo hiện hữu bỏ qua layer PCCC_*), `PCCC_VUNGBV` mã hệ HVT: vòng nét đứt in được;
+7 `PCCC_THUYETMINH` (văn mẫu `cad/knowledge/mau-thuyet-minh-pccc.md`, build.bat chép cạnh DLL). `chay_thu.ps1`, `thu_mcp.ps1` TAT CA DAT.
+CHƯA: thu_gui (không đổi giao diện), nút trên palette cho 4 lệnh mới (đang chỉ có ở trang Lệnh); xem tận mắt trong AutoCAD. VIỆC KẾ: chờ người dùng.
+
+## VIỆC 14/11 KHUYA — HỌC BỘ BẢN VẼ PCCC MẪU (DWG): XONG
 Người dùng đưa `file_cad_test/` (đã thêm vào `.gitignore`) + thư mục hồ sơ một xưởng trên Drive; dặn KHÔNG đụng file gốc, cần thì save as riêng.
 Đã chép sang `ket_qua/cad_test/hoc_mau/` (gitignore), dump bằng `dump2.lsp` (MTEXT đủ đoạn mã 3), in PNG vài tờ. Kết quả:
 `cad/knowledge/hoc-ban-ve-mau-dwg.md` (bộ tờ, quy ước, beam, zone, sprinkler; mục 6 = 7 việc plugin còn thiếu so với mẫu) và

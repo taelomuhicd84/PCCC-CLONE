@@ -142,6 +142,7 @@ namespace TKPCCC
             new[] { "PCCC_KYHIEU", "Chèn bảng KÝ HIỆU cho mặt bằng (chỉ thiết bị có trên tờ)", "Chọn mặt bằng (Enter = cả bản vẽ), bấm góc trên trái, cao chữ" },
             new[] { "PCCC_QUYDINH", "Chèn bảng quy định lắp đặt đầu báo (TCVN 7568-14:2025)", "Bấm góc trên trái, cao chữ; trị số lấy từ khoang_cach_rai.json" },
             new[] { "PCCC_THOATNAN", "Hatch gạch chéo ĐƯỜNG THOÁT NẠN", "Chọn polyline kín các lối thoát nạn (layer PCCC_THOAT_NAN)" },
+            new[] { "PCCC_THUYETMINH", "Chèn thuyết minh theo các hệ có trên bản vẽ (văn mẫu)", "Bấm góc trên trái, cao chữ; mỗi hệ một cột, đọc lại số liệu" },
             new[] { "PCCC_VUNGBV", "Vẽ vùng bảo vệ bán kính R quanh thiết bị", "Nhập mã, bán kính R; báo thiết bị đứng lẻ" },
             new[] { "PCCC_SPEC", "Chạy một file spec JSON (các thao tác như cad_chay)", "Nhập đường dẫn file .json; kết quả ghi <tên>.kq.json cạnh file" } };
 
