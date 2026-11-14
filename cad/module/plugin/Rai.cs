@@ -550,6 +550,9 @@ namespace TKPCCC
             // Không có "s", "buoc": lấy bước tối đa theo tiêu chuẩn của mã thiết bị (và chiều cao trần "h"); "s" người gọi đưa vào thì dùng số đó.
             Dictionary<string, object> tc = TieuChuanRai(ma, LaySo(o, "h", 0));
             double tuongMax = 0, cachMin = tc == null ? 0 : LaySo(tc, "tuong_min", 0) / m;
+            // shortcut: thao tác spec chỉ rải điểm; tia chiếu (vẽ tia nối hai tường) mới có ở lệnh PCCC_RAI, khi AI cần thì chuyển TiaVung sang đây.
+            if (sx <= 0 && bx <= 0 && tc != null && LayChu(tc, "kieu", "") == "tia")
+                throw new System.Exception("mã " + ma + " là đầu báo tia chiếu: rải bằng lệnh PCCC_RAI (vẽ tia nối hai tường); thao tác rai chỉ rải điểm");
             if (sx <= 0 && bx <= 0 && tc != null) { sx = sy = D(Lay(tc, "s")) / m; tuongMax = LaySo(tc, "tuong", 0) / m; }
             if (sx <= 0 && bx <= 0)
                 throw new System.Exception("rai cần \"s\" (bước tối đa) hoặc \"buoc\" (bước đúng) lấy theo quy chuẩn áp dụng: mã " + ma + " chưa có trị số trong data/khoang_cach_rai.json");
@@ -853,20 +856,28 @@ namespace TKPCCC
             VatTu v = HoiMa(ed, dm, "block", "Mã thiết bị cần rải");
             if (v == null) return;
             double m = HeSoMet(db), s, k = 0.001 / m, dt = 0, le = -1, tuongMax = 0, cachMin = 0;
+            bool xem = false, tia = false;
             Dictionary<string, object> tc = TieuChuanRai(v.ma, 0);
             if (tc != null)
             {
                 // Mã có trị số tiêu chuẩn (data/khoang_cach_rai.json): không hỏi khoảng cách hay m2, chỉ hỏi chiều cao trần để chọn dòng.
-                // HeSo = mức tối ưu k 50–100 % (ý lấy từ addin mẫu, 14/11): bước và cách tường tối đa nhân k; k < 100 % là rải dày hơn mức tối đa.
+                // Ý lấy từ addin mẫu (14/11), từ khoá ở cùng dấu nhắc: HeSo = mức tối ưu k 50–100 % (bước và cách tường tối đa nhân k, k < 100 % là rải dày hơn);
+                // Dam = trần có dầm sâu > 0,3 m (dòng có "dam" thì bước nhân he_so); XemTruoc = chỉ đếm, không vẽ.
                 int heSo = 100;
+                bool coDam = false;
                 PromptDoubleResult hcr;
                 while (true)
                 {
-                    PromptDoubleOptions hc = new PromptDoubleOptions("\nChiều cao trần (m), Enter = không xét" + (heSo < 100 ? " (k = " + heSo + " %)" : ""));
-                    hc.Keywords.Add("HeSo"); // AutoCAD tự nối " [HeSo]: "
+                    string them = (heSo < 100 ? ", k = " + heSo + " %" : "") + (coDam ? ", có dầm" : "") + (xem ? ", xem trước" : "");
+                    PromptDoubleOptions hc = new PromptDoubleOptions("\nChiều cao trần (m), Enter = không xét" + (them != "" ? " (" + them.Substring(2) + ")" : ""));
+                    hc.Keywords.Add("HeSo"); // AutoCAD tự nối " [HeSo/Dam/XemTruoc]: "
+                    hc.Keywords.Add("Dam");
+                    hc.Keywords.Add("XemTruoc");
                     hc.AllowNegative = false; hc.AllowZero = false; hc.AllowNone = true;
                     hcr = ed.GetDouble(hc);
                     if (hcr.Status != PromptStatus.Keyword) break;
+                    if (hcr.StringResult == "Dam") { coDam = true; continue; }
+                    if (hcr.StringResult == "XemTruoc") { xem = true; continue; }
                     PromptIntegerOptions ko = new PromptIntegerOptions("\nMức tối ưu k (%) so với khoảng cách tối đa của tiêu chuẩn, 50–100: ");
                     ko.LowerLimit = 50; ko.UpperLimit = 100; ko.DefaultValue = heSo; ko.UseDefaultValue = true;
                     PromptIntegerResult kr = ed.GetInteger(ko);
@@ -878,8 +889,22 @@ namespace TKPCCC
                 s = D(Lay(tc, "s")) * heSo / 100.0 / m;
                 tuongMax = LaySo(tc, "tuong", 0) * heSo / 100.0 / m;
                 cachMin = LaySo(tc, "tuong_min", 0) / m;
-                ed.WriteMessage("\n[TKPCCC] " + v.ma + " theo " + LayChu(tc, "can_cu", "") + ": bước tối đa " + Lt(s * m).ToString(CultureInfo.InvariantCulture)
-                    + " m, cách tường tối đa " + Lt(tuongMax * m).ToString(CultureInfo.InvariantCulture) + " m" + (heSo < 100 ? " (k = " + heSo + " %)" : "") + ".");
+                tia = LayChu(tc, "kieu", "") == "tia";
+                ed.WriteMessage("\n[TKPCCC] " + v.ma + " theo " + LayChu(tc, "can_cu", "") + ": " + (tia ? "khoảng cách giữa các tia " : "bước tối đa ")
+                    + Lt(s * m).ToString(CultureInfo.InvariantCulture) + " m, cách tường tối đa " + Lt(tuongMax * m).ToString(CultureInfo.InvariantCulture) + " m"
+                    + (heSo < 100 ? " (k = " + heSo + " %)" : "") + ".");
+                if (coDam)
+                {
+                    Dictionary<string, object> dam = Lay(tc, "dam") as Dictionary<string, object>;
+                    if (dam != null)
+                    {
+                        s *= LaySo(dam, "he_so", 1);
+                        ed.WriteMessage("\n[TKPCCC] Trần có dầm sâu > 0,3 m, theo " + LayChu(dam, "can_cu", "") + ": bước tối đa còn "
+                            + Lt(s * m).ToString(CultureInfo.InvariantCulture) + " m.");
+                    }
+                    else ed.WriteMessage("\n[TKPCCC] " + v.ma + ": tiêu chuẩn không giảm bước khi có dầm. Đầu báo khói kiểu điểm xét từng ô giữa dầm theo TCVN 7568-14:2025 5.9.1.1.6"
+                        + " (skills/MOD_dau_bao_khoi_khoang_dam.md): ô cần ít nhất một đầu báo thì bấm nét dầm làm nét phân vùng mẫu để rải từng ô.");
+                }
             }
             else
             {
@@ -967,10 +992,22 @@ namespace TKPCCC
             using (Transaction tr = db.TransactionManager.StartTransaction())
             {
                 BlockTableRecord ms = (BlockTableRecord)tr.GetObject(db.CurrentSpaceId, OpenMode.ForWrite);
-                ObjectId lop = veVung ? DamBaoLayer(db, tr, LAYER_VUNG, 6) : ObjectId.Null;
+                ObjectId lop = veVung && !xem ? DamBaoLayer(db, tr, LAYER_VUNG, 6) : ObjectId.Null;
+                ObjectId lopTia = tia && !xem ? DamBaoLayer(db, tr, LAYER_TIA, MauHe(v.he)) : ObjectId.Null;
+                string duoi = xem ? " (xem trước, chưa vẽ)" : "";
                 foreach (List<Point2d> d in vung)
                 {
-                    if (veVung)
+                    if (tia)
+                    {
+                        double bt, tt;
+                        List<Point2d[]> ts = TiaVung(d, s, 0.2 / m, out bt, out tt);
+                        if (!xem) foreach (Point2d[] a in ts) VeTia(db, tr, ms, v, a, k, lopTia, 0.3 / m);
+                        tong += ts.Count;
+                        ed.WriteMessage("\n[TKPCCC] PCCC_RAI " + v.ma + " tia=" + ts.Count + " buoc=" + Lt(bt).ToString(CultureInfo.InvariantCulture)
+                            + " tuong=" + Lt(tt).ToString(CultureInfo.InvariantCulture) + duoi);
+                        continue;
+                    }
+                    if (veVung && !xem)
                     {
                         Polyline pl = PlVung(d, lop);
                         ms.AppendEntity(pl);
@@ -979,19 +1016,60 @@ namespace TKPCCC
                             + " (" + d.Count + " đỉnh) trên layer " + LAYER_VUNG + ".");
                     }
                     LuoiRai r = LuoiVung(d, s, s, 0, 0, le, le, 0.05 / m, dt, 0, theoHang, tuongMax, cachMin);
-                    foreach (Point3d p in r.Diem) ChenThietBi(db, tr, v, p, k, 0);
+                    if (!xem) foreach (Point3d p in r.Diem) ChenThietBi(db, tr, v, p, k, 0);
                     tong += r.Diem.Count;
                     if (r.Ho > 0) soHo++;
                     ed.WriteMessage("\n[TKPCCC] PCCC_RAI " + v.ma + " n=" + r.Diem.Count + " luoi=" + r.Nx + "x" + r.Ny
                         + " buoc=" + Lt(r.Bx).ToString(CultureInfo.InvariantCulture) + "x" + Lt(r.By).ToString(CultureInfo.InvariantCulture)
                         + " m2=" + Math.Round(r.O * m * m, 2).ToString(CultureInfo.InvariantCulture)
-                        + (r.Ho > 0 ? " HO=" + r.Ho.ToString(CultureInfo.InvariantCulture) + "% (vùng chưa phủ hết, kiểm lại)" : ""));
+                        + (r.Ho > 0 ? " HO=" + r.Ho.ToString(CultureInfo.InvariantCulture) + "% (vùng chưa phủ hết, kiểm lại)" : "") + duoi);
                 }
                 tr.Commit();
             }
-            ed.WriteMessage("\nĐã rải tổng " + tong + " " + v.ten + " trong " + vung.Count + " phòng.");
-            KetQuaRaiCuoi = "Lượt cuối: " + tong + " " + v.ma + " trong " + vung.Count + " phòng"
-                + (soHo > 0 ? " · " + soHo + " phòng chưa phủ hết (HO, xem dòng lệnh)" : " · phủ kín");
+            ed.WriteMessage("\n" + (xem ? "Xem trước: sẽ rải " : "Đã rải tổng ") + tong + " " + v.ten + (tia ? " (tia)" : "") + " trong " + vung.Count + " phòng.");
+            KetQuaRaiCuoi = (xem ? "Xem trước (chưa vẽ): " : "Lượt cuối: ") + tong + " " + v.ma + (tia ? " (tia)" : "") + " trong " + vung.Count + " phòng"
+                + (soHo > 0 ? " · " + soHo + " phòng chưa phủ hết (HO, xem dòng lệnh)" : tia ? "" : " · phủ kín");
+        }
+
+        const string LAYER_TIA = "PCCC_BC_TIA";
+
+        /// Đầu báo tia chiếu (5.9.1.3.2): các tia song song cạnh dài của khung bao vùng (ít tia, mỗi tia dài), cách nhau ≤ s, tia ngoài cùng cách tường
+        /// nửa bước (≤ s / 2; dòng BC_BEAM có tuong = s / 2 nên đủ điều kiện cách tường). Mỗi hàng cắt vùng thành các đoạn trong phòng; hai đầu lùi vào "vao".
+        /// shortcut: hàng chia theo khung bao, phòng chữ L có thể có góc xa tia hơn s / 2 theo phương vuông góc; khi cần thì chia phòng bằng nét phân vùng.
+        static List<Point2d[]> TiaVung(List<Point2d> d, double s, double vao, out double b, out double t)
+        {
+            double x0 = d.Min(p => p.X), x1 = d.Max(p => p.X), y0 = d.Min(p => p.Y), y1 = d.Max(p => p.Y);
+            bool doc = y1 - y0 > x1 - x0;
+            List<Point2d> q = doc ? d.Select(p => new Point2d(p.Y, p.X)).ToList() : d;
+            int n;
+            ChiaBuoc(doc ? x1 - x0 : y1 - y0, s, 0, -1, 0, 1, out n, out b, out t);
+            List<Point2d[]> kq = new List<Point2d[]>();
+            for (int i = 0; i < n; i++)
+            {
+                double y = (doc ? x0 : y0) + t + i * b;
+                foreach (double[] kh in KhoangNgang(q, y))
+                {
+                    if (kh[1] - kh[0] <= 2 * vao) continue;
+                    Point2d a = new Point2d(kh[0] + vao, y), c = new Point2d(kh[1] - vao, y);
+                    kq.Add(doc ? new[] { new Point2d(a.Y, a.X), new Point2d(c.Y, c.X) } : new[] { a, c });
+                }
+            }
+            return kq;
+        }
+
+        /// Một tia: block đầu phát ở đầu a (quay về phía đầu thu, một block = một bộ khi bóc khối lượng), nét tia a–c và vạch ngang ở đầu thu c.
+        static void VeTia(Database db, Transaction tr, BlockTableRecord ms, VatTu v, Point2d[] a, double k, ObjectId lop, double vach)
+        {
+            Vector2d h = a[1] - a[0];
+            ChenThietBi(db, tr, v, new Point3d(a[0].X, a[0].Y, 0), k, Math.Atan2(h.Y, h.X));
+            Vector2d n = new Vector2d(-h.Y, h.X).GetNormal() * vach;
+            foreach (Line l in new[] { new Line(new Point3d(a[0].X, a[0].Y, 0), new Point3d(a[1].X, a[1].Y, 0)),
+                new Line(new Point3d(a[1].X + n.X, a[1].Y + n.Y, 0), new Point3d(a[1].X - n.X, a[1].Y - n.Y, 0)) })
+            {
+                l.LayerId = lop;
+                ms.AppendEntity(l);
+                tr.AddNewlyCreatedDBObject(l, true);
+            }
         }
 
         /// PCCC_TUYEN: ống nhánh sprinkler kiểu xương cá cho một phòng. Chọn đầu phun, chọn ống chính, rồi BẤM chỗ đặt ống góp
@@ -1050,6 +1128,61 @@ namespace TKPCCC
                 tr.Commit();
             }
             ed.WriteMessage("\n[TKPCCC] PCCC_TUYEN " + v.ma + " doan=" + soDoan + " m=" + Math.Round(dai * m, 2).ToString(CultureInfo.InvariantCulture));
+        }
+
+        /// PCCC_DAY (ý "Vẽ dây Loop" của addin mẫu, 14/11): dây nối tiếp các thiết bị đã chọn, đi theo hàng kiểu rắn bò (RanBo, như tuyen noi_tiep),
+        /// từ điểm đầu (tủ, hộp nối; Enter = từ thiết bị đầu). Điểm cuối: Enter = dừng ở thiết bị cuối, Vong = quay về điểm đầu (mạch vòng).
+        static void DayTay()
+        {
+            Document doc = AcApp.DocumentManager.MdiActiveDocument;
+            Database db = doc.Database;
+            Editor ed = doc.Editor;
+            FileDanhMuc dm = DocDanhMuc();
+            VatTu v = HoiMa(ed, dm, "tuyen", "Mã dây (vd DAY_BC)");
+            if (v == null) return;
+            PromptSelectionOptions c1 = new PromptSelectionOptions();
+            c1.MessageForAdding = "\nChọn các thiết bị cần nối dây: ";
+            PromptSelectionResult r1 = ed.GetSelection(c1, new SelectionFilter(new TypedValue[] { new TypedValue((int)DxfCode.Start, "INSERT") }));
+            if (r1.Status != PromptStatus.OK) return;
+            PromptPointOptions po = new PromptPointOptions("\nBấm điểm đầu dây (tủ, hộp nối), Enter = bắt đầu từ thiết bị đầu: ");
+            po.AllowNone = true;
+            PromptPointResult pr = ed.GetPoint(po);
+            if (pr.Status != PromptStatus.OK && pr.Status != PromptStatus.None) return;
+            Point3d? tu = pr.Status == PromptStatus.OK ? pr.Value.TransformBy(ed.CurrentUserCoordinateSystem) : (Point3d?)null;
+            PromptPointOptions pc = new PromptPointOptions("\nBấm điểm cuối dây, Enter = dừng ở thiết bị cuối");
+            pc.Keywords.Add("Vong"); // AutoCAD tự nối " [Vong]: "
+            pc.AllowNone = true;
+            PromptPointResult pr2 = ed.GetPoint(pc);
+            if (pr2.Status == PromptStatus.Cancel) return;
+            bool vong = pr2.Status == PromptStatus.Keyword;
+            Point3d? den = pr2.Status == PromptStatus.OK ? pr2.Value.TransformBy(ed.CurrentUserCoordinateSystem) : vong ? tu : (Point3d?)null;
+
+            double m = HeSoMet(db), dai = 0;
+            int n = 0;
+            using (Transaction tr = db.TransactionManager.StartTransaction())
+            {
+                List<Point3d> ps = new List<Point3d>();
+                BoiCanh bc = new BoiCanh { Tr = tr, Dm = dm, Alias = DocAlias() };
+                foreach (ObjectId id in r1.Value.GetObjectIds())
+                {
+                    BlockReference br = tr.GetObject(id, OpenMode.ForRead) as BlockReference;
+                    if (br != null && !(br is Table) && MaThietBi(br, bc) != null) ps.Add(new Point3d(br.Position.X, br.Position.Y, 0));
+                }
+                if (ps.Count == 0) throw new System.Exception("vùng chọn không có thiết bị nào (block có mã vật tư)");
+                n = ps.Count;
+                ObjectId layer = DamBaoLayer(db, tr, TIEN_TO_LAYER + v.ma, MauHe(v.he));
+                BlockTableRecord ms = (BlockTableRecord)tr.GetObject(db.CurrentSpaceId, OpenMode.ForWrite);
+                foreach (List<Point3d> d in TuyenNoiTiep(new List<List<Point3d>> { ps }, tu, den, 0.1 / m))
+                {
+                    if (vong && !tu.HasValue) d.Add(d[0]); // không có điểm đầu: vòng về thiết bị đầu
+                    Polyline day = TaoPline(d, false, layer);
+                    ms.AppendEntity(day);
+                    tr.AddNewlyCreatedDBObject(day, true);
+                    dai += day.Length;
+                }
+                tr.Commit();
+            }
+            ed.WriteMessage("\n[TKPCCC] PCCC_DAY " + v.ma + " thiet_bi=" + n + (vong ? " vong" : "") + " m=" + Math.Round(dai * m, 2).ToString(CultureInfo.InvariantCulture));
         }
     }
 }

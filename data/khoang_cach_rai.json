@@ -1,5 +1,5 @@
 {
-  "_ghi_chu": "Trị số rải thiết bị theo mã vật tư (đơn vị m), plugin CAD đọc khi thao tác rai / lệnh PCCC_RAI không có \"s\" hay \"buoc\". Mỗi dòng chép từ file nguyên văn ở cột nguon, không viết theo trí nhớ. s = khoảng cách tối đa giữa hai thiết bị; tuong = khoảng cách tối đa từ hàng thiết bị tới tường; tuong_min = tối thiểu; r = khoảng cách tối đa từ điểm bất kỳ tới thiết bị gần nhất (kích thước chéo góc); h_max = chiều cao trần tối đa của dòng này. Sprinkler (TCVN 7336) chưa có: chép bảng khoảng cách đầu phun nguyên văn vào knowledge/ trước rồi mới thêm dòng.",
+  "_ghi_chu": "Trị số rải thiết bị theo mã vật tư (đơn vị m), plugin CAD đọc khi thao tác rai / lệnh PCCC_RAI không có \"s\" hay \"buoc\". Mỗi dòng chép từ file nguyên văn ở cột nguon, không viết theo trí nhớ. s = khoảng cách tối đa giữa hai thiết bị; tuong = khoảng cách tối đa từ hàng thiết bị tới tường; tuong_min = tối thiểu; r = khoảng cách tối đa từ điểm bất kỳ tới thiết bị gần nhất (kích thước chéo góc); h_max = chiều cao trần tối đa của dòng này; kieu \"tia\" = đầu báo tia chiếu, s là khoảng cách giữa các tia, plugin vẽ tia nối hai tường; dam = trần có dầm sâu > 0,3 m: s nhân he_so. cu_ly: khoảng cách tối đa d giữa hai thiết bị cùng loại (PCCC_VUNGBV với R = d / 2 báo thiết bị đứng lẻ). Sprinkler (TCVN 7336) chưa có: chép bảng khoảng cách đầu phun nguyên văn vào knowledge/ trước rồi mới thêm dòng.",
   "thiet_bi": [
     {
       "ma": ["BC_KHOI", "BC_KHOI_TRAN"],
@@ -22,7 +22,42 @@
       "nguyen_van": [
         "5.9.2.1.2 ... Đối với các bề mặt bằng phẳng, khoảng cách từ bất cứ điểm nào trên bề mặt bằng phẳng đến đầu báo cháy gần nhất cũng không được vượt quá 5,1 m và khoảng cách giữa các đầu báo cháy không được vượt quá 7,2 m (xem Hình 7).",
         "5.9.2.1.4 a) Khoảng cách từ hàng đầu báo cháy gần nhất tới tường hoặc vách ngăn nằm trong khoảng từ 0,3 m đến 3,6 m (xem Hình 7)."
+      ],
+      "dam": {
+        "he_so": 0.7,
+        "can_cu": "TCVN 7568-14:2025 5.9.2.1.5",
+        "nguyen_van": "5.9.2.1.5 Giảm khoảng cách giữa các đầu báo cháy Khi trần được phân chia bởi các kết cấu như dầm, xà hoặc đường ống có độ sâu theo phương thẳng đứng lớn hơn 0,3 m thì khoảng cách giữa các đầu báo cháy được giảm đi 30 %."
+      }
+    },
+    {
+      "ma": ["BC_BEAM"],
+      "ten": "Đầu báo cháy khói tia chiếu",
+      "kieu": "tia",
+      "s": 14.4, "tuong": 7.2, "h_max": 40,
+      "can_cu": "TCVN 7568-14:2025 5.9.1.3.1, 5.9.1.3.2",
+      "nguon": "knowledge/tcvn7568-14-2025.md",
+      "nguyen_van": [
+        "5.9.1.3.1 Đầu báo cháy khói tia chiếu được lắp đặt cho khu vực có chiều cao trần đến 40 m. Khoảng cách lắp đặt đầu báo nằm trong khoảng từ 0,025 m đến 0,6 m bến dưới trần hoặc mái.",
+        "5.9.1.3.2 Khoảng cách giữa các tia chiếu không được vượt quá 14,4 m (xem Hình 5). Khoảng cách tia chiếu đến tường, vách ngăn không được vượt quá 7,2 m."
       ]
+    }
+  ],
+  "cu_ly": [
+    {
+      "ma": ["BC_NUTAN", "BC_TOHOP"],
+      "ten": "Hộp nút ấn báo cháy",
+      "d": 45,
+      "can_cu": "TCVN 7568-14:2025 5.10.3",
+      "nguon": "knowledge/tcvn7568-14-2025.md",
+      "nguyen_van": "5.10.3 Khoảng cách giữa các hộp nút ấn báo cháy không được vượt quá 45 m."
+    },
+    {
+      "ma": ["BC_DEN", "BC_COI_DEN"],
+      "ten": "Thiết bị báo cháy bằng ánh sáng lắp trên tường",
+      "d": 45,
+      "can_cu": "TCVN 7568-14:2025 5.11.3.1.2",
+      "nguon": "knowledge/tcvn7568-14-2025.md",
+      "nguyen_van": "Khi lắp đặt trên tường chiều cao từ chân tường đến đèn tối thiểu 2 m; khoảng cách giữa các thiết bị không quá 45 m."
     }
   ]
 }

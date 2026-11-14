@@ -411,3 +411,7 @@ BỐ TRÍ, hoàn tác, vẽ loop, kiểm tra, báo cáo); Dim đối tượng 5 
 - `module/ui/BangBoTri.cs` (mới) + `PCCC_BOTRI`: phân hệ Bố trí BC (đọc `khoang_cach_rai.json` cạnh DLL, nhớ lựa chọn trong `cai_dat.json` khoá `bt_*`).
 - `BangChinh.cs`: nút dọc "Bố trí BC", thẻ bước 4 có huy hiệu mở trang; huy hiệu lệnh kèm phím tắt, tìm theo phím tắt.
 - Test: `chay_thu.ps1` thêm `HeSo 50`; `thu_gui.ps1` chép `khoang_cach_rai.json`, gõ `PCCC_BOTRI`, đếm thiết bị trên trang.
+- Đợt 1 tiếp (người dùng: "cứ làm hết", chỉ dùng file spec .md đã train, không tra TCVN): `PCCC_RAI` thêm `Dam`, `XemTruoc`, đầu báo tia chiếu `BC_BEAM`
+  (tia song song cạnh dài, `TiaVung`, `VeTia`, layer `PCCC_BC_TIA`); `khoang_cach_rai.json` thêm `BC_BEAM`, `dam` của `BC_NHIET`, nhóm `cu_ly` (nút ấn, đèn 45 m);
+  lệnh mới `PCCC_DAY`; trang Báo cháy thêm ô dầm, Xem trước, mục 5 (cự ly, dây loop, Dim, bóc KL, chèn bảng), Vẽ vùng tay. Test 102/102 + thu_mcp + thu_gui đạt.
+  Danh sách việc còn lại: `cad/tien_do/viec_video_addin.md`.

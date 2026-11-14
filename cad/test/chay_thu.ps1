@@ -259,6 +259,10 @@ $bamTv = (Get-FileHash "$T\PCCC_Blocks.dwg").Hash
   'PCCC_SPEC', "$T\so_do_loc.json", 'PCCC_SPEC', "$T\so_do_bc2.json", 'INSUNITS', '6', 'PCCC_SPEC', "$T\so_do_m.json", 'INSUNITS', '4', 'PCCC_SPEC', "$T\rai_xien.json",
   'RECTANG', '3000000,0', '3030600,20400', 'PCCC_RAI', 'BC_KHOI', '', '', 'L', '', '', '',
   'RECTANG', '3200000,0', '3230600,20400', 'PCCC_RAI', 'BC_KHOI', 'HeSo', '50', '', '', 'L', '', '', '',
+  'RECTANG', '3300000,0', '3330000,20000', 'PCCC_RAI', 'BC_BEAM', '', '', 'L', '', '', '',
+  'RECTANG', '3400000,0', '3430600,20400', 'PCCC_RAI', 'BC_KHOI', 'XemTruoc', '', '', 'L', '', '', '',
+  'RECTANG', '3500000,0', '3514400,7200', 'PCCC_RAI', 'BC_NHIET', 'Dam', '', '', 'L', '', '', '',
+  '_.ZOOM', 'W', '3199000,-1000', '3231000,21000', 'PCCC_DAY', 'DAY_BC', 'C', '3199000,-1000', '3231000,21000', '', '3200000,-500', 'Vong',
   '-LAYER', 'M', 'NEN_A', 'L', 'CENTER', '', 'M', 'KT_A', '', 'PCCC_SPEC', "$T\vung_ve.json",
   '-HATCH', 'P', 'SOLID', 'W', 'N', '2599800,4700', '2600300,4700', '2600300,5200', '2599800,5200', 'C', '', '', '-LAYER', 'S', '0', '',
   'PCCC_SPEC', "$T\vung_do.json", 'PCCC_SPEC', "$T\vung_ve2.json", 'OSMODE', '0', '_.ZOOM', 'W', '2699000,-1000', '2714000,6000', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '', '', '', 'C', '2699000,-1000', '2714000,6000', '', '', '2710500,1200', '',
@@ -274,7 +278,13 @@ $bamTv = (Get-FileHash "$T\PCCC_Blocks.dwg").Hash
   # toa do moi dau bao khoi cua rai_xien (goc x 2500000, vung da giac y < 50000)
   ('(progn (setq f (open "' + ($T -replace '\\', '/') + '/xien.txt" "w") ss (ssget "_X" (list (cons 0 "INSERT") (cons 2 "BC_KHOI"))) i 0) ' +
    '(repeat (sslength ss) (setq p (cdr (assoc 10 (entget (ssname ss i))))) (if (and (> (car p) 2490000) (< (car p) 2600000) (< (cadr p) 50000)) ' +
-   '(write-line (strcat (rtos (car p) 2 3) "," (rtos (cadr p) 2 3)) f)) (setq i (1+ i))) (close f))')) -join "`r`n" |
+   '(write-line (strcat (rtos (car p) 2 3) "," (rtos (cadr p) 2 3)) f)) (setq i (1+ i))) (close f))'),
+  # 14/11 toi: XemTruoc khong chen block; BC_BEAM 2 tia = 2 block + 2 net tia + 2 vach dau thu tren PCCC_BC_TIA
+  ('(progn (defun dk (ten x0 x1 / ss i n p) (setq ss (ssget "_X" (list (cons 0 "INSERT") (cons 2 ten))) i 0 n 0) ' +
+   '(if ss (repeat (sslength ss) (setq p (cdr (assoc 10 (entget (ssname ss i))))) (if (and (> (car p) x0) (< (car p) x1)) (setq n (1+ n))) (setq i (1+ i)))) n) ' +
+   '(setq f (open "' + ($T -replace '\\', '/') + '/moi.txt" "w")) (write-line (strcat "XEM " (itoa (dk "BC_KHOI" 3399000 3431000))) f) ' +
+   '(write-line (strcat "BEAM " (itoa (dk "BC_BEAM" 3299000 3331000))) f) (setq ss (ssget "_X" (list (cons 8 "PCCC_BC_TIA")))) ' +
+   '(write-line (strcat "TIA " (itoa (if ss (sslength ss) 0))) f) (close f))')) -join "`r`n" |
   Set-Content -Encoding ascii "$T\kb2.scr"
 $p2 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb2.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb2.out.txt"
 if (-not $p2.WaitForExit(180000)) { Stop-Process -Id $p2.Id -Force; throw "accoreconsole qua 3 phut (PCCC_SPEC): $T\kb2.out.txt" }
@@ -523,6 +533,12 @@ Set-ItemProperty $fGoc IsReadOnly $false
 # Viec 1: PCCC_RAI BC_KHOI khong hoi S, m2, cach tuong (chi hoi chieu cao tran, Enter), lay TCVN 7568-14 tu khoang_cach_rai.json: 30600 x 20400 ra 3 x 2 buoc 10200.
 Kiem ($out2 -match 'PCCC_RAI BC_KHOI n=6 luoi=3x2 buoc=10200x10200 m2=104\.04(\r|\n)') 'PCCC_RAI BC_KHOI: tri so TCVN 7568-14 tu file, khong hoi S, ra 3 x 2 buoc 10200'
 Kiem ($out2 -match 'PCCC_RAI BC_KHOI n=24 luoi=6x4 buoc=5100x5100 ') 'PCCC_RAI HeSo 50 (muc toi uu k, PCCC_BOTRI gui): cung phong ra 6 x 4 buoc 5100, gap 4 lan k = 100 %'
+Kiem ($out2 -match 'PCCC_RAI BC_BEAM tia=2 buoc=10000 tuong=5000') 'PCCC_RAI BC_BEAM (TCVN 7568-14 5.9.1.3.2): phong 30 x 20 m ra 2 tia song song canh dai, cach nhau 10 m, cach tuong 5 m'
+Kiem ($out2 -match 'PCCC_RAI BC_KHOI n=6 luoi=3x2 buoc=10200x10200 m2=104\.04 \(xem') 'PCCC_RAI XemTruoc: dem 6 dau bao, bao (xem truoc, chua ve)'
+Kiem ($out2 -match 'PCCC_RAI BC_NHIET n=6 luoi=3x2 buoc=4800x3600 ') 'PCCC_RAI Dam (5.9.2.1.5): dau nhiet buoc 7,2 x 0,7 = 5,04 m, phong 14,4 x 7,2 ra 3 x 2 (khong dam: 2 x 1)'
+Kiem ($out2 -match 'PCCC_DAY DAY_BC thiet_bi=24 vong m=') 'PCCC_DAY: day loop noi 24 dau bao cua phong HeSo 50, vong ve diem dau'
+$moi = if (Test-Path "$T\moi.txt") { Get-Content -Raw "$T\moi.txt" } else { '' }
+Kiem ($moi -match 'XEM 0' -and $moi -match 'BEAM 2' -and $moi -match 'TIA 4') "XemTruoc khong chen block, BC_BEAM 2 block + 4 net PCCC_BC_TIA: $($moi -replace '\s+', ' ')"
 
 # --- Kien truc (goi A 14/11): tuong, vach, cua, kt_chuoi, vung_tu_dong tren phong ve bang tuong; lenh PCCC_TRUC, PCCC_TUONG, PCCC_CUA, PCCC_ADIM, PCCC_CDIM ---
 # Phong 6000 x 4000 (tim), tuong 200 kin + vach 100 o x 4000 (2 dau cham tim tuong ngoai), cua 900 tuong duoi, cua 800 tren vach.

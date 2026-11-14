@@ -92,6 +92,7 @@ namespace TKPCCC
         [CommandMethod("PCCC_SPEC")] public void LenhSpec() { Chay(ChaySpec); } // cad/module/plugin/Spec.cs
         [CommandMethod("PCCC_RAI")] public void LenhRai() { Chay(RaiTay); }     // cad/module/plugin/Rai.cs
         [CommandMethod("PCCC_TUYEN")] public void LenhTuyen() { Chay(TuyenTay); } // cad/module/plugin/Rai.cs
+        [CommandMethod("PCCC_DAY")] public void LenhDay() { Chay(DayTay); }       // cad/module/plugin/Rai.cs
         [CommandMethod("PCCC_THEMBLOCK")] public void LenhThemBlock() { Chay(ThemBlock); } // cad/module/plugin/Block.cs
         static void Chay(Action viec)
         {
@@ -118,8 +119,9 @@ namespace TKPCCC
             new[] { "PCCC_LIB", "Nạp, cập nhật block PCCC từ PCCC_Blocks.dwg", "Gõ lệnh; Taomoi = cất bản cũ, tạo lại thư viện mặc định" },
             new[] { "PCCC_DAT", "Đặt thiết bị theo mã vật tư", "Nhập mã (? = danh sách, gõ một phần tên hoặc mã để tìm), bấm điểm đặt" },
             new[] { "PCCC_ONG", "Vẽ ống, dây trên layer PCCC_<mã>", "Nhập mã ống, dây (vd ONG_DN50), bấm các điểm" },
-            new[] { "PCCC_RAI", "Rải thiết bị theo lưới trong phòng", "Nhập mã (đầu báo: chiều cao trần, HeSo = mức tối ưu k 50–100 %), quét chọn mặt bằng, bấm nét phân vùng mẫu (mỗi màu một lần, Enter = tự nhận từ tường), Enter = mọi vùng hoặc bấm điểm từng vùng; tự vẽ vùng PCCC_VUNG rồi rải" },
+            new[] { "PCCC_RAI", "Rải thiết bị theo lưới trong phòng", "Nhập mã (đầu báo: chiều cao trần; HeSo = mức tối ưu k 50–100 %, Dam = trần có dầm > 0,3 m, XemTruoc = chỉ đếm), quét chọn mặt bằng, bấm nét phân vùng mẫu (mỗi màu một lần, Enter = tự nhận từ tường), Enter = mọi vùng hoặc bấm điểm từng vùng; tự vẽ vùng PCCC_VUNG rồi rải; BC_BEAM vẽ tia nối hai tường" },
             new[] { "PCCC_TUYEN", "Ống nhánh sprinkler kiểu xương cá", "Chọn đầu phun, chọn ống chính, bấm vị trí ống góp" },
+            new[] { "PCCC_DAY", "Dây báo cháy nối tiếp thiết bị (dây loop)", "Nhập mã dây (DAY_BC), chọn thiết bị, bấm điểm đầu (tủ), điểm cuối: Enter = dừng ở thiết bị cuối, Vong = về điểm đầu" },
             new[] { "PCCC_THEMBLOCK", "Thêm block của bạn (kể cả block động) vào thư viện", "Chọn block, nhập mã vật tư mới, tên, hệ, đơn vị tính" },
             new[] { "PCCC_GAN", "Gán block có sẵn trong bản vẽ vào mã vật tư", "Chọn block rồi nhập mã: bóc được bản vẽ không vẽ bằng plugin" },
             new[] { "PCCC_BOC", "Bóc khối lượng, gửi lên web báo giá", "Chọn vùng (Enter = cả bản vẽ), tách theo tầng, khu nếu muốn" },

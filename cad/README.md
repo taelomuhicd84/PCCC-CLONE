@@ -59,6 +59,7 @@ AI chỉ viết một gói thao tác ngắn (spec JSON), plugin sinh hình. Mộ
 | Dim tự động (`PCCC_ADIM`, `PCCC_CDIM`, lõi chuỗi dim của `kt_chuoi`) | `module/plugin/Dim.cs` |
 | Thêm vật tư, thiết bị | `data/vat_tu.json` ở GỐC repo (dùng chung với báo giá), rồi `build.bat`, `PCCC_LIB` |
 | Đưa block của mình (kể cả block động) vào thư viện dưới một mã mới | trong AutoCAD: `PCCC_THEMBLOCK` hoặc nút "Thêm từ bản vẽ" của bảng `PCCC_BLOCK`; mã nguồn `module/plugin/Block.cs` |
+| Dây báo cháy nối tiếp thiết bị (`PCCC_DAY`, dây loop); đầu báo tia chiếu `BC_BEAM` vẽ tia (`PCCC_RAI`) | `module/plugin/Rai.cs`, hàm `DayTay`, `TiaVung`, `VeTia` |
 | Đổi trang Bố trí BC (`PCCC_BOTRI`: thiết bị theo tiêu chuẩn, mức tối ưu k, nút BỐ TRÍ gửi `PCCC_RAI` điền sẵn) | `module/ui/BangBoTri.cs`; trị số ở `data/khoang_cach_rai.json` gốc repo; từ khoá `HeSo` ở `module/plugin/Rai.cs`, hàm `RaiTay` |
 | Đổi palette chính `PCCC` (thẻ quy trình 6 bước, bot chat `claude -p`, trang Cài đặt) | `module/ui/BangChinh.cs`; màu 3 kiểu giao diện ở `module/ui/GiaoDien.cs`, hàm `BangMau` |
 | Đổi bảng block (cột, ô lọc, nút) | `module/ui/BangBlock.cs`; cách vẽ ảnh xem trước ở `module/plugin/Block.cs`, hàm `VeAnhBlock` |
