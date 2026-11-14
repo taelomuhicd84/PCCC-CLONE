@@ -24,6 +24,7 @@ cad/TKPCCC.bundle/Contents/anh_block/
 cad/TKPCCC.bundle/Contents/nguon_vat_tu.txt
 cad/TKPCCC.bundle/Contents/hinh_bc.json
 cad/TKPCCC.bundle/Contents/khoang_cach_rai.json
+cad/TKPCCC.bundle/Contents/chon-loai-dau-bao.md
 
 # Ban quyen: khoa rieng KHONG BAO GIO vao repo (repo cong khai)
 *.pem

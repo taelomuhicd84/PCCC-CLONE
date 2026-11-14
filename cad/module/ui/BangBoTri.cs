@@ -29,7 +29,9 @@ namespace TKPCCC
         readonly TrackBar k = new TrackBar();
         readonly OTong oBuoc = new OTong("Bước ≤"), oTuong = new OTong("Cách tường ≤"), oR = new OTong("R ≤");
         readonly CheckBox theoHang = new CheckBox(), coDam = new CheckBox();
-        readonly ComboBox preset = new ComboBox();
+        readonly ComboBox preset = new ComboBox(), congNang = new ComboBox();
+        readonly Label goiYCn = new Label();
+        readonly List<string[]> bangCn = new List<string[]>(); // { khu vực, loại, căn cứ }
         NutBo phuR;
 
         public BangBoTri()
@@ -63,6 +65,23 @@ namespace TKPCCC
             NutNho(hp, "Lưu", delegate { LuuPreset(preset.Text); }).Width = 46;
             NutNho(hp, "Nạp", delegate { NapPreset(preset.Text); }).Width = 46;
             f.Controls.Add(hp);
+
+            // Bước "Tiêu chuẩn & công năng" (spec addin mẫu): chọn công năng → gợi ý loại đầu báo theo bảng "Loại theo khu vực" của
+            // knowledge/chon-loai-dau-bao.md (nguồn duy nhất, build.bat chép cạnh DLL; không chép bảng vào mã).
+            Muc("0", "CÔNG NĂNG", "gợi ý loại đầu báo");
+            congNang.DropDownStyle = ComboBoxStyle.DropDownList;
+            congNang.Width = 290;
+            congNang.AccessibleName = "Công năng gian phòng";
+            DocCongNang();
+            foreach (string[] c in bangCn) congNang.Items.Add(c[0]);
+            congNang.SelectedIndexChanged += delegate { GiaoDien.An(ChonCongNang); };
+            f.Controls.Add(congNang);
+            goiYCn.Font = GiaoDien.Nho;
+            goiYCn.ForeColor = GiaoDien.Cam;
+            goiYCn.AutoSize = true;
+            goiYCn.MaximumSize = new Size(290, 0);
+            goiYCn.Text = bangCn.Count == 0 ? "Thiếu chon-loai-dau-bao.md cạnh DLL: chạy lại cad\\build.bat." : "";
+            f.Controls.Add(goiYCn);
 
             Muc("1", "THIẾT BỊ CẦN BỐ TRÍ", "theo tiêu chuẩn");
             string maCu = GiaoDien.DocCaiDat("bt_ma", ds.Count > 0 ? ds[0].Ma : "");
@@ -285,6 +304,36 @@ namespace TKPCCC
             // Lưới vuông bước s: mỗi thiết bị phủ s² m²; tia: mỗi tia phủ dải rộng s, tính theo m dài tia.
             uoc.Text = t.Tia ? "≈ 1 tia cho mỗi dải rộng " + So(s) + " m (tia song song cạnh dài phòng)"
                 : "≈ " + So(Math.Round(100 / (s * s), 1)) + " thiết bị / 100 m² (lưới vuông, chưa tính chia lẻ theo phòng)";
+        }
+
+        /// Đọc bảng "## Loại theo khu vực" của chon-loai-dau-bao.md: mỗi dòng "| khu vực | loại | căn cứ |", bỏ dấu ** của markdown.
+        void DocCongNang()
+        {
+            string file = Path.Combine(Path.GetDirectoryName(typeof(Lenh).Assembly.Location), "chon-loai-dau-bao.md");
+            if (!File.Exists(file)) return;
+            bool trong = false;
+            foreach (string dong in File.ReadAllLines(file, Encoding.UTF8))
+            {
+                if (dong.StartsWith("## ")) { trong = dong.Contains("Loại theo khu vực"); continue; }
+                if (!trong || !dong.StartsWith("|") || dong.StartsWith("|---") || dong.Contains("| Loại |")) continue;
+                string[] o = dong.Trim('|').Split('|').Select(x => x.Replace("**", "").Trim()).ToArray();
+                if (o.Length >= 3) bangCn.Add(new[] { o[0], o[1], o[2] });
+            }
+        }
+
+        /// Chọn công năng: hiện loại + căn cứ; chỉ "Nhiệt" (không có khói) thì chọn đầu nhiệt, có "Khói" thì đầu khói;
+        /// "Nhiệt hoặc khói" giữ lựa chọn đang có (người thiết kế quyết), đang chọn tia chiếu thì về đầu khói.
+        void ChonCongNang()
+        {
+            if (congNang.SelectedIndex < 0) return;
+            string[] c = bangCn[congNang.SelectedIndex];
+            goiYCn.Text = "Loại: " + c[1] + "\nCăn cứ: " + c[2];
+            string l = c[1].Split('(', ';')[0].ToLowerInvariant(); // chỉ phần loại, bỏ ghi chú trong ngoặc (vd karaoke: "Nhiệt (… khói thuốc gây báo giả)")
+            bool khoi = l.Contains("khói"), nhiet = l.Contains("nhiệt");
+            string ma = nhiet && !khoi ? "BC_NHIET" : khoi && !nhiet ? "BC_KHOI" : null;
+            ThietBi t = Dang();
+            if (ma == null && t != null && t.Tia) ma = "BC_KHOI";
+            for (int i = 0; i < ds.Count && ma != null; i++) if (ds[i].Ma == ma) chon[i].Checked = true;
         }
 
         Dictionary<string, string> DocPreset()

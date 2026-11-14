@@ -43,7 +43,9 @@ phương X/Y/Tự động qua `Lenh.AdimPhuong`; `PCCC_ADIM` thêm lọc Mline).
 ## Đợt 5 — Thanh dọc phân hệ: XONG 14/11 tối: Quy trình · Tiện ích · Báo cháy · Chữa cháy · Thống kê · Thư viện · Lệnh · Bot chat · Cài đặt
 (Đường ống, Sơ đồ, Hồ sơ của spec gộp vào Chữa cháy, Thống kê; thẻ ở `ui/PhanHe.cs`, khung lưới dùng chung `BangTienIch`). Bố trí nhanh thêm Đa giác đều (POLYGON).
 
+Thêm: bước 0 "Công năng" của trang Báo cháy đọc bảng "Loại theo khu vực" của `knowledge/chon-loai-dau-bao.md` (file đã train, build chép cạnh DLL),
+chọn công năng thì hiện loại + căn cứ và tự chọn đầu khói / nhiệt (bảng ghi "nhiệt hoặc khói" thì giữ lựa chọn).
+
 ## Còn lại (chưa làm, cần người dùng chốt hoặc làm sau)
-- Báo cháy bước 1 "Tiêu chuẩn & công năng" (dropdown công năng → loại đầu báo): người dùng dặn không tra TCVN; cần bảng chọn loại đầu báo theo công năng.
 - Vật cản: ống gió dịch đầu báo khỏi biên ống (cần layer ống gió của bản vẽ thật).
 - Xem trên AutoCAD thật bằng mắt (người dùng), Fable kiểm toàn dự án (người dùng tự chạy).

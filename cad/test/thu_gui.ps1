@@ -11,7 +11,7 @@ if (Get-Process acad -ErrorAction SilentlyContinue) { throw 'Dang co AutoCAD mo:
 foreach ($f in "$B\TKPCCC.Cad.dll", "$B\TKPCCC.UI.dll", "$B\vat_tu.json", "$GOC\cad\bin\TKPCCC.Mcp.exe") { if (-not (Test-Path $f)) { throw "Thieu $f - chay cad\build.bat truoc" } }
 $T = Join-Path $env:TEMP ('tkpccc_gui_' + [guid]::NewGuid().ToString('N').Substring(0, 8))
 New-Item -ItemType Directory "$T\b" | Out-Null
-Copy-Item "$B\TKPCCC.Cad.dll", "$B\TKPCCC.UI.dll", "$B\vat_tu.json", "$B\ky_hieu.json", "$B\khoang_cach_rai.json" "$T\b"
+Copy-Item "$B\TKPCCC.Cad.dll", "$B\TKPCCC.UI.dll", "$B\vat_tu.json", "$B\ky_hieu.json", "$B\khoang_cach_rai.json", "$B\chon-loai-dau-bao.md" "$T\b"
 $env:TKPCCC_CAD_HANG_DOI = "$T\hd"   # ca AutoCAD lan Mcp.exe mo tu day deu thua huong bien nay
 # Phim tat PHX = PCCC_HELP (phim_tat.txt canh DLL): kich ban go PHX, bang lenh hien ra = phim tat da dang ky va PCCC_HELP mo bang.
 'PHX=PCCC_HELP' | Set-Content -Encoding ascii "$T\b\phim_tat.txt"

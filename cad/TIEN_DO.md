@@ -11,7 +11,7 @@ BC_BEAM vẽ tia, `PCCC_DAY` dây loop, cự ly 45 m). Đợt 2 xong (trang Ti�
 Đợt 4 xong (trang con ADIM 5 bước, `PCCC_ADIM` lọc Mline): `chay_thu.ps1` 114/114, `thu_mcp`, `thu_gui` đạt.
 Luật hạn mức (người dùng dặn 14/11): tới 95 % thì ghi 2 file này + push; 19h reset thì TỰ làm tiếp, toàn quyền. Đợt 5 xong (thanh dọc 9 phân hệ, thêm Chữa cháy, Thống kê; Bố trí nhanh đa giác đều). Sau đó: TZ `PCCC_TACHVUNG`, MZ `PCCC_KHUVUC`, vòng tròn PCCC_VUNG / PCCC_LOAITRU làm vùng (Bố trí nhanh "Tròn"): `chay_thu.ps1` 117/117,
 `thu_gui` đạt. Thêm: trang ADIM bấm trước 2 mép tường (`PCCC_ADIMMOC`, hiện toạ độ), trang Báo cháy hiện kết quả kiểm vùng mù: 118/118.
-Phần còn lại ở cuối file việc: công năng → loại đầu báo (cần bảng người dùng chốt), ống gió dịch đầu báo. Người dùng tự mở AutoCAD xem và cho Fable kiểm.
+Bước "Công năng" của trang Báo cháy đọc `knowledge/chon-loai-dau-bao.md`. Phần còn lại ở cuối file việc: ống gió dịch đầu báo. Người dùng tự mở AutoCAD xem và cho Fable kiểm.
 
 ## VIỆC 14/11 CHIỀU — PCCC_RAI TREO CAD: XONG MÃ + TEST (chi tiết `cad/LICH_SU.md` 14/11 chiều)
 `PCCC_RAI` mới: mã → (trần | S, m², cách tường) → theo hàng → QUÉT CHỌN mặt bằng → bấm NÉT PHÂN VÙNG MẪU (mỗi màu một lần, bấm được nét trong block; Enter = tự nhận từ tường)

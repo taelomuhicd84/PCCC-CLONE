@@ -32,6 +32,8 @@ if exist "%OUT%\TKPCCC.Cad.dll" move /y "%OUT%\TKPCCC.Cad.dll" "%OUT%\TKPCCC.Cad
 copy /y "%~dp0..\data\vat_tu.json" "%OUT%\vat_tu.json" >nul
 rem Tri so rai thiet bi theo tieu chuan (rai / PCCC_RAI khong co "s"): nguon o data\khoang_cach_rai.json goc repo.
 copy /y "%~dp0..\data\khoang_cach_rai.json" "%OUT%\khoang_cach_rai.json" >nul
+rem Bang chon loai dau bao theo cong nang (trang Bao chay doc bang "Loai theo khu vuc"): nguon duy nhat knowledge\chon-loai-dau-bao.md.
+copy /y "%~dp0..\knowledge\chon-loai-dau-bao.md" "%OUT%\chon-loai-dau-bao.md" >nul
 rem PCCC_THEMBLOCK ghi ma moi vao ca file goc cua repo (nguon duy nhat cua danh muc): de lai duong dan cho plugin.
 echo %~dp0..\data\vat_tu.json>"%OUT%\nguon_vat_tu.txt"
 rem Mac dinh ky hieu truc, kich thuoc, chu: nguoi dung sua o cad\data\ky_hieu, plugin doc ban chep canh DLL.

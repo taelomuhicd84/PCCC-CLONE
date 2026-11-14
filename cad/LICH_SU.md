@@ -433,3 +433,5 @@ BỐ TRÍ, hoàn tác, vẽ loop, kiểm tra, báo cáo); Dim đối tượng 5 
   tách 20 x 10 m tại x 8 m ra 80 + 120 m²).
 - Thêm: `PCCC_ADIMMOC` (bấm trước mép tường cho ADIM, nhớ ở `Lenh.AdimMoc`, ADIM dùng xong xoá), trang ADIM 2 nút mốc hiện ✓ toạ độ + ✕;
   `PCCC_KT` ghi `KetQuaKtCuoi`, trang Báo cháy hiện ở chân (mù %, cảnh báo). Test 118/118 (2 mốc bấm trước ra cùng 4 dim như gõ trong lệnh).
+- Thêm: bước "Công năng" trang Báo cháy: đọc bảng "Loại theo khu vực" của `knowledge/chon-loai-dau-bao.md` (không chép bảng vào mã), gợi ý loại + căn cứ,
+  tự chọn đầu khói / nhiệt; chỉ xét phần loại trước ngoặc (karaoke ghi "Nhiệt (… khói thuốc …)" phải ra nhiệt). `build.bat` chép file .md cạnh DLL.
