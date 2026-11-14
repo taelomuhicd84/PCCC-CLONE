@@ -431,3 +431,5 @@ BỐ TRÍ, hoàn tác, vẽ loop, kiểm tra, báo cáo); Dim đối tượng 5 
 - Thêm: `PCCC_TACHVUNG` (TZ, cắt vùng bằng nửa mặt phẳng), `PCCC_KHUVUC` (MZ, chữ tên + m² ở điểm bấm, tổng m²); CIRCLE trên PCCC_VUNG / PCCC_LOAITRU
   thành đa giác 72 cạnh (rải, loại trừ, kiểm vùng mù); trang Báo cháy thêm Bố trí nhanh "Tròn"; Tiện ích 30 thẻ. Test 117/117 (vòng r 10 m ra 2 x 2 bước 10 m, phủ kín;
   tách 20 x 10 m tại x 8 m ra 80 + 120 m²).
+- Thêm: `PCCC_ADIMMOC` (bấm trước mép tường cho ADIM, nhớ ở `Lenh.AdimMoc`, ADIM dùng xong xoá), trang ADIM 2 nút mốc hiện ✓ toạ độ + ✕;
+  `PCCC_KT` ghi `KetQuaKtCuoi`, trang Báo cháy hiện ở chân (mù %, cảnh báo). Test 118/118 (2 mốc bấm trước ra cùng 4 dim như gõ trong lệnh).

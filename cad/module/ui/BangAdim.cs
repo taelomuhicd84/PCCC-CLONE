@@ -54,7 +54,27 @@ namespace TKPCCC
             x.Click += delegate { GiaoDien.An(dong); };
             dau.Controls.AddRange(new Control[] { ten, phu, x });
             f.Controls.Add(dau);
-            f.Controls.Add(Chu("Bước 1 & 2: khi lệnh hỏi, bấm 2 mép tường / trục giới hạn (hoặc Enter bỏ qua để chỉ dim khoảng cách giữa các đối tượng).", GiaoDien.ChuDam));
+            f.Controls.Add(Chu("Bước 1 & 2 (tuỳ chọn): bấm 2 mép tường / trục giới hạn; bỏ trống thì lệnh hỏi, Enter bỏ qua để chỉ dim khoảng cách giữa các đối tượng.", GiaoDien.ChuDam));
+            FlowLayoutPanel hm = Hang();
+            for (int i = 0; i < 2; i++)
+            {
+                int so = i + 1;
+                NutBo moc = new NutBo("", GiaoDien.XanhDam);
+                moc.Font = GiaoDien.Nho;
+                moc.Size = new Size(110, 40);
+                moc.Margin = new Padding(0, 0, 2, 4);
+                moc.Click += delegate { GiaoDien.GuiLenh("PCCC_ADIMMOC\n" + so + "\n", "PCCC_ADIMMOC", HienMoc); };
+                NutBo xoa = new NutBo("✕", GiaoDien.Xanh);
+                xoa.Size = new Size(24, 40);
+                xoa.Margin = new Padding(0, 0, 8, 4);
+                xoa.AccessibleName = "Xoá mốc " + so;
+                xoa.Click += delegate { Lenh.AdimMoc[so - 1] = null; HienMoc(); };
+                nutMoc[i] = moc;
+                hm.Controls.Add(moc);
+                hm.Controls.Add(xoa);
+            }
+            f.Controls.Add(hm);
+            HienMoc();
 
             Muc("Layer", "Chọn layer đặt đường dim");
             lop.Width = 140;
@@ -108,9 +128,24 @@ namespace TKPCCC
             f.Text = "Adim: " + LOAI.Length; // thu_gui.ps1 nhận trang
         }
 
-        /// Nạp danh sách DimStyle của bản vẽ đang mở (gọi mỗi lần mở trang).
+        readonly NutBo[] nutMoc = new NutBo[2];
+
+        /// Chữ 2 nút mốc theo Lenh.AdimMoc (bấm xong, xoá, hoặc ADIM đã dùng thì về "chưa bấm").
+        void HienMoc()
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                Autodesk.AutoCAD.Geometry.Point3d? p = Lenh.AdimMoc[i];
+                nutMoc[i].Text = (i + 1) + ". Mép " + (i == 0 ? "đầu" : "cuối") + "\n" + (p.HasValue ? "✓ X " + Math.Round(p.Value.X) + " Y " + Math.Round(p.Value.Y) : "chưa bấm");
+                nutMoc[i].Mau = p.HasValue ? GiaoDien.XanhLa : GiaoDien.XanhDam;
+                nutMoc[i].Invalidate();
+            }
+        }
+
+        /// Nạp danh sách DimStyle của bản vẽ đang mở, cập nhật mốc tường (gọi mỗi lần mở trang).
         public void NapKieu()
         {
+            HienMoc();
             string chon = kieu.SelectedItem as string ?? GiaoDien.DocCaiDat("adim_kieu", "");
             kieu.Items.Clear();
             Document doc = AcApp.DocumentManager.MdiActiveDocument;
@@ -142,7 +177,7 @@ namespace TKPCCC
             Lenh.AdimPhuong = ph;
             // Tên có dấu cách: -LAYER, -DIMSTYLE coi dấu cách là Enter, nên bọc ngoặc kép.
             GiaoDien.GuiLenh((l != "" ? "_.-LAYER\n_M\n\"" + l + "\"\n\n" : "") + (k != "" ? "_.-DIMSTYLE\n_R\n\"" + k + "\"\n" : "") + "PCCC_ADIM\n" + lo + "\n",
-                "PCCC_ADIM", delegate { Lenh.AdimPhuong = null; });
+                "PCCC_ADIM", delegate { Lenh.AdimPhuong = null; HienMoc(); }); // ADIM dùng xong mốc thì xoá: nút về "chưa bấm"
         }
 
         void Muc(string so, string ten)

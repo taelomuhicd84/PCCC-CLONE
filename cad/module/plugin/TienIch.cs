@@ -27,6 +27,8 @@ namespace TKPCCC
         [CommandMethod("PCCC_KT")] public void LenhKt() { Chay(KiemTraPhu); }
 
         const string LAYER_KIEM_MU = "PCCC_KIEM_MU"; // đánh dấu vùng mù của PCCC_KT, mỗi lần chạy vẽ lại
+        /// Tóm tắt lần PCCC_KT gần nhất (trang Báo cháy hiện ở chân sau khi lệnh xong); "" = chưa chạy hoặc lần đó không có phòng.
+        public static string KetQuaKtCuoi = "";
 
         /// PCKT / CKO (spec addin mẫu): vùng mù trong các phòng PCCC_VUNG. Lưới mẫu 0,5 m trong phòng (bỏ vùng PCCC_LOAITRU); điểm mẫu xa mọi thiết bị hơn R
         /// của thiết bị đó (r trong khoang_cach_rai.json, mã không có r thì không tính) là điểm mù. Báo % mù từng phòng, khoanh điểm mù (thưa 1 m) trên PCCC_KIEM_MU.
@@ -75,7 +77,7 @@ namespace TKPCCC
                         if (ri > 0) { tb.Add(new Point2d(br.Position.X, br.Position.Y)); rr.Add(ri); }
                     }
                 }
-                if (phong.Count == 0) { tr.Commit(); ed.WriteMessage("\n[TKPCCC] PCCC_KT: vùng chọn không có phòng (polyline kín layer " + LAYER_VUNG + "): chạy PCCC_RAI hoặc vẽ vùng trước."); return; }
+                if (phong.Count == 0) { tr.Commit(); KetQuaKtCuoi = "Kiểm vùng mù: vùng chọn chưa có phòng PCCC_VUNG"; ed.WriteMessage("\n[TKPCCC] PCCC_KT: vùng chọn không có phòng (polyline kín layer " + LAYER_VUNG + "): chạy PCCC_RAI hoặc vẽ vùng trước."); return; }
                 BlockTableRecord ms = (BlockTableRecord)tr.GetObject(db.CurrentSpaceId, OpenMode.ForWrite);
                 ObjectId lop = DamBaoLayer(db, tr, LAYER_KIEM_MU, 1);
                 ((LayerTableRecord)tr.GetObject(lop, OpenMode.ForWrite)).IsPlottable = false;
@@ -113,6 +115,7 @@ namespace TKPCCC
                 }
                 tr.Commit();
             }
+            KetQuaKtCuoi = "Kiểm vùng mù: " + soPhong + " phòng · mù " + PhanTram(tongMu, tongDiem) + " %" + (tongMu > 0 ? " · cảnh báo: khoanh đỏ PCCC_KIEM_MU" : " · phủ kín");
             ed.WriteMessage("\n[TKPCCC] PCCC_KT phong=" + soPhong + " mu=" + PhanTram(tongMu, tongDiem) + "% diem_mu=" + tongMu
                 + (tongMu > 0 ? " (khoanh đỏ trên " + LAYER_KIEM_MU + ", không in; rải bù bằng PCCC_DAT hoặc giảm k)" : " (phủ kín)"));
         }

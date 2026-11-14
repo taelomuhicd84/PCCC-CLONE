@@ -39,11 +39,11 @@ Lệnh mới cần viết (plugin):
 - [x] Preset Lưu / Nạp (khoá `bt_presets` trong cai_dat.json)
 
 ## Đợt 4 — ADIM sub-panel 5 bước: XONG 14/11 tối (`ui/BangAdim.cs`, mở từ thẻ ADIM; layer + chip, DimStyle của bản vẽ, lọc Block/Line/Pline/Mline/Tất cả,
-phương X/Y/Tự động qua `Lenh.AdimPhuong`; `PCCC_ADIM` thêm lọc Mline). Hai mép tường bấm khi lệnh hỏi (chưa hiện toạ độ lên trang: shortcut).
+phương X/Y/Tự động qua `Lenh.AdimPhuong`; `PCCC_ADIM` thêm lọc Mline). Hai mép tường: nút bấm trước trên trang (lệnh `PCCC_ADIMMOC`, hiện ✓ toạ độ, ✕ xoá), không bấm thì lệnh hỏi.
 ## Đợt 5 — Thanh dọc phân hệ: XONG 14/11 tối: Quy trình · Tiện ích · Báo cháy · Chữa cháy · Thống kê · Thư viện · Lệnh · Bot chat · Cài đặt
 (Đường ống, Sơ đồ, Hồ sơ của spec gộp vào Chữa cháy, Thống kê; thẻ ở `ui/PhanHe.cs`, khung lưới dùng chung `BangTienIch`). Bố trí nhanh thêm Đa giác đều (POLYGON).
 
 ## Còn lại (chưa làm, cần người dùng chốt hoặc làm sau)
 - Báo cháy bước 1 "Tiêu chuẩn & công năng" (dropdown công năng → loại đầu báo): người dùng dặn không tra TCVN; cần bảng chọn loại đầu báo theo công năng.
-- ADIM hiện toạ độ 2 mép tường lên trang, Vật cản: ống gió dịch đầu báo.
+- Vật cản: ống gió dịch đầu báo khỏi biên ống (cần layer ống gió của bản vẽ thật).
 - Xem trên AutoCAD thật bằng mắt (người dùng), Fable kiểm toàn dự án (người dùng tự chạy).

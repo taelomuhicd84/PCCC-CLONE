@@ -178,7 +178,14 @@ namespace TKPCCC
 
             Muc("5", "KIỂM TRA, ĐI DÂY, THỐNG KÊ", "");
             FlowLayoutPanel kiem = HangNut();
-            NutNho(kiem, "✓ Kiểm vùng mù", delegate { GiaoDien.GuiLenh("PCCC_KT\n", null, null); });
+            NutNho(kiem, "✓ Kiểm vùng mù", delegate
+            {
+                GiaoDien.GuiLenh("PCCC_KT\n", "PCCC_KT", delegate
+                {
+                    ketQua.Text = Lenh.KetQuaKtCuoi; // chân trang: độ phủ, cảnh báo (spec addin mẫu)
+                    ketQua.ForeColor = Lenh.KetQuaKtCuoi.Contains("phủ kín") ? GiaoDien.XanhLa : GiaoDien.Do;
+                });
+            });
             foreach (CuLy c in cuLy)
             {
                 CuLy cc = c;

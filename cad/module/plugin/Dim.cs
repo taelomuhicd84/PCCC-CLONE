@@ -103,9 +103,11 @@ namespace TKPCCC
             }
             if (ps.Count == 0) throw new System.Exception("không có đối tượng hợp loại " + loc);
 
-            // 2 mốc mép tường / trục (tuỳ chọn): Enter bỏ qua.
-            List<Point3d> tuong = new List<Point3d>();
-            foreach (string hoi in new[] { "\nMép tường / trục đầu <Enter = bỏ qua>: ", "\nMép tường / trục cuối <Enter = bỏ qua>: " })
+            // 2 mốc mép tường / trục (tuỳ chọn): Enter bỏ qua. Trang ADIM đã bấm sẵn (PCCC_ADIMMOC) thì dùng luôn, không hỏi, dùng xong xoá.
+            List<Point3d> tuong = AdimMoc.Where(x => x.HasValue).Select(x => x.Value).ToList();
+            bool coSan = tuong.Count > 0;
+            AdimMoc[0] = AdimMoc[1] = null;
+            foreach (string hoi in coSan ? new string[0] : new[] { "\nMép tường / trục đầu <Enter = bỏ qua>: ", "\nMép tường / trục cuối <Enter = bỏ qua>: " })
             {
                 PromptPointOptions po = new PromptPointOptions(hoi);
                 po.AllowNone = true;
@@ -181,6 +183,25 @@ namespace TKPCCC
         {
             [CommandMethod("PCCC_ADIM")] public void LenhAdim() { Chay(Adim); }
             [CommandMethod("PCCC_CDIM")] public void LenhCdim() { Chay(Cdim); }
+            [CommandMethod("PCCC_ADIMMOC")] public void LenhAdimMoc() { Chay(AdimBamMoc); }
+        }
+
+        /// Mép tường / trục của ADIM bấm trước từ trang ADIM (bước 1, 2 của spec addin mẫu): [0] đầu, [1] cuối; null = chưa bấm. Trang ADIM xoá bằng nút ✕.
+        public static Point3d?[] AdimMoc = new Point3d?[2];
+
+        /// PCCC_ADIMMOC: hỏi số mốc (1 = đầu, 2 = cuối), bấm điểm, nhớ vào AdimMoc cho lần PCCC_ADIM kế tiếp.
+        static void AdimBamMoc()
+        {
+            Editor ed = AcApp.DocumentManager.MdiActiveDocument.Editor;
+            PromptIntegerOptions so = new PromptIntegerOptions("\nMốc số (1 = mép tường / trục đầu, 2 = cuối): ");
+            so.LowerLimit = 1; so.UpperLimit = 2;
+            PromptIntegerResult sr = ed.GetInteger(so);
+            if (sr.Status != PromptStatus.OK) return;
+            PromptPointResult pr = ed.GetPoint("\n[PCCC] BƯỚC " + sr.Value + ": bấm mép tường / trục " + (sr.Value == 1 ? "đầu" : "cuối") + ": ");
+            if (pr.Status != PromptStatus.OK) return;
+            Point3d p = pr.Value.TransformBy(ed.CurrentUserCoordinateSystem);
+            AdimMoc[sr.Value - 1] = p;
+            ed.WriteMessage("\n[TKPCCC] PCCC_ADIMMOC " + sr.Value + " X=" + Math.Round(p.X).ToString(CultureInfo.InvariantCulture) + " Y=" + Math.Round(p.Y).ToString(CultureInfo.InvariantCulture));
         }
     }
 }

@@ -113,6 +113,7 @@ namespace TKPCCC
             new[] { "PCCC_CUA", "B3: cửa đi trên tường đã vẽ", "Bấm tâm cửa trên tường, nhập rộng, bấm phía cánh mở vào" },
             new[] { "PCCC_ADIM", "Dim tự động cả lưới thiết bị", "Lọc Block/Line/Pline, quét cửa sổ, 2 mốc tường (Enter bỏ qua), bấm điểm đặt đường dim" },
             new[] { "PCCC_CDIM", "Dim tiếp tục chuỗi ADIM vừa tạo", "Bấm các điểm tiếp theo" },
+            new[] { "PCCC_ADIMMOC", "Bấm trước mép tường / trục cho ADIM (trang ADIM bước 1, 2)", "Nhập 1 (đầu) hoặc 2 (cuối), bấm điểm; lần PCCC_ADIM kế tiếp dùng luôn, không hỏi" },
             new[] { "PCCC_BANQUYEN", "Bản quyền: email, mã máy, key", "Nhập email, Đăng ký hoặc dán key rồi Kích hoạt; Lấy key tự động sau 5–10 phút" },
             new[] { "PCCC_TIENICH", "Tiện ích: 27 thẻ chia 6 nhóm (khu vực, xử lý, hiệu chỉnh, layer ống, kiểm tra, cài đặt)", "Mở phân hệ Tiện ích của palette; nút lọc nhóm, ô tìm theo tên hoặc mã tắt (SZ, CKC...)" },
             new[] { "PCCC_BOTRI", "Bố trí báo cháy tự động: chọn thiết bị theo TCVN, trần, mức tối ưu k", "Mở phân hệ Báo cháy của palette; BỐ TRÍ gửi PCCC_RAI điền sẵn, chỉ còn quét chọn mặt bằng" },
