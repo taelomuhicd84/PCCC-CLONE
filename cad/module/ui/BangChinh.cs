@@ -1,5 +1,5 @@
 // Palette chính (lệnh PCCC; PCCC_BLOCK, PCCC_HELP mở đúng phân hệ): đầu trang [PCCC] + tên + phiên bản, ô tìm lọc thẻ, thanh dọc chọn phân hệ
-// (Quy trình vẽ · Tiện ích · Báo cháy · Thư viện · Lệnh · Bot chat · Cài đặt), chân trang trạng thái cầu nối MCP + bản vẽ. Chỉ giao diện: lệnh vẽ gửi bằng tên qua GiaoDien.GuiLenh.
+// (Quy trình vẽ · Tiện ích · Báo cháy · Chữa cháy · Thống kê · Thư viện · Lệnh · Bot chat · Cài đặt), chân trang trạng thái cầu nối MCP + bản vẽ. Chỉ giao diện: lệnh vẽ gửi bằng tên qua GiaoDien.GuiLenh.
 // Bot chat gọi `claude -p` (đăng nhập Claude Code, không API key) chạy NỀN ở <repo>\cad với MCP cad: luồng AutoCAD không bị khoá nên cầu nối Cau.cs
 // vẫn chạy hàng đợi trong lúc chờ.
 using System;
@@ -20,7 +20,7 @@ namespace TKPCCC
 {
     public class BangChinh : UserControl
     {
-        public const string QUY_TRINH = "Quy trình vẽ", TIEN_ICH = "Tiện ích", BO_TRI = "Báo cháy", THU_VIEN = "Thư viện", LENH = "Lệnh", BOT = "Bot chat", CAI_DAT = "Cài đặt";
+        public const string QUY_TRINH = "Quy trình vẽ", TIEN_ICH = "Tiện ích", BO_TRI = "Báo cháy", CHUA_CHAY = "Chữa cháy", THONG_KE = "Thống kê", THU_VIEN = "Thư viện", LENH = "Lệnh", BOT = "Bot chat", CAI_DAT = "Cài đặt";
         public const string ADIM = "ADIM"; // trang con Dim đối tượng (không có nút ở thanh dọc)
         static PaletteSet ps;
         static BangChinh nd;
@@ -59,6 +59,7 @@ namespace TKPCCC
         BangLenh bangLenh;
         BangTienIch tienIch;
         BangAdim adim;
+        readonly Dictionary<string, BangTienIch> luoiKhac = new Dictionary<string, BangTienIch>(); // Chữa cháy, Thống kê
         BotChat bot;
         int soBlock;
 
@@ -76,9 +77,10 @@ namespace TKPCCC
             ben.Width = 84;
             ben.FlowDirection = FlowDirection.TopDown;
             ben.WrapContents = false;
+            ben.AutoScroll = true; // palette kéo thấp hơn 9 nút thì cuộn, không mất nút cuối
             ben.BackColor = GiaoDien.Nen;
             ben.Padding = new Padding(0, 6, 0, 0);
-            foreach (string t in new[] { QUY_TRINH, TIEN_ICH, BO_TRI, THU_VIEN, LENH, BOT, CAI_DAT })
+            foreach (string t in new[] { QUY_TRINH, TIEN_ICH, BO_TRI, CHUA_CHAY, THONG_KE, THU_VIEN, LENH, BOT, CAI_DAT })
             {
                 string ten = t;
                 NutBen n = new NutBen(ten);
@@ -92,6 +94,7 @@ namespace TKPCCC
             tim.TextChanged += delegate
             {
                 if (dangXem == TIEN_ICH) { tienIch.Tim(tim.Text); return; }
+                if (luoiKhac.ContainsKey(dangXem ?? "")) { luoiKhac[dangXem].Tim(tim.Text); return; }
                 if (dangXem != QUY_TRINH && tim.Text != "") ChonTrang(QUY_TRINH);
                 LocThe();
             };
@@ -186,6 +189,8 @@ namespace TKPCCC
             if (ten == CAI_DAT) return TrangCaiDat();
             if (ten == BO_TRI) return new BangBoTri();
             if (ten == ADIM) return adim = new BangAdim(delegate { ChonTrang(TIEN_ICH); });
+            if (ten == CHUA_CHAY) return luoiKhac[ten] = new BangTienIch(PhanHe.CHUA_CHAY, PhanHe.NHOM_CC, PhanHe.NUT_CC, "ChuaChay", delegate(string t) { ChonTrang(t); });
+            if (ten == THONG_KE) return luoiKhac[ten] = new BangTienIch(PhanHe.THONG_KE, PhanHe.NHOM_TK, PhanHe.NUT_TK, "ThongKe", delegate(string t) { ChonTrang(t); });
             if (ten == TIEN_ICH) return tienIch = new BangTienIch(delegate(string t) { ChonTrang(t); });
             return dsThe;
         }
@@ -316,7 +321,7 @@ namespace TKPCCC
         public NutBen(string chu)
         {
             Text = chu;
-            Size = new Size(84, 46);
+            Size = new Size(84, 40); // 9 phân hệ: 9 x 42 px vừa palette cao 700
             Margin = new Padding(0, 0, 0, 2);
             Cursor = Cursors.Hand;
             DoubleBuffered = true;

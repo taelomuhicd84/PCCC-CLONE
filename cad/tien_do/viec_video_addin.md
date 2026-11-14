@@ -40,4 +40,11 @@ Lệnh mới cần viết (plugin):
 
 ## Đợt 4 — ADIM sub-panel 5 bước: XONG 14/11 tối (`ui/BangAdim.cs`, mở từ thẻ ADIM; layer + chip, DimStyle của bản vẽ, lọc Block/Line/Pline/Mline/Tất cả,
 phương X/Y/Tự động qua `Lenh.AdimPhuong`; `PCCC_ADIM` thêm lọc Mline). Hai mép tường bấm khi lệnh hỏi (chưa hiện toạ độ lên trang: shortcut).
-## Đợt 5 — Thanh dọc phân hệ: Quy trình · Tiện ích · Báo cháy · Chữa cháy · Thống kê · Thư viện · Lệnh · Bot chat · Cài đặt
+## Đợt 5 — Thanh dọc phân hệ: XONG 14/11 tối: Quy trình · Tiện ích · Báo cháy · Chữa cháy · Thống kê · Thư viện · Lệnh · Bot chat · Cài đặt
+(Đường ống, Sơ đồ, Hồ sơ của spec gộp vào Chữa cháy, Thống kê; thẻ ở `ui/PhanHe.cs`, khung lưới dùng chung `BangTienIch`). Bố trí nhanh thêm Đa giác đều (POLYGON).
+
+## Còn lại (chưa làm, cần người dùng chốt hoặc làm sau)
+- TZ tách khu vực, MZ quản lý khu vực (tên phòng, công năng trong XData).
+- Báo cháy bước 1 "Tiêu chuẩn & công năng" (dropdown công năng → loại đầu báo): người dùng dặn không tra TCVN; cần bảng chọn loại đầu báo theo công năng.
+- Mặt bằng dạng Tròn (rai chưa nhận CIRCLE làm vùng), ADIM hiện toạ độ 2 mép tường lên trang, Vật cản: ống gió dịch đầu báo.
+- Xem trên AutoCAD thật bằng mắt (người dùng), Fable kiểm toàn dự án (người dùng tự chạy).

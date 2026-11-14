@@ -426,3 +426,5 @@ BỐ TRÍ, hoàn tác, vẽ loop, kiểm tra, báo cáo); Dim đối tượng 5 
 - Đợt 4: trang con ADIM (`ui/BangAdim.cs`): chọn layer (chip DIM, PCCC_DIM, 0_DIM, Hiện hành), DimStyle của bản vẽ, loại đối tượng, phương đo; BẮT ĐẦU gửi
   `-LAYER M`, `-DIMSTYLE R`, `PCCC_ADIM` + loại; phương đặt qua `Lenh.AdimPhuong` (câu hỏi phương nằm sau quét chọn, chuỗi gửi không điền được). `PCCC_ADIM` lọc thêm Mline.
   Test 114/114 (Mline 3 đỉnh ra 2 dim). Người dùng đổi ngưỡng hạn mức CAD thành 95 %, cho tự làm tiếp lúc reset 19h (ghi vào `CLAUDE.md`, `cad/CLAUDE.md`).
+- Đợt 5: thanh dọc 9 phân hệ (thêm Chữa cháy, Thống kê, nút cao 40 px, cuộn khi palette thấp); `BangTienIch` thành khung lưới thẻ dùng chung (mảng thẻ, nhóm,
+  nút lọc truyền vào), thẻ Chữa cháy, Thống kê ở `ui/PhanHe.cs`; ô tìm lọc cả 2 trang mới; Bố trí nhanh thêm "Đa giác đều" (POLYGON). Test 114/114, thu_gui đạt.

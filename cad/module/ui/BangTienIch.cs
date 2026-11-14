@@ -53,11 +53,17 @@ namespace TKPCCC
         readonly List<Label> nut = new List<Label>();
         readonly ToolTip goiY = new ToolTip(); // thẻ hẹp cắt mô tả: rê chuột xem đủ
         readonly Action<string> moTrang;
+        readonly string nhanDem;
         string nhomChon = "", chuTim = "";
 
-        public BangTienIch(Action<string> moTrang)
+        public BangTienIch(Action<string> moTrang) : this(THE, NHOM, NUT, "TienIch", moTrang) { }
+
+        /// Khung dùng chung cho mọi phân hệ dạng lưới thẻ (Tiện ích, Chữa cháy, Thống kê: mảng thẻ ở PhanHe.cs).
+        /// the: { nhóm "1".., mã tắt, tên, mô tả, lệnh }; nhom: tiêu đề nhóm; nut: "Tất cả" + nhãn nút lọc từng nhóm; nhanDem: chữ cửa sổ "nhanDem: n" cho thu_gui.ps1.
+        public BangTienIch(string[][] THE, string[] NHOM, string[] NUT, string nhanDem, Action<string> moTrang)
         {
             this.moTrang = moTrang;
+            this.nhanDem = nhanDem;
             BackColor = GiaoDien.Nen;
             luoi.Dock = DockStyle.Fill;
             luoi.AutoScroll = true;
@@ -151,7 +157,7 @@ namespace TKPCCC
                 l.ForeColor = chon ? Color.White : GiaoDien.ChuDam;
             }
             luoi.ResumeLayout();
-            luoi.Text = "TienIch: " + n; // thu_gui.ps1 đọc số thẻ đang hiện
+            luoi.Text = nhanDem + ": " + n; // thu_gui.ps1 đọc số thẻ đang hiện
         }
 
         void Chay(string lenh)
@@ -159,6 +165,8 @@ namespace TKPCCC
             string thuMuc = Path.GetDirectoryName(typeof(Lenh).Assembly.Location);
             if (lenh == "#caidat") moTrang(BangChinh.CAI_DAT);
             else if (lenh == "#adim") moTrang(BangChinh.ADIM);
+            else if (lenh == "#bot") moTrang(BangChinh.BOT);
+            else if (lenh == "#botri") moTrang(BangChinh.BO_TRI);
             else if (lenh == "#thumuc") Process.Start("explorer.exe", "\"" + thuMuc + "\"");
             else if (lenh == "#tieuchuan") Process.Start("notepad.exe", "\"" + Path.Combine(thuMuc, "khoang_cach_rai.json") + "\"");
             else if (lenh == "#saoluu") Process.Start("explorer.exe", "/select,\"" + GiaoDien.FileCaiDat + "\"");

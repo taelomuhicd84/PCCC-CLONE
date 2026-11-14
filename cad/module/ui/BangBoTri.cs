@@ -149,12 +149,12 @@ namespace TKPCCC
             NutBo boTri = new NutBo("▶  BỐ TRÍ", GiaoDien.XanhDam);
             boTri.Size = new Size(300, 38);
             boTri.Margin = new Padding(0, 12, 0, 4);
-            boTri.Click += delegate { GiaoDien.An(delegate { BoTri(false, false); }); };
+            boTri.Click += delegate { GiaoDien.An(delegate { BoTri(false, null); }); };
             f.Controls.Add(boTri);
             NutBo xem = new NutBo("Xem trước số lượng (không vẽ)", GiaoDien.Xanh);
             xem.Size = new Size(300, 30);
             xem.Margin = new Padding(0, 0, 0, 4);
-            xem.Click += delegate { GiaoDien.An(delegate { BoTri(true, false); }); };
+            xem.Click += delegate { GiaoDien.An(delegate { BoTri(true, null); }); };
             f.Controls.Add(xem);
             // Nút BỐ TRÍ, Xem trước, thanh k theo bề rộng palette (kéo hẹp tới MinimumSize vẫn không tràn ngang).
             f.Resize += delegate { int w = Math.Max(200, f.ClientSize.Width - f.Padding.Horizontal - 4); boTri.Width = w; xem.Width = w; k.Width = w; };
@@ -167,7 +167,8 @@ namespace TKPCCC
             FlowLayoutPanel nut = HangNut();
             NutNho(nut, "↶ Hoàn tác lượt", delegate { GiaoDien.GuiLenh("_.U\n", null, null); });
             phuR = NutNho(nut, "Kiểm tra phủ R", delegate { ThietBi t = Dang(); if (t != null && t.R > 0) GiaoDien.GuiLenh("PCCC_VUNGBV\n" + t.Ma + "\n" + Ct(t.R) + "\n", null, null); });
-            NutNho(nut, "⚡ Bố trí nhanh", delegate { GiaoDien.An(delegate { BoTri(false, true); }); });
+            NutNho(nut, "⚡ Bố trí nhanh", delegate { GiaoDien.An(delegate { BoTri(false, "RECTANG"); }); });
+            NutNho(nut, "⬡ Đa giác đều", delegate { GiaoDien.An(delegate { BoTri(false, "POLYGON"); }); });
             NutNho(nut, "Vẽ vùng tay", delegate { GiaoDien.GuiLenh("_.-LAYER\n_M\nPCCC_VUNG\n\n_.PLINE\n", null, null); });
             NutNho(nut, "Vùng loại trừ", delegate { GiaoDien.GuiLenh("_.-LAYER\n_M\nPCCC_LOAITRU\n\n_.PLINE\n", null, null); });
             f.Controls.Add(nut);
@@ -316,9 +317,9 @@ namespace TKPCCC
             TinhLai();
         }
 
-        /// nhanh = "Bố trí nhanh": vẽ khung chữ nhật trên PCCC_VUNG (bấm 2 góc), xong thì PCCC_RAI chọn khung vừa vẽ (L) và rải ngay.
+        /// nhanh = lệnh AutoCAD vẽ khung kín ("RECTANG": bấm 2 góc; "POLYGON": đa giác đều) trên PCCC_VUNG; xong thì PCCC_RAI chọn khung vừa vẽ (L) và rải ngay.
         /// shortcut: layer hiện hành để lại PCCC_VUNG sau khi vẽ khung; muốn trả layer cũ thì đọc CLAYER trước khi gửi.
-        void BoTri(bool xem, bool nhanh)
+        void BoTri(bool xem, string nhanh)
         {
             ThietBi t = Dang();
             if (t == null) throw new System.Exception("Chưa có thiết bị nào có trị số tiêu chuẩn (khoang_cach_rai.json).");
@@ -338,7 +339,7 @@ namespace TKPCCC
                 ketQua.ForeColor = Lenh.KetQuaRaiCuoi.Contains("HO") ? GiaoDien.Do : GiaoDien.XanhLa;
             };
             // Chọn L (khung vừa vẽ), Enter kết thúc chọn, Enter = không nét mẫu: khung là polyline kín PCCC_VUNG nên rải luôn, không hỏi điểm phòng.
-            if (nhanh) GiaoDien.GuiLenh("_.-LAYER\n_M\nPCCC_VUNG\n\n_.RECTANG\n", "RECTANG", delegate { GiaoDien.GuiLenh(cau + "_L\n\n\n", "PCCC_RAI", xong); });
+            if (nhanh != null) GiaoDien.GuiLenh("_.-LAYER\n_M\nPCCC_VUNG\n\n_." + nhanh + "\n", nhanh, delegate { GiaoDien.GuiLenh(cau + "_L\n\n\n", "PCCC_RAI", xong); });
             else GiaoDien.GuiLenh(cau, "PCCC_RAI", xong);
         }
 

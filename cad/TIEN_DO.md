@@ -9,7 +9,7 @@ Người dùng dặn: làm HẾT theo spec `PROMPT_HOP_NHAT_PLUGIN_PCCC_CAD.md` 
 BC_BEAM vẽ tia, `PCCC_DAY` dây loop, cự ly 45 m). Đợt 2 xong (trang Tiện ích `PCCC_TIENICH` 27 thẻ, 8 lệnh mới `plugin/TienIch.cs`): `chay_thu.ps1` 109/109,
 `thu_gui.ps1` TAT CA DAT. Đợt 3 xong (vùng loại trừ `PCCC_LOAITRU`, xem trước vẽ tạm, `PCCC_KT` vùng mù, Bố trí nhanh, preset): `chay_thu.ps1` 113/113.
 Đợt 4 xong (trang con ADIM 5 bước, `PCCC_ADIM` lọc Mline): `chay_thu.ps1` 114/114, `thu_mcp`, `thu_gui` đạt.
-Luật hạn mức (người dùng dặn 14/11): tới 95 % thì ghi 2 file này + push; 19h reset thì TỰ làm tiếp, toàn quyền. VIỆC KẾ: đợt 5 (thanh dọc: Chữa cháy, Thống kê) theo file việc.
+Luật hạn mức (người dùng dặn 14/11): tới 95 % thì ghi 2 file này + push; 19h reset thì TỰ làm tiếp, toàn quyền. Đợt 5 xong (thanh dọc 9 phân hệ, thêm Chữa cháy, Thống kê; Bố trí nhanh đa giác đều). Phần còn lại ở cuối file việc (TZ, MZ, công năng, vùng tròn...).
 
 ## VIỆC 14/11 CHIỀU — PCCC_RAI TREO CAD: XONG MÃ + TEST (chi tiết `cad/LICH_SU.md` 14/11 chiều)
 `PCCC_RAI` mới: mã → (trần | S, m², cách tường) → theo hàng → QUÉT CHỌN mặt bằng → bấm NÉT PHÂN VÙNG MẪU (mỗi màu một lần, bấm được nét trong block; Enter = tự nhận từ tường)
