@@ -14,7 +14,13 @@ TRẠNG THÁI (dừng 90 % lúc ~11:05 14/11): MÃ ĐÃ VIẾT, build đạt (`M
 `chay_thu.ps1` 89 DAT / 4 LOI. Lỗi gốc: "PCCC_RAI bam diem trong phong khong co polyline" (bản sao `vung_ve2.json` gốc 2700000, đáp `'C','2699000,-1000','2714000,6000','','2710500,1200',''`);
 3 lỗi còn lại (`rai da giac canh xien` 0 đầu báo, `so_do` kiểu chữ, `BC_COI_DEN`) đọc file LISP ghi SAU dòng đó ⇒ nhiều khả năng kịch bản lệch đáp án ở `PCCC_RAI`, không phải lỗi riêng.
 VIỆC KẾ: in `$out2` quanh "Quét chọn" để xem dấu nhắc nào nuốt đáp án (ngờ: `GetPoint` có từ khoá `TatCa` + `AllowNone`; hoặc `MatChon` không ra mặt vì `vung_ve2` khác), sửa, chạy lại
-`chay_thu.ps1` + `thu_mcp.ps1` tới TAT CA DAT; thêm 1 phép kiểm nhánh Enter = mọi phòng trên mặt bằng 2 phòng (ra 2 vùng, bỏ mặt bao ngoài); `cad\build.bat` vào bundle; báo người dùng tắt hẳn AutoCAD, mở lại, thử trên `PCCC HOÁ CHẤT.dwg`.
+`chay_thu.ps1` + `thu_mcp.ps1` tới TAT CA DAT.
+NGƯỜI DÙNG BÁO THÊM 14/11 (ảnh `ket_qua/cad_test/2026-11-14/2_ca_ban_ve_mot_block.png`, không commit): bản vẽ mặt bằng xưởng bao bì là MỘT BLOCK duy nhất (cả khung tên, bảng thống kê);
+plugin coi cả block là một vùng, rải đầu báo đều khắp tờ giấy (cả khung tên, ngoài nhà). Người dùng đã KẺ NÉT PHÂN VÙNG: polyline dày màu XANH LÁ (Xưởng 1, Xưởng 2, phòng nhỏ)
+và ĐỎ (khối văn phòng). Sửa (làm NGAY sau khi test đạt): sau quét chọn hỏi "Chọn một nét phân vùng mẫu, Enter = tự nhận từ tường"; có mẫu thì chỉ lấy nét (kể cả nét trong block,
+explode đệ quy như `ThuNet`) cùng layer + màu thật (ByLayer/ByBlock quy ra màu) với mẫu, cho phép nhiều màu (chọn mẫu xanh rồi đỏ), dựng mặt kín từ các nét đó rồi rải từng mặt;
+bỏ mặt bao ngoài / khung giấy. Trước khi viết: dùng MCP `doc` gi:"layer" trên bản vẽ đang mở xem layer, màu, độ dày thật của nét xanh, đỏ (bản vẽ chưa biết đường dẫn: hỏi người dùng nếu cần).
+Phép kiểm: dựng block chứa khung + 2 polyline xanh + 1 đỏ, rải chỉ ra đầu báo trong 3 vùng, 0 đầu báo ngoài. Tiếp: thêm 1 phép kiểm nhánh Enter = mọi phòng trên mặt bằng 2 phòng (ra 2 vùng, bỏ mặt bao ngoài); `cad\build.bat` vào bundle; báo người dùng tắt hẳn AutoCAD, mở lại, thử trên `PCCC HOÁ CHẤT.dwg`.
 
 ## VIỆC 14/11 — XONG PHẦN MÃ, đã gộp vào `main` (kế hoạch, hợp đồng key: `cad/tien_do/viec_14_11.md`; nhật ký `cad/LICH_SU.md`)
 Quy trình vẽ 6 bước + `tuong`/`cua`/`kt_chuoi` + `PCCC_TRUC/TUONG/CUA/ADIM/CDIM`; palette `PCCC` (bot chat, Cài đặt 3 giao diện); ảnh block nền đen;
