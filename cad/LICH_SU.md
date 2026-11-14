@@ -392,3 +392,5 @@ Người dùng (ảnh PCCC_RAI): gõ `?` thì hiện bảng danh sách, không i
   Bỏ `VungBam`, bỏ `TraceBoundary`, bỏ từ khoá `Doituong`. Test: bỏ đáp 'D' (4 chỗ `chay_thu.ps1`, 1 chỗ `thu_gui.ps1`); phép kiểm bấm điểm dùng bản sao mặt bằng ở gốc 2700000 + khung chọn C.
 - Đổi model (người dùng dặn): `cad-ve` Haiku → Sonnet; Gemini mặc định `gemini-4-argon-medium` (bỏ 3.8 Flash), việc khó Carbon/Hydrogen (`agy models`).
 - Dừng ở 90 % hạn mức 5 giờ. Kết quả `chay_thu.ps1` lần đầu sau sửa: xem `cad/TIEN_DO.md`.
+- 11:10: thử bảng chọn trên AutoCAD thật bằng `thu_gui.ps1` (gửi `PCCC_RAI ?` qua COM trong job): 3 lần LOI do COM chập chờn; script gỡ lỗi riêng thấy bảng mở đúng.
+  Phiên khác commit `d20e5a9` (làm lại PCCC_RAI) gộp luôn phần thử dở của `thu_gui.ps1`. Dừng ở 93 % hạn mức 5 giờ, việc kế ghi `cad/TIEN_DO.md` mục 6.

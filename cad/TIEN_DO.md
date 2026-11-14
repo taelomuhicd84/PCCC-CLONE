@@ -29,7 +29,12 @@ bản quyền (`PCCC_BANQUYEN`, KeyGen, Apps Script). Test tự động đạt h
 5. Để sau (ý của file tham khảo): phân hệ Báo cháy có thanh trượt k % + KPI, xem trước TransientGraphics, hoàn tác lượt bố trí, tiện ích đánh số / kiểm trùng / kiểm layer.
 6. XONG mã 14/11 (người dùng yêu cầu): gõ `?` ở dấu nhắc mã (`PCCC_RAI`, `PCCC_DAT`, `PCCC_TUYEN`, `PCCC_VUNGBV`, `PCCC_GAN`) mở bảng chọn
    `ui/BangChonVatTu.cs` (ký hiệu, tên, mã, tìm không dấu, Enter/bấm đúp chọn) thay cho in dòng lệnh; gõ chữ khớp nhiều mã cũng mở bảng lọc sẵn.
-   CÒN: xem trên AutoCAD thật (AutoCAD đang mở nên chưa chạy `thu_gui.ps1`; người dùng tắt hẳn AutoCAD rồi mở lại để nạp DLL mới).
+   Đã thấy trên AutoCAD thật (script gỡ lỗi, COM): bảng "TKPCCC - Mã thiết bị cần rải" mở đúng, 520 x 625. DỞ (dừng 93 % lúc ~11:10 14/11): phép kiểm cuối `thu_gui.ps1`
+   (khối "Go ? o dau nhac ma") gửi lệnh qua COM `SendCommand` trong `Start-Job` KHÔNG ỔN ĐỊNH: `RPC_E_CALL_REJECTED` khi AutoCAD bận, lần ra 57 BC_KHOI, lần không mở bảng,
+   một lần bảng tự đóng sau ~22 s (chưa rõ vì sao). VIỆC KẾ: bỏ COM + job; đưa vào `gui.scr` (dòng 18) ngay sau 'PHX': `'PCCC_DAT', '?'` + đáp điểm đặt (đọc dấu nhắc `DatThietBi`
+   trong `Lenh.cs` ~dòng 477) — KHÔNG dùng `PCCC_RAI` vì phiên khác đang làm lại dấu nhắc RAI (`d20e5a9`, chưa đạt test). Kiểm bảng NGAY sau `song.json`
+   (dời `Add-Type` UIA + `WinU` lên trước), lọc 'dau bao khoi', bấm nút "Chọn" (InvokePattern), kịch bản tự đáp tiếp; cuối test `dem` BC_KHOI = 4 (rai MCP) + số đặt.
+   Rồi `thu_gui.ps1` tới TAT CA DAT, `chay_thu.ps1`, `thu_mcp.ps1`.
 7. Gemini (skill `tkpccc-phoi-hop-model` gốc repo): CHẠY ĐƯỢC 14/11 qua Antigravity CLI `agy` (Gemini CLI bị Google từ chối tài khoản cá nhân);
    thử PDF mẫu đúng 10/10. CÒN: đo token trước/sau trên
    `ket_qua/cad_mau/drive_goc/cong_trinh.pdf` (bóc trục, kích thước trang mặt bằng), ghi `LICH_SU.md`.
