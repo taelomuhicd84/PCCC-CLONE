@@ -9,6 +9,13 @@
   <Components>
     <ComponentEntry AppName="TKPCCC" ModuleName="./Contents/TKPCCC.Cad.dll" LoadOnAutoCADStartup="True">
       <Commands GroupName="TKPCCC">
+        <Command Local="PCCC" Global="PCCC" />
+        <Command Local="PCCC_TRUC" Global="PCCC_TRUC" />
+        <Command Local="PCCC_TUONG" Global="PCCC_TUONG" />
+        <Command Local="PCCC_CUA" Global="PCCC_CUA" />
+        <Command Local="PCCC_ADIM" Global="PCCC_ADIM" />
+        <Command Local="PCCC_CDIM" Global="PCCC_CDIM" />
+        <Command Local="PCCC_BANQUYEN" Global="PCCC_BANQUYEN" />
         <Command Local="PCCC_HELP" Global="PCCC_HELP" />
         <Command Local="PCCC_LIB" Global="PCCC_LIB" />
         <Command Local="PCCC_DAT" Global="PCCC_DAT" />

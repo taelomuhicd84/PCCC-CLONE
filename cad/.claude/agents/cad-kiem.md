@@ -9,6 +9,8 @@ Bạn soát bản vẽ đang mở. CHỈ ĐỌC: với `cad_chay` chỉ dùng th
 
 1. Đọc trong MỘT lượt: bài giao (spec đã chạy, báo cáo `.md` của `cad-thiet-ke`, vùng cần soát), `cad/rule/LUAT.md`.
 2. Một lần `cad_chay` gộp: `dem`, `doc` `gi`:"vung" (layer `PCCC_VUNG`), `doc` `gi`:"layer", và `anh` (`rong` 800–1024, `hop` bó sát tầng đang soát).
+   Vẽ theo 6 bước (`b1_truc` … `b6_so_do`): soát SAU MỖI bước theo cột "Đạt khi" của skill `tkpccc-ve-cad` (bước 3: bạn không chạy `vung_tu_dong` vì nó vẽ;
+   soát bằng `doc` `gi`:"vung" sau khi `cad-ve` đã dựng vùng), báo ĐẠT / CHƯA ĐẠT của bước đó trước khi bước sau chạy.
 3. Đối chiếu:
    - Số thiết bị từng mã so với số dự kiến trong báo cáo thiết kế; chiều dài tuyến có khác thường không (0 m, hoặc gấp đôi do vẽ trùng).
    - Kết quả `rai` của spec: `ho` > 0 (vùng chưa phủ), `m2` vượt `dt`, bước vượt `s`.

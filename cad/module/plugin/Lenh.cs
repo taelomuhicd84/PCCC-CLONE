@@ -105,7 +105,14 @@ namespace TKPCCC
 
         /// Mọi lệnh gõ tay: { tên, việc làm, cách dùng }. Thêm lệnh mới thì thêm một dòng ở đây (bảng PCCC_HELP đọc mảng này).
         public static readonly string[][] DS_LENH = {
+            new[] { "PCCC", "Palette chính: quy trình vẽ 6 bước, thư viện, lệnh, bot chat, cài đặt", "Gõ lệnh; chọn phân hệ ở thanh dọc trái, ô tìm lọc thẻ theo tên hoặc lệnh" },
             new[] { "PCCC_HELP", "Bảng mọi lệnh PCCC, tìm lệnh, sửa phím tắt", "Gõ chữ vào ô tìm; sửa ô Phím tắt rồi Enter là lưu cho lần sau" },
+            new[] { "PCCC_TRUC", "B1: vẽ lưới trục", "Nhập nhịp X (vd 6000,6000,4500), nhịp Y, bấm điểm gốc" },
+            new[] { "PCCC_TUONG", "B2, B3: vẽ tường theo tim, vách ngăn", "Nhập dày, bấm chuỗi điểm như PLINE; Vach = vách ngăn, Dong = khép kín" },
+            new[] { "PCCC_CUA", "B3: cửa đi trên tường đã vẽ", "Bấm tâm cửa trên tường, nhập rộng, bấm phía cánh mở vào" },
+            new[] { "PCCC_ADIM", "Dim tự động cả lưới thiết bị", "Lọc Block/Line/Pline, quét cửa sổ, 2 mốc tường (Enter bỏ qua), bấm điểm đặt đường dim" },
+            new[] { "PCCC_CDIM", "Dim tiếp tục chuỗi ADIM vừa tạo", "Bấm các điểm tiếp theo" },
+            new[] { "PCCC_BANQUYEN", "Bản quyền: email, mã máy, key", "Nhập email, Đăng ký hoặc dán key rồi Kích hoạt; Lấy key tự động sau 5–10 phút" },
             new[] { "PCCC_BLOCK", "Bảng block PCCC: ký hiệu, tên, số lượng trong bản vẽ", "Bấm đúp hoặc nút xanh để đặt, nút cam để rải; chỉ có trong AutoCAD có giao diện" },
             new[] { "PCCC_LIB", "Nạp, cập nhật block PCCC từ PCCC_Blocks.dwg", "Gõ lệnh; Taomoi = cất bản cũ, tạo lại thư viện mặc định" },
             new[] { "PCCC_DAT", "Đặt thiết bị theo mã vật tư", "Nhập mã (? = danh sách, gõ một phần tên hoặc mã để tìm), bấm điểm đặt" },

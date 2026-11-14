@@ -2,6 +2,13 @@
   "_ghi_chu": "Mac dinh cho thao tac spec (luoi_truc, kt, chu). Sua xong chay cad\\build.bat de chep vao bundle; lan PCCC_SPEC ke tiep dung so moi, khong can mo lai AutoCAD. r, du, kt_gan, kt_xa, kt_cao la he so nhan voi co chu 'cao'. mau_* la so mau AutoCAD (1 do, 2 vang, 3 xanh la, 4 cyan, 5 xanh duong, 6 tim, 7 trang).",
   "chu": { "cao": 250 },
   "kt": { "cao": 250, "cach": 500 },
+  "kien_truc": {
+    "_ghi_chu": "tuong, cua, kt_chuoi, PCCC_TUONG, PCCC_CUA (chuan: cad/layer/kien_truc.md). Ten layer tuong phai co chu TUONG/WALL/VACH, cua co chu CUA/DOOR, kich thuoc co chu DIM de vung_tu_dong nhan dung. d_*, rong_cua theo don vi ban ve (mm).",
+    "layer_tuong": "TUONG", "mau_tuong": 7, "d_tuong": 200,
+    "layer_vach": "VACH", "mau_vach": 8, "d_vach": 100,
+    "layer_cua": "CUA", "mau_cua": 4, "rong_cua": 900,
+    "layer_kt": "DIM", "mau_kt": 3
+  },
   "luoi_truc": {
     "cao": 350,
     "r": 1.15,
