@@ -423,3 +423,6 @@ BỐ TRÍ, hoàn tác, vẽ loop, kiểm tra, báo cáo); Dim đối tượng 5 
   `PCCC_XEM_TRUOC` (không in, lượt rải thật xoá); lệnh mới `PCCC_KT` (vùng mù: lưới mẫu 0,5 m trong phòng PCCC_VUNG, xa mọi thiết bị > R, khoanh trên `PCCC_KIEM_MU`);
   trang Báo cháy: preset Lưu/Nạp, Bố trí nhanh (RECTANG trên PCCC_VUNG rồi PCCC_RAI chọn L), Vùng loại trừ, Kiểm vùng mù; Tiện ích thêm thẻ CKO. Test 113/113
   (phòng 20 x 20 m một đầu khói giữa phòng: mù 59,5 % = 952 / 1600, đúng tính tay).
+- Đợt 4: trang con ADIM (`ui/BangAdim.cs`): chọn layer (chip DIM, PCCC_DIM, 0_DIM, Hiện hành), DimStyle của bản vẽ, loại đối tượng, phương đo; BẮT ĐẦU gửi
+  `-LAYER M`, `-DIMSTYLE R`, `PCCC_ADIM` + loại; phương đặt qua `Lenh.AdimPhuong` (câu hỏi phương nằm sau quét chọn, chuỗi gửi không điền được). `PCCC_ADIM` lọc thêm Mline.
+  Test 114/114 (Mline 3 đỉnh ra 2 dim). Người dùng đổi ngưỡng hạn mức CAD thành 95 %, cho tự làm tiếp lúc reset 19h (ghi vào `CLAUDE.md`, `cad/CLAUDE.md`).

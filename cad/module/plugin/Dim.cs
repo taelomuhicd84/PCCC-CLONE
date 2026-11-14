@@ -51,6 +51,9 @@ namespace TKPCCC
         // shortcut: CDIM nhớ chuỗi ADIM gần nhất cho cả phiên AutoCAD (không theo từng bản vẽ); cần thì lưu theo Document.
         static bool cdimCo, cdimX;
         static Point3d cdimQua, cdimCuoi;
+        /// Trang ADIM của palette (TKPCCC.UI.dll) đặt phương đo trước khi gửi PCCC_ADIM ("X", "Y", "Tudong"): lệnh dùng luôn, không hỏi lại; dùng một lần rồi xoá.
+        /// Cần vì chuỗi gửi qua SendStringToExecute không điền được câu hỏi nằm SAU bước quét chọn.
+        public static string AdimPhuong;
 
         static string HoiTu(Editor ed, string hoi, string ds, string macDinh)
         {
@@ -69,9 +72,11 @@ namespace TKPCCC
             Database db = doc.Database;
             Editor ed = doc.Editor;
             Matrix3d ucs = ed.CurrentUserCoordinateSystem;
-            string loc = HoiTu(ed, "\nLoại đối tượng cần dim", "Block Line Pline Tatca", "Block");
+            string phSan = AdimPhuong;
+            AdimPhuong = null;
+            string loc = HoiTu(ed, "\nLoại đối tượng cần dim", "Block Line Pline Mline Tatca", "Block");
             if (loc == null) return;
-            string loai = loc == "Block" ? "INSERT" : loc == "Line" ? "LINE" : loc == "Pline" ? "LWPOLYLINE,POLYLINE" : "INSERT,LINE,LWPOLYLINE,POLYLINE";
+            string loai = loc == "Block" ? "INSERT" : loc == "Line" ? "LINE" : loc == "Pline" ? "LWPOLYLINE,POLYLINE" : loc == "Mline" ? "MLINE" : "INSERT,LINE,LWPOLYLINE,POLYLINE,MLINE";
             PromptSelectionOptions so = new PromptSelectionOptions();
             so.MessageForAdding = "\nQuét cửa sổ chọn cả lưới đối tượng: ";
             PromptSelectionResult sr = ed.GetSelection(so, new SelectionFilter(new TypedValue[] { new TypedValue((int)DxfCode.Start, loai) }));
@@ -87,6 +92,8 @@ namespace TKPCCC
                     Line ln = e as Line;
                     Polyline pl = e as Polyline;
                     Polyline2d p2 = e as Polyline2d;
+                    Mline ml = e as Mline;
+                    if (ml != null) for (int i = 0; i < ml.NumberOfVertices; i++) ps.Add(ml.VertexAt(i));
                     if (br != null) ps.Add(br.Position);
                     else if (ln != null) { ps.Add(ln.StartPoint); ps.Add(ln.EndPoint); }
                     else if (pl != null) for (int i = 0; i < pl.NumberOfVertices; i++) ps.Add(pl.GetPoint3dAt(i));
@@ -107,7 +114,7 @@ namespace TKPCCC
                 if (pr.Status != PromptStatus.OK) break;
                 tuong.Add(pr.Value.TransformBy(ucs));
             }
-            string ph = HoiTu(ed, "\nPhương đo", "X Y Tudong", "Tudong");
+            string ph = phSan ?? HoiTu(ed, "\nPhương đo", "X Y Tudong", "Tudong");
             if (ph == null) return;
             PromptPointResult qr = ed.GetPoint("\nĐiểm đặt đường kích thước: ");
             if (qr.Status != PromptStatus.OK) return;

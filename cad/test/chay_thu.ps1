@@ -591,6 +591,7 @@ $adG[5] = @(24003, 13000)
   'PCCC_ADIM', '', 'W', '19000,9000', '30000,20000', '', '19500,10000', '28500,10000', '', '20000,19000',
   'PCCC_CDIM', '30000,19000', '30000,25000', '',
   'PCCC_ADIM', 'Block', 'W', '19000,9000', '30000,20000', '', '', 'Y', '18000,12000', '-LAYER', 'S', '0', '',
+  '_.MLINE', '60000,0', '63000,0', '64000,0', '', '_.ZOOM', '_E', 'PCCC_ADIM', 'Mline', 'W', '59000,-1000', '65000,1000', '', '', 'X', '60000,-2000',
   'PCCC_TRUC', '6000,6000,4500', '5000', '-30000,0',
   'PCCC_TUONG', '', '', '40000,0', '46000,0', '46000,4000', '40000,4000', 'D',
   'PCCC_CUA', '43000,0', '', '43000,2000', '',
@@ -611,6 +612,7 @@ Kiem ($fk -and (Test-Path $fk) -and (DocAnh $fk).mau -gt 1) "anh phong tuong + c
 $kt2 = DocKq 'kt_tay'
 Kiem ($out3 -match 'PCCC_ADIM n=4 phuong=X moc=5' -and $out3 -match 'PCCC_CDIM n=1' -and $out3 -match 'PCCC_ADIM n=3 phuong=Y' -and $kt2 -and $kt2.doc[0].ds[0].n -eq 8) `
   'PCCC_ADIM quet luoi 3 x 4 + 2 moc tuong ra 4 dim (1 cot 1 moc), CDIM noi 1, ADIM phuong Y ra 3 dim'
+Kiem ($out3 -match 'PCCC_ADIM n=2 phuong=X moc=3') 'PCCC_ADIM loc Mline (spec ADIM buoc 3): mline 3 dinh ra 2 dim'
 Kiem ($out3 -match 'PCCC_TRUC 4x2 truc ve=' -and $out3 -match 'PCCC_TUONG tuong d=200 ve=2' -and $out3 -match 'PCCC_CUA ve=\d+ thay=2' -and
   $kt2 -and @($kt2.vung_tu_dong).Count -eq 1 -and $kt2.vung_tu_dong[0].m2 -eq 22.04) `
   "PCCC_TRUC, PCCC_TUONG (kin), PCCC_CUA: phong 5800 x 3800 = 22,04 m2 dung duoc vung ($($kt2.vung_tu_dong | ConvertTo-Json -Compress -Depth 3))"

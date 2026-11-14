@@ -38,5 +38,6 @@ Lệnh mới cần viết (plugin):
 - [x] PCKT `PCCC_KT`: vùng mù (điểm trong PCCC_VUNG xa mọi thiết bị > R), khoanh, % mù
 - [x] Preset Lưu / Nạp (khoá `bt_presets` trong cai_dat.json)
 
-## Đợt 4 — ADIM sub-panel 5 bước (UI gửi PCCC_ADIM điền sẵn: layer, lọc, phương)
+## Đợt 4 — ADIM sub-panel 5 bước: XONG 14/11 tối (`ui/BangAdim.cs`, mở từ thẻ ADIM; layer + chip, DimStyle của bản vẽ, lọc Block/Line/Pline/Mline/Tất cả,
+phương X/Y/Tự động qua `Lenh.AdimPhuong`; `PCCC_ADIM` thêm lọc Mline). Hai mép tường bấm khi lệnh hỏi (chưa hiện toạ độ lên trang: shortcut).
 ## Đợt 5 — Thanh dọc phân hệ: Quy trình · Tiện ích · Báo cháy · Chữa cháy · Thống kê · Thư viện · Lệnh · Bot chat · Cài đặt

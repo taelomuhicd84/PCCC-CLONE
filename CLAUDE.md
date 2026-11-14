@@ -10,7 +10,7 @@ Bộ công cụ thiết kế PCCC: plugin AutoCAD 2021 + runner Node + web nội
   làm tiếp không cần hội thoại này) + `LICH_SU.md`, commit, push (skill `tkpccc-xong-dau-muc`); báo người dùng giờ reset.
 - Dự tính trước: việc sắp làm có thể đẩy usage qua 85 % (vd mở agent ≈ 10–25 % mỗi agent) thì lưu + push TRƯỚC khi làm.
 - Việc CAD (thư mục `cad/`, người dùng dặn 2026-11-10): tiến độ và nhật ký lưu RIÊNG ở `cad/TIEN_DO.md`, `cad/LICH_SU.md`
-  (`TIEN_DO.md` gốc chỉ trỏ tới); tới 90 % (người dùng dặn 2026-11-11, thay mức 85 % cho việc CAD) thì dừng, ghi 2 file đó, commit, push, hẹn giờ tới lúc reset rồi TỰ làm tiếp, không hỏi người dùng.
+  (`TIEN_DO.md` gốc chỉ trỏ tới); tới 95 % (người dùng dặn 2026-11-14, thay mức 90 % ngày 11/11 cho việc CAD) thì dừng, ghi 2 file đó, commit, push, hẹn giờ tới lúc reset rồi TỰ làm tiếp, không hỏi người dùng.
   `cad/` là dự án con (người dùng dặn 2026-11-11): luật riêng `cad/CLAUDE.md`, bản đồ thư mục `cad/README.md`, skill và agent riêng trong `cad/.claude/`.
 
 ## Mỗi module là một skill (người dùng dặn 2026-11-02: sửa module nào thì chỉ vào đó, đỡ tốn token)

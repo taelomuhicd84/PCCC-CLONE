@@ -21,6 +21,7 @@ namespace TKPCCC
     public class BangChinh : UserControl
     {
         public const string QUY_TRINH = "Quy trình vẽ", TIEN_ICH = "Tiện ích", BO_TRI = "Báo cháy", THU_VIEN = "Thư viện", LENH = "Lệnh", BOT = "Bot chat", CAI_DAT = "Cài đặt";
+        public const string ADIM = "ADIM"; // trang con Dim đối tượng (không có nút ở thanh dọc)
         static PaletteSet ps;
         static BangChinh nd;
 
@@ -57,6 +58,7 @@ namespace TKPCCC
         BangBlock block;
         BangLenh bangLenh;
         BangTienIch tienIch;
+        BangAdim adim;
         BotChat bot;
         int soBlock;
 
@@ -173,6 +175,7 @@ namespace TKPCCC
             foreach (KeyValuePair<string, NutBen> n in nutBen) { n.Value.Chon = n.Key == ten; n.Value.Invalidate(); }
             if (ten == THU_VIEN) soBlock = block.Nap();
             if (ten == LENH) bangLenh.Nap();
+            if (ten == ADIM) adim.NapKieu();
         }
 
         Control TaoTrang(string ten)
@@ -182,6 +185,7 @@ namespace TKPCCC
             if (ten == BOT) return bot = new BotChat();
             if (ten == CAI_DAT) return TrangCaiDat();
             if (ten == BO_TRI) return new BangBoTri();
+            if (ten == ADIM) return adim = new BangAdim(delegate { ChonTrang(TIEN_ICH); });
             if (ten == TIEN_ICH) return tienIch = new BangTienIch(delegate(string t) { ChonTrang(t); });
             return dsThe;
         }
@@ -204,7 +208,7 @@ namespace TKPCCC
             Them(5, "Dây, ống", "Dây báo cháy, ống nhánh theo thiết bị đã rải; vẽ ống, dây tay", new[] { "PCCC_TUYEN", "PCCC_ONG" }, null);
             Them(6, "Sơ đồ nguyên lý", "Nhờ bot chat vẽ từ mặt bằng đang mở", new[] { BOT },
                 new Action[] { delegate { ChonTrang(BOT); bot.DatCau(BotChat.MAU_SO_DO); } });
-            Them(0, "Kích thước tự động", "Quét cửa sổ, chuỗi kích thước theo thiết bị", new[] { "PCCC_ADIM" }, null);
+            Them(0, "Kích thước tự động", "Quét cửa sổ, chuỗi kích thước theo thiết bị (trang 5 bước)", new[] { "PCCC_ADIM" }, new Action[] { delegate { ChonTrang(ADIM); } });
             Them(0, "Kích thước tiếp tục", "Nối tiếp chuỗi kích thước vừa tạo", new[] { "PCCC_CDIM" }, null);
 
             foreach (string[] l in Lenh.DS_LENH) Them(-1, l[1], l[2], new[] { l[0] }, null); // chỉ hiện khi tìm

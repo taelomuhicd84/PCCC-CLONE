@@ -27,7 +27,7 @@ namespace TKPCCC
             new[] { "3", "MR", "Di chuyển / Xoay", "Xoay từng block quanh điểm chèn", "PCCC_XOAY\n" },
             new[] { "3", "AD", "Căn chỉnh Dim", "Dóng đường dim về một mốc", "PCCC_CANDIM\n" },
             new[] { "3", "CLT", "Căn chỉnh Text", "Căn lề, xếp đều chữ (TEXTALIGN)", "_.TEXTALIGN\n" },
-            new[] { "3", "ADIM", "Dim đối tượng", "Chuỗi dim tự động cả lưới thiết bị", "PCCC_ADIM\n" },
+            new[] { "3", "ADIM", "Dim đối tượng", "Trang 5 bước: layer, lọc, phương, chuỗi dim", "#adim" },
             new[] { "3", "CDIM", "Dim tiếp tục", "Nối tiếp chuỗi dim vừa tạo", "PCCC_CDIM\n" },
             new[] { "3", "SCB", "Tỷ lệ", "Tỉ lệ từng block quanh điểm chèn", "PCCC_TYLE\n" },
             new[] { "3", "CLN", "Xóa / Làm sạch", "Xoá nét trùng (OVERKILL)", "_.OVERKILL\n" },
@@ -158,6 +158,7 @@ namespace TKPCCC
         {
             string thuMuc = Path.GetDirectoryName(typeof(Lenh).Assembly.Location);
             if (lenh == "#caidat") moTrang(BangChinh.CAI_DAT);
+            else if (lenh == "#adim") moTrang(BangChinh.ADIM);
             else if (lenh == "#thumuc") Process.Start("explorer.exe", "\"" + thuMuc + "\"");
             else if (lenh == "#tieuchuan") Process.Start("notepad.exe", "\"" + Path.Combine(thuMuc, "khoang_cach_rai.json") + "\"");
             else if (lenh == "#saoluu") Process.Start("explorer.exe", "/select,\"" + GiaoDien.FileCaiDat + "\"");

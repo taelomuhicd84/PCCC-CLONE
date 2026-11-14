@@ -60,6 +60,7 @@ AI chỉ viết một gói thao tác ngắn (spec JSON), plugin sinh hình. Mộ
 | Thêm vật tư, thiết bị | `data/vat_tu.json` ở GỐC repo (dùng chung với báo giá), rồi `build.bat`, `PCCC_LIB` |
 | Đưa block của mình (kể cả block động) vào thư viện dưới một mã mới | trong AutoCAD: `PCCC_THEMBLOCK` hoặc nút "Thêm từ bản vẽ" của bảng `PCCC_BLOCK`; mã nguồn `module/plugin/Block.cs` |
 | Kiểm vùng mù đầu báo (`PCCC_KT`) và các tiện ích chỉnh sửa, kiểm tra (`PCCC_TRUNG`, `PCCC_LOPCHUAN`, `PCCC_DANHSO`, `PCCC_XOAY`, `PCCC_TYLE`, `PCCC_DOIBLOCK`, `PCCC_CANDIM`, `PCCC_DOIDN`) | `module/plugin/TienIch.cs` |
+| Trang con ADIM 5 bước (layer, DimStyle, lọc, phương) | `module/ui/BangAdim.cs`; lệnh `module/plugin/Dim.cs` (`AdimPhuong`) |
 | Trang Tiện ích của palette (`PCCC_TIENICH`: 27 thẻ, mã tắt, nhóm) | `module/ui/BangTienIch.cs`, mảng `THE` (thêm thẻ = 1 dòng) |
 | Vùng loại trừ `PCCC_LOAITRU`, vẽ tạm xem trước `PCCC_XEM_TRUOC` của `PCCC_RAI` | `module/plugin/Rai.cs`, hàm `TachLoaiTru`, `XoaXemTruoc` |
 | Dây báo cháy nối tiếp thiết bị (`PCCC_DAY`, dây loop); đầu báo tia chiếu `BC_BEAM` vẽ tia (`PCCC_RAI`) | `module/plugin/Rai.cs`, hàm `DayTay`, `TiaVung`, `VeTia` |
