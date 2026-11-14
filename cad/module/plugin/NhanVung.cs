@@ -186,7 +186,7 @@ namespace TKPCCC
             }
             if (chiCua) return;
             Hatch hg = e as Hatch;
-            if (hg != null && LaGachCheo(hg)) n.GachCheo.AddRange(VongHatch(hg));
+            if (hg != null && loai >= 0 && LaGachCheo(hg)) n.GachCheo.AddRange(VongHatch(hg)); // hatch của plugin (PCCC_THOAT_NAN...) không phải công trình hiện hữu
             if (n.Mau != null && (e is Hatch || !n.Mau.Contains(KhoaNet(n, lop, mau)))) return;
             if (n.ChiTuong && loai != 2) return;
             if (!NetLien(n, net)) return; // trục (CENTER, DASHDOT), nét khuất

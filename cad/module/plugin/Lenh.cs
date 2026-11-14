@@ -141,6 +141,7 @@ namespace TKPCCC
             new[] { "PCCC_BANG", "Chèn bảng thống kê vào bản vẽ", "Chạy PCCC_BOC trước (bảng lấy kết quả gần nhất), bấm điểm chèn" },
             new[] { "PCCC_KYHIEU", "Chèn bảng KÝ HIỆU cho mặt bằng (chỉ thiết bị có trên tờ)", "Chọn mặt bằng (Enter = cả bản vẽ), bấm góc trên trái, cao chữ" },
             new[] { "PCCC_QUYDINH", "Chèn bảng quy định lắp đặt đầu báo (TCVN 7568-14:2025)", "Bấm góc trên trái, cao chữ; trị số lấy từ khoang_cach_rai.json" },
+            new[] { "PCCC_THOATNAN", "Hatch gạch chéo ĐƯỜNG THOÁT NẠN", "Chọn polyline kín các lối thoát nạn (layer PCCC_THOAT_NAN)" },
             new[] { "PCCC_VUNGBV", "Vẽ vùng bảo vệ bán kính R quanh thiết bị", "Nhập mã, bán kính R; báo thiết bị đứng lẻ" },
             new[] { "PCCC_SPEC", "Chạy một file spec JSON (các thao tác như cad_chay)", "Nhập đường dẫn file .json; kết quả ghi <tên>.kq.json cạnh file" } };
 
@@ -1009,7 +1010,16 @@ namespace TKPCCC
                 BlockTable bt = (BlockTable)tr.GetObject(db.BlockTableId, OpenMode.ForRead);
                 BlockTableRecord ms = (BlockTableRecord)tr.GetObject(bt[BlockTableRecord.ModelSpace], OpenMode.ForWrite);
                 ObjectId lop = DamBaoLayer(db, tr, tenLop, 8);
-                ((LayerTableRecord)tr.GetObject(lop, OpenMode.ForWrite)).IsPlottable = false;
+                LayerTableRecord lr = (LayerTableRecord)tr.GetObject(lop, OpenMode.ForWrite);
+                // Tủ họng vách tường: bộ bản vẽ mẫu IN vòng bán kính bảo vệ bằng nét đứt (hoc-ban-ve-mau-dwg.md mục 4); loại khác chỉ để kiểm, không in.
+                bool inVong = v.he == "HVT";
+                lr.IsPlottable = inVong;
+                if (inVong)
+                {
+                    LinetypeTable lt = (LinetypeTable)tr.GetObject(db.LinetypeTableId, OpenMode.ForRead);
+                    if (!lt.Has("DASHED")) foreach (string f in new[] { "acadiso.lin", "acad.lin" }) { try { db.LoadLineTypeFile("DASHED", f); break; } catch (System.Exception) { } }
+                    if (lt.Has("DASHED")) lr.LinetypeObjectId = lt["DASHED"];
+                }
                 double tol = 0.001 / HeSoMet(db);
                 HashSet<string> daCo = new HashSet<string>(); // bản copy đè cùng điểm chỉ vẽ 1 vòng
                 foreach (ObjectId id in ms.Cast<ObjectId>().ToList())
@@ -1032,7 +1042,7 @@ namespace TKPCCC
             }
             // Khoảng hở: thiết bị không có thiết bị cùng loại nào trong phạm vi 2R (vùng bảo vệ không chạm nhau).
             int le = tam.Count(p => tam.Count(q => q != p && p.DistanceTo(q) <= 2 * r) == 0);
-            ed.WriteMessage("\nĐã vẽ " + tam.Count + " vùng bảo vệ R = " + rr.Value + " m trên layer " + tenLop + " (không in)"
+            ed.WriteMessage("\nĐã vẽ " + tam.Count + " vùng bảo vệ R = " + rr.Value + " m trên layer " + tenLop + (v.he == "HVT" ? " (nét đứt, in được)" : " (không in)")
                 + (xoa > 0 ? ", thay " + xoa + " vòng cũ" : "") + "."
                 + (le > 0 && tam.Count > 1 ? " Có " + le + " thiết bị đứng lẻ (cách thiết bị gần nhất > 2R) — kiểm tra khoảng hở." : ""));
         }

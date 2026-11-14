@@ -538,5 +538,49 @@ namespace TKPCCC
             }
             ed.WriteMessage("\n[TKPCCC] PCCC_DOIDN n=" + n + " " + v.ma);
         }
+
+        [CommandMethod("PCCC_THOATNAN")] public void LenhThoatNan() { Chay(ThoatNan); }
+
+        const string LAYER_THOAT_NAN = "PCCC_THOAT_NAN";
+
+        /// PCCC_THOATNAN: hatch gạch chéo ANSI31 (vạch cách 0,6 m) trong các polyline kín đã chọn = ĐƯỜNG THOÁT NẠN, như mặt bằng chữa cháy của bộ bản vẽ mẫu
+        /// (cad/knowledge/hoc-ban-ve-mau-dwg.md mục 4). Layer PCCC_*: NhanVung không coi hatch này là công trình hiện hữu.
+        static void ThoatNan()
+        {
+            Document doc = AcApp.DocumentManager.MdiActiveDocument;
+            Database db = doc.Database;
+            Editor ed = doc.Editor;
+            PromptSelectionOptions so = new PromptSelectionOptions();
+            so.MessageForAdding = "\nChọn polyline kín vùng đường thoát nạn: ";
+            PromptSelectionResult r = ed.GetSelection(so, new SelectionFilter(new TypedValue[] { new TypedValue((int)DxfCode.Start, "LWPOLYLINE") }));
+            if (r.Status != PromptStatus.OK) return;
+            double m = HeSoMet(db), m2 = 0;
+            int n = 0;
+            using (Transaction tr = db.TransactionManager.StartTransaction())
+            {
+                BlockTableRecord ms = (BlockTableRecord)tr.GetObject(db.CurrentSpaceId, OpenMode.ForWrite);
+                ObjectId lop = DamBaoLayer(db, tr, LAYER_THOAT_NAN, 8);
+                foreach (ObjectId id in r.Value.GetObjectIds())
+                {
+                    Polyline pl = tr.GetObject(id, OpenMode.ForRead) as Polyline;
+                    if (pl == null || !pl.Closed || pl.NumberOfVertices < 3) continue;
+                    Hatch h = new Hatch();
+                    h.SetDatabaseDefaults(db);
+                    h.LayerId = lop;
+                    ms.AppendEntity(h);
+                    tr.AddNewlyCreatedDBObject(h, true);
+                    h.PatternScale = 0.6 / m / 3.175; // ANSI31: vạch cách 3,175 đơn vị ở tỉ lệ 1
+                    h.SetHatchPattern(HatchPatternType.PreDefined, "ANSI31");
+                    h.Associative = false;
+                    h.AppendLoop(HatchLoopTypes.Outermost, new ObjectIdCollection { id });
+                    h.EvaluateHatch(true);
+                    m2 += Math.Abs(pl.Area) * m * m;
+                    n++;
+                }
+                tr.Commit();
+            }
+            ed.WriteMessage("\n[TKPCCC] PCCC_THOATNAN vung=" + n + " m2=" + Math.Round(m2, 2).ToString(CultureInfo.InvariantCulture)
+                + (n == 0 ? " (không có polyline kín nào)" : " trên layer " + LAYER_THOAT_NAN));
+        }
     }
 }

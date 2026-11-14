@@ -56,6 +56,7 @@ $kb = @('INSUNITS', '4', 'NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '_.SAVEAS', '2018',
   'CIRCLE', '80000,0', '150', '-BLOCK', 'VAN_KHACH', '80000,0', 'L', '', '-INSERT', 'VAN_KHACH', '80000,0', '1', '', '0',
   'PCCC_THEMBLOCK', 'L', 'van_khach', 'Van khach them', 'SPR', '', 'PCCC_DAT', 'VAN_KHACH', '81000,0', '',
   'PCCC_KYHIEU', '', '0,-20000', '', 'PCCC_QUYDINH', '0,-40000', '',
+  'RECTANG', '0,-60000', '10000,-58000', 'PCCC_THOATNAN', 'L', '', 'PCCC_DAT', 'HVT_TU', '20000,-60000', '', 'PCCC_VUNGBV', 'HVT_TU', '26',
   'PCCC_BOC', 'Khong', '', 'ThuPlugin', '_.QSAVE')
 $kb -join "`r`n" | Set-Content -Encoding ascii "$T\kb.scr"
 $p = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb.out.txt"
@@ -79,7 +80,9 @@ $can = @(
   @('PCCC_THEMBLOCK VAN_KHACH', 'PCCC_THEMBLOCK: block ten VAN_KHACH them duoi ma van_khach (ma trung ten block khong bi bao trung)'),
   @('VAN_KHACH\s+2 ', 'block moi them: PCCC_DAT dat duoc, PCCC_BOC dem 2 cai (ban chen tay + ban PCCC_DAT)'),
   @('PCCC_KYHIEU dong=\d+ [^\r\n]*BC_KHOI[^\r\n]*BC_NHIET', 'PCCC_KYHIEU: bang ky hieu liet ke thiet bi co trong ban ve (dau khoi, dau nhiet)'),
-  @('PCCC_QUYDINH dong=3\b', 'PCCC_QUYDINH: bang quy dinh lap dat 3 loai dau bao tu khoang_cach_rai.json'))
+  @('PCCC_QUYDINH dong=3\b', 'PCCC_QUYDINH: bang quy dinh lap dat 3 loai dau bao tu khoang_cach_rai.json'),
+  @('PCCC_THOATNAN vung=1 m2=20\b', 'PCCC_THOATNAN: hatch ANSI31 duong thoat nan trong polyline 10 x 2 m'),
+  @('R = 26 m tr.n layer PCCC_VUNGBV_HVT_TU \(n.t ..t, in [^)]+\)', 'PCCC_VUNGBV tu vach tuong: vong net dut, layer in duoc'))
 $loi = 0
 foreach ($c in $can) { if ($out -match $c[0]) { "DAT   $($c[1])" } else { "LOI   $($c[1])"; $loi++ } }
 # Lan boc thu 2 (sau khi chen bang + vung bao ve) van phai ra 2 / 7: bang thong ke va vong tron khong bi dem.

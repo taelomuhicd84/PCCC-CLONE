@@ -76,6 +76,7 @@ AI chỉ viết một gói thao tác ngắn (spec JSON), plugin sinh hình. Mộ
 | Ghi bài học khi vẽ | `knowledge/hoc/` |
 | Bảng KÝ HIỆU mặt bằng `PCCC_KYHIEU`, bảng quy định lắp đặt đầu báo `PCCC_QUYDINH`, thao tác spec `bang` | `module/plugin/BangMb.cs` (trị số từ `data/khoang_cach_rai.json`) |
 | Dim bước tia beam (`PCCC_RAI` BC_BEAM, layer `PCCC_BC_TIA_KT`); nhãn zone + diện tích, điện trở cuối dây (`PCCC_DAY`) | `module/plugin/Rai.cs` (`KtTia`, `DayTay`) |
+| Hatch đường thoát nạn `PCCC_THOATNAN`; vòng bán kính tủ vách tường in được (`PCCC_VUNGBV` mã hệ HVT) | `module/plugin/TienIch.cs`, `module/plugin/Lenh.cs` (`VungBaoVe`) |
 
 ## Build và kiểm thử
 - `cad\build.bat`: ra `TKPCCC.bundle\Contents\TKPCCC.Cad.dll`, `TKPCCC.UI.dll` và `bin\TKPCCC.Mcp.exe`. AutoCAD đang mở thì tắt hẳn rồi mở lại để nạp bản mới.
