@@ -24,9 +24,13 @@ Nguyên tắc: model đắt chỉ đọc bản đã rút gọn. Thứ tự ưu t
 python .claude/skills/tkpccc-phoi-hop-model/scripts/goi_gemini.py --kiem
 python .claude/skills/tkpccc-phoi-hop-model/scripts/goi_gemini.py --file <pdf> --trang 3-5 --json --out ket_qua/<dự án>/gemini_<việc>.json --yeu-cau "<trường cần lấy>"
 ```
-- Script chép file (hoặc chỉ các trang `--trang`) vào thư mục tạm, chạy `gemini -p ... --approval-mode plan` (chỉ đọc) ở đó: Gemini không thấy repo.
+- Công cụ: **Antigravity CLI** `%LOCALAPPDATA%\agy\bin\agy.exe` (đăng nhập Google AI của người dùng; `agy models` liệt kê model), dự phòng Gemini CLI (cần `GEMINI_API_KEY`).
+- Script đổi các trang PDF cần (`--trang`) ra PNG (`--dpi`, mặc định 200) trong thư mục tạm, chạy `agy -p ... --mode plan` (chỉ đọc) ở đó: không thấy repo.
+  Lời nhắn bảo rõ "dùng view_file, KHÔNG dùng run_command" (thiếu câu này agy đòi chạy lệnh shell, bị chặn, trả rỗng). KHÔNG dùng `--dangerously-skip-permissions`.
 - Kết quả ghi vào `ket_qua/<dự án>/` (không commit). Claude đọc file đó, KHÔNG dán PDF vào hội thoại.
-- `--model` để chọn model Flash cho việc bóc đơn giản (xem tên bằng `gemini` → `/model`); bỏ trống thì CLI tự chọn.
+- `--model gemini-3.8-flash-medium` cho việc bóc đơn giản (một trang ≈ 10–25 nghìn token Gemini, ≈ 30 giây); việc khó dùng `gemini-4-*`.
+- Thử 14/11 trên `cad/test/mau_kt.pdf` (có đáp án, một nhãn cố tình ghi sai): 150 dpi + hỏi "nhịp mm" sai 2/10 (tự "sửa" nhãn); 200 dpi + hỏi "chữ in nguyên văn" đúng 10/10.
+  ⇒ luôn hỏi CHỮ IN NGUYÊN VĂN, không hỏi số đã suy ra.
 
 ## Mẫu yêu cầu bóc (luôn đòi trích nguồn để kiểm)
 `--yeu-cau` liệt kê trường cần lấy, mỗi giá trị kèm `trang` và `trich` (chữ nguyên văn trên bản vẽ), không đọc được thì `null`. Ví dụ CAD bước 1:
@@ -36,6 +40,5 @@ python .claude/skills/tkpccc-phoi-hop-model/scripts/goi_gemini.py --file <pdf> -
 - Số Gemini bóc ra là CHƯA KIỂM: trước khi vào bảng đối chiếu, spec CAD hay kết luận phải đối chiếu bằng script (chữ vector, tỉ lệ) hoặc Claude xem ảnh đúng trang đó. Trị số quy chuẩn vẫn lấy nguyên văn từ `knowledge/`, `skills/`, không lấy từ Gemini.
 - Hồ sơ khách: gói miễn phí của Google có thể dùng nội dung để cải thiện sản phẩm. Chỉ gửi trang cần thiết (`--trang`); người dùng chịu trách nhiệm về điều khoản tài khoản.
 - Gemini lỗi đăng nhập / hết hạn mức: quay về bước 3 (Claude đọc đúng trang), không chờ.
-- 14/11: đăng nhập Google cá nhân bị Google từ chối (`IneligibleTierError`: Code Assist cho cá nhân không còn hỗ trợ Gemini CLI, chuyển sang Antigravity).
-  Gemini CLI chỉ chạy được bằng `GEMINI_API_KEY` (Google AI Studio) do người dùng tự tạo; chưa có key thì bỏ bước 2.
+- 14/11: Gemini CLI với đăng nhập Google cá nhân bị từ chối (`IneligibleTierError`, Google bảo chuyển Antigravity) ⇒ dùng `agy`.
 - Đo hiệu quả: ghi token Gemini (script in ra) và token Claude của lượt đó vào `LICH_SU.md` khi thử trên hồ sơ thật.

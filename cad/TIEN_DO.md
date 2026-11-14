@@ -14,8 +14,8 @@ bản quyền (`PCCC_BANQUYEN`, KeyGen, Apps Script). Test tự động đạt h
 4. Rủi ro gói A: tường giao chữ T còn nét thò qua mặt tường; `cua` chỉ cắt tường hai nét thẳng; CDIM nhớ chuỗi cho cả phiên. Gói B: phân hệ Lệnh (bảng 880 px) chật trong palette 400 px;
    nút Dừng bot chỉ tắt `claude.cmd`, không tắt tiến trình con; chưa có block màu để thử nhánh ByLayer/ByBlock/true color.
 5. Để sau (ý của file tham khảo): phân hệ Báo cháy có thanh trượt k % + KPI, xem trước TransientGraphics, hoàn tác lượt bố trí, tiện ích đánh số / kiểm trùng / kiểm layer.
-6. Gemini (skill `tkpccc-phoi-hop-model` gốc repo): đăng nhập Google cá nhân bị từ chối 14/11 (`IneligibleTierError`, Google bảo chuyển Antigravity); chờ người dùng
-   chọn: tạo `GEMINI_API_KEY` (AI Studio) hay bỏ Gemini. Có key thì chạy `goi_gemini.py --kiem`, rồi đo token trước/sau trên
+6. Gemini (skill `tkpccc-phoi-hop-model` gốc repo): CHẠY ĐƯỢC 14/11 qua Antigravity CLI `agy` (Gemini CLI bị Google từ chối tài khoản cá nhân);
+   thử PDF mẫu đúng 10/10. CÒN: đo token trước/sau trên
    `ket_qua/cad_mau/drive_goc/cong_trinh.pdf` (bóc trục, kích thước trang mặt bằng), ghi `LICH_SU.md`.
 
 ## NGƯỜI DÙNG TEST 13/11 — 4 VIỆC LÀM SONG SONG VỚI VIỆC DỞ Ở PHIÊN SAU (dặn: chỉ ghi nhận, phiên reset 5 giờ kế tiếp mới làm)

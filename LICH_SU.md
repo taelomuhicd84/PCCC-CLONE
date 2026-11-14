@@ -181,3 +181,6 @@
   (mỗi tệp một hạng mục, đường dẫn cụ thể nhất thắng), chip quy chuẩn trích dẫn, bảng skill/agent. Agent Sonnet.
 - Skill `tkpccc-phoi-hop-model` + `scripts/goi_gemini.py`: Gemini CLI 0.68.0 (đã cài `npm i -g`) bóc PDF dài/scan ở thư mục tạm, chế độ plan, Claude đọc JSON nhỏ.
   CHƯA thử: người dùng chưa đăng nhập Google trong Gemini CLI.
+- Gemini: Gemini CLI đăng nhập Google cá nhân bị từ chối (`IneligibleTierError`); chuyển `goi_gemini.py` sang Antigravity CLI `agy -p --output-format json --mode plan`
+  (đăng nhập Google AI của người dùng). Agy không đọc PDF nếu không chạy shell ⇒ script đổi trang ra PNG 200 dpi, bảo dùng `view_file`. Thử `cad/test/mau_kt.pdf`:
+  hỏi "chữ in nguyên văn" đúng 10/10 nhịp (cả nhãn cố tình ghi sai), hỏi "nhịp mm" ở 150 dpi sai 2/10. Gemini Flash ≈ 10–25 nghìn token/trang.
