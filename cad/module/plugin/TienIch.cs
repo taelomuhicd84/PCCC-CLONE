@@ -24,6 +24,98 @@ namespace TKPCCC
         [CommandMethod("PCCC_DOIBLOCK")] public void LenhDoiBlock() { Chay(DoiBlock); }
         [CommandMethod("PCCC_CANDIM")] public void LenhCanDim() { Chay(CanDim); }
         [CommandMethod("PCCC_DOIDN")] public void LenhDoiDn() { Chay(DoiDn); }
+        [CommandMethod("PCCC_KT")] public void LenhKt() { Chay(KiemTraPhu); }
+
+        const string LAYER_KIEM_MU = "PCCC_KIEM_MU"; // đánh dấu vùng mù của PCCC_KT, mỗi lần chạy vẽ lại
+
+        /// PCKT / CKO (spec addin mẫu): vùng mù trong các phòng PCCC_VUNG. Lưới mẫu 0,5 m trong phòng (bỏ vùng PCCC_LOAITRU); điểm mẫu xa mọi thiết bị hơn R
+        /// của thiết bị đó (r trong khoang_cach_rai.json, mã không có r thì không tính) là điểm mù. Báo % mù từng phòng, khoanh điểm mù (thưa 1 m) trên PCCC_KIEM_MU.
+        static void KiemTraPhu()
+        {
+            Document doc = AcApp.DocumentManager.MdiActiveDocument;
+            Database db = doc.Database;
+            Editor ed = doc.Editor;
+            double m = HeSoMet(db), b = 0.5 / m;
+            SelectionFilter loc = new SelectionFilter(new[] { new TypedValue((int)DxfCode.Start, "LWPOLYLINE,INSERT") });
+            PromptSelectionOptions o = new PromptSelectionOptions();
+            o.MessageForAdding = "\nChọn vùng kiểm (phòng PCCC_VUNG + thiết bị; Enter = cả bản vẽ): ";
+            PromptSelectionResult r = ed.GetSelection(o, loc);
+            if (r.Status != PromptStatus.OK) r = ed.SelectAll(loc);
+            if (r.Status != PromptStatus.OK) return;
+            int tongDiem = 0, tongMu = 0, soPhong = 0;
+            using (Transaction tr = db.TransactionManager.StartTransaction())
+            {
+                BoiCanh bc = new BoiCanh { Tr = tr, Dm = DocDanhMuc(), Alias = DocAlias() };
+                List<List<Point2d>> phong = new List<List<Point2d>>(), loaiTru = new List<List<Point2d>>();
+                List<Point2d> tb = new List<Point2d>();
+                List<double> rr = new List<double>();
+                Dictionary<string, double> rMa = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
+                foreach (ObjectId id in r.Value.GetObjectIds())
+                {
+                    Entity e = tr.GetObject(id, OpenMode.ForRead) as Entity;
+                    Polyline pl = e as Polyline;
+                    BlockReference br = e as BlockReference;
+                    if (pl != null && pl.Closed && pl.NumberOfVertices >= 3)
+                    {
+                        if (string.Equals(pl.Layer, LAYER_VUNG, StringComparison.OrdinalIgnoreCase)) phong.Add(DinhPl(pl));
+                        else if (string.Equals(pl.Layer, LAYER_LOAI_TRU, StringComparison.OrdinalIgnoreCase)) loaiTru.Add(DinhPl(pl));
+                    }
+                    else if (br != null && !(br is Table))
+                    {
+                        string ma = MaThietBi(br, bc);
+                        if (ma == null) continue;
+                        double ri;
+                        if (!rMa.TryGetValue(ma, out ri))
+                        {
+                            Dictionary<string, object> tc = TieuChuanRai(ma, 0);
+                            rMa[ma] = ri = tc == null ? 0 : LaySo(tc, "r", 0) / m;
+                        }
+                        if (ri > 0) { tb.Add(new Point2d(br.Position.X, br.Position.Y)); rr.Add(ri); }
+                    }
+                }
+                if (phong.Count == 0) { tr.Commit(); ed.WriteMessage("\n[TKPCCC] PCCC_KT: vùng chọn không có phòng (polyline kín layer " + LAYER_VUNG + "): chạy PCCC_RAI hoặc vẽ vùng trước."); return; }
+                BlockTableRecord ms = (BlockTableRecord)tr.GetObject(db.CurrentSpaceId, OpenMode.ForWrite);
+                ObjectId lop = DamBaoLayer(db, tr, LAYER_KIEM_MU, 1);
+                ((LayerTableRecord)tr.GetObject(lop, OpenMode.ForWrite)).IsPlottable = false;
+                foreach (ObjectId id in ms)
+                {
+                    Entity e = tr.GetObject(id, OpenMode.ForRead) as Entity;
+                    if (e != null && e.LayerId == lop) { e.UpgradeOpen(); e.Erase(); }
+                }
+                foreach (List<Point2d> q in phong)
+                {
+                    soPhong++;
+                    double x0 = q.Min(p => p.X), x1 = q.Max(p => p.X), y0 = q.Min(p => p.Y), y1 = q.Max(p => p.Y);
+                    int diem = 0, mu = 0;
+                    for (int i = 0; x0 + (i + 0.5) * b < x1; i++)
+                        for (int j = 0; y0 + (j + 0.5) * b < y1; j++)
+                        {
+                            Point2d p = new Point2d(x0 + (i + 0.5) * b, y0 + (j + 0.5) * b);
+                            if (!TrongDaGiac(q, p) || loaiTru.Any(t => TrongDaGiac(t, p))) continue;
+                            diem++;
+                            bool phu = false;
+                            for (int k = 0; k < tb.Count && !phu; k++) phu = p.GetDistanceTo(tb[k]) <= rr[k] + 1e-9;
+                            if (phu) continue;
+                            mu++;
+                            if (i % 2 == 0 && j % 2 == 0)
+                            {
+                                Circle c = new Circle(new Point3d(p.X, p.Y, 0), Vector3d.ZAxis, b / 2);
+                                c.LayerId = lop;
+                                ms.AppendEntity(c);
+                                tr.AddNewlyCreatedDBObject(c, true);
+                            }
+                        }
+                    tongDiem += diem; tongMu += mu;
+                    ed.WriteMessage("\n[TKPCCC] PCCC_KT phòng " + soPhong + ": m2=" + Math.Round(diem * b * b * m * m, 1).ToString(CultureInfo.InvariantCulture)
+                        + " thiết bị=" + tb.Count(p => TrongDaGiac(q, p)) + " mù=" + PhanTram(mu, diem) + "%");
+                }
+                tr.Commit();
+            }
+            ed.WriteMessage("\n[TKPCCC] PCCC_KT phong=" + soPhong + " mu=" + PhanTram(tongMu, tongDiem) + "% diem_mu=" + tongMu
+                + (tongMu > 0 ? " (khoanh đỏ trên " + LAYER_KIEM_MU + ", không in; rải bù bằng PCCC_DAT hoặc giảm k)" : " (phủ kín)"));
+        }
+
+        static string PhanTram(int a, int b) { return (b == 0 ? 0 : Math.Round(100.0 * a / b, 1)).ToString(CultureInfo.InvariantCulture); }
 
         const string LAYER_KIEM = "PCCC_KIEM"; // vòng đánh dấu lỗi kiểm tra, không in
 

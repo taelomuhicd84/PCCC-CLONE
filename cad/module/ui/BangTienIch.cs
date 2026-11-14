@@ -37,6 +37,7 @@ namespace TKPCCC
             new[] { "4", "DN", "Cập nhật DN", "Đổi cỡ đoạn ống đã chọn", "PCCC_DOIDN\n" },
             new[] { "5", "CKC", "Kiểm tra trùng", "Thiết bị đặt trùng điểm", "PCCC_TRUNG\n" },
             new[] { "5", "CKL", "Kiểm tra Layer", "Thiết bị sai layer (khoanh đỏ)", "PCCC_LOPCHUAN\n" },
+            new[] { "5", "CKO", "Kiểm tra vùng mù", "% mù từng phòng theo R, khoanh đỏ", "PCCC_KT\n" },
             new[] { "5", "R", "Vùng bảo vệ R", "Vòng R quanh thiết bị, báo đứng lẻ", "PCCC_VUNGBV\n" },
             new[] { "5", "REP", "Báo cáo nhanh", "Bóc khối lượng theo tầng, khu", "PCCC_BOC\n" },
             new[] { "6", "SET", "Cài đặt chung", "Giao diện, model bot chat, bản quyền", "#caidat" },

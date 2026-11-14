@@ -28,14 +28,15 @@ Lệnh mới cần viết (plugin):
 - [x] AD `PCCC_CANDIM` dóng đường dim về một mốc
 - [x] DN `PCCC_DOIDN` đổi cỡ ống (layer PCCC_ONG_DNxx)
 - [x] RN `RENAME`, LM `LAYER`, PD `PCCC_ONG`, REP `PCCC_BOC`, BAK mở chỗ `cai_dat.json`, SP `BOUNDARY`
-- [ ] TZ tách khu vực, MZ quản lý khu vực, CKO (= `PCCC_KT` đợt 3): chưa có
+- [x] CKO = `PCCC_KT`
+- [ ] TZ tách khu vực, MZ quản lý khu vực: chưa có
 
-## Đợt 3 — Báo cháy còn lại
-- [ ] Vùng loại trừ (lỗ thang, giếng trời): PCCC_RAI bỏ điểm nằm trong polyline loại trừ
-- [ ] Xem trước vẽ tạm: điểm + vòng R trên layer không in `PCCC_XEM_TRUOC`, xoá khi BỐ TRÍ / xem lại
-- [ ] Bố trí nhanh: RECTANG trên PCCC_VUNG rồi PCCC_RAI chọn L
-- [ ] PCKT `PCCC_KT`: vùng mù (điểm trong PCCC_VUNG xa mọi thiết bị > R), khoanh, % mù
-- [ ] Preset Lưu / Nạp (tên preset trong cai_dat.json)
+## Đợt 3 — Báo cháy còn lại: XONG 14/11 tối
+- [x] Vùng loại trừ (lỗ thang, giếng trời): PCCC_RAI bỏ điểm nằm trong polyline loại trừ
+- [x] Xem trước vẽ tạm: điểm + vòng R trên layer không in `PCCC_XEM_TRUOC`, xoá khi BỐ TRÍ / xem lại
+- [x] Bố trí nhanh: RECTANG trên PCCC_VUNG rồi PCCC_RAI chọn L
+- [x] PCKT `PCCC_KT`: vùng mù (điểm trong PCCC_VUNG xa mọi thiết bị > R), khoanh, % mù
+- [x] Preset Lưu / Nạp (khoá `bt_presets` trong cai_dat.json)
 
 ## Đợt 4 — ADIM sub-panel 5 bước (UI gửi PCCC_ADIM điền sẵn: layer, lọc, phương)
 ## Đợt 5 — Thanh dọc phân hệ: Quy trình · Tiện ích · Báo cháy · Chữa cháy · Thống kê · Thư viện · Lệnh · Bot chat · Cài đặt

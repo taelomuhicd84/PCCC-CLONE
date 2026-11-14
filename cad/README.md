@@ -59,8 +59,9 @@ AI chỉ viết một gói thao tác ngắn (spec JSON), plugin sinh hình. Mộ
 | Dim tự động (`PCCC_ADIM`, `PCCC_CDIM`, lõi chuỗi dim của `kt_chuoi`) | `module/plugin/Dim.cs` |
 | Thêm vật tư, thiết bị | `data/vat_tu.json` ở GỐC repo (dùng chung với báo giá), rồi `build.bat`, `PCCC_LIB` |
 | Đưa block của mình (kể cả block động) vào thư viện dưới một mã mới | trong AutoCAD: `PCCC_THEMBLOCK` hoặc nút "Thêm từ bản vẽ" của bảng `PCCC_BLOCK`; mã nguồn `module/plugin/Block.cs` |
-| Tiện ích chỉnh sửa, kiểm tra (`PCCC_TRUNG`, `PCCC_LOPCHUAN`, `PCCC_DANHSO`, `PCCC_XOAY`, `PCCC_TYLE`, `PCCC_DOIBLOCK`, `PCCC_CANDIM`, `PCCC_DOIDN`) | `module/plugin/TienIch.cs` |
+| Kiểm vùng mù đầu báo (`PCCC_KT`) và các tiện ích chỉnh sửa, kiểm tra (`PCCC_TRUNG`, `PCCC_LOPCHUAN`, `PCCC_DANHSO`, `PCCC_XOAY`, `PCCC_TYLE`, `PCCC_DOIBLOCK`, `PCCC_CANDIM`, `PCCC_DOIDN`) | `module/plugin/TienIch.cs` |
 | Trang Tiện ích của palette (`PCCC_TIENICH`: 27 thẻ, mã tắt, nhóm) | `module/ui/BangTienIch.cs`, mảng `THE` (thêm thẻ = 1 dòng) |
+| Vùng loại trừ `PCCC_LOAITRU`, vẽ tạm xem trước `PCCC_XEM_TRUOC` của `PCCC_RAI` | `module/plugin/Rai.cs`, hàm `TachLoaiTru`, `XoaXemTruoc` |
 | Dây báo cháy nối tiếp thiết bị (`PCCC_DAY`, dây loop); đầu báo tia chiếu `BC_BEAM` vẽ tia (`PCCC_RAI`) | `module/plugin/Rai.cs`, hàm `DayTay`, `TiaVung`, `VeTia` |
 | Đổi trang Bố trí BC (`PCCC_BOTRI`: thiết bị theo tiêu chuẩn, mức tối ưu k, nút BỐ TRÍ gửi `PCCC_RAI` điền sẵn) | `module/ui/BangBoTri.cs`; trị số ở `data/khoang_cach_rai.json` gốc repo; từ khoá `HeSo` ở `module/plugin/Rai.cs`, hàm `RaiTay` |
 | Đổi palette chính `PCCC` (thẻ quy trình 6 bước, bot chat `claude -p`, trang Cài đặt) | `module/ui/BangChinh.cs`; màu 3 kiểu giao diện ở `module/ui/GiaoDien.cs`, hàm `BangMau` |

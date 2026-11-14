@@ -1,4 +1,4 @@
-// Phân hệ "Bố trí BC" của palette PCCC (lệnh PCCC_BOTRI), ý lấy từ addin mẫu 14/11: chọn thiết bị kèm trị số tiêu chuẩn (data/khoang_cach_rai.json),
+﻿// Phân hệ "Bố trí BC" của palette PCCC (lệnh PCCC_BOTRI), ý lấy từ addin mẫu 14/11: chọn thiết bị kèm trị số tiêu chuẩn (data/khoang_cach_rai.json),
 // chiều cao trần, thanh "mức tối ưu k" 50–100 % hiện ngay bước, cách tường, R dùng thật, trần có dầm; BỐ TRÍ / Xem trước = gửi PCCC_RAI đã điền sẵn câu trả lời
 // (mã, HeSo k, Dam, XemTruoc, trần, theo hàng): người dùng chỉ còn quét chọn mặt bằng. Kiểm cự ly (nút ấn, đèn ≤ 45 m) = PCCC_VUNGBV với R = d / 2.
 // Chỉ giao diện: mọi xử lý bản vẽ ở Rai.cs, Lenh.cs.
@@ -29,6 +29,7 @@ namespace TKPCCC
         readonly TrackBar k = new TrackBar();
         readonly OTong oBuoc = new OTong("Bước ≤"), oTuong = new OTong("Cách tường ≤"), oR = new OTong("R ≤");
         readonly CheckBox theoHang = new CheckBox(), coDam = new CheckBox();
+        readonly ComboBox preset = new ComboBox();
         NutBo phuR;
 
         public BangBoTri()
@@ -43,6 +44,25 @@ namespace TKPCCC
             Controls.Add(f);
             DocTieuChuan();
             f.Text = "BoTri: " + ds.Count; // thu_gui.ps1 đọc số thiết bị (chữ của cửa sổ)
+
+            // Preset (spec addin mẫu): bộ lựa chọn có tên, lưu một khoá "bt_presets" của cai_dat.json dạng "Tên=mã;trần;k;dầm;hàng|...".
+            FlowLayoutPanel hp = HangNut();
+            Label lp = new Label();
+            lp.Text = "Preset";
+            lp.Font = GiaoDien.Dam;
+            lp.ForeColor = GiaoDien.ChuDam;
+            lp.AutoSize = true;
+            lp.Margin = new Padding(0, 7, 6, 0);
+            hp.Controls.Add(lp);
+            preset.DropDownStyle = ComboBoxStyle.DropDown;
+            preset.Width = 130;
+            preset.Margin = new Padding(0, 3, 4, 0);
+            preset.AccessibleName = "Tên preset";
+            preset.Items.AddRange(DocPreset().Keys.ToArray());
+            hp.Controls.Add(preset);
+            NutNho(hp, "Lưu", delegate { LuuPreset(preset.Text); }).Width = 46;
+            NutNho(hp, "Nạp", delegate { NapPreset(preset.Text); }).Width = 46;
+            f.Controls.Add(hp);
 
             Muc("1", "THIẾT BỊ CẦN BỐ TRÍ", "theo tiêu chuẩn");
             string maCu = GiaoDien.DocCaiDat("bt_ma", ds.Count > 0 ? ds[0].Ma : "");
@@ -77,10 +97,10 @@ namespace TKPCCC
             canhBao.ForeColor = GiaoDien.Do;
             canhBao.Font = GiaoDien.Nho;
             canhBao.AutoSize = true;
-            canhBao.MaximumSize = new Size(300, 0);
+            canhBao.MaximumSize = new Size(290, 0);
             f.Controls.Add(canhBao);
 
-            Muc("3", "MỨC TỐI ƯU", "k nhân bước, cách tường tối đa");
+            Muc("3", "MỨC TỐI ƯU", "k nhân bước, cách tường");
             k.Minimum = 50; k.Maximum = 100; k.SmallChange = 5; k.LargeChange = 10; k.TickFrequency = 10;
             int kCu;
             k.Value = int.TryParse(GiaoDien.DocCaiDat("bt_k", "100"), out kCu) && kCu >= 50 && kCu <= 100 ? kCu : 100;
@@ -98,12 +118,12 @@ namespace TKPCCC
             o.WrapContents = false;
             o.BackColor = GiaoDien.Nen;
             o.Margin = new Padding(0);
-            foreach (OTong t in new[] { oBuoc, oTuong, oR }) { t.Size = new Size(96, 80); t.Margin = new Padding(0, 0, 6, 0); o.Controls.Add(t); }
+            foreach (OTong t in new[] { oBuoc, oTuong, oR }) { t.Size = new Size(92, 80); t.Margin = new Padding(0, 0, 6, 0); o.Controls.Add(t); }
             f.Controls.Add(o);
             uoc.Font = GiaoDien.Nho;
             uoc.ForeColor = GiaoDien.ChuMo;
             uoc.AutoSize = true;
-            uoc.MaximumSize = new Size(300, 0);
+            uoc.MaximumSize = new Size(290, 0);
             uoc.Margin = new Padding(0, 4, 0, 0);
             f.Controls.Add(uoc);
 
@@ -117,7 +137,7 @@ namespace TKPCCC
             ghiDam.Font = GiaoDien.Nho;
             ghiDam.ForeColor = GiaoDien.Cam;
             ghiDam.AutoSize = true;
-            ghiDam.MaximumSize = new Size(300, 0);
+            ghiDam.MaximumSize = new Size(272, 0);
             ghiDam.Margin = new Padding(18, 0, 0, 4);
             f.Controls.Add(ghiDam);
             theoHang.Text = "Phòng không chữ nhật: chia theo từng hàng";
@@ -129,35 +149,39 @@ namespace TKPCCC
             NutBo boTri = new NutBo("▶  BỐ TRÍ", GiaoDien.XanhDam);
             boTri.Size = new Size(300, 38);
             boTri.Margin = new Padding(0, 12, 0, 4);
-            boTri.Click += delegate { GiaoDien.An(delegate { BoTri(false); }); };
+            boTri.Click += delegate { GiaoDien.An(delegate { BoTri(false, false); }); };
             f.Controls.Add(boTri);
             NutBo xem = new NutBo("Xem trước số lượng (không vẽ)", GiaoDien.Xanh);
             xem.Size = new Size(300, 30);
             xem.Margin = new Padding(0, 0, 0, 4);
-            xem.Click += delegate { GiaoDien.An(delegate { BoTri(true); }); };
+            xem.Click += delegate { GiaoDien.An(delegate { BoTri(true, false); }); };
             f.Controls.Add(xem);
             // Nút BỐ TRÍ, Xem trước, thanh k theo bề rộng palette (kéo hẹp tới MinimumSize vẫn không tràn ngang).
             f.Resize += delegate { int w = Math.Max(200, f.ClientSize.Width - f.Padding.Horizontal - 4); boTri.Width = w; xem.Width = w; k.Width = w; };
             f.Controls.Add(Chu("Gửi PCCC_RAI đã điền sẵn: còn quét chọn mặt bằng, bấm nét phân vùng mẫu (Enter = tự nhận), Enter = mọi phòng.", 0));
             ketQua.Font = GiaoDien.Dam;
             ketQua.AutoSize = true;
-            ketQua.MaximumSize = new Size(300, 0);
+            ketQua.MaximumSize = new Size(290, 0);
             ketQua.Margin = new Padding(0, 4, 0, 0);
             f.Controls.Add(ketQua);
             FlowLayoutPanel nut = HangNut();
             NutNho(nut, "↶ Hoàn tác lượt", delegate { GiaoDien.GuiLenh("_.U\n", null, null); });
             phuR = NutNho(nut, "Kiểm tra phủ R", delegate { ThietBi t = Dang(); if (t != null && t.R > 0) GiaoDien.GuiLenh("PCCC_VUNGBV\n" + t.Ma + "\n" + Ct(t.R) + "\n", null, null); });
+            NutNho(nut, "⚡ Bố trí nhanh", delegate { GiaoDien.An(delegate { BoTri(false, true); }); });
             NutNho(nut, "Vẽ vùng tay", delegate { GiaoDien.GuiLenh("_.-LAYER\n_M\nPCCC_VUNG\n\n_.PLINE\n", null, null); });
+            NutNho(nut, "Vùng loại trừ", delegate { GiaoDien.GuiLenh("_.-LAYER\n_M\nPCCC_LOAITRU\n\n_.PLINE\n", null, null); });
             f.Controls.Add(nut);
-            f.Controls.Add(Chu("Vẽ vùng tay: polyline KÍN (gõ C để khép) trên layer PCCC_VUNG, rồi BỐ TRÍ quét chọn nó.", 0));
+            f.Controls.Add(Chu("Bố trí nhanh: bấm 2 góc khung chữ nhật, rải ngay trong khung. Vẽ vùng tay, vùng loại trừ (lỗ thang, giếng trời): polyline KÍN (gõ C để khép), "
+                + "rồi BỐ TRÍ quét chọn cả hai: không rải trong vùng loại trừ.", 0));
 
             Muc("5", "KIỂM TRA, ĐI DÂY, THỐNG KÊ", "");
             FlowLayoutPanel kiem = HangNut();
+            NutNho(kiem, "✓ Kiểm vùng mù", delegate { GiaoDien.GuiLenh("PCCC_KT\n", null, null); });
             foreach (CuLy c in cuLy)
             {
                 CuLy cc = c;
                 NutBo n = NutNho(kiem, "Cự ly " + c.Ma + " ≤ " + So(c.D) + " m", delegate { GiaoDien.GuiLenh("PCCC_VUNGBV\n" + cc.Ma + "\n" + Ct(cc.D / 2) + "\n", null, null); });
-                n.Width = 148;
+                n.Width = 144;
                 n.AccessibleDescription = c.Ten + " — " + c.CanCu;
             }
             NutNho(kiem, "Vẽ dây loop", delegate { GiaoDien.GuiLenh("PCCC_DAY\nDAY_BC\n", null, null); });
@@ -254,7 +278,47 @@ namespace TKPCCC
                 : "≈ " + So(Math.Round(100 / (s * s), 1)) + " thiết bị / 100 m² (lưới vuông, chưa tính chia lẻ theo phòng)";
         }
 
-        void BoTri(bool xem)
+        Dictionary<string, string> DocPreset()
+        {
+            Dictionary<string, string> d = new Dictionary<string, string>();
+            foreach (string muc in GiaoDien.DocCaiDat("bt_presets", "").Split('|'))
+            {
+                int i = muc.IndexOf('=');
+                if (i > 0) d[muc.Substring(0, i)] = muc.Substring(i + 1);
+            }
+            return d;
+        }
+
+        void LuuPreset(string ten)
+        {
+            ThietBi t = Dang();
+            ten = new string((ten ?? "").Where(c => c != '|' && c != '=' && c != ';').ToArray()).Trim();
+            if (ten == "" || t == null) throw new System.Exception("Gõ tên preset (vd Văn phòng - 100%) rồi bấm Lưu.");
+            Dictionary<string, string> d = DocPreset();
+            d[ten] = t.Ma + ";" + tran.Text.Trim().Replace(";", "") + ";" + k.Value + ";" + (coDam.Checked ? "Co" : "Khong") + ";" + (theoHang.Checked ? "Co" : "Khong");
+            GiaoDien.LuuCaiDat("bt_presets", string.Join("|", d.Select(x => x.Key + "=" + x.Value)));
+            if (!preset.Items.Contains(ten)) preset.Items.Add(ten);
+            ketQua.ForeColor = GiaoDien.XanhLa;
+            ketQua.Text = "Đã lưu preset \"" + ten + "\".";
+        }
+
+        void NapPreset(string ten)
+        {
+            string v;
+            if (!DocPreset().TryGetValue((ten ?? "").Trim(), out v)) throw new System.Exception("Chưa có preset \"" + ten + "\".");
+            string[] p = v.Split(';');
+            for (int i = 0; i < ds.Count; i++) if (ds[i].Ma == p[0]) chon[i].Checked = true;
+            if (p.Length > 1) tran.Text = p[1];
+            int kk;
+            if (p.Length > 2 && int.TryParse(p[2], out kk) && kk >= k.Minimum && kk <= k.Maximum) k.Value = kk;
+            if (p.Length > 3) coDam.Checked = p[3] == "Co";
+            if (p.Length > 4) theoHang.Checked = p[4] == "Co";
+            TinhLai();
+        }
+
+        /// nhanh = "Bố trí nhanh": vẽ khung chữ nhật trên PCCC_VUNG (bấm 2 góc), xong thì PCCC_RAI chọn khung vừa vẽ (L) và rải ngay.
+        /// shortcut: layer hiện hành để lại PCCC_VUNG sau khi vẽ khung; muốn trả layer cũ thì đọc CLAYER trước khi gửi.
+        void BoTri(bool xem, bool nhanh)
         {
             ThietBi t = Dang();
             if (t == null) throw new System.Exception("Chưa có thiết bị nào có trị số tiêu chuẩn (khoang_cach_rai.json).");
@@ -266,12 +330,16 @@ namespace TKPCCC
             GiaoDien.LuuCaiDat("bt_dam", coDam.Checked ? "Co" : "Khong");
             GiaoDien.LuuCaiDat("bt_hang", theoHang.Checked ? "Co" : "Khong");
             // Đúng thứ tự dấu nhắc của PCCC_RAI (Rai.cs RaiTay): mã → [HeSo → k] [Dam] [XemTruoc] → trần (trống = Enter) → theo hàng.
-            GiaoDien.GuiLenh("PCCC_RAI\n" + t.Ma + "\n" + (k.Value < 100 ? "HeSo\n" + k.Value + "\n" : "") + (coDam.Checked && !t.Tia ? "Dam\n" : "")
-                + (xem ? "XemTruoc\n" : "") + (h > 0 ? Ct(h) : "") + "\n" + (theoHang.Checked ? "Co" : "Khong") + "\n", "PCCC_RAI", delegate
-                {
-                    ketQua.Text = Lenh.KetQuaRaiCuoi;
-                    ketQua.ForeColor = Lenh.KetQuaRaiCuoi.Contains("HO") ? GiaoDien.Do : GiaoDien.XanhLa;
-                });
+            string cau = "PCCC_RAI\n" + t.Ma + "\n" + (k.Value < 100 ? "HeSo\n" + k.Value + "\n" : "") + (coDam.Checked && !t.Tia ? "Dam\n" : "")
+                + (xem ? "XemTruoc\n" : "") + (h > 0 ? Ct(h) : "") + "\n" + (theoHang.Checked ? "Co" : "Khong") + "\n";
+            Action xong = delegate
+            {
+                ketQua.Text = Lenh.KetQuaRaiCuoi;
+                ketQua.ForeColor = Lenh.KetQuaRaiCuoi.Contains("HO") ? GiaoDien.Do : GiaoDien.XanhLa;
+            };
+            // Chọn L (khung vừa vẽ), Enter kết thúc chọn, Enter = không nét mẫu: khung là polyline kín PCCC_VUNG nên rải luôn, không hỏi điểm phòng.
+            if (nhanh) GiaoDien.GuiLenh("_.-LAYER\n_M\nPCCC_VUNG\n\n_.RECTANG\n", "RECTANG", delegate { GiaoDien.GuiLenh(cau + "_L\n\n\n", "PCCC_RAI", xong); });
+            else GiaoDien.GuiLenh(cau, "PCCC_RAI", xong);
         }
 
         void Muc(string so, string ten, string phu)
@@ -292,7 +360,7 @@ namespace TKPCCC
             l.Font = GiaoDien.Nho;
             l.ForeColor = GiaoDien.ChuMo;
             l.AutoSize = true;
-            l.MaximumSize = new Size(300, 0);
+            l.MaximumSize = new Size(290 - lui, 0);
             l.Margin = new Padding(lui, 0, 0, 2);
             return l;
         }
@@ -301,7 +369,7 @@ namespace TKPCCC
         {
             FlowLayoutPanel p = new FlowLayoutPanel();
             p.AutoSize = true;
-            p.MaximumSize = new Size(310, 0);
+            p.MaximumSize = new Size(296, 0);
             p.BackColor = GiaoDien.Nen;
             p.Margin = new Padding(0, 6, 0, 0);
             return p;
@@ -311,7 +379,7 @@ namespace TKPCCC
         {
             NutBo n = new NutBo(chu, GiaoDien.Xanh);
             n.Font = GiaoDien.Nho;
-            n.Size = new Size(98, 30);
+            n.Size = new Size(92, 30);
             n.Margin = new Padding(0, 0, 4, 4);
             n.Click += delegate { GiaoDien.An(viec); };
             p.Controls.Add(n);

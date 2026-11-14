@@ -962,7 +962,10 @@ namespace TKPCCC
                 if (mau.Add(kh)) ed.WriteMessage("\n[TKPCCC] Nét phân vùng mẫu: layer " + kh.Replace("|", ", màu ") + ".");
             }
             List<List<Point2d>> vung, mat;
-            MatChon(db, qr.Value.GetObjectIds(), mau.Count > 0 ? mau : null, out vung, out mat);
+            ObjectId[] conLai;
+            List<List<Point2d>> loaiTru = TachLoaiTru(db, qr.Value.GetObjectIds(), out conLai);
+            if (loaiTru.Count > 0) ed.WriteMessage("\n[TKPCCC] " + loaiTru.Count + " vùng loại trừ (polyline kín layer " + LAYER_LOAI_TRU + "): không rải trong đó.");
+            MatChon(db, conLai, mau.Count > 0 ? mau : null, out vung, out mat);
             bool veVung = vung.Count == 0;
             if (veVung)
             {
@@ -995,6 +998,12 @@ namespace TKPCCC
                 ObjectId lop = veVung && !xem ? DamBaoLayer(db, tr, LAYER_VUNG, 6) : ObjectId.Null;
                 ObjectId lopTia = tia && !xem ? DamBaoLayer(db, tr, LAYER_TIA, MauHe(v.he)) : ObjectId.Null;
                 string duoi = xem ? " (xem trước, chưa vẽ)" : "";
+                // Xem trước (spec addin mẫu): vẽ tạm điểm + vòng R hiệu dụng trên layer không in; lượt rải thật hay xem lại thì xoá bản tạm cũ.
+                int xoaTam = XoaXemTruoc(db, tr, ms);
+                if (xoaTam > 0 && !xem) ed.WriteMessage("\n[TKPCCC] xoa_xem_truoc=" + xoaTam);
+                ObjectId lopTam = xem ? LopXemTruoc(db, tr) : ObjectId.Null;
+                double rTam = tc == null ? 0 : LaySo(tc, "r", 0) * s / D(Lay(tc, "s")); // R tiêu chuẩn (m) nhân cùng tỉ lệ với bước (k, dầm, đổi đơn vị)
+                int soTam = 0;
                 foreach (List<Point2d> d in vung)
                 {
                     if (tia)
@@ -1002,6 +1011,7 @@ namespace TKPCCC
                         double bt, tt;
                         List<Point2d[]> ts = TiaVung(d, s, 0.2 / m, out bt, out tt);
                         if (!xem) foreach (Point2d[] a in ts) VeTia(db, tr, ms, v, a, k, lopTia, 0.3 / m);
+                        else foreach (Point2d[] a in ts) soTam += VeTam(tr, ms, new Line(new Point3d(a[0].X, a[0].Y, 0), new Point3d(a[1].X, a[1].Y, 0)), lopTam);
                         tong += ts.Count;
                         ed.WriteMessage("\n[TKPCCC] PCCC_RAI " + v.ma + " tia=" + ts.Count + " buoc=" + Lt(bt).ToString(CultureInfo.InvariantCulture)
                             + " tuong=" + Lt(tt).ToString(CultureInfo.InvariantCulture) + duoi);
@@ -1016,7 +1026,15 @@ namespace TKPCCC
                             + " (" + d.Count + " đỉnh) trên layer " + LAYER_VUNG + ".");
                     }
                     LuoiRai r = LuoiVung(d, s, s, 0, 0, le, le, 0.05 / m, dt, 0, theoHang, tuongMax, cachMin);
+                    // shortcut: điểm trong vùng loại trừ chỉ bị bỏ, không dời ra mép lỗ; mép lỗ xa thiết bị thì PCCC_KT báo vùng mù, rải bù bằng PCCC_DAT.
+                    int bo = r.Diem.RemoveAll(p => loaiTru.Any(q => TrongDaGiac(q, new Point2d(p.X, p.Y))));
+                    if (bo > 0) ed.WriteMessage("\n[TKPCCC] bo_loai_tru=" + bo);
                     if (!xem) foreach (Point3d p in r.Diem) ChenThietBi(db, tr, v, p, k, 0);
+                    else foreach (Point3d p in r.Diem)
+                    {
+                        soTam += VeTam(tr, ms, new Circle(p, Vector3d.ZAxis, 0.15 / m), lopTam);
+                        if (rTam > 0) soTam += VeTam(tr, ms, new Circle(p, Vector3d.ZAxis, rTam), lopTam);
+                    }
                     tong += r.Diem.Count;
                     if (r.Ho > 0) soHo++;
                     ed.WriteMessage("\n[TKPCCC] PCCC_RAI " + v.ma + " n=" + r.Diem.Count + " luoi=" + r.Nx + "x" + r.Ny
@@ -1024,6 +1042,7 @@ namespace TKPCCC
                         + " m2=" + Math.Round(r.O * m * m, 2).ToString(CultureInfo.InvariantCulture)
                         + (r.Ho > 0 ? " HO=" + r.Ho.ToString(CultureInfo.InvariantCulture) + "% (vùng chưa phủ hết, kiểm lại)" : "") + duoi);
                 }
+                if (xem) ed.WriteMessage("\n[TKPCCC] xem_truoc=" + soTam + " (vẽ tạm trên layer " + LAYER_XEM_TRUOC + ", không in, tự xoá khi rải thật)");
                 tr.Commit();
             }
             ed.WriteMessage("\n" + (xem ? "Xem trước: sẽ rải " : "Đã rải tổng ") + tong + " " + v.ten + (tia ? " (tia)" : "") + " trong " + vung.Count + " phòng.");
@@ -1032,6 +1051,60 @@ namespace TKPCCC
         }
 
         const string LAYER_TIA = "PCCC_BC_TIA";
+        const string LAYER_LOAI_TRU = "PCCC_LOAITRU";   // polyline kín: lỗ thang, giếng trời... không rải trong đó
+        const string LAYER_XEM_TRUOC = "PCCC_XEM_TRUOC"; // bản vẽ tạm của XemTruoc, không in
+
+        /// Tách polyline kín layer PCCC_LOAITRU khỏi vùng chọn (không đưa vào dựng phòng); trả đa giác loại trừ, conLai = các id còn lại.
+        static List<List<Point2d>> TachLoaiTru(Database db, ObjectId[] ids, out ObjectId[] conLai)
+        {
+            List<List<Point2d>> kq = new List<List<Point2d>>();
+            List<ObjectId> con = new List<ObjectId>();
+            using (Transaction tr = db.TransactionManager.StartTransaction())
+            {
+                foreach (ObjectId id in ids)
+                {
+                    Polyline pl = tr.GetObject(id, OpenMode.ForRead) as Polyline;
+                    if (pl != null && string.Equals(pl.Layer, LAYER_LOAI_TRU, StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (pl.Closed && pl.NumberOfVertices >= 3) kq.Add(DinhPl(pl));
+                    }
+                    else con.Add(id);
+                }
+                tr.Commit();
+            }
+            conLai = con.ToArray();
+            return kq;
+        }
+
+        static ObjectId LopXemTruoc(Database db, Transaction tr)
+        {
+            ObjectId lop = DamBaoLayer(db, tr, LAYER_XEM_TRUOC, 3);
+            ((LayerTableRecord)tr.GetObject(lop, OpenMode.ForWrite)).IsPlottable = false;
+            return lop;
+        }
+
+        static int VeTam(Transaction tr, BlockTableRecord ms, Entity e, ObjectId lop)
+        {
+            e.LayerId = lop;
+            ms.AppendEntity(e);
+            tr.AddNewlyCreatedDBObject(e, true);
+            return 1;
+        }
+
+        /// Xoá mọi đối tượng layer PCCC_XEM_TRUOC trong không gian đang vẽ; trả số đã xoá.
+        static int XoaXemTruoc(Database db, Transaction tr, BlockTableRecord ms)
+        {
+            LayerTable lt = (LayerTable)tr.GetObject(db.LayerTableId, OpenMode.ForRead);
+            if (!lt.Has(LAYER_XEM_TRUOC)) return 0;
+            ObjectId lop = lt[LAYER_XEM_TRUOC];
+            int n = 0;
+            foreach (ObjectId id in ms)
+            {
+                Entity e = tr.GetObject(id, OpenMode.ForRead) as Entity;
+                if (e != null && e.LayerId == lop) { e.UpgradeOpen(); e.Erase(); n++; }
+            }
+            return n;
+        }
 
         /// Đầu báo tia chiếu (5.9.1.3.2): các tia song song cạnh dài của khung bao vùng (ít tia, mỗi tia dài), cách nhau ≤ s, tia ngoài cùng cách tường
         /// nửa bước (≤ s / 2; dòng BC_BEAM có tuong = s / 2 nên đủ điều kiện cách tường). Mỗi hàng cắt vùng thành các đoạn trong phòng; hai đầu lùi vào "vao".

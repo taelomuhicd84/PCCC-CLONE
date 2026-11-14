@@ -419,3 +419,7 @@ BỐ TRÍ, hoàn tác, vẽ loop, kiểm tra, báo cáo); Dim đối tượng 5 
   thẻ gửi lệnh có sẵn hoặc lệnh AutoCAD (RENAME, LAYMCH, MEASURE, TEXTALIGN, OVERKILL, LAYER, BOUNDARY). Lệnh mới `plugin/TienIch.cs`: `PCCC_TRUNG`, `PCCC_LOPCHUAN`,
   `PCCC_DANHSO`, `PCCC_XOAY`, `PCCC_TYLE`, `PCCC_DOIBLOCK` (đổi BTR, ghi lại MA_VT), `PCCC_CANDIM`, `PCCC_DOIDN`. Thanh dọc: Quy trình · Tiện ích · Báo cháy · Thư viện · Lệnh · Bot chat · Cài đặt.
   Test 109/109 (7 ca tiện ích), thu_gui đếm 27 thẻ.
+- Đợt 3: `PCCC_RAI` bỏ điểm trong polyline kín layer `PCCC_LOAITRU` (lỗ thang, giếng trời; không đưa vào dựng phòng), XemTruoc vẽ tạm điểm + vòng R trên
+  `PCCC_XEM_TRUOC` (không in, lượt rải thật xoá); lệnh mới `PCCC_KT` (vùng mù: lưới mẫu 0,5 m trong phòng PCCC_VUNG, xa mọi thiết bị > R, khoanh trên `PCCC_KIEM_MU`);
+  trang Báo cháy: preset Lưu/Nạp, Bố trí nhanh (RECTANG trên PCCC_VUNG rồi PCCC_RAI chọn L), Vùng loại trừ, Kiểm vùng mù; Tiện ích thêm thẻ CKO. Test 113/113
+  (phòng 20 x 20 m một đầu khói giữa phòng: mù 59,5 % = 952 / 1600, đúng tính tay).

@@ -130,6 +130,7 @@ namespace TKPCCC
             new[] { "PCCC_DOIBLOCK", "Đổi block, giữ điểm, góc, tỉ lệ (SB)", "Chọn block cần thay, nhập mã thiết bị mới" },
             new[] { "PCCC_CANDIM", "Dóng hàng đường kích thước (AD)", "Chọn các dim, bấm điểm đường dim đi qua" },
             new[] { "PCCC_DOIDN", "Đổi cỡ ống DN (DN)", "Chọn đoạn ống, nhập mã ống mới (vd ONG_DN65)" },
+            new[] { "PCCC_KT", "Kiểm tra vùng mù đầu báo (PCKT, CKO)", "Quét phòng PCCC_VUNG + thiết bị (Enter = cả bản vẽ): % mù từng phòng theo R, khoanh đỏ điểm mù trên PCCC_KIEM_MU" },
             new[] { "PCCC_DAY", "Dây báo cháy nối tiếp thiết bị (dây loop)", "Nhập mã dây (DAY_BC), chọn thiết bị, bấm điểm đầu (tủ), điểm cuối: Enter = dừng ở thiết bị cuối, Vong = về điểm đầu" },
             new[] { "PCCC_THEMBLOCK", "Thêm block của bạn (kể cả block động) vào thư viện", "Chọn block, nhập mã vật tư mới, tên, hệ, đơn vị tính" },
             new[] { "PCCC_GAN", "Gán block có sẵn trong bản vẽ vào mã vật tư", "Chọn block rồi nhập mã: bóc được bản vẽ không vẽ bằng plugin" },
