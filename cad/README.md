@@ -77,7 +77,7 @@ AI chỉ viết một gói thao tác ngắn (spec JSON), plugin sinh hình. Mộ
 | Bảng KÝ HIỆU mặt bằng `PCCC_KYHIEU`, bảng quy định lắp đặt đầu báo `PCCC_QUYDINH`, thao tác spec `bang` | `module/plugin/BangMb.cs` (trị số từ `data/khoang_cach_rai.json`) |
 | Thuyết minh theo hệ có trên bản vẽ `PCCC_THUYETMINH` (mục chọn ở `MUC_THEO_HE`) | `module/plugin/BangMb.cs`; văn mẫu `knowledge/mau-thuyet-minh-pccc.md` (build.bat chép cạnh DLL) |
 | Dim bước tia beam (`PCCC_RAI` BC_BEAM, layer `PCCC_BC_TIA_KT`); nhãn zone + diện tích, điện trở cuối dây (`PCCC_DAY`) | `module/plugin/Rai.cs` (`KtTia`, `DayTay`) |
-| Rải theo khoang dầm (`PCCC_RAI` từ khoá Dam, đầu khói): khoang ≥ 9 m² (trần ≥ 4 m) / 4 m² (2–4 m) rải từng khoang, khoang nhỏ gom rải như trần phẳng | `module/plugin/Rai.cs` (`khoangDam`, `hopNho`); nguyên văn 5.9.1.1.6 ở `knowledge/tcvn7568-14-2025.md` |
+| Rải theo khoang dầm (`PCCC_RAI` từ khoá Dam, đầu khói): bấm nét DẦM mẫu, độ sâu d từ ký hiệu b x h (không có thì hỏi cỡ chung / TungDam), d ≤ 0,3 m bỏ dầm; khoang ≥ 9 m² (trần ≥ 4 m) / 4 m² (2–4 m) rải từng khoang, khoang nhỏ gom rải như trần phẳng | `module/plugin/Rai.cs` (`khoangDam`, `hopNho`); nguyên văn 5.9.1.1.6 ở `knowledge/tcvn7568-14-2025.md` |
 | Hatch đường thoát nạn `PCCC_THOATNAN`; vòng bán kính tủ vách tường in được (`PCCC_VUNGBV` mã hệ HVT) | `module/plugin/TienIch.cs`, `module/plugin/Lenh.cs` (`VungBaoVe`) |
 
 ## Build và kiểm thử

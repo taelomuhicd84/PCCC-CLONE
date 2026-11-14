@@ -3,6 +3,12 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## VIỆC 15/11 — LUẬT DẦM (người dùng bổ sung): XONG
+Khoang dầm phải xét cả độ sâu dầm d (b x h) lẫn chiều cao trần h (5.9.1.1.6). `PCCC_RAI` từ khoá Dam: bấm nét DẦM mẫu (tách khỏi nét tường, `NenVung.BoMau`);
+d lấy từ ký hiệu "b x h" (vd `B1 (400x600)`, chữ trong block cũng đọc) gần nhất trong 10 m; không có ký hiệu thì hỏi một cỡ cho cả mặt bằng hoặc `TungDam`
+(chọn line dọc dầm rồi nhập b x h từng nhóm); dầm d ≤ 0,3 m bỏ (trần phẳng, khoản a); dầm không ký hiệu gần, không cỡ chung: coi là sâu.
+Test `chay_thu.ps1`: 3 phòng có ký hiệu (sâu / nông / lưới nhỏ), 1 phòng hỏi cỡ chung, 1 phòng TungDam: TAT CA DAT.
+
 ## VIỆC 15/11 RẠNG SÁNG — 7 VIỆC PLUGIN CÒN THIẾU SO VỚI BẢN VẼ MẪU: XONG (người dùng chọn làm hết; dặn tới 95 % ghi tiến độ, không push, đợi reset 5:00 tự làm tiếp)
 1–2 `PCCC_KYHIEU`, `PCCC_QUYDINH` + spec `bang` (`module/plugin/BangMb.cs`); 3 dim bước tia beam (`KtTia`, layer `PCCC_BC_TIA_KT`, thông báo `kt=`);
 4 `PCCC_DAY` hỏi tên zone (nhãn "VỀ TỦ TTBC - ZONE n" + diện tích vùng PCCC_VUNG), điện trở cuối dây ở mút mạch hở dây báo cháy;

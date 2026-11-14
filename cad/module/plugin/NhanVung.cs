@@ -44,6 +44,7 @@ namespace TKPCCC
             public List<Point2d[]> Cua = new List<Point2d[]>();                           // hộp bao [min, max] ký hiệu cửa (cung cánh, block cửa)
             public List<List<Point2d>> GachCheo = new List<List<Point2d>>();             // biên hatch gạch chéo = công trình hiện hữu (người dùng 14/11)
             public bool ChiCua;                                                           // đang đi trong block layer bị bỏ: chỉ gom ký hiệu cửa
+            public HashSet<string> BoMau;                                                 // khoá "LAYER|màu" bỏ ra (nét dầm khi dựng tường)
         }
 
         /// Màu thật của nét: ByLayer theo layer thật, ByBlock theo màu block chứa nó (chaMau; ngoài block coi như 7). "A3" = ACI 3, "R0,255,0" = màu thật.
@@ -166,7 +167,7 @@ namespace TKPCCC
             bool chiCua = n.ChiCua || (loai == 0 && n.Mau == null);
             GomCua(n, e, lop);
             ObjectId net = KieuNet(n, e, lop, chaNet);
-            string mau = n.Mau == null ? null : MauKhoa(n, e, lop, chaMau);
+            string mau = n.Mau == null && n.BoMau == null ? null : MauKhoa(n, e, lop, chaMau);
             BlockReference br = e as BlockReference;
             if (br != null)
             {
@@ -187,6 +188,7 @@ namespace TKPCCC
             if (chiCua) return;
             Hatch hg = e as Hatch;
             if (hg != null && loai >= 0 && LaGachCheo(hg)) n.GachCheo.AddRange(VongHatch(hg)); // hatch của plugin (PCCC_THOAT_NAN...) không phải công trình hiện hữu
+            if (n.BoMau != null && !(e is Hatch) && n.BoMau.Contains(KhoaNet(n, lop, mau))) return;
             if (n.Mau != null && (e is Hatch || !n.Mau.Contains(KhoaNet(n, lop, mau)))) return;
             if (n.ChiTuong && loai != 2) return;
             if (!NetLien(n, net)) return; // trục (CENTER, DASHDOT), nét khuất
@@ -762,13 +764,24 @@ namespace TKPCCC
         /// mat: mọi mặt kín dựng từ nét tường (WCS, đã bỏ đỉnh thẳng hàng). mau: khoá nét phân vùng mẫu (KhoaNetMau), có thì chỉ dựng mặt từ các nét
         /// cùng layer + màu thật với mẫu, kể cả nét trong block (người dùng 14/11: cả tờ là một block, vùng kẻ bằng nét xanh lá, đỏ).
         /// oX: ô có dấu X (lỗ thông tầng, TachOX); gach: biên hatch gạch chéo (công trình hiện hữu). Mặt trùng hai loại này không rải (MatKhongRai).
+        /// Dầm (người dùng bổ sung 15/11: xét cả độ sâu dầm, 5.9.1.1.6): damMau = khoá nét dầm (không dựng làm tường), giuDam(đoạn) = dầm sâu > 0,3 m
+        /// thì giữ làm biên khoang, dầm nông bỏ (trần phẳng, khoản a); damThem = đoạn dầm người dùng chọn tay (TungDam, đã lọc sâu). demDam = [giữ, bỏ].
         static void MatChon(Database db, ObjectId[] ids, HashSet<string> mau, out List<List<Point2d>> co, out List<List<Point2d>> mat,
             out List<List<Point2d>> oX, out List<List<Point2d>> gach)
+        {
+            int[] dem;
+            MatChon(db, ids, mau, null, null, null, out co, out mat, out oX, out gach, out dem);
+        }
+
+        static void MatChon(Database db, ObjectId[] ids, HashSet<string> mau, HashSet<string> damMau, Func<Point2d[], bool> giuDam, List<Point2d[]> damThem,
+            out List<List<Point2d>> co, out List<List<Point2d>> mat, out List<List<Point2d>> oX, out List<List<Point2d>> gach, out int[] demDam)
         {
             co = new List<List<Point2d>>();
             mat = new List<List<Point2d>>();
             oX = new List<List<Point2d>>();
             gach = new List<List<Point2d>>();
+            demDam = new int[2];
+            bool coDam = damMau != null && damMau.Count > 0;
             using (Transaction tr = db.TransactionManager.StartTransaction())
             {
                 NenVung n = new NenVung();
@@ -791,7 +804,26 @@ namespace TKPCCC
                     n.ChiTuong = chiTuong;
                     n.Cua.Clear(); n.GachCheo.Clear();
                     List<Point2d[]> doan = new List<Point2d[]>();
+                    n.BoMau = coDam ? damMau : null;
                     foreach (Entity e in ds) ThuNet(n, e, ObjectId.Null, ObjectId.Null, null, 0, doan);
+                    n.BoMau = null;
+                    if (coDam || damThem != null)
+                    {
+                        List<Point2d[]> dd = new List<Point2d[]>();
+                        if (coDam)
+                        {
+                            HashSet<string> cu = n.Mau;
+                            bool ct = n.ChiTuong;
+                            n.Mau = damMau; n.ChiTuong = false;
+                            foreach (Entity e in ds) ThuNet(n, e, ObjectId.Null, ObjectId.Null, null, 0, dd);
+                            n.Mau = cu; n.ChiTuong = ct;
+                        }
+                        demDam = new int[2];
+                        foreach (Point2d[] s in dd)
+                            if (giuDam == null || giuDam(s)) { doan.Add(s); demDam[0]++; }
+                            else demDam[1]++;
+                        if (damThem != null) { doan.AddRange(damThem); demDam[0] += damThem.Count; } // nét chọn tay: người gọi đã bỏ dầm nông
+                    }
                     oX = TachOX(doan, n.Tol);
                     gach = new List<List<Point2d>>(n.GachCheo);
                     if (doan.Count >= 3)

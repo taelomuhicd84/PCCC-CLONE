@@ -462,3 +462,8 @@ Người dùng chọn làm hết 7 việc ở mục 6 `cad/knowledge/hoc-ban-ve-
 5.9.1.1.6 c–f), `PCCC_THOATNAN`, vòng tủ vách tường in được. Test mới trong `chay_thu.ps1` (bảng, spec bang, dim tia kt=3, dây vòng + zone, dây hở + điện trở,
 thoát nạn, vòng HVT, khoang dầm 4 lớn + 18 nhỏ, thuyết minh 3 hệ 7 mục): TAT CA DAT; `thu_mcp` đạt.
 Lỗi gặp: `DAY_BC` có hệ ONG (không phải BC) nên điều kiện điện trở cuối dây xét theo mã; PowerShell 5 `@($null).Count` = 1 (kiểm `-not $x.loi`).
+
+## 2026-11-15 — Luật dầm: xét độ sâu dầm d cùng chiều cao trần h
+Người dùng bổ sung: tiêu chuẩn (5.9.1.1.6) xét cả chiều cao dầm và chiều cao trần; có mặt bằng dầm thì quét ký hiệu b x h (vd B1 (400x600)), không có thì
+hỏi người dùng một cỡ cho cả mặt bằng hoặc để họ vẽ line chọn cỡ từng vị trí. Làm trong `PCCC_RAI` (Dam): bước nét DẦM mẫu, `NhanDam`/`DocBxh`, `TungDam`,
+`MatChon` dựng tường không có nét dầm rồi chỉ giữ dầm sâu > 0,3 m. 3 ca test mới đạt; bản trước chỉ xét h, coi mọi nét dầm là dầm sâu.

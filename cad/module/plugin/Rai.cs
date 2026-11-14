@@ -53,6 +53,78 @@ namespace TKPCCC
             return kq;
         }
 
+        /// Độ sâu dầm (m) từ ký hiệu "b x h" (mm), vd "B1 (400x600)", "300X700", "250×500". -1 = không phải ký hiệu dầm.
+        static double DocBxh(string s)
+        {
+            System.Text.RegularExpressions.Match k = System.Text.RegularExpressions.Regex.Match(s ?? "", @"(\d{2,4})\s*[xX×\*]\s*(\d{2,4})");
+            if (!k.Success) return -1;
+            double b = double.Parse(k.Groups[1].Value, CultureInfo.InvariantCulture), h = double.Parse(k.Groups[2].Value, CultureInfo.InvariantCulture);
+            return b >= 50 && b <= 2000 && h >= 100 && h <= 3000 ? h / 1000 : -1;
+        }
+
+        /// Ký hiệu dầm "b x h" trong các đối tượng (cả chữ trong block lồng nhau): tâm hộp bao chữ -> độ sâu (m).
+        static List<KeyValuePair<Point2d, double>> NhanDam(ObjectId[] ids)
+        {
+            List<KeyValuePair<Point2d, double>> kq = new List<KeyValuePair<Point2d, double>>();
+            Database db = ids.Length > 0 ? ids[0].Database : null;
+            if (db == null) return kq;
+            using (Transaction tr = db.TransactionManager.StartTransaction())
+            {
+                foreach (ObjectId id in ids)
+                {
+                    Entity e = tr.GetObject(id, OpenMode.ForRead) as Entity;
+                    if (e != null) ChuDam(e, 0, kq);
+                }
+                tr.Commit();
+            }
+            return kq;
+        }
+
+        static void ChuDam(Entity e, int sau, List<KeyValuePair<Point2d, double>> kq)
+        {
+            if (!e.Visible) return;
+            BlockReference br = e as BlockReference;
+            if (br != null)
+            {
+                if (br is Table || sau > 6) return;
+                DBObjectCollection con = new DBObjectCollection();
+                try { br.Explode(con); } catch (System.Exception) { }
+                foreach (DBObject x in con)
+                {
+                    Entity c = x as Entity;
+                    if (c != null) ChuDam(c, sau + 1, kq);
+                    x.Dispose();
+                }
+                return;
+            }
+            DBText dt = e as DBText;
+            MText mt = e as MText;
+            string t = dt != null ? dt.TextString : mt != null ? mt.Text : null;
+            if (t == null) return;
+            double d = DocBxh(t);
+            if (d <= 0) return;
+            Point3d p = dt != null ? dt.Position : mt.Location;
+            try { Extents3d x = e.GeometricExtents; p = x.MinPoint + (x.MaxPoint - x.MinPoint) * 0.5; } catch (System.Exception) { }
+            kq.Add(new KeyValuePair<Point2d, double>(new Point2d(p.X, p.Y), d));
+        }
+
+        /// Các đoạn thẳng của một line / polyline (cung coi là dây cung).
+        static List<Point2d[]> DoanNet(Database db, ObjectId id)
+        {
+            List<Point2d[]> kq = new List<Point2d[]>();
+            using (Transaction tr = db.TransactionManager.StartTransaction())
+            {
+                Line ln = tr.GetObject(id, OpenMode.ForRead) as Line;
+                Polyline pl = tr.GetObject(id, OpenMode.ForRead) as Polyline;
+                if (ln != null) kq.Add(new[] { new Point2d(ln.StartPoint.X, ln.StartPoint.Y), new Point2d(ln.EndPoint.X, ln.EndPoint.Y) });
+                else if (pl != null)
+                    for (int i = 0; i < (pl.Closed ? pl.NumberOfVertices : pl.NumberOfVertices - 1); i++)
+                        kq.Add(new[] { pl.GetPoint2dAt(i), pl.GetPoint2dAt((i + 1) % pl.NumberOfVertices) });
+                tr.Commit();
+            }
+            return kq;
+        }
+
         /// Khoảng cách từ p tới viền đa giác q.
         static double CachVien(List<Point2d> q, Point2d p)
         {
@@ -914,8 +986,8 @@ namespace TKPCCC
                     else
                     {
                         ed.WriteMessage("\n[TKPCCC] " + v.ma + ": tiêu chuẩn không giảm bước khi có dầm. Đầu báo khói kiểu điểm xét từng ô giữa dầm theo TCVN 7568-14:2025 5.9.1.1.6"
-                            + " (skills/MOD_dau_bao_khoi_khoang_dam.md): bấm nét dầm làm nét phân vùng mẫu; khoang ≥ ngưỡng (9 m² trần ≥ 4 m, 4 m² trần 2–4 m) rải từng khoang,"
-                            + " khoang nhỏ hơn rải chung như trần phẳng (lắp ở mặt dưới dầm).");
+                            + " (skills/MOD_dau_bao_khoi_khoang_dam.md): bấm nét dầm ở bước nét DẦM mẫu; độ sâu dầm lấy từ ký hiệu b x h (hỏi nếu không có), dầm ≤ 0,3 m bỏ;"
+                            + " khoang ≥ ngưỡng (9 m² trần ≥ 4 m, 4 m² trần 2–4 m) rải từng khoang, khoang nhỏ hơn rải chung như trần phẳng (lắp ở mặt dưới dầm).");
                         khoangDam = true;
                         hTran = hcr.Status == PromptStatus.OK ? hcr.Value : 0;
                     }
@@ -976,13 +1048,88 @@ namespace TKPCCC
                 string kh = KhoaNetMau(db, nr);
                 if (mau.Add(kh)) ed.WriteMessage("\n[TKPCCC] Nét phân vùng mẫu: layer " + kh.Replace("|", ", màu ") + ".");
             }
+            // Dầm (người dùng bổ sung 15/11: tiêu chuẩn xét độ sâu dầm d cùng chiều cao trần h, 5.9.1.1.6): d lấy từ ký hiệu "b x h" trên mặt bằng dầm
+            // (vd B1 (400x600)), không có thì hỏi một cỡ cho cả mặt bằng hoặc TungDam (chọn line dọc dầm, nhập cỡ từng nhóm). d ≤ 0,3 m: bỏ nét dầm (trần phẳng, khoản a).
+            HashSet<string> damMau = null;
+            Func<Point2d[], bool> giuDam = null;
+            List<Point2d[]> damThem = null;
+            HashSet<ObjectId> idDam = new HashSet<ObjectId>();
+            if (khoangDam)
+            {
+                damMau = new HashSet<string>();
+                while (true)
+                {
+                    PromptNestedEntityOptions no = new PromptNestedEntityOptions(damMau.Count == 0
+                        ? "\nBấm một nét DẦM mẫu (layer + màu của dầm), Enter = không có: " : "\nBấm nét dầm màu khác, Enter = xong: ");
+                    no.AllowNone = true;
+                    PromptNestedEntityResult nr = ed.GetNestedEntity(no);
+                    if (nr.Status == PromptStatus.None) break;
+                    if (nr.Status != PromptStatus.OK) return;
+                    string kh = KhoaNetMau(db, nr);
+                    mau.Remove(kh); // nét dầm không dựng làm tường
+                    if (damMau.Add(kh)) ed.WriteMessage("\n[TKPCCC] Nét dầm mẫu: layer " + kh.Replace("|", ", màu ") + ".");
+                }
+                List<KeyValuePair<Point2d, double>> nhan = NhanDam(qr.Value.GetObjectIds());
+                double sauChung = -1;
+                if (damMau.Count == 0 || nhan.Count == 0)
+                {
+                    PromptStringOptions so = new PromptStringOptions(damMau.Count > 0
+                        ? "\nKhông thấy ký hiệu dầm b x h (vd B1 (400x600)) trên mặt bằng. Nhập b x h (mm) cho cả mặt bằng, hoặc TungDam = chọn line dọc dầm rồi nhập từng cỡ: "
+                        : "\nChưa có nét dầm mẫu. TungDam = chọn line dọc dầm bạn vẽ rồi nhập b x h; Enter = bỏ qua dầm (rải như trần phẳng): ");
+                    so.AllowSpaces = false;
+                    PromptResult sr = ed.GetString(so);
+                    if (sr.Status != PromptStatus.OK) return;
+                    string tl = sr.StringResult.Trim();
+                    if (tl.Equals("TungDam", StringComparison.OrdinalIgnoreCase) || tl.Equals("T", StringComparison.OrdinalIgnoreCase))
+                    {
+                        damThem = new List<Point2d[]>();
+                        while (true)
+                        {
+                            PromptSelectionOptions lo = new PromptSelectionOptions();
+                            lo.MessageForAdding = "\nChọn line / polyline dọc dầm cùng một cỡ, Enter = xong: ";
+                            PromptSelectionResult lr = ed.GetSelection(lo, new SelectionFilter(new[] { new TypedValue((int)DxfCode.Start, "LINE,LWPOLYLINE") }));
+                            if (lr.Status != PromptStatus.OK) break;
+                            PromptResult cr = ed.GetString("\nKích thước dầm b x h (mm) của các line này, vd 400x600: ");
+                            if (cr.Status != PromptStatus.OK) return;
+                            double d = DocBxh(cr.StringResult);
+                            if (d <= 0) { ed.WriteMessage("\nKhông đọc được b x h \"" + cr.StringResult + "\": chọn lại."); continue; }
+                            int truoc = damThem.Count;
+                            foreach (ObjectId id in lr.Value.GetObjectIds())
+                            {
+                                idDam.Add(id);
+                                if (d > 0.3 + 1e-9) damThem.AddRange(DoanNet(db, id));
+                            }
+                            ed.WriteMessage("\n[TKPCCC] tung_dam d=" + d.ToString(CultureInfo.InvariantCulture) + " m: " + lr.Value.Count + " nét"
+                                + (d > 0.3 + 1e-9 ? " (sâu, chia khoang " + (damThem.Count - truoc) + " đoạn)" : " (≤ 0,3 m: bỏ, trần phẳng)"));
+                        }
+                    }
+                    else if (tl != "")
+                    {
+                        sauChung = DocBxh(tl);
+                        if (sauChung <= 0) { ed.WriteMessage("\nKhông đọc được b x h \"" + tl + "\"."); return; }
+                    }
+                }
+                giuDam = dn =>
+                {
+                    double gan = double.MaxValue, d = -1;
+                    foreach (KeyValuePair<Point2d, double> kv in nhan) { double c = CachDoan(dn, kv.Key); if (c < gan) { gan = c; d = kv.Value; } }
+                    if (gan <= 10 / m) return d > 0.3 + 1e-9;               // ký hiệu gần nhất trong 10 m
+                    return sauChung > 0 ? sauChung > 0.3 + 1e-9 : true;     // không ký hiệu gần, không cỡ chung: coi là dầm sâu (chia khoang, rải dày hơn)
+                };
+                ed.WriteMessage("\n[TKPCCC] dam ky_hieu=" + nhan.Count + (sauChung > 0 ? " d_chung=" + sauChung.ToString(CultureInfo.InvariantCulture) : "")
+                    + (damThem != null ? " tung_dam=" + damThem.Count : ""));
+            }
             List<List<Point2d>> vung, mat, oX, gach;
             ObjectId[] conLai;
             List<List<Point2d>> loaiTru = TachLoaiTru(db, qr.Value.GetObjectIds(), out conLai);
             if (loaiTru.Count > 0) ed.WriteMessage("\n[TKPCCC] " + loaiTru.Count + " vùng loại trừ (polyline kín layer " + LAYER_LOAI_TRU + "): không rải trong đó.");
             List<List<Point2d>> ongGio = TachOngGio(db, conLai, out conLai);
             if (ongGio.Count > 0) ed.WriteMessage("\n[TKPCCC] " + ongGio.Count + " ống gió (polyline kín layer có ONG_GIO / DUCT): đầu rơi vào ống thì dịch ra ngoài biên.");
-            MatChon(db, conLai, mau.Count > 0 ? mau : null, out vung, out mat, out oX, out gach);
+            if (idDam.Count > 0) conLai = conLai.Where(id => !idDam.Contains(id)).ToArray(); // line dầm chọn tay không làm tường
+            int[] demDam;
+            MatChon(db, conLai, mau.Count > 0 ? mau : null, damMau, giuDam, damThem, out vung, out mat, out oX, out gach, out demDam);
+            if (khoangDam && demDam[0] + demDam[1] > 0)
+                ed.WriteMessage("\n[TKPCCC] dam_sau=" + demDam[0] + " dam_nong=" + demDam[1] + " (dầm nông d ≤ 0,3 m bỏ, rải như trần phẳng: 5.9.1.1.6 a)");
             if (oX.Count > 0)
             {
                 ed.WriteMessage("\n[TKPCCC] o_x=" + oX.Count + " (ô có dấu X = lỗ thông tầng: không rải).");
