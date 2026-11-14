@@ -6,7 +6,8 @@ Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.m
 ## VIỆC 14/11 — XONG PHẦN MÃ, đã gộp vào `main` (kế hoạch, hợp đồng key: `cad/tien_do/viec_14_11.md`; nhật ký `cad/LICH_SU.md`)
 Quy trình vẽ 6 bước + `tuong`/`cua`/`kt_chuoi` + `PCCC_TRUC/TUONG/CUA/ADIM/CDIM`; palette `PCCC` (bot chat, Cài đặt 3 giao diện); ảnh block nền đen;
 bản quyền (`PCCC_BANQUYEN`, KeyGen, Apps Script). Test tự động đạt hết. VIỆC KẾ, theo thứ tự:
-1. Khi KHÔNG có AutoCAD nào mở: `cad\build.bat` rồi `cad\test\thu_gui.ps1`; xem tận mắt palette `PCCC` dock trái, đổi giao diện tại chỗ, bot chat chạy cùng cầu nối,
+1. XONG 14/11 10:40: `thu_gui.ps1` 12/12 trên AutoCAD thật (palette `PCCC`, 8 thẻ quy trình, Thư viện 43 block ảnh nền đen, Lệnh 20 lệnh, MCP thật); palette hẹp:
+   khung Hành động xuống đáy, ẩn cột phụ. CÒN xem tận mắt: đổi giao diện tại chỗ, bot chat chạy cùng cầu nối,
    `PCCC_BANQUYEN`, chặn lệnh ở bản `phat_hanh` (giả định `GlobalCommandName` có "#" khi lệnh kết thúc chưa thử). Bot chat cần `claude` CLI đăng nhập lại (`claude` → `/login`; 14/11 báo OAuth hết hạn).
 2. Review Opus max (`cad-review`) cho mốc 13/11 + 14/11 (`git diff 4ba0ba7..HEAD -- cad`).
 3. Người dùng làm 1 lần theo `cad/module/banquyen/HUONG_DAN.md` (tạo khoá, Sheet, Apps Script, web app, URL vào `cad/data/ban_quyen/cau_hinh_ban_quyen.json`), rồi thử Apps Script thật.
