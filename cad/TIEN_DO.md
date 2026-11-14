@@ -6,7 +6,8 @@ Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.m
 ## VIỆC 14/11 TỐI — HỢP NHẤT ADDIN MẪU (video + spec người dùng): ĐANG LÀM, danh sách việc `cad/tien_do/viec_video_addin.md`
 Người dùng dặn: làm HẾT theo spec `PROMPT_HOP_NHAT_PLUGIN_PCCC_CAD.md` (ngoài repo, đường dẫn trong file việc), không tra TCVN 7568 (trị số đã có trong
 `data/khoang_cach_rai.json`), KHÔNG review giữa chừng: xong toàn bộ người dùng tự cho Fable kiểm. Đợt 1 xong (trang Báo cháy `PCCC_BOTRI`, `PCCC_RAI` HeSo/Dam/XemTruoc,
-BC_BEAM vẽ tia, `PCCC_DAY` dây loop, cự ly 45 m): `chay_thu.ps1` 102/102, `thu_mcp.ps1`, `thu_gui.ps1` TAT CA DAT. VIỆC KẾ: đợt 2 (Tiện ích 28 thẻ) theo file việc.
+BC_BEAM vẽ tia, `PCCC_DAY` dây loop, cự ly 45 m). Đợt 2 xong (trang Tiện ích `PCCC_TIENICH` 27 thẻ, 8 lệnh mới `plugin/TienIch.cs`): `chay_thu.ps1` 109/109,
+`thu_gui.ps1` TAT CA DAT. VIỆC KẾ: đợt 3 (Báo cháy: vùng loại trừ, xem trước vẽ tạm, `PCCC_KT` vùng mù, bố trí nhanh, preset) theo file việc.
 
 ## VIỆC 14/11 CHIỀU — PCCC_RAI TREO CAD: XONG MÃ + TEST (chi tiết `cad/LICH_SU.md` 14/11 chiều)
 `PCCC_RAI` mới: mã → (trần | S, m², cách tường) → theo hàng → QUÉT CHỌN mặt bằng → bấm NÉT PHÂN VÙNG MẪU (mỗi màu một lần, bấm được nét trong block; Enter = tự nhận từ tường)

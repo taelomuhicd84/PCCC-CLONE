@@ -22,7 +22,7 @@ cad/
 │  └─ mau/                 bản vẽ mẫu, khung tên (chờ file của người dùng)
 ├─ module/                 mã chạy
 │  ├─ plugin/              Lenh.cs (lệnh PCCC_*) · Spec.cs (PCCC_SPEC, thao tác spec) · Rai.cs (rai, tuyen, PCCC_RAI, PCCC_TUYEN) · NhanVung.cs (vung_tu_dong: tự dựng vùng phòng từ nét tường, bỏ trục) · KienTruc.cs (tuong, cua, kt_chuoi, PCCC_TRUC, PCCC_TUONG, PCCC_CUA) · Dim.cs (PCCC_ADIM, PCCC_CDIM) · SoDo.cs (so_do, sơ đồ nguyên lý) · Block.cs (PCCC_THEMBLOCK, ảnh xem trước) · Cau.cs (cầu nối) -> TKPCCC.Cad.dll
-│  ├─ ui/                  BangChinh.cs (palette chính lệnh PCCC: Quy trình vẽ, Bố trí BC, Thư viện, Lệnh, Bot chat, Cài đặt) · BangBoTri.cs (phân hệ Bố trí BC, PCCC_BOTRI) · BangBlock.cs (phân hệ Thư viện, PCCC_BLOCK) · BangLenh.cs (phân hệ Lệnh, PCCC_HELP) · BangChonVatTu.cs (gõ ? khi hỏi mã: bảng chọn thiết bị) · GiaoDien.cs (3 kiểu màu, cai_dat.json) -> TKPCCC.UI.dll; chỗ DUY NHẤT được tham chiếu acmgd, không xử lý bản vẽ
+│  ├─ ui/                  BangChinh.cs (palette chính lệnh PCCC: Quy trình vẽ, Tiện ích, Báo cháy, Thư viện, Lệnh, Bot chat, Cài đặt) · BangBoTri.cs (phân hệ Báo cháy, PCCC_BOTRI) · BangTienIch.cs (phân hệ Tiện ích, PCCC_TIENICH) · BangBlock.cs (phân hệ Thư viện, PCCC_BLOCK) · BangLenh.cs (phân hệ Lệnh, PCCC_HELP) · BangChonVatTu.cs (gõ ? khi hỏi mã: bảng chọn thiết bị) · GiaoDien.cs (3 kiểu màu, cai_dat.json) -> TKPCCC.UI.dll; chỗ DUY NHẤT được tham chiếu acmgd, không xử lý bản vẽ
 │  ├─ banquyen/            KeyGen.cs -> bin/TKPCCC.KeyGen.exe (chủ plugin tạo khoá, ký key) · apps_script/Code.gs (Google Sheet tự cấp key) · HUONG_DAN.md · plugin/BanQuyen.cs + ui/BanQuyenUi.cs (PCCC_BANQUYEN)
 │  ├─ mcp/                 Mcp.cs -> bin/TKPCCC.Mcp.exe (công cụ cad_tt, cad_chay, cad_anh)
 │  ├─ chung/               HangDoi.cs: hàng đợi file dùng chung plugin + máy chủ MCP
@@ -59,6 +59,8 @@ AI chỉ viết một gói thao tác ngắn (spec JSON), plugin sinh hình. Mộ
 | Dim tự động (`PCCC_ADIM`, `PCCC_CDIM`, lõi chuỗi dim của `kt_chuoi`) | `module/plugin/Dim.cs` |
 | Thêm vật tư, thiết bị | `data/vat_tu.json` ở GỐC repo (dùng chung với báo giá), rồi `build.bat`, `PCCC_LIB` |
 | Đưa block của mình (kể cả block động) vào thư viện dưới một mã mới | trong AutoCAD: `PCCC_THEMBLOCK` hoặc nút "Thêm từ bản vẽ" của bảng `PCCC_BLOCK`; mã nguồn `module/plugin/Block.cs` |
+| Tiện ích chỉnh sửa, kiểm tra (`PCCC_TRUNG`, `PCCC_LOPCHUAN`, `PCCC_DANHSO`, `PCCC_XOAY`, `PCCC_TYLE`, `PCCC_DOIBLOCK`, `PCCC_CANDIM`, `PCCC_DOIDN`) | `module/plugin/TienIch.cs` |
+| Trang Tiện ích của palette (`PCCC_TIENICH`: 27 thẻ, mã tắt, nhóm) | `module/ui/BangTienIch.cs`, mảng `THE` (thêm thẻ = 1 dòng) |
 | Dây báo cháy nối tiếp thiết bị (`PCCC_DAY`, dây loop); đầu báo tia chiếu `BC_BEAM` vẽ tia (`PCCC_RAI`) | `module/plugin/Rai.cs`, hàm `DayTay`, `TiaVung`, `VeTia` |
 | Đổi trang Bố trí BC (`PCCC_BOTRI`: thiết bị theo tiêu chuẩn, mức tối ưu k, nút BỐ TRÍ gửi `PCCC_RAI` điền sẵn) | `module/ui/BangBoTri.cs`; trị số ở `data/khoang_cach_rai.json` gốc repo; từ khoá `HeSo` ở `module/plugin/Rai.cs`, hàm `RaiTay` |
 | Đổi palette chính `PCCC` (thẻ quy trình 6 bước, bot chat `claude -p`, trang Cài đặt) | `module/ui/BangChinh.cs`; màu 3 kiểu giao diện ở `module/ui/GiaoDien.cs`, hàm `BangMau` |

@@ -1,5 +1,5 @@
 // Palette chính (lệnh PCCC; PCCC_BLOCK, PCCC_HELP mở đúng phân hệ): đầu trang [PCCC] + tên + phiên bản, ô tìm lọc thẻ, thanh dọc chọn phân hệ
-// (Quy trình vẽ · Bố trí BC · Thư viện · Lệnh · Bot chat · Cài đặt), chân trang trạng thái cầu nối MCP + bản vẽ. Chỉ giao diện: lệnh vẽ gửi bằng tên qua GiaoDien.GuiLenh.
+// (Quy trình vẽ · Tiện ích · Báo cháy · Thư viện · Lệnh · Bot chat · Cài đặt), chân trang trạng thái cầu nối MCP + bản vẽ. Chỉ giao diện: lệnh vẽ gửi bằng tên qua GiaoDien.GuiLenh.
 // Bot chat gọi `claude -p` (đăng nhập Claude Code, không API key) chạy NỀN ở <repo>\cad với MCP cad: luồng AutoCAD không bị khoá nên cầu nối Cau.cs
 // vẫn chạy hàng đợi trong lúc chờ.
 using System;
@@ -20,7 +20,7 @@ namespace TKPCCC
 {
     public class BangChinh : UserControl
     {
-        public const string QUY_TRINH = "Quy trình vẽ", BO_TRI = "Bố trí BC", THU_VIEN = "Thư viện", LENH = "Lệnh", BOT = "Bot chat", CAI_DAT = "Cài đặt";
+        public const string QUY_TRINH = "Quy trình vẽ", TIEN_ICH = "Tiện ích", BO_TRI = "Báo cháy", THU_VIEN = "Thư viện", LENH = "Lệnh", BOT = "Bot chat", CAI_DAT = "Cài đặt";
         static PaletteSet ps;
         static BangChinh nd;
 
@@ -56,6 +56,7 @@ namespace TKPCCC
         string dangXem;
         BangBlock block;
         BangLenh bangLenh;
+        BangTienIch tienIch;
         BotChat bot;
         int soBlock;
 
@@ -75,7 +76,7 @@ namespace TKPCCC
             ben.WrapContents = false;
             ben.BackColor = GiaoDien.Nen;
             ben.Padding = new Padding(0, 6, 0, 0);
-            foreach (string t in new[] { QUY_TRINH, BO_TRI, THU_VIEN, LENH, BOT, CAI_DAT })
+            foreach (string t in new[] { QUY_TRINH, TIEN_ICH, BO_TRI, THU_VIEN, LENH, BOT, CAI_DAT })
             {
                 string ten = t;
                 NutBen n = new NutBen(ten);
@@ -85,7 +86,13 @@ namespace TKPCCC
             }
             Controls.Add(ben);
 
-            tim.TextChanged += delegate { if (dangXem != QUY_TRINH && tim.Text != "") ChonTrang(QUY_TRINH); LocThe(); };
+            // Đang xem Tiện ích thì ô tìm lọc thẻ tiện ích (tìm theo mã tắt SZ, CKC...); trang khác thì về Quy trình lọc thẻ lệnh.
+            tim.TextChanged += delegate
+            {
+                if (dangXem == TIEN_ICH) { tienIch.Tim(tim.Text); return; }
+                if (dangXem != QUY_TRINH && tim.Text != "") ChonTrang(QUY_TRINH);
+                LocThe();
+            };
             Controls.Add(GiaoDien.OTim(tim, "Tìm công cụ theo tên hoặc lệnh..."));
             Controls.Add(DauTrang());
 
@@ -175,6 +182,7 @@ namespace TKPCCC
             if (ten == BOT) return bot = new BotChat();
             if (ten == CAI_DAT) return TrangCaiDat();
             if (ten == BO_TRI) return new BangBoTri();
+            if (ten == TIEN_ICH) return tienIch = new BangTienIch(delegate(string t) { ChonTrang(t); });
             return dsThe;
         }
 

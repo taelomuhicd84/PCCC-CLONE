@@ -15,19 +15,20 @@ Nguyên tắc: tái dùng lệnh có sẵn (không viết trùng), lệnh AutoCA
 - [x] `PCCC_DAY` (Vẽ dây Loop): nối tiếp rắn bò, điểm đầu tủ, `Vong` về điểm đầu.
 - [x] Kiểm cự ly nút ấn, đèn ≤ 45 m = `PCCC_VUNGBV` R = d/2 (báo đứng lẻ); huy hiệu thẻ kèm phím tắt.
 
-## Đợt 2 — Tiện ích (28 thẻ, lưới 2 cột + pills nhóm 1–6)
+## Đợt 2 — Tiện ích: XONG 14/11 tối (`PCCC_TIENICH`, `ui/BangTienIch.cs` 27 thẻ, lưới 2 cột + nút lọc nhóm 1–6; lệnh mới ở `plugin/TienIch.cs`)
 Lệnh có sẵn / AutoCAD có sẵn (thẻ gửi thẳng): SZ vùng tay (PLINE layer PCCC_VUNG) · SP nhận diện (PCCC_RAI quét chọn) · ADIM · CDIM · SL `LAYMCH` ·
 AP `MEASURE` · CLT `TEXTALIGN` · CLN `-OVERKILL` + `-PURGE` · SET trang Cài đặt · DIR mở thư mục dữ liệu · STD mở `khoang_cach_rai.json`.
 Lệnh mới cần viết (plugin): 
-- [ ] CKC `PCCC_TRUNG` kiểm thiết bị trùng toạ độ, khoanh đỏ
-- [ ] CKL / APL `PCCC_LOPCHUAN` kiểm (và sửa) thiết bị sai layer PCCC_<hệ>
-- [ ] AN `PCCC_DANHSO` đánh số thiết bị (tiền tố, số đầu, thứ tự X→Y / Y→X)
-- [ ] MR `PCCC_XOAY` xoay từng block quanh điểm chèn của nó
-- [ ] SCB `PCCC_TYLE` đổi tỉ lệ từng block quanh điểm chèn
-- [ ] SB `PCCC_DOIBLOCK` thay block giữ điểm, góc, tỉ lệ
-- [ ] AD `PCCC_CANDIM` dóng đường dim về một mốc
-- [ ] DN `PCCC_DOIDN` đổi cỡ ống (layer PCCC_ONG_DNxx)
-- [ ] TZ, MZ, RN, LM, PD, CKO, REP, BAK: làm sau cùng nếu còn hạn mức (RN = `RENAME`; LM theo `cad/layer/*.md`)
+- [x] CKC `PCCC_TRUNG` kiểm thiết bị trùng toạ độ, khoanh đỏ
+- [x] CKL / APL `PCCC_LOPCHUAN` kiểm (và sửa) thiết bị sai layer PCCC_<hệ>
+- [x] AN `PCCC_DANHSO` đánh số thiết bị (tiền tố, số đầu, thứ tự X→Y / Y→X)
+- [x] MR `PCCC_XOAY` xoay từng block quanh điểm chèn của nó
+- [x] SCB `PCCC_TYLE` đổi tỉ lệ từng block quanh điểm chèn
+- [x] SB `PCCC_DOIBLOCK` thay block giữ điểm, góc, tỉ lệ
+- [x] AD `PCCC_CANDIM` dóng đường dim về một mốc
+- [x] DN `PCCC_DOIDN` đổi cỡ ống (layer PCCC_ONG_DNxx)
+- [x] RN `RENAME`, LM `LAYER`, PD `PCCC_ONG`, REP `PCCC_BOC`, BAK mở chỗ `cai_dat.json`, SP `BOUNDARY`
+- [ ] TZ tách khu vực, MZ quản lý khu vực, CKO (= `PCCC_KT` đợt 3): chưa có
 
 ## Đợt 3 — Báo cháy còn lại
 - [ ] Vùng loại trừ (lỗ thang, giếng trời): PCCC_RAI bỏ điểm nằm trong polyline loại trừ

@@ -35,6 +35,7 @@ namespace TKPCCC
         [CommandMethod("PCCC")] public void MoPccc() { Mo(null, "PCCC"); }
         [CommandMethod("PCCC_BLOCK")] public void MoBang() { Mo(BangChinh.THU_VIEN, "PCCC_BLOCK"); }
         [CommandMethod("PCCC_BOTRI")] public void MoBoTri() { Mo(BangChinh.BO_TRI, "PCCC_BOTRI"); }
+        [CommandMethod("PCCC_TIENICH")] public void MoTienIch() { Mo(BangChinh.TIEN_ICH, "PCCC_TIENICH"); }
 
         /// PCCC_HELP (lệnh ở TKPCCC.Cad.dll) gọi qua Lenh.MoBangLenh.
         public static void MoBangLenh() { Mo(BangChinh.LENH, null); }

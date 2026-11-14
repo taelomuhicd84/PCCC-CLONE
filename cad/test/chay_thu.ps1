@@ -263,6 +263,16 @@ $bamTv = (Get-FileHash "$T\PCCC_Blocks.dwg").Hash
   'RECTANG', '3400000,0', '3430600,20400', 'PCCC_RAI', 'BC_KHOI', 'XemTruoc', '', '', 'L', '', '', '',
   'RECTANG', '3500000,0', '3514400,7200', 'PCCC_RAI', 'BC_NHIET', 'Dam', '', '', 'L', '', '', '',
   '_.ZOOM', 'W', '3199000,-1000', '3231000,21000', 'PCCC_DAY', 'DAY_BC', 'C', '3199000,-1000', '3231000,21000', '', '3200000,-500', 'Vong',
+  # Tien ich (14/11 toi): 4 dau khoi, 2 cai trung diem, 1 cai doi sang layer 0; roi kiem trung, sua layer, danh so, xoay, ty le, doi block, can dim, doi DN
+  '_.ZOOM', 'W', '3599000,-1000', '3604000,10000', 'PCCC_DAT', 'BC_KHOI', '3600000,0', '3600000,0', '3603000,0', '3603000,3000', '',
+  '_.CHPROP', 'C', '3602900,2900', '3603100,3100', '', '_LA', '0', '',
+  'PCCC_TRUNG', 'C', '3599000,-1000', '3604000,4000', '', 'PCCC_LOPCHUAN', 'C', '3599000,-1000', '3604000,4000', '', 'Co',
+  'PCCC_DANHSO', 'C', '3599000,-1000', '3604000,4000', '', 'S', '1', '',
+  'PCCC_XOAY', 'C', '3599000,-1000', '3604000,4000', '', '90', 'PCCC_TYLE', 'C', '3599000,-1000', '3604000,4000', '', '2',
+  'PCCC_DOIBLOCK', 'C', '3599000,-1000', '3604000,4000', '', 'BC_NHIET',
+  '_.DIMLINEAR', '3600000,5000', '3601000,5000', '3600500,5500', '_.DIMLINEAR', '3601000,5000', '3602000,5000', '3601500,6000',
+  'PCCC_CANDIM', 'C', '3599000,4900', '3603000,6100', '', '3600000,7000',
+  '_.PLINE', '3600000,9000', '3603000,9000', '', 'PCCC_DOIDN', 'L', '', 'ONG_DN65',
   '-LAYER', 'M', 'NEN_A', 'L', 'CENTER', '', 'M', 'KT_A', '', 'PCCC_SPEC', "$T\vung_ve.json",
   '-HATCH', 'P', 'SOLID', 'W', 'N', '2599800,4700', '2600300,4700', '2600300,5200', '2599800,5200', 'C', '', '', '-LAYER', 'S', '0', '',
   'PCCC_SPEC', "$T\vung_do.json", 'PCCC_SPEC', "$T\vung_ve2.json", 'OSMODE', '0', '_.ZOOM', 'W', '2699000,-1000', '2714000,6000', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '', '', '', 'C', '2699000,-1000', '2714000,6000', '', '', '2710500,1200', '',
@@ -537,6 +547,13 @@ Kiem ($out2 -match 'PCCC_RAI BC_BEAM tia=2 buoc=10000 tuong=5000') 'PCCC_RAI BC_
 Kiem ($out2 -match 'PCCC_RAI BC_KHOI n=6 luoi=3x2 buoc=10200x10200 m2=104\.04 \(xem') 'PCCC_RAI XemTruoc: dem 6 dau bao, bao (xem truoc, chua ve)'
 Kiem ($out2 -match 'PCCC_RAI BC_NHIET n=6 luoi=3x2 buoc=4800x3600 ') 'PCCC_RAI Dam (5.9.2.1.5): dau nhiet buoc 7,2 x 0,7 = 5,04 m, phong 14,4 x 7,2 ra 3 x 2 (khong dam: 2 x 1)'
 Kiem ($out2 -match 'PCCC_DAY DAY_BC thiet_bi=24 vong m=') 'PCCC_DAY: day loop noi 24 dau bao cua phong HeSo 50, vong ve diem dau'
+Kiem ($out2 -match 'PCCC_TRUNG trung=1 thua=1') 'PCCC_TRUNG (CKC): 2 dau khoi trung diem ra 1 cum, 1 ban thua'
+Kiem ($out2 -match 'PCCC_LOPCHUAN sai=1 sua=1') 'PCCC_LOPCHUAN (CKL, APL): dau khoi o layer 0 ve lai PCCC_BC'
+Kiem ($out2 -match 'PCCC_DANHSO n=4\b') 'PCCC_DANHSO (AN): danh so 4 thiet bi'
+Kiem ($out2 -match 'PCCC_XOAY n=4 goc=90' -and $out2 -match 'PCCC_TYLE n=4 he_so=2') 'PCCC_XOAY, PCCC_TYLE (MR, SCB): 4 block quanh diem chen'
+Kiem ($out2 -match 'PCCC_DOIBLOCK n=4 BC_NHIET') 'PCCC_DOIBLOCK (SB): 4 dau khoi thanh dau nhiet'
+Kiem ($out2 -match 'PCCC_CANDIM n=2') 'PCCC_CANDIM (AD): 2 dim dong ve mot moc'
+Kiem ($out2 -match 'PCCC_DOIDN n=1 ONG_DN65') 'PCCC_DOIDN (DN): doan ong sang layer PCCC_ONG_DN65'
 $moi = if (Test-Path "$T\moi.txt") { Get-Content -Raw "$T\moi.txt" } else { '' }
 Kiem ($moi -match 'XEM 0' -and $moi -match 'BEAM 2' -and $moi -match 'TIA 4') "XemTruoc khong chen block, BC_BEAM 2 block + 4 net PCCC_BC_TIA: $($moi -replace '\s+', ' ')"
 

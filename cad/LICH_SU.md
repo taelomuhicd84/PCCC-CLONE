@@ -415,3 +415,7 @@ BỐ TRÍ, hoàn tác, vẽ loop, kiểm tra, báo cáo); Dim đối tượng 5 
   (tia song song cạnh dài, `TiaVung`, `VeTia`, layer `PCCC_BC_TIA`); `khoang_cach_rai.json` thêm `BC_BEAM`, `dam` của `BC_NHIET`, nhóm `cu_ly` (nút ấn, đèn 45 m);
   lệnh mới `PCCC_DAY`; trang Báo cháy thêm ô dầm, Xem trước, mục 5 (cự ly, dây loop, Dim, bóc KL, chèn bảng), Vẽ vùng tay. Test 102/102 + thu_mcp + thu_gui đạt.
   Danh sách việc còn lại: `cad/tien_do/viec_video_addin.md`.
+- Đợt 2: trang Tiện ích (`ui/BangTienIch.cs`, `PCCC_TIENICH`): 27 thẻ theo spec, mã tắt chỉ là huy hiệu (không đăng ký lệnh để khỏi đè lệnh AutoCAD),
+  thẻ gửi lệnh có sẵn hoặc lệnh AutoCAD (RENAME, LAYMCH, MEASURE, TEXTALIGN, OVERKILL, LAYER, BOUNDARY). Lệnh mới `plugin/TienIch.cs`: `PCCC_TRUNG`, `PCCC_LOPCHUAN`,
+  `PCCC_DANHSO`, `PCCC_XOAY`, `PCCC_TYLE`, `PCCC_DOIBLOCK` (đổi BTR, ghi lại MA_VT), `PCCC_CANDIM`, `PCCC_DOIDN`. Thanh dọc: Quy trình · Tiện ích · Báo cháy · Thư viện · Lệnh · Bot chat · Cài đặt.
+  Test 109/109 (7 ca tiện ích), thu_gui đếm 27 thẻ.

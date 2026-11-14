@@ -16,7 +16,7 @@ $env:TKPCCC_CAD_HANG_DOI = "$T\hd"   # ca AutoCAD lan Mcp.exe mo tu day deu thua
 # Phim tat PHX = PCCC_HELP (phim_tat.txt canh DLL): kich ban go PHX, bang lenh hien ra = phim tat da dang ky va PCCC_HELP mo bang.
 'PHX=PCCC_HELP' | Set-Content -Encoding ascii "$T\b\phim_tat.txt"
 # PHX de cuoi: phim tat gui PCCC_HELP bat dong bo (SendStringToExecute), dat truoc thi lenh sau cua kich ban chen ngang.
-@('NETLOAD', "`"$T\b\TKPCCC.Cad.dll`"", 'INSUNITS', '4', 'PCCC', 'PCCC_BLOCK', 'PCCC_BOTRI',
+@('NETLOAD', "`"$T\b\TKPCCC.Cad.dll`"", 'INSUNITS', '4', 'PCCC', 'PCCC_BLOCK', 'PCCC_BOTRI', 'PCCC_TIENICH',
   'PCCC_DAT', '?', '3000000,0', '3001000,0', '', 'PHX') -join "`r`n" | Set-Content -Encoding ascii "$T\gui.scr"
 $loi = 0
 function Kiem($dk, $ten) { if ($dk) { "DAT   $ten" } else { "LOI   $ten"; $script:loi++ } }
@@ -162,7 +162,7 @@ public static class WinU {
   $khung = $AE::RootElement.FindFirst($TS::Descendants, $dk)
   $so = @{}
   if ($khung) {
-    foreach ($c in [WinU]::ChuCon([IntPtr]$khung.Current.NativeWindowHandle)) { if ($c -match '^(The|Block|Lenh|BoTri): (\d+)$') { $so[$Matches[1]] = [int]$Matches[2] } }
+    foreach ($c in [WinU]::ChuCon([IntPtr]$khung.Current.NativeWindowHandle)) { if ($c -match '^(The|Block|Lenh|BoTri|TienIch): (\d+)$') { $so[$Matches[1]] = [int]$Matches[2] } }
   }
   Kiem ($khung -and -not $khung.Current.IsOffscreen) "lenh PCCC mo palette 'TKPCCC - PCCC'"
   Kiem ($so['The'] -eq 8) "Quy trinh ve: $($so['The']) the (can 8: 6 buoc + ADIM + CDIM)"
@@ -171,6 +171,9 @@ public static class WinU {
   Kiem ($so['Lenh'] -eq $soLenh) "phim tat PHX mo PCCC_HELP (phan he Lenh): $($so['Lenh']) lenh (can $soLenh)"
   # PCCC_BOTRI (phan he Bo tri BC): moi dong co tri so trong khoang_cach_rai.json la mot lua chon thiet bi.
   $soTb = @((Get-Content -Raw -Encoding UTF8 "$GOC\data\khoang_cach_rai.json" | ConvertFrom-Json).thiet_bi).Count
+  # PCCC_TIENICH: luoi the tien ich (BangTienIch.THE), nhom "Tat ca", o tim trong.
+  $soTi = [regex]::Matches((Get-Content -Raw -Encoding UTF8 "$GOC\cad\module\ui\BangTienIch.cs"), 'new\[\] \{ "\d", "').Count
+  Kiem ($so['TienIch'] -eq $soTi) "PCCC_TIENICH mo phan he Tien ich: $($so['TienIch']) the (can $soTi)"
   Kiem ($so['BoTri'] -eq $soTb) "PCCC_BOTRI mo (phan he Bo tri BC): $($so['BoTri']) thiet bi (can $soTb)"
   if ($khung) {
     $h = [IntPtr]$khung.Current.NativeWindowHandle; $r = $khung.Current.BoundingRectangle
