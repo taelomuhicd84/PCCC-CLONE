@@ -1,6 +1,6 @@
 # Thu tren AutoCAD CO GIAO DIEN (khong nam trong bo bat buoc): script tu mo mot AutoCAD that khoang 1-2 phut roi tu tat.
 # Nap ban build trong bundle (chay cad\build.bat truoc) tu mot thu muc tam, mo palette PCCC (lenh PCCC, PCCC_BLOCK, phim tat PHX = PCCC_HELP), roi goi may chu MCP that
-# (cad\bin\TKPCCC.Mcp.exe) qua cau noi: cad_tt, cad_chay (pdf + rai + tuyen + anh), cad_anh. Doc bang block bang UI Automation, khong chup man hinh.
+# (cad\bin\TKPCCC.Mcp.exe) qua cau noi: cad_tt, cad_chay (pdf + rai + tuyen + anh), cad_anh; PCCC_DAT go ? (bang chon vat tu). Doc bang bang UI Automation.
 # Chi chay khi KHONG co AutoCAD nao dang mo. Thu vien block, anh, hang doi deu nam trong thu muc tam: khong dung toi file cua nguoi dung.
 # Chay: powershell -ExecutionPolicy Bypass -File cad\test\thu_gui.ps1     (file chi dung chu ASCII)
 $ErrorActionPreference = 'Stop'
@@ -15,7 +15,8 @@ Copy-Item "$B\TKPCCC.Cad.dll", "$B\TKPCCC.UI.dll", "$B\vat_tu.json", "$B\ky_hieu
 $env:TKPCCC_CAD_HANG_DOI = "$T\hd"   # ca AutoCAD lan Mcp.exe mo tu day deu thua huong bien nay
 # Phim tat PHX = PCCC_HELP (phim_tat.txt canh DLL): kich ban go PHX, bang lenh hien ra = phim tat da dang ky va PCCC_HELP mo bang.
 'PHX=PCCC_HELP' | Set-Content -Encoding ascii "$T\b\phim_tat.txt"
-@('NETLOAD', "`"$T\b\TKPCCC.Cad.dll`"", 'INSUNITS', '4', 'PCCC', 'PCCC_BLOCK', 'PHX') -join "`r`n" | Set-Content -Encoding ascii "$T\gui.scr"
+@('NETLOAD', "`"$T\b\TKPCCC.Cad.dll`"", 'INSUNITS', '4', 'PCCC', 'PCCC_BLOCK', 'PHX',
+  'PCCC_DAT', '?', '3000000,0', '3001000,0', '') -join "`r`n" | Set-Content -Encoding ascii "$T\gui.scr"
 $loi = 0
 function Kiem($dk, $ten) { if ($dk) { "DAT   $ten" } else { "LOI   $ten"; $script:loi++ } }
 Add-Type -AssemblyName System.Drawing
@@ -37,6 +38,50 @@ try {
   for ($i = 0; $i -lt 180 -and -not (Test-Path "$T\hd\song.json"); $i++) { Start-Sleep -Seconds 1 }
   Kiem (Test-Path "$T\hd\song.json") "AutoCAD mo, NETLOAD plugin, cau noi chay (sau $i giay)"
   if (-not (Test-Path "$T\hd\song.json")) { throw 'AutoCAD khong nap duoc plugin trong 3 phut (co hop thoai dang cho?)' }
+  Add-Type -AssemblyName UIAutomationClient; Add-Type -AssemblyName UIAutomationTypes
+  Add-Type -TypeDefinition @'
+using System; using System.Collections.Generic; using System.Runtime.InteropServices; using System.Text;
+public static class WinU {
+  [DllImport("user32.dll")] public static extern bool PrintWindow(IntPtr h, IntPtr dc, uint f);
+  delegate bool CB(IntPtr h, IntPtr l);
+  [DllImport("user32.dll")] static extern bool EnumChildWindows(IntPtr h, CB cb, IntPtr l);
+  [DllImport("user32.dll", CharSet = CharSet.Unicode)] static extern int GetWindowText(IntPtr h, StringBuilder s, int n);
+  public static List<string> ChuCon(IntPtr h) {
+    List<string> kq = new List<string>();
+    EnumChildWindows(h, delegate(IntPtr c, IntPtr l) { StringBuilder sb = new StringBuilder(64); GetWindowText(c, sb, 64); kq.Add(sb.ToString()); return true; }, IntPtr.Zero);
+    return kq;
+  }
+}
+'@
+  $AE = [Windows.Automation.AutomationElement]; $TS = [Windows.Automation.TreeScope]
+  $soBlock = @((Get-Content -Raw -Encoding UTF8 "$GOC\data\vat_tu.json" | ConvertFrom-Json).vat_tu | Where-Object { $_.loai -eq 'block' }).Count
+
+  # Go ? o dau nhac ma (kich ban khoi dong: PCCC_DAT ?): mo bang chon ui/BangChonVatTu.cs thay cho in dong lenh. Kich ban chi nap o dau nhac dong lenh
+  # nen dung cho toi khi bang dong; sau do tu dap 2 diem dat + Enter. Khong goi lenh qua COM: AutoCAD ban thi tu choi (RPC_E_CALL_REJECTED), ket qua chap chon.
+  $dkTien = New-Object Windows.Automation.PropertyCondition($AE::ProcessIdProperty, $acad.Id)
+  $hop = $null
+  for ($i = 0; $i -lt 120 -and -not $hop; $i++) {
+    Start-Sleep -Milliseconds 500
+    $hop = @($AE::RootElement.FindAll($TS::Children, $dkTien)) | Where-Object { $_.Current.Name -like 'TKPCCC - M*' } | Select-Object -First 1
+  }
+  function SoDong($e) { foreach ($c in [WinU]::ChuCon([IntPtr]$e.Current.NativeWindowHandle)) { if ($c -match '^V.t t.: (\d+)$') { return [int]$Matches[1] } }; -1 }
+  Kiem $hop "PCCC_DAT go ? mo bang chon '$(if ($hop) { $hop.Current.Name })'"
+  if ($hop) {
+    $n0 = SoDong $hop
+    Kiem ($n0 -eq $soBlock) "bang chon: $n0 dong (can $soBlock block)"
+    $o = $hop.FindFirst($TS::Descendants, (New-Object Windows.Automation.PropertyCondition($AE::ControlTypeProperty, [Windows.Automation.ControlType]::Edit)))
+    $o.GetCurrentPattern([Windows.Automation.ValuePattern]::Pattern).SetValue('dau bao khoi')
+    Start-Sleep -Milliseconds 500
+    $n1 = SoDong $hop
+    Kiem ($n1 -ge 2 -and $n1 -lt $n0) "bang chon loc khong dau 'dau bao khoi': $n1 dong"
+    $h = [IntPtr]$hop.Current.NativeWindowHandle; $r = $hop.Current.BoundingRectangle
+    $bmp = New-Object Drawing.Bitmap ([int]$r.Width), ([int]$r.Height)
+    $g = [Drawing.Graphics]::FromImage($bmp); $dc = $g.GetHdc(); [void][WinU]::PrintWindow($h, $dc, 2); $g.ReleaseHdc($dc); $g.Dispose()
+    $bmp.Save("$T\bang_chon.png"); $bmp.Dispose()
+    $dkNut = New-Object Windows.Automation.PropertyCondition($AE::ControlTypeProperty, [Windows.Automation.ControlType]::Button)
+    $nut = @($hop.FindAll($TS::Descendants, $dkNut)) | Where-Object { $_.Current.Name -like 'Ch*' } | Select-Object -First 1
+    if ($nut) { $nut.GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern).Invoke() }
+  }
   Start-Sleep -Seconds 8   # cho PCCC_BLOCK trong kich ban khoi dong chay xong
 
   $psi = New-Object Diagnostics.ProcessStartInfo "$GOC\cad\bin\TKPCCC.Mcp.exe"
@@ -81,22 +126,6 @@ try {
   # Palette chinh (lenh PCCC; PCCC_BLOCK, PCCC_HELP mo dung phan he): tim khung theo ten trong cua so AutoCAD (UI Automation), roi doc chu cua MOI cua so con
   # bang EnumChildWindows (ca trang dang an): "The: n" (Quy trinh ve), "Block: n" (Thu vien), "Lenh: n" (Lenh). DataGridView trong AutoCAD chi hien la "Pane".
   # Chup anh palette bang PrintWindow (ca khi bi che).
-  Add-Type -AssemblyName UIAutomationClient; Add-Type -AssemblyName UIAutomationTypes
-  Add-Type -TypeDefinition @'
-using System; using System.Collections.Generic; using System.Runtime.InteropServices; using System.Text;
-public static class WinU {
-  [DllImport("user32.dll")] public static extern bool PrintWindow(IntPtr h, IntPtr dc, uint f);
-  delegate bool CB(IntPtr h, IntPtr l);
-  [DllImport("user32.dll")] static extern bool EnumChildWindows(IntPtr h, CB cb, IntPtr l);
-  [DllImport("user32.dll", CharSet = CharSet.Unicode)] static extern int GetWindowText(IntPtr h, StringBuilder s, int n);
-  public static List<string> ChuCon(IntPtr h) {
-    List<string> kq = new List<string>();
-    EnumChildWindows(h, delegate(IntPtr c, IntPtr l) { StringBuilder sb = new StringBuilder(64); GetWindowText(c, sb, 64); kq.Add(sb.ToString()); return true; }, IntPtr.Zero);
-    return kq;
-  }
-}
-'@
-  $AE = [Windows.Automation.AutomationElement]; $TS = [Windows.Automation.TreeScope]
   $dk = New-Object Windows.Automation.AndCondition(
     (New-Object Windows.Automation.PropertyCondition($AE::ProcessIdProperty, $acad.Id)),
     (New-Object Windows.Automation.PropertyCondition($AE::NameProperty, 'TKPCCC - PCCC')))
@@ -107,7 +136,6 @@ public static class WinU {
   }
   Kiem ($khung -and -not $khung.Current.IsOffscreen) "lenh PCCC mo palette 'TKPCCC - PCCC'"
   Kiem ($so['The'] -eq 8) "Quy trinh ve: $($so['The']) the (can 8: 6 buoc + ADIM + CDIM)"
-  $soBlock = @((Get-Content -Raw -Encoding UTF8 "$GOC\data\vat_tu.json" | ConvertFrom-Json).vat_tu | Where-Object { $_.loai -eq 'block' }).Count
   Kiem ($so['Block'] -eq $soBlock) "PCCC_BLOCK mo phan he Thu vien: $($so['Block']) dong block (can $soBlock)"
   $soLenh = [regex]::Matches((Get-Content -Raw -Encoding UTF8 "$GOC\cad\module\plugin\Lenh.cs"), 'new\[\] \{ "PCCC').Count
   Kiem ($so['Lenh'] -eq $soLenh) "phim tat PHX mo PCCC_HELP (phan he Lenh): $($so['Lenh']) lenh (can $soLenh)"
@@ -128,45 +156,11 @@ public static class WinU {
     Kiem ($p.R -eq 0 -and $p.G -eq 0 -and $p.B -eq 0) "anh xem truoc nen den nhu man hinh CAD ($($anh[0].Name) goc = $p)"
   }
 
-  # Go ? o dau nhac ma cua PCCC_RAI: mo bang chon (ui/BangChonVatTu.cs) thay cho in dong lenh. Lenh gui qua COM SendCommand trong job rieng
-  # (SendCommand chi tra ve khi lenh xong, ma bang chon la hop thoai modal); cac cau tra loi sau "?" nam san trong hang nhap, dung sau khi bang dong.
-  $job = Start-Job {
-    $app = $null
-    for ($i = 0; $i -lt 30 -and -not $app; $i++) { try { $app = [Runtime.InteropServices.Marshal]::GetActiveObject('AutoCAD.Application') } catch { Start-Sleep 1 } }
-    $app.ActiveDocument.SendCommand("RECTANG`n3000000,0`n3030600,20400`nPCCC_RAI`n?`n`n`nL`n`n`n")
-  }
-  $dkTien = New-Object Windows.Automation.PropertyCondition($AE::ProcessIdProperty, $acad.Id)
-  $hop = $null
-  for ($i = 0; $i -lt 60 -and -not $hop; $i++) {
-    Start-Sleep -Milliseconds 500
-    $hop = @($AE::RootElement.FindAll($TS::Children, $dkTien)) | Where-Object { $_.Current.Name -like 'TKPCCC - M*' } | Select-Object -First 1
-  }
-  function SoDong($e) { foreach ($c in [WinU]::ChuCon([IntPtr]$e.Current.NativeWindowHandle)) { if ($c -match '^V.t t.: (\d+)$') { return [int]$Matches[1] } }; -1 }
-  Kiem $hop "PCCC_RAI go ? mo bang chon '$(if ($hop) { $hop.Current.Name })' (sau $([int]($i / 2)) giay)"
-  if (-not $hop) { "      job $($job.State): $((Receive-Job $job -Keep 2>&1) -join ' | ')"; @($AE::RootElement.FindAll($TS::Children, $dkTien)) | ForEach-Object { "      cua so: '$($_.Current.Name)' $($_.Current.ClassName) [$(([WinU]::ChuCon([IntPtr]$_.Current.NativeWindowHandle) | Where-Object { $_ } | Select-Object -First 8) -join '; ')]" } }
-  if ($hop) {
-    $n0 = SoDong $hop
-    Kiem ($n0 -eq $soBlock) "bang chon: $n0 dong (can $soBlock block)"
-    $o = $hop.FindFirst($TS::Descendants, (New-Object Windows.Automation.PropertyCondition($AE::ControlTypeProperty, [Windows.Automation.ControlType]::Edit)))
-    $o.GetCurrentPattern([Windows.Automation.ValuePattern]::Pattern).SetValue('dau bao khoi')
-    Start-Sleep -Milliseconds 500
-    $n1 = SoDong $hop
-    Kiem ($n1 -ge 2 -and $n1 -lt $n0) "bang chon loc khong dau 'dau bao khoi': $n1 dong"
-    $h = [IntPtr]$hop.Current.NativeWindowHandle; $r = $hop.Current.BoundingRectangle
-    $bmp = New-Object Drawing.Bitmap ([int]$r.Width), ([int]$r.Height)
-    $g = [Drawing.Graphics]::FromImage($bmp); $dc = $g.GetHdc(); [void][WinU]::PrintWindow($h, $dc, 2); $g.ReleaseHdc($dc); $g.Dispose()
-    $bmp.Save("$T\bang_chon.png"); $bmp.Dispose()
-    $dkNut = New-Object Windows.Automation.PropertyCondition($AE::ControlTypeProperty, [Windows.Automation.ControlType]::Button)
-    $nut = @($hop.FindAll($TS::Descendants, $dkNut)) | Where-Object { $_.Current.Name -like 'Ch*' } | Select-Object -First 1
-    if ($nut) { $nut.GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern).Invoke() }
-  }
-  $xong = Wait-Job $job -Timeout 60
   $r = GoiCongCu 5 'cad_chay' @{ ops = @(@{ op = 'dem' }) }
   $k3 = if ($r.isError) { $null } else { $r.content[0].text | ConvertFrom-Json }
-  Kiem ($xong -and $k3 -and $k3.dem.BC_KHOI -eq 10) "nut Chon nhan BC_KHOI (dong dau sau loc), PCCC_RAI rai tiep 6 dau bao: BC_KHOI = $(if ($k3) { $k3.dem.BC_KHOI }) (can 4 + 6)"
+  Kiem ($k3 -and $k3.dem.BC_KHOI -eq 6) "nut Chon nhan BC_KHOI (dong dau sau loc), PCCC_DAT dat 2 diem: BC_KHOI = $(if ($k3) { $k3.dem.BC_KHOI }) (can 4 rai MCP + 2)"
 }
 finally {
-  if ($job) { Remove-Job $job -Force }
   if ($mcp) { try { $mcp.StandardInput.Close() } catch { }; if (-not $mcp.WaitForExit(5000)) { $mcp.Kill() } }
   # AutoCAD rieng cua lan thu: tat han, khong luu Drawing1.
   if (-not $acad.HasExited) { Stop-Process -Id $acad.Id -Force }

@@ -394,3 +394,5 @@ Người dùng (ảnh PCCC_RAI): gõ `?` thì hiện bảng danh sách, không i
 - Dừng ở 90 % hạn mức 5 giờ. Kết quả `chay_thu.ps1` lần đầu sau sửa: xem `cad/TIEN_DO.md`.
 - 11:10: thử bảng chọn trên AutoCAD thật bằng `thu_gui.ps1` (gửi `PCCC_RAI ?` qua COM trong job): 3 lần LOI do COM chập chờn; script gỡ lỗi riêng thấy bảng mở đúng.
   Phiên khác commit `d20e5a9` (làm lại PCCC_RAI) gộp luôn phần thử dở của `thu_gui.ps1`. Dừng ở 93 % hạn mức 5 giờ, việc kế ghi `cad/TIEN_DO.md` mục 6.
+- 14/11 chiều (sau reset): `thu_gui.ps1` bỏ COM + `Start-Job`, phép kiểm bảng chọn chạy bằng kịch bản khởi động `PCCC_DAT ?` (kiểm ngay sau `song.json`, lọc không dấu, bấm Chọn, `dem` BC_KHOI = 6).
+  Chưa chạy vì AutoCAD người dùng đang mở. `thu_mcp.ps1` TAT CA DAT; `chay_thu.ps1` không build do `NhanVung.cs` của phiên khác đang sửa dở.
