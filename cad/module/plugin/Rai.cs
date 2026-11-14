@@ -961,13 +961,19 @@ namespace TKPCCC
                 string kh = KhoaNetMau(db, nr);
                 if (mau.Add(kh)) ed.WriteMessage("\n[TKPCCC] Nét phân vùng mẫu: layer " + kh.Replace("|", ", màu ") + ".");
             }
-            List<List<Point2d>> vung, mat;
+            List<List<Point2d>> vung, mat, oX, gach;
             ObjectId[] conLai;
             List<List<Point2d>> loaiTru = TachLoaiTru(db, qr.Value.GetObjectIds(), out conLai);
             if (loaiTru.Count > 0) ed.WriteMessage("\n[TKPCCC] " + loaiTru.Count + " vùng loại trừ (polyline kín layer " + LAYER_LOAI_TRU + "): không rải trong đó.");
             List<List<Point2d>> ongGio = TachOngGio(db, conLai, out conLai);
             if (ongGio.Count > 0) ed.WriteMessage("\n[TKPCCC] " + ongGio.Count + " ống gió (polyline kín layer có ONG_GIO / DUCT): đầu rơi vào ống thì dịch ra ngoài biên.");
-            MatChon(db, conLai, mau.Count > 0 ? mau : null, out vung, out mat);
+            MatChon(db, conLai, mau.Count > 0 ? mau : null, out vung, out mat, out oX, out gach);
+            if (oX.Count > 0)
+            {
+                ed.WriteMessage("\n[TKPCCC] o_x=" + oX.Count + " (ô có dấu X = lỗ thông tầng: không rải).");
+                loaiTru.AddRange(oX);
+            }
+            if (gach.Count > 0) ed.WriteMessage("\n[TKPCCC] gach_cheo=" + gach.Count + " (hatch gạch chéo = công trình hiện hữu: Enter mọi phòng thì bỏ qua).");
             bool veVung = vung.Count == 0;
             if (veVung)
             {
@@ -984,11 +990,18 @@ namespace TKPCCC
                     po.AllowNone = true;
                     PromptPointResult pr = ed.GetPoint(po);
                     if (pr.Status == PromptStatus.Cancel) return;
-                    if (pr.Status == PromptStatus.Keyword || (pr.Status == PromptStatus.None && vung.Count == 0)) { vung = PhongThat(mat, m); break; }
+                    if (pr.Status == PromptStatus.Keyword || (pr.Status == PromptStatus.None && vung.Count == 0))
+                    {
+                        List<List<Point2d>> pt = PhongThat(mat, m);
+                        vung = pt.Where(f0 => !MatKhongRai(f0, oX, gach)).ToList();
+                        if (pt.Count > vung.Count) ed.WriteMessage("\n[TKPCCC] bo_phong=" + (pt.Count - vung.Count) + " (ô X, gạch chéo).");
+                        break;
+                    }
                     if (pr.Status != PromptStatus.OK) break;
                     Point3d q = pr.Value.TransformBy(ed.CurrentUserCoordinateSystem);
                     List<Point2d> f = mat.Where(x => TrongDaGiac(x, new Point2d(q.X, q.Y))).OrderBy(x => DienTichDaGiac(x)).FirstOrDefault();
                     if (f == null) ed.WriteMessage("\nĐiểm không nằm trong phòng kín nào của vùng đã chọn.");
+                    else if (MatKhongRai(f, oX, new List<List<Point2d>>())) ed.WriteMessage("\nÔ có dấu X (lỗ thông tầng): không rải.");
                     else if (!vung.Contains(f)) vung.Add(f);
                 }
             }

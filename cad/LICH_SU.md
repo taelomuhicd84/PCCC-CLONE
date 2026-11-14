@@ -439,7 +439,13 @@ BỐ TRÍ, hoàn tác, vẽ loop, kiểm tra, báo cáo); Dim đối tượng 5 
   ống dịch tới cạnh gần nhất + 0,1 m (còn trong phòng, không vào ống khác), không dịch được thì báo `ket`. Test 119/119 (ống 2 x 2 m trùm 1 đầu: dịch, vẫn 6 đầu).
   Hết danh sách spec làm được; còn việc của người dùng: xem trên AutoCAD thật, Fable kiểm toàn dự án.
 
-## 2026-11-14 đêm — Rải thử bản vẽ thật xưởng bao bì Quyết Thắng (đang làm)
+## 2026-11-14 đêm — Rải thử bản vẽ thật xưởng bao bì Quyết Thắng (xong 19h40, chờ người dùng duyệt)
+19h03 tự làm tiếp (hạn mức đã reset). In PNG 5 lần chèn block nền: tờ "THUYẾT MINH CÔNG TRÌNH" là mặt bằng sạch (rải ở đây), tờ "MẶT BẰNG TỔNG THỂ
+BÁO CHÁY" là thiết kế cũ (đối chiếu). Thêm luật vào `NhanVung.cs`: ô X lỗ thông tầng (`TachOX`), hatch gạch chéo = hiện hữu, khe 3–12 m có cửa
+hoặc tường 2 nét cùng hở thì khép, cửa ở khe chữ T, chữ T / góc hụt 2–10 mm; test mới trong `chay_thu.ps1` (120 đạt), `thu_mcp` đạt.
+Rải: 5 bộ BC_BEAM + 27 BC_KHOI, 7 zone, `PCCC_KT` mù 0 %; `thuyet_minh.md` + ảnh gửi người dùng (hồ sơ khách ở `ket_qua/`, không commit).
+Lỗi gặp: PICKBOX 13 px ≈ 1,8 m làm bấm nét mẫu trượt (đặt 2 rồi trả 13); nét mẫu bấm trúng tia beam vừa vẽ; SAVEAS trùng tên treo kịch bản.
+Lần đầu (dừng 93 %):
 Người dùng gửi `BEAM QUYẾT THẮNG.dwg` (cả tờ là block), chốt 5 quy tắc (ô X = lỗ thông tầng bỏ; mái che vẫn rải; công trình hiện hữu bỏ; 2 xưởng tách;
 zone theo TCVN 7568-14 5.7.2.1) và yêu cầu rải + thuyết minh. Đã chép file, dump cấu trúc bằng LISP, tìm được chữ XƯỞNG 1/2 và block nền ứng viên
 `A$Cbcabb6d6`; dừng ở 93 % hạn mức (chi tiết + bước kế: `cad/TIEN_DO.md`). Đặt lịch 19h03 tự làm tiếp; theo lời người dùng không push lúc dừng.

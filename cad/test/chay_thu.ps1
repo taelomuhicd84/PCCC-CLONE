@@ -288,6 +288,20 @@ $bamTv = (Get-FileHash "$T\PCCC_Blocks.dwg").Hash
   # Ong gio 2 x 2 m trum dau bao (4215300, 5100) cua luoi 3 x 2: dau do dich ra ngoai bien ong (1 m + 0,1 m), van 6 dau
   '_.ZOOM', 'W', '4199000,-1000', '4231000,21000', '-LAYER', 'M', 'ONG_GIO', '', '_.RECTANG', '4214300,4100', '4216300,6100', '-LAYER', 'S', '0', '',
   '_.RECTANG', '4200000,0', '4230600,20400', 'PCCC_RAI', 'BC_KHOI', '', '', 'C', '4199000,-1000', '4231000,21000', '', '', '',
+  # Luat 14/11 (ban ve xuong bao bi): A | o X | B; C tuong 2 net ho 5 m; D ho 4 m co cung cua; E ho 4 m khong cua (ho);
+  # F hatch ANSI31 (hien huu); G cua o khe chu T 2,5 m; H goc hut 5 mm. Phong cach nhau 15 m (> 12 m) de khe thang hang khong noi cheo.
+  '_.ZOOM', 'W', '4299000,-3000', '4478000,11000',
+  '_.RECTANG', '4300000,0', '4310000,10000', '_.RECTANG', '4310000,0', '4312000,10000', '_.RECTANG', '4312000,0', '4322000,10000',
+  '_.LINE', '4310000,0', '4312000,10000', '', '_.LINE', '4310000,10000', '4312000,0', '',
+  '_.PLINE', '4342000,0', '4337000,0', '4337000,10000', '4352000,10000', '4352000,0', '4347000,0', '',
+  '_.PLINE', '4342000,200', '4337200,200', '4337200,9800', '4351800,9800', '4351800,200', '4347000,200', '',
+  '_.PLINE', '4369000,0', '4367000,0', '4367000,10000', '4377000,10000', '4377000,0', '4373000,0', '',
+  '_.PLINE', '4394000,0', '4392000,0', '4392000,10000', '4402000,10000', '4402000,0', '4398000,0', '',
+  '_.RECTANG', '4417000,0', '4427000,10000', '-HATCH', 'P', 'ANSI31', '100', '0', 'S', 'L', '', '',
+  '_.LINE', '4442000,-2000', '4442000,10000', '', '_.PLINE', '4442000,10000', '4452000,10000', '4452000,0', '4444500,0', '',
+  '_.PLINE', '4467000,0', '4467000,10000', '4477000,10000', '4477000,0', '', '_.LINE', '4467000,0', '4476995,0', '',
+  '-LAYER', 'M', 'CUA', '', '_.ARC', 'C', '4369000,0', '4370000,0', '4369000,1000', '_.ARC', 'C', '4444500,0', '4444500,1000', '4443500,0', '-LAYER', 'S', '0', '',
+  'PCCC_RAI', 'BC_KHOI', '', '', 'C', '4299000,-3000', '4478000,11000', '', '', '',
   '-LAYER', 'M', 'NEN_A', 'L', 'CENTER', '', 'M', 'KT_A', '', 'PCCC_SPEC', "$T\vung_ve.json",
   '-HATCH', 'P', 'SOLID', 'W', 'N', '2599800,4700', '2600300,4700', '2600300,5200', '2599800,5200', 'C', '', '', '-LAYER', 'S', '0', '',
   'PCCC_SPEC', "$T\vung_do.json", 'PCCC_SPEC', "$T\vung_ve2.json", 'OSMODE', '0', '_.ZOOM', 'W', '2699000,-1000', '2714000,6000', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '', '', '', 'C', '2699000,-1000', '2714000,6000', '', '', '2710500,1200', '',
@@ -576,6 +590,8 @@ Kiem ($out2 -match 'PCCC_KT phong=1 mu=59\.5% diem_mu=952') 'PCCC_KT: phong 20 x
 Kiem ($out2 -match 'PCCC_TACHVUNG vung=2 m2=80\+120') 'PCCC_TACHVUNG (TZ): vung 20 x 10 m cat tai x = 8 m ra 80 + 120 m2'
 Kiem ($out2 -match 'PCCC_KHUVUC vung=\d+ dat_ten=2 ') 'PCCC_KHUVUC (MZ): dat ten 2 vung'
 Kiem ($out2 -match 'dich_ong_gio=1(\r|\n)[\s\S]{0,200}PCCC_RAI BC_KHOI n=6 luoi=3x2') 'Ong gio (layer ONG_GIO) trum 1 dau bao: dich ra ngoai bien, van 6 dau'
+Kiem ($out2 -match 'o_x=1 [\s\S]{0,300}gach_cheo=1 [\s\S]{0,300}bo_phong=2 [\s\S]{0,2500}trong 6 ph') `
+  'O X (lo thong tang) + hatch ANSI31 bo; cua 2 net 5 m, cung cua 4 m, cua khe chu T, goc hut 5 mm khep: 6 phong (khe 4 m khong cua van ho)'
 Kiem ($out2 -match 'PCCC_RAI BC_KHOI n=4 luoi=2x2 buoc=10000x10000 m2=100[\s\S]{0,600}PCCC_KT phong=1 mu=0% diem_mu=0[\s\S]{0,80}Command: PCCC_TACHVUNG') `
   'Vung tron PCCC_VUNG (CIRCLE r 10 m): PCCC_RAI 2 x 2 buoc 10 m trong vong tron, PCCC_KT phu kin'
 $moi = if (Test-Path "$T\moi.txt") { Get-Content -Raw "$T\moi.txt" } else { '' }

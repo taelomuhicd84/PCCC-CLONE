@@ -3,7 +3,16 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
-## VIỆC 14/11 ĐÊM — RẢI THỬ BẢN VẼ THẬT "BEAM QUYẾT THẮNG.dwg" + THUYẾT MINH: ĐANG LÀM (19h reset hạn mức thì TỰ làm tiếp)
+## VIỆC 14/11 ĐÊM — RẢI THỬ BẢN VẼ THẬT "BEAM QUYẾT THẮNG.dwg" + THUYẾT MINH: XONG 19h40, ĐANG CHỜ NGƯỜI DÙNG DUYỆT (không làm thêm)
+KẾT QUẢ (ket_qua/cad_test/2026-11-14/quyet_thang/, gitignore): `BEAM_QUYET_THANG_rai.dwg`, `thuyet_minh.md`, `rai_ket_qua.png` đã gửi người dùng.
+5 bộ `BC_BEAM` (xưởng 1: 3 tia, xưởng 2: 2 tia) + 27 `BC_KHOI`, 7 zone (5.7.2.1: tách mái che dọc, phòng bơm, trạm vì không có lối vào từ trong nhà), `PCCC_KT` mù 0 %.
+Rải trên tờ "THUYẾT MINH CÔNG TRÌNH" (block `A$Cbcabb6d6` chèn tại 1076601.6, 218732.6); kịch bản `final.scr` (tạo bằng python, điểm bấm phòng ở `phong_diem.json`).
+Luật mới trong `NhanVung.cs` (test `chay_thu.ps1` ca 4300000–4477000): ô X → `TachOX` (bỏ 2 chéo, vùng loại trừ, `o_x=`);
+hatch ANSI31–36 / User 45° → `gach_cheo=`, Enter mọi phòng thì bỏ vùng (`bo_phong=`); khe 3–12 m (`HO_CUA_MAX_M`) khép khi có ký hiệu cửa
+(`GomCua`: cung 60–120° r 0,4–3 m, block tên/layer CUA/DOOR) hoặc tường 2 nét cùng hở (`SongDoi`); khe chữ T có cửa (tia từ đầu tường); chữ T / góc L hụt 2–10 mm tự nối.
+Bài học chạy accoreconsole trên bản vẽ khách: PICKBOX mặc định 13 px ≈ 1,8 m ở zoom cả tờ → bấm nét mẫu trượt sang nét khác; đặt `PICKBOX 2` rồi trả `13`;
+bấm nét mẫu xa thiết bị / tia vừa vẽ; SAVEAS tên đã có thì hỏi ghi đè, treo kịch bản (xoá file trước).
+VIỆC KẾ: chờ người dùng xem `thuyet_minh.md` mục 5 (7 điểm cần duyệt), chốt hoặc tự sửa; KHÔNG tự làm thêm.
 File gốc (hồ sơ khách, KHÔNG commit, KHÔNG sửa file gốc): `D:\1.DRIVE CÔNG TY\My Drive\1.PHÒNG THIẾT KẾ\1. HỒ SƠ THẨM DUYỆT\10. Năm 2026\1. Xưởng\XƯỞNG BAO BÌ QUYẾT THẮNG\BEAM QUYẾT THẮNG.dwg`.
 Làm trên bản chép ở `ket_qua/cad_test/2026-11-14/quyet_thang/` (gitignore), chạy accoreconsole, in PNG kiểm. Cả tờ là MỘT block (không có nét rời).
 Màu nét: xanh lá = nhà văn phòng, phòng 2; xanh dương = 2 xưởng, mái che; hồng = cửa; đỏ đứt = ranh đất; gạch chéo = công trình hiện hữu.
@@ -20,7 +29,7 @@ Người dùng chốt (14/11 đêm):
 6. Rải luôn + viết thuyết minh công trình (bảng phòng, m², loại đầu báo, số lượng, zone, căn cứ). Tên file "BEAM": xưởng cao dùng đầu báo tia chiếu `BC_BEAM` (vẽ tia), văn phòng đầu khói điểm.
 Bước: (1) dump layer/màu/hình trong block bằng LISP; (2) thêm luật ô X (NhanVung.cs + test); (3) PCCC_RAI trên bản chép (bấm nét mẫu xanh lá + xanh dương);
 (4) gom zone, viết `thuyet_minh.md` ở thư mục kết quả, gửi người dùng; (5) ghi file này + LICH_SU, commit, push.
-DỞ Ở ĐÂU (14/11 ~16h30, hạn mức 93 %, dừng theo luật; hẹn CronCreate 19h03 tự làm tiếp; người dùng dặn: tới 95 % ghi tiến độ, KHÔNG push):
+(Lịch sử) DỞ Ở ĐÂU (14/11 ~16h30, hạn mức 93 %, dừng theo luật; 19h03 đã làm tiếp xong — xem KẾT QUẢ ở trên):
 - Đã chép file gốc thành `ket_qua/cad_test/2026-11-14/quyet_thang/goc.dwg`; `dump.lsp` + `dump.scr` (accoreconsole /i goc.dwg /s dump.scr) ghi `dump.txt`:
   dòng `L|layer|màu|nét`, `M|...` đối tượng model space, `B:<block>|...` nội dung block (kiểu|layer|màu|truecolor|nét|tên block|p10|p11|...).
   Tóm tắt bằng python đọc mã `mbcs`. INSUNITS 4 (mm). Model space 5 500 đối tượng (1 607 sprinkler `*U313`, 197 đầu khói, ống DN…), 99 block; bản vẽ nhiều tờ.
