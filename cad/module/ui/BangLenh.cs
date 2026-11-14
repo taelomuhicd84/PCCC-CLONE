@@ -150,6 +150,15 @@ namespace TKPCCC
             cCach.MinimumWidth = 220;
             cCach.DefaultCellStyle.ForeColor = GiaoDien.ChuMo;
             ds.Columns.Add(cCach);
+            // Palette hẹp: bỏ cột nút chạy (còn bấm đúp, nút Chạy lệnh) và cột Cách dùng.
+            Resize += delegate
+            {
+                bool hep = Width < 640;
+                ds.Columns[0].Visible = !hep;
+                cCach.Visible = !hep;
+                cViec.MinimumWidth = hep ? 60 : 160;
+                cLenh.Width = hep ? 118 : 130;
+            };
             ds.CellPainting += delegate(object s, DataGridViewCellPaintingEventArgs e)
             {
                 if (e.RowIndex < 0 || e.ColumnIndex != C_NUT) return;

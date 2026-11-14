@@ -109,7 +109,7 @@ public static class WinU {
   Kiem ($so['The'] -eq 8) "Quy trinh ve: $($so['The']) the (can 8: 6 buoc + ADIM + CDIM)"
   $soBlock = @((Get-Content -Raw -Encoding UTF8 "$GOC\data\vat_tu.json" | ConvertFrom-Json).vat_tu | Where-Object { $_.loai -eq 'block' }).Count
   Kiem ($so['Block'] -eq $soBlock) "PCCC_BLOCK mo phan he Thu vien: $($so['Block']) dong block (can $soBlock)"
-  $soLenh = [regex]::Matches((Get-Content -Raw -Encoding UTF8 "$GOC\cad\module\plugin\Lenh.cs"), 'new\[\] \{ "PCCC_').Count
+  $soLenh = [regex]::Matches((Get-Content -Raw -Encoding UTF8 "$GOC\cad\module\plugin\Lenh.cs"), 'new\[\] \{ "PCCC').Count
   Kiem ($so['Lenh'] -eq $soLenh) "phim tat PHX mo PCCC_HELP (phan he Lenh): $($so['Lenh']) lenh (can $soLenh)"
   if ($khung) {
     $h = [IntPtr]$khung.Current.NativeWindowHandle; $r = $khung.Current.BoundingRectangle

@@ -289,6 +289,18 @@ namespace TKPCCC
             k.Controls.Add(f);
             k.Controls.Add(TieuDe("Hành động"));
             cha.Controls.Add(k);
+            // Trong palette hẹp (≈ 400 px) khung bên phải chèn bảng còn vài chục px: dời xuống đáy, nút xếp ngang.
+            EventHandler doi = delegate
+            {
+                bool hep = cha.Width < 640;
+                if (hep == (k.Dock == DockStyle.Bottom)) return;
+                k.Dock = hep ? DockStyle.Bottom : DockStyle.Right;
+                if (hep) k.Height = 150; else k.Width = rong;
+                f.FlowDirection = hep ? FlowDirection.LeftToRight : FlowDirection.TopDown;
+                f.WrapContents = hep;
+            };
+            cha.Resize += doi;
+            doi(null, null);
             return f;
         }
 

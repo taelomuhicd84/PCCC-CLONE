@@ -94,6 +94,14 @@ namespace TKPCCC
             DataGridViewTextBoxColumn cSl = GiaoDien.Cot("Số lượng", 70, true);
             cSl.DefaultCellStyle.Font = GiaoDien.Dam;
             ds.Columns.Add(cSl);
+            // Palette hẹp: bỏ cột Đơn vị, thu cột số lượng để cột tên còn chỗ.
+            Resize += delegate
+            {
+                bool hep = Width < 640;
+                ds.Columns[3].Visible = !hep;
+                cSl.Width = hep ? 46 : 70;
+                cSl.HeaderText = hep ? "SL" : "Số lượng";
+            };
             ds.RowPrePaint += VeNhom;
             ds.CellPainting += VeO;
             ds.CellMouseClick += BamO;

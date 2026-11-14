@@ -373,3 +373,5 @@ Kế hoạch + hợp đồng key: `cad/tien_do/viec_14_11.md`. 3 agent Opus song
 - Gói C (`0dc394c`): `BanQuyen.cs`, `ui/BanQuyenUi.cs` (`PCCC_BANQUYEN`), `module/banquyen/` (KeyGen.exe, Apps Script `Code.gs`, `HUONG_DAN.md`), `build.bat phat_hanh` chặn lệnh, `test/thu_ban_quyen.ps1` 16 phép.
 - Sau gộp: thêm 8 dòng `DS_LENH` + 7 `<Command>` trong `PackageContents.xml`; `cad-ve` sang Haiku (phối hợp model, skill `tkpccc-phoi-hop-model` ở gốc).
   Build 4 file đạt; `chay_thu.ps1`, `thu_mcp.ps1`, `thu_ban_quyen.ps1` TAT CA DAT; pytest 13/13; `npm test` 401/401. Usage 5 giờ 57 % lúc ghi.
+- 10:40: người dùng đóng AutoCAD, chạy `thu_gui.ps1` trên AutoCAD thật: 12/12 sau 2 sửa (kịch bản đếm sót lệnh `PCCC`; palette hẹp 400 px: `GiaoDien.KhungHanhDong`
+  tự dời khung Hành động xuống đáy khi rộng < 640, `BangBlock` ẩn cột Đơn vị + cột SL hẹp, `BangLenh` ẩn cột nút chạy + Cách dùng). Đã xem ảnh 2 phân hệ.
