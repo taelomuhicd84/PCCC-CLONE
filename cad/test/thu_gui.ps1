@@ -15,8 +15,9 @@ Copy-Item "$B\TKPCCC.Cad.dll", "$B\TKPCCC.UI.dll", "$B\vat_tu.json", "$B\ky_hieu
 $env:TKPCCC_CAD_HANG_DOI = "$T\hd"   # ca AutoCAD lan Mcp.exe mo tu day deu thua huong bien nay
 # Phim tat PHX = PCCC_HELP (phim_tat.txt canh DLL): kich ban go PHX, bang lenh hien ra = phim tat da dang ky va PCCC_HELP mo bang.
 'PHX=PCCC_HELP' | Set-Content -Encoding ascii "$T\b\phim_tat.txt"
-@('NETLOAD', "`"$T\b\TKPCCC.Cad.dll`"", 'INSUNITS', '4', 'PCCC', 'PCCC_BLOCK', 'PHX',
-  'PCCC_DAT', '?', '3000000,0', '3001000,0', '') -join "`r`n" | Set-Content -Encoding ascii "$T\gui.scr"
+# PHX de cuoi: phim tat gui PCCC_HELP bat dong bo (SendStringToExecute), dat truoc thi lenh sau cua kich ban chen ngang.
+@('NETLOAD', "`"$T\b\TKPCCC.Cad.dll`"", 'INSUNITS', '4', 'PCCC', 'PCCC_BLOCK',
+  'PCCC_DAT', '?', '3000000,0', '3001000,0', '', 'PHX') -join "`r`n" | Set-Content -Encoding ascii "$T\gui.scr"
 $loi = 0
 function Kiem($dk, $ten) { if ($dk) { "DAT   $ten" } else { "LOI   $ten"; $script:loi++ } }
 Add-Type -AssemblyName System.Drawing
@@ -51,6 +52,34 @@ public static class WinU {
     EnumChildWindows(h, delegate(IntPtr c, IntPtr l) { StringBuilder sb = new StringBuilder(64); GetWindowText(c, sb, 64); kq.Add(sb.ToString()); return true; }, IntPtr.Zero);
     return kq;
   }
+  [DllImport("user32.dll")] static extern bool EnumWindows(CB cb, IntPtr l);
+  [DllImport("user32.dll")] static extern uint GetWindowThreadProcessId(IntPtr h, out uint p);
+  [DllImport("user32.dll")] static extern bool IsWindowVisible(IntPtr h);
+  /// Cua so cap cao dang hien cua tien trinh pid co tieu de bat dau bang dau (UIA RootElement.FindAll bo sot hop thoai modal mo tu kich ban).
+  public static IntPtr TimCuaSo(uint pid, string dau) {
+    IntPtr kq = IntPtr.Zero;
+    EnumWindows(delegate(IntPtr h, IntPtr l) {
+      uint p; GetWindowThreadProcessId(h, out p);
+      if (p != pid || !IsWindowVisible(h)) return true;
+      StringBuilder sb = new StringBuilder(128); GetWindowText(h, sb, 128);
+      if (sb.ToString().StartsWith(dau)) { kq = h; return false; }
+      return true; }, IntPtr.Zero);
+    return kq;
+  }
+  [DllImport("user32.dll", CharSet = CharSet.Unicode)] static extern int GetClassName(IntPtr h, StringBuilder s, int n);
+  [DllImport("user32.dll", CharSet = CharSet.Unicode)] static extern IntPtr SendMessage(IntPtr h, int m, IntPtr w, string l);
+  [DllImport("user32.dll")] static extern bool PostMessage(IntPtr h, int m, IntPtr w, IntPtr l);
+  /// Cua so con dau tien co ten lop chua lop va chu bat dau bang chu (UIA khong thay o con cua hop thoai nay).
+  public static IntPtr Con(IntPtr h, string lop, string chu) {
+    IntPtr kq = IntPtr.Zero;
+    EnumChildWindows(h, delegate(IntPtr c, IntPtr l) {
+      StringBuilder t = new StringBuilder(128), k = new StringBuilder(128); GetWindowText(c, t, 128); GetClassName(c, k, 128);
+      if (k.ToString().Contains(lop) && t.ToString().StartsWith(chu)) { kq = c; return false; }
+      return true; }, IntPtr.Zero);
+    return kq;
+  }
+  public static void DatChu(IntPtr h, string s) { SendMessage(h, 0x000C, IntPtr.Zero, s); } // WM_SETTEXT: o tim nhan EN_CHANGE, bang loc lai
+  public static void Bam(IntPtr h) { PostMessage(h, 0x00F5, IntPtr.Zero, IntPtr.Zero); } // BM_CLICK
 }
 '@
   $AE = [Windows.Automation.AutomationElement]; $TS = [Windows.Automation.TreeScope]
@@ -58,19 +87,20 @@ public static class WinU {
 
   # Go ? o dau nhac ma (kich ban khoi dong: PCCC_DAT ?): mo bang chon ui/BangChonVatTu.cs thay cho in dong lenh. Kich ban chi nap o dau nhac dong lenh
   # nen dung cho toi khi bang dong; sau do tu dap 2 diem dat + Enter. Khong goi lenh qua COM: AutoCAD ban thi tu choi (RPC_E_CALL_REJECTED), ket qua chap chon.
-  $dkTien = New-Object Windows.Automation.PropertyCondition($AE::ProcessIdProperty, $acad.Id)
   $hop = $null
   for ($i = 0; $i -lt 120 -and -not $hop; $i++) {
     Start-Sleep -Milliseconds 500
-    $hop = @($AE::RootElement.FindAll($TS::Children, $dkTien)) | Where-Object { $_.Current.Name -like 'TKPCCC - M*' } | Select-Object -First 1
+    $hw = [WinU]::TimCuaSo([uint32]$acad.Id, 'TKPCCC - M')
+    if ($hw -ne [IntPtr]::Zero) { $hop = $AE::FromHandle($hw) }
   }
   function SoDong($e) { foreach ($c in [WinU]::ChuCon([IntPtr]$e.Current.NativeWindowHandle)) { if ($c -match '^V.t t.: (\d+)$') { return [int]$Matches[1] } }; -1 }
   Kiem $hop "PCCC_DAT go ? mo bang chon '$(if ($hop) { $hop.Current.Name })'"
   if ($hop) {
     $n0 = SoDong $hop
     Kiem ($n0 -eq $soBlock) "bang chon: $n0 dong (can $soBlock block)"
-    $o = $hop.FindFirst($TS::Descendants, (New-Object Windows.Automation.PropertyCondition($AE::ControlTypeProperty, [Windows.Automation.ControlType]::Edit)))
-    $o.GetCurrentPattern([Windows.Automation.ValuePattern]::Pattern).SetValue('dau bao khoi')
+    $o = [WinU]::Con($hw, 'EDIT', '')
+    Kiem ($o -ne [IntPtr]::Zero) 'bang chon co o tim'
+    [WinU]::DatChu($o, 'dau bao khoi')
     Start-Sleep -Milliseconds 500
     $n1 = SoDong $hop
     Kiem ($n1 -ge 2 -and $n1 -lt $n0) "bang chon loc khong dau 'dau bao khoi': $n1 dong"
@@ -78,9 +108,9 @@ public static class WinU {
     $bmp = New-Object Drawing.Bitmap ([int]$r.Width), ([int]$r.Height)
     $g = [Drawing.Graphics]::FromImage($bmp); $dc = $g.GetHdc(); [void][WinU]::PrintWindow($h, $dc, 2); $g.ReleaseHdc($dc); $g.Dispose()
     $bmp.Save("$T\bang_chon.png"); $bmp.Dispose()
-    $dkNut = New-Object Windows.Automation.PropertyCondition($AE::ControlTypeProperty, [Windows.Automation.ControlType]::Button)
-    $nut = @($hop.FindAll($TS::Descendants, $dkNut)) | Where-Object { $_.Current.Name -like 'Ch*' } | Select-Object -First 1
-    if ($nut) { $nut.GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern).Invoke() }
+    $nut = [WinU]::Con($hw, 'BUTTON', 'Ch')
+    Kiem ($nut -ne [IntPtr]::Zero) 'bang chon co nut Chon'
+    [WinU]::Bam($nut)
   }
   Start-Sleep -Seconds 8   # cho PCCC_BLOCK trong kich ban khoi dong chay xong
 

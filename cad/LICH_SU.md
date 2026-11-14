@@ -400,3 +400,5 @@ Người dùng (ảnh PCCC_RAI): gõ `?` thì hiện bảng danh sách, không i
   rải tràn cả tờ: thêm bước bấm NÉT PHÂN VÙNG MẪU (`GetNestedEntity`, bấm được nét trong block; khoá layer + màu thật, ByLayer/ByBlock quy ra màu; `ThuNet` thêm `chaMau`,
   lọc theo mẫu, bỏ hatch, chỉ nét liền). `PhongThat`: ngưỡng 2A/P ≥ 1 m, bỏ mặt chứa phòng khác (thay luật > 50 %). Test thêm 2 phép kiểm; `chay_thu.ps1` 96/96,
   `thu_mcp.ps1` đạt, build vào bundle. Song song: phiên khác bỏ phép thử `PCCC_RAI` qua COM trong `thu_gui.ps1` (commit `ef58af6`).
+- 14:35: `thu_gui.ps1` 19/19 trên AutoCAD thật. Hộp thoại modal mở từ kịch bản không có trong cây UIA `RootElement` (thấy qua `EnumWindows`): test tìm bảng bằng `WinU.TimCuaSo`,
+  điền ô tìm `WM_SETTEXT`, bấm Chọn `BM_CLICK`. `PHX` dời cuối kịch bản (phím tắt gửi `PCCC_HELP` bất đồng bộ, bị `PCCC_DAT` chen). `chay_thu.ps1` 96/96, `thu_mcp.ps1` đạt.

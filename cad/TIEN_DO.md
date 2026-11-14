@@ -23,14 +23,11 @@ bản quyền (`PCCC_BANQUYEN`, KeyGen, Apps Script). Test tự động đạt h
 4. Rủi ro gói A: tường giao chữ T còn nét thò qua mặt tường; `cua` chỉ cắt tường hai nét thẳng; CDIM nhớ chuỗi cho cả phiên. Gói B: phân hệ Lệnh (bảng 880 px) chật trong palette 400 px;
    nút Dừng bot chỉ tắt `claude.cmd`, không tắt tiến trình con; chưa có block màu để thử nhánh ByLayer/ByBlock/true color.
 5. Để sau (ý của file tham khảo): phân hệ Báo cháy có thanh trượt k % + KPI, xem trước TransientGraphics, hoàn tác lượt bố trí, tiện ích đánh số / kiểm trùng / kiểm layer.
-6. XONG mã 14/11 (người dùng yêu cầu): gõ `?` ở dấu nhắc mã (`PCCC_RAI`, `PCCC_DAT`, `PCCC_TUYEN`, `PCCC_VUNGBV`, `PCCC_GAN`) mở bảng chọn
+6. XONG 14/11 14:35 (người dùng yêu cầu): gõ `?` ở dấu nhắc mã (`PCCC_RAI`, `PCCC_DAT`, `PCCC_TUYEN`, `PCCC_VUNGBV`, `PCCC_GAN`) mở bảng chọn
    `ui/BangChonVatTu.cs` (ký hiệu, tên, mã, tìm không dấu, Enter/bấm đúp chọn) thay cho in dòng lệnh; gõ chữ khớp nhiều mã cũng mở bảng lọc sẵn.
-   Đã thấy trên AutoCAD thật (script gỡ lỗi, COM): bảng "TKPCCC - Mã thiết bị cần rải" mở đúng, 520 x 625. Gửi lệnh qua COM thì chập chờn (`RPC_E_CALL_REJECTED`),
-   nên 14/11 chiều `thu_gui.ps1` đổi sang kịch bản khởi động: `gui.scr` thêm `'PCCC_DAT', '?', '3000000,0', '3001000,0', ''`; kiểm bảng ngay sau `song.json`
-   (số dòng = số block, lọc 'dau bao khoi' 2..n-1 dòng, ảnh `bang_chon.png`), bấm "Chọn" (InvokePattern); cuối test `dem` BC_KHOI = 6 (4 rai MCP + 2 đặt).
-   CHƯA CHẠY bản mới: AutoCAD người dùng đang mở. VIỆC KẾ: người dùng tắt AutoCAD → `thu_gui.ps1` tới TAT CA DAT (nếu kịch bản không dừng chờ bảng mà đáp luôn
-   vào bảng thì phải tìm cách khác). `chay_thu.ps1` lúc này không build được vì phiên khác đang sửa dở `NhanVung.cs` (`ThuNet` 6 tham số), không phải lỗi của mục này;
-   `thu_mcp.ps1` TAT CA DAT.
+   `thu_gui.ps1` 19/19 trên AutoCAD thật (kịch bản `PCCC_DAT ?`: 43 dòng, lọc 'dau bao khoi' 3 dòng, bấm Chọn đặt 2 BC_KHOI); `chay_thu.ps1` 96/96, `thu_mcp.ps1` đạt.
+   Bài học test: gửi lệnh qua COM chập chờn (`RPC_E_CALL_REJECTED`); UIA `RootElement` không thấy hộp thoại modal mở từ kịch bản, phải `EnumWindows` + `WM_SETTEXT`/`BM_CLICK`;
+   phím tắt (`PHX`) gửi lệnh bất đồng bộ nên để cuối kịch bản. CÒN: review Opus max cùng mốc 14/11.
 7. Gemini (skill `tkpccc-phoi-hop-model` gốc repo): CHẠY ĐƯỢC 14/11 qua Antigravity CLI `agy` (Gemini CLI bị Google từ chối tài khoản cá nhân);
    thử PDF mẫu đúng 10/10. CÒN: đo token trước/sau trên
    `ket_qua/cad_mau/drive_goc/cong_trinh.pdf` (bóc trục, kích thước trang mặt bằng), ghi `LICH_SU.md`.
