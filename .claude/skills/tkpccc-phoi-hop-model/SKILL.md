@@ -15,7 +15,7 @@ Nguyên tắc: model đắt chỉ đọc bản đã rút gọn. Thứ tự ưu t
 | Lập kế hoạch, chia job, điều phối | Claude Sonnet (việc khó: Opus) |
 | Bóc PDF dài: mục lục, thông số công trình, chữ trên trang scan | script → Gemini |
 | CAD bước 1–3 (trục, tường, cửa, tên phòng) từ PDF | `pdf_ti_le.py` + Gemini bóc toạ độ thô → Claude lập spec |
-| Chạy spec, đếm, soát số (`cad-ve`, `cad-kiem`) | Claude Haiku / Sonnet effort thấp |
+| Chạy spec, đếm, soát số (`cad-ve`, `cad-kiem`) | Claude Sonnet effort thấp (không dùng Haiku, người dùng dặn 14/11) |
 | Viết mã plugin | Claude Opus (`cad-lap-trinh`) |
 | Kết luận bảng đối chiếu, thẩm định, review mã | Claude Opus, chỉ đọc bản tóm có trích nguyên văn |
 
@@ -28,7 +28,8 @@ python .claude/skills/tkpccc-phoi-hop-model/scripts/goi_gemini.py --file <pdf> -
 - Script đổi các trang PDF cần (`--trang`) ra PNG (`--dpi`, mặc định 200) trong thư mục tạm, chạy `agy -p ... --mode plan` (chỉ đọc) ở đó: không thấy repo.
   Lời nhắn bảo rõ "dùng view_file, KHÔNG dùng run_command" (thiếu câu này agy đòi chạy lệnh shell, bị chặn, trả rỗng). KHÔNG dùng `--dangerously-skip-permissions`.
 - Kết quả ghi vào `ket_qua/<dự án>/` (không commit). Claude đọc file đó, KHÔNG dán PDF vào hội thoại.
-- `--model gemini-3.8-flash-medium` cho việc bóc đơn giản (một trang ≈ 10–25 nghìn token Gemini, ≈ 30 giây); việc khó dùng `gemini-4-*`.
+- Model (người dùng dặn 14/11): KHÔNG dùng Gemini 3.8 Flash; chỉ dòng Gemini 4 từ Argon trở lên. Script mặc định `gemini-4-argon-medium` (bóc đơn giản);
+  việc khó: `gemini-4-carbon-high` hoặc `gemini-4-hydrogen-high` (`agy models` liệt kê). Số đo token dưới đây là của Flash, chưa đo lại với Argon.
 - Thử 14/11 trên `cad/test/mau_kt.pdf` (có đáp án, một nhãn cố tình ghi sai): 150 dpi + hỏi "nhịp mm" sai 2/10 (tự "sửa" nhãn); 200 dpi + hỏi "chữ in nguyên văn" đúng 10/10.
   ⇒ luôn hỏi CHỮ IN NGUYÊN VĂN, không hỏi số đã suy ra.
 - Đo 14/11 trên hồ sơ thật (`cong_trinh.pdf` trang 5, mặt bằng báo cháy, đáp án từ chữ vector, chi tiết `LICH_SU.md`):

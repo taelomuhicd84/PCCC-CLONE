@@ -3,6 +3,14 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## VIỆC 14/11 CHIỀU — PCCC_RAI TREO CAD, ĐỔI SANG QUÉT CHỌN MẶT BẰNG (người dùng báo, ảnh: bấm điểm trong kho `PCCC HOÁ CHẤT.dwg` thì AutoCAD đứng)
+Nguyên nhân: nhánh bấm điểm gọi `VungBam` (`NhanVung.cs`) đọc MỌI đối tượng model space (`DocDs`, `GeometricExtents`, explode mọi block), nới ô dò gấp đôi
+tới cả bản vẽ khi phòng lớn hoặc hở, `MatChua` cắt đoạn cỡ O(m²), dò 2 lượt (chỉ tường rồi mọi nét); hỏng thì rơi xuống `Editor.TraceBoundary` trên cả bản vẽ (treo kinh điển).
+Cách làm (người dùng chốt): sau mã + trần + theo hàng, `GetSelection` "Quét chọn mặt bằng"; chỉ dựng đoạn từ đối tượng đã chọn (một lần), tính mọi mặt kín một lần;
+polyline kín layer `PCCC_VUNG` trong vùng chọn dùng thẳng làm vùng; dấu nhắc "Bấm điểm trong phòng [TatCa] <TatCa>": Enter ngay = mọi phòng (bỏ mặt hẹp là lòng tường,
+2A/P < 0,5 m hoặc < 1 m²), bấm điểm = chỉ phòng đó; vẽ vùng lên `PCCC_VUNG` rồi rải. Bỏ `TraceBoundary`, bỏ `VungBam`. Test: bỏ đáp 'D' trong `chay_thu.ps1` (dòng RAI) và `thu_gui.ps1`;
+dòng `2610500,1200` thêm khung chọn quanh 2 phòng ở gốc 2600000. Đổi model 14/11: `cad-ve` Sonnet (bỏ Haiku), Gemini mặc định `gemini-4-argon-medium` (bỏ 3.8 Flash).
+
 ## VIỆC 14/11 — XONG PHẦN MÃ, đã gộp vào `main` (kế hoạch, hợp đồng key: `cad/tien_do/viec_14_11.md`; nhật ký `cad/LICH_SU.md`)
 Quy trình vẽ 6 bước + `tuong`/`cua`/`kt_chuoi` + `PCCC_TRUC/TUONG/CUA/ADIM/CDIM`; palette `PCCC` (bot chat, Cài đặt 3 giao diện); ảnh block nền đen;
 bản quyền (`PCCC_BANQUYEN`, KeyGen, Apps Script). Test tự động đạt hết. VIỆC KẾ, theo thứ tự:

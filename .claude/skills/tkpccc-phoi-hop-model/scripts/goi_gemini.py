@@ -81,7 +81,8 @@ def main() -> None:
     p.add_argument("--yeu-cau", help="việc cần bóc, ghi rõ trường cần lấy")
     p.add_argument("--json", action="store_true", help="bắt trả JSON hợp lệ (kiểm bằng json.loads)")
     p.add_argument("--out", help="file ghi kết quả (mặc định in ra màn hình)")
-    p.add_argument("--model", help="vd gemini-3.8-flash-medium (xem `agy models`); bỏ trống = CLI tự chọn")
+    # Người dùng dặn 14/11: không dùng Gemini 3.8 Flash, chỉ Gemini 4 từ Argon trở lên.
+    p.add_argument("--model", default="gemini-4-argon-medium", help="mặc định gemini-4-argon-medium; việc khó gemini-4-carbon-high, gemini-4-hydrogen-high (xem `agy models`)")
     p.add_argument("--timeout", type=int, default=600)
     p.add_argument("--dpi", type=int, default=200, help="độ phân giải ảnh trang PDF gửi đi")
     p.add_argument("--kiem", action="store_true", help="thử đăng nhập, in model và token")

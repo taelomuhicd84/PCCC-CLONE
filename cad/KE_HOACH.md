@@ -22,7 +22,7 @@ Gói Claude đang dùng là **Pro** (hạn mức nhỏ), nên thiết kế phả
 | Việc bấm tay hằng ngày | Bảng nút trong CAD, 0 token |
 | PDF → CAD | Lệnh `PDFIMPORT` có sẵn của AutoCAD + chỉnh tỉ lệ 2 điểm, 0 token |
 | Ngữ cảnh phình (hook, plugin, skill, MCP khác) | Khung chat trong CAD gọi AI ở chế độ gầy: chỉ công cụ CAD + từ vựng spec |
-| Model đắt | Mặc định Sonnet effort low (hoặc Haiku, Gemini Flash) cho việc vẽ. Opus/Fable chỉ khi cần cân nhắc thiết kế |
+| Model đắt | Mặc định Sonnet effort low (Gemini 4 Argon trở lên; không dùng Haiku, Gemini Flash: người dùng dặn 14/11) cho việc vẽ. Opus/Fable chỉ khi cần cân nhắc thiết kế |
 | Hết hạn mức giữa chừng | Mọi trạng thái nằm trong file (spec đã chạy, `TIEN_DO`), AI khác (Gemini) mở lên làm tiếp được |
 
 ## 3. Kiến trúc
