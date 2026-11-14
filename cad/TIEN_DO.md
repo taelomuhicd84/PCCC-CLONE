@@ -3,6 +3,22 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## VIỆC 14/11 ĐÊM — RẢI THỬ BẢN VẼ THẬT "BEAM QUYẾT THẮNG.dwg" + THUYẾT MINH: ĐANG LÀM (19h reset hạn mức thì TỰ làm tiếp)
+File gốc (hồ sơ khách, KHÔNG commit, KHÔNG sửa file gốc): `D:\1.DRIVE CÔNG TY\My Drive\1.PHÒNG THIẾT KẾ\1. HỒ SƠ THẨM DUYỆT\10. Năm 2026\1. Xưởng\XƯỞNG BAO BÌ QUYẾT THẮNG\BEAM QUYẾT THẮNG.dwg`.
+Làm trên bản chép ở `ket_qua/cad_test/2026-11-14/quyet_thang/` (gitignore), chạy accoreconsole, in PNG kiểm. Cả tờ là MỘT block (không có nét rời).
+Màu nét: xanh lá = nhà văn phòng, phòng 2; xanh dương = 2 xưởng, mái che; hồng = cửa; đỏ đứt = ranh đất; gạch chéo = công trình hiện hữu.
+Người dùng chốt (14/11 đêm):
+1. Ô có dấu X (hai đường chéo) = LỖ THÔNG TẦNG: không bố trí → plugin nhận ô X (2 đoạn cắt nhau gần trung điểm, 4 đầu mút là 4 góc) thành vùng loại trừ, bỏ 2 đường chéo khỏi dựng phòng.
+2. Mái che không công năng: VẪN RẢI (người dùng tự xoá nếu thấy không ổn).
+3. Công trình hiện hữu (gạch chéo): KHÔNG rải.
+4. "Cửa > 3 m": người dùng chưa hiểu → giải thích: khe hở nét tường ≤ 3 m (`HO_CUA_M`, NhanVung.cs) tự khép như cửa; cửa xưởng rộng hơn thì phòng hở, không thành vùng.
+5. Phân vùng: 2 xưởng riêng (tách bởi lỗ thông tầng); có tường ngăn cháy thì tách; dính nhau thì rải chung; phòng cách bởi tường / vách → vùng riêng,
+   gom zone báo cháy theo TCVN 7568-14:2025 5.7.2.1 (người dùng gửi ảnh): zone ≤ 2000 m², kích thước ≤ 100 m, một tầng; phòng không liền kề gom một zone
+   khi lối vào cách nhau ≤ 10 m và nhìn thấy nhau; 5.7.2.3 không gian che kín ≤ 500 m² gộp được nếu tổng đầu báo ≤ 40; 5.7.2.5 một vùng phát hiện thuộc một vùng báo động.
+6. Rải luôn + viết thuyết minh công trình (bảng phòng, m², loại đầu báo, số lượng, zone, căn cứ). Tên file "BEAM": xưởng cao dùng đầu báo tia chiếu `BC_BEAM` (vẽ tia), văn phòng đầu khói điểm.
+Bước: (1) dump layer/màu/hình trong block bằng LISP; (2) thêm luật ô X (NhanVung.cs + test); (3) PCCC_RAI trên bản chép (bấm nét mẫu xanh lá + xanh dương);
+(4) gom zone, viết `thuyet_minh.md` ở thư mục kết quả, gửi người dùng; (5) ghi file này + LICH_SU, commit, push.
+
 ## VIỆC 14/11 TỐI — HỢP NHẤT ADDIN MẪU (video + spec người dùng): ĐANG LÀM, danh sách việc `cad/tien_do/viec_video_addin.md`
 Người dùng dặn: làm HẾT theo spec `PROMPT_HOP_NHAT_PLUGIN_PCCC_CAD.md` (ngoài repo, đường dẫn trong file việc), không tra TCVN 7568 (trị số đã có trong
 `data/khoang_cach_rai.json`), KHÔNG review giữa chừng: xong toàn bộ người dùng tự cho Fable kiểm. Đợt 1 xong (trang Báo cháy `PCCC_BOTRI`, `PCCC_RAI` HeSo/Dam/XemTruoc,
