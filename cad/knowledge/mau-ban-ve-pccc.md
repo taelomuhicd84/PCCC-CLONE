@@ -1,5 +1,7 @@
 # Bản vẽ PCCC mẫu của người dùng: cách thể hiện, cách rải, cách đi dây và đi ống
 
+Bổ sung 14/11/2026: học thêm 5 bộ DWG (kho, xưởng, nhà nhiều tầng) ở `hoc-ban-ve-mau-dwg.md`; văn thuyết minh mẫu ở `mau-thuyet-minh-pccc.md`.
+
 Nguồn: bộ PDF 4 tờ người dùng gửi 2026-11-11 (nhà karaoke 2 tầng, mặt bằng 41,0 × 20,3 m, phòng hát hai bên hành lang).
 Bản sao để ở `ket_qua/cad_mau/test_HA2.pdf`, không commit vì là hồ sơ công trình thật.
 

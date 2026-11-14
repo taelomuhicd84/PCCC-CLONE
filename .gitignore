@@ -31,3 +31,6 @@ cad/TKPCCC.bundle/Contents/chon-loai-dau-bao.md
 TKPCCC_KHOA/
 khoa_rieng*
 cad/TKPCCC.bundle/Contents/cau_hinh_ban_quyen.json
+
+# Ban ve mau cua khach (nguoi dung de lai de Claude hoc), khong dua len repo cong khai
+file_cad_test/

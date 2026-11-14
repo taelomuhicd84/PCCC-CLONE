@@ -11,7 +11,7 @@ cad/
 │  ├─ agents/              cad-thiet-ke (lập spec) · cad-ve (chạy spec) · cad-kiem (soát bản vẽ) · cad-lap-trinh (sửa plugin) · cad-review (review mỗi mốc, Write chỉ để ghi báo cáo); bảng việc ở CLAUDE.md
 │  └─ skills/              tkpccc-ve-cad (vẽ qua MCP; scripts/pdf_ti_le.py tính tỉ lệ trang PDF, scripts/chay_spec.ps1 chạy spec không cần mở AutoCAD) · tkpccc-cad-console (build, kiểm thử, in PNG; scripts/hinh_tu_pdf.py lấy hình ký hiệu từ nét vector PDF)
 ├─ skills/                 hướng dẫn dùng cho MỌI AI (Claude, Gemini, Codex): TU_VUNG.md (từ vựng spec, nguồn duy nhất) · vi_du/
-├─ knowledge/              kiến thức vẽ CAD: quy-uoc-ban-ve.md · mau-ban-ve-pccc.md (cách rải, đi dây, đi ống của bản mẫu) · tham-khao-mcp-hub.md (ý lấy từ MCP bên khác) · so-do-nguyen-ly.md (cách vẽ sơ đồ nguyên lý `so_do`, chi tiết nào lấy từ mẫu, chi tiết nào tự đặt) · hoc/
+├─ knowledge/              kiến thức vẽ CAD: quy-uoc-ban-ve.md · mau-ban-ve-pccc.md (cách rải, đi dây, đi ống của bản mẫu) · tham-khao-mcp-hub.md (ý lấy từ MCP bên khác) · so-do-nguyen-ly.md (cách vẽ sơ đồ nguyên lý `so_do`, chi tiết nào lấy từ mẫu, chi tiết nào tự đặt) · hoc-ban-ve-mau-dwg.md (học 5 bộ DWG mẫu: bộ tờ, khung tên, bảng ký hiệu, bảng quy định lắp đặt, beam, zone, sprinkler, việc plugin còn thiếu) · mau-thuyet-minh-pccc.md (văn thuyết minh mẫu chép nguyên văn từ bản vẽ, theo hệ) · hoc/
 ├─ rule/                   LUAT.md: việc trên CAD ↔ file quy chuẩn nguyên văn ↔ skill, agent liên quan
 ├─ layer/                  file .md chuẩn layer (tên, màu, loại đường) để tạo layer đúng chuẩn · kien_truc.md (TUONG, VACH, CUA, DIM)
 ├─ data/                   dữ liệu vẽ (xem data/README.md)

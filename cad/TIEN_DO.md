@@ -3,6 +3,12 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## VIỆC 14/11 KHUYA — HỌC BỘ BẢN VẼ PCCC MẪU (DWG): XONG, chờ người dùng chọn việc ở mục 6 file học
+Người dùng đưa `file_cad_test/` (đã thêm vào `.gitignore`) + thư mục hồ sơ một xưởng trên Drive; dặn KHÔNG đụng file gốc, cần thì save as riêng.
+Đã chép sang `ket_qua/cad_test/hoc_mau/` (gitignore), dump bằng `dump2.lsp` (MTEXT đủ đoạn mã 3), in PNG vài tờ. Kết quả:
+`cad/knowledge/hoc-ban-ve-mau-dwg.md` (bộ tờ, quy ước, beam, zone, sprinkler; mục 6 = 7 việc plugin còn thiếu so với mẫu) và
+`cad/knowledge/mau-thuyet-minh-pccc.md` (27 đoạn thuyết minh chép nguyên văn, đã bỏ tên khách, địa chỉ, số GCN). VIỆC KẾ: chờ người dùng chọn làm việc nào ở mục 6.
+
 ## VIỆC 14/11 ĐÊM — RẢI THỬ BẢN VẼ THẬT "BEAM QUYẾT THẮNG.dwg" + THUYẾT MINH: XONG 19h40, ĐANG CHỜ NGƯỜI DÙNG DUYỆT (không làm thêm)
 KẾT QUẢ (ket_qua/cad_test/2026-11-14/quyet_thang/, gitignore): `BEAM_QUYET_THANG_rai.dwg`, `thuyet_minh.md`, `rai_ket_qua.png` đã gửi người dùng.
 5 bộ `BC_BEAM` (xưởng 1: 3 tia, xưởng 2: 2 tia) + 27 `BC_KHOI`, 7 zone (5.7.2.1: tách mái che dọc, phòng bơm, trạm vì không có lối vào từ trong nhà), `PCCC_KT` mù 0 %.

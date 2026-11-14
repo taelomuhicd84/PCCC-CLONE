@@ -449,3 +449,9 @@ Lần đầu (dừng 93 %):
 Người dùng gửi `BEAM QUYẾT THẮNG.dwg` (cả tờ là block), chốt 5 quy tắc (ô X = lỗ thông tầng bỏ; mái che vẫn rải; công trình hiện hữu bỏ; 2 xưởng tách;
 zone theo TCVN 7568-14 5.7.2.1) và yêu cầu rải + thuyết minh. Đã chép file, dump cấu trúc bằng LISP, tìm được chữ XƯỞNG 1/2 và block nền ứng viên
 `A$Cbcabb6d6`; dừng ở 93 % hạn mức (chi tiết + bước kế: `cad/TIEN_DO.md`). Đặt lịch 19h03 tự làm tiếp; theo lời người dùng không push lúc dừng.
+
+## 2026-11-14 khuya — Học bộ bản vẽ PCCC mẫu (DWG)
+Người dùng đưa 5 bộ DWG mẫu (`file_cad_test/`, thư mục hồ sơ trên Drive), dặn không sửa file gốc. Chép ra `ket_qua/cad_test/hoc_mau/`, dump bằng
+`dump2.lsp` (sửa: MTEXT dài nối các đoạn mã 3, trước đây mất phần đầu), gom 82 đoạn ghi chú dài, in PNG 9 tờ. Viết
+`cad/knowledge/hoc-ban-ve-mau-dwg.md` và `cad/knowledge/mau-thuyet-minh-pccc.md` (văn mẫu, đã lọc tên khách, địa chỉ, số GCN). Thêm `file_cad_test/` vào `.gitignore`.
+Bài học công cụ: model space xếp tờ theo hàng, tờ thường là block nên gom cụm theo điểm chèn không ra khung; tên tờ nằm DƯỚI hình; bash heredoc làm hỏng `\U` trong python (viết bằng Write).
