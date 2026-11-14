@@ -53,6 +53,14 @@ namespace TKPCCC
             return kq;
         }
 
+        /// Khoảng cách từ p tới viền đa giác q.
+        static double CachVien(List<Point2d> q, Point2d p)
+        {
+            double kq = double.MaxValue;
+            for (int i = 0; i < q.Count; i++) kq = Math.Min(kq, CachDoan(new[] { q[i], q[(i + 1) % q.Count] }, p));
+            return kq;
+        }
+
         static List<Point2d> DinhPl(Polyline pl)
         {
             List<Point2d> d = new List<Point2d>();
@@ -856,7 +864,8 @@ namespace TKPCCC
             VatTu v = HoiMa(ed, dm, "block", "Mã thiết bị cần rải");
             if (v == null) return;
             double m = HeSoMet(db), s, k = 0.001 / m, dt = 0, le = -1, tuongMax = 0, cachMin = 0;
-            bool xem = false, tia = false;
+            bool xem = false, tia = false, khoangDam = false;
+            double hTran = 0;
             Dictionary<string, object> tc = TieuChuanRai(v.ma, 0);
             if (tc != null)
             {
@@ -902,8 +911,14 @@ namespace TKPCCC
                         ed.WriteMessage("\n[TKPCCC] Trần có dầm sâu > 0,3 m, theo " + LayChu(dam, "can_cu", "") + ": bước tối đa còn "
                             + Lt(s * m).ToString(CultureInfo.InvariantCulture) + " m.");
                     }
-                    else ed.WriteMessage("\n[TKPCCC] " + v.ma + ": tiêu chuẩn không giảm bước khi có dầm. Đầu báo khói kiểu điểm xét từng ô giữa dầm theo TCVN 7568-14:2025 5.9.1.1.6"
-                        + " (skills/MOD_dau_bao_khoi_khoang_dam.md): ô cần ít nhất một đầu báo thì bấm nét dầm làm nét phân vùng mẫu để rải từng ô.");
+                    else
+                    {
+                        ed.WriteMessage("\n[TKPCCC] " + v.ma + ": tiêu chuẩn không giảm bước khi có dầm. Đầu báo khói kiểu điểm xét từng ô giữa dầm theo TCVN 7568-14:2025 5.9.1.1.6"
+                            + " (skills/MOD_dau_bao_khoi_khoang_dam.md): bấm nét dầm làm nét phân vùng mẫu; khoang ≥ ngưỡng (9 m² trần ≥ 4 m, 4 m² trần 2–4 m) rải từng khoang,"
+                            + " khoang nhỏ hơn rải chung như trần phẳng (lắp ở mặt dưới dầm).");
+                        khoangDam = true;
+                        hTran = hcr.Status == PromptStatus.OK ? hcr.Value : 0;
+                    }
                 }
             }
             else
@@ -1006,6 +1021,26 @@ namespace TKPCCC
                 }
             }
 
+            // Khoang dầm (TCVN 7568-14:2025 5.9.1.1.6 c–f; bộ bản vẽ mẫu ghi "khoang < 9 m² => không bố trí theo khoang dầm"): khoang nhỏ hơn ngưỡng
+            // gom chung, rải MỘT lưới như trần phẳng trên hộp bao các khoang nhỏ, giữ điểm nằm trong khoang nhỏ hoặc trên dầm sát khoang (≤ 0,6 m).
+            List<List<Point2d>> nho = new List<List<Point2d>>();
+            List<Point2d> hopNho = null;
+            List<List<Point2d>> vungRai = vung;
+            if (khoangDam && !tia)
+            {
+                double nguong = hTran > 0 && hTran < 2 ? double.MaxValue : hTran > 0 && hTran < 4 ? 4 : 9;
+                nho = vung.Where(d => DienTichDaGiac(d) * m * m < nguong).ToList();
+                vungRai = vung.Where(d => !nho.Contains(d)).ToList();
+                if (nho.Count > 0)
+                {
+                    double x0 = nho.Min(d => d.Min(p => p.X)), x1 = nho.Max(d => d.Max(p => p.X)), y0 = nho.Min(d => d.Min(p => p.Y)), y1 = nho.Max(d => d.Max(p => p.Y));
+                    hopNho = new List<Point2d> { new Point2d(x0, y0), new Point2d(x1, y0), new Point2d(x1, y1), new Point2d(x0, y1) };
+                    vungRai.Add(hopNho);
+                }
+                ed.WriteMessage("\n[TKPCCC] khoang_dam nguong=" + (nguong == double.MaxValue ? "phang" : nguong.ToString(CultureInfo.InvariantCulture))
+                    + " lon=" + (vung.Count - nho.Count) + " nho=" + nho.Count + (hTran <= 0 ? " (không nhập trần: lấy ngưỡng 9 m² của trần ≥ 4 m)" : ""));
+            }
+
             int tong = 0, soHo = 0;
             using (Transaction tr = db.TransactionManager.StartTransaction())
             {
@@ -1019,7 +1054,7 @@ namespace TKPCCC
                 ObjectId lopTam = xem ? LopXemTruoc(db, tr) : ObjectId.Null;
                 double rTam = tc == null ? 0 : LaySo(tc, "r", 0) * s / D(Lay(tc, "s")); // R tiêu chuẩn (m) nhân cùng tỉ lệ với bước (k, dầm, đổi đơn vị)
                 int soTam = 0;
-                foreach (List<Point2d> d in vung)
+                foreach (List<Point2d> d in vungRai)
                 {
                     if (tia)
                     {
@@ -1038,14 +1073,20 @@ namespace TKPCCC
                         continue;
                     }
                     if (veVung && !xem)
-                    {
-                        Polyline pl = PlVung(d, lop);
-                        ms.AppendEntity(pl);
-                        tr.AddNewlyCreatedDBObject(pl, true);
-                        ed.WriteMessage("\n[TKPCCC] Vùng tự dựng m2=" + Math.Round(DienTichDaGiac(d) * m * m, 2).ToString(CultureInfo.InvariantCulture)
-                            + " (" + d.Count + " đỉnh) trên layer " + LAYER_VUNG + ".");
-                    }
+                        foreach (List<Point2d> dv in d == hopNho ? nho : new List<List<Point2d>> { d })
+                        {
+                            Polyline pl = PlVung(dv, lop);
+                            ms.AppendEntity(pl);
+                            tr.AddNewlyCreatedDBObject(pl, true);
+                            ed.WriteMessage("\n[TKPCCC] Vùng tự dựng m2=" + Math.Round(DienTichDaGiac(dv) * m * m, 2).ToString(CultureInfo.InvariantCulture)
+                                + " (" + dv.Count + " đỉnh) trên layer " + LAYER_VUNG + ".");
+                        }
                     LuoiRai r = LuoiVung(d, s, s, 0, 0, le, le, 0.05 / m, dt, 0, theoHang, tuongMax, cachMin);
+                    if (d == hopNho)
+                    {
+                        int ngoai = r.Diem.RemoveAll(p => !nho.Any(q => TrongDaGiac(q, new Point2d(p.X, p.Y)) || CachVien(q, new Point2d(p.X, p.Y)) <= 0.6 / m));
+                        ed.WriteMessage("\n[TKPCCC] khoang_nho_chung n=" + r.Diem.Count + (ngoai > 0 ? " bo_ngoai=" + ngoai : ""));
+                    }
                     // shortcut: điểm trong vùng loại trừ chỉ bị bỏ, không dời ra mép lỗ; mép lỗ xa thiết bị thì PCCC_KT báo vùng mù, rải bù bằng PCCC_DAT.
                     int bo = r.Diem.RemoveAll(p => loaiTru.Any(q => TrongDaGiac(q, new Point2d(p.X, p.Y))));
                     if (bo > 0) ed.WriteMessage("\n[TKPCCC] bo_loai_tru=" + bo);
