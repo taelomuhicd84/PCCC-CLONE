@@ -435,3 +435,6 @@ BỐ TRÍ, hoàn tác, vẽ loop, kiểm tra, báo cáo); Dim đối tượng 5 
   `PCCC_KT` ghi `KetQuaKtCuoi`, trang Báo cháy hiện ở chân (mù %, cảnh báo). Test 118/118 (2 mốc bấm trước ra cùng 4 dim như gõ trong lệnh).
 - Thêm: bước "Công năng" trang Báo cháy: đọc bảng "Loại theo khu vực" của `knowledge/chon-loai-dau-bao.md` (không chép bảng vào mã), gợi ý loại + căn cứ,
   tự chọn đầu khói / nhiệt; chỉ xét phần loại trước ngoặc (karaoke ghi "Nhiệt (… khói thuốc …)" phải ra nhiệt). `build.bat` chép file .md cạnh DLL.
+- Thêm: ống gió (spec "vật cản trần"): `PCCC_RAI` tách polyline kín / vòng tròn layer tên có ONG_GIO, ONG-GIO, ONGGIO, DUCT khỏi vùng chọn; đầu báo rơi vào
+  ống dịch tới cạnh gần nhất + 0,1 m (còn trong phòng, không vào ống khác), không dịch được thì báo `ket`. Test 119/119 (ống 2 x 2 m trùm 1 đầu: dịch, vẫn 6 đầu).
+  Hết danh sách spec làm được; còn việc của người dùng: xem trên AutoCAD thật, Fable kiểm toàn dự án.

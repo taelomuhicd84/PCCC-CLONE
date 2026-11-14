@@ -46,6 +46,7 @@ phương X/Y/Tự động qua `Lenh.AdimPhuong`; `PCCC_ADIM` thêm lọc Mline).
 Thêm: bước 0 "Công năng" của trang Báo cháy đọc bảng "Loại theo khu vực" của `knowledge/chon-loai-dau-bao.md` (file đã train, build chép cạnh DLL),
 chọn công năng thì hiện loại + căn cứ và tự chọn đầu khói / nhiệt (bảng ghi "nhiệt hoặc khói" thì giữ lựa chọn).
 
+Thêm: ống gió (polyline kín / vòng tròn layer tên có ONG_GIO, ONG-GIO, ONGGIO, DUCT trong vùng chọn): `PCCC_RAI` dịch đầu báo rơi vào ống ra ngoài biên + 0,1 m.
+
 ## Còn lại (chưa làm, cần người dùng chốt hoặc làm sau)
-- Vật cản: ống gió dịch đầu báo khỏi biên ống (cần layer ống gió của bản vẽ thật).
 - Xem trên AutoCAD thật bằng mắt (người dùng), Fable kiểm toàn dự án (người dùng tự chạy).

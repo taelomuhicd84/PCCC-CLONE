@@ -64,7 +64,7 @@ AI chỉ viết một gói thao tác ngắn (spec JSON), plugin sinh hình. Mộ
 | Trang con ADIM 5 bước (layer, DimStyle, lọc, phương) | `module/ui/BangAdim.cs`; lệnh `module/plugin/Dim.cs` (`AdimPhuong`) |
 | Thẻ phân hệ Chữa cháy, Thống kê (lưới thẻ) | `module/ui/PhanHe.cs` (thêm thẻ = 1 dòng) |
 | Trang Tiện ích của palette (`PCCC_TIENICH`: 27 thẻ, mã tắt, nhóm) | `module/ui/BangTienIch.cs`, mảng `THE` (thêm thẻ = 1 dòng) |
-| Vùng loại trừ `PCCC_LOAITRU`, vẽ tạm xem trước `PCCC_XEM_TRUOC` của `PCCC_RAI` | `module/plugin/Rai.cs`, hàm `TachLoaiTru`, `XoaXemTruoc` |
+| Vùng loại trừ `PCCC_LOAITRU`, ống gió (layer ONG_GIO / DUCT, đầu báo dịch ra), vẽ tạm xem trước `PCCC_XEM_TRUOC` của `PCCC_RAI` | `module/plugin/Rai.cs`, hàm `TachLoaiTru`, `TachOngGio` (từ khoá `DUOI_ONG_GIO`), `DichRaNgoai`, `XoaXemTruoc` |
 | Dây báo cháy nối tiếp thiết bị (`PCCC_DAY`, dây loop); đầu báo tia chiếu `BC_BEAM` vẽ tia (`PCCC_RAI`) | `module/plugin/Rai.cs`, hàm `DayTay`, `TiaVung`, `VeTia` |
 | Gợi ý loại đầu báo theo công năng (trang Báo cháy) | bảng "Loại theo khu vực" ở `knowledge/chon-loai-dau-bao.md` gốc repo (build chép cạnh DLL) |
 | Đổi trang Bố trí BC (`PCCC_BOTRI`: thiết bị theo tiêu chuẩn, mức tối ưu k, nút BỐ TRÍ gửi `PCCC_RAI` điền sẵn) | `module/ui/BangBoTri.cs`; trị số ở `data/khoang_cach_rai.json` gốc repo; từ khoá `HeSo` ở `module/plugin/Rai.cs`, hàm `RaiTay` |

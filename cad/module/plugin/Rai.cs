@@ -965,6 +965,8 @@ namespace TKPCCC
             ObjectId[] conLai;
             List<List<Point2d>> loaiTru = TachLoaiTru(db, qr.Value.GetObjectIds(), out conLai);
             if (loaiTru.Count > 0) ed.WriteMessage("\n[TKPCCC] " + loaiTru.Count + " vùng loại trừ (polyline kín layer " + LAYER_LOAI_TRU + "): không rải trong đó.");
+            List<List<Point2d>> ongGio = TachOngGio(db, conLai, out conLai);
+            if (ongGio.Count > 0) ed.WriteMessage("\n[TKPCCC] " + ongGio.Count + " ống gió (polyline kín layer có ONG_GIO / DUCT): đầu rơi vào ống thì dịch ra ngoài biên.");
             MatChon(db, conLai, mau.Count > 0 ? mau : null, out vung, out mat);
             bool veVung = vung.Count == 0;
             if (veVung)
@@ -1029,6 +1031,16 @@ namespace TKPCCC
                     // shortcut: điểm trong vùng loại trừ chỉ bị bỏ, không dời ra mép lỗ; mép lỗ xa thiết bị thì PCCC_KT báo vùng mù, rải bù bằng PCCC_DAT.
                     int bo = r.Diem.RemoveAll(p => loaiTru.Any(q => TrongDaGiac(q, new Point2d(p.X, p.Y))));
                     if (bo > 0) ed.WriteMessage("\n[TKPCCC] bo_loai_tru=" + bo);
+                    int dich = 0, ket = 0;
+                    for (int i = 0; i < r.Diem.Count; i++)
+                    {
+                        List<Point2d> og = ongGio.FirstOrDefault(q => TrongDaGiac(q, new Point2d(r.Diem[i].X, r.Diem[i].Y)));
+                        if (og == null) continue;
+                        Point2d? ra = DichRaNgoai(og, new Point2d(r.Diem[i].X, r.Diem[i].Y), 0.1 / m);
+                        if (ra.HasValue && TrongDaGiac(d, ra.Value) && !ongGio.Any(q => TrongDaGiac(q, ra.Value))) { r.Diem[i] = new Point3d(ra.Value.X, ra.Value.Y, 0); dich++; }
+                        else ket++;
+                    }
+                    if (dich + ket > 0) ed.WriteMessage("\n[TKPCCC] dich_ong_gio=" + dich + (ket > 0 ? " ket=" + ket + " (không dịch ra được: kiểm lại tay)" : ""));
                     if (!xem) foreach (Point3d p in r.Diem) ChenThietBi(db, tr, v, p, k, 0);
                     else foreach (Point3d p in r.Diem)
                     {
@@ -1077,6 +1089,53 @@ namespace TKPCCC
             }
             conLai = con.ToArray();
             return kq;
+        }
+
+        /// Ống gió (spec addin mẫu "vật cản trần"): polyline kín, vòng tròn trên layer tên có ONG_GIO, ONG-GIO, ONGGIO hoặc DUCT. Tách khỏi vùng chọn
+        /// (không đưa vào dựng phòng); trả đa giác ống. shortcut: nhận ống theo tên layer cố định; bản vẽ đặt tên khác thì thêm từ khoá vào DUOI_ONG_GIO.
+        static readonly string[] DUOI_ONG_GIO = { "ONG_GIO", "ONG-GIO", "ONGGIO", "DUCT" };
+        static List<List<Point2d>> TachOngGio(Database db, ObjectId[] ids, out ObjectId[] conLai)
+        {
+            List<List<Point2d>> kq = new List<List<Point2d>>();
+            List<ObjectId> con = new List<ObjectId>();
+            using (Transaction tr = db.TransactionManager.StartTransaction())
+            {
+                foreach (ObjectId id in ids)
+                {
+                    Entity e = tr.GetObject(id, OpenMode.ForRead) as Entity;
+                    Polyline pl = e as Polyline;
+                    Circle ci = e as Circle;
+                    string lop = e == null ? "" : BoDau(e.Layer).ToUpperInvariant();
+                    if ((pl != null || ci != null) && DUOI_ONG_GIO.Any(k => lop.Contains(k)))
+                    {
+                        if (ci != null) kq.Add(DaGiacTron(ci, 72));
+                        else if (pl.Closed && pl.NumberOfVertices >= 3) kq.Add(DinhPl(pl));
+                    }
+                    else con.Add(id);
+                }
+                tr.Commit();
+            }
+            conLai = con.ToArray();
+            return kq;
+        }
+
+        /// Điểm p trong đa giác q: dịch theo hướng tới cạnh gần nhất, qua biên thêm "qua". null = đa giác suy biến.
+        static Point2d? DichRaNgoai(List<Point2d> q, Point2d p, double qua)
+        {
+            Point2d? gan = null;
+            double dMin = double.MaxValue;
+            for (int i = 0; i < q.Count; i++)
+            {
+                Point2d a = q[i], b = q[(i + 1) % q.Count];
+                Vector2d ab = b - a;
+                double t = ab.LengthSqrd < 1e-12 ? 0 : Math.Max(0, Math.Min(1, (p - a).DotProduct(ab) / ab.LengthSqrd));
+                Point2d c = a + ab * t;
+                double dd = c.GetDistanceTo(p);
+                if (dd < dMin) { dMin = dd; gan = c; }
+            }
+            if (!gan.HasValue || dMin < 1e-9) return null;
+            Vector2d v = (gan.Value - p).GetNormal();
+            return gan.Value + v * qua;
         }
 
         static ObjectId LopXemTruoc(Database db, Transaction tr)

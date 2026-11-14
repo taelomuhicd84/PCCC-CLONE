@@ -164,6 +164,7 @@ namespace TKPCCC
             theoHang.AutoSize = true;
             theoHang.Checked = GiaoDien.DocCaiDat("bt_hang", "Khong") == "Co";
             f.Controls.Add(theoHang);
+            f.Controls.Add(Chu("Ống gió: polyline kín (hoặc vòng tròn) trên layer tên có ONG_GIO, ONG-GIO hoặc DUCT, quét chọn cùng mặt bằng: đầu báo rơi vào ống tự dịch ra ngoài biên ống.", 0));
 
             NutBo boTri = new NutBo("▶  BỐ TRÍ", GiaoDien.XanhDam);
             boTri.Size = new Size(300, 38);
