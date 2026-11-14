@@ -38,11 +38,12 @@ TKPCCC/
 │  ├─ src/xuat_docx.ts     Word: báo cáo khảo sát
 │  ├─ src/thamdinh.ts      gọi lõi Python thamdinh/ (`python -m pccc_checker run`), đọc findings.jsonl, câu hỏi "Claude xét" dòng XM
 │  ├─ src/thuy_luc.ts      chuẩn hoá ô sơ bộ thủy lực; số liệu -> ô Excel mẫu + gọi scripts/xuat_thuy_luc_excel.py
+│  ├─ src/thong_ke_du_an.ts  quét tệp, gom mã quy chuẩn, đếm theo module/skill/agent cho tab Dự án (GET /api/du-an/thong-ke)
 │  ├─ src/engines/claude.ts  gọi `claude -p` bằng đăng nhập Claude Code (KHÔNG API key), chỉ công cụ đọc
 │  └─ test/
 │
 ├─ web/                 GIAO DIỆN: 1 file index.html (HTML + JS thuần, không build);
-│                       5 tab Hướng dẫn · Khảo sát · Khối lượng & Báo giá · Thủy lực · Thẩm định PDF
+│                       6 tab Hướng dẫn · Khảo sát · Khối lượng & Báo giá · Thủy lực · Thẩm định PDF · Dự án
 │
 ├─ bang_tinh/thuy_luc/  EXCEL MẪU THỦY LỰC (chép từ SKILL-PCCC-NEW): MAU_THUY_LUC_7336.xlsx, o_nhap.json (bản đồ ô nhập), vi_du/
 ├─ scripts/             xuat_thuy_luc_excel.py (ghi ô Excel mẫu, giữ công thức; sửa F106 theo B.2.10.12),

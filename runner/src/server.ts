@@ -13,6 +13,7 @@ import { cauHoiXet, chayThamDinh, docKetLuan, KHOA_CHU, KHOA_CO_KHONG, KHOA_SO, 
 import { soBoThuyLuc, tinhThuyLuc, toiUuThuyLuc, type SoLieuThuyLuc } from "../../shared/src/thuy_luc";
 import { chuanHoaMatBang, xuatThuyLucExcel } from "./thuy_luc";
 import { marked } from "marked";
+import { thongKe } from "./thong_ke_du_an";
 
 const GOC = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", ".."); // runner/src -> gốc dự án
 const KET_QUA = path.join(GOC, "ket_qua"); // ket_qua/<dự án>/: khoi_luong.json, khoi_luong_so_bo.json, khao_sat.json
@@ -105,6 +106,7 @@ async function xuLy(req: IncomingMessage, res: ServerResponse) {
   }
   if (r === "GET /api/vat-tu") return json(res, danhMuc());
   if (r === "GET /api/du-an") return json(res, existsSync(KET_QUA) ? readdirSync(KET_QUA).filter(coDuLieu) : []);
+  if (r === "GET /api/du-an/thong-ke") return json(res, thongKe(GOC));
   if (r === "GET /api/huong-dan") return json(res, JSON.parse(readFileSync(path.join(GOC, "data", "huong_dan.json"), "utf8")));
   if (r === "GET /api/tai-lieu") {
     const html = await marked.parse(readFileSync(fileTaiLieu(q.get("f")), "utf8")); // tính xong mới gửi header: lỗi còn trả JSON được

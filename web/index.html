@@ -49,6 +49,14 @@
   #bangTD { min-width:760px; } /* điện thoại: cuộn ngang trong khung bảng thay vì ép cột Nội dung */
   #bangPA { min-width:640px; }
   #slTL { min-height:220px; font:12px/1.4 ui-monospace, Consolas, monospace; }
+  .da-the { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin-bottom:16px; }
+  .da-the > div { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px; }
+  .da-the b { display:block; font-size:26px; line-height:1.2; } .da-the small { color:var(--mute); }
+  .da-t { font-size:12px; letter-spacing:.08em; color:var(--mute); margin:0 0 10px; font-weight:600; }
+  .da-hm { margin-bottom:12px; } .da-hm .dong { display:grid; grid-template-columns:minmax(120px,240px) 1fr 52px; gap:10px; align-items:center; }
+  .da-nen { background:color-mix(in srgb, var(--acc) 12%, transparent); border-radius:4px; height:10px; } .da-nen i { display:block; height:100%; background:var(--acc); border-radius:4px; }
+  .da-hm .so { text-align:right; font-variant-numeric:tabular-nums; } .da-hm .chips { margin:4px 0 0 0; display:flex; flex-wrap:wrap; gap:4px; }
+  .chip em { font-style:normal; color:var(--mute); margin-left:4px; }
   @media (max-width:760px) { .hd { grid-template-columns:1fr; } .duan { margin-left:0; } }
 </style>
 </head>
@@ -61,6 +69,7 @@
     <button data-tab="bg">Khối lượng &amp; Báo giá</button>
     <button data-tab="tl">Thủy lực</button>
     <button data-tab="td">Thẩm định PDF</button>
+    <button data-tab="da">Dự án</button>
   </nav>
   <div class="duan">
     <select id="duAn"><option value="">— dự án —</option></select>
@@ -192,6 +201,14 @@
   </div>
 
   <!-- THẨM ĐỊNH PDF -->
+  <!-- DỰ ÁN -->
+  <div id="tab-da" class="an">
+    <div class="da-the" id="daThe"></div>
+    <section><p class="da-t">HẠNG MỤC</p><div id="daHM"></div></section>
+    <section><p class="da-t">QUY CHUẨN TRÍCH DẪN</p><div id="daQC"></div></section>
+    <section><p class="da-t">SKILL</p><div id="daSkill"></div></section>
+    <section><p class="da-t">AGENT</p><div id="daAgent"></div></section>
+  </div>
   <div id="tab-td" class="an">
     <section>
       <h2>Thẩm định bản vẽ PDF theo QCVN 06:2022 (sửa đổi 1:2023)</h2>
@@ -242,11 +259,12 @@ let tab = "hd";
 function moTab(t) {
   tab = t;
   document.querySelectorAll("nav button").forEach((b) => b.classList.toggle("on", b.dataset.tab === t));
-  ["hd", "ks", "bg", "tl", "td"].forEach((x) => $("tab-" + x).classList.toggle("an", x !== t));
+  ["hd", "ks", "bg", "tl", "td", "da"].forEach((x) => $("tab-" + x).classList.toggle("an", x !== t));
   if (t === "ks") taiKS();
   if (t === "bg") hienBaoGia();
   if (t === "tl") taiTL();
   if (t === "td") taiTD();
+  if (t === "da") taiDA();
   nho("tab", t);
 }
 document.querySelectorAll("nav button").forEach((b) => (b.onclick = () => moTab(b.dataset.tab)));
@@ -497,6 +515,18 @@ async function xetTD(id, nut) {
   nut.textContent = "Claude đang xét (vài phút)…";
   try { td.claude_xet = { ...td.claude_xet, [id]: await api("/api/tham-dinh/xet" + qDuAn(), { method: "POST", body: JSON.stringify({ id }) }) }; }
   finally { hienTD(td); }
+}
+async function taiDA() {
+  const k = await api("/api/du-an/thong-ke"), t = k.tong, chip = (a, n) => `<span class="chip">${esc(a)}<em>${n}</em></span>`;
+  const the = (so, ten, ph) => `<div><b>${so}</b>${ten}<br><small>${ph}</small></div>`;
+  $("daThe").innerHTML = the(t.tep.toLocaleString("vi-VN"), "Tệp", `${t.mb} MB · ${t.thu_muc_nguon} thư mục nguồn · ${t.cong_trinh} công trình (ket_qua)`)
+    + the(t.skill, "Skill", "chuyên môn của module") + the(t.agent, "Agent", "thẩm định, vẽ, kiểm") + the(t.quy_chuan, "Quy chuẩn trích dẫn", "mã văn bản khác nhau");
+  const max = Math.max(1, ...k.hang_muc.map((h) => h.tep));
+  $("daHM").innerHTML = k.hang_muc.map((h) => `<div class="da-hm"><div class="dong"><span>${esc(h.ten)}</span><span class="da-nen"><i style="width:${Math.max(1, h.tep / max * 100)}%"></i></span><span class="so">${h.tep}</span></div>`
+    + `<div class="chips">${h.nhom.map((n) => chip(n.ten, n.so)).join("")}</div></div>`).join("");
+  $("daQC").innerHTML = `<div class="chips" style="display:flex;flex-wrap:wrap;gap:4px"><span class="chip"><b>Tổng ${k.quy_chuan.length}</b></span>${k.quy_chuan.map((q) => chip(q.ma, q.so)).join("")}</div>`;
+  $("daSkill").innerHTML = `<table><tr><th>Tên</th><th>Mô tả</th><th>Model</th><th>Effort</th><th>Tệp</th></tr>${k.skill.map((s) => `<tr><td>${esc(s.ten)}</td><td class="mute">${esc(s.mo_ta)}</td><td>${esc(s.model)}</td><td>${esc(s.effort)}</td><td>${s.tep}</td></tr>`).join("")}</table>`;
+  $("daAgent").innerHTML = `<table><tr><th>Tên</th><th>Model</th><th>Effort</th></tr>${k.agent.map((a) => `<tr><td>${esc(a.ten)}</td><td>${esc(a.model)}</td><td>${esc(a.effort)}</td></tr>`).join("")}</table>`;
 }
 async function taiTD() {
   $("tdTomTat").textContent = ""; $("bangTD").innerHTML = ""; $("tdKq").textContent = ""; $("pdfTD").classList.add("an");
