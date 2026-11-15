@@ -11,9 +11,9 @@ Người dùng dặn (2026-10-31): xong mỗi đầu mục thì lưu tiến đ�
 ngay. Lý do: hết usage hoặc ngữ cảnh quá dài giữa chừng thì mất mạch; phiên sau (hoặc máy khác) chỉ cần đọc repo là làm tiếp được.
 
 ## 1. Kiểm tra (không báo xong khi chưa chạy)
-- `npm test` (shared/test + runner/test).
+- `npm test` (backend/shared/test + runner/test).
 - Có sửa `cad/`: `powershell -ExecutionPolicy Bypass -File cad\test\chay_thu.ps1` → `TAT CA DAT` (xem skill `tkpccc-cad-console`).
-- Có sửa web/runner: bật runner (`npm start`, chạy nền) và thử luồng vừa sửa trên trình duyệt tích hợp hoặc bằng `fetch`.
+- Có sửa frontend/backend: bật runner (`npm start`, chạy nền) và thử luồng vừa sửa trên trình duyệt tích hợp hoặc bằng `fetch`.
 - Dọn dữ liệu thử mình tạo trong `ket_qua/`, file rác (`plot.log`…); không xoá dữ liệu người dùng.
 
 ## 2. Ghi tiến độ

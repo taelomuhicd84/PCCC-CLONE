@@ -2,7 +2,7 @@
 
 Đọc chữ vector trong PDF → kiểm 26 luật QCVN 06:2022 + Sửa đổi 1:2023 (`rules/qcvn06_2022_sd01_2023.yaml`, `verified: true`)
 → `findings.jsonl` (D Đạt / KD Không đạt / XM Cần xác minh) + PDF ghi chú (khung + comment ghi điều khoản). Runner gọi qua
-`runner/src/thamdinh.ts`; web: tab **Thẩm định PDF**.
+`backend/src/thamdinh.ts`; web: tab **Thẩm định PDF**.
 
 ## Chạy
 Cần Python 3.10+ với `pymupdf`, `pyyaml` (`python -m pip install pymupdf pyyaml`). Từ thư mục `thamdinh/`:

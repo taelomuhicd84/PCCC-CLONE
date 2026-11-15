@@ -15,9 +15,9 @@ Phát triển module này: chỉ đọc file trong bảng dưới. Thẩm địn
 | `thamdinh/scripts/make_sample_pdf.py` | PDF mẫu có lỗi cài sẵn |
 | `thamdinh/test/` | pytest |
 | `thamdinh/README.md` | nguồn, phần đã cắt/sửa |
-| `runner/src/thamdinh.ts`, `runner/test/thamdinh.test.ts` | gọi Python, đọc `findings.jsonl`, câu hỏi "Claude xét" |
-| `runner/src/server.ts` | route `/api/tham-dinh` (thân PDF ≤ 200 MB), `/api/tham-dinh/pdf`, `/api/tham-dinh/xet` |
-| `web/index.html` | tab "Thẩm định PDF" (`data-tab="td"`) |
+| `backend/src/thamdinh.ts`, `backend/test/thamdinh.test.ts` | gọi Python, đọc `findings.jsonl`, câu hỏi "Claude xét" |
+| `backend/src/server.ts` | route `/api/tham-dinh` (thân PDF ≤ 200 MB), `/api/tham-dinh/pdf`, `/api/tham-dinh/xet` |
+| `frontend/index.html` | tab "Thẩm định PDF" (`data-tab="td"`) |
 
 ## Chạy
 `python -m pccc_checker run <pdf> --out <thư mục> [--pages auto|all|1-3,5] [--set height_pccc_m=24 --set function_group=F1.3]`
@@ -33,4 +33,4 @@ Bản scan (không có lớp chữ) không đọc được; mới có 26 luật 
 mã dòng PC-001… đánh lại mỗi lần chạy nên chạy lại thì xoá "Claude xét" cũ.
 
 ## Kiểm
-`python -m pytest thamdinh/test -q`, `npx vitest run runner/test/thamdinh.test.ts`.
+`python -m pytest thamdinh/test -q`, `npx vitest run backend/test/thamdinh.test.ts`.

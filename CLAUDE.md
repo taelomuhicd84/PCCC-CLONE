@@ -23,6 +23,7 @@ Bộ công cụ thiết kế PCCC: plugin AutoCAD 2021 + runner Node + web nội
 Làm module nào: đọc `.claude/skills/<skill>/SKILL.md` của module đó và các file nó liệt kê; không đọc cả repo.
 | Module | Skill | Agent |
 |---|---|---|
+| Web nội bộ: giao diện `frontend/` (6 tab) và server + lõi `backend/` | `tkpccc-bao-gia`, `tkpccc-thuy-luc`, `tkpccc-huong-dan` | `web-frontend`, `web-backend` |
 | Khảo sát – tư vấn PCCC (bảng KS + comment, phương án trên PDF) | `tkpccc-khao-sat-tu-van` | |
 | Thẩm định PCCC: xây dựng (bảng KT) + hệ thống (bảng A, B) | `tkpccc-tham-dinh` | `pccc-xay-dung`, `pccc-he-thong` |
 | Bảng đối chiếu A/B/KT/KS: chọn, lập, gộp, kiểm, xuất Excel | `tkpccc-bang-doi-chieu` | |
@@ -40,7 +41,7 @@ Làm module nào: đọc `.claude/skills/<skill>/SKILL.md` của module đó và
   ghi trong frontmatter `model:`, `effort:` của SKILL.md và agent; nguồn duy nhất là frontmatter. Skill phụ trợ gọi giữa luồng
   (`tkpccc-bang-doi-chieu`, `tkpccc-ghi-chu-ban-ve`, `tkpccc-tra-quy-chuan`) KHÔNG đặt: model của skill áp cho cả phần còn lại của lượt.
 - Module mới: tạo `.claude/skills/tkpccc-<tên>/` (`SKILL.md`; module chỉ Claude dùng thì để luôn `scripts/`, `data/`, `test/` trong đó), thêm 1 dòng
-  vào bảng trên và `STRUCTURE.md`. Code chạy trong web/runner vẫn ở `shared/`, `runner/`, `thamdinh/`, `cad/` nhưng `SKILL.md` của module phải liệt kê.
+  vào bảng trên và `STRUCTURE.md`. Code chạy trong web vẫn ở `backend/` (gồm `backend/shared/`), `frontend/`, `thamdinh/`, `cad/` nhưng `SKILL.md` của module phải liệt kê.
 - Quy trình nào lặp lại và hay thì gom thành skill (người dùng dặn 2026-10-31).
 
 ## Quy tắc chung
@@ -52,9 +53,9 @@ Làm module nào: đọc `.claude/skills/<skill>/SKILL.md` của module đó và
 - Không trùng lắp, không làm việc thừa (người dùng dặn 2026-11-03): một số liệu một chỗ rồi link tới; chỉ làm, chỉ tra phần công việc
   yêu cầu và đối tượng có thật (không có hệ thống thì không tra chi tiết hệ thống đó); kết luận biết trước thì điền hàng loạt, không giao agent.
 - Tri thức/điều khoản chép nguyên văn vào `knowledge/` hoặc `skills/`, không viết theo trí nhớ.
-- Gọi Claude **không dùng API key**: `runner/src/engines/claude.ts` spawn `claude -p` bằng đăng nhập CLI, chỉ công cụ đọc, không nạp hook/plugin cá nhân.
+- Gọi Claude **không dùng API key**: `backend/src/engines/claude.ts` spawn `claude -p` bằng đăng nhập CLI, chỉ công cụ đọc, không nạp hook/plugin cá nhân.
 - `data/vat_tu.json` là nguồn DUY NHẤT của danh mục vật tư (plugin + báo giá).
-- Số người dùng nhập kiểu Việt Nam ("1.200" = 1200, "3,5" = 3.5): đọc bằng `docSoVN` (`shared/src/bao_gia.ts`).
+- Số người dùng nhập kiểu Việt Nam ("1.200" = 1200, "3,5" = 3.5): đọc bằng `docSoVN` (`backend/shared/src/bao_gia.ts`).
 - Plugin AutoCAD: **chỉ C# 5**, chỉ tham chiếu `acdbmgd` + `accoremgd` (chi tiết skill `tkpccc-cad-console`).
 - Kiểm tra trước khi báo xong: `npm test`, `python -m pytest thamdinh/test .claude/skills -q` và
   `powershell -ExecutionPolicy Bypass -File cad\test\chay_thu.ps1` (không cần mở AutoCAD, nhưng máy phải cài AutoCAD 2021).

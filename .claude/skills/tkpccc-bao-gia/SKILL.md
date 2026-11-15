@@ -11,14 +11,14 @@ Phát triển module này: chỉ đọc file trong bảng dưới. Báo cáo kh�
 |---|---|
 | `data/vat_tu.json` | danh mục vật tư: nguồn DUY NHẤT cho plugin + báo giá (loai: block / tuyen / khac) |
 | `data/don_gia.json` | đơn giá người dùng đã nhập (tự sinh, không commit) |
-| `shared/src/bao_gia.ts` | khối lượng × danh mục × đơn giá → báo giá theo hệ; `docSoVN` |
-| `shared/src/khao_sat.ts` | khảo sát 8 mục: chuẩn hoá, ghép gợi ý Claude, `uocKhoiLuong` theo m² |
-| `runner/src/xuat_xlsx.ts` | đơn giá mẫu, đọc đơn giá, báo giá có công thức, sheet theo tầng/khu |
-| `runner/src/xuat_docx.ts` | Word báo cáo khảo sát |
-| `runner/src/server.ts` | route `/api/vat-tu`, `/api/khoi-luong`, `/api/don-gia`, `/api/don-gia/mau`, `/api/bao-gia`, `/api/bao-gia.xlsx`, `/api/khao-sat`, `/api/khao-sat.docx`, `/api/khao-sat/goi-y`, `/api/khao-sat/so-bo`, `/api/du-an` |
-| `web/index.html` | tab "Khảo sát" (`ks`), "Khối lượng & Báo giá" (`bg`) |
+| `backend/shared/src/bao_gia.ts` | khối lượng × danh mục × đơn giá → báo giá theo hệ; `docSoVN` |
+| `backend/shared/src/khao_sat.ts` | khảo sát 8 mục: chuẩn hoá, ghép gợi ý Claude, `uocKhoiLuong` theo m² |
+| `backend/src/xuat_xlsx.ts` | đơn giá mẫu, đọc đơn giá, báo giá có công thức, sheet theo tầng/khu |
+| `backend/src/xuat_docx.ts` | Word báo cáo khảo sát |
+| `backend/src/server.ts` | route `/api/vat-tu`, `/api/khoi-luong`, `/api/don-gia`, `/api/don-gia/mau`, `/api/bao-gia`, `/api/bao-gia.xlsx`, `/api/khao-sat`, `/api/khao-sat.docx`, `/api/khao-sat/goi-y`, `/api/khao-sat/so-bo`, `/api/du-an` |
+| `frontend/index.html` | tab "Khảo sát" (`ks`), "Khối lượng & Báo giá" (`bg`) |
 | `knowledge/bao-gia-pccc.md`, `knowledge/khao-sat-bao-gia.md` | quy tắc báo giá sơ bộ, 8 mục khảo sát |
-| `shared/test/bao_gia.test.ts`, `shared/test/khao_sat.test.ts`, `shared/test/mau.ts`, `runner/test/runner.test.ts` | test |
+| `backend/shared/test/bao_gia.test.ts`, `backend/shared/test/khao_sat.test.ts`, `backend/shared/test/mau.ts`, `backend/test/runner.test.ts` | test |
 
 Bóc khối lượng trong AutoCAD: lệnh `PCCC_BOC` (skill `tkpccc-cad-console`) gửi `POST /api/khoi-luong`.
 
@@ -28,4 +28,4 @@ Bóc khối lượng trong AutoCAD: lệnh `PCCC_BOC` (skill `tkpccc-cad-console
 - Báo giá sơ bộ theo m² dùng quy tắc mặc định của `knowledge/bao-gia-pccc.md` (DN ống ghi "cỡ ống chờ thiết kế").
 
 ## Kiểm
-`npx vitest run shared/test/bao_gia.test.ts shared/test/khao_sat.test.ts runner/test/runner.test.ts`.
+`npx vitest run backend/shared/test/bao_gia.test.ts backend/shared/test/khao_sat.test.ts backend/test/runner.test.ts`.

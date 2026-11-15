@@ -65,7 +65,7 @@ thong_so_cong_trinh.json (có trích nguồn)  ◄── Opus 5.5 high soát đ�
 | Giao diện | Tra mạng UX, dựng khung giao diện | `agy` | `gemini-4-carbon-medium` | Đọc, viết nhiều; ít rủi ro nghiệp vụ |
 | Web | Giao diện | agent `web-frontend` | Sonnet 5.5 medium | |
 | Web | API, xuất file, bảo mật | agent `web-backend` | Sonnet 5.5 medium (bảo mật, hợp đồng dữ liệu: Opus high) | |
-| Báo giá, thủy lực | Tính | `shared/` + Excel mẫu | 0 token | Đã khớp Excel của người dùng |
+| Báo giá, thủy lực | Tính | `backend/shared/` + Excel mẫu | 0 token | Đã khớp Excel của người dùng |
 | Thủy lực | Sửa lõi tính | skill `tkpccc-thuy-luc` | Opus 5.5 high | Sai là sai bơm |
 | Điều phối | Chia việc, đọc kết quả, quyết định | phiên đầu não | model phiên chính; giữ ngữ cảnh nhỏ | Mỗi lượt đầu não đọc lại cả ngữ cảnh |
 | Review lớn | Soát lại phát hiện NGHIÊM TRỌNG / CAO trước khi sửa | Fable 5.2 | high / xhigh, chỉ mảng quyết định kết quả PCCC | Rất tốn: 3 phiên soát ≈ 30 % hạn mức Fable tuần |

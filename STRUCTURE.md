@@ -22,19 +22,19 @@ TKPCCC/
 │     ├─ tkpccc-bang-doi-chieu/   data/ (A1–A26, B1–B14, KT*, KS, index.json; A/B/KT chép SKILL-PCCC-NEW 24743f9),
 │     │                           scripts/bang_doi_chieu.py (chon, khung, dong, tim, lamviec, job, gop, kiem, xlsx, md), test/
 │     ├─ tkpccc-ghi-chu-ban-ve/   scripts/ghi_chu_pdf.py (ve, luoi, tim: annotation khung/callout/leader/nét/tường/cửa), test/
-│     ├─ tkpccc-kiem-luat-pdf/ · tkpccc-thuy-luc/ · tkpccc-bao-gia/ · tkpccc-huong-dan/   thẻ module (code ở shared/ runner/ thamdinh/ web/)
+│     ├─ tkpccc-kiem-luat-pdf/ · tkpccc-thuy-luc/ · tkpccc-bao-gia/ · tkpccc-huong-dan/   thẻ module (code ở backend/ thamdinh/ frontend/)
 │     ├─ tkpccc-phoi-hop-model/   scripts/goi_gemini.py: gọi Gemini CLI không giao diện bóc PDF, Claude chỉ đọc JSON kết quả
 │     └─ tkpccc-tra-quy-chuan/ · tkpccc-xong-dau-muc/   quy trình chung
 │
-├─ shared/              LÕI NGHIỆP VỤ dùng chung, hàm thuần (không đọc/ghi file, không server)
-│  ├─ src/bao_gia.ts       khối lượng × danh mục × đơn giá -> báo giá theo hệ; docSoVN (đọc số kiểu Việt Nam)
-│  ├─ src/khao_sat.ts      khảo sát 8 mục: chuẩn hoá, ghép gợi ý Claude, ước khối lượng sơ bộ theo m²
-│  ├─ src/thuy_luc.ts      thủy lực sprinkler TCVN 7336 PL B: tính/kiểm, sơ bộ từ mặt bằng, so phương án DN, chọn số đầu C07
-│  │                       (chép nguyên từ SKILL-PCCC-NEW 24743f9; test khớp Excel người dùng — sửa thì báo để đồng bộ)
-│  └─ test/                *.test.ts + mau.ts (dữ liệu mẫu dùng chung cho test)
-│
-├─ runner/              SERVER CỤC BỘ (Node, chạy `npm start`, cổng 8787)
-│  ├─ src/server.ts        API + phục vụ web/index.html; đọc/ghi data/ và ket_qua/
+├─ backend/             PHẦN SAU: server cục bộ + lõi nghiệp vụ (Node, `npm start`, cổng 8787)
+│  ├─ shared/           LÕI NGHIỆP VỤ dùng chung, hàm thuần (không đọc/ghi file, không server)
+│  │  ├─ src/bao_gia.ts       khối lượng × danh mục × đơn giá -> báo giá theo hệ; docSoVN (đọc số kiểu Việt Nam)
+│  │  ├─ src/khao_sat.ts      khảo sát 8 mục: chuẩn hoá, ghép gợi ý Claude, ước khối lượng sơ bộ theo m²
+│  │  ├─ src/thuy_luc.ts      thủy lực sprinkler TCVN 7336 PL B: tính/kiểm, sơ bộ từ mặt bằng, so phương án DN, chọn số đầu C07
+│  │  │                    (chép nguyên từ SKILL-PCCC-NEW 24743f9; test khớp Excel người dùng — sửa thì báo để đồng bộ)
+│  │  └─ test/             *.test.ts + mau.ts (dữ liệu mẫu dùng chung cho test)
+│  │
+│  ├─ src/server.ts        API + phục vụ frontend/index.html; đọc/ghi data/ và ket_qua/
 │  ├─ src/xuat_xlsx.ts     Excel: đơn giá mẫu, đọc đơn giá, báo giá có công thức, sheet theo tầng/khu
 │  ├─ src/xuat_docx.ts     Word: báo cáo khảo sát
 │  ├─ src/thamdinh.ts      gọi lõi Python thamdinh/ (`python -m pccc_checker run`), đọc findings.jsonl, câu hỏi "Claude xét" dòng XM
@@ -43,7 +43,7 @@ TKPCCC/
 │  ├─ src/engines/claude.ts  gọi `claude -p` bằng đăng nhập Claude Code (KHÔNG API key), chỉ công cụ đọc
 │  └─ test/
 │
-├─ web/                 GIAO DIỆN: 1 file index.html (HTML + JS thuần, không build);
+├─ frontend/            GIAO DIỆN: 1 file index.html (HTML + JS thuần, không build);
 │                       6 tab Hướng dẫn · Khảo sát · Khối lượng & Báo giá · Thủy lực · Thẩm định PDF · Dự án
 │
 ├─ bang_tinh/thuy_luc/  EXCEL MẪU THỦY LỰC (chép từ SKILL-PCCC-NEW): MAU_THUY_LUC_7336.xlsx, o_nhap.json (bản đồ ô nhập), vi_du/
@@ -99,9 +99,9 @@ TKPCCC/
 |---|---|---|---|
 | Quy tắc, tiến độ | `CLAUDE.md`, `TIEN_DO.md`, `LICH_SU.md`, `ROADMAP.md`, `STRUCTURE.md` | Claude cập nhật mỗi mốc | có |
 | Quy trình lặp lại của Claude | `.claude/skills/<tên>/SKILL.md` (+ `scripts/`) | Claude gom việc hay thành skill | có |
-| Nghiệp vụ (tính toán) | `shared/src` | Claude, kèm test trong `shared/test` | có |
-| Server, xuất file, gọi Claude | `runner/src` | Claude, kèm test trong `runner/test` | có |
-| Giao diện | `web/index.html` | Claude | có |
+| Nghiệp vụ (tính toán) | `backend/shared/src` | Claude, kèm test trong `backend/shared/test` | có |
+| Server, xuất file, gọi Claude | `backend/src` | Claude (agent `web-backend`), kèm test trong `backend/test` | có |
+| Giao diện | `frontend/index.html` | Claude (agent `web-frontend`) | có |
 | Thẩm định PDF (Python) | `thamdinh/` (luật: `thamdinh/rules/*.yaml`) | Claude, kèm test trong `thamdinh/test` | có |
 | AutoCAD | `cad/module/plugin/Lenh.cs` | Claude, kiểm bằng `cad/test/chay_thu.ps1` | có |
 | Thư viện block, gán block | `cad/TKPCCC.bundle/Contents/PCCC_Blocks.dwg`, `block_alias.json` | người dùng (BEDIT, `PCCC_GAN`) | có |
@@ -114,11 +114,11 @@ TKPCCC/
 AutoCAD: PCCC_DAT / PCCC_ONG vẽ ─► PCCC_BOC ──POST /api/khoi-luong──► ket_qua/<dự án>/khoi_luong.json ─┐
 Web: tab Khảo sát ─► ket_qua/<dự án>/khao_sat.json ─► "Ước khối lượng" ─► khoi_luong_so_bo.json ────────┤
                                                                                                      ▼
-data/vat_tu.json + data/don_gia.json ──► shared/src/bao_gia.ts ──► runner/src/xuat_xlsx.ts ──► báo giá .xlsx
-Claude ("Claude gợi ý", "Hỏi") ◄── runner/src/engines/claude.ts (`claude -p`, đọc knowledge/ + skills/)
-Web: tab Thủy lực ─POST /api/thuy-luc/so-bo|tinh─► shared/src/thuy_luc.ts ─► ket_qua/<dự án>/thuy_luc/so_lieu.json
-   ─GET /api/thuy-luc.xlsx─► runner/src/thuy_luc.ts ─► scripts/xuat_thuy_luc_excel.py (+ Excel COM) ─► thuy_luc.xlsx
-Web: tab Thẩm định PDF ─POST /api/tham-dinh─► ket_qua/<dự án>/thamdinh/ban_ve.pdf ─► runner/src/thamdinh.ts ─► python thamdinh/
+data/vat_tu.json + data/don_gia.json ──► backend/shared/src/bao_gia.ts ──► backend/src/xuat_xlsx.ts ──► báo giá .xlsx
+Claude ("Claude gợi ý", "Hỏi") ◄── backend/src/engines/claude.ts (`claude -p`, đọc knowledge/ + skills/)
+Web: tab Thủy lực ─POST /api/thuy-luc/so-bo|tinh─► backend/shared/src/thuy_luc.ts ─► ket_qua/<dự án>/thuy_luc/so_lieu.json
+   ─GET /api/thuy-luc.xlsx─► backend/src/thuy_luc.ts ─► scripts/xuat_thuy_luc_excel.py (+ Excel COM) ─► thuy_luc.xlsx
+Web: tab Thẩm định PDF ─POST /api/tham-dinh─► ket_qua/<dự án>/thamdinh/ban_ve.pdf ─► backend/src/thamdinh.ts ─► python thamdinh/
    ─► findings.jsonl (D/KD/XM) + PDF ghi chú ─► bảng kết luận; dòng XM ─"Claude xét"─► claude_xet.json
 ```
 
@@ -126,8 +126,8 @@ Web: tab Thẩm định PDF ─POST /api/tham-dinh─► ket_qua/<dự án>/tham
 - Module mới (người dùng dặn 2026-11-02): `.claude/skills/tkpccc-<tên>/SKILL.md`; module chỉ Claude dùng thì để luôn `scripts/`, `data/`,
   `test/` trong thư mục skill; thêm 1 dòng vào bảng module ↔ skill trong `CLAUDE.md`. Agent con: `.claude/agents/pccc-<việc>.md`.
 - Vật tư / thiết bị mới: 1 dòng trong `data/vat_tu.json` → `cad\build.bat` → `PCCC_LIB` (tự thêm block mặc định cho mã mới).
-- Phép tính nghiệp vụ mới (ước khối lượng, thủy lực…): file mới trong `shared/src/` + test trong `shared/test/`.
-- API mới: route trong `runner/src/server.ts`; xuất định dạng mới: `runner/src/xuat_<định dạng>.ts`; engine AI mới: `runner/src/engines/`.
+- Phép tính nghiệp vụ mới (ước khối lượng, thủy lực…): file mới trong `backend/shared/src/` + test trong `backend/shared/test/`.
+- API mới: route trong `backend/src/server.ts`; xuất định dạng mới: `backend/src/xuat_<định dạng>.ts`; engine AI mới: `backend/src/engines/`.
 - Lệnh AutoCAD mới: `cad/module/plugin/Lenh.cs` (bọc `Chay(...)`), thêm dòng kiểm vào `cad/test/chay_thu.ps1`, khai báo trong `PackageContents.xml`.
 - Quy chuẩn mới: nguyên văn vào `knowledge/` (văn bản, bảng) hoặc `skills/` (điều khoản theo chuyên đề); nối vào bước trong `data/huong_dan.json`.
 - Luật thẩm định PDF mới: thêm vào `thamdinh/rules/qcvn06_2022_sd01_2023.yaml` (check có sẵn) hoặc hàm `@register` trong

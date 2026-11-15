@@ -33,7 +33,7 @@ Nguyên tắc (vì sao): người dùng là kỹ sư PCCC, kết quả đi vào 
 | Quy định chung QCVN 10, định nghĩa QCVN 10 | `knowledge/qcvn10-2025-chung.md` |
 | Quy định chuyển tiếp QCVN 06 | `knowledge/qcvn06-dieu-7.md` |
 | Viết báo cáo khảo sát (8 mục, form tư vấn 7 mục) | `knowledge/khao-sat-bao-gia.md` |
-| Ước khối lượng, báo giá sơ bộ | `knowledge/bao-gia-pccc.md` (đã mã hoá trong `shared/src/khao_sat.ts` → `uocKhoiLuong`) |
+| Ước khối lượng, báo giá sơ bộ | `knowledge/bao-gia-pccc.md` (đã mã hoá trong `backend/shared/src/khao_sat.ts` → `uocKhoiLuong`) |
 
 Từng bước thiết kế B0–B7 đã gắn sẵn danh sách tài liệu trong `data/huong_dan.json` (`tai_lieu`), web hiện nguyên văn ở tab Hướng dẫn.
 
