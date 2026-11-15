@@ -5,9 +5,9 @@ Thang rẽ quạt, bậc chéo, thang cong, thang xoắn thường KHÔNG đư�
 ## Bước bắt buộc
 1. Cắt phóng to từng thang ở mọi trang mặt bằng có thang:
    ```
-   python scripts/cat_thang.py <ban_ve.pdf> <ket_qua/.../thang> [--trang 6,8,10]
+   python -X utf8 .claude/skills/tkpccc-ghi-chu-ban-ve/scripts/ghi_chu_pdf.py cat ban_ve.pdf --trang N --vung x0,y0,x1,y1 --phong 4
    ```
-   Mỗi thang ra một ảnh `<trang>_<nhãn>.png`, zoom 5. Thang không có nhãn thì tự cắt vùng quanh nó. Không kết luận từ ảnh cả trang: ở zoom trang, bậc chéo nhìn giống chiếu nghỉ.
+   Mỗi thang một lệnh (`--vung` px trên ảnh `luoi` zoom 1.6, khoanh rộng hơn thang một chút; `--phong` tăng tới khi thấy rõ nét bậc ở chiếu nghỉ). (Script `scripts/cat_thang.py` cũ không còn trong repo, sửa 2026-11-15.) Không kết luận từ ảnh cả trang: ở zoom trang, bậc chéo nhìn giống chiếu nghỉ.
 2. Xem TỪNG chiếu nghỉ, đầu vế, góc quay trên ảnh phóng to. Phân loại theo bảng dưới.
 3. Ghi kết quả cho từng thang ở từng tầng (hình dạng có thể đổi theo tầng): `BTB2 T3: bậc chéo ở chiếu nghỉ dưới → không tính thoát nạn (3.4.4)`.
 4. Chỉ đếm lối thoát nạn bằng các thang ĐẠT (Bài học 26). Thang không đạt thì giải pháp là ghi "thang di chuyển nội bộ, không thoát nạn", để trong buồng thang ngăn cháy, rồi tìm lối khác: thang ngoài nhà loại 3, hoặc buồng thang mới ở chỗ đất trống.
@@ -16,7 +16,7 @@ Thang rẽ quạt, bậc chéo, thang cong, thang xoắn thường KHÔNG đư�
 | Thấy gì | Là gì | Tính thoát nạn? |
 |---|---|---|
 | Chiếu nghỉ là ô phẳng, không có nét bậc, dài ≥ bề rộng vế; hai vế song song chạy thẳng | Thang 2 vế thẳng có chiếu nghỉ | Xét tiếp 3.4.1–3.4.3, 3.4.7 |
-| Ở chiếu nghỉ, các nét chéo tỏa từ đầu tường giữa hai vế (hình chữ V, rẻ quạt) | Bậc chéo (rẽ quạt) ở chiếu nghỉ. Mẫu: `knowledge/hinh/bac_cheo_chieu_nghi_mau.png` | Chỉ được khi nhà F1.2, F1.3, F2–F5 cao PCCC ≤ 15 m VÀ ≤ 15 người/tầng, tối đa 3 bậc tại góc xoay ≤ 90° (3.4.4). Ngoài ra KHÔNG |
+| Ở chiếu nghỉ, các nét chéo tỏa từ đầu tường giữa hai vế (hình chữ V, rẻ quạt) | Bậc chéo (rẽ quạt) ở chiếu nghỉ (ảnh mẫu `bac_cheo_chieu_nghi_mau.png` chưa có trong `knowledge/hinh/`: cần người dùng gửi lại) | Chỉ được khi nhà F1.2, F1.3, F2–F5 cao PCCC ≤ 15 m VÀ ≤ 15 người/tầng, tối đa 3 bậc tại góc xoay ≤ 90° (3.4.4). Ngoài ra KHÔNG |
 | Bậc hình thang hẹp đầu ở góc quay, tâm là một điểm | Bậc rẻ quạt ở góc | Như trên |
 | Các bậc là cung tròn đồng tâm, hoặc vế cong | Thang cong | Chỉ khi đủ mọi điều kiện 3.4.4: F1.2, F1.3, F2–F5; chiều cao thang ≤ 9 m; bán kính ≥ 2 lần bề rộng vế; cổ bậc 150–190; mặt bậc phía trong ≥ 220, ở giữa ≥ 250, phía ngoài ≤ 450 mm. Thiếu kích thước thì CẦN XÁC NHẬN, thường là KHÔNG |
 | Vòng tròn có trụ giữa, bậc tỏa quanh trụ | Thang xoắn ốc | KHÔNG tính thoát nạn: trên đường thoát nạn cấm thang xoắn ốc, thang cong toàn phần hoặc từng phần trừ trường hợp 3.4.4 (3.3.7). Chỉ là thang nội bộ hoặc thang lên mái kỹ thuật |
@@ -36,8 +36,8 @@ Thang rẽ quạt, bậc chéo, thang cong, thang xoắn thường KHÔNG đư�
 - **Nhãn của người thiết kế** ("thang di chuyển nội bộ, không dùng thoát nạn", "đóng kín thang không sử dụng", "thang sắt thoát nạn") chỉ để đối chiếu. Vẫn phải xếp loại theo hình rồi so với nhãn; lệch thì báo.
 
 ## Thang rẻ quạt, bậc chéo: hai điều kiện của QCVN 06 3.4.4 (đọc nguyên văn 2026-10-30)
-Hình A.12 TCVN 13967:2024 (trang 48; ảnh `knowledge/hinh/tcvn13967_hinh_A12_thang_re_quat.png`) minh họa rẻ quạt cho công trình bất kỳ có thang thoát nạn (người dùng dặn). A = vùng mặt bậc an toàn để đi, B = dải đánh dấu mép bậc; 9.3.3.3.1 c (trang 30) yêu cầu giải pháp nhận biết mép bậc.
-QCVN 06 3.4.4 (`knowledge/hoc/hop-nhat/qcvn-6.md` dòng 990): được dùng thang cong, thang bậc chéo khi thỏa MỘT trong hai:
+Hình A.12 TCVN 13967:2024 (trang 48; ảnh Hình A.12 chưa có trong `knowledge/hinh/`: cần chép lại từ TCVN 13967:2024) minh họa rẻ quạt cho công trình bất kỳ có thang thoát nạn (người dùng dặn). A = vùng mặt bậc an toàn để đi, B = dải đánh dấu mép bậc; 9.3.3.3.1 c (trang 30) yêu cầu giải pháp nhận biết mép bậc.
+QCVN 06 3.4.4 (bản hợp nhất cũ `knowledge/hoc/hop-nhat/qcvn-6.md` không còn trong repo; tóm tắt ở `skills/MOD_cau_thang_buong_thang.md` mục 3.4.4): được dùng thang cong, thang bậc chéo khi thỏa MỘT trong hai:
 1) Mỗi bậc có một phần mặt bậc thỏa 3.4.1 (bản thang ≥ 0,9 m; ≥ 0,7 m nếu nhà ≤ 15 m và ≤ 15 người/tầng) và 3.4.2 (mặt bậc ≥ 250 mm, cao ≤ 220 mm). Phần đó chính là vùng A của Hình A.12.
 2) Nhóm F1.2, F1.3, F2–F5, cao PCCC ≤ 15 m, ≤ 15 người/tầng: tại mỗi chiếu nghỉ hoặc góc xoay ≤ 90° tối đa 3 bậc chéo (rẻ quạt).
 Cách kiểm trên bản vẽ: đếm bậc chéo; nếu > 3 thì tính vùng A: bậc xoay quanh tâm với góc θ mỗi bậc, bề rộng mặt bậc = r·θ, vùng A bắt đầu ở r = 250/θ (mm); bề rộng vùng A = bề rộng vế − r. Đạt điều kiện 1 khi vùng A ≥ 0,7/0,9 m. Thêm dải đánh dấu mép bậc (Hình A.12). Thang xoắn ốc tròn trụ giữa vẫn không tính.
@@ -53,8 +53,8 @@ Không chọn thang theo cảm tính, không tự quyết phương án. Làm đ�
    - Chung buồng với thang khác (thang hầm → trệt) không; thang máy nằm trong hay ngoài buồng thang.
 2. **Đạt / không đạt từng tiêu chí**: hình dạng (3.3.7, 3.4.4), vế và bậc (3.4.1, 3.4.2), chiếu nghỉ (3.4.3), đóng kín, tách thang hầm (3.2.1, Hình I.2), lối ra ở tầng 1 (3.4.7).
 3. **Phương án cho TỪNG thang không đạt, rồi kiểm khả thi trên mặt bằng.** Phần khó nhất là đóng kín buồng thang và tách thang hầm → trệt khỏi thang các tầng trên → trệt. Vẽ thử vị trí tường, cửa rồi kiểm.
-   Vẽ ở TẤT CẢ các tầng có thang (hầm, tầng 1, lửng, tầng điển hình, tầng thượng), buồng thang bằng nét liền khép kín, kèm cung vế ở mọi
-   đầu vế giáp chiếu tầng (người dùng dặn 2026-11-02; công cụ: skill `tkpccc-ghi-chu-ban-ve`, kiểu `tuong`, `cua`, `cung`). Kiểm:
+   Vẽ ở TẤT CẢ các tầng có thang (hầm, tầng 1, lửng, tầng điển hình, tầng thượng), buồng thang bằng nét liền khép kín
+   (người dùng dặn 2026-11-02; công cụ: skill `tkpccc-ghi-chu-ban-ve`, kiểu `tuong`, `cua`; KHÔNG vẽ `cung`, xem gạch dưới; ngoại lệ tầng nổi trên của nhà không thuộc diện thẩm định: mục "Checklist vẽ buồng thang"). Kiểm:
    - Tường bao mới có chặn cửa căn hộ, phòng bên cạnh không. Chặn thì không hợp lý.
    - Khoảng cách từ mép bậc đầu/cuối vế tới tường ≥ bề rộng bản thang (≥ 0,9 m): chiếu thang rộng ≥ bản thang (3.4.3).
    - Cung mở cửa không lấn vùng chiếu nghỉ: lấy đầu mép bậc phía trong (sát giếng thang) làm tâm, bán kính tới đầu mép bậc còn lại (= bề rộng vế), vẽ cung 1/4. Cánh cửa quét không được cắt vào cung đó (3.4.3: cánh cửa mở vào buồng thang không làm giảm bề rộng tính toán của chiếu và bản thang). Mẫu người dùng gửi: thang CT1, cửa FD1, cung bán kính 900.
@@ -165,26 +165,17 @@ khác mẫu Nguyễn Viết Thanh (vách ngăn chia buồng thang ở tầng 1).
 - Cửa phòng mở vào trong phòng không bao giờ vướng cung vế thang: không ghi "kiểm cung cánh cửa phòng".
 - Nhà thang hở nhiều tầng, không thuộc diện thẩm định: hầm + trệt BẮT BUỘC quây kín thang; các tầng trên có thể thay bằng cửa EI cho từng phòng/căn hộ mở vào thang.
 
-### Hầm, trệt và các tầng trên (người dùng sửa 2026-11-06, căn hộ DV 8 m; GHI ĐÈ các ý trước trong mục này nếu mâu thuẫn)
-- HẦM: chỉ 1 cửa EI ở vế trái (vế đi LÊN); hầm là tầng thấp nhất nên không có cửa "đi xuống"; không vẽ cửa vế phải. Thang máy hầm mới cần khoang (buồng) đệm ngăn cháy với hầm xe.
-- TRỆT: tường quây ôm hai vế thang + thang máy sát theo đường nét đỏ người dùng vẽ (tường sát khối thang, bậc thang trái thấp hơn phải); cửa EI sát mép để cửa các phòng
-  mở ra sảnh (T-01, T-02) không va; hai cửa EI ở đầu hai vế khi thang đi xuống/lên cùng một sảnh.
-- CÁC TẦNG NỔI TRÊN (lửng trở lên): KHÔNG cần tường quây trước mặt thang, KHÔNG vẽ tường; thay bằng cửa chống cháy EI cho các phòng/căn hộ mở vào thang, hành lang.
-- Thang máy các tầng nổi không cần tường quây riêng; chỉ thang máy hầm cần khoang đệm.
-- Phần số liệu 900 mm của mục trên là tham chiếu khi người dùng chưa vẽ nét mẫu; ưu tiên nét người dùng vẽ.
-- (2026-11-06, người dùng sửa tiếp) Thang máy nằm NGOÀI tường quây, KHÔNG vẽ tường ngang qua đỉnh thang máy: tường quây chỉ gồm hai mũ che đầu hai vế (nối vào vách giếng thang máy sẵn có)
-  và hai tường bên; cửa thang máy dùng E30 thay cho tường/buồng đệm ở các tầng nổi.
-- (2026-11-06, CHỐT, ghi đè mọi ý trước về thang máy hầm) Hầm GIỐNG trệt: thang máy nằm ngoài tường quây, KHÔNG vẽ tường qua đỉnh thang máy, KHÔNG vẽ khoang đệm riêng, cửa thang máy E30;
-  tường quây chỉ gồm mũ che đầu hai vế nối vào vách giếng thang máy sẵn có. Khác trệt ở chỗ hầm chỉ có 1 cửa EI ở vế trái (đi lên).
+### Checklist vẽ buồng thang (đọc TRƯỚC khi đặt `tuong`/`cua`; người dùng dặn "đừng sai mãi" 2026-11-06; gom 2026-11-15 từ bài 06/11 và bài 09/11 bên dưới, bỏ các ý đã bị ghi đè)
+1. Có nét người dùng vẽ (tường đỏ, cửa xanh) trên PDF ⇒ GIỮ đúng nét đó, không tự vẽ thêm; số liệu dưới đây chỉ dùng khi chưa có nét mẫu.
+2. HẦM (QCVN 06 4.28, nguyên văn `knowledge/qcvn06-dieu-4.md`: "Trong các tầng hầm hoặc tầng nửa hầm, trước lối vào các thang máy phải bố trí các khoang đệm ngăn cháy loại 1 có áp suất không khí dương khi cháy."):
+   quây một khối gồm CẢ thang bộ lẫn thang máy (tường ở mép ngoài, cách người dùng vẽ 09/11) và có khoang đệm như trên trước lối vào thang máy; chỉ 1 cửa EI 60 ở vế đi LÊN (hầm là tầng thấp nhất, không có cửa "đi xuống").
+   Thang hầm chung buồng thang các tầng trên (nhà < 28 m, không có lối riêng ra ngoài) thì vào buồng thang qua khoang đệm (3.2.1).
+3. TRỆT: tường quây hai vế, cách mép bậc đầu TỪNG vế ≈ 900 mm (đo bậc đầu từng vế bằng ảnh phóng 4 lần); 2 cửa EI ra sảnh ở đầu hai vế, đặt sát mép phía có cửa phòng mở ra sảnh (T-01, T-02) để không va.
+   Thang máy NGOÀI buồng thang ⇒ cửa giếng thang máy E 30, không vẽ tường ngang qua đỉnh thang máy; thang máy TRONG buồng thang quây kín ⇒ không ghi E 30, xét 3.4.6.
+4. TẦNG NỔI TRÊN (lửng trở lên): nhà THUỘC diện thẩm định ⇒ quây kín buồng thang ở mọi tầng như trệt. Nhà KHÔNG thuộc diện thẩm định có thang hở nhiều tầng ⇒ được thay tường quây bằng cửa chống cháy EI cho từng phòng ở/căn hộ mở vào thang, hành lang (không cho WC); thang máy các tầng này không cần tường quây riêng.
+5. Cửa EI ≈ 800 mm mở VÀO buồng thang (tầng 1 lối ra mở RA ngoài buồng), cánh quét trong khoảng ≈ 900 mm trước bậc, không chạm bậc. Cửa phòng mở vào trong phòng thì không bàn cung vế thang.
 
-### Checklist vẽ buồng thang (đọc TRƯỚC khi đặt `tuong`/`cua`, người dùng dặn "đừng sai mãi" 2026-11-06)
-1. Tầng nổi trên (lửng trở lên): KHÔNG vẽ tường quây; cửa chống cháy từng phòng/căn hộ.
-2. Hầm + trệt: tường quây hai vế, cách mép bậc đầu từng vế ≈ 900 mm (nét người dùng vẽ nếu có thì theo nét đó), thang máy ở NGOÀI (cửa E30), không tường qua đỉnh thang máy.
-3. Cửa EI ≈ 800 mm mở vào buồng, không chạm bậc, sát mép phía có cửa phòng mở ra (T-01, T-02). Hầm chỉ 1 cửa, vế trái đi lên.
-4. Cửa phòng mở vào phòng thì không bàn cung vế thang.
-5. Đo bậc đầu từng vế bằng ảnh phóng 4 lần; so lại với nét người dùng vẽ trước khi gửi.
-
-### Hầm: khoang đệm theo 4.28 (người dùng sửa 2026-11-09, GHI ĐÈ mục CHỐT 2026-11-06 về hầm; dự án Văn phòng Tân Quy Đông 1)
+### Hầm: khoang đệm theo 4.28 (người dùng sửa 2026-11-09; đã gom vào checklist trên)
 - QCVN 06 4.28: tầng hầm, nửa hầm, trước lối vào thang máy phải có khoang đệm ngăn cháy loại 1, áp suất dương khi cháy; 3.2.1: thang hầm chung buồng thang tầng trên (nhà < 28 m, không lối riêng) vào qua khoang đệm.
 - Cách vẽ người dùng chỉ (nét đỏ + cửa xanh trên `ban_ve.pdf`): HẦM quây một khối gồm CẢ thang bộ lẫn thang máy (tường tại mép ngoài), chỉ 1 cửa EI 60 ở tường trái; TRỆT: tường quây vế trên (tường trái dọc theo sảnh), vách giếng thang máy, tường dưới vế dưới, 2 cửa EI 60 ra sảnh; thang máy cửa E30.
 - Người dùng tự vẽ nét trên PDF gốc thì GIỮ NGUYÊN nét đó (đọc `a.vertices` từ annotation Line), không tự vẽ tường/cửa thêm.

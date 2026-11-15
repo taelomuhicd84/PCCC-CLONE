@@ -49,7 +49,7 @@ Màu `mau`: `do` = CHƯA ĐẠT · `cam` = CẦN XÁC NHẬN, thiếu số liệ
    mỗi phương án một màu (PA1 tím, PA2 xanh lá); comment ghi khả thi hay không và vì sao.
    Đóng kín buồng thang (người dùng dặn 2026-11-02): vẽ buồng thang bằng `tuong` NÉT LIỀN KHÉP KÍN (cả tường có sẵn lẫn tường mới) +
    `cua` (KHÔNG vẽ `cung` vế thang trừ khi người dùng bảo, 2026-11-06; chỉ note, xem `knowledge/nhan-dien-thang-thoat-nan.md`) ở mọi đầu vế giáp chiếu tầng, cho TẤT CẢ các tầng có thang (hầm, tầng 1, lửng, tầng điển hình, tầng thượng),
-   không chỉ tầng điển hình.
+   không chỉ tầng điển hình. Ngoại lệ duy nhất: tầng nổi trên của nhà KHÔNG thuộc diện thẩm định có thang hở (mục "Checklist vẽ buồng thang" của `knowledge/nhan-dien-thang-thoat-nan.md`).
 4. Trang đầu có mục `chu`: "TƯ VẤN SƠ BỘ PCCC (ngày) – tham khảo, không phải kết luận thẩm định" hoặc "THẨM ĐỊNH SƠ BỘ PCCC (ngày)".
 5. Luôn chạy `ve --anh` rồi XEM ảnh, sửa tọa độ tới khi khung trùng hạng mục và chữ không đè nét chính của bản vẽ.
 6. Chỉ dùng annotation, không vẽ vào nội dung trang (draw_*, insert_text), để người dùng sửa, xoá được.
@@ -70,7 +70,5 @@ Tường buồng thang vẽ cách mép bậc đầu tiên khoảng 900 mm (bằn
 và cánh quét trong khoảng 900 mm đó, không chạm bậc. Trên bản vẽ A3 1:75 zoom 1,6: 900 mm ≈ 38 px; hành lang: đặt tường ở y ≈ 374 khi bậc đầu ở y ≈ 412.
 Đo khoảng bậc đầu trên từng bản vẽ trước khi đặt `tuong`/`cua`.
 Tường tính riêng từng vế (bậc đầu mỗi vế có thể khác cao độ, tường bậc thang); cửa EI phía có phòng mở ra sảnh đặt sát mép để cửa phòng không va. Chi tiết: `knowledge/nhan-dien-thang-thoat-nan.md` mục "Vẽ tường quây buồng thang".
-Hầm: chỉ cửa EI vế trái (đi lên), thang máy hầm có khoang đệm; trệt: tường ôm hai vế + thang máy theo nét người dùng vẽ; tầng nổi trên: KHÔNG vẽ tường quây (cửa EI từng phòng). Chi tiết `knowledge/nhan-dien-thang-thoat-nan.md`.
-Thang máy ngoài tường quây (không vẽ tường qua đỉnh thang máy), cửa thang máy E30: xem knowledge/nhan-dien-thang-thoat-nan.md.
-Đọc checklist "Vẽ buồng thang" cuối knowledge/nhan-dien-thang-thoat-nan.md trước khi đặt tuong/cua (hầm giống trệt: thang máy ngoài, cửa E30, hầm chỉ 1 cửa vế trái).
+Hầm, trệt, tầng nổi trên, thang máy (E30 hay khoang đệm 4.28): làm đúng mục "Checklist vẽ buồng thang" của `knowledge/nhan-dien-thang-thoat-nan.md` (nguồn duy nhất, đã gom các bài 06/11 và 09/11; đọc TRƯỚC khi đặt tuong/cua).
 Cửa EI đề xuất cho phòng ở/căn hộ, KHÔNG cho WC: phóng to đọc nhãn phòng và cung cửa từng phòng trước khi khoanh (bài học trong knowledge/hoc/du-an/so-bo-thiet-ke.md).
