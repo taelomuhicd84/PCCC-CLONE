@@ -72,7 +72,7 @@ G=.claude/skills/tkpccc-ghi-chu-ban-ve/scripts/ghi_chu_pdf.py
              {"khung": 1, "trang": 3, "kieu": "cua", "tam": [800, 990], "den": [830, 990], "loai": "EI 60", "mau": "tim",
               "phuong_an": "PA1", "noi_dung": "Thay cửa ngăn cháy tự đóng"}]}
 ```
-- Chỉ ghi dòng đã xét (theo `idx` của job). Thông số công trình: KHÔNG ghi `cong_trinh`; chỉ đề xuất trường mới tìm được hoặc thấy lệch qua `de_xuat_thong_so` kèm nguồn (lược đồ `tkpccc-bang-doi-chieu/data/thong_so_cong_trinh.schema.json`; `gop` từ chối đề xuất thiếu trang/trích, lệch giá trị thì ghi xung đột). Tọa độ px theo zoom của ảnh `luoi` (1.6).
+- Chỉ ghi dòng đã xét (theo `idx` của job). Thông số công trình: KHÔNG ghi `cong_trinh`; chỉ đề xuất trường mới tìm được hoặc thấy lệch qua `de_xuat_thong_so` kèm nguồn (lược đồ `tkpccc-bang-doi-chieu/thong_so_cong_trinh.schema.json`; `gop` từ chối đề xuất thiếu trang/trích, lệch giá trị thì ghi xung đột). Tọa độ px theo zoom của ảnh `luoi` (1.6).
 - Số khung đánh từ 1 trong mỗi file phần; `gop` đánh lại nối tiếp toàn hồ sơ.
 
 ## Đo cỡ job (hồ sơ Q.4 F1.2 4 tầng, đầu vào loại 1, agent sonnet, 02–03/11/2026)

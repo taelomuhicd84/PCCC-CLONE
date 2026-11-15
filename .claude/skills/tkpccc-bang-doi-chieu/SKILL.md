@@ -91,7 +91,7 @@ Không mở cả file JSON bảng gốc (tới 160 KB): đọc bằng `khung`, `
     "phuong_an": ["PA1 (nét tím) …: KHÔNG KHẢ THI (…)", "PA2 …: cần người dùng xem xét"], "khung": [11], "nguon": "trang 3"}]}],
  "ghi_chu": [ … mục của skill tkpccc-ghi-chu-ban-ve … ]}
 ```
-- `cong_trinh` theo lược đồ `data/thong_so_cong_trinh.schema.json`: trường bắt buộc (`bat_buoc`) có giá trị hoặc ghi tên trường vào `thieu`; trường có giá trị phải có `nguon` {trang, trich nguyên văn, loai, do_tin_cay, xac_nhan} (nguồn chuỗi cũ chỉ cảnh báo); còn `xung_dot` thì lỗi. `kiem` báo lỗi theo luật này; file phần của agent đề xuất qua `de_xuat_thong_so`, `gop` kiểm trước khi ghi.
+- `cong_trinh` theo lược đồ `thong_so_cong_trinh.schema.json` (gốc thư mục skill): trường bắt buộc (`bat_buoc`) có giá trị hoặc ghi tên trường vào `thieu`; trường có giá trị phải có `nguon` {trang, trich nguyên văn, loai, do_tin_cay, xac_nhan} (nguồn chuỗi cũ chỉ cảnh báo); còn `xung_dot` thì lỗi. `kiem` báo lỗi theo luật này; file phần của agent đề xuất qua `de_xuat_thong_so`, `gop` kiểm trước khi ghi.
 - `job` chỉ trích nguyên văn từ file của ĐÚNG văn bản ghi ở cột Khoản Điều (`VAN_BAN` trong script); cột Tra ở trỏ file văn bản khác thì bỏ; văn bản chưa có file nguyên văn (QCVN 01, 13, TCVN 6396…) thì ghi "Không tìm thấy nguyên văn: <số> (<văn bản>)", không trích điều cùng số của văn bản khác.
 - `ket_luan`: `DAT` · `CHUA_DAT` · `CAN_XAC_NHAN` · `KHONG_AP_DUNG` (rỗng = chưa xét). Khác ĐẠT phải có `ly_do` có số; CHƯA ĐẠT phải có `phuong_an`;
   CHƯA ĐẠT, CẦN XÁC NHẬN phải có `khung` và mục `ghi_chu` cùng số (lệnh `kiem` kiểm cả hai chiều).

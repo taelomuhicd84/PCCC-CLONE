@@ -181,7 +181,7 @@ def _ds(k) -> list:
     return list(k) if isinstance(k, list) else ([] if k is None else [k])
 
 
-LUOC_DO = DATA / "thong_so_cong_trinh.schema.json"
+LUOC_DO = DATA.parent / "thong_so_cong_trinh.schema.json"
 
 
 def _trong(v) -> bool:
@@ -253,7 +253,7 @@ def gop(ra: Path, phan: list[Path], giu_so: bool) -> dict:
     for f in phan:
         de_xuat[f] = _de_xuat(doc_json(f), f.name, sai)
     if sai:
-        raise SystemExit("Thông số công trình trong file phần không hợp lệ (lược đồ data/thong_so_cong_trinh.schema.json):\n"
+        raise SystemExit("Thông số công trình trong file phần không hợp lệ (lược đồ thong_so_cong_trinh.schema.json của skill):\n"
                          + "\n".join(sai))
     so = [k for b in dc["bang"] for r in b["dong"] for k in r["khung"]] + [k for g in dc["ghi_chu"] for k in _ds(g.get("khung"))]
     tiep = max([k for k in so if isinstance(k, int)] + [0]) + 1
