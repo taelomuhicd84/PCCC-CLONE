@@ -112,13 +112,31 @@ rules:
 
   - id: MIN-EXITS-PER-FLOOR
     source: SD01
-    clause: "QCVN 06:2022 khoản 3.2.6, 3.2.7; điểm 3.2.6.2 a (sửa đổi theo SĐ1:2023)"
+    clause: "QCVN 06:2022 khoản 3.2.6.1, 3.2.6.2 (sửa đổi theo SĐ1:2023), 3.2.7"
     title: Số lối ra thoát nạn từ tầng
     check: min_exits_per_floor
-    # Điểm 3.2.6.2 a: tầng nhà F1.2, F2, F3, F4.2, F4.3, F4.4 được 1 lối ra khi thoả đồng thời các điều kiện.
-    # Tool CHƯA kiểm: không để xe cơ giới/kho A,B,C ở tầng có lối ra; lối thoát khẩn cấp (ban công, lô gia, cửa sổ
-    # có thiết bị hỗ trợ) hoặc lên sân thượng thoáng; nhà > 3 tầng/> 9 m; các trường hợp b), c), d) (tầng kỹ thuật,
-    # F1.3 500-550 m², F4.1). Reviewer/kỹ sư phải xác nhận khi bản vẽ chỉ có 1 lối ra.
+    # Bước 1 — 3.2.6.1 (nguyên văn: bảng KT7.1 idx 82, KT4.1 idx 84-85; skills/MOD_so_luong_loi_ra.md:15):
+    # "Các tầng nhà thuộc các nhóm sau đây phải có không ít hơn hai lối ra thoát nạn: Các tầng của nhà thuộc các nhóm
+    # F1.1; F1.2; F2.1; F2.2; F3; F4; Các tầng nhà với số lượng người từ 50 trở lên; Các tầng của nhà nhóm F1.3 khi tổng
+    # diện tích các căn hộ trên một tầng lớn hơn 500 m2 …; Các tầng của nhà nhóm F5, hạng A hoặc B khi số người làm việc
+    # trong ca đông nhất lớn hơn 5 người, hạng C … lớn hơn 25 người"; tầng hầm: "diện tích lớn hơn 300 m2 hoặc dùng cho hơn
+    # 15 người có mặt đồng thời". Khớp chắc chắn -> cần 2 lối; chưa biết -> XM; không khớp -> 1 lối đủ.
+    need_two:
+      - function_group_in: [F1.1, F1.2, F2.1, F2.2]
+      - function_class_in: [F3, F4]
+      - max_occupants_per_floor_gte: 50
+    need_two_basement:
+      - floor_area_m2_gt: 300
+      - max_occupants_per_floor_gt: 15
+    # Khớp hoặc chưa biết -> chưa xác định được (XM). F1.3: máy chỉ có diện tích sàn, không có tổng diện tích căn hộ.
+    # F5: máy không đọc hạng nguy hiểm cháy nổ (≤ 5 người thì không hạng nào buộc 2 lối).
+    need_two_maybe:
+      - {function_group: F1.3, floor_area_m2_gt: 500}
+      - {function_class: F5, max_occupants_per_floor_gt: 5}
+    # Bước 2 — 3.2.6.2 (KT17 idx 92): "Cho phép bố trí một lối ra thoát nạn trong các trường hợp sau (trừ các nhà có bậc
+    # chịu lửa V)". Ngoại lệ khớp vẫn ra XM vì máy CHƯA kiểm: không để xe cơ giới/kho A,B,C ở tầng có lối ra; lối thoát
+    # khẩn cấp (ban công, lô gia, cửa sổ có thiết bị hỗ trợ) hoặc lên sân thượng thoáng; nhà > 3 tầng/> 9 m; b) tầng kỹ thuật.
+    no_single_exit: {fire_resistance_level: V}
     single_exit_cases:
       - any: &groups [{function_group_in: [F1.2, F4.2, F4.3, F4.4]}, {function_class_in: [F2, F3]}]
         height_pccc_m_lte: 15
@@ -137,8 +155,13 @@ rules:
         max_occupants_per_floor_lte: 15
         has_auto_fire_alarm: true
         has_auto_sprinkler: true
+      # d) F4.1 (skills/MOD_so_luong_loi_ra.md, 3.2.6.2 d): tiểu học ≤ 9 m, tầng ≤ 300 m²; F4.1 còn lại ≤ 15 m, tầng ≤ 500 m²
+      #    (máy không phân biệt tiểu học -> lấy điều kiện rộng hơn, kết quả vẫn là XM)
+      - function_group: F4.1
+        height_pccc_m_lte: 15
+        floor_area_m2_lte: 500
     severity: error
-    message: "Tầng chỉ có {actual} lối ra thoát nạn (yêu cầu >= {required}, trừ các trường hợp tại 3.2.6.2)"
+    message: "Tầng chỉ có {actual} lối ra thoát nạn (yêu cầu >= {required} theo 3.2.6.1, không thuộc trường hợp được 1 lối ra tại 3.2.6.2)"
     verified: true
 
   # ================================================================ 3.3 ĐƯỜNG THOÁT NẠN / HÀNH LANG

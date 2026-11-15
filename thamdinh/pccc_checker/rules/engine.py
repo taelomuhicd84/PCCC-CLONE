@@ -59,9 +59,66 @@ def match_when(when: dict[str, Any] | None, ctx: dict[str, Any]) -> bool:
     return True
 
 
+def match3(when: dict[str, Any] | None, ctx: dict[str, Any]) -> bool | None:
+    """Như match_when nhưng 3 trạng thái: True / False / None (thiếu số liệu, chưa biết khớp hay không)."""
+    kq: bool | None = True
+    for key, expected in (when or {}).items():
+        if key == "any":
+            con = [match3(sub, ctx) for sub in expected]
+            r = True if True in con else (None if None in con else False)
+        else:
+            op = "eq"
+            m = re.match(r"(.+)_(lt|lte|gt|gte|in|nin|ne)$", key)
+            if m:
+                key, op = m.group(1), m.group(2)
+            actual = ctx.get(key)
+            if actual is None:
+                r = None
+            else:
+                try:
+                    r = (str(actual).upper() == str(expected).upper()) if op == "eq" else bool(_OPS[op](actual, expected))
+                except TypeError:
+                    r = False
+        if r is False:
+            return False
+        if r is None:
+            kq = None
+    return kq
+
+
+def unknown_keys(when: dict[str, Any] | None, ctx: dict[str, Any]) -> set[str]:
+    out: set[str] = set()
+    for key, val in (when or {}).items():
+        if key == "any":
+            for sub in val:
+                out |= unknown_keys(sub, ctx)
+            continue
+        m = re.match(r"(.+)_(lt|lte|gt|gte|in|nin|ne)$", key)
+        k = m.group(1) if m else key
+        if ctx.get(k) is None:
+            out.add(k)
+    return out
+
+
+def possible_values(rule: dict[str, Any], ctx: dict[str, Any]) -> list[tuple[Any, str, set]]:
+    """Các ngưỡng có thể áp dụng: [(giá trị, ghi chú, khoá còn thiếu)]. Case đầu tiên KHỚP chắc chắn thì dừng;
+    case chưa biết (thiếu số liệu) thì giữ làm ngưỡng có thể rồi xét tiếp; cuối cùng là ngưỡng mặc định."""
+    out = []
+    for case in rule.get("cases", []) or []:
+        r = match3(case.get("when"), ctx)
+        if r is True:
+            out.append((case["value"], case.get("note", ""), set()))
+            return out
+        if r is None:
+            out.append((case["value"], case.get("note", ""), unknown_keys(case.get("when"), ctx)))
+    out.append((rule.get("value"), rule.get("default_note", ""), set()))
+    return [v for v in out if v[0] is not None]
+
+
 def context(el: Element | None, d: DrawingExtraction) -> dict[str, Any]:
     ctx = {k: v for k, v in vars(d.building).items()}
     ctx.setdefault("people_per_floor", d.building.max_occupants_per_floor)
+    ctx["single_workplace"] = False      # cờ của phần tử: không ghi = không phải lối/thang đến chỗ làm việc đơn lẻ
     fg = str(d.building.function_group or "")
     ctx["function_class"] = fg.split(".")[0].upper() if fg else None   # F2.1 -> F2
     b = d.building
@@ -199,8 +256,7 @@ def run_rules(rules: list[dict[str, Any]], d: DrawingExtraction, only: set[str] 
             if hard & blocked.keys():
                 findings.append(_cannot_check(rule, [blocked[k] for k in sorted(hard & blocked.keys())], False))
                 continue
-            if soft & blocked.keys():
-                findings.append(_cannot_check(rule, [blocked[k] for k in sorted(soft & blocked.keys())], True))
+            # phụ thuộc mềm (chỉ trong `cases`): check tự xét từng phần tử theo possible_values -> XM khi chưa chắc
         fn = REGISTRY.get(rule["check"])
         if fn is None:
             findings.append(Finding(rule["id"], rule.get("clause", ""), "info",

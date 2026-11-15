@@ -65,7 +65,7 @@ def dong_dat(rules: list[dict], d: DrawingExtraction, findings: list[Finding]) -
     """Luật có phần tử đo được số liệu mà không sinh kết quả nào -> D. Luật im lặng vì không khớp điều kiện
     hoặc thiếu số liệu KHÔNG phải D."""
     from .pipeline.consistency import cd_of
-    from .rules.engine import context, resolve_value, targets
+    from .rules.engine import context, possible_values, targets
     co_ket_qua = {f.rule_id for f in findings}
     rows = []
     for r in rules:
@@ -81,7 +81,10 @@ def dong_dat(rules: list[dict], d: DrawingExtraction, findings: list[Finding]) -
         elif r["check"] == "required_attr":
             yc = f"ghi {TEN_THUOC_TINH.get(r['attr'], r['attr'])}"
         else:
-            yc = "; ".join(sorted({_so(resolve_value(r, context(e, d))[0]) for e in els}))
+            # luật không có phát hiện nào = mọi phần tử đạt MỌI ngưỡng có thể -> ghi ngưỡng chặt nhất đã đạt
+            chon = min if r["check"] == "max_attr" else max
+            yc = "; ".join(sorted({_so(chon(float(v[0]) for v in possible_values(r, context(e, d))))
+                                   for e in els if possible_values(r, context(e, d))}))
         rows.append({"id": None, "hm": "HM01", "tang": None, "cd": cd_of(r.get("clause", "")), "rule": r["id"],
                      "yc": yc, "ht": "; ".join(f"{e.label or e.id}: " + ", ".join(_so(e.get(a)) for a in attrs) for e in els),
                      "tt": "D", "ly_do": f"{r.get('title', r['id'])}: đạt", "truc": None, "trang": els[0].page,

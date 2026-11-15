@@ -95,12 +95,13 @@ def infer_function_group(d: DrawingExtraction, texts: list[str]) -> None:
     m = re.search(r"CÔNG\s*TRÌNH\s*[:\-]?\s*([^|\n]{3,60})", blob, re.I)
     candidates = [m.group(1)] if m else []
     candidates.append(blob)
+    # Chỉ GỢI Ý, không gán: chữ "VĂN PHÒNG…" trong tên đơn vị thiết kế cũng khớp -> luật phụ thuộc nhóm F phải ra XM
     for text in candidates:
         for pat, group, name in USE_TO_GROUP:
             if pat.search(text):
-                d.building.function_group = group
                 d.building.assumptions.append(
-                    f"function_group={group}: suy ra từ công năng '{name}' (bản vẽ không ghi nhóm F) — cần xác nhận")
+                    f"function_group: bản vẽ không ghi nhóm F; chữ trên bản vẽ gợi ý {group} ('{name}') — chưa dùng để "
+                    f"kết luận, xác nhận bằng --set function_group={group}")
                 return
 
 

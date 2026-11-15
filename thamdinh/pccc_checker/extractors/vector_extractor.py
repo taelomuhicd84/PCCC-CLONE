@@ -153,8 +153,10 @@ class VectorTextExtractor(Extractor):
                 add("corridor", t, attrs)
             elif EXIT.search(s) and not SHEET.match(s):
                 exit_texts.append(t)
-        # Chữ "LỐI THOÁT NẠN"/"EXIT" đứng riêng: gán cho cửa gần nhất, nếu không có cửa thì tạo lối ra mới
+        # Chữ "LỐI THOÁT NẠN"/"EXIT" đứng riêng: gán cho cửa gần nhất, nếu không có cửa thì tạo lối ra mới (chưa chắc
+        # chắn: `text_only`). Chữ nằm ngoài khung mặt bằng (chú giải, khung tên) không phải lối ra.
         doors = [e for e in page.elements if e.type in ("door", "fire_door", "exit_door")]
+        pb = page.plan_bbox
         for t in exit_texts:
             near = [e for e in doors if _near(e.bbox, t["bbox"], self.near_pt)]
             if near:
@@ -162,8 +164,8 @@ class VectorTextExtractor(Extractor):
                     e.attrs["is_exit"] = True
                     if e.type == "door":
                         e.type = "exit_door"
-            else:
-                add("exit_door", t, {"is_exit": True})
+            elif not pb or _near(pb, t["bbox"], 0):
+                add("exit_door", t, {"is_exit": True, "text_only": True})
         # Ghi chú cạnh thang là căn cứ mạnh hơn phỏng đoán của Gemini -> gán cho thang GẦN NHẤT (cờ _..._note)
         # ưu tiên thang có ký hiệu mã (BTB1, TB3); nhãn chung như "BUỒNG THANG" chỉ dùng khi không có
         coded = [e for e in page.elements if e.type == "stair" and STAIR_LABEL.match(e.label or "")]

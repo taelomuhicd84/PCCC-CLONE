@@ -102,7 +102,8 @@ def from_engine(findings: list[dict], extraction: dict | None, hm: str = "HM01",
         rows.append({
             "id": None, "hm": hm_ids.get(f.get("hang_muc") or "", f.get("hang_muc") or hm), "tang": None, "cd": cd_of(f.get("clause", "")), "rule": f["rule_id"],
             "yc": f.get("required"), "ht": f.get("actual"),
-            "tt": "XM" if f.get("status") == "cannot_check" else "KD",
+            # chỉ `error` đủ chắc chắn mới KD; warning/info (nhắc việc, có ngoại lệ máy không xét) và "xm" -> XM
+            "tt": "KD" if f.get("severity") == "error" and f.get("status", "violation") == "violation" else "XM",
             "ly_do": f.get("message", "") + (f" · {f['reviewer_note']}" if f.get("reviewer_note") else ""),
             "truc": None, "trang": f.get("page"), "bbox": bbox, "conf": conf, "evid": evid or None,
             "dieu_khoan": f.get("clause"),

@@ -35,6 +35,8 @@ INFO_CATEGORIES = {"cover", "bang_quy_mo", "thuyet_minh_pccc", "khu_dat", "ghi_c
 FIRE_INPUT_KEYS = {"bac_chiu_lua", "nhom_nha", "hang_chay_no", "chieu_cao_pccc", "cap_nguy_hiem_chay_ket_cau"}
 DRAWING_CATEGORIES = {"plan", "stair", "door_schedule", "section", "site"}
 RELEVANT = {"plan", "stair", "door_schedule", "section", "site", "unknown"}
+# Ô tên bộ môn trong khung tên ("KẾT CẤU", "KẾT CẤU: KS. …"), không phải tiêu đề bản vẽ kết cấu
+BO_MON = re.compile(r"^\W*KẾT\s*CẤU\s*(:.*)?$", re.I)
 TITLE_LINE = re.compile(r"^(?!TỔNG\s*GIÁM)(MẶT|CHI TIẾT|BẢNG|THỐNG KÊ|TỔNG|BỐ TRÍ|SƠ ĐỒ|KẾT CẤU)", re.I)
 
 
@@ -58,11 +60,14 @@ def classify_page(pdf: Path, page_no: int) -> tuple[str, str]:
     texts = [t["text"] for t in vector_text(pdf, page_no)]
     if sum(len(t) for t in texts) < 50:
         return "unknown", ""
-    titles = [t for t in texts if TITLE_LINE.match(t) and len(t) <= 80]
+    titles = [t for t in texts if TITLE_LINE.match(t) and len(t) <= 80 and not BO_MON.match(t)]
     title = titles[0] if titles else ""
     # Ưu tiên tiêu đề có chữ to nhất là khó; dùng toàn bộ dòng tiêu đề, xét loại theo thứ tự ưu tiên.
     blob = " | ".join(titles)
     base = next((name for name, pat in CATEGORIES if pat.search(blob)), "")
+    # mặt bằng tầng kèm bảng thống kê cửa vẫn là mặt bằng (bảng cửa riêng một trang thì không có "MẶT BẰNG TẦNG…")
+    if base == "door_schedule" and dict(CATEGORIES)["plan"].search(blob):
+        base = "plan"
     if base in DRAWING_CATEGORIES:
         return base, title
     kind = info_kind(texts)

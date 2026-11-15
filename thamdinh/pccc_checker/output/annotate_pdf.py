@@ -35,8 +35,9 @@ def annotate(pdf_in: Path, findings: list[Finding], pdf_out: Path, min_severity:
         page = doc[pno]
         worst = min(items, key=lambda it: RANK.get(it[1].severity, 3))[1]
         color = COLORS.get(worst.severity, (0.5, 0.5, 0.5))
-        if bbox:
-            r = (pymupdf.Rect(bbox) + (-4, -4, 4, 4)) & page.rect
+        # bbox chữ vector và toạ độ annotation đều theo trang CHƯA xoay; page.rect là trang ĐÃ xoay -> cắt theo khung chưa xoay
+        r = ((pymupdf.Rect(bbox) + (-4, -4, 4, 4)) & (page.rect * page.derotation_matrix)) if bbox else None
+        if r is not None and not r.is_empty:
             box = page.add_rect_annot(r)
             box.set_colors(stroke=color)
             box.set_border(width=1.5)
@@ -48,6 +49,7 @@ def annotate(pdf_in: Path, findings: list[Finding], pdf_out: Path, min_severity:
             tag.update()
             x, y = r.x1 + 2, r.y0
         else:
+            bbox = None                                      # không vẽ được khung -> ghi chú ở góc trang
             x, y = 20, corner_y.get(pno, 20.0)
             corner_y[pno] = y + 18 * len(items)
         for k, (idx, f) in enumerate(items):

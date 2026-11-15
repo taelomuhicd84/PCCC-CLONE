@@ -27,9 +27,11 @@ với `cwd=thamdinh/` (hoặc `PYTHONPATH=thamdinh`) và `PYTHONIOENCODING=utf-8
 - Sửa luật ở `thamdinh/rules/*.yaml` (check có sẵn) hoặc hàm `@register` trong `thamdinh/pccc_checker/rules/checks.py`; thêm ca kiểm vào
   `thamdinh/test/`; ghi phần đã cắt/sửa vào `thamdinh/README.md`.
 - Dòng "không đọc được số liệu" là XM, không phải KD; thiếu nhóm F, chiều cao, bậc chịu lửa thì luật phụ thuộc ra XM.
+- Ngưỡng có `cases` phụ thuộc số liệu chưa biết (số người, diện tích): chỉ Đạt khi đạt MỌI ngưỡng có thể, chỉ KD khi vi phạm mọi ngưỡng,
+  còn lại XM (`engine.possible_values`). Chỉ finding `error` thành KD; `warning`/`info` thành XM. Nhóm F suy từ chữ chỉ là gợi ý.
 
 ## Giới hạn đã biết
-Bản scan (không có lớp chữ) không đọc được; mới có 26 luật thoát nạn; thang bộ được tính 1 lối ra khi xét phân tán 3.2.8;
+Bản scan (không có lớp chữ) không đọc được; mới có 26 luật thoát nạn; thang chưa xét hình dạng (rẽ quạt, bậc chéo) nên đủ 2 lối nhờ thang thì luật số lối ra ra XM;
 mã dòng PC-001… đánh lại mỗi lần chạy nên chạy lại thì xoá "Claude xét" cũ.
 
 ## Kiểm

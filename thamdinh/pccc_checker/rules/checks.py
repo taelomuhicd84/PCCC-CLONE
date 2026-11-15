@@ -7,7 +7,7 @@ from collections import defaultdict
 from typing import Any, Iterable
 
 from ..models import DrawingExtraction, Element, Finding, PageExtraction
-from .engine import context, make_finding, match_when, register, resolve_value, targets
+from .engine import context, make_finding, match3, match_when, possible_values, register, resolve_value, targets, unknown_keys
 
 PT_TO_MM = 25.4 / 72
 
@@ -34,28 +34,41 @@ def page_scale_m_per_pt(page: PageExtraction, default: str | None = None) -> flo
 
 
 # ------------------------------------------------------------ check tổng quát
-@register("min_attr")
-def min_attr(rule: dict, d: DrawingExtraction) -> Iterable[Finding]:
+def _xet_nguong(rule: dict, d: DrawingExtraction, nho_hon_la_loi: bool) -> Iterable[Finding]:
+    """min_attr (nho_hon_la_loi) / max_attr. Ngưỡng phụ thuộc số liệu chưa biết (vd số người) -> có nhiều ngưỡng có thể:
+    vi phạm MỌI ngưỡng -> KD theo ngưỡng nhẹ nhất; chỉ vi phạm một số -> XM (không được kết luận đạt)."""
     attr = rule["attr"]
     for el in targets(rule, d):
         actual = _num(el.get(attr))
         if actual is None:
             continue
-        req, note = resolve_value(rule, context(el, d))
-        if req is not None and actual + 1e-6 < float(req):
-            yield make_finding(rule, el, actual, req, note)
+        vals = sorted(possible_values(rule, context(el, d)), key=lambda v: float(v[0]), reverse=not nho_hon_la_loi)
+        if not vals:
+            continue
+        sai = (lambda v: actual + 1e-6 < float(v)) if nho_hon_la_loi else (lambda v: actual - 1e-6 > float(v))
+        loi = [v for v in vals if sai(v[0])]
+        if not loi:
+            continue
+        if len(loi) == len(vals):                 # vi phạm cả ngưỡng nhẹ nhất (vals[0])
+            yield make_finding(rule, el, actual, vals[0][0], vals[0][1])
+            continue
+        nang = loi[-1]                            # ngưỡng chặt nhất bị vi phạm
+        thieu = sorted(set().union(*(v[2] for v in loi)))
+        f = make_finding(rule, el, actual, nang[0],
+                         f"chỉ không đạt nếu {nang[1]}; máy chưa biết {', '.join(thieu) or 'trường hợp áp dụng'} — "
+                         f"đạt ngưỡng {vals[0][0]} m ({vals[0][1]})")
+        f.status = "xm"
+        yield f
+
+
+@register("min_attr")
+def min_attr(rule: dict, d: DrawingExtraction) -> Iterable[Finding]:
+    yield from _xet_nguong(rule, d, True)
 
 
 @register("max_attr")
 def max_attr(rule: dict, d: DrawingExtraction) -> Iterable[Finding]:
-    attr = rule["attr"]
-    for el in targets(rule, d):
-        actual = _num(el.get(attr))
-        if actual is None:
-            continue
-        req, note = resolve_value(rule, context(el, d))
-        if req is not None and actual - 1e-6 > float(req):
-            yield make_finding(rule, el, actual, req, note)
+    yield from _xet_nguong(rule, d, False)
 
 
 @register("bool_attr")
@@ -125,16 +138,38 @@ def building_missing(rule: dict, d: DrawingExtraction) -> Iterable[Finding]:
 
 
 # ------------------------------------------------------------ check chuyên biệt
+CUNG_LOI_M = 3.0      # shortcut: cửa cách nhãn thang <= 3 m coi là cửa vào chính thang đó; nhận được đường bao buồng thang thì đổi
+
+
+def _gap(a: list[float], b: list[float]) -> float:
+    return math.hypot(max(0.0, max(a[0], b[0]) - min(a[2], b[2])), max(0.0, max(a[1], b[1]) - min(a[3], b[3])))
+
+
 def _exits_by_page(d: DrawingExtraction) -> dict[int, list[Element]]:
-    out: dict[int, list[Element]] = defaultdict(list)
+    """Lối ra thoát nạn theo trang. Cửa nằm sát nhãn thang là cửa vào chính buồng thang đó: chỉ tính 1 lối (thang)."""
+    pages = {p.page: p for p in d.pages}
+    stairs: dict[int, list[Element]] = defaultdict(list)
+    doors: dict[int, list[Element]] = defaultdict(list)
     for e in d.elements():
         if e.attrs.get("schedule_entry"):
             continue
         if e.type == "exit_door" or (e.type in ("door", "fire_door") and e.get("is_exit")):
-            out[e.page].append(e)
+            doors[e.page].append(e)
         elif e.type == "stair" and e.get("is_evacuation") is not False and e.get("counts_as_exit", True):
-            out[e.page].append(e)
+            stairs[e.page].append(e)
+    out: dict[int, list[Element]] = defaultdict(list)
+    for pno in set(stairs) | set(doors):
+        k = page_scale_m_per_pt(pages[pno]) if pno in pages else None
+        gan = CUNG_LOI_M / k if k else 85.0        # 85 pt ~ 3 m ở 1:100
+        out[pno] = stairs[pno] + [e for e in doors[pno] if not any(_gap(e.bbox, s.bbox) <= gan for s in stairs[pno])]
     return out
+
+
+def _chac(e: Element) -> bool:
+    """Lối ra chắc chắn: cửa có ký hiệu (không phải chữ đứng riêng); thang đã được người/Claude xét hình dạng."""
+    if e.type == "stair":
+        return e.get("shape_ok") is True
+    return not e.get("text_only")
 
 
 def _edge_dists(a: list[float], b: list[float]) -> tuple[float, float]:
@@ -224,25 +259,67 @@ def min_exits_per_floor(rule: dict, d: DrawingExtraction) -> Iterable[Finding]:
     (các `single_exit_cases` trong YAML, gồm trường hợp mới của SĐ1:2023)."""
     exits = _exits_by_page(d)
     ctx = context(None, d)
-    allowed_single = any(match_when(c, ctx) for c in rule.get("single_exit_cases", []))
+
+    def ba(conds) -> tuple[bool | None, set]:
+        """Một trong các điều kiện khớp chắc chắn -> True; có điều kiện chưa biết -> None; còn lại False."""
+        kq = [match3(c, ctx) for c in conds or []]
+        thieu = set().union(set(), *(unknown_keys(c, ctx) for c, r in zip(conds or [], kq) if r is None))
+        return (True if True in kq else None if None in kq else False), thieu
+
+    nv = match3(rule.get("no_single_exit"), ctx) if rule.get("no_single_exit") else False
+    ngoai_le, thieu_nl = ba(rule.get("single_exit_cases"))
+    if nv is True:                                   # nhà bậc chịu lửa V: không có ngoại lệ 1 lối ra
+        ngoai_le = False
+    elif nv is None and ngoai_le is not False:
+        ngoai_le, thieu_nl = None, thieu_nl | {"fire_resistance_level"}
     for p in d.pages:
         is_plan = p.category == "plan" or (not p.category and any(
             e.type in ("room", "corridor", "stair", "exit_door") for e in p.elements))
         if not is_plan or re.search(r"\bMÁI\b", p.sheet_title or "", re.I):
             continue
-        n = len(exits.get(p.page, []))
+        dsach = exits.get(p.page, [])
+        n, n_chac = len(dsach), sum(_chac(e) for e in dsach)
+        can2, thieu = ba(rule.get("need_two"))
+        if re.search(r"HẦM", p.sheet_title or "", re.I) and can2 is not True:
+            h, th = ba(rule.get("need_two_basement"))
+            can2 = True if h is True else (None if None in (h, can2) else False)
+            thieu |= th
+        if can2 is False:
+            co, th = ba(rule.get("need_two_maybe"))
+            if co is not False:
+                can2, thieu = None, thieu | th | ({"(hạng / diện tích căn hộ)"} if co else set())
         if n == 0:
             yield Finding(rule["id"], rule.get("clause", ""), "warning",
                           "Không nhận diện được lối ra thoát nạn nào trên mặt bằng — cần kiểm tra thủ công",
                           page=p.page, verified_rule=bool(rule.get("verified")))
-        elif n < 2 and not allowed_single:
-            e = exits[p.page][0]
-            f = make_finding(rule, e, n, 2)
-            if (p.declared or {}).get("unoccupied"):
-                f.severity = "warning"
-                f.message += (" — tầng có ghi chú 'không có người có mặt thường xuyên' (sân thượng/tầng kỹ thuật): "
-                              "kiểm tra có thuộc trường hợp được phép 1 lối ra không (3.2.6.2)")
+            continue
+        if can2 is False or (n_chac >= 2):
+            continue
+        if n >= 2:            # đủ 2 lối nếu tính cả lối chưa chắc chắn
+            ds = [e.label or e.id for e in dsach if not _chac(e)]
+            f = make_finding(rule, dsach[0], n, 2,
+                             f"đếm được {n} lối ra nhưng chỉ {n_chac} lối chắc chắn; chưa xét hình dạng thang / lối ra "
+                             f"nhận từ chữ đứng riêng: {', '.join(ds)}. Thang rẽ quạt, bậc chéo, thang cong, xoắn không tính "
+                             "thoát nạn (trừ 3.4.4) — knowledge/nhan-dien-thang-thoat-nan.md")
+            f.status = "xm"
             yield f
+            continue
+        f = make_finding(rule, dsach[0], n, 2)
+        if can2 is None or ngoai_le is not False or (p.declared or {}).get("unoccupied"):
+            ly = []
+            if can2 is None:
+                ly.append(f"chưa xác định tầng có thuộc diện phải có 2 lối ra (3.2.6.1), máy chưa biết: {', '.join(sorted(thieu))}")
+            if ngoai_le is True:
+                ly.append("thuộc trường hợp được 1 lối ra (3.2.6.2) nếu thoả thêm điều kiện máy không kiểm: không để xe cơ "
+                          "giới, không kho hạng A, B, C tại tầng có lối ra ngoài nhà; lối thoát khẩn cấp hoặc lên sân thượng "
+                          "thoáng; nhà > 3 tầng hoặc > 9 m: lối ra của phòng và tầng theo quy chuẩn")
+            elif ngoai_le is None:
+                ly.append(f"chưa đủ số liệu xét trường hợp được 1 lối ra (3.2.6.2): {', '.join(sorted(thieu_nl))}")
+            if (p.declared or {}).get("unoccupied"):
+                ly.append("tầng có ghi chú 'không có người có mặt thường xuyên' (sân thượng/tầng kỹ thuật, 3.2.6.2 b)")
+            f.message += " — " + "; ".join(ly)
+            f.status = "xm"
+        yield f
 
 
 @register("basement_smoke_lobby")
