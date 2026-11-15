@@ -4,7 +4,7 @@ import { createServer, type IncomingMessage, type ServerResponse } from "node:ht
 import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { lapBaoGia, type DanhMuc, type DonGia, type KhoiLuong } from "../shared/src/bao_gia";
+import { boBanVe, gopBanVe, lapBaoGia, type DanhMuc, type DonGia, type KhoiLuong } from "../shared/src/bao_gia";
 import { chuanHoaKhaoSat, ghepGoiY, khoiLuongSoBo, tachJsonKhaoSat, HE_THONG, type KhaoSat } from "../shared/src/khao_sat";
 import { docDonGia, taoMauDonGia, xuatBaoGia } from "./xuat_xlsx";
 import { xuatKhaoSat } from "./xuat_docx";
@@ -160,11 +160,19 @@ async function xuLy(req: IncomingMessage, res: ServerResponse) {
     if (!Array.isArray(kl.dong)) throw new LoiNguoiDung("Thiếu danh sách dong");
     const sach = (ds: { ma: unknown; sl: unknown }[]) => ds.map((d) => ({ ma: String(d.ma), sl: Number(d.sl) || 0 }));
     kl.dong = sach(kl.dong);
+    kl.ban_ve = kl.ban_ve ? String(kl.ban_ve) : undefined;
     if (Array.isArray(kl.khu_vuc)) kl.khu_vuc = kl.khu_vuc.map((k) => ({ ten: String(k.ten), dong: sach(Array.isArray(k.dong) ? k.dong : []) }));
     const f = fileKL(kl.du_an);
-    mkdirSync(path.dirname(f), { recursive: true });
-    writeFileSync(f, JSON.stringify({ ...kl, luc: kl.luc ?? new Date().toISOString() }, null, 1), "utf8");
-    return json(res, { ok: true, du_an: tenThuMuc(kl.du_an), so_dong: kl.dong.length });
+    const cu = existsSync(f) ? (JSON.parse(readFileSync(f, "utf8")) as KhoiLuong) : null;
+    const gop = gopBanVe(cu, { ...kl, du_an: tenThuMuc(kl.du_an), luc: kl.luc ?? new Date().toISOString() }); // bóc lại cùng bản vẽ thì thay phần của nó
+    ghiJson(f, gop);
+    return json(res, { ok: true, du_an: tenThuMuc(kl.du_an), so_dong: kl.dong.length, ban_ve: kl.ban_ve ?? "", so_ban_ve: gop.ban_ves!.length });
+  }
+  if (r === "POST /api/khoi-luong/xoa-ban-ve") {
+    const f = fileKL(q.get("du_an"));
+    const con = boBanVe(docKL(q.get("du_an")), q.get("ban_ve") ?? "");
+    if (con) ghiJson(f, con); else rmSync(f, { force: true });
+    return json(res, { ok: true, so_ban_ve: con?.ban_ves?.length ?? 0 });
   }
   if (r === "GET /api/khoi-luong") return json(res, docKL(q.get("du_an"), q.get("nguon")));
   if (r === "GET /api/don-gia/mau") return tai(res, await taoMauDonGia(danhMuc(), donGia()), "don_gia.xlsx");

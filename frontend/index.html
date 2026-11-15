@@ -138,6 +138,7 @@
         <label><input type="radio" name="nguon" value="so_bo"> Sơ bộ theo khảo sát</label>
         <button id="taiLai">Tải lại</button>
         <span id="kl" class="mute"></span>
+        <div id="dsBV" class="mute"></div>
       </div>
     </section>
     <section>
@@ -389,7 +390,7 @@ $("soBo").onclick = () => cho($("soBo"), bao($("ksKq"), async () => {
 // ---------- Báo giá ----------
 const nguon = () => document.querySelector("input[name=nguon]:checked").value;
 async function hienBaoGia() {
-  $("bang").innerHTML = ""; $("thieu").textContent = ""; $("kl").textContent = "";
+  $("bang").innerHTML = ""; $("thieu").textContent = ""; $("kl").textContent = ""; $("dsBV").textContent = "";
   $("xuat").removeAttribute("href");
   if (!duAn()) { $("thieu").textContent = "Chọn dự án."; return; }
   const q = qDuAn() + "&nguon=" + nguon();
@@ -397,6 +398,14 @@ async function hienBaoGia() {
     const [kl, bg] = await Promise.all([api("/api/khoi-luong" + q), api("/api/bao-gia" + q)]);
     $("kl").textContent = `${kl.ban_ve ?? "?"} · ${new Date(kl.luc).toLocaleString("vi-VN")}` + (kl.khu_vuc?.length ? ` · ${kl.khu_vuc.length} tầng/khu: ${kl.khu_vuc.map((k) => k.ten).join(", ")}` : "");
     $("xuat").href = "/api/bao-gia.xlsx" + q;
+    const bv = nguon() === "cad" && kl.ban_ves?.length > 1 ? kl.ban_ves : []; // có ≥ 2 bản vẽ DWG thì liệt kê, cho bỏ từng bản
+    $("dsBV").innerHTML = bv.length ? "Cộng " + bv.length + " bản vẽ: " + bv.map((b, i) => `${esc(b.ban_ve || "(không tên)")} <button data-bv="${i}" title="Bỏ bản vẽ này khỏi khối lượng">Bỏ</button>`).join(" · ") : "";
+    $("dsBV").querySelectorAll("button[data-bv]").forEach((n) => (n.onclick = async () => {
+      const ten = bv[+n.dataset.bv].ban_ve;
+      if (!confirm(`Bỏ khối lượng của bản vẽ "${ten}" khỏi dự án? (bóc lại bằng PCCC_BOC để thêm)`)) return;
+      try { await api("/api/khoi-luong/xoa-ban-ve" + qDuAn() + "&ban_ve=" + encodeURIComponent(ten), { method: "POST" }); } catch (e) { $("thieu").textContent = e.message; return; }
+      hienBaoGia();
+    }));
     if (bg.thieu_gia.length) $("thieu").textContent = `${bg.thieu_gia.length} mã chưa có đơn giá: ${bg.thieu_gia.join(", ")}`;
     let h = '<tr><th>Mã</th><th>Hạng mục</th><th>ĐVT</th><th class="so">KL</th><th class="so">Đơn giá VT</th><th class="so">Đơn giá NC</th><th class="so">Thành tiền</th><th>Ghi chú</th></tr>';
     for (const n of bg.nhom) {

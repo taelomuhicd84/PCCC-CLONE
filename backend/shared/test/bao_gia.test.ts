@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { docSoVN, lapBaoGia } from "../src/bao_gia";
+import { boBanVe, docSoVN, gopBanVe, lapBaoGia } from "../src/bao_gia";
 import { dm, kl } from "./mau";
 
 describe("lapBaoGia", () => {
@@ -20,4 +20,36 @@ describe("docSoVN", () => {
     ["1,200.5", 1200.5], ["350.000đ", 350000], ["120 000 m²", 120000], ["2 nổi + 1 hầm", 2], ["0.500", 0.5], [12, 12],
     ["", null], ["không rõ", null], [null, null],
   ])("%s -> %s", (vao, ra) => expect(docSoVN(vao)).toBe(ra));
+});
+
+describe("gopBanVe (PCCC_BOC nhiều DWG)", () => {
+  const k = (ban_ve: string | undefined, dong: [string, number][], khu?: [string, [string, number][]][]) => ({
+    du_an: "X", ban_ve, luc: "2026-11-15T10:00:00", dong: dong.map(([ma, sl]) => ({ ma, sl })),
+    ...(khu ? { khu_vuc: khu.map(([ten, d]) => ({ ten, dong: d.map(([ma, sl]) => ({ ma, sl })) })) } : {}),
+  });
+  const sl = (x: { dong: { ma: string; sl: number }[] }, ma: string) => x.dong.find((d) => d.ma === ma)?.sl;
+
+  it("hai bản vẽ cộng dồn; bóc lại một bản thì thay phần của nó, bản kia giữ", () => {
+    let kq = gopBanVe(null, k("t1.dwg", [["A", 5], ["B", 2]], [["Tầng 1", [["A", 5]]]]));
+    kq = gopBanVe(kq, k("t2.dwg", [["A", 3]], [["Tầng 1", [["A", 1]]], ["Tầng 2", [["A", 2]]]]));
+    expect(kq.ban_ves!.map((b) => b.ban_ve)).toEqual(["t1.dwg", "t2.dwg"]);
+    expect(sl(kq, "A")).toBe(8); expect(sl(kq, "B")).toBe(2);
+    expect(kq.khu_vuc!.map((x) => [x.ten, sl(x, "A")])).toEqual([["Tầng 1", 6], ["Tầng 2", 2]]);
+    kq = gopBanVe(kq, k("T1.DWG", [["A", 1]])); // cùng bản vẽ, khác hoa/thường: thay
+    expect(kq.ban_ves!.length).toBe(2);
+    expect(sl(kq, "A")).toBe(4); expect(sl(kq, "B")).toBeUndefined();
+    expect(kq.ban_ve).toBe("T1.DWG, t2.dwg");
+  });
+  it("plugin cũ không gửi ban_ve: thay toàn bộ như trước; file cũ không có ban_ves coi là một bản vẽ", () => {
+    const cu = gopBanVe(null, k("t1.dwg", [["A", 5]]));
+    expect(sl(gopBanVe(cu, k(undefined, [["C", 9]])), "A")).toBeUndefined();
+    const fileCu = { du_an: "X", ban_ve: "t1.dwg", luc: "x", dong: [{ ma: "A", sl: 5 }] };
+    const kq = gopBanVe(fileCu, k("t2.dwg", [["A", 1]]));
+    expect(sl(kq, "A")).toBe(6); expect(kq.ban_ves!.length).toBe(2);
+  });
+  it("bỏ một bản vẽ tính lại tổng; hết bản vẽ trả null", () => {
+    const kq = gopBanVe(gopBanVe(null, k("t1.dwg", [["A", 5]])), k("t2.dwg", [["A", 3]]));
+    expect(sl(boBanVe(kq, "T2.dwg")!, "A")).toBe(5);
+    expect(boBanVe(boBanVe(kq, "t2.dwg")!, "t1.dwg")).toBeNull();
+  });
 });
