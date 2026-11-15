@@ -59,3 +59,13 @@ Khoản Điều "Đ 1.4.9 / QCVN 06:2022/BXD và Sửa đổi 1: 2023"; cùng c�
 Cách ghi: KHÔNG dừng ở cao độ sàn (người dùng sửa 2026-11-02: ghi chú đặt tại mép dưới cửa sổ) và KHÔNG tính từ ±0.000 (phải từ mặt đường); ghi phép cộng đủ ba phần: cao độ sàn tầng trên cùng
 + bậu cửa sổ (hoặc lan can) + chênh giữa ±0.000 và mặt đường xe chữa cháy. Chỉ có mặt bằng thì ước lượng theo `knowledge/khao-sat-bao-gia.md` mục "Ước lượng chiều cao", có nhãn "ước lượng".
 **Dùng ở:** mọi ngưỡng chiều cao (15, 21, 25, 28, 30, 50 m) của QCVN 06 và QCVN 10; ghi chú PDF đặt nét tại mép dưới cửa sổ (skill `tkpccc-ghi-chu-ban-ve`, quy tắc 1).
+
+## Nhà ở có kinh doanh: phân loại theo ba mặt (gom 2026-11-15, review R1)
+Một căn nhà có thể vừa "không phải nhà hỗn hợp" (diện thẩm định) vừa "trang bị như nhà hỗn hợp" (hệ thống). Xét riêng từng mặt, ghi rõ mặt nào:
+| Mặt | Căn cứ (nguyên văn ở) | Quy tắc |
+|---|---|---|
+| Diện thẩm định | NĐ 105/2025 Phụ lục III mục 8 + công văn C07 (`knowledge/cv-2360-cahn-1183-c07-dien-tham-dinh.md` mục 1) | Mục 8 "trừ công trình nhà ở riêng lẻ có kết hợp sản xuất, kinh doanh"; có yếu tố ở của chủ hộ thì không xác định là đa năng, hỗn hợp |
+| Trang bị hệ thống | QCVN 10:2025 Bảng A.1 mục 1–2, chú thích (2) (`knowledge/qcvn10-2025-bao-chay-chua-chay-tu-dong.md`) | Tính TỔNG phần diện tích sản xuất, kinh doanh: < 30 % tổng sàn ⇒ mục 1–2; 30–70 % ⇒ "như đối với nhà hỗn hợp" (mục 21); > 70 % ⇒ theo công năng sản xuất, kinh doanh |
+| Bảng kiến trúc (KT) | QCVN 06 Điều 1.4 "nhà hỗn hợp" | `knowledge/thuat-ngu-chuan.md` ghi ngưỡng 70 % mỗi công năng; nguyên văn Điều 1.4 CHƯA NẠP (CẦN NGUỒN) |
+Ví dụ: nhà ở 60 %, cà phê 20 %, spa 20 % ⇒ tổng KD 40 % ⇒ hệ thống trang bị như nhà hỗn hợp (không xét từng loại KD dưới 30 %).
+**Dùng ở:** chọn bảng (`tkpccc-bang-doi-chieu` lệnh `chon`), dòng diện thẩm định của bảng KS, mục Hệ thống của BCKS.
