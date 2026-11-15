@@ -165,3 +165,16 @@ def test_van_ban_khac_khong_thua_ke():
     assert bdc._dieu_trong("Điều 4.5 / TCVN 13456:2022") == [("4.5", "TCVN 13456")]
     assert bdc._dieu_trong("Đ3.2.6.2 / QCVN06:2022") == [("3.2.6.2", "QCVN 06")]     # số dính liền chữ Đ
     assert ("2.1.2", "QCVN 01") in bdc._dieu_trong("QCVN 10:2025/BCA (tra điều tương ứng) / Điều 2.1.2 / QCVN 01:2019/BCA")
+
+
+@pytest.mark.parametrize("ma", ["A2", "KS"])
+def test_job_trich_dinh_nghia_chieu_cao_pccc(tmp_path, ma):
+    # 1.4.9 (chiều cao PCCC: mép dưới cửa sổ tầng trên cùng, tính từ mặt đường xe chữa cháy) nằm ở knowledge/dinh-nghia
+    f = tmp_path / "doi_chieu.json"
+    bdc.lamviec([ma], f, "khao_sat")
+    kq = bdc.job(f, ma, 0, 5, tmp_path / "job.md", tmp_path / "phan.json")
+    t = (tmp_path / "job.md").read_text(encoding="utf-8")
+    assert "knowledge/dinh-nghia/dinh-nghia.md" in t and "mép dưới của lỗ cửa (cửa sổ)" in t, kq
+    if ma == "KS":
+        ks = json.loads((Path(__file__).parents[1] / "data" / "KS.json").read_text(encoding="utf-8"))
+        assert "mép dưới" in next(r for r in ks["dong"] if r["idx"] == 2)["goi_y"]

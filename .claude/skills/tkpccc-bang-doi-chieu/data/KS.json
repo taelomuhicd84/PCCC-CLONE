@@ -27,7 +27,8 @@
       "idx": 2,
       "tt": "2",
       "noi_dung": "Chiều cao PCCC",
-      "goi_y": "Cao độ sàn tầng trên cùng có người so với mặt đường xe chữa cháy; ghi phép cộng; không có mặt đứng thì ước lượng có nhãn",
+      "goi_y": "QCVN 06 Đ 1.4.9 (nguyên văn: knowledge/dinh-nghia/dinh-nghia.md mục 1.4.9): \"khoảng cách lớn nhất tính từ mặt đường cho xe chữa cháy tiếp cận đến mép dưới của lỗ cửa (cửa sổ) mở trên tường ngoài của tầng trên cùng\" (không tính tầng kỹ thuật trên cùng); không có cửa sổ: \"một nửa tổng khoảng cách tính từ mặt đường cho xe chữa cháy tiếp cận đến mặt sàn và đến trần của tầng trên cùng\"; có ban công, lan can: tới \"mép trên của kết cấu bao che (lan can)\"; mái có khai thác: tới \"mép trên tường bao của mái\". Ghi phép cộng (cao độ sàn tầng trên cùng + bậu cửa hoặc lan can + chênh ±0.000 với mặt đường); không có mặt đứng thì ước lượng có nhãn",
+      "khoan_dieu": "Đ 1.4.9 / QCVN 06:2022/BXD và Sửa đổi 1: 2023",
       "tra_o": "knowledge/dinh-nghia/dinh-nghia.md; knowledge/khao-sat-bao-gia.md mục 3, Ước lượng chiều cao",
       "thong_tin": true
     },

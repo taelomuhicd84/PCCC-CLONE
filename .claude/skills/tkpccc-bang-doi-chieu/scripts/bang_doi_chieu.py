@@ -189,7 +189,7 @@ def gop(ra: Path, phan: list[Path], giu_so: bool) -> dict:
 
 GOC = Path(__file__).resolve().parents[4]          # thư mục dự án TKPCCC
 # Văn bản nêu ở cột Khoản Điều → file tri thức chép nguyên văn (tìm điều trong các file này)
-VAN_BAN = {"QCVN 06": (r"QCVN\s*0?6\b", ["skills/*.md", "knowledge/qcvn06-*.md"]),
+VAN_BAN = {"QCVN 06": (r"QCVN\s*0?6\b", ["skills/*.md", "knowledge/qcvn06-*.md", "knowledge/dinh-nghia/*.md"]),
            "QCVN 10": (r"QCVN\s*10\b", ["knowledge/qcvn10-2025-*.md"]),
            "TCVN 7568-14": (r"7568", ["knowledge/tcvn7568-14-2025.md"]),
            "NĐ 105/2025": (r"105/2025|347/2026", ["knowledge/nghi-dinh-tham-dinh-dieu-chinh.md"])}
