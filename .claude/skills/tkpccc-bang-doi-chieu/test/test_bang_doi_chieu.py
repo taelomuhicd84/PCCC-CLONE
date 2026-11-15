@@ -178,3 +178,16 @@ def test_job_trich_dinh_nghia_chieu_cao_pccc(tmp_path, ma):
     if ma == "KS":
         ks = json.loads((Path(__file__).parents[1] / "data" / "KS.json").read_text(encoding="utf-8"))
         assert "mép dưới" in next(r for r in ks["dong"] if r["idx"] == 2)["goi_y"]
+
+
+def test_chon_thieu_chieu_cao_khong_lay_bang_thap():
+    r = bdc.chon("khách sạn", None, {})
+    assert r["xay_dung"]["ma"] is None and r["xay_dung"]["can_chon"] == ["KT7.1", "KT7.2", "KT7.3"]
+    assert "chiều cao PCCC" in r["xay_dung"]["ly_do"] and "KT7.1" not in r["lenh_lamviec"].split(",")
+    assert r["thieu"] == ["chieu_cao_pccc_m"]
+    assert bdc.chon("khách sạn", (18, 24), {})["xay_dung"]["ma"] == "KT7.1"          # khoảng nằm gọn một mốc
+    vat = bdc.chon("khách sạn", (26, 31), {})["xay_dung"]                             # khoảng vắt mốc 28 m
+    assert vat["ma"] is None and vat["can_chon"] == ["KT7.1", "KT7.2"]
+    assert bdc.chon("nhà trẻ", None, {})["xay_dung"]["ma"] == "KT8"                     # bảng không chia mốc
+    assert bdc._cao("18,4") == 18.4 and bdc._cao("15-21") == (15.0, 21.0) and bdc._cao("15,5 – 21") == (15.5, 21.0)
+    assert bdc.chon("khách sạn", 28, {})["xay_dung"]["ma"] == "KT7.1"                   # "đến 28m" gồm 28

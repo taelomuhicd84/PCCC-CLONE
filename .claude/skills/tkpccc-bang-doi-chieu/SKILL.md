@@ -17,7 +17,9 @@ Phát triển module này: chỉ sửa trong thư mục này.
 - Khảo sát – tư vấn: `KS`.
 - Thẩm định XÂY DỰNG: một bảng `KT` theo công năng + chiều cao PCCC. Thẩm định HỆ THỐNG PCCC: một bảng `A` theo công năng +
   các bảng `B` theo cờ hệ thống (B12 bình + dụng cụ, B13 đèn sự cố + loa, B14 điện PCCC luôn xét; B1 báo cháy, B5 họng nước, B6 sprinkler xét cả khi chưa rõ có hay không).
-- `chon --cong-nang "<công năng thực tế + nhóm F>" --cao <m> --co bao_chay=1,sprinkler=0,…` in bảng + lý do + chuỗi cho `lamviec`.
+- `chon --cong-nang "<công năng thực tế + nhóm F>" --cao <m | a-b> --co bao_chay=1,sprinkler=0,…` in bảng + lý do + chuỗi cho `lamviec`.
+  `--cao` nhận số ("18,4") hoặc khoảng ước lượng ("15-21"). Thiếu chiều cao, hoặc khoảng vắt mốc (28, 50, 75 m) thì bảng KT có mốc
+  KHÔNG được chọn: `xay_dung.ma = null`, `can_chon` liệt kê các bảng, `thieu: ["chieu_cao_pccc_m"]` → xác định chiều cao rồi chạy lại.
   Cờ: bao_chay, bao_chay_dia_chi, tram_bom, ngoai_nha, hong_nuoc, sprinkler, bot_co_dinh, khi_hoa_long, khi_nen, khi, sol_khi (1 có, 0 không, bỏ trống = chưa rõ).
 
 ## Lệnh

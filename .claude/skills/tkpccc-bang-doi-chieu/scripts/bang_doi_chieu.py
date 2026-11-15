@@ -1,7 +1,7 @@
 """Bảng đối chiếu PCCC: chọn bảng, đọc dòng tiết kiệm token, lập file kết quả, gộp phần của agent, kiểm, xuất.
 
   python -X utf8 bang_doi_chieu.py danhmuc
-  python -X utf8 bang_doi_chieu.py chon --cong-nang "khách sạn" [--cao 18.4] [--co bao_chay=1,sprinkler=0]
+  python -X utf8 bang_doi_chieu.py chon --cong-nang "khách sạn" [--cao 18,4 | 15-21] [--co bao_chay=1,sprinkler=0]
   python -X utf8 bang_doi_chieu.py khung KT7.1 [--tu 40] [--den 80]
   python -X utf8 bang_doi_chieu.py dong KT7.1 "#85"        (hoặc theo TT: "6.4")
   python -X utf8 bang_doi_chieu.py tim KT7.1 "hành lang"
@@ -87,12 +87,36 @@ def can_xet(ma: str, r: dict) -> bool:
     return ma == "KS" or bool(str(r.get("quy_dinh", "")).strip() or str(r.get("khoan_dieu", "")).strip())
 
 
-def chon(cong_nang: str, cao: float | None, co: dict) -> dict:
+def _cao(s: str | None) -> float | tuple | None:
+    """--cao: "18,4" -> 18.4; khoảng "15-21" / "15,5 – 21" -> (15.5, 21.0) (chiều cao ước lượng)."""
+    if s is None or not str(s).strip():
+        return None
+    so = [float(x.replace(",", ".")) for x in re.findall(r"\d+(?:[.,]\d+)?", str(s))]
+    if len(so) == 1:
+        return so[0]
+    if len(so) == 2 and re.search(r"\d\s*[-–—]\s*\d", str(s)):
+        return (min(so), max(so))
+    raise SystemExit(f"--cao {s!r}: ghi một số (18,4) hoặc khoảng (15-21)")
+
+
+def chon(cong_nang: str, cao: float | tuple | None, co: dict) -> dict:
     tim = lambda luat: next((ma for re_, ma in luat if re.search(re_, cong_nang, re.I)), None)  # noqa: E731
     kt = tim(LUAT_KT)
-    if isinstance(kt, tuple):
+    kt_ly_do, can_chon, thieu = None, None, []
+    if isinstance(kt, tuple):          # bảng kiến trúc chia theo mốc chiều cao PCCC ("đến 28m", "từ trên 28m đến 50m"…)
         moc, ds = kt
-        kt = ds[0] if cao is None else next((m for h, m in zip(moc, ds) if cao <= h), ds[-1])
+        muc = lambda h: next((m for gh, m in zip(moc, ds) if h <= gh), ds[-1])  # noqa: E731
+        lo, hi = (cao, cao) if isinstance(cao, (int, float)) else (cao or (None, None))
+        if lo is None:
+            kt, can_chon, thieu = None, list(ds), ["chieu_cao_pccc_m"]
+            kt_ly_do = (f"thiếu chiều cao PCCC: bảng kiến trúc chia theo mốc {', '.join(f'{h} m' for h in moc)} "
+                        f"({', '.join(ds)}); nhập --cao <m> hoặc khoảng ước lượng --cao a-b rồi chạy lại")
+        elif muc(lo) != muc(hi):
+            can_chon = [m for m in ds if ds.index(muc(lo)) <= ds.index(m) <= ds.index(muc(hi))]
+            kt, thieu = None, ["chieu_cao_pccc_m"]
+            kt_ly_do = (f"chiều cao PCCC {lo}–{hi} m vắt mốc ({', '.join(can_chon)}): xác định chiều cao trước khi chọn bảng")
+        else:
+            kt = muc(lo)
     ht = [{"ma": m, "ly_do": "xét cho mọi công trình"} for m in BANG_LUON_XET]
     if co.get("bao_chay_dia_chi") is True:
         ht.append({"ma": "B2", "ly_do": "thiết kế có báo cháy địa chỉ"})
@@ -105,10 +129,13 @@ def chon(cong_nang: str, cao: float | None, co: dict) -> dict:
             ht.append({"ma": m, "ly_do": "chưa rõ có hay không: xét để kết luận đối tượng trang bị"})
     ht.sort(key=lambda x: int(x["ma"][1:]))
     a = tim(LUAT_A)
-    ra = {"xay_dung": {"ma": kt, "ly_do": f"công năng {cong_nang!r}, cao PCCC {cao if cao is not None else 'chưa rõ (lấy mức thấp nhất)'}"
-                       if kt else "chưa có bảng kiến trúc: chọn tay"},
+    xd = {"ma": kt, "ly_do": kt_ly_do or (f"công năng {cong_nang!r}" + (f", cao PCCC {cao}" if cao is not None else "")
+                                          if kt else "chưa có bảng kiến trúc: chọn tay")}
+    if can_chon:
+        xd["can_chon"] = can_chon
+    ra = {"xay_dung": xd,
           "cong_nang": {"ma": a, "ly_do": f"công năng {cong_nang!r}" if a else "chưa nhận ra công năng: chọn tay"},
-          "he_thong": ht}
+          "he_thong": ht, "thieu": thieu}
     ra["lenh_lamviec"] = ",".join(m for m in [kt, a] + [x["ma"] for x in ht] if m)
     return ra
 
@@ -592,7 +619,7 @@ def main(argv=None):
     sub.add_parser("danhmuc")
     c = sub.add_parser("chon")
     c.add_argument("--cong-nang", required=True)
-    c.add_argument("--cao", type=float)
+    c.add_argument("--cao", help="chiều cao PCCC m: 18,4 hoặc khoảng ước lượng 15-21")
     c.add_argument("--co")
     for ten in ("khung", "dong", "tim"):
         x = sub.add_parser(ten)
@@ -636,7 +663,7 @@ def main(argv=None):
             print(f"{b['ma']:6} {b['so_dong']:4} dòng  {b['ten']}")
         return
     if a.lenh == "chon":
-        print(json.dumps(chon(a.cong_nang, a.cao, _co(a.co)), ensure_ascii=False, indent=1))
+        print(json.dumps(chon(a.cong_nang, _cao(a.cao), _co(a.co)), ensure_ascii=False, indent=1))
         return
     if a.lenh in ("khung", "dong", "tim"):
         b = doc_bang(a.ma)
