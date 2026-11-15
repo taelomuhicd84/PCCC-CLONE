@@ -278,7 +278,35 @@ namespace TKPCCC
                 for (int t = 0; t < n; t++) mau.Add(q[j] + (q[i] - q[j]) * ((double)t / n));
             }
             Func<Point2d, Point2d, bool> phu = (p, c) => Math.Abs(p.X - c.X) <= hx + e && Math.Abs(p.Y - c.Y) <= hy + e;
-            List<int> ho = Enumerable.Range(0, mau.Count).Where(i => !luoi.Any(c => phu(mau[i], c)))
+            // Review 15/11 (vẽ mượt): tra bằng lưới băm ô (hx + 2e) x (hy + 2e) (mọi điểm thiết bị phủ nằm trong 3 x 3 ô quanh nó) và mảng đếm
+            // số thiết bị phủ mỗi mẫu (dem); kết quả và thứ tự xét giữ y như cách quét hết danh sách trước đây.
+            double wx = hx + 2 * e, wy = hy + 2 * e;
+            Dictionary<long, List<int>> oMau = new Dictionary<long, List<int>>();
+            List<int> dem = new List<int>();
+            Action<int> themMau = s =>
+            {
+                long k = KhoaO(mau[s], wx, wy);
+                List<int> l;
+                if (!oMau.TryGetValue(k, out l)) { l = new List<int>(); oMau[k] = l; }
+                l.Add(s);
+                dem.Add(0);
+            };
+            // Gọi f cho mọi mẫu c phủ được (mỗi mẫu đúng một lần: 9 ô quanh c có khoá khác nhau).
+            Action<Point2d, Action<int>> moiMauPhu = (c, f) =>
+            {
+                long ix = (long)Math.Floor(c.X / wx), iy = (long)Math.Floor(c.Y / wy);
+                for (long a = ix - 1; a <= ix + 1; a++)
+                    for (long b = iy - 1; b <= iy + 1; b++)
+                    {
+                        List<int> l;
+                        if (oMau.TryGetValue(a * 2654435761L + b, out l))
+                            foreach (int s in l) if (phu(mau[s], c)) f(s);
+                    }
+            };
+            for (int s = 0; s < mau.Count; s++) themMau(s);
+            foreach (Point2d c in luoi) moiMauPhu(c, s => dem[s]++);
+            // ho luôn là đúng các mẫu dem = 0 (dem chỉ tăng trong lúc thêm thiết bị).
+            List<int> ho = Enumerable.Range(0, mau.Count).Where(i => dem[i] == 0)
                 .OrderBy(i => Math.Round(mau[i].Y / e)).ThenBy(i => mau[i].X).ToList();
             int them = 0;
             for (int luot = 0; luot < 20; luot++)
@@ -288,52 +316,105 @@ namespace TKPCCC
                     List<Point2d> sot = DiemHo(q, luoi, hx, hy, phu);
                     if (sot.Count == 0) break;
                     // Khe hẹp hơn bước mẫu: mẫu dày (bước / 4) quanh từng đỉnh khe để chấm điểm vị trí theo đúng cỡ khe.
+                    ChiMucLuoi cl = new ChiMucLuoi(luoi, hx, hy);
                     foreach (Point2d s in sot.ToList())
                         for (int i = -4; i <= 4; i++)
                             for (int j = -4; j <= 4; j++)
                             {
                                 Point2d m = new Point2d(s.X + buoc * i / 4, s.Y + buoc * j / 4);
-                                if (TrongDaGiac(q, m) && !luoi.Any(c => phu(m, c))) sot.Add(m);
+                                if (TrongDaGiac(q, m) && !cl.CoPhu(m, phu)) sot.Add(m);
                             }
                     ho = Enumerable.Range(mau.Count, sot.Count).ToList();
                     mau.AddRange(sot);
+                    for (int s = mau.Count - sot.Count; s < mau.Count; s++) themMau(s);
                 }
-            for (; ho.Count > 0 && them < 5000; them++)
-            {
-                if (them % 20 == 0) KiemEsc();
-                Point2d P = mau[ho[0]];
-                List<Point2d> thu = new List<Point2d>();
-                foreach (double cy in luoi.Select(c => c.Y).Distinct().Where(v => Math.Abs(v - P.Y) <= hy))
-                    foreach (double cx in luoi.Select(c => c.X).Distinct().Where(v => Math.Abs(v - P.X) <= hx)) thu.Add(new Point2d(cx, cy));
-                List<Point2d> luoiThu = new List<Point2d>();
-                for (int i = 0; i <= 8; i++)
-                    for (int j = 0; j <= 8; j++) luoiThu.Add(new Point2d(P.X - hx + hx * i / 4, P.Y - hy + hy * j / 4));
-                thu.AddRange(luoiThu.OrderBy(c => c.GetDistanceTo(P))); // hoà điểm thì gần điểm hở hơn (ô phủ dư ra hai phía)
-                Point2d tot = P; // không vị trí nào trong vùng: đặt ngay điểm hở (luôn thuộc vùng)
-                int diemTot = 0;
-                for (int lan = 0; lan < 2 && diemTot == 0; lan++) // lần 2 bỏ điều kiện cách tường (góc quá nhọn)
-                    foreach (Point2d c in thu)
-                    {
-                        if (!TrongDaGiac(q, c) || (lan == 0 && cachMin > 0 && KhoangBien(q, c) < cachMin)) continue;
-                        int diem = ho.Count(i => phu(mau[i], c)); // vị trí lưới đứng trước nên hoà thì giữ thẳng hàng
-                        if (diem > diemTot) { diemTot = diem; tot = c; }
-                    }
-                luoi.Add(tot);
-                ho.RemoveAll(i => phu(mau[i], tot));
-            }
+                for (; ho.Count > 0 && them < 5000; them++)
+                {
+                    if (them % 20 == 0) KiemEsc();
+                    Point2d P = mau[ho[0]];
+                    List<Point2d> thu = new List<Point2d>();
+                    foreach (double cy in luoi.Select(c => c.Y).Distinct().Where(v => Math.Abs(v - P.Y) <= hy))
+                        foreach (double cx in luoi.Select(c => c.X).Distinct().Where(v => Math.Abs(v - P.X) <= hx)) thu.Add(new Point2d(cx, cy));
+                    List<Point2d> luoiThu = new List<Point2d>();
+                    for (int i = 0; i <= 8; i++)
+                        for (int j = 0; j <= 8; j++) luoiThu.Add(new Point2d(P.X - hx + hx * i / 4, P.Y - hy + hy * j / 4));
+                    thu.AddRange(luoiThu.OrderBy(c => c.GetDistanceTo(P))); // hoà điểm thì gần điểm hở hơn (ô phủ dư ra hai phía)
+                    Point2d tot = P; // không vị trí nào trong vùng: đặt ngay điểm hở (luôn thuộc vùng)
+                    int diemTot = 0;
+                    for (int lan = 0; lan < 2 && diemTot == 0; lan++) // lần 2 bỏ điều kiện cách tường (góc quá nhọn)
+                        foreach (Point2d c in thu)
+                        {
+                            if (!TrongDaGiac(q, c) || (lan == 0 && cachMin > 0 && KhoangBien(q, c) < cachMin)) continue;
+                            int diem = 0; // vị trí lưới đứng trước nên hoà thì giữ thẳng hàng
+                            moiMauPhu(c, s => { if (dem[s] == 0) diem++; });
+                            if (diem > diemTot) { diemTot = diem; tot = c; }
+                        }
+                    luoi.Add(tot);
+                    moiMauPhu(tot, s => dem[s]++);
+                    ho.RemoveAll(i => phu(mau[i], tot));
+                }
             }
             if (ho.Count == 0)
             {
                 if (DiemHo(q, luoi, hx, hy, phu).Count > 0) return 0.1; // còn khe sau 20 lượt (không gặp khi thử): báo hở để người vẽ xem
                 // Tham lam có thể thêm thừa (thiết bị thêm sau phủ hết phần của thiết bị thêm trước): bỏ thử từng cái, từ cái thêm sau cùng.
+                // Bỏ c làm hở một mẫu khi và chỉ khi có mẫu c phủ mà dem = 1 (mọi mẫu đang được phủ).
                 for (int i = luoi.Count - 1, dau = luoi.Count - them; i >= dau; i--)
                 {
                     Point2d c = luoi[i];
                     luoi.RemoveAt(i);
-                    if (mau.Any(m => !luoi.Any(d => phu(m, d))) || DiemHo(q, luoi, hx, hy, phu).Count > 0) luoi.Insert(i, c);
+                    bool hoMau = false;
+                    moiMauPhu(c, s => { if (dem[s] == 1) hoMau = true; });
+                    if (hoMau || DiemHo(q, luoi, hx, hy, phu).Count > 0) luoi.Insert(i, c);
+                    else moiMauPhu(c, s => dem[s]--);
                 }
             }
             return nTrong == 0 ? 0 : Math.Round(100.0 * ho.Count(i => i < nTrong) / nTrong, 1);
+        }
+
+        /// Khoá ô lưới băm: hai ô trong cùng vùng 5 x 5 ô không bao giờ trùng khoá.
+        static long KhoaO(Point2d p, double wx, double wy)
+        {
+            return (long)Math.Floor(p.X / wx) * 2654435761L + (long)Math.Floor(p.Y / wy);
+        }
+
+        /// Chỉ mục thiết bị theo ô 2hx x 2hy (review 15/11, vẽ mượt): thiết bị phủ p (lệch ≤ hx + e) hay cách thiết bị khác ≤ 2hx, 2hy
+        /// đều nằm trong 3 x 3 ô quanh nó. Chỉ số thiết bị trong mỗi ô tăng dần.
+        class ChiMucLuoi
+        {
+            readonly List<Point2d> luoi;
+            readonly double wx, wy;
+            readonly Dictionary<long, List<int>> o = new Dictionary<long, List<int>>();
+            public ChiMucLuoi(List<Point2d> luoi, double hx, double hy)
+            {
+                this.luoi = luoi; wx = 2 * hx; wy = 2 * hy;
+                for (int i = 0; i < luoi.Count; i++)
+                {
+                    long k = KhoaO(luoi[i], wx, wy);
+                    List<int> l;
+                    if (!o.TryGetValue(k, out l)) { l = new List<int>(); o[k] = l; }
+                    l.Add(i);
+                }
+            }
+            /// Chỉ số các thiết bị trong 3 x 3 ô quanh p, tăng dần.
+            public List<int> Gan(Point2d p)
+            {
+                List<int> kq = new List<int>();
+                long ix = (long)Math.Floor(p.X / wx), iy = (long)Math.Floor(p.Y / wy);
+                for (long a = ix - 1; a <= ix + 1; a++)
+                    for (long b = iy - 1; b <= iy + 1; b++)
+                    {
+                        List<int> l;
+                        if (o.TryGetValue(a * 2654435761L + b, out l)) kq.AddRange(l);
+                    }
+                kq.Sort();
+                return kq;
+            }
+            public bool CoPhu(Point2d p, Func<Point2d, Point2d, bool> phu)
+            {
+                foreach (int i in Gan(p)) if (phu(p, luoi[i])) return true;
+                return false;
+            }
         }
 
         /// Điểm trong vùng chưa được ô phủ nào chứa, tìm CHÍNH XÁC: mỗi khe hở (vùng trừ hợp các ô chữ nhật) có một đỉnh là đỉnh vùng,
@@ -341,6 +422,7 @@ namespace TKPCCC
         static List<Point2d> DiemHo(List<Point2d> q, List<Point2d> luoi, double hx, double hy, Func<Point2d, Point2d, bool> phu)
         {
             double eps = 1e-4 * (hx + hy);
+            ChiMucLuoi cl = new ChiMucLuoi(luoi, hx, hy);
             List<Point2d> dinh = new List<Point2d>(q);
             for (int i = 0, j = q.Count - 1; i < q.Count; j = i++)
             {
@@ -363,17 +445,20 @@ namespace TKPCCC
                 }
             }
             foreach (Point2d c in luoi)
-                foreach (Point2d d in luoi)
+                foreach (int k in cl.Gan(c)) // cùng thứ tự với quét hết danh sách: chỉ số tăng dần
+                {
+                    Point2d d = luoi[k];
                     if (Math.Abs(c.X - d.X) <= 2 * hx && Math.Abs(c.Y - d.Y) <= 2 * hy)
                         foreach (double x in new[] { c.X - hx, c.X + hx })
                             foreach (double y in new[] { d.Y - hy, d.Y + hy })
                                 if (Math.Abs(x - d.X) <= hx && Math.Abs(y - c.Y) <= hy) dinh.Add(new Point2d(x, y));
+                }
             List<Point2d> kq = new List<Point2d>();
             foreach (Point2d p in dinh)
                 foreach (Vector2d v in new[] { new Vector2d(eps, eps), new Vector2d(-eps, eps), new Vector2d(eps, -eps), new Vector2d(-eps, -eps) })
                 {
                     Point2d m = p + v;
-                    if (TrongDaGiac(q, m) && !luoi.Any(c => phu(m, c))) kq.Add(m);
+                    if (TrongDaGiac(q, m) && !cl.CoPhu(m, phu)) kq.Add(m);
                 }
             return kq;
         }
