@@ -19,6 +19,7 @@ SKILL-PCCC-NEW 24743f9 (data/bang); KS là khung khảo sát – tư vấn của
 from __future__ import annotations
 
 import argparse
+import fnmatch
 import json
 import re
 import sys
@@ -193,7 +194,10 @@ VAN_BAN = {"QCVN 06": (r"QCVN\s*0?6\b", ["skills/*.md", "knowledge/qcvn06-*.md"]
            "TCVN 7568-14": (r"7568", ["knowledge/tcvn7568-14-2025.md"]),
            "NĐ 105/2025": (r"105/2025|347/2026", ["knowledge/nghi-dinh-tham-dinh-dieu-chinh.md"])}
 SO = r"((?:[A-Z]\.\d{1,2}|\d{1,2}\.\d{1,2})(?:\.\d{1,2})*[a-z]?)(?![\w.])"    # 3.2.6.1, G.1.2, G.2a; không bắt 1.500, 10.2023
-SO_DIEU = re.compile(r"(?<![\w.])" + SO)
+SO_DIEU = re.compile(r"(?<![0-9A-Za-z_.])" + SO)          # nhận cả "Đ3.2.6.2" (số dính liền chữ Đ)
+# Văn bản KHÔNG có trong VAN_BAN (không có file nguyên văn): số điều của nó không được gán sang văn bản bên cạnh
+VB_KHAC = re.compile(r"\b(QCVN|TCVN|TCXDVN|NFPA|ISO|EN|BS)\s*(\d+(?:-\d+)*)|\b(N[ĐD]|TT)\s*(\d+/\d{4})"
+                     r"|\b(Nghị\s*định|Thông\s*tư)\s*(\d+/\d{4})|\b(Luật)\s+([^/,;]+)")
 DAU = r"^\s*(?:#+\s*|[-*]\s*)?(?:\*\*)?"
 DAU_DIEU = re.compile(DAU + r"(?:Điều\s+|Mục\s+)?" + SO)   # "Bảng …" không cắt điều
 # Mục của các SKILL.md mà agent cần (trích nguyên vào quy_tac_agent.md, agent khỏi đọc cả 3 file)
@@ -208,11 +212,25 @@ def _doc_dong(p: Path) -> list:
     return _dong_file[p]
 
 
+def _van_ban(phan: str) -> str | None:
+    """Tên văn bản nêu trong một phần của cột Khoản Điều: khoá của VAN_BAN, hoặc tên văn bản khác (vd "TCVN 13456")."""
+    vb = next((ten for ten, (m, _) in VAN_BAN.items() if re.search(m, phan, re.I)), None)
+    if vb:
+        return vb
+    m = VB_KHAC.search(phan)
+    if not m:
+        return None
+    a, b = [g for g in m.groups() if g][:2]
+    return f"{a} {' '.join(b.split())}"
+
+
 def _dieu_trong(khoan_dieu: str) -> list:
-    """[(số điều, mẫu văn bản)] từ cột Khoản Điều; văn bản gán theo phần "/" chứa nó hoặc phần kế sau (vd "Đ 3.2.6 / QCVN 06:2022")."""
+    """[(số điều, văn bản)] từ cột Khoản Điều; văn bản gán theo phần "/" chứa nó hoặc phần kế sau (vd "Đ 3.2.6 / QCVN 06:2022").
+    Văn bản không có trong VAN_BAN vẫn được gán (tên của nó) để số điều không bị trích nhầm sang QCVN 06 / QCVN 10."""
     ra, cho, vb_cuoi = [], [], None
-    for phan in str(khoan_dieu or "").split("/"):
-        vb = next((ten for ten, (m, _) in VAN_BAN.items() if re.search(m, phan, re.I)), None)
+    kd = re.sub(r"\b(QCVN|TCVN)\s*/\s*(\d)", r"\1 \2", str(khoan_dieu or ""))   # "Đ 7.1 TCVN / 6396-72:2010"
+    for phan in kd.split("/"):
+        vb = _van_ban(phan)
         if re.search(r"Bảng\s+\S+", phan, re.I):         # "Bảng B.1 mục 1.2": số sau "mục" là dòng của bảng, không phải điều
             phan = re.sub(r"mục\s+[\d.]+", "", phan, flags=re.I)
         cho += SO_DIEU.findall(phan)
@@ -223,13 +241,18 @@ def _dieu_trong(khoan_dieu: str) -> list:
 
 
 def _file_tim(tra_o: str, vb: str | None) -> list:
-    """File tìm điều: theo cột Tra ở trước (tiền tố tên file), rồi theo văn bản."""
+    """File tìm điều: theo cột Tra ở trước (tiền tố tên file), rồi theo văn bản. Chỉ giữ file thuộc ĐÚNG văn bản của điều
+    (cột Tra ở có khi trỏ skill QCVN 06 cho dòng căn cứ TCVN 7568-14, QCVN 10…); văn bản không có trong VAN_BAN -> rỗng."""
+    if vb not in VAN_BAN:
+        return []
+    mau = VAN_BAN[vb][1]
     ds = []
     for t in re.split(r"[,;+]\s*|\s+\+\s+", str(tra_o or "")):
         t = t.strip().split(" ")[0].removesuffix(".md")
         if re.fullmatch(r"[\w-]{4,}", t):
             ds += sorted(GOC.glob(f"skills/{t}*.md")) + sorted(GOC.glob(f"knowledge/{t}*.md")) + sorted(GOC.glob(f"knowledge/*/{t}*.md"))
-    for g in VAN_BAN[vb][1] if vb else []:
+    ds = [p for p in ds if any(fnmatch.fnmatch(p.relative_to(GOC).as_posix(), g) for g in mau)]
+    for g in mau:
         ds += sorted(GOC.glob(g))
     return list(dict.fromkeys(ds))
 
@@ -299,7 +322,7 @@ def job(f: Path, ma: str, tu: int, den: int, ra: Path, phan: Path) -> dict:
     t += ["", "## Điều khoản nguyên văn (trích tự động, mỗi điều một lần; cần thêm thì mở đúng file:dòng)", ""]
     khong = []
     for (so, vb), v in dieu.items():
-        kq = _trich_dieu(so, _file_tim(v["tra_o"], vb)) if vb else None      # không rõ văn bản thì không đoán file
+        kq = _trich_dieu(so, _file_tim(v["tra_o"], vb)) if vb in VAN_BAN else None   # không rõ / không có file nguyên văn
         if kq:
             t += [f"### {so} — {kq[0]} (dòng #{', #'.join(map(str, v['idx']))})", *("> " + d for d in kq[1].splitlines()), ""]
         else:

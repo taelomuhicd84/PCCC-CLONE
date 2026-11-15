@@ -135,3 +135,33 @@ def test_bcks_mau_mac_dinh_8_muc(tmp_path):
     kq = bdc.bcks(dc, tmp_path / "doi_chieu.json", tmp_path / "BCKS.xlsx")
     ws = load_workbook(tmp_path / "BCKS.xlsx").worksheets[0]
     assert [ws[f"F{r}"].value for r in (10, 12, 13, 14, 15, 16, 17)] == list("abcdefg") and kq["muc_mau_khong_co"] == []
+
+
+def _trich(ma: str, idx: int) -> list:
+    """[(số điều, văn bản, file:dòng hoặc None)] mà lệnh job sẽ trích cho một dòng của bảng."""
+    b = json.loads((Path(__file__).parents[1] / "data" / f"{ma}.json").read_text(encoding="utf-8"))
+    r = next(r for r in b["dong"] if r["idx"] == idx)
+    ra = []
+    for so, vb in bdc._dieu_trong(r.get("khoan_dieu")):
+        kq = bdc._trich_dieu(so, bdc._file_tim(r.get("tra_o"), vb)) if vb in bdc.VAN_BAN else None
+        ra.append((so, vb, kq[0] if kq else None))
+    return ra
+
+
+@pytest.mark.parametrize("ma, idx", [("B1", 2), ("B13", 3), ("B14", 18), ("B12", 3), ("A18", 74), ("A25", 2),
+                                     ("A24", 25), ("KT4.1", 135), ("A17", 88), ("A20", 92)])
+def test_job_khong_trich_nham_van_ban(ma, idx):
+    # R2/R5 15/11: điều của TCVN 7568-14, TCVN 13456, TCVN 7435, QCVN 10, QCVN 72, QCVN 21, TCVN 6396, QCVN 01
+    # từng bị trích sang file QCVN 06 cùng số điều (theo cột "Tra ở" hoặc văn bản của phần kế bên)
+    for so, vb, noi in _trich(ma, idx):
+        if noi:
+            assert vb in bdc.VAN_BAN and any(Path(noi.split(":")[0]).match(g) for g in bdc.VAN_BAN[vb][1]), (so, vb, noi)
+        assert not (noi or "").startswith("skills/") or vb == "QCVN 06", (so, vb, noi)
+
+
+def test_van_ban_khac_khong_thua_ke():
+    assert bdc._dieu_trong("Phụ lục A.4, / Đ 7.1 TCVN / 6396-72:2010 / Đ 6.13 / QCVN 06:2022") == \
+        [("A.4", "TCVN 6396-72"), ("7.1", "TCVN 6396-72"), ("6.13", "QCVN 06")]
+    assert bdc._dieu_trong("Điều 4.5 / TCVN 13456:2022") == [("4.5", "TCVN 13456")]
+    assert bdc._dieu_trong("Đ3.2.6.2 / QCVN06:2022") == [("3.2.6.2", "QCVN 06")]     # số dính liền chữ Đ
+    assert ("2.1.2", "QCVN 01") in bdc._dieu_trong("QCVN 10:2025/BCA (tra điều tương ứng) / Điều 2.1.2 / QCVN 01:2019/BCA")
