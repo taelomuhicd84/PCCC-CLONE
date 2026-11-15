@@ -104,6 +104,9 @@ if ($moi.Count -eq 1 -and $moi[0].ten -eq 'Van khach them' -and $moi[0].he -eq '
 $anhLoi = @('BC_KHOI', 'VAN_KHACH' | Where-Object { -not (Test-Path "$T\anh_block\$_.png") -or (DocAnh "$T\anh_block\$_.png").mau -le 1 })
 if ($anhLoi.Count -eq 0) { 'DAT   anh xem truoc block: BC_KHOI, VAN_KHACH co anh co net' } else { "LOI   anh xem truoc block thieu hoac trang: $($anhLoi -join ', ')"; $loi++ }
 function Kiem($dk, $ten) { if ($dk) { "DAT   $ten" } else { "LOI   $ten"; $script:loi++ } }
+# Review 15/11 (R3b viec 5): accoreconsole phai chay DLL vua build, khong phai ban bundle tu nap (Initialize in duong dan DLL)
+$nap = @([regex]::Matches($out, 'plugin PCCC \(([^)]+)\)') | ForEach-Object { $_.Groups[1].Value })
+Kiem ($nap.Count -ge 1 -and @($nap | Where-Object { $_ -ine "$T\TKPCCC.Cad.dll" }).Count -eq 0) "DLL dang chay la ban vua build ($($nap -join ', ')); khac thi accoreconsole dang nap bundle tu nap: chay cad\cai_dat.bat /go roi thu lai"
 # Mau anh = mau layer PCCC_<he> ma block duoc chen vao (net layer 0 ByLayer), khong phai mau layer 0 cua thu vien (trang); mien to (Solid) phai to dac.
 function DemMau($f, $r0, $g0, $b0) {
   $bmp = New-Object Drawing.Bitmap $f; $n = 0; $trang = 0

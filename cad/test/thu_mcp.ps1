@@ -64,6 +64,9 @@ try {
     @('INSUNITS', '4', 'NETLOAD', "`"$T\TKPCCC.Cad.dll`"", 'PCCC_SPEC', "$T\hd\dang\$($viec.Name)") -join "`r`n" | Set-Content -Encoding ascii "$T\kb.scr"
     $p = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb.out.txt"
     if (-not $p.WaitForExit(120000)) { Stop-Process -Id $p.Id -Force }
+    # Review 15/11 (R3b viec 5): accoreconsole phai chay DLL vua build, khong phai ban bundle tu nap (Initialize in duong dan DLL)
+    $nap = @([regex]::Matches(([Text.Encoding]::Unicode.GetString([IO.File]::ReadAllBytes("$T\kb.out.txt")) -replace "`0", ''), 'plugin PCCC \(([^)]+)\)') | ForEach-Object { $_.Groups[1].Value })
+    Kiem ($nap.Count -ge 1 -and @($nap | Where-Object { $_ -ine "$T\TKPCCC.Cad.dll" }).Count -eq 0) "DLL dang chay la ban vua build ($($nap -join ', ')); khac thi accoreconsole dang nap bundle tu nap: chay cad\cai_dat.bat /go roi thu lai"
     $r = Nhan 60000
     $kq = $r.result.content[0].text | ConvertFrom-Json
     Kiem ($r.result.isError -eq $false -and $kq.ok -eq $true -and $kq.ve -eq 29) "cad_chay tra ket qua cua plugin (ve = $($kq.ve), can 29)"

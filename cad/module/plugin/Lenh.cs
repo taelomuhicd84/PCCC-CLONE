@@ -51,7 +51,8 @@ namespace TKPCCC
         {
             BanQuyen.Chan(); // chỉ bản build phat_hanh chặn lệnh PCCC* khi chưa có bản quyền
             Document doc = AcApp.DocumentManager.MdiActiveDocument;
-            if (doc != null) doc.Editor.WriteMessage("\n[TKPCCC] Đã nạp plugin PCCC. Gõ PCCC_HELP để xem lệnh.");
+            // In đường dẫn DLL (review 15/11): biết AutoCAD đang chạy bản bundle hay bản thử; bộ test kiểm đúng bản vừa build.
+            if (doc != null) doc.Editor.WriteMessage("\n[TKPCCC] Đã nạp plugin PCCC (" + Assembly.GetExecutingAssembly().Location + "). Gõ PCCC_HELP để xem lệnh.");
             // Cầu nối MCP chỉ bật trong AutoCAD có giao diện: accoreconsole không có vòng lặp thông điệp cho timer.
             try
             {

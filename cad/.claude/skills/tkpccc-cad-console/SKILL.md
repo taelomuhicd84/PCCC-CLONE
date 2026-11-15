@@ -51,7 +51,7 @@ mãi ⇒ **luôn chạy với giới hạn thời gian** (`$p.WaitForExit(180000
 ## Đọc kết quả
 - Output dạng UTF-16LE: `[Text.Encoding]::Unicode.GetString(bytes) -replace "`0",""`. Đọc khi tiến trình còn chạy phải mở chia sẻ:
   `[IO.File]::Open(f,'Open','Read','ReadWrite')`.
-- Lỗi plugin hiện dạng `[TKPCCC] Lỗi: ...` (mọi lệnh bọc `Chay(...)`). Tìm theo `Command: PCCC_X` chứ không theo `PCCC_X` trần
+- Lỗi plugin hiện dạng `[TKPCCC] Lỗi: ...` (mọi lệnh bọc `Chay(...)`). Tìm theo `Command: PCCC_<tên>` chứ không theo `PCCC_<tên>` trần
   (thông báo cũng có thể chứa tên lệnh).
 - PowerShell không phân biệt hoa thường: `$a` đè `$A` — đặt tên biến khác hẳn nhau.
 
