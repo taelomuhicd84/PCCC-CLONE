@@ -20,7 +20,20 @@ thiếu số liệu vẫn ra D / KD thay vì XM; trang xoay làm sập máy ki�
 `PCCC_KT` tính phủ xuyên tường; khoang dầm gom khoang nhỏ của mọi phòng; INSUNITS Unitless vẽ theo mét; web đổi dự án giữa chừng ghi đè dự án khác;
 `docSoVN("12,375")` = 12375; runner không kiểm Host / Origin; vitest quét cả `.claude/worktrees/`; ảnh block sai màu do vẽ theo layer `0`.
 
-**Bước tiếp theo (làm theo thứ tự, mỗi bước kiểm `get_usage`):**
+**TRẠNG THÁI 10:30 15/11 (thay cho danh sách bước cũ bên dưới; kế hoạch + bảng agent ↔ model: `KE_HOACH_TONG.md`):**
+- Fable 5.2 vòng 2 xong cho R1 (13 xác minh, 1 sai, đổi mức 6 lỗi) và R5 (lỗi "3 luật YAML đã gạch" hạ xuống VỪA); R2 chưa soát. Ba phiên Fable đốt hết cửa sổ 05:00–10:00
+  và đưa hạn mức Fable tuần 12 % → 42 %, tuần chung 66 % ⇒ KHÔNG chạy Fable soát tiếp; thợ sửa tự xác minh trước khi sửa.
+- Xong: `cad/module/lisp/TKPCCC.lsp` + `cad/cai_dat.bat` (liên kết bundle đã tạo, đúng đích; accoreconsole không tự nạp bundle; AutoCAD có giao diện chưa thử);
+  luật 85–95 % + ngữ cảnh 50 % trong `CLAUDE.md`; `agy` (gemini-4-carbon-medium) đã tra mạng: `ket_qua/review_1115/agy_cad_muot.md`, `agy_ui_palette.md`.
+- App không cho mở phiên mới khi người dùng dùng Remote Control ⇒ giao việc sửa cho 4 phiên review sẵn có (SendMessage), hàng việc `ket_qua/review_1115/VIEC.md`:
+  R5 (Opus high) việc PCCC 1–2 → `KQ_PCCC_may.md`; R1 (Opus high) việc PCCC 3 → `KQ_PCCC_tri_thuc.md`; R3b (Opus high) việc CAD 2, 4, 5 → `KQ_CAD_ui.md`;
+  R4 (Sonnet medium) việc WEB 1–2 → `KQ_WEB.md`. Thợ dừng khi cửa sổ 5 giờ ≥ 85 % hoặc tuần ≥ 85 %.
+- **Mỗi lần reset / mỗi lần thợ báo xong, đầu não làm:** (1) `get_usage`; tuần ≥ 85 % thì dừng hẳn, báo người dùng; (2) đọc `KQ_*.md`, kiểm `git log`, chạy lại test của mảng;
+  (3) thợ nào ghi DỞ thì nhắn "làm tiếp"; (4) R3b xong thì `set_session_model` Opus 5.5 + effort high cho R3a (`local_59a64d70-ef69-484d-b559-27f25553ffaf`) rồi giao việc CAD 1, 3, 6;
+  (5) R5 + R1 xong thì giao việc PCCC 4 (`thong_so_cong_trinh.json`: R1 viết lược đồ + SKILL, R5 thêm kiểm vào `bang_doi_chieu.py`) và việc 5 (`scripts/kiem_lien_ket.py`: R5);
+  (6) cập nhật file này + `LICH_SU.md`, commit; (7) CronCreate tới lần reset kế.
+
+**Bước cũ (đã thay bằng trạng thái ở trên):**
 1. Fable 5.2 vòng 2: nhắn (SendMessage tới id phiên) từng phiên R1, R5, R2, R3a, R4, R3b "soát lại file kết quả của mình: đọc lại mã xác minh từng lỗi
    NGHIÊM TRỌNG / CAO, đánh dấu ĐÃ XÁC MINH hoặc SAI, bổ sung chỗ sót". Mỗi đợt 2 phiên. Id: R1 `local_8e4a5e88-a66b-4541-b234-a3a22e67a9d3`,
    R2 `local_610e944b-1193-4ab6-a81e-fa8d44dc1588`, R3a `local_59a64d70-ef69-484d-b559-27f25553ffaf`, R3b `local_cca9d51c-fab8-4995-bc93-bb7e0e0e7727`,

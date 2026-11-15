@@ -197,3 +197,9 @@
   kết quả ở `ket_qua/review_1115/` (không commit). "anti" = Antigravity CLI `agy`, "carbon" = `gemini-4-carbon-medium` (`agy models`).
   Bài học: phiên nhánh thừa hưởng model app ghi cho phiên mẹ (Opus 5.5), không phải Fable 5.2 ⇒ vòng 1 chạy Opus 5.5; đã `set_session_model` Fable 5.2 cho lượt sau.
   Sáu phiên song song tốn ≈ 78 % cửa sổ 5 giờ (20 % → 98 %) ⇒ mỗi đợt chỉ 2–3 phiên. Dừng ở 98 %, hẹn CronCreate 05:04 chạy tiếp.
+- 05:00–10:00: Fable 5.2 soát vòng 2 cho R1, R5 (xong), R2 (chưa kịp): ba phiên Fable đốt hết cửa sổ 5 giờ, hạn mức Fable tuần 12 % → 42 %, tuần chung 51 % → 66 %.
+  Bài học: phiên Fable ngữ cảnh lớn rất tốn; chỉ dùng Fable soát điểm quyết định kết quả PCCC. Vòng 2 có ích: hạ mức 2 lỗi R5 (luật EI 30 "đã gạch": NGHIÊM TRỌNG → VỪA), gạch 1 kịch bản sai của R1.
+  Viết `cad/module/lisp/TKPCCC.lsp` (nạp DLL thay NETLOAD, thử accoreconsole đạt) + `cad/cai_dat.bat` (junction bundle vào ApplicationPlugins; sandbox Claude không đi qua / không xoá được junction,
+  kiểm bằng tab Terminal: đúng đích, accoreconsole không tự nạp bundle). `agy` gemini-4-carbon-medium tra mạng 2 báo cáo (CAD mượt, UX palette) vào `ket_qua/review_1115/`.
+- 10:00–10:40: viết `KE_HOACH_TONG.md` (kết quả review, góp ý phát triển, sơ đồ + bảng agent ↔ model ↔ effort, hàng việc). App không cho mở phiên mới khi người dùng dùng Remote Control
+  ⇒ giao việc sửa cho 4 phiên review sẵn có theo `ket_qua/review_1115/VIEC.md`: R5 + R1 + R3b (Opus 5.5 high), R4 (Sonnet 5.5 medium). Hẹn CronCreate 15:05.

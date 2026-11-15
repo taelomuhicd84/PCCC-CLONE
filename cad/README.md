@@ -89,7 +89,8 @@ AI chỉ viết một gói thao tác ngắn (spec JSON), plugin sinh hình. Mộ
 - Cả hai phải ra `TAT CA DAT`.
 
 ## Dùng
-1. Chạy `cad\build.bat`, rồi `cad\cai_dat.bat` MỘT lần (liên kết bundle để AutoCAD tự nạp mỗi lần mở; accoreconsole không tự nạp bundle nên bộ test không bị ảnh hưởng).
+1. Chạy `cad\build.bat`, rồi `cad\cai_dat.bat` MỘT lần (liên kết bundle để AutoCAD tự nạp mỗi lần mở; gỡ bằng `cad\cai_dat.bat /go` trong cmd / PowerShell thường: sandbox của Claude không đi qua và không xoá được liên kết này).
+   Đã kiểm 15/11 (ngoài sandbox, liên kết đúng đích): accoreconsole KHÔNG tự nạp bundle này, bộ test không bị ảnh hưởng. AutoCAD có giao diện tự nạp: chưa thử.
    Cách khác: `APPLOAD` file `module\lisp\TKPCCC.lsp`, hoặc `NETLOAD` file `TKPCCC.Cad.dll` (file này tự nạp luôn `TKPCCC.UI.dll`). Gõ `PCCC` để mở palette chính (`PCCC_BLOCK` mở thẳng phân hệ Thư viện, `PCCC_HELP` phân hệ Lệnh).
 2. Mở Claude Code ở gốc repo hoặc tại `cad/`: file `.mcp.json` khai máy chủ `cad`. AI khác thì khai lệnh chạy là đường dẫn tới `cad\bin\TKPCCC.Mcp.exe`.
 3. Gõ yêu cầu vẽ. Chạy tay một spec: trong AutoCAD gõ `PCCC_SPEC` rồi dán đường dẫn file `.json`; kết quả nằm ở `<tên>.kq.json`.
