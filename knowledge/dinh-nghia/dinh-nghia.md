@@ -45,3 +45,17 @@ Kích thước lỗ mở (chú thích): khi hành lang bên được ngăn cách
 - **Màn ngăn khói** (D.7): màn cuốn điều khiển tự động từ xa hoặc kết cấu cố định, không nguy hiểm hơn Ch1 trên nền không cháy, hạ xuống ≥ chiều dày lớp khói, dùng chia vùng khói.
 - **Đường thoát nạn không gồm** thang máy, thang cuốn và các đoạn nêu ở 3.3.3 → `skills/MOD_hanh_lang_bao_che.md`.
 - **Mật độ dòng người** = tổng số người phải thoát / diện tích đường thoát nạn (Phụ lục G, chú thích Bảng G.2a) → `skills/MOD_tinh_toan_khoang_cach.md`.
+## 1.4.9 Chiều cao phòng cháy chữa cháy (chiều cao PCCC) của nhà
+Nguồn nguyên văn: cột Quy định của bảng đối chiếu chính thức (`.claude/skills/tkpccc-bang-doi-chieu/data/A2.json`, dòng idx 3 "Chiều cao phục vụ PCCC",
+Khoản Điều "Đ 1.4.9 / QCVN 06:2022/BXD và Sửa đổi 1: 2023"; cùng câu ở các bảng A khác). Văn bản QCVN 06 Điều 1.4 gốc chưa nạp vào `knowledge/`.
+> Chiều cao PCCC của nhà (không tính tầng kỹ thuật trên cùng) được xác định như sau:
+> - Bằng khoảng cách lớn nhất tính từ mặt đường cho xe chữa cháy tiếp cận đến mép dưới của lỗ cửa (cửa sổ) mở trên tường ngoài của tầng trên cùng;
+> - Bằng một nửa tổng khoảng cách tính từ mặt đường cho xe chữa cháy tiếp cận đến mặt sàn và đến trần của tầng trên cùng – khi không có lỗ cửa (cửa sổ).
+> CHÚ THÍCH 1: Khi mái nhà được khai thác sử dụng thì chiều cao PCCC của nhà được xác định bằng khoảng cách lớn nhất từ mặt đường cho xe chữa cháy tiếp cận đến mép trên tường bao của mái.
+> CHÚ THÍCH 2: Khi xác định chiều cao PCCC thì mái nhà không được tính là có khai thác sử dụng nếu con người không có mặt thường xuyên trên mái.
+> CHÚ THÍCH 3: Khi có ban công (lô gia) hoặc kết cấu bao che (lan can) cửa sổ thì chiều cao PCCC được tính bằng khoảng cách lớn nhất từ mặt đường cho xe chữa cháy tiếp cận đến mép trên của kết cấu bao che (lan can).
+> CHÚ THÍCH 4: Trong trường hợp các mặt đường tiếp cận nhà có cao độ khác nhau thì nhà có thể có các chiều cao PCCC khác nhau tùy thuộc vào phương án thiết kế an toàn cháy cụ thể.
+
+Cách ghi: KHÔNG dừng ở cao độ sàn (người dùng sửa 2026-11-02: ghi chú đặt tại mép dưới cửa sổ) và KHÔNG tính từ ±0.000 (phải từ mặt đường); ghi phép cộng đủ ba phần: cao độ sàn tầng trên cùng
++ bậu cửa sổ (hoặc lan can) + chênh giữa ±0.000 và mặt đường xe chữa cháy. Chỉ có mặt bằng thì ước lượng theo `knowledge/khao-sat-bao-gia.md` mục "Ước lượng chiều cao", có nhãn "ước lượng".
+**Dùng ở:** mọi ngưỡng chiều cao (15, 21, 25, 28, 30, 50 m) của QCVN 06 và QCVN 10; ghi chú PDF đặt nét tại mép dưới cửa sổ (skill `tkpccc-ghi-chu-ban-ve`, quy tắc 1).

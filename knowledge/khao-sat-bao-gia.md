@@ -5,7 +5,7 @@ Không phải thẩm định. Từ bản vẽ (hoặc thông tin bằng chữ) l
 ## Các thông tin phải lấy (theo đúng thứ tự)
 1. **Hạng mục** (tên công trình/hạng mục khảo sát), **công năng** (F1.x–F5.x theo thuật ngữ trong `dinh-nghia`; nêu công năng thực tế bằng chữ kèm nhóm F nếu xác định được).
 2. **Diện tích** (tổng sàn; **bản vẽ cải tạo có 2 mặt bằng cùng tờ — trên "theo bản vẽ xin phép", dưới là cải tạo — thì xét theo mặt bằng CẢI TẠO phía dưới**, xem bài học `knowledge/hoc/du-an/so-bo-thiet-ke.md`; tum thang/mái che chỉ không tính tầng khi chưa xây kín và nằm trong mức cho phép; nêu cả diện tích từng tầng nếu bản vẽ có) và **số tầng** (nổi, hầm, tum/mái nếu có).
-3. **Chiều cao PCCC** (theo Điều 3 QCVN 06: từ mặt đường xe chữa cháy đến cao độ sàn tầng trên cùng có người, ghi phép cộng). Không có mặt đứng: ước lượng khoảng (xem mục "Ước lượng chiều cao").
+3. **Chiều cao PCCC** (QCVN 06 Đ 1.4.9: từ mặt đường xe chữa cháy tới mép dưới cửa sổ tầng trên cùng; có ban công/lan can thì tới mép trên lan can; không cửa sổ thì nửa tổng tới sàn và tới trần; ghi phép cộng; nguyên văn ở `knowledge/dinh-nghia/dinh-nghia.md` mục 1.4.9). Không có mặt đứng: ước lượng khoảng (xem mục "Ước lượng chiều cao").
 4. **Khối tích**: lấy trên bản vẽ nếu có; không có thì tự tính = diện tích x chiều cao, ghi rõ "tự tính" và phép tính (từng tầng nếu có diện tích và chiều cao từng tầng, không thì tổng diện tích x chiều cao công trình).
 5. **Có thuộc diện thẩm định thiết kế PCCC không**: đối chiếu Phụ lục III NĐ 105/2025 (đã sửa bởi NĐ 347/2026, file `nghi-dinh-tham-dinh-dieu-chinh.md`); nhà hỗn hợp, nhà có tầng chủ hộ ở, dự án nhiều hạng mục, cải tạo mở rộng: xét theo `cv-2360-cahn-1183-c07-dien-tham-dinh.md` (C07 thống nhất) theo loại công trình, chiều cao, diện tích, khối tích, số tầng. Trả CÓ / KHÔNG / CẦN XÁC NHẬN kèm căn cứ (mục, điểm của Phụ lục III). Thiếu số liệu quyết định thì CẦN XÁC NHẬN và nói thiếu gì.
 6. **Số lối thoát nạn** thấy trên bản vẽ (đếm buồng thang bộ thoát nạn và lối ra thẳng ngoài nhà; ghi từng lối ở tầng nào, loại nào) và **đánh giá đảm bảo yêu cầu không**:
@@ -25,7 +25,7 @@ Không phải thẩm định. Từ bản vẽ (hoặc thông tin bằng chữ) l
 ## Ước lượng chiều cao (loại 2 và 3)
 - Một tầng khoảng 3,5 m; cho KHOẢNG 3,3–3,8 m (không chốt một số).
 - Chiều cao công trình ≈ số tầng x 3,3 đến 3,8 m (chưa cộng tum, mái dốc).
-- Chiều cao PCCC ≈ (số tầng - 1) x 3,3 đến 3,8 m (tính tới sàn tầng trên cùng, không tính mái; tầng hầm không cộng). Tầng kỹ thuật hoặc trệt cao bất thường thì nói rõ và nới khoảng.
+- Chiều cao PCCC ≈ (số tầng - 1) x 3,3 đến 3,8 m (tới sàn tầng trên cùng) + bậu cửa sổ tầng trên cùng 0,9 đến 1,2 m + chênh nền nhà so với mặt đường xe chữa cháy (không biết thì 0,15 đến 0,45 m); tầng hầm không cộng; ghi rõ ba phần (định nghĩa: `knowledge/dinh-nghia/dinh-nghia.md` mục 1.4.9). Tầng kỹ thuật hoặc trệt cao bất thường thì nói rõ và nới khoảng.
 - Nếu khoảng này nằm hai bên một ngưỡng của quy chuẩn (vd. 15, 28 m) thì kết luận liên quan là CẦN XÁC NHẬN.
 
 ## Form tư vấn thiết kế PCCC (người dùng chốt 30/10/2026)

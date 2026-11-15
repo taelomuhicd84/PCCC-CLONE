@@ -49,7 +49,7 @@ Chỉ áp dụng bài có "Trạng thái: da_duyet". Ghi bởi agent pccc-hoc-du
 ### Công năng đọc từ nhãn phòng trên mặt bằng, không đọc tên bản vẽ; số tầng theo cốt sàn (2026-10-31, nguồn: Roy PPS, người dùng sửa)
 - Trạng thái: da_duyet
 - Căn cứ: người dùng dạy 2026-10-31; TCVN 13967:2024 Điều 9; QCVN 06:2022/BXD 3.5
-- Nội dung: Công năng lấy từ nhãn phòng ghi trên mặt bằng, không lấy từ khung tên hay tên file (lỗi: ghi "nhà ở" vì tên bản vẽ). Số tầng đếm theo cốt sàn và đánh số tầng; ít tờ bản vẽ thì suy ra và ghi "ước lượng", không suy từ nhãn WC. Lửng của nhà ở riêng lẻ kết hợp ≤ 65 % sàn tầng dưới thì không tính; các nhà khác tính 1 tầng (F1–F4 chỉ khu kỹ thuật ≤ 10 % và ≤ 300 m² mới không tính). Chiều cao PCCC tính từ mặt đường xe chữa cháy tiếp cận tới mép dưới cửa sổ tầng trên cùng (QCVN 06 mục 3.5).
+- Nội dung: Công năng lấy từ nhãn phòng ghi trên mặt bằng, không lấy từ khung tên hay tên file (lỗi: ghi "nhà ở" vì tên bản vẽ). Số tầng đếm theo cốt sàn và đánh số tầng; ít tờ bản vẽ thì suy ra và ghi "ước lượng", không suy từ nhãn WC. Lửng của nhà ở riêng lẻ kết hợp ≤ 65 % sàn tầng dưới thì không tính; các nhà khác tính 1 tầng (F1–F4 chỉ khu kỹ thuật ≤ 10 % và ≤ 300 m² mới không tính). Chiều cao PCCC tính từ mặt đường xe chữa cháy tiếp cận tới mép dưới cửa sổ tầng trên cùng (QCVN 06 Đ 1.4.9, `knowledge/dinh-nghia/dinh-nghia.md`).
 
 ### Thang rẻ quạt, bậc chéo: hai điều kiện của QCVN 06 3.4.4 và Hình A.12 (2026-10-31, nguồn: Roy PPS, người dùng sửa)
 - Trạng thái: da_duyet
