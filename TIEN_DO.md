@@ -21,6 +21,7 @@ thiếu số liệu vẫn ra D / KD thay vì XM; trang xoay làm sập máy ki�
 `docSoVN("12,375")` = 12375; runner không kiểm Host / Origin; vitest quét cả `.claude/worktrees/`; ảnh block sai màu do vẽ theo layer `0`.
 
 **TRẠNG THÁI 10:30 15/11 (thay cho danh sách bước cũ bên dưới; kế hoạch + bảng agent ↔ model: `KE_HOACH_TONG.md`):**
+- **10:20 15/11, đợt 1 (thợ báo, đầu não đã chạy lại test: npm Test Files 8 passed (8); Tests 64 passed (64); pytest 41 passed in 6.74s):** R1 xong việc PCCC 3 (cc2ba3b, 01c035d, 1af5fe9; chờ người dùng chốt: tum, bãi đỗ xe, tên khách, xem `KQ_PCCC_tri_thuc.md`); R5 xong việc PCCC 1–2 (508f0f5, 965910f); R4 xong WEB 1–2 (b777378, b64b45e, f638b82, cd3f95a: tách `frontend/` + `backend/`, agent web-frontend / web-backend; chưa thử trình duyệt thật, chưa chạy `chay.bat`); R3b đang làm CAD (việc 4, chờ build + test), chưa báo xong. Cửa sổ 5 giờ ≥ 87 % ⇒ dừng; CronCreate 15:05 làm tiếp 7 bước bên dưới.
 - Fable 5.2 vòng 2 xong cho R1 (13 xác minh, 1 sai, đổi mức 6 lỗi) và R5 (lỗi "3 luật YAML đã gạch" hạ xuống VỪA); R2 chưa soát. Ba phiên Fable đốt hết cửa sổ 05:00–10:00
   và đưa hạn mức Fable tuần 12 % → 42 %, tuần chung 66 % ⇒ KHÔNG chạy Fable soát tiếp; thợ sửa tự xác minh trước khi sửa.
 - Xong: `cad/module/lisp/TKPCCC.lsp` + `cad/cai_dat.bat` (liên kết bundle đã tạo, đúng đích; accoreconsole không tự nạp bundle; AutoCAD có giao diện chưa thử);
