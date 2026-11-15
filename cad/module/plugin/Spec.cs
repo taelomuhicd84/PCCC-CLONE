@@ -229,6 +229,7 @@ namespace TKPCCC
             if (g.KqNguon != null) kq["nguon"] = g.KqNguon;
             if (g.KqVung.Count > 0) kq["vung_tu_dong"] = g.KqVung;
             kq["ban_ve"] = Path.GetFileName(doc.Name);
+            kq["don_vi"] = TenDonVi(g.Db);
             return kq;
         }
 

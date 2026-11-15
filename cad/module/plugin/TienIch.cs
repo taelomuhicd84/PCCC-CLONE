@@ -42,6 +42,7 @@ namespace TKPCCC
             PromptSelectionOptions o = new PromptSelectionOptions();
             o.MessageForAdding = "\nChọn vùng kiểm (phòng PCCC_VUNG + thiết bị; Enter = cả bản vẽ): ";
             PromptSelectionResult r = ed.GetSelection(o, loc);
+            if (r.Status == PromptStatus.Cancel) return; // Esc = thoát, chỉ Enter mới kiểm cả bản vẽ
             if (r.Status != PromptStatus.OK) r = ed.SelectAll(loc);
             if (r.Status != PromptStatus.OK) return;
             int tongDiem = 0, tongMu = 0, soPhong = 0;
@@ -91,6 +92,8 @@ namespace TKPCCC
                     soPhong++;
                     double x0 = q.Min(p => p.X), x1 = q.Max(p => p.X), y0 = q.Min(p => p.Y), y1 = q.Max(p => p.Y);
                     int diem = 0, mu = 0;
+                // Chỉ thiết bị trong phòng (review 15/11): thiết bị phòng bên cạnh không phủ xuyên tường.
+                List<int> trong = Enumerable.Range(0, tb.Count).Where(k => TrongDaGiac(q, tb[k])).ToList();
                     for (int i = 0; x0 + (i + 0.5) * b < x1; i++)
                         for (int j = 0; y0 + (j + 0.5) * b < y1; j++)
                         {
@@ -98,7 +101,7 @@ namespace TKPCCC
                             if (!TrongDaGiac(q, p) || loaiTru.Any(t => TrongDaGiac(t, p))) continue;
                             diem++;
                             bool phu = false;
-                            for (int k = 0; k < tb.Count && !phu; k++) phu = p.GetDistanceTo(tb[k]) <= rr[k] + 1e-9;
+                            for (int k = 0; k < trong.Count && !phu; k++) phu = p.GetDistanceTo(tb[trong[k]]) <= rr[trong[k]] + 1e-9;
                             if (phu) continue;
                             mu++;
                             if (i % 2 == 0 && j % 2 == 0)
@@ -111,7 +114,7 @@ namespace TKPCCC
                         }
                     tongDiem += diem; tongMu += mu;
                     ed.WriteMessage("\n[TKPCCC] PCCC_KT phòng " + soPhong + ": m2=" + Math.Round(diem * b * b * m * m, 1).ToString(CultureInfo.InvariantCulture)
-                        + " thiết bị=" + tb.Count(p => TrongDaGiac(q, p)) + " mù=" + PhanTram(mu, diem) + "%");
+                        + " thiết bị=" + trong.Count + " mù=" + PhanTram(mu, diem) + "%");
                 }
                 tr.Commit();
             }
@@ -254,7 +257,7 @@ namespace TKPCCC
             PromptSelectionOptions o = new PromptSelectionOptions();
             o.MessageForAdding = "\n" + loiNhac + (caBanVe ? " (Enter = cả bản vẽ)" : "") + ": ";
             PromptSelectionResult r = ed.GetSelection(o, loc);
-            if (r.Status != PromptStatus.OK && caBanVe) r = ed.SelectAll(loc);
+            if (r.Status != PromptStatus.OK && r.Status != PromptStatus.Cancel && caBanVe) r = ed.SelectAll(loc); // Esc = thoát
             List<KeyValuePair<ObjectId, string>> kq = new List<KeyValuePair<ObjectId, string>>();
             if (r.Status != PromptStatus.OK) return kq;
             foreach (ObjectId id in r.Value.GetObjectIds())

@@ -225,14 +225,49 @@ namespace TKPCCC
         }
 
         /// Hệ số đổi đơn vị bản vẽ ra mét theo INSUNITS.
+        /// INSUNITS không phải đơn vị dài đã biết (Unitless...): đoán theo khổ bản vẽ (review 15/11: bản vẽ theo mét để Unitless từng bị coi là mm,
+        /// mỗi phòng 1 đầu báo mà báo "phủ kín"). Khổ (cạnh lớn của EXTMIN–EXTMAX) dưới 2 000 đơn vị thì là m, còn lại mm.
         static double HeSoMet(Database db)
         {
             switch (db.Insunits)
             {
                 case UnitsValue.Meters: return 1;
+                case UnitsValue.Decimeters: return 0.1;
                 case UnitsValue.Centimeters: return 0.01;
-                default: return 0.001; // shortcut: coi mọi đơn vị khác là mm (bản vẽ VN thường mm); thêm đơn vị khi gặp
+                case UnitsValue.Millimeters: return 0.001;
+                case UnitsValue.Inches: return 0.0254;
+                case UnitsValue.Feet: return 0.3048;
             }
+            Point3d a = db.Extmin, b = db.Extmax;
+            double kho = b.X >= a.X && b.Y >= a.Y ? Math.Max(b.X - a.X, b.Y - a.Y) : 0;
+            double k = kho > 0 && kho < 2000 ? 1 : 0.001;
+            if (canhBaoDonVi != db.UnmanagedObject)
+            {
+                canhBaoDonVi = db.UnmanagedObject;
+                try
+                {
+                    AcApp.DocumentManager.MdiActiveDocument.Editor.WriteMessage("\n[TKPCCC] Chú ý: INSUNITS = " + db.Insunits + ", coi bản vẽ theo "
+                        + (k == 1 ? "m" : "mm") + " (đoán theo khổ bản vẽ). Đặt INSUNITS 4 (mm) hoặc 6 (m) cho chắc.");
+                }
+                catch (System.Exception) { }
+            }
+            return k;
+        }
+        static IntPtr canhBaoDonVi;
+
+        /// Tên đơn vị bản vẽ cho kết quả spec ("don_vi"): đơn vị đoán thì thêm " (doan)".
+        static string TenDonVi(Database db)
+        {
+            switch (db.Insunits)
+            {
+                case UnitsValue.Meters: return "m";
+                case UnitsValue.Decimeters: return "dm";
+                case UnitsValue.Centimeters: return "cm";
+                case UnitsValue.Millimeters: return "mm";
+                case UnitsValue.Inches: return "in";
+                case UnitsValue.Feet: return "ft";
+            }
+            return (HeSoMet(db) == 1 ? "m" : "mm") + " (doan)";
         }
 
         static void InDanhSach(Editor ed, IEnumerable<VatTu> ds)

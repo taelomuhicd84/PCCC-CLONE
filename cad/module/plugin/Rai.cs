@@ -125,6 +125,34 @@ namespace TKPCCC
             return kq;
         }
 
+        /// Thêm thiết bị cho tới khi mọi điểm mẫu (đỉnh + lưới bước min(hx, hy) / 4) của từng khoang có thiết bị lệch ≤ hx theo X, ≤ hy theo Y.
+        /// Lần đầu thử tâm khoang, không phủ được điểm hở thì đặt ngay điểm hở. Trả số thiết bị thêm.
+        static int PhuBu(List<List<Point2d>> khoang, List<Point3d> diem, double hx, double hy)
+        {
+            int them = 0;
+            double e = 1e-6 * (hx + hy), b = Math.Min(hx, hy) / 4;
+            foreach (List<Point2d> q in khoang)
+            {
+                List<Point2d> mau = new List<Point2d>(q);
+                double x0 = q.Min(p => p.X), x1 = q.Max(p => p.X), y0 = q.Min(p => p.Y), y1 = q.Max(p => p.Y);
+                for (double y = y0 + b / 2; y < y1; y += b)
+                    for (double x = x0 + b / 2; x < x1; x += b)
+                        if (TrongDaGiac(q, new Point2d(x, y))) mau.Add(new Point2d(x, y));
+                for (int lan = 0; lan < 100; lan++)
+                {
+                    Point2d? ho = null;
+                    foreach (Point2d p in mau)
+                        if (!diem.Any(c => Math.Abs(c.X - p.X) <= hx + e && Math.Abs(c.Y - p.Y) <= hy + e)) { ho = p; break; }
+                    if (!ho.HasValue) break;
+                    Point2d t = DiemTrongMat(q);
+                    if (lan > 0 || Math.Abs(t.X - ho.Value.X) > hx || Math.Abs(t.Y - ho.Value.Y) > hy) t = ho.Value;
+                    diem.Add(new Point3d(t.X, t.Y, 0));
+                    them++;
+                }
+            }
+            return them;
+        }
+
         /// Khoảng cách từ p tới viền đa giác q.
         static double CachVien(List<Point2d> q, Point2d p)
         {
@@ -1171,21 +1199,34 @@ namespace TKPCCC
             // Khoang dầm (TCVN 7568-14:2025 5.9.1.1.6 c–f; bộ bản vẽ mẫu ghi "khoang < 9 m² => không bố trí theo khoang dầm"): khoang nhỏ hơn ngưỡng
             // gom chung, rải MỘT lưới như trần phẳng trên hộp bao các khoang nhỏ, giữ điểm nằm trong khoang nhỏ hoặc trên dầm sát khoang (≤ 0,6 m).
             List<List<Point2d>> nho = new List<List<Point2d>>();
-            List<Point2d> hopNho = null;
+            // Hộp bao của từng cụm khoang nhỏ -> các khoang của cụm (review 15/11: trước gom khoang nhỏ của MỌI phòng vào một hộp, khoang có thể không có đầu báo).
+            Dictionary<List<Point2d>, List<List<Point2d>>> nhoCuaHop = new Dictionary<List<Point2d>, List<List<Point2d>>>();
             List<List<Point2d>> vungRai = vung;
             if (khoangDam && !tia)
             {
-                double nguong = hTran > 0 && hTran < 2 ? double.MaxValue : hTran > 0 && hTran < 4 ? 4 : 9;
+                // Không nhập trần: ngưỡng 4 m² của trần 2–4 m (an toàn hơn 9 m²: khoang 4–9 m² vẫn có đầu báo riêng, 5.9.1.1.6 d).
+                double nguong = hTran > 0 && hTran < 2 ? double.MaxValue : hTran >= 4 ? 9 : 4;
                 nho = vung.Where(d => DienTichDaGiac(d) * m * m < nguong).ToList();
                 vungRai = vung.Where(d => !nho.Contains(d)).ToList();
-                if (nho.Count > 0)
+                // Cụm = khoang nhỏ kề nhau (hộp bao cách nhau ≤ 0,6 m, tức qua một dầm); mỗi cụm một lưới như trần phẳng.
+                double ke = 0.6 / m;
+                double[][] hb = nho.Select(d => new[] { d.Min(p => p.X), d.Min(p => p.Y), d.Max(p => p.X), d.Max(p => p.Y) }).ToArray();
+                int[] cha = Enumerable.Range(0, nho.Count).ToArray();
+                Func<int, int> goc = null;
+                goc = i => cha[i] == i ? i : (cha[i] = goc(cha[i]));
+                for (int i = 0; i < nho.Count; i++)
+                    for (int j = i + 1; j < nho.Count; j++)
+                        if (hb[i][0] <= hb[j][2] + ke && hb[j][0] <= hb[i][2] + ke && hb[i][1] <= hb[j][3] + ke && hb[j][1] <= hb[i][3] + ke) cha[goc(i)] = goc(j);
+                foreach (IGrouping<int, int> cum in Enumerable.Range(0, nho.Count).GroupBy(i => goc(i)))
                 {
-                    double x0 = nho.Min(d => d.Min(p => p.X)), x1 = nho.Max(d => d.Max(p => p.X)), y0 = nho.Min(d => d.Min(p => p.Y)), y1 = nho.Max(d => d.Max(p => p.Y));
-                    hopNho = new List<Point2d> { new Point2d(x0, y0), new Point2d(x1, y0), new Point2d(x1, y1), new Point2d(x0, y1) };
-                    vungRai.Add(hopNho);
+                    double x0 = cum.Min(i => hb[i][0]), y0 = cum.Min(i => hb[i][1]), x1 = cum.Max(i => hb[i][2]), y1 = cum.Max(i => hb[i][3]);
+                    List<Point2d> hop = new List<Point2d> { new Point2d(x0, y0), new Point2d(x1, y0), new Point2d(x1, y1), new Point2d(x0, y1) };
+                    nhoCuaHop[hop] = cum.Select(i => nho[i]).ToList();
+                    vungRai.Add(hop);
                 }
                 ed.WriteMessage("\n[TKPCCC] khoang_dam nguong=" + (nguong == double.MaxValue ? "phang" : nguong.ToString(CultureInfo.InvariantCulture))
-                    + " lon=" + (vung.Count - nho.Count) + " nho=" + nho.Count + (hTran <= 0 ? " (không nhập trần: lấy ngưỡng 9 m² của trần ≥ 4 m)" : ""));
+                    + " lon=" + (vung.Count - nho.Count) + " nho=" + nho.Count + " cum=" + nhoCuaHop.Count
+                    + (hTran <= 0 ? " (không nhập trần: lấy ngưỡng 4 m² của trần 2–4 m, an toàn)" : ""));
             }
 
             int tong = 0, soHo = 0;
@@ -1219,8 +1260,10 @@ namespace TKPCCC
                             + " tuong=" + Lt(tt).ToString(CultureInfo.InvariantCulture) + (xem ? "" : " kt=" + soKt) + duoi);
                         continue;
                     }
+                    List<List<Point2d>> nhoD;
+                    bool laHopNho = nhoCuaHop.TryGetValue(d, out nhoD);
                     if (veVung && !xem)
-                        foreach (List<Point2d> dv in d == hopNho ? nho : new List<List<Point2d>> { d })
+                        foreach (List<Point2d> dv in laHopNho ? nhoD : new List<List<Point2d>> { d })
                         {
                             Polyline pl = PlVung(dv, lop);
                             ms.AppendEntity(pl);
@@ -1229,10 +1272,14 @@ namespace TKPCCC
                                 + " (" + dv.Count + " đỉnh) trên layer " + LAYER_VUNG + ".");
                         }
                     LuoiRai r = LuoiVung(d, s, s, 0, 0, le, le, 0.05 / m, dt, 0, theoHang, tuongMax, cachMin);
-                    if (d == hopNho)
+                    if (laHopNho)
                     {
-                        int ngoai = r.Diem.RemoveAll(p => !nho.Any(q => TrongDaGiac(q, new Point2d(p.X, p.Y)) || CachVien(q, new Point2d(p.X, p.Y)) <= 0.6 / m));
-                        ed.WriteMessage("\n[TKPCCC] khoang_nho_chung n=" + r.Diem.Count + (ngoai > 0 ? " bo_ngoai=" + ngoai : ""));
+                        int ngoai = r.Diem.RemoveAll(p => !nhoD.Any(q => TrongDaGiac(q, new Point2d(p.X, p.Y)) || CachVien(q, new Point2d(p.X, p.Y)) <= 0.6 / m));
+                        // Lưới tính trên hộp bao, đã lọc: kiểm phủ lại trên chính các khoang, chỗ hở thì thêm đầu báo.
+                        double h0 = tuongMax > 0 ? Math.Min(s / 2, tuongMax) : s / 2;
+                        int bu = PhuBu(nhoD, r.Diem, h0, h0);
+                        r.Ho = 0;
+                        ed.WriteMessage("\n[TKPCCC] khoang_nho_chung n=" + r.Diem.Count + (ngoai > 0 ? " bo_ngoai=" + ngoai : "") + (bu > 0 ? " bu=" + bu : ""));
                     }
                     // shortcut: điểm trong vùng loại trừ chỉ bị bỏ, không dời ra mép lỗ; mép lỗ xa thiết bị thì PCCC_KT báo vùng mù, rải bù bằng PCCC_DAT.
                     int bo = r.Diem.RemoveAll(p => loaiTru.Any(q => TrongDaGiac(q, new Point2d(p.X, p.Y))));

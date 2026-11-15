@@ -235,6 +235,9 @@ $XIEN = @(@(1100, 36000), @(13900, 40300), @(52500, 25100), @(16000, 0), @(0, 20
 ('{"goc":[2500000,0],"ops":[{"op":"rai","ma":"BC_KHOI","vung":' + (ConvertTo-Json -Compress $XIEN) + ',"s":10500,"kt":true},' +
   '{"op":"rai","ma":"BC_KHOI","hop":[0,60000,30600,80400],"kt":true},{"op":"rai","ma":"BC_KHOI","hop":[0,90000,10000,100000],"h":16}]}') |
   Set-Content -Encoding ascii "$T\rai_xien.json"
+# Review 15/11: INSUNITS 1 (inch): buoc 10,2 m = 401,57 in (truoc coi la mm: 1 dau bao); INSUNITS 0 (Unitless) ban ve lon: doan mm, bao don_vi
+'{"goc":[5000000,0],"ops":[{"op":"rai","ma":"BC_KHOI","hop":[0,0,1204.72,803.14]}]}' | Set-Content -Encoding ascii "$T\rai_inch.json"
+'{"goc":[5100000,0],"ops":[{"op":"rai","ma":"BC_KHOI","hop":[0,0,30600,20400]}]}' | Set-Content -Encoding ascii "$T\rai_unitless.json"
 # vung_tu_dong (viec 2 test 13/11): mat bang 2 phong tuong 2 net 200 (layer trung tinh KT_A), cua 1000 co ma tuong giua 2 phong, cot goc phong 2 la polyline,
 # cot goc phong 1 CHI CO HATCH (ve bang -HATCH trong kb2), cot giua phong 1 (dao), chu + kich thuoc trong phong; truc TRUC_T (luoi_truc) va mot truc CENTER
 # tren layer trung tinh NEN_A cat ngang ca hai phong (chi nhan ra truc nho kieu net). Phong 1 = 5,8 x 4,8 - goc 0,2 x 0,2 = 27,8 m2; phong 2 cung 27,8 m2.
@@ -284,7 +287,7 @@ $bamTv = (Get-FileHash "$T\PCCC_Blocks.dwg").Hash
   'PCCC_SPEC', "$T\pdf2.json", 'PCCC_SPEC', "$T\xoa2.json", 'PCCC_SPEC', "$T\rai_loi.json", 'PCCC_SPEC', "$T\tuyen_thu.json", 'PCCC_SPEC', "$T\nhan.json",
   'PCCC_SPEC', "$T\rai_moi.json", 'PCCC_SPEC', "$T\pdf_mk.json", 'PCCC_SPEC', "$T\rv_tuyen.json", 'PCCC_SPEC', "$T\hoa.json", 'PCCC_SPEC', "$T\hoa_doc.json",
   'PCCC_SPEC', "$T\rv_hang.json", 'PCCC_SPEC', "$T\rv2.json", 'PCCC_SPEC', "$T\van.json", 'PCCC_SPEC', "$T\bang_mb.json", 'PCCC_SPEC', "$T\so_do.json", 'PCCC_SPEC', "$T\so_do_loi.json", 'PCCC_SPEC', "$T\so_do_bc.json", 'PCCC_SPEC', "$T\so_do_bc_loi.json", 'PCCC_SPEC', "$T\so_do_bc_ng.json",
-  'PCCC_SPEC', "$T\so_do_loc.json", 'PCCC_SPEC', "$T\so_do_bc2.json", 'INSUNITS', '6', 'PCCC_SPEC', "$T\so_do_m.json", 'INSUNITS', '4', 'PCCC_SPEC', "$T\rai_xien.json",
+  'PCCC_SPEC', "$T\so_do_loc.json", 'PCCC_SPEC', "$T\so_do_bc2.json", 'INSUNITS', '6', 'PCCC_SPEC', "$T\so_do_m.json", 'INSUNITS', '1', 'PCCC_SPEC', "$T\rai_inch.json", 'INSUNITS', '0', 'PCCC_SPEC', "$T\rai_unitless.json", 'INSUNITS', '4', 'PCCC_SPEC', "$T\rai_xien.json",
   'RECTANG', '3000000,0', '3030600,20400', 'PCCC_RAI', 'BC_KHOI', '', '', 'L', '', '', '',
   'RECTANG', '3200000,0', '3230600,20400', 'PCCC_RAI', 'BC_KHOI', 'HeSo', '50', '', '', 'L', '', '', '',
   'RECTANG', '3300000,0', '3330000,20000', 'PCCC_RAI', 'BC_BEAM', '', '', 'L', '', '', '',
@@ -309,6 +312,9 @@ $bamTv = (Get-FileHash "$T\PCCC_Blocks.dwg").Hash
   '_.ZOOM', 'W', '3199000,-1000', '3231000,21000', 'PCCC_KT', 'C', '3199000,-1000', '3231000,21000', '',
   '_.ZOOM', 'W', '3799000,-1000', '3821000,21000', '-LAYER', 'M', 'PCCC_VUNG', '', '_.RECTANG', '3800000,0', '3820000,20000', '-LAYER', 'S', '0', '',
   'PCCC_DAT', 'BC_KHOI', '3810000,10000', '', 'PCCC_KT', 'C', '3799000,-1000', '3821000,21000', '',
+  # Review 15/11: WC 2 x 2 m PCCC_VUNG khong dau bao, sat phong 10 x 10 m co dau bao cach WC 2-4 m: WC phai mu 100 % (truoc tinh phu xuyen tuong)
+  '_.ZOOM', 'W', '3829000,-1000', '3843000,11000', '-LAYER', 'M', 'PCCC_VUNG', '', '_.RECTANG', '3830000,0', '3840000,10000', '_.RECTANG', '3840000,4000', '3842000,6000', '-LAYER', 'S', '0', '',
+  'PCCC_DAT', 'BC_KHOI', '3838000,5000', '', 'PCCC_KT', 'C', '3829000,-1000', '3843000,11000', '',
   # Vung tron PCCC_VUNG (Bo tri nhanh "Tron"), tach vung TZ, dat ten MZ
   '_.ZOOM', 'W', '3989000,-11000', '4121000,11000', '-LAYER', 'M', 'PCCC_VUNG', '', '_.CIRCLE', '4000000,0', '10000',
   '_.RECTANG', '4100000,0', '4120000,10000', '-LAYER', 'S', '0', '',
@@ -346,6 +352,12 @@ $bamTv = (Get-FileHash "$T\PCCC_Blocks.dwg").Hash
   # E 10 x 10 m, khong net dam mau: TungDam chon line doc x = 5 m nhap 400x600 (sau, chia 2 khoang), line ngang nua trai 200x250 (nong, bo)
   '_.ZOOM', 'W', '4609000,-1000', '4621000,11000', '_.RECTANG', '4610000,0', '4620000,10000', '_.LINE', '4615000,0', '4615000,10000', '', '_.LINE', '4610000,5000', '4615000,5000', '',
   'PCCC_RAI', 'BC_KHOI', 'Dam', '8', '', 'C', '4609000,-1000', '4621000,11000', '', '', '', 'TungDam', '4615000,2000', '', '400x600', '4612000,5000', '', '200x250', '', '',
+  # Review 15/11: F, G 2,5 x 2,5 m (< 9 m2, tran 8 m) cach nhau 30 m: khoang nho gom THEO PHONG, moi phong 1 dau (truoc: 1 hop bao chung)
+  '_.ZOOM', 'W', '4629000,-1000', '4664000,4000', '_.RECTANG', '4630000,0', '4632500,2500', '_.RECTANG', '4660000,0', '4662500,2500',
+  'PCCC_RAI', 'BC_KHOI', 'Dam', '8', '', 'C', '4629000,-1000', '4664000,4000', '', '', '', '', '',
+  # H 3 x 2 m, Dam, Enter khong nhap tran: nguong 4 m2 (an toan) -> khoang 6 m2 la khoang lon, rai rieng (truoc: nguong 9)
+  '_.ZOOM', 'W', '4679000,-1000', '4684000,3000', '_.RECTANG', '4680000,0', '4683000,2000',
+  'PCCC_RAI', 'BC_KHOI', 'Dam', '', '', 'C', '4679000,-1000', '4684000,3000', '', '', '', '', '',
   '-LAYER', 'M', 'NEN_A', 'L', 'CENTER', '', 'M', 'KT_A', '', 'PCCC_SPEC', "$T\vung_ve.json",
   '-HATCH', 'P', 'SOLID', 'W', 'N', '2599800,4700', '2600300,4700', '2600300,5200', '2599800,5200', 'C', '', '', '-LAYER', 'S', '0', '',
   'PCCC_SPEC', "$T\vung_do.json", 'PCCC_SPEC', "$T\vung_ve2.json", 'OSMODE', '0', '_.ZOOM', 'W', '2699000,-1000', '2714000,6000', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '', '', '', 'C', '2699000,-1000', '2714000,6000', '', '', '2710500,1200', '',
@@ -633,6 +645,12 @@ Kiem ($out2 -match 'PCCC_DOIDN n=1 ONG_DN65') 'PCCC_DOIDN (DN): doan ong sang la
 Kiem ($out2 -match 'xem_truoc=12' -and $out2 -match 'xoa_xem_truoc=12') 'XemTruoc ve tam 6 diem + 6 vong R tren PCCC_XEM_TRUOC, luot rai that sau xoa het 12'
 Kiem ($out2 -match 'bo_loai_tru=1' -and $out2 -match 'PCCC_RAI BC_KHOI n=5 luoi=3x2') 'PCCC_LOAITRU: lo thang trum 1 diem luoi 3 x 2, con 5 dau bao'
 Kiem ($out2 -match 'PCCC_KT phong=1 mu=0% diem_mu=0') 'PCCC_KT: phong rai k = 50 % phu kin'
+Kiem ($out2 -match 'PCCC_KT ph\S+ng \d+: m2=4 [^\r\n]*=0 [^\r\n]*=100%') 'PCCC_KT: WC 2 x 2 m khong dau bao sat phong co dau bao: mu 100 % (khong tinh phu xuyen tuong)'
+Kiem ($out2 -match 'khoang_dam nguong=9 lon=0 nho=2[\s\S]{0,1500}khoang_nho_chung n=1\b[\s\S]{0,600}khoang_nho_chung n=1\b') 'Khoang dam nho 2 phong cach 30 m: gom theo tung phong, moi phong 1 dau'
+Kiem ($out2 -match 'khoang_dam nguong=4 lon=1 nho=0') 'Dam khong nhap tran: nguong 4 m2, khoang 6 m2 rai rieng'
+$kin = DocKq 'rai_inch'; $kun = DocKq 'rai_unitless'
+Kiem ($kin -and $kin.rai[0].n -eq 6 -and [math]::Abs($kin.rai[0].bx - 401.57) -lt 0.1 -and $kin.don_vi -eq 'in') "INSUNITS 1 (inch): rai 30,6 x 20,4 m ra 6 dau, buoc 401,57 in ($($kin | ConvertTo-Json -Compress -Depth 4))"
+Kiem ($kun -and $kun.rai[0].n -eq 6 -and $kun.don_vi -match '^mm') "INSUNITS 0: ban ve lon doan mm, bao don_vi ($($kun.don_vi))"
 Kiem ($out2 -match 'PCCC_KT phong=1 mu=59\.5% diem_mu=952') 'PCCC_KT: phong 20 x 20 m, 1 dau khoi o tam, R 7,2 m: mu 59,5 % (952 / 1600 diem mau 0,5 m)'
 Kiem ($out2 -match 'PCCC_TACHVUNG vung=2 m2=80\+120') 'PCCC_TACHVUNG (TZ): vung 20 x 10 m cat tai x = 8 m ra 80 + 120 m2'
 Kiem ($out2 -match 'PCCC_KHUVUC vung=\d+ dat_ten=2 ') 'PCCC_KHUVUC (MZ): dat ten 2 vung'
