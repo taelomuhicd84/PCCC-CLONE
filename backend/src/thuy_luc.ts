@@ -5,8 +5,8 @@
 import { spawn } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import { docSoVN } from "../../shared/src/bao_gia";
-import { nhanDienMang, ONG_THEP, type Doan, type MatBang, type SoLieuThuyLuc } from "../../shared/src/thuy_luc";
+import { docSoVN } from "../shared/src/bao_gia";
+import { nhanDienMang, ONG_THEP, type Doan, type MatBang, type SoLieuThuyLuc } from "../shared/src/thuy_luc";
 import { HUONG_DAN_PYTHON } from "./thamdinh";
 
 const NHOM = ["1", "2", "3", "4.1"]; // Bảng 1/3 đã có trong lõi; kho nhóm 5–7 (Bảng 2) chưa có

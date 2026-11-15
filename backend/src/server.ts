@@ -1,21 +1,21 @@
-// Runner nội bộ: nhận khối lượng từ plugin AutoCAD, quản lý đơn giá, xuất báo giá, hỏi Claude; phục vụ web/.
+// Runner nội bộ: nhận khối lượng từ plugin AutoCAD, quản lý đơn giá, xuất báo giá, hỏi Claude; phục vụ frontend/.
 // Chạy: npm start  (mặc định chỉ máy này; LAN: npm start -- --host 0.0.0.0)
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { lapBaoGia, type DanhMuc, type DonGia, type KhoiLuong } from "../../shared/src/bao_gia";
-import { chuanHoaKhaoSat, ghepGoiY, khoiLuongSoBo, tachJsonKhaoSat, HE_THONG, type KhaoSat } from "../../shared/src/khao_sat";
+import { lapBaoGia, type DanhMuc, type DonGia, type KhoiLuong } from "../shared/src/bao_gia";
+import { chuanHoaKhaoSat, ghepGoiY, khoiLuongSoBo, tachJsonKhaoSat, HE_THONG, type KhaoSat } from "../shared/src/khao_sat";
 import { docDonGia, taoMauDonGia, xuatBaoGia } from "./xuat_xlsx";
 import { xuatKhaoSat } from "./xuat_docx";
 import { hoiClaude } from "./engines/claude";
 import { cauHoiXet, chayThamDinh, docKetLuan, KHOA_CHU, KHOA_CO_KHONG, KHOA_SO, tachDeXuat } from "./thamdinh";
-import { soBoThuyLuc, tinhThuyLuc, toiUuThuyLuc, type SoLieuThuyLuc } from "../../shared/src/thuy_luc";
+import { soBoThuyLuc, tinhThuyLuc, toiUuThuyLuc, type SoLieuThuyLuc } from "../shared/src/thuy_luc";
 import { chuanHoaMatBang, chuanHoaSoLieu, xuatThuyLucExcel } from "./thuy_luc";
 import { marked } from "marked";
 import { thongKe } from "./thong_ke_du_an";
 
-const GOC = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", ".."); // runner/src -> gốc dự án
+const GOC = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", ".."); // backend/src -> gốc dự án
 const KET_QUA = path.join(GOC, "ket_qua"); // ket_qua/<dự án>/: khoi_luong.json, khoi_luong_so_bo.json, khao_sat.json
 const FILE_DON_GIA = path.join(GOC, "data", "don_gia.json");
 const THU_MUC_TAI_LIEU = ["knowledge", "skills"].map((d) => path.join(GOC, d));
@@ -111,7 +111,7 @@ async function xuLy(req: IncomingMessage, res: ServerResponse) {
 
   if (r === "GET /" || r === "GET /index.html") {
     res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
-    return res.end(readFileSync(path.join(GOC, "web", "index.html")));
+    return res.end(readFileSync(path.join(GOC, "frontend", "index.html")));
   }
   if (r === "GET /api/vat-tu") return json(res, danhMuc());
   if (r === "GET /api/du-an") return json(res, existsSync(KET_QUA) ? readdirSync(KET_QUA).filter(coDuLieu) : []);

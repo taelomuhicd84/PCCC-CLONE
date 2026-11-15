@@ -1,4 +1,4 @@
-// Dữ liệu mẫu dùng chung cho test của shared/ và runner/.
+// Dữ liệu mẫu dùng chung cho test của backend/shared/ và backend/.
 import type { DanhMuc, KhoiLuong } from "../src/bao_gia";
 
 export const dm: DanhMuc = {

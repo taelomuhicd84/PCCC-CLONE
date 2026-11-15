@@ -4,7 +4,7 @@ import { spawnSync } from "node:child_process";
 import { mkdtempSync, readFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { soBoThuyLuc, type SoLieuThuyLuc } from "../../shared/src/thuy_luc";
+import { soBoThuyLuc, type SoLieuThuyLuc } from "../shared/src/thuy_luc";
 import { chuanHoaMatBang, soLieuExcel, xuatThuyLucExcel } from "../src/thuy_luc";
 
 const GOC = path.resolve(__dirname, "..", "..");

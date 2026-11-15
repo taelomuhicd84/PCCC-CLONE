@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import ExcelJS from "exceljs";
-import { lapBaoGia } from "../../shared/src/bao_gia";
-import { khaoSatTrong } from "../../shared/src/khao_sat";
-import { dm, kl } from "../../shared/test/mau";
+import { lapBaoGia } from "../shared/src/bao_gia";
+import { khaoSatTrong } from "../shared/src/khao_sat";
+import { dm, kl } from "../shared/test/mau";
 import { docDonGia, taoMauDonGia, xuatBaoGia } from "../src/xuat_xlsx";
 import { xuatKhaoSat } from "../src/xuat_docx";
 import { tenThuMuc } from "../src/server";
