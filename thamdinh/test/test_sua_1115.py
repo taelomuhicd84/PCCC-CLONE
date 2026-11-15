@@ -164,6 +164,21 @@ def test_nhom_f_suy_doan_khong_dung_ket_luan(tmp_path, capsys):
                                                  (960, 735, "CÔNG TRÌNH: KARAOKE XYZ"),
                                                  (905, 345, "D1 900x2200"), (905, 357, "LỐI THOÁT NẠN")], *dat)
     assert "function_group" not in tom_tat["thong_tin"]
-    assert any("F4.3" in a for a in tom_tat["thong_tin"]["assumptions"])
+    assert not any("F4.3" in a for a in tom_tat["thong_tin"].get("assumptions", []))   # tên đơn vị thiết kế không là nguồn
     assert "D" not in tt(rows, "EXIT-DOOR-WIDTH")
     assert tt(rows, "BUILDING-INFO") == ["XM"]
+
+
+@pytest.mark.parametrize("dong, goi_y", [
+    ("CÔNG NĂNG: CĂN HỘ DỊCH VỤ", None),            # lưu trú F1.2 hay ở F1.3 tuỳ vận hành: không đoán
+    ("CÔNG NĂNG: NHÀ Ở KẾT HỢP KINH DOANH", None),   # hỗn hợp: không đoán
+    ("CÔNG NĂNG: KHÁCH SẠN", "F1.2"),
+])
+def test_goi_y_nhom_f_chi_tu_dong_cong_nang(tmp_path, capsys, dong, goi_y):
+    dat = ["fire_resistance_level=II", "structural_hazard_class=S0", "floors_above=5", "basements=0", "height_pccc_m=10"]
+    tom_tat, rows = chay(tmp_path, capsys, "gy", [(960, 720, "TRỤ SỞ CÔNG TY TNHH THIẾT KẾ XYZ"), (960, 735, dong)], *dat)
+    tt_ = tom_tat["thong_tin"]
+    assert "function_group" not in tt_ and tt(rows, "BUILDING-INFO") == ["XM"]
+    goi = [a for a in tt_.get("assumptions", []) if a.startswith("function_group")]
+    assert len(goi) == 1 and "F4.3" not in goi[0]
+    assert (f"gợi ý {goi_y}" in goi[0]) if goi_y else ("không suy được" in goi[0])

@@ -73,36 +73,45 @@ def apply_door_schedule(d: DrawingExtraction) -> int:
 
 
 # --------------------------------------------------------------- nhóm F theo công năng
-# Phụ lục A QCVN 06:2022 (tham khảo nhanh, chỉ dùng khi bản vẽ KHÔNG ghi nhóm F).
+# Phụ lục A QCVN 06:2022 (tham khảo nhanh). CHỈ để gợi ý trong `assumptions`, không gán function_group: kết luận cần
+# nhóm F do người / bảng quy mô xác nhận. Chỉ đọc dòng có nhãn "CÔNG NĂNG:" / "CHỨC NĂNG:" (khung tên, tên công ty, tên
+# file không phải nguồn công năng: "VĂN PHÒNG KIẾN TRÚC…", "TRỤ SỞ CÔNG TY…").
 USE_TO_GROUP: list[tuple[re.Pattern, str, str]] = [
     (re.compile(r"KHÁCH\s*SẠN|NHÀ\s*NGHỈ|NHÀ\s*KHÁCH|KÝ\s*TÚC\s*XÁ", re.I), "F1.2", "khách sạn/nhà nghỉ/ký túc xá"),
-    (re.compile(r"CHUNG\s*CƯ|NHÀ\s*Ở\s*TẬP\s*THỂ|CĂN\s*HỘ", re.I), "F1.3", "chung cư"),
+    (re.compile(r"CHUNG\s*CƯ|NHÀ\s*Ở\s*TẬP\s*THỂ|CĂN\s*HỘ(?!\s*DỊCH\s*VỤ)", re.I), "F1.3", "chung cư"),
     (re.compile(r"NHÀ\s*Ở\s*RIÊNG\s*LẺ|NHÀ\s*PHỐ|BIỆT\s*THỰ", re.I), "F1.4", "nhà ở riêng lẻ"),
     (re.compile(r"MẦM\s*NON|NHÀ\s*TRẺ|BỆNH\s*VIỆN|VIỆN\s*DƯỠNG\s*LÃO", re.I), "F1.1", "nhà trẻ/bệnh viện/dưỡng lão"),
-    (re.compile(r"VĂN\s*PHÒNG|TRỤ\s*SỞ", re.I), "F4.3", "văn phòng/trụ sở"),
+    (re.compile(r"VĂN\s*PHÒNG", re.I), "F4.3", "văn phòng"),
     (re.compile(r"TRƯỜNG\s*(HỌC|TIỂU|THCS|THPT|PHỔ)", re.I), "F4.1", "trường học"),
     (re.compile(r"SIÊU\s*THỊ|TRUNG\s*TÂM\s*THƯƠNG\s*MẠI|CỬA\s*HÀNG", re.I), "F3.1", "thương mại"),
     (re.compile(r"NHÀ\s*HÀNG|QUÁN\s*ĂN", re.I), "F3.2", "nhà hàng"),
     (re.compile(r"NHÀ\s*XƯỞNG|XƯỞNG\s*SẢN\s*XUẤT", re.I), "F5.1", "nhà xưởng"),
     (re.compile(r"NHÀ\s*KHO|KHO\s*HÀNG", re.I), "F5.2", "kho"),
 ]
+CONG_NANG = re.compile(r"^\W*(?:CÔNG|CHỨC)\s*NĂNG(?:\s*SỬ\s*DỤNG)?\s*[:\-]\s*(.{3,80})$", re.I)
+# Tên gọi không tự xác định nhóm (vd căn hộ dịch vụ: lưu trú F1.2 hay ở F1.3 tuỳ vận hành) -> không gợi ý nhóm
+MO_HO = re.compile(r"CĂN\s*HỘ\s*DỊCH\s*VỤ|TRỤ\s*SỞ|HỖN\s*HỢP|KẾT\s*HỢP|ĐA\s*NĂNG", re.I)
 
 
 def infer_function_group(d: DrawingExtraction, texts: list[str]) -> None:
     if d.building.function_group:
         return
-    blob = " ".join(texts)
-    m = re.search(r"CÔNG\s*TRÌNH\s*[:\-]?\s*([^|\n]{3,60})", blob, re.I)
-    candidates = [m.group(1)] if m else []
-    candidates.append(blob)
-    # Chỉ GỢI Ý, không gán: chữ "VĂN PHÒNG…" trong tên đơn vị thiết kế cũng khớp -> luật phụ thuộc nhóm F phải ra XM
-    for text in candidates:
-        for pat, group, name in USE_TO_GROUP:
-            if pat.search(text):
-                d.building.assumptions.append(
-                    f"function_group: bản vẽ không ghi nhóm F; chữ trên bản vẽ gợi ý {group} ('{name}') — chưa dùng để "
-                    f"kết luận, xác nhận bằng --set function_group={group}")
-                return
+    for t in texts:
+        m = CONG_NANG.match(t or "")
+        if not m:
+            continue
+        ten = m.group(1).strip()
+        nhom = sorted({g for pat, g, _ in USE_TO_GROUP if pat.search(ten)})
+        if MO_HO.search(ten) or len(nhom) != 1:
+            d.building.assumptions.append(
+                f"function_group: bản vẽ ghi công năng '{ten}' nhưng không ghi nhóm F, máy không suy được một nhóm chắc chắn"
+                + (f" (khớp {', '.join(nhom)})" if nhom else "") + " — nhập --set function_group=…")
+            return
+        name = next(n for pat, g, n in USE_TO_GROUP if g == nhom[0])
+        d.building.assumptions.append(
+            f"function_group: bản vẽ không ghi nhóm F; công năng '{ten}' gợi ý {nhom[0]} ('{name}') — chưa dùng để "
+            f"kết luận, xác nhận bằng --set function_group={nhom[0]}")
+        return
 
 
 def postprocess(d: DrawingExtraction, page_texts: dict[int, list[str]]) -> None:
