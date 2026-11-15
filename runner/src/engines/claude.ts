@@ -35,7 +35,11 @@ export function hoiClaude(cauHoi: string, thuMuc: string, timeoutMs = 5 * 60_000
   return new Promise((resolve, reject) => {
     const p = spawn(l.shell ? quote(l.cmd) : l.cmd, l.shell ? args.map(quote) : args, { cwd: thuMuc, shell: l.shell, windowsHide: true, env });
     let out = "", err = "";
-    const t = setTimeout(() => { p.kill(); reject(new Error("Claude quá thời gian")); }, timeoutMs);
+    const t = setTimeout(() => {
+      // claude.cmd chạy qua cmd.exe: kill() chỉ giết cmd, nên Windows giết cả cây tiến trình
+      if (process.platform === "win32" && p.pid) spawn("taskkill", ["/pid", String(p.pid), "/T", "/F"], { windowsHide: true }); else p.kill();
+      reject(new Error("Claude quá thời gian"));
+    }, timeoutMs);
     p.stdout.on("data", (d) => (out += d));
     p.stderr.on("data", (d) => (err += d));
     p.stdin.on("error", () => {}); // claude thoát sớm (lỗi đăng nhập...) thì ghi stdin báo EPIPE: bỏ qua, lỗi thật đọc ở "close"

@@ -17,7 +17,7 @@ export type BaoGia = {
 
 /**
  * Đọc số kiểu Việt Nam lẫn quốc tế: "1.200" = 1200, "3,5" = 3.5, "1.200,5" = 1200.5, "350.000đ" = 350000, "3.5" = 3.5.
- * Một dấu chấm/phẩy theo sau đúng 3 chữ số được coi là phân cách hàng nghìn. Không có số thì null.
+ * Một dấu chấm theo sau đúng 3 chữ số là phân cách hàng nghìn; một dấu phẩy luôn là thập phân. Không có số thì null.
  */
 export function docSoVN(x: unknown): number | null {
   if (typeof x === "number") return Number.isFinite(x) ? x : null;
@@ -30,7 +30,8 @@ export function docSoVN(x: unknown): number | null {
     t = t.replace(thapPhan === "." ? /,/g : /\./g, "").replace(",", ".");
   } else if (cham + phay) {
     const d = cham ? "." : ",";
-    const nghin = cham + phay > 1 || (new RegExp(`\\${d}\\d{3}$`).test(t) && !/^-?0[.,]/.test(t));
+    // Phẩy đơn luôn là thập phân (quy ước VN: "12,375" = 12.375); chỉ chấm đơn + đúng 3 chữ số mới là nghìn.
+    const nghin = cham + phay > 1 || (cham === 1 && /\.\d{3}$/.test(t) && !/^-?0\./.test(t));
     t = nghin ? t.split(d).join("") : t.replace(d, ".");
   }
   const n = Number(t);

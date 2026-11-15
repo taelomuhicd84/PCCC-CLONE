@@ -1,7 +1,7 @@
 // Runner nội bộ: nhận khối lượng từ plugin AutoCAD, quản lý đơn giá, xuất báo giá, hỏi Claude; phục vụ web/.
 // Chạy: npm start  (mặc định chỉ máy này; LAN: npm start -- --host 0.0.0.0)
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
-import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { lapBaoGia, type DanhMuc, type DonGia, type KhoiLuong } from "../../shared/src/bao_gia";
@@ -11,7 +11,7 @@ import { xuatKhaoSat } from "./xuat_docx";
 import { hoiClaude } from "./engines/claude";
 import { cauHoiXet, chayThamDinh, docKetLuan, KHOA_CHU, KHOA_CO_KHONG, KHOA_SO, tachDeXuat } from "./thamdinh";
 import { soBoThuyLuc, tinhThuyLuc, toiUuThuyLuc, type SoLieuThuyLuc } from "../../shared/src/thuy_luc";
-import { chuanHoaMatBang, xuatThuyLucExcel } from "./thuy_luc";
+import { chuanHoaMatBang, chuanHoaSoLieu, xuatThuyLucExcel } from "./thuy_luc";
 import { marked } from "marked";
 import { thongKe } from "./thong_ke_du_an";
 
@@ -29,6 +29,14 @@ const danhMuc = (): DanhMuc => JSON.parse(readFileSync(path.join(GOC, "data", "v
 const donGia = (): DonGia => (existsSync(FILE_DON_GIA) ? JSON.parse(readFileSync(FILE_DON_GIA, "utf8")) : {});
 
 class LoiNguoiDung extends Error {}
+
+/** Chặn CSRF và DNS rebinding: Origin (nếu có) phải trùng Host; khi chỉ nghe máy này thì Host phải là localhost/127.0.0.1/[::1]. Plugin AutoCAD không gửi Origin. */
+export function nguonHopLe(host: string | undefined, origin: string | undefined, chiMayNay: boolean): boolean {
+  if (chiMayNay && !/^(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/i.test(host ?? "")) return false;
+  if (origin === undefined) return true;
+  return !!host && origin.toLowerCase() === "http://" + host.toLowerCase();
+}
+const CHI_MAY_NAY = /^(127\.0\.0\.1|localhost|::1)$/.test(HOST);
 
 /** Tên dự án thành tên thư mục an toàn: chặn ../, ký tự cấm, tên thiết bị (CON, NUL…) và dấu chấm/cách cuối mà Windows tự cắt. */
 export function tenThuMuc(ten: unknown): string {
@@ -96,6 +104,7 @@ const tai = (res: ServerResponse, buf: Buffer, ten: string) => {
 };
 
 async function xuLy(req: IncomingMessage, res: ServerResponse) {
+  if (!nguonHopLe(req.headers.host, req.headers.origin, CHI_MAY_NAY)) throw new LoiNguoiDung("Từ chối: Host/Origin không hợp lệ");
   const url = new URL(req.url ?? "/", "http://x");
   const q = url.searchParams;
   const r = `${req.method} ${url.pathname}`;
@@ -149,7 +158,9 @@ async function xuLy(req: IncomingMessage, res: ServerResponse) {
   if (r === "POST /api/khoi-luong") {
     const kl = JSON.parse((await docBody(req)).toString("utf8")) as KhoiLuong;
     if (!Array.isArray(kl.dong)) throw new LoiNguoiDung("Thiếu danh sách dong");
-    kl.dong = kl.dong.map((d) => ({ ma: String(d.ma), sl: Number(d.sl) || 0 }));
+    const sach = (ds: { ma: unknown; sl: unknown }[]) => ds.map((d) => ({ ma: String(d.ma), sl: Number(d.sl) || 0 }));
+    kl.dong = sach(kl.dong);
+    if (Array.isArray(kl.khu_vuc)) kl.khu_vuc = kl.khu_vuc.map((k) => ({ ten: String(k.ten), dong: sach(Array.isArray(k.dong) ? k.dong : []) }));
     const f = fileKL(kl.du_an);
     mkdirSync(path.dirname(f), { recursive: true });
     writeFileSync(f, JSON.stringify({ ...kl, luc: kl.luc ?? new Date().toISOString() }, null, 1), "utf8");
@@ -158,8 +169,9 @@ async function xuLy(req: IncomingMessage, res: ServerResponse) {
   if (r === "GET /api/khoi-luong") return json(res, docKL(q.get("du_an"), q.get("nguon")));
   if (r === "GET /api/don-gia/mau") return tai(res, await taoMauDonGia(danhMuc(), donGia()), "don_gia.xlsx");
   if (r === "POST /api/don-gia") {
-    const moi = await docDonGia(await docBody(req));
-    writeFileSync(FILE_DON_GIA, JSON.stringify({ ...donGia(), ...moi }, null, 1), "utf8");
+    const moi = await docDonGia(await docBody(req)).catch((e) => { throw new LoiNguoiDung("Không đọc được file Excel đơn giá: " + (e instanceof Error ? e.message : String(e))); });
+    writeFileSync(FILE_DON_GIA + ".tmp", JSON.stringify({ ...donGia(), ...moi }, null, 1), "utf8"); // ghi tạm rồi đổi tên: tắt giữa chừng không làm hỏng file cũ
+    renameSync(FILE_DON_GIA + ".tmp", FILE_DON_GIA);
     return json(res, { ok: true, so_ma: Object.keys(moi).length });
   }
   if (r === "GET /api/bao-gia") return json(res, lapBaoGia(docKL(q.get("du_an"), q.get("nguon")), danhMuc(), donGia()));
@@ -222,7 +234,8 @@ async function xuLy(req: IncomingMessage, res: ServerResponse) {
     return json(res, { gia_dinh: sb.gia_dinh, loi_bo_tri: sb.loi_bo_tri, ket_qua: sb.ket_qua, so_lieu: sb.so_lieu, phuong_an });
   }
   if (r === "POST /api/thuy-luc/tinh") {
-    const sl = JSON.parse((await docBody(req, 200_000)).toString("utf8")) as SoLieuThuyLuc;
+    const tho = JSON.parse((await docBody(req, 200_000)).toString("utf8")) as SoLieuThuyLuc;
+    const sl = soLieuHopLe(() => chuanHoaSoLieu(tho));
     if (!Array.isArray(sl?.nhanh_trai) || !sl.nhanh_trai.length || !Array.isArray(sl.ong_chinh)) throw new LoiNguoiDung("Số liệu cần nhanh_trai (ít nhất 1 đoạn) và ong_chinh (mảng, có thể rỗng)");
     const ket_qua = soLieuHopLe(() => tinhThuyLuc(sl));
     ghiJson(path.join(dirTL(q.get("du_an")), "so_lieu.json"), sl);

@@ -57,3 +57,15 @@ describe("tenThuMuc", () => {
     expect(() => tenThuMuc("...")).toThrow();
   });
 });
+
+describe("nguonHopLe (CSRF / DNS rebinding)", () => {
+  it("máy này: Host localhost ok, Origin trùng ok, Origin lạ chặn, Host lạ chặn, không Origin (plugin CAD) ok", async () => {
+    const { nguonHopLe } = await import("../src/server");
+    expect(nguonHopLe("127.0.0.1:8787", undefined, true)).toBe(true);
+    expect(nguonHopLe("localhost:8787", "http://localhost:8787", true)).toBe(true);
+    expect(nguonHopLe("127.0.0.1:8787", "http://evil.example", true)).toBe(false);
+    expect(nguonHopLe("evil.example:8787", undefined, true)).toBe(false); // DNS rebinding
+    expect(nguonHopLe("192.168.1.5:8787", "http://192.168.1.5:8787", false)).toBe(true); // --host 0.0.0.0
+    expect(nguonHopLe("192.168.1.5:8787", "http://evil.example", false)).toBe(false);
+  });
+});

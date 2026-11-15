@@ -371,7 +371,9 @@ const bao = (el, viec) => async () => { try { await viec(); } catch (e) { el.tex
 $("luuKS").onclick = () => cho($("luuKS"), bao($("ksKq"), async () => { await luuKS(); $("ksKq").textContent = "Đã lưu."; $("ksKq").className = "ok"; }));
 $("goiY").onclick = () => cho($("goiY"), bao($("ksKq"), async () => {
   $("ksKq").textContent = "Claude đang đọc quy chuẩn (có thể vài phút)…"; $("ksKq").className = "mute";
+  const da = duAn(); // việc dài: nếu đổi dự án trong lúc chờ thì bỏ kết quả, không ghi đè khảo sát dự án khác
   const j = await api("/api/khao-sat/goi-y", { method: "POST", body: JSON.stringify(ksTuForm()) });
+  if (duAn() !== da) { $("ksKq").textContent = `Gợi ý cho "${da}" đã xong nhưng bạn đã đổi dự án nên chưa lưu: chọn lại "${da}" rồi bấm Claude gợi ý.`; $("ksKq").className = "warn"; return; }
   ksVaoForm(j.khao_sat); $("ksTraLoi").textContent = j.tra_loi;
   await luuKS();
   $("ksKq").textContent = "Đã điền gợi ý và lưu — kiểm tra lại từng mục."; $("ksKq").className = "ok";
@@ -472,7 +474,7 @@ $("excelTL").onclick = () => cho($("excelTL"), bao($("tlKq2"), async () => {
   if (!duAn()) throw new Error("Chọn hoặc tạo dự án trước");
   await tinhTL(); // Excel lấy đúng số liệu đang hiện trong ô
   $("tlKq2").textContent = "Đang xuất Excel (mở Excel ẩn để hoàn thiện, có thể vài chục giây)…"; $("tlKq2").className = "mute";
-  const r = await fetch("/api/thuy-luc.xlsx" + qDuAn());
+  const r = await fetch("/api/thuy-luc.xlsx" + qDuAn()); // đồng bộ ngay sau tinhTL: cùng dự án
   if (!r.ok) throw new Error((await r.json()).loi || r.statusText);
   $("tlGhiChu").textContent = JSON.parse(decodeURIComponent(r.headers.get("x-ghi-chu") || "%5B%5D")).join("\n");
   const a = document.createElement("a");
@@ -513,8 +515,11 @@ function dongTD(r) {
 }
 async function xetTD(id, nut) {
   nut.textContent = "Claude đang xét (vài phút)…";
-  try { td.claude_xet = { ...td.claude_xet, [id]: await api("/api/tham-dinh/xet" + qDuAn(), { method: "POST", body: JSON.stringify({ id }) }) }; }
-  finally { hienTD(td); }
+  const da = duAn(), cu = td; // mã dòng PC-xxx đánh lại theo từng dự án: chỉ gắn kết quả vào đúng dự án đã bấm
+  try {
+    const x = await api("/api/tham-dinh/xet?du_an=" + encodeURIComponent(da), { method: "POST", body: JSON.stringify({ id }) });
+    if (duAn() === da && td === cu) td.claude_xet = { ...td.claude_xet, [id]: x };
+  } finally { if (duAn() === da && td === cu) hienTD(td); }
 }
 async function taiDA() {
   const k = await api("/api/du-an/thong-ke"), t = k.tong, chip = (a, n) => `<span class="chip">${esc(a)}<em>${n}</em></span>`;
@@ -541,8 +546,10 @@ $("chayTD").onclick = () => cho($("chayTD"), bao($("tdKq"), async () => {
   for (const el of $("formTD").elements) if (el.name && el.value.trim()) p.set(el.name, el.value.trim());
   if (f) p.set("ten", f.name);
   $("tdKq").textContent = f ? "Đang tải lên và đọc bản vẽ…" : "Đang chạy lại…"; $("tdKq").className = "mute";
-  hienTD(await api("/api/tham-dinh?" + p, { method: "POST", body: f ?? "" }));
-  $("fileTD").value = ""; $("tdKq").textContent = "Xong."; $("tdKq").className = "ok";
+  const da = duAn(), kq = await api("/api/tham-dinh?" + p, { method: "POST", body: f ?? "" });
+  $("fileTD").value = "";
+  if (duAn() !== da) { $("tdKq").textContent = `Thẩm định "${da}" đã xong; mở lại dự án đó để xem.`; $("tdKq").className = "warn"; return; }
+  hienTD(kq); $("tdKq").textContent = "Xong."; $("tdKq").className = "ok";
   await taiDuAn(duAn());
 }));
 

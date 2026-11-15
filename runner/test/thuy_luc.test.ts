@@ -58,3 +58,14 @@ describe("thủy lực trên web", () => {
     expect(ws.getCell("D183").formula).not.toMatch(/H21/);
   }, 60_000);
 });
+
+describe("chuanHoaSoLieu", () => {
+  it("chuỗi số kiểu VN thành số; khóa chữ giữ; chuỗi không phải số báo đúng khóa", async () => {
+    const { chuanHoaSoLieu } = await import("../src/thuy_luc");
+    const r = chuanHoaSoLieu({ nhom: "3", q1: "1,5", nhanh_trai: [{ dn: "32", l: "3,5", nut: "1-2" }] }) as Record<string, any>;
+    expect(r.nhom).toBe("3");
+    expect(r.q1).toBe(1.5);
+    expect(r.nhanh_trai[0]).toEqual({ dn: 32, l: 3.5, nut: "1-2" });
+    expect(() => chuanHoaSoLieu({ nhanh_trai: [{ dn: 32, l: "abc" }] })).toThrow(/nhanh_trai\[0\]\.l/);
+  });
+});

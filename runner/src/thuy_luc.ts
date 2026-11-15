@@ -29,6 +29,15 @@ export function chuanHoaMatBang(x: Record<string, unknown>): MatBang {
   };
 }
 
+const CHU = new Set(["nhom", "mang", "nut", "doi_xung"]); // khóa chữ giữ nguyên, còn lại là số
+/** Số liệu JSON người nhập ("l": "3,5") -> số thật; chuỗi không đọc được thì báo đúng khóa thay vì để lõi tính ra NaN. */
+export function chuanHoaSoLieu<T>(x: T, duong = ""): T {
+  if (Array.isArray(x)) return x.map((v, i) => chuanHoaSoLieu(v, `${duong}[${i}]`)) as T;
+  if (x && typeof x === "object") return Object.fromEntries(Object.entries(x).map(([k, v]) => [k, CHU.has(k) ? v : chuanHoaSoLieu(v, duong ? `${duong}.${k}` : k)])) as T;
+  if (typeof x === "string") { const n = docSoVN(x); if (n === null) throw new Error(`Khóa "${duong}": "${x}" không phải số`); return n as T; }
+  return x;
+}
+
 // Excel mẫu có đúng 4 dòng vòng nối cứng: 3 dòng chia đôi lưu lượng rồi 1 dòng cả lưu lượng (F-J). Dòng thiếu ghi L = 0.
 // Thừa đoạn thì quy về chiều dài tương đương cùng DN (cùng Q nên ΔP = Q²·L/(100·KT) không đổi: L' = L·KT(DN')/KT(DN)).
 function vongMau(vong: Doan[], ghiChu: string[]) {
