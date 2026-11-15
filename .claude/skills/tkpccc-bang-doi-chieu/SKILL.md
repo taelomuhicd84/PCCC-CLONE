@@ -82,13 +82,17 @@ Không mở cả file JSON bảng gốc (tới 160 KB): đọc bằng `khung`, `
 {"loai": "khao_sat|tham_dinh", "ban_ve": "ban_ve.pdf", "zoom": 1.6,
  "cong_trinh": {"ten": "", "cong_nang": "", "nhom_f": "", "so_tang_noi": null, "so_tang_ham": null, "chieu_cao_pccc_m": null,
                 "dien_tich_san_m2": null, "khoi_tich_m3": null, "bac_chiu_lua": "", "cap_s": "", "he_thong": {},
-                "nguon": {"chieu_cao_pccc_m": "trang 5 mặt cắt A-A"}, "thieu": ["mặt đứng", "cao độ đường"]},
+                "nguon": {"chieu_cao_pccc_m": {"trang": 5, "trich": "+17.200 (mặt cắt A-A) + bậu 1,0 + 0,2", "loai": "do_hinh",
+                                               "do_tin_cay": "vua", "xac_nhan": "chua"}},
+                "thieu": ["mặt đứng", "cao độ đường"], "xung_dot": []},
  "bang": [{"ma": "KS", "ten": "…", "phan": "khao_sat|xay_dung|he_thong", "dong": [
    {"idx": 13, "tt": "11", "noi_dung": "…", "quy_dinh": "…", "khoan_dieu": "…", "tra_o": "…", "nhom": false, "xet": true,
     "thiet_ke": "Rẽ quạt, chưa đóng kín (trang 3)", "ket_luan": "CHUA_DAT", "ly_do": "nhà cao 18,4 m > 15 m (3.4.4)",
     "phuong_an": ["PA1 (nét tím) …: KHÔNG KHẢ THI (…)", "PA2 …: cần người dùng xem xét"], "khung": [11], "nguon": "trang 3"}]}],
  "ghi_chu": [ … mục của skill tkpccc-ghi-chu-ban-ve … ]}
 ```
+- `cong_trinh` theo lược đồ `data/thong_so_cong_trinh.schema.json`: trường bắt buộc (`bat_buoc`) có giá trị hoặc ghi tên trường vào `thieu`; trường có giá trị phải có `nguon` {trang, trich nguyên văn, loai, do_tin_cay, xac_nhan} (nguồn chuỗi cũ chỉ cảnh báo); còn `xung_dot` thì lỗi. `kiem` báo lỗi theo luật này; file phần của agent đề xuất qua `de_xuat_thong_so`, `gop` kiểm trước khi ghi.
+- `job` chỉ trích nguyên văn từ file của ĐÚNG văn bản ghi ở cột Khoản Điều (`VAN_BAN` trong script); cột Tra ở trỏ file văn bản khác thì bỏ; văn bản chưa có file nguyên văn (QCVN 01, 13, TCVN 6396…) thì ghi "Không tìm thấy nguyên văn: <số> (<văn bản>)", không trích điều cùng số của văn bản khác.
 - `ket_luan`: `DAT` · `CHUA_DAT` · `CAN_XAC_NHAN` · `KHONG_AP_DUNG` (rỗng = chưa xét). Khác ĐẠT phải có `ly_do` có số; CHƯA ĐẠT phải có `phuong_an`;
   CHƯA ĐẠT, CẦN XÁC NHẬN phải có `khung` và mục `ghi_chu` cùng số (lệnh `kiem` kiểm cả hai chiều).
 - NGẮN GỌN (người dùng dặn 2026-11-06): bảng đối chiếu chỉ đối chiếu những mục CẦN, mỗi ô Kết luận một câu ngắn đủ hiểu, kiểu "không đảm bảo

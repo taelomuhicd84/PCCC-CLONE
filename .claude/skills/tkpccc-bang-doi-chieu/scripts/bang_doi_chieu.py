@@ -181,10 +181,80 @@ def _ds(k) -> list:
     return list(k) if isinstance(k, list) else ([] if k is None else [k])
 
 
+LUOC_DO = DATA / "thong_so_cong_trinh.schema.json"
+
+
+def _trong(v) -> bool:
+    return v in (None, "", [], {})
+
+
+def _loi_nguon(n) -> str | None:
+    """Nguồn một thông số: {trang, trich, loai, do_tin_cay, xac_nhan}. Trả lỗi (chuỗi) hoặc None."""
+    ld = doc_json(LUOC_DO)["nguon"]
+    if not isinstance(n, dict):
+        return "thiếu nguồn {trang, trich, loai, do_tin_cay, xac_nhan}" if _trong(n) else None   # chuỗi cũ: kiem cảnh báo
+    if not str(n.get("trich") or "").strip():
+        return "nguồn thiếu 'trich' (chữ nguyên văn hoặc phép tính)"
+    if n.get("loai") not in ld["loai"]:
+        return f"nguồn 'loai' phải là một trong {ld['loai']}"
+    if not isinstance(n.get("trang"), int) and n.get("loai") != "nguoi_dung":
+        return "nguồn thiếu 'trang' (số trang PDF)"
+    for k in ("do_tin_cay", "xac_nhan"):
+        if n.get(k) not in ld[k]:
+            return f"nguồn '{k}' phải là một trong {ld[k]}"
+    return None
+
+
+def _de_xuat(p: dict, ten: str, sai: list) -> list:
+    """`de_xuat_thong_so` của file phần (cũ: `cong_trinh` + `cong_trinh.nguon`) -> [{truong, gia_tri, nguon}] đã kiểm."""
+    truong = doc_json(LUOC_DO)["truong"]
+    ds = list(p.get("de_xuat_thong_so") or [])
+    cu = dict(p.get("cong_trinh") or {})
+    nguon_cu = cu.pop("nguon", {}) or {}
+    ds += [{"truong": k, "gia_tri": v, "nguon": nguon_cu.get(k)} for k, v in cu.items() if k not in ("thieu", "he_thong")]
+    for x in ds:
+        k = x.get("truong")
+        if k not in truong:
+            sai.append(f"{ten}: trường '{k}' không có trong lược đồ ({', '.join(truong)})")
+        elif _trong(x.get("gia_tri")):
+            sai.append(f"{ten}: '{k}' không có giá trị (thiếu thì không đề xuất)")
+        elif (e := _loi_nguon(x.get("nguon")) or (None if isinstance(x.get("nguon"), dict) else "nguồn phải là đối tượng")):
+            sai.append(f"{ten}: '{k}' = {x.get('gia_tri')!r}: {e}")
+    return ds
+
+
+def kiem_cong_trinh(ct: dict) -> tuple[list, list]:
+    """-> (lỗi, cảnh báo) của khối cong_trinh theo lược đồ: trường bắt buộc có giá trị hoặc nằm trong `thieu`;
+    trường có giá trị phải có nguồn; còn xung đột -> lỗi."""
+    ld = doc_json(LUOC_DO)
+    loi, cb = [], []
+    nguon, thieu = ct.get("nguon") or {}, set(ct.get("thieu") or [])
+    for k in ld["bat_buoc"]:
+        if _trong(ct.get(k)) and k not in thieu:
+            loi.append(f"cong_trinh.{k}: thiếu giá trị (bản vẽ không có thì ghi '{k}' vào cong_trinh.thieu)")
+    for k in ld["truong"]:
+        if _trong(ct.get(k)):
+            continue
+        e = _loi_nguon(nguon.get(k))
+        if e:
+            loi.append(f"cong_trinh.{k} = {ct.get(k)!r}: {e}")
+        elif not isinstance(nguon.get(k), dict):
+            cb.append(f"cong_trinh.{k}: nguồn dạng chuỗi {nguon.get(k)!r}, nên ghi {{trang, trich, loai, do_tin_cay, xac_nhan}}")
+    for x in ct.get("xung_dot") or []:
+        loi.append(f"cong_trinh.{x.get('truong')}: xung đột {x.get('gia_tri')} (nguồn {x.get('nguon')}) — chốt một giá trị rồi xoá mục xung_dot")
+    return loi, cb
+
+
 def gop(ra: Path, phan: list[Path], giu_so: bool) -> dict:
     """Gộp file phần (agent điền) vào doi_chieu.json theo idx; số khung đánh lại nối tiếp (trừ --giu-so)."""
     dc = doc_json(ra)
     bang = {b["ma"]: b for b in dc["bang"]}
+    de_xuat, sai = {}, []                       # kiểm thông số công trình của MỌI file phần trước khi ghi gì
+    for f in phan:
+        de_xuat[f] = _de_xuat(doc_json(f), f.name, sai)
+    if sai:
+        raise SystemExit("Thông số công trình trong file phần không hợp lệ (lược đồ data/thong_so_cong_trinh.schema.json):\n"
+                         + "\n".join(sai))
     so = [k for b in dc["bang"] for r in b["dong"] for k in r["khung"]] + [k for g in dc["ghi_chu"] for k in _ds(g.get("khung"))]
     tiep = max([k for k in so if isinstance(k, int)] + [0]) + 1
     dem = 0
@@ -207,9 +277,15 @@ def gop(ra: Path, phan: list[Path], giu_so: bool) -> dict:
         for g in p.get("ghi_chu", []):
             k = g.get("khung")
             dc["ghi_chu"].append({**g, "khung": [doi.get(x, x) for x in k] if isinstance(k, list) else doi.get(k, k)})
-        for k, v in p.get("cong_trinh", {}).items():          # agent bổ sung thông tin công trình còn trống
-            if dc["cong_trinh"].get(k) in (None, "", [], {}):
-                dc["cong_trinh"][k] = v
+        ct = dc["cong_trinh"]
+        for x in de_xuat[f]:                     # agent đề xuất thông số: điền trường trống, khác giá trị đã có -> xung đột
+            k, v = x["truong"], x["gia_tri"]
+            if _trong(ct.get(k)):
+                ct[k] = v
+                ct.setdefault("nguon", {})[k] = x["nguon"]
+            elif ct.get(k) != v:
+                ct.setdefault("xung_dot", []).append({"truong": k, "gia_tri": [ct.get(k), v], "nguon": [ct.get("nguon", {}).get(k), x["nguon"]],
+                                                      "file": f.name})
     ghi_json(ra, dc)
     return {"ok": True, "dong_da_gop": dem, "ghi_chu": len(dc["ghi_chu"])}
 
@@ -366,7 +442,8 @@ def job(f: Path, ma: str, tu: int, den: int, ra: Path, phan: Path) -> dict:
 
 
 def kiem(dc: dict) -> dict:
-    loi, canh_bao, dem = [], [], {}
+    loi, canh_bao = kiem_cong_trinh(dc.get("cong_trinh") or {})
+    dem = {}
     khung_ve = {k for g in dc.get("ghi_chu", []) for k in _ds(g.get("khung"))}
     khung_dong = set()
     for b in dc["bang"]:

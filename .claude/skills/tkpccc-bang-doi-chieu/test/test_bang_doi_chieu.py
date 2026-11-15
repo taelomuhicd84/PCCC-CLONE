@@ -11,6 +11,8 @@ bdc = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(bdc)
 
 
+NGUON = {"trang": 2, "trich": "NHÓM NHÀ: F1.2", "loai": "ban_ve_chu", "do_tin_cay": "cao", "xac_nhan": "claude"}
+
 def test_chon_bang():
     r = bdc.chon("Căn hộ dịch vụ, khách sạn (F1.2)", 18.4, {})
     assert r["xay_dung"]["ma"] == "KT7.1" and r["cong_nang"]["ma"] == "A5"
@@ -39,7 +41,7 @@ def test_lamviec_gop_kiem_xuat(tmp_path):
     assert (tmp_path / "quy_tac_agent.md").read_text(encoding="utf-8").count("\n## ") >= 6
 
     phan = tmp_path / "phan_kt.json"
-    phan.write_text(json.dumps({"ma": "KT7.1", "cong_trinh": {"nhom_f": "F1.2"},
+    phan.write_text(json.dumps({"ma": "KT7.1", "de_xuat_thong_so": [{"truong": "nhom_f", "gia_tri": "F1.2", "nguon": NGUON}],
                                 "dong": [{"idx": idx, "thiet_ke": "Thang rẽ quạt", "ket_luan": "CHUA_DAT", "ly_do": "cao 18,4 m > 15 m",
                                           "phuong_an": ["PA1: sửa vế thẳng"], "khung": [7]}],
                                 "ghi_chu": [{"khung": 7, "trang": 1, "kieu": "khung", "hop": [0, 0, 10, 10]}]}, ensure_ascii=False),
@@ -63,6 +65,8 @@ def test_lamviec_gop_kiem_xuat(tmp_path):
     ks[3]["ket_luan"] = "SAI"
     assert any("không hợp lệ" in x for x in bdc.kiem(dc)["loi"])
     ks[3]["ket_luan"] = ""
+    assert any("cong_trinh.cong_nang: thiếu giá trị" in x for x in bdc.kiem(dc)["loi"])
+    dc["cong_trinh"]["thieu"] = ["cong_nang", "so_tang_noi", "chieu_cao_pccc_m"]   # bản vẽ không có: ghi vào thieu
     k = bdc.kiem(dc)
     assert k["ok"] and any("chưa có khung" in x for x in k["canh_bao"])
     assert k["dem"]["KS"]["xac_dinh"] == 1 and not any("khung 3" in x for x in k["canh_bao"])
@@ -191,3 +195,38 @@ def test_chon_thieu_chieu_cao_khong_lay_bang_thap():
     assert bdc.chon("nhà trẻ", None, {})["xay_dung"]["ma"] == "KT8"                     # bảng không chia mốc
     assert bdc._cao("18,4") == 18.4 and bdc._cao("15-21") == (15.0, 21.0) and bdc._cao("15,5 – 21") == (15.5, 21.0)
     assert bdc.chon("khách sạn", 28, {})["xay_dung"]["ma"] == "KT7.1"                   # "đến 28m" gồm 28
+
+
+def test_gop_kiem_thong_so_cong_trinh(tmp_path):
+    f = tmp_path / "dc.json"
+    bdc.lamviec(["KS"], f, "khao_sat")
+    p = tmp_path / "p.json"
+    p.write_text(json.dumps({"ma": "KS", "de_xuat_thong_so": [{"truong": "chieu_cao_pccc_m", "gia_tri": 18.4,
+                                                               "nguon": {"trang": 5, "trich": ""}}]}), encoding="utf-8")
+    with pytest.raises(SystemExit, match="trich"):          # thiếu chữ nguyên văn -> không gộp, file không đổi
+        bdc.gop(f, [p], True)
+    p.write_text(json.dumps({"ma": "KS", "cong_trinh": {"so_tang_noi": 6}}), encoding="utf-8")
+    with pytest.raises(SystemExit, match="so_tang_noi"):    # kiểu cũ ghi thẳng cong_trinh không kèm nguồn
+        bdc.gop(f, [p], True)
+    assert json.loads(f.read_text(encoding="utf-8"))["cong_trinh"]["so_tang_noi"] is None
+
+    tot = [{"truong": "chieu_cao_pccc_m", "gia_tri": 18.4, "nguon": dict(NGUON, trang=5, trich="+17.200 + 1,0 + 0,2", loai="do_hinh")},
+           {"truong": "nhom_f", "gia_tri": "F1.2", "nguon": NGUON}, {"truong": "cong_nang", "gia_tri": "khách sạn", "nguon": NGUON},
+           {"truong": "so_tang_noi", "gia_tri": 6, "nguon": dict(NGUON, loai="nguoi_dung", trang=None, xac_nhan="nguoi_dung", trich="người dùng: 6 tầng")}]
+    p.write_text(json.dumps({"ma": "KS", "de_xuat_thong_so": tot}, ensure_ascii=False), encoding="utf-8")
+    bdc.gop(f, [p], True)
+    dc = json.loads(f.read_text(encoding="utf-8"))
+    assert dc["cong_trinh"]["chieu_cao_pccc_m"] == 18.4 and dc["cong_trinh"]["nguon"]["chieu_cao_pccc_m"]["trang"] == 5
+    assert not bdc.kiem_cong_trinh(dc["cong_trinh"])[0]
+
+    p.write_text(json.dumps({"ma": "KS", "de_xuat_thong_so": [dict(tot[0], gia_tri=21.0)]}), encoding="utf-8")
+    bdc.gop(f, [p], True)                                    # giá trị khác giá trị đã có -> xung đột, không ghi đè
+    dc = json.loads(f.read_text(encoding="utf-8"))
+    assert dc["cong_trinh"]["chieu_cao_pccc_m"] == 18.4
+    assert any("xung đột" in x for x in bdc.kiem(dc)["loi"])
+    dc["cong_trinh"].pop("xung_dot")
+    dc["cong_trinh"]["nguon"]["nhom_f"] = "trang 2"          # nguồn dạng chuỗi cũ: cảnh báo, không lỗi
+    l, cb = bdc.kiem_cong_trinh(dc["cong_trinh"])
+    assert not l and any("nguồn dạng chuỗi" in x for x in cb)
+    dc["cong_trinh"]["nguon"].pop("cong_nang")
+    assert any("cong_trinh.cong_nang" in x for x in bdc.kiem_cong_trinh(dc["cong_trinh"])[0])

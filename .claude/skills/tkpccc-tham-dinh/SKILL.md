@@ -63,7 +63,8 @@ G=.claude/skills/tkpccc-ghi-chu-ban-ve/scripts/ghi_chu_pdf.py
 ## File phần (agent ghi, lệnh `gop` đọc)
 ```json
 {"ma": "KT7.1",
- "cong_trinh": {"bac_chiu_lua": "II"},
+ "de_xuat_thong_so": [{"truong": "bac_chiu_lua", "gia_tri": "II", "nguon": {"trang": 2, "trich": "BẬC CHỊU LỬA: II",
+                       "loai": "ban_ve_chu", "do_tin_cay": "cao", "xac_nhan": "claude"}}],
  "dong": [{"idx": 85, "thiet_ke": "Cửa buồng thang D1 0,9 m, không ký hiệu chống cháy (trang 3)", "ket_luan": "CHUA_DAT",
            "ly_do": "cửa buồng thang phải là cửa ngăn cháy (…)", "phuong_an": ["PA1: thay FD EI 60 tự đóng, chèn kín khe"],
            "khung": [1], "nguon": "trang 3"}],
@@ -71,7 +72,7 @@ G=.claude/skills/tkpccc-ghi-chu-ban-ve/scripts/ghi_chu_pdf.py
              {"khung": 1, "trang": 3, "kieu": "cua", "tam": [800, 990], "den": [830, 990], "loai": "EI 60", "mau": "tim",
               "phuong_an": "PA1", "noi_dung": "Thay cửa ngăn cháy tự đóng"}]}
 ```
-- Chỉ ghi dòng đã xét (theo `idx` của job). `cong_trinh` chỉ ghi trường mới tìm được. Tọa độ px theo zoom của ảnh `luoi` (1.6).
+- Chỉ ghi dòng đã xét (theo `idx` của job). Thông số công trình: KHÔNG ghi `cong_trinh`; chỉ đề xuất trường mới tìm được hoặc thấy lệch qua `de_xuat_thong_so` kèm nguồn (lược đồ `tkpccc-bang-doi-chieu/data/thong_so_cong_trinh.schema.json`; `gop` từ chối đề xuất thiếu trang/trích, lệch giá trị thì ghi xung đột). Tọa độ px theo zoom của ảnh `luoi` (1.6).
 - Số khung đánh từ 1 trong mỗi file phần; `gop` đánh lại nối tiếp toàn hồ sơ.
 
 ## Đo cỡ job (hồ sơ Q.4 F1.2 4 tầng, đầu vào loại 1, agent sonnet, 02–03/11/2026)

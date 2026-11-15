@@ -1,0 +1,25 @@
+{
+ "mo_ta": "Lược đồ tối thiểu thông số công trình dùng chung (khối cong_trinh của doi_chieu.json). Nguồn: R1_dau_vao_pdf.md mục 4 (review 15/11). gop / kiem của bang_doi_chieu.py đọc file này.",
+ "bat_buoc": ["cong_nang", "nhom_f", "so_tang_noi", "chieu_cao_pccc_m"],
+ "truong": {
+  "ten": {"don_vi": "", "mo_ta": "tên công trình (không ghi tên khách)"},
+  "cong_nang": {"don_vi": "", "mo_ta": "công năng thực tế từng tầng bằng chữ; khung tên, tên file KHÔNG là nguồn công năng"},
+  "nhom_f": {"don_vi": "", "mo_ta": "nhóm nguy hiểm cháy theo công năng QCVN 06 (F1.1…F5.3); hỗn hợp ghi từng nhóm"},
+  "so_tang_noi": {"don_vi": "tầng", "mo_ta": "đếm theo cốt sàn trên mặt cắt / mặt bằng; tum theo quy tắc 30 %"},
+  "so_tang_ham": {"don_vi": "tầng", "mo_ta": ""},
+  "chieu_cao_pccc_m": {"don_vi": "m", "mo_ta": "QCVN 06 Đ 1.4.9 (knowledge/dinh-nghia/dinh-nghia.md): mép dưới cửa sổ tầng trên cùng, từ mặt đường xe chữa cháy; ghi phép cộng trong trich"},
+  "dien_tich_san_m2": {"don_vi": "m2", "mo_ta": "tầng điển hình hoặc lớn nhất; theo tầng ghi trong trich"},
+  "khoi_tich_m3": {"don_vi": "m3", "mo_ta": "lấy trên bản vẽ hoặc tự tính (loai uoc_luong, ghi phép tính)"},
+  "bac_chiu_lua": {"don_vi": "", "mo_ta": "ghi trên bản vẽ hoặc tra Bảng H.2 (loai tra_bang), không tự đặt"},
+  "cap_s": {"don_vi": "", "mo_ta": "cấp nguy hiểm cháy kết cấu S0…S3"}
+ },
+ "nguon": {
+  "mau": {"trang": 5, "trich": "+17.200 (mặt cắt A-A) + bậu 1,0 − đường −0,2", "loai": "do_hinh", "do_tin_cay": "vua", "xac_nhan": "chua"},
+  "trang": "số trang PDF; bỏ trống chỉ khi loai = nguoi_dung",
+  "trich": "chữ nguyên văn đọc trên bản vẽ (hoặc phép tính), không để trống",
+  "loai": ["nguoi_dung", "ban_ve_chu", "do_hinh", "tra_bang", "uoc_luong"],
+  "do_tin_cay": ["cao", "vua", "thap", "uoc_luong"],
+  "xac_nhan": ["nguoi_dung", "claude", "chua"]
+ },
+ "file_phan": "agent KHÔNG ghi thẳng cong_trinh: ghi \"de_xuat_thong_so\": [{\"truong\": \"bac_chiu_lua\", \"gia_tri\": \"II\", \"nguon\": {\"trang\": 2, \"trich\": \"BẬC CHỊU LỬA: II\", \"loai\": \"ban_ve_chu\", \"do_tin_cay\": \"cao\", \"xac_nhan\": \"claude\"}}]; gop điền trường còn trống, giá trị khác giá trị đã có thì ghi vào cong_trinh.xung_dot (kiem báo lỗi)"
+}
