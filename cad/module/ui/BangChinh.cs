@@ -238,7 +238,7 @@ namespace TKPCCC
 
         void LocThe()
         {
-            string k = tim.Text.Trim().ToLowerInvariant();
+            string k = Lenh.BoDau(tim.Text.Trim());
             int n = 0;
             dsThe.SuspendLayout();
             foreach (TheCongCu t in the)
@@ -352,7 +352,7 @@ namespace TKPCCC
             MoTa = moTa;
             // Huy hiệu kèm phím tắt người dùng (ý lấy từ addin mẫu 14/11: tìm được theo phím tắt). shortcut: sửa phím tắt thì mở lại palette thẻ mới đổi.
             string[] phim = nhan.Select(l => { string pt; return PhimTat.TheoLenh.TryGetValue(l, out pt) ? pt : ""; }).ToArray();
-            ChuTim = (ten + " " + moTa + " " + string.Join(" ", nhan) + " " + string.Join(" ", phim)).ToLowerInvariant();
+            ChuTim = Lenh.BoDau(ten + " " + moTa + " " + string.Join(" ", nhan) + " " + string.Join(" ", phim));
             Height = 64;
             Margin = new Padding(0, 0, 0, 6);
             DoubleBuffered = true;

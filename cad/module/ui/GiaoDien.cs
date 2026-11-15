@@ -60,6 +60,7 @@ namespace TKPCCC
                 Do = H(0xF87171); XanhLa = H(0x34D399); Cam = H(0xFBBF24);
             }
             ChuDe = ten;
+            Lenh.NenSang = ten != "toi"; // ảnh block (Block.cs) vẽ màu hợp nền ô; đổi kiểu thì ảnh tự vẽ lại lần nạp sau
         }
 
         // Thứ tự = vai trò: màu cũ ở vị trí i đổi thành màu mới ở vị trí i. Màu chữ trắng trên nền nhấn không nằm trong bộ chữ nên giữ nguyên.

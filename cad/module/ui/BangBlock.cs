@@ -48,6 +48,7 @@ namespace TKPCCC
         {
             Lenh.MoBangLenh = LenhUi.MoBangLenh;
             Lenh.ChonVatTu = BangChonVatTu.Chon;
+            Lenh.NenSang = GiaoDien.ChuDe != "toi"; // ảnh block vẽ đúng nền ngay lần đầu (bảng chọn mã có thể mở trước palette)
             string loi = PhimTat.Nap();
             Document doc = AcApp.DocumentManager.MdiActiveDocument;
             if (loi != "" && doc != null) doc.Editor.WriteMessage("\n[TKPCCC] Phím tắt bỏ qua: " + loi);
@@ -88,7 +89,7 @@ namespace TKPCCC
             cAnh.ImageLayout = DataGridViewImageCellLayout.Zoom;
             cAnh.DefaultCellStyle.NullValue = null; // block chưa có ảnh: ô trống, không hiện dấu X đỏ
             cAnh.DefaultCellStyle.Padding = new Padding(4);
-            cAnh.DefaultCellStyle.BackColor = cAnh.DefaultCellStyle.SelectionBackColor = Color.Black; // ảnh nền đen như màn hình CAD
+            cAnh.DefaultCellStyle.BackColor = cAnh.DefaultCellStyle.SelectionBackColor = GiaoDien.The; // ảnh nền trong suốt, nét vẽ hợp nền (Lenh.NenSang)
             ds.Columns.Add(cAnh);
             DataGridViewTextBoxColumn cTen = GiaoDien.Cot("Tên thiết bị", 200, false);
             cTen.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -117,6 +118,8 @@ namespace TKPCCC
             ds.SelectionChanged += delegate { XemTruoc(); };
 
             loc.TextChanged += delegate { Loc(); };
+            // Đổi kiểu màu: ảnh block vẽ lại theo nền mới (Lenh.NenSang đã đổi trong GiaoDien.BangMau).
+            GiaoDien.DaDoiChuDe += delegate { if (IsHandleCreated && !IsDisposed) GiaoDien.An(delegate { Nap(); }); };
 
             // Thứ tự Add quyết định cách xếp Dock: điều khiển Fill phải thêm trước.
             Panel trai = new Panel();
@@ -147,7 +150,7 @@ namespace TKPCCC
             GiaoDien.Them(hd, chiCo, 24);
             xem.SizeMode = PictureBoxSizeMode.Zoom;
             xem.BorderStyle = BorderStyle.FixedSingle;
-            xem.BackColor = Color.Black; // ảnh block vẽ nền đen như màn hình CAD
+            xem.BackColor = GiaoDien.The; // DatChuDe đổi màu cùng bảng
             GiaoDien.Them(hd, xem, 150);
             tenXem.Font = GiaoDien.Dam;
             tenXem.ForeColor = GiaoDien.ChuDam;
@@ -209,7 +212,7 @@ namespace TKPCCC
         void Loc()
         {
             VatTu dangChon = Chon();
-            string k = loc.Text.Trim().ToLowerInvariant();
+            string k = Lenh.BoDau(loc.Text.Trim()); // gõ "dau bao" cũng ra "Đầu báo"
             string heChon = chonHe.SelectedIndex > 0 ? (string)chonHe.SelectedItem : null;
             ds.SuspendLayout();
             ds.Rows.Clear();
@@ -219,7 +222,7 @@ namespace TKPCCC
             foreach (IGrouping<string, VatTu> nhom in tatCa.GroupBy(TenHe))
             {
                 List<VatTu> hien = nhom.Where(v => (heChon == null || nhom.Key == heChon)
-                    && (k == "" || (v.ma + " " + v.ten + " " + nhom.Key).ToLowerInvariant().Contains(k))
+                    && (k == "" || Lenh.BoDau(v.ma + " " + v.ten + " " + nhom.Key).Contains(k))
                     && (!chiCo.Checked || SoLuong(v) > 0)).ToList();
                 if (hien.Count == 0) continue;
                 int r = ds.Rows.Add();

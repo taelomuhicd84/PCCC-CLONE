@@ -18,23 +18,68 @@ namespace TKPCCC
 {
     public partial class Lenh
     {
-        const int CO_ANH = 64; // cạnh ảnh xem trước (px)
-        // Đổi cách vẽ ảnh thì đổi chuỗi này: ảnh cũ (vd nền trắng nét đen) tự vẽ lại một lần, người dùng không phải xoá tay.
-        const string KIEU_ANH = "nen_den_mau_that_1";
+        const int CO_ANH = 128; // cạnh ảnh xem trước (px): ô xem trước 150 px không bị nhòe
+        // Đổi cách vẽ ảnh thì đổi chuỗi này: ảnh cũ tự vẽ lại một lần, người dùng không phải xoá tay.
+        const string KIEU_ANH = "mau_layer_chen_2";
 
         public static string ThuMucAnh { get { return Path.Combine(ThuMuc, "anh_block"); } }
 
-        class ChuAnh { public Point3d P; public double Cao; public string T; public int Ngang, Dung; public Gdi.Color Mau; }
-        class NetAnh { public Point3d[] P; public Gdi.Color Mau; }
+        /// TKPCCC.UI.dll gán theo chủ đề palette: true = nền sáng (ACI 7 vẽ đen, màu chói như vàng, cyan làm tối cho khỏi mất nét).
+        public static bool NenSang;
 
-        /// Màu nét như trên màn hình CAD nền đen: ByLayer lấy màu layer (layer 0 trong block lồng lấy layer của block cha),
-        /// ByBlock lấy màu block cha (cấp ngoài cùng: trắng), ACI 7 vẽ trắng, true color giữ nguyên.
-        static Gdi.Color MauAnh(Transaction tr, Entity e, Gdi.Color mauCha, Gdi.Color? lopCha)
+        class ChuAnh { public Point3d P; public double Cao; public string T; public int Ngang, Dung; public Gdi.Color Mau; }
+        /// To = miền tô đặc (Solid, Hatch SOLID): các vòng P tô chung, vòng trong là lỗ.
+        class NetAnh { public List<Point3d[]> P; public Gdi.Color Mau; public bool To; }
+
+        /// Màu nét như trên màn hình CAD: ByLayer lấy màu layer (layer 0 lấy màu layer mà block cha được chèn vào),
+        /// ByBlock lấy màu block cha (cấp ngoài cùng: màu layer chèn, vì block chèn bằng plugin để màu ByLayer), ACI 7 vẽ trắng, true color giữ nguyên.
+        static Gdi.Color MauAnh(Transaction tr, Entity e, Gdi.Color mauCha, Gdi.Color? lopCha, Dictionary<string, Gdi.Color> lopBanVe)
         {
             Autodesk.AutoCAD.Colors.Color c = e.Color;
             if (c.IsByBlock) return mauCha;
-            if (c.IsByLayer) return MauLop((LayerTableRecord)tr.GetObject(e.LayerId, OpenMode.ForRead), lopCha);
+            if (c.IsByLayer) return MauLop((LayerTableRecord)tr.GetObject(e.LayerId, OpenMode.ForRead), lopCha, lopBanVe);
             return MauRgb(c);
+        }
+
+        /// Màu đổi theo nền ảnh: nền sáng thì trắng thành gần đen, màu sáng quá (độ sáng > 0,55) hạ xuống 0,55.
+        static Gdi.Color HopNen(Gdi.Color c)
+        {
+            if (!NenSang) return c;
+            if (c.R > 230 && c.G > 230 && c.B > 230) return Gdi.Color.FromArgb(30, 34, 41);
+            double l = (0.299 * c.R + 0.587 * c.G + 0.114 * c.B) / 255;
+            if (l <= 0.55) return c;
+            double k = 0.55 / l;
+            return Gdi.Color.FromArgb((int)(c.R * k), (int)(c.G * k), (int)(c.B * k));
+        }
+
+        /// Màu layer của bản vẽ đang làm (tên không phân biệt hoa thường): layer cùng tên trong bản vẽ thắng layer của thư viện, như khi chép block vào.
+        static Dictionary<string, Gdi.Color> MauLopBanVe()
+        {
+            Dictionary<string, Gdi.Color> d = new Dictionary<string, Gdi.Color>(StringComparer.OrdinalIgnoreCase);
+            Database db = HostApplicationServices.WorkingDatabase;
+            if (db == null) return d;
+            try
+            {
+                using (Transaction tr = db.TransactionManager.StartOpenCloseTransaction())
+                {
+                    foreach (ObjectId id in (LayerTable)tr.GetObject(db.LayerTableId, OpenMode.ForRead))
+                    {
+                        LayerTableRecord l = (LayerTableRecord)tr.GetObject(id, OpenMode.ForRead);
+                        if (l.Name != "0") d[l.Name] = MauRgb(l.Color);
+                    }
+                    tr.Commit();
+                }
+            }
+            catch (System.Exception) { } // không đọc được bản vẽ: dùng màu mặc định của hệ
+            return d;
+        }
+
+        /// Màu layer PCCC_<hệ> mà ChenThietBi (Spec.cs) đặt block vào: theo bản vẽ nếu đã có layer, không thì màu MauHe sẽ tạo.
+        static Gdi.Color MauChen(string he, Dictionary<string, Gdi.Color> lopBanVe)
+        {
+            Gdi.Color c;
+            if (lopBanVe.TryGetValue(TIEN_TO_LAYER + he, out c)) return c;
+            return MauRgb(Autodesk.AutoCAD.Colors.Color.FromColorIndex(Autodesk.AutoCAD.Colors.ColorMethod.ByAci, MauHe(he)));
         }
 
         static Gdi.Color MauRgb(Autodesk.AutoCAD.Colors.Color c)
@@ -46,18 +91,24 @@ namespace TKPCCC
 
         // ---------- Ảnh xem trước ----------
 
-        /// Gom nét của block (toạ độ block): mọi đường cong lấy mẫu theo tham số, block lồng tới 2 cấp, chữ giữ điểm đặt + chiều cao, kèm màu.
-        static void GomNet(Transaction tr, BlockTableRecord b, Matrix3d m, int sau, Gdi.Color mauCha, Gdi.Color? lopCha, List<NetAnh> net, List<ChuAnh> chu)
+        /// Gom nét của block (toạ độ block): mọi đường cong lấy mẫu theo tham số, Solid và Hatch thành miền tô, block lồng tới 2 cấp,
+        /// chữ (cả attribute hiện) giữ điểm đặt + chiều cao, kèm màu.
+        static void GomNet(Transaction tr, BlockTableRecord b, Matrix3d m, int sau, Gdi.Color mauCha, Gdi.Color? lopCha, Dictionary<string, Gdi.Color> lopBanVe,
+            List<NetAnh> net, List<ChuAnh> chu)
         {
             foreach (ObjectId id in b)
             {
                 Entity e = tr.GetObject(id, OpenMode.ForRead) as Entity;
-                if (e == null || !e.Visible || e is AttributeDefinition) continue;
-                Gdi.Color mau = MauAnh(tr, e, mauCha, lopCha);
+                if (e == null || !e.Visible) continue;
+                AttributeDefinition ad = e as AttributeDefinition;
+                if (ad != null && (ad.Invisible || string.IsNullOrEmpty(ad.TextString))) continue; // MA_VT, TEN ẩn: không vẽ
+                Gdi.Color mau = MauAnh(tr, e, mauCha, lopCha, lopBanVe);
                 Curve c = e as Curve;
                 BlockReference br = e as BlockReference;
                 MText mt = e as MText;
                 DBText dt = e as DBText;
+                Solid so = e as Solid;
+                Hatch ha = e as Hatch;
                 try
                 {
                     if (c != null)
@@ -67,13 +118,34 @@ namespace TKPCCC
                         double t0 = c.StartParam, t1 = c.EndParam;
                         Point3d[] ps = new Point3d[n + 1];
                         for (int i = 0; i <= n; i++) ps[i] = c.GetPointAtParameter(t0 + (t1 - t0) * i / n).TransformBy(m);
-                        net.Add(new NetAnh { P = ps, Mau = mau });
+                        net.Add(new NetAnh { P = new List<Point3d[]> { ps }, Mau = mau });
+                    }
+                    else if (so != null)
+                    {
+                        // Solid: thứ tự đỉnh 0-1-3-2 (đỉnh 3 trùng 2 là tam giác).
+                        Point3d[] ps = new short[] { 0, 1, 3, 2 }.Select(i => so.GetPointAt(i).TransformBy(m)).ToArray();
+                        net.Add(new NetAnh { P = new List<Point3d[]> { ps }, Mau = mau, To = true });
+                    }
+                    else if (ha != null)
+                    {
+                        // shortcut: cung (bulge) của biên polyline vẽ thành đoạn thẳng; hatch mẫu nét (ANSI31...) chỉ vẽ biên, không vẽ nét mẫu.
+                        List<Point3d[]> vong = new List<Point3d[]>();
+                        for (int i = 0; i < ha.NumberOfLoops; i++)
+                        {
+                            HatchLoop lp = ha.GetLoopAt(i);
+                            List<Point2d> p2 = new List<Point2d>();
+                            if (lp.IsPolyline) foreach (BulgeVertex bv in lp.Polyline) p2.Add(bv.Vertex);
+                            else foreach (Curve2d c2 in lp.Curves) p2.AddRange(c2.GetSamplePoints(c2 is LineSegment2d ? 2 : 24));
+                            if (p2.Count > 1) vong.Add(p2.Select(q => new Point3d(q.X, q.Y, ha.Elevation).TransformBy(m)).ToArray());
+                        }
+                        bool dac = ha.PatternType == HatchPatternType.PreDefined && string.Equals(ha.PatternName, "SOLID", StringComparison.OrdinalIgnoreCase);
+                        if (vong.Count > 0) net.Add(new NetAnh { P = vong, Mau = mau, To = dac });
                     }
                     else if (br != null && sau < 2)
                     {
                         // Nét layer 0 trong block con lấy màu layer của block con đó (block con cũng ở layer 0 thì lấy tiếp của cha).
-                        Gdi.Color lop = MauLop((LayerTableRecord)tr.GetObject(br.LayerId, OpenMode.ForRead), lopCha);
-                        GomNet(tr, (BlockTableRecord)tr.GetObject(br.BlockTableRecord, OpenMode.ForRead), m * br.BlockTransform, sau + 1, mau, lop, net, chu);
+                        Gdi.Color lop = MauLop((LayerTableRecord)tr.GetObject(br.LayerId, OpenMode.ForRead), lopCha, lopBanVe);
+                        GomNet(tr, (BlockTableRecord)tr.GetObject(br.BlockTableRecord, OpenMode.ForRead), m * br.BlockTransform, sau + 1, mau, lop, lopBanVe, net, chu);
                     }
                     else if (mt != null || dt != null)
                     {
@@ -87,22 +159,24 @@ namespace TKPCCC
             }
         }
 
-        /// Màu của layer l như vẽ trên nền đen (layer 0 lồng thì theo cha).
-        static Gdi.Color MauLop(LayerTableRecord l, Gdi.Color? lopCha)
+        /// Màu của layer l (layer 0 thì theo layer chèn của cha; layer trùng tên trong bản vẽ đang làm thì theo bản vẽ).
+        static Gdi.Color MauLop(LayerTableRecord l, Gdi.Color? lopCha, Dictionary<string, Gdi.Color> lopBanVe)
         {
             if (l.Name == "0" && lopCha.HasValue) return lopCha.Value;
+            Gdi.Color c;
+            if (lopBanVe.TryGetValue(l.Name, out c)) return c;
             return MauRgb(l.Color);
         }
 
-        /// Ảnh xem trước của một block như trên màn hình CAD: nền đen, nét đúng màu, vừa khít ô CO_ANH.
-        /// shortcut: không vẽ hatch, không xoay chữ, block động vẽ theo trạng thái đang lưu trong định nghĩa; cần đẹp hơn thì dùng ảnh của AutoCAD.
-        static void VeAnhBlock(Transaction tr, BlockTableRecord b, string file)
+        /// Ảnh xem trước của một block như trên màn hình CAD: nền trong suốt (ô palette tô màu nền), nét đúng màu layer chèn, vừa khít ô CO_ANH.
+        /// shortcut: không xoay chữ, block động vẽ theo trạng thái đang lưu trong định nghĩa; cần đẹp hơn thì dùng ảnh của AutoCAD.
+        static void VeAnhBlock(Transaction tr, BlockTableRecord b, string file, Gdi.Color mauChen, Dictionary<string, Gdi.Color> lopBanVe)
         {
             List<NetAnh> net = new List<NetAnh>();
             List<ChuAnh> chu = new List<ChuAnh>();
-            GomNet(tr, b, Matrix3d.Identity, 0, Gdi.Color.White, null, net, chu);
+            GomNet(tr, b, Matrix3d.Identity, 0, mauChen, mauChen, lopBanVe, net, chu);
             double x0 = double.MaxValue, y0 = double.MaxValue, x1 = double.MinValue, y1 = double.MinValue;
-            foreach (Point3d p in net.SelectMany(n => n.P).Concat(chu.SelectMany(c => new Point3d[] {
+            foreach (Point3d p in net.SelectMany(n => n.P).SelectMany(v => v).Concat(chu.SelectMany(c => new Point3d[] {
                 new Point3d(c.P.X - c.Cao / 2, c.P.Y - c.Cao / 2, 0), new Point3d(c.P.X + c.Cao / 2, c.P.Y + c.Cao / 2, 0) })))
             {
                 x0 = Math.Min(x0, p.X); y0 = Math.Min(y0, p.Y); x1 = Math.Max(x1, p.X); y1 = Math.Max(y1, p.Y);
@@ -110,23 +184,37 @@ namespace TKPCCC
             using (Gdi.Bitmap bmp = new Gdi.Bitmap(CO_ANH, CO_ANH))
             using (Gdi.Graphics g = Gdi.Graphics.FromImage(bmp))
             {
-                g.Clear(Gdi.Color.Black);
+                g.Clear(Gdi.Color.Transparent);
                 g.SmoothingMode = Gdi.Drawing2D.SmoothingMode.AntiAlias;
+                g.TextRenderingHint = Gdi.Text.TextRenderingHint.AntiAliasGridFit; // ClearType trên nền trong suốt để viền màu bẩn
                 double rong = Math.Max(x1 - x0, y1 - y0);
                 if (rong > 1e-9)
                 {
                     double k = (CO_ANH - 8) / rong, ox = (CO_ANH - (x1 - x0) * k) / 2, oy = (CO_ANH - (y1 - y0) * k) / 2;
                     Func<Point3d, Gdi.PointF> doi = p => new Gdi.PointF((float)(ox + (p.X - x0) * k), (float)(CO_ANH - oy - (p.Y - y0) * k));
-                    foreach (NetAnh n in net)
-                        using (Gdi.Pen but = new Gdi.Pen(n.Mau, 1.2f))
-                            g.DrawLines(but, n.P.Select(doi).ToArray());
+                    foreach (NetAnh n in net) // theo thứ tự vẽ của block
+                    {
+                        Gdi.Color mau = HopNen(n.Mau);
+                        if (n.To)
+                            using (Gdi.Drawing2D.GraphicsPath gp = new Gdi.Drawing2D.GraphicsPath(Gdi.Drawing2D.FillMode.Alternate))
+                            using (Gdi.SolidBrush bt = new Gdi.SolidBrush(mau))
+                            using (Gdi.Pen vien = new Gdi.Pen(mau, 1f))
+                            {
+                                foreach (Point3d[] v in n.P) gp.AddPolygon(v.Select(doi).ToArray());
+                                g.FillPath(bt, gp);
+                                g.DrawPath(vien, gp); // dải tô mảnh (quạt tam giác từ PDF) không bị khe hở
+                            }
+                        else
+                            using (Gdi.Pen but = new Gdi.Pen(mau, 1.6f))
+                                foreach (Point3d[] v in n.P) g.DrawLines(but, v.Select(doi).ToArray());
+                    }
                     foreach (ChuAnh c in chu)
                         using (Gdi.Font f = new Gdi.Font("Arial", (float)Math.Max(6, Math.Min(40, c.Cao * k)), Gdi.GraphicsUnit.Pixel))
                         using (Gdi.StringFormat sf = new Gdi.StringFormat())
                         {
                             sf.Alignment = (Gdi.StringAlignment)c.Ngang;   // 0 trái, 1 giữa, 2 phải
                             sf.LineAlignment = (Gdi.StringAlignment)c.Dung; // 0 trên, 1 giữa, 2 dưới
-                            using (Gdi.SolidBrush bc = new Gdi.SolidBrush(c.Mau))
+                            using (Gdi.SolidBrush bc = new Gdi.SolidBrush(HopNen(c.Mau)))
                                 g.DrawString(c.T, f, bc, doi(c.P), sf);
                         }
                 }
@@ -134,16 +222,22 @@ namespace TKPCCC
             }
         }
 
-        /// Vẽ lại ảnh cho block nào chưa có ảnh hoặc ảnh cũ hơn PCCC_Blocks.dwg. Trả số ảnh vừa vẽ.
+        /// Vẽ lại ảnh cho block nào chưa có ảnh hoặc ảnh cũ hơn PCCC_Blocks.dwg; đổi nền (NenSang) hay màu layer PCCC_<hệ> của bản vẽ đang làm thì vẽ lại hết.
+        /// Trả số ảnh vừa vẽ.
         static int CapNhatAnhBlock(FileDanhMuc dm)
         {
             if (!File.Exists(FileThuVien)) return 0;
             Directory.CreateDirectory(ThuMucAnh);
+            Dictionary<string, Gdi.Color> lopBanVe = MauLopBanVe();
+            List<VatTu> block = dm.vat_tu.Where(v => v.loai == "block").ToList();
+            // shortcut: khoá chỉ gồm màu layer PCCC_<hệ>; layer khác 0 trong block đổi màu trong bản vẽ thì ảnh chỉ đổi khi PCCC_Blocks.dwg đổi.
+            string khoa = KIEU_ANH + "|" + (NenSang ? "sang" : "toi") + "|" + string.Join(",", block.Select(v => v.he ?? "").Distinct().OrderBy(h => h, StringComparer.Ordinal)
+                .Select(h => h + "=" + MauChen(h, lopBanVe).ToArgb().ToString("X8")));
             DateTime luc = File.GetLastWriteTimeUtc(FileThuVien);
             string fKieu = Path.Combine(ThuMucAnh, "kieu_anh.txt");
-            if (!File.Exists(fKieu) || File.ReadAllText(fKieu).Trim() != KIEU_ANH) luc = DateTime.MaxValue; // ảnh kiểu cũ: vẽ lại hết
-            List<VatTu> can = dm.vat_tu.Where(v => v.loai == "block" && File.GetLastWriteTimeUtc(Path.Combine(ThuMucAnh, v.ma + ".png")) < luc).ToList(); // file chưa có thì giờ ghi = năm 1601
-            if (can.Count == 0) { File.WriteAllText(fKieu, KIEU_ANH); return 0; }
+            if (!File.Exists(fKieu) || File.ReadAllText(fKieu).Trim() != khoa) luc = DateTime.MaxValue; // kiểu, nền hay màu layer khác: vẽ lại hết
+            List<VatTu> can = block.Where(v => File.GetLastWriteTimeUtc(Path.Combine(ThuMucAnh, v.ma + ".png")) < luc).ToList(); // file chưa có thì giờ ghi = năm 1601
+            if (can.Count == 0) { File.WriteAllText(fKieu, khoa); return 0; }
             int n = 0;
             using (Database db = new Database(false, true))
             {
@@ -154,13 +248,13 @@ namespace TKPCCC
                     foreach (VatTu v in can)
                     {
                         if (!bt.Has(v.ma)) continue;
-                        VeAnhBlock(tr, (BlockTableRecord)tr.GetObject(bt[v.ma], OpenMode.ForRead), Path.Combine(ThuMucAnh, v.ma + ".png"));
+                        VeAnhBlock(tr, (BlockTableRecord)tr.GetObject(bt[v.ma], OpenMode.ForRead), Path.Combine(ThuMucAnh, v.ma + ".png"), MauChen(v.he ?? "", lopBanVe), lopBanVe);
                         n++;
                     }
                     tr.Commit();
                 }
             }
-            File.WriteAllText(fKieu, KIEU_ANH);
+            File.WriteAllText(fKieu, khoa);
             return n;
         }
 

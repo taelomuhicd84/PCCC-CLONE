@@ -102,7 +102,23 @@ if ($moi.Count -eq 1 -and $moi[0].ten -eq 'Van khach them' -and $moi[0].he -eq '
   @($dmGocThu.vat_tu).Count -eq @($dmGoc.vat_tu).Count + 1) { 'DAT   vat_tu.json canh DLL va file goc (nguon_vat_tu.txt) them dung 1 dong cho ma moi' } else { 'LOI   vat_tu.json sau PCCC_THEMBLOCK'; $loi++ }
 # Anh xem truoc cho bang PCCC_BLOCK: PCCC_LIB ve cho block mac dinh, PCCC_THEMBLOCK ve cho block moi; anh phai co net.
 $anhLoi = @('BC_KHOI', 'VAN_KHACH' | Where-Object { -not (Test-Path "$T\anh_block\$_.png") -or (DocAnh "$T\anh_block\$_.png").mau -le 1 })
-if ($anhLoi.Count -eq 0) { 'DAT   anh xem truoc block: BC_KHOI, VAN_KHACH co anh 64 px co net' } else { "LOI   anh xem truoc block thieu hoac trang: $($anhLoi -join ', ')"; $loi++ }
+if ($anhLoi.Count -eq 0) { 'DAT   anh xem truoc block: BC_KHOI, VAN_KHACH co anh co net' } else { "LOI   anh xem truoc block thieu hoac trang: $($anhLoi -join ', ')"; $loi++ }
+function Kiem($dk, $ten) { if ($dk) { "DAT   $ten" } else { "LOI   $ten"; $script:loi++ } }
+# Mau anh = mau layer PCCC_<he> ma block duoc chen vao (net layer 0 ByLayer), khong phai mau layer 0 cua thu vien (trang); mien to (Solid) phai to dac.
+function DemMau($f, $r0, $g0, $b0) {
+  $bmp = New-Object Drawing.Bitmap $f; $n = 0; $trang = 0
+  for ($y = 0; $y -lt $bmp.Height; $y++) { for ($x = 0; $x -lt $bmp.Width; $x++) {
+    $c = $bmp.GetPixel($x, $y); if ($c.A -lt 128) { continue }
+    if ([Math]::Abs($c.R - $r0) + [Math]::Abs($c.G - $g0) + [Math]::Abs($c.B - $b0) -lt 120) { $n++ }
+    if ($c.R -gt 200 -and $c.G -gt 200 -and $c.B -gt 200) { $trang++ } } }
+  $bmp.Dispose(); @{ n = $n; trang = $trang; rong = 0 + (New-Object Drawing.Bitmap $f).Width }
+}
+$mDo = if (Test-Path "$T\anh_block\BC_KHOI.png") { DemMau "$T\anh_block\BC_KHOI.png" 255 0 0 } else { @{ n = 0; trang = 0; rong = 0 } }
+$mXanh = if (Test-Path "$T\anh_block\VAN_KHACH.png") { DemMau "$T\anh_block\VAN_KHACH.png" 0 0 255 } else { @{ n = 0; trang = 0 } }
+$mTo = if (Test-Path "$T\anh_block\BC_DTCD.png") { DemMau "$T\anh_block\BC_DTCD.png" 255 0 0 } else { @{ n = 0 } }
+Kiem ($mDo.n -gt 50 -and $mDo.trang -lt $mDo.n -and $mDo.rong -ge 128) "anh BC_KHOI do (layer PCCC_BC), 128 px: do=$($mDo.n) trang=$($mDo.trang) rong=$($mDo.rong)"
+Kiem ($mXanh.n -gt 50 -and $mXanh.trang -lt $mXanh.n) "anh VAN_KHACH (he SPR, block nguoi dung tren layer 0) xanh: xanh=$($mXanh.n) trang=$($mXanh.trang)"
+Kiem ($mTo.n -gt 1500) "anh BC_DTCD to dac mien Solid: diem do=$($mTo.n)"
 
 # --- PCCC_SPEC: chay goi spec mau (cad\skills\vi_du\thu.json) trong ban ve moi, kiem ket qua JSON ---
 # Goi mau co 1 thao tac sai co y (khong_co) de kiem duong bao loi: ok = false, loi dung vi tri, cac thao tac khac van chay.

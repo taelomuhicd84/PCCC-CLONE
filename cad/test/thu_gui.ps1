@@ -189,7 +189,7 @@ public static class WinU {
   Kiem ($anh.Count -eq $soBlock) "anh xem truoc: $($anh.Count) file (can $soBlock)"
   if ($anh.Count) {
     $bmp = New-Object Drawing.Bitmap $anh[0].FullName; $p = $bmp.GetPixel(0, 0); $bmp.Dispose()
-    Kiem ($p.R -eq 0 -and $p.G -eq 0 -and $p.B -eq 0) "anh xem truoc nen den nhu man hinh CAD ($($anh[0].Name) goc = $p)"
+    Kiem ($p.A -eq 0) "anh xem truoc nen trong suot (o bang to mau nen theo kieu mau palette) ($($anh[0].Name) goc = $p)"
   }
 
   $r = GoiCongCu 5 'cad_chay' @{ ops = @(@{ op = 'dem' }) }

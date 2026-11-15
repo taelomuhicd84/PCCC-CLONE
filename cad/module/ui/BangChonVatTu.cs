@@ -60,7 +60,7 @@ namespace TKPCCC
             cAnh.ImageLayout = DataGridViewImageCellLayout.Zoom;
             cAnh.DefaultCellStyle.NullValue = null; // không có ảnh: ô trống, không hiện dấu X đỏ
             cAnh.DefaultCellStyle.Padding = new Padding(4);
-            cAnh.DefaultCellStyle.BackColor = cAnh.DefaultCellStyle.SelectionBackColor = Color.Black; // ảnh nền đen như màn hình CAD
+            cAnh.DefaultCellStyle.BackColor = cAnh.DefaultCellStyle.SelectionBackColor = GiaoDien.The; // ảnh nền trong suốt, nét vẽ hợp nền (Lenh.NenSang)
             cAnh.Visible = anh.Count > 0; // ống, dây: không có ký hiệu
             ds.Columns.Add(cAnh);
             DataGridViewTextBoxColumn cTen = GiaoDien.Cot("Tên thiết bị / mã", 200, false);

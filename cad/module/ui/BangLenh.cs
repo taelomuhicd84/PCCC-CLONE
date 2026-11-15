@@ -221,13 +221,13 @@ namespace TKPCCC
 
         void Loc()
         {
-            string k = loc.Text.Trim().ToLowerInvariant();
+            string k = Lenh.BoDau(loc.Text.Trim());
             ds.Rows.Clear();
             foreach (string[] l in Lenh.DS_LENH)
             {
                 string a;
                 PhimTat.TheoLenh.TryGetValue(l[0], out a);
-                if (k != "" && !(l[0] + " " + a + " " + l[1] + " " + l[2]).ToLowerInvariant().Contains(k)) continue;
+                if (k != "" && !Lenh.BoDau(l[0] + " " + a + " " + l[1] + " " + l[2]).Contains(k)) continue;
                 ds.Rows.Add("", l[0], a ?? "", l[1], l[2]);
             }
             ds.Text = "Lenh: " + ds.Rows.Count; // thu_gui.ps1 đọc số dòng (chữ của cửa sổ) qua UI Automation

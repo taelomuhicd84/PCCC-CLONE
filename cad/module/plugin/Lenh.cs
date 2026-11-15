@@ -63,7 +63,7 @@ namespace TKPCCC
                     if (File.Exists(ui)) ExtensionLoader.Load(ui);
                 }
             }
-            catch (System.Exception) { }
+            catch (System.Exception ex) { if (doc != null) doc.Editor.WriteMessage("\n[TKPCCC] Không nạp được palette (TKPCCC.UI.dll): " + ex.Message); }
         }
 
         public void Terminate() { }
