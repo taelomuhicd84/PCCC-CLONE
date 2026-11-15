@@ -203,3 +203,7 @@
   kiểm bằng tab Terminal: đúng đích, accoreconsole không tự nạp bundle). `agy` gemini-4-carbon-medium tra mạng 2 báo cáo (CAD mượt, UX palette) vào `ket_qua/review_1115/`.
 - 10:00–10:40: viết `KE_HOACH_TONG.md` (kết quả review, góp ý phát triển, sơ đồ + bảng agent ↔ model ↔ effort, hàng việc). App không cho mở phiên mới khi người dùng dùng Remote Control
   ⇒ giao việc sửa cho 4 phiên review sẵn có theo `ket_qua/review_1115/VIEC.md`: R5 + R1 + R3b (Opus 5.5 high), R4 (Sonnet 5.5 medium). Hẹn CronCreate 15:05.
+- 10:40–15:00 đợt 1 (thợ là các phiên review cũ): R1 tri thức 3 commit (chiều cao PCCC 1.4.9, QCVN 10 A.1 chú thích (2), checklist buồng thang); R5 máy kiểm luật + `bang_doi_chieu.py job` 2 commit
+  (pytest 13 → 41 ca); R4 web 4 commit (sửa lỗi, tách `frontend/` + `backend/`, agent web; vitest 230 → 64 ca vì hết quét worktree); R3b CAD 2 commit (ảnh block màu layer, key theo seri ổ cứng + `keygen.py`).
+  Đầu não chạy lại npm test 64 đạt, pytest 41 đạt; test CAD chưa chạy lại.
+- 15:10 đợt 2: giao R3a (CAD lõi: phủ xuyên tường, khoang dầm, INSUNITS, vẽ mượt), R5 (bảng đối chiếu + lược đồ thông số công trình), R2 (`scripts/kiem_lien_ket.py`), R4 (xoá findings cũ). Tuần 77 %, dừng ở 85 %.
