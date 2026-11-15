@@ -12,6 +12,7 @@ ngay. Lý do: hết usage hoặc ngữ cảnh quá dài giữa chừng thì mấ
 
 ## 1. Kiểm tra (không báo xong khi chưa chạy)
 - `npm test` (backend/shared/test + runner/test).
+- `python scripts/kiem_lien_ket.py`: đường dẫn chết, mã vật tư/bảng, trị số rải, lệnh CAD, model skill/agent lệch nhau. Mục LỖI phải = 0; CẢNH BÁO ghi vào TIEN_DO nếu mới.
 - Có sửa `cad/`: `powershell -ExecutionPolicy Bypass -File cad\test\chay_thu.ps1` → `TAT CA DAT` (xem skill `tkpccc-cad-console`).
 - Có sửa frontend/backend: bật runner (`npm start`, chạy nền) và thử luồng vừa sửa trên trình duyệt tích hợp hoặc bằng `fetch`.
 - Dọn dữ liệu thử mình tạo trong `ket_qua/`, file rác (`plot.log`…); không xoá dữ liệu người dùng.
