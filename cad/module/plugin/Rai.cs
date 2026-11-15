@@ -300,6 +300,7 @@ namespace TKPCCC
                 }
             for (; ho.Count > 0 && them < 5000; them++)
             {
+                if (them % 20 == 0) KiemEsc();
                 Point2d P = mau[ho[0]];
                 List<Point2d> thu = new List<Point2d>();
                 foreach (double cy in luoi.Select(c => c.Y).Distinct().Where(v => Math.Abs(v - P.Y) <= hy))
@@ -1242,8 +1243,15 @@ namespace TKPCCC
                 ObjectId lopTam = xem ? LopXemTruoc(db, tr) : ObjectId.Null;
                 double rTam = tc == null ? 0 : LaySo(tc, "r", 0) * s / D(Lay(tc, "s")); // R tiêu chuẩn (m) nhân cùng tỉ lệ với bước (k, dầm, đổi đơn vị)
                 int soTam = 0;
+                // Thanh tiến độ + Esc mỗi phòng (review 15/11: lệnh dài không dừng được, AutoCAD "Not Responding"). Esc: ném lỗi, transaction không commit.
+                Autodesk.AutoCAD.Runtime.ProgressMeter tienDo = new Autodesk.AutoCAD.Runtime.ProgressMeter();
+                tienDo.SetLimit(vungRai.Count);
+                tienDo.Start("TKPCCC: rải " + vungRai.Count + " vùng (Esc = dừng)");
+                try {
                 foreach (List<Point2d> d in vungRai)
                 {
+                    tienDo.MeterProgress();
+                    KiemEsc();
                     if (tia)
                     {
                         double bt, tt;
@@ -1307,6 +1315,7 @@ namespace TKPCCC
                         + " m2=" + Math.Round(r.O * m * m, 2).ToString(CultureInfo.InvariantCulture)
                         + (r.Ho > 0 ? " HO=" + r.Ho.ToString(CultureInfo.InvariantCulture) + "% (vùng chưa phủ hết, kiểm lại)" : "") + duoi);
                 }
+                } finally { tienDo.Stop(); tienDo.Dispose(); }
                 if (xem) ed.WriteMessage("\n[TKPCCC] xem_truoc=" + soTam + " (vẽ tạm trên layer " + LAYER_XEM_TRUOC + ", không in, tự xoá khi rải thật)");
                 tr.Commit();
             }

@@ -235,6 +235,9 @@ $XIEN = @(@(1100, 36000), @(13900, 40300), @(52500, 25100), @(16000, 0), @(0, 20
 ('{"goc":[2500000,0],"ops":[{"op":"rai","ma":"BC_KHOI","vung":' + (ConvertTo-Json -Compress $XIEN) + ',"s":10500,"kt":true},' +
   '{"op":"rai","ma":"BC_KHOI","hop":[0,60000,30600,80400],"kt":true},{"op":"rai","ma":"BC_KHOI","hop":[0,90000,10000,100000],"h":16}]}') |
   Set-Content -Encoding ascii "$T\rai_xien.json"
+'{"ops":[{"op":"doc","gi":"layer","l":"0"},{"op":"dem"}]}' | Set-Content -Encoding ascii "$T\dem_lon.json"
+('{"goc":[9500000,200000],"ops":[{"op":"rai","ma":"SPR_DAU_DOWN","vung":' + (ConvertTo-Json -Compress @($XIEN | ForEach-Object { , @(($_[0] * 3), ($_[1] * 3)) })) + ',"s":3000}]}') |
+  Set-Content -Encoding ascii "$T\rai_lon.json"
 # Review 15/11: INSUNITS 1 (inch): buoc 10,2 m = 401,57 in (truoc coi la mm: 1 dau bao); INSUNITS 0 (Unitless) ban ve lon: doan mm, bao don_vi
 '{"goc":[5000000,0],"ops":[{"op":"rai","ma":"BC_KHOI","hop":[0,0,1204.72,803.14]}]}' | Set-Content -Encoding ascii "$T\rai_inch.json"
 '{"goc":[5100000,0],"ops":[{"op":"rai","ma":"BC_KHOI","hop":[0,0,30600,20400]}]}' | Set-Content -Encoding ascii "$T\rai_unitless.json"
@@ -379,7 +382,12 @@ $bamTv = (Get-FileHash "$T\PCCC_Blocks.dwg").Hash
    '(if ss (repeat (sslength ss) (setq p (cdr (assoc 10 (entget (ssname ss i))))) (if (and (> (car p) x0) (< (car p) x1)) (setq n (1+ n))) (setq i (1+ i)))) n) ' +
    '(setq f (open "' + ($T -replace '\\', '/') + '/moi.txt" "w")) (write-line (strcat "XEM " (itoa (dk "BC_KHOI" 3399000 3431000))) f) ' +
    '(write-line (strcat "BEAM " (itoa (dk "BC_BEAM" 3299000 3331000))) f) (setq ss (ssget "_X" (list (cons 8 "PCCC_BC_TIA")))) ' +
-   '(write-line (strcat "TIA " (itoa (if ss (sslength ss) 0))) f) (close f))')) -join "`r`n" |
+   '(write-line (strcat "TIA " (itoa (if ss (sslength ss) 0))) f) (close f))'),
+  # Do thoi gian (review 15/11, ve muot): block NOI_THAT 50 net x 10 000 ban chen (noi that cua ban ve kien truc), roi dem ca ban ve va rai vung lon
+  ('(progn (entmake (list (cons 0 "BLOCK") (cons 2 "NOI_THAT") (cons 70 0) (list 10 0.0 0.0 0.0))) (setq i 0) ' +
+   '(repeat 50 (entmake (list (cons 0 "LINE") (list 10 (* i 10.0) 0.0 0.0) (list 11 (* i 10.0) 500.0 0.0))) (setq i (1+ i))) (entmake (list (cons 0 "ENDBLK"))) ' +
+   '(setq i 0) (repeat 10000 (entmake (list (cons 0 "INSERT") (cons 2 "NOI_THAT") (list 10 (+ 9000000.0 (* (rem i 100) 1000.0)) (* (/ i 100) 1000.0) 0.0))) (setq i (1+ i))) (princ))'),
+  'PCCC_SPEC', "$T\dem_lon.json", 'PCCC_SPEC', "$T\rai_lon.json") -join "`r`n" |
   Set-Content -Encoding ascii "$T\kb2.scr"
 $p2 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb2.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb2.out.txt"
 if (-not $p2.WaitForExit(180000)) { Stop-Process -Id $p2.Id -Force; throw "accoreconsole qua 3 phut (PCCC_SPEC): $T\kb2.out.txt" }
@@ -649,6 +657,9 @@ Kiem ($out2 -match 'PCCC_KT ph\S+ng \d+: m2=4 [^\r\n]*=0 [^\r\n]*=100%') 'PCCC_K
 Kiem ($out2 -match 'khoang_dam nguong=9 lon=0 nho=2[\s\S]{0,1500}khoang_nho_chung n=1\b[\s\S]{0,600}khoang_nho_chung n=1\b') 'Khoang dam nho 2 phong cach 30 m: gom theo tung phong, moi phong 1 dau'
 Kiem ($out2 -match 'khoang_dam nguong=4 lon=1 nho=0') 'Dam khong nhap tran: nguong 4 m2, khoang 6 m2 rai rieng'
 $kin = DocKq 'rai_inch'; $kun = DocKq 'rai_unitless'
+$kdl = DocKq 'dem_lon'; $krl = DocKq 'rai_lon'
+Kiem ($kdl -and $kdl.doc[0].ds[0].n -ge 10000 -and $kdl.ms -ge 0) "DO: dem ca ban ve co 10 000 block noi that x 50 net: $($kdl.ms) ms"
+Kiem ($krl -and $krl.rai[0].n -gt 1000 -and $krl.rai[0].ho -eq 0 -and $krl.ms -ge 0) "DO: rai vung da giac xien ~12 600 m2 s 3 m: n=$($krl.rai[0].n), $($krl.ms) ms"
 Kiem ($kin -and $kin.rai[0].n -eq 6 -and [math]::Abs($kin.rai[0].bx - 401.57) -lt 0.1 -and $kin.don_vi -eq 'in') "INSUNITS 1 (inch): rai 30,6 x 20,4 m ra 6 dau, buoc 401,57 in ($($kin | ConvertTo-Json -Compress -Depth 4))"
 Kiem ($kun -and $kun.rai[0].n -eq 6 -and $kun.don_vi -match '^mm') "INSUNITS 0: ban ve lon doan mm, bao don_vi ($($kun.don_vi))"
 Kiem ($out2 -match 'PCCC_KT phong=1 mu=59\.5% diem_mu=952') 'PCCC_KT: phong 20 x 20 m, 1 dau khoi o tam, R 7,2 m: mu 59,5 % (952 / 1600 diem mau 0,5 m)'

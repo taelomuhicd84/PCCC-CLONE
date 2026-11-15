@@ -90,6 +90,7 @@ namespace TKPCCC
                 foreach (List<Point2d> q in phong)
                 {
                     soPhong++;
+                KiemEsc();
                     double x0 = q.Min(p => p.X), x1 = q.Max(p => p.X), y0 = q.Min(p => p.Y), y1 = q.Max(p => p.Y);
                     int diem = 0, mu = 0;
                 // Chỉ thiết bị trong phòng (review 15/11): thiết bị phòng bên cạnh không phủ xuyên tường.

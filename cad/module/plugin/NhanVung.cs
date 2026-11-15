@@ -465,6 +465,7 @@ namespace TKPCCC
             Action<int, double> ghi = (k, g) => { double c0; if (!ganNhat.TryGetValue(k, out c0) || g < c0) ganNhat[k] = g; };
             for (int ii = 0; ii < tt.Length; ii++)
             {
+                if ((ii & 1023) == 0) KiemEsc();
                 int i = tt[ii];
                 Point2d a = doan[i][0], b = doan[i][1];
                 double xMax = Math.Max(a.X, b.X), yMin = Math.Min(a.Y, b.Y), yMax = Math.Max(a.Y, b.Y);
@@ -577,6 +578,7 @@ namespace TKPCCC
             tt = SapX(doan);
             for (int ii = 0; ii < m; ii++)
             {
+                if ((ii & 1023) == 0) KiemEsc();
                 int i = tt[ii];
                 Point2d a = doan[i][0], b = doan[i][1];
                 Vector2d r = b - a;
@@ -805,7 +807,7 @@ namespace TKPCCC
                     n.Cua.Clear(); n.GachCheo.Clear();
                     List<Point2d[]> doan = new List<Point2d[]>();
                     n.BoMau = coDam ? damMau : null;
-                    foreach (Entity e in ds) ThuNet(n, e, ObjectId.Null, ObjectId.Null, null, 0, doan);
+                    foreach (Entity e in ds) { if (doan.Count % 64 == 0) KiemEsc(); ThuNet(n, e, ObjectId.Null, ObjectId.Null, null, 0, doan); }
                     n.BoMau = null;
                     if (coDam || damThem != null)
                     {

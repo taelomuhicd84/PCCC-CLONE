@@ -94,6 +94,12 @@ namespace TKPCCC
         [CommandMethod("PCCC_TUYEN")] public void LenhTuyen() { Chay(TuyenTay); } // cad/module/plugin/Rai.cs
         [CommandMethod("PCCC_DAY")] public void LenhDay() { Chay(DayTay); }       // cad/module/plugin/Rai.cs
         [CommandMethod("PCCC_THEMBLOCK")] public void LenhThemBlock() { Chay(ThemBlock); } // cad/module/plugin/Block.cs
+        /// Esc giữa lệnh dài (review 15/11): ném lỗi để transaction đang mở không commit, bản vẽ không đổi. Gọi thưa (mỗi phòng, mỗi vài trăm vòng).
+        static void KiemEsc()
+        {
+            if (HostApplicationServices.Current.UserBreak()) throw new System.Exception("đã dừng bằng Esc, bản vẽ không đổi");
+        }
+
         static void Chay(Action viec)
         {
             try { viec(); }
@@ -742,6 +748,26 @@ namespace TKPCCC
             public List<Khu> Khu;
             public double HeSo;
             public KetQua Kq;
+            /// Định nghĩa block -> có thể chứa thiết bị / nét PCCC_ không (review 15/11: không duyệt lại nội thất cho từng bản chèn).
+            public Dictionary<ObjectId, bool> CoTb = new Dictionary<ObjectId, bool>();
+        }
+
+        /// Block bid (kể cả block lồng) có thể chứa thứ được đếm: bản chèn mang mã thiết bị hoặc Curve trên layer PCCC_. Nhớ theo định nghĩa.
+        static bool CoThietBi(ObjectId bid, BoiCanh bc)
+        {
+            bool co;
+            if (bc.CoTb.TryGetValue(bid, out co)) return co;
+            bc.CoTb[bid] = true; // đang xét (block không tự lồng chính nó); lỗi giữa chừng thì vẫn duyệt như cũ
+            co = false;
+            foreach (ObjectId id in (BlockTableRecord)bc.Tr.GetObject(bid, OpenMode.ForRead))
+            {
+                Entity e = bc.Tr.GetObject(id, OpenMode.ForRead) as Entity;
+                BlockReference br = e as BlockReference;
+                if (br != null) { if (!(br is Table) && (MaThietBi(br, bc) != null || CoThietBi(br.BlockTableRecord, bc))) { co = true; break; } }
+                else if (e is Curve && e.Layer.StartsWith(TIEN_TO_LAYER, StringComparison.OrdinalIgnoreCase)) { co = true; break; }
+            }
+            bc.CoTb[bid] = co;
+            return co;
         }
 
         static void Cong(Dictionary<string, double> kl, string ma, double sl)
@@ -805,6 +831,7 @@ namespace TKPCCC
                     return;
                 }
                 if (sau >= SAU_TOI_DA) { bc.Kq.QuaSau++; return; }
+                if (!CoThietBi(br.BlockTableRecord, bc)) return;
                 Matrix3d tf2 = tf * br.BlockTransform;
                 foreach (ObjectId id in btr)
                 {

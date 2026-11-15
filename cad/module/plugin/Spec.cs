@@ -132,6 +132,7 @@ namespace TKPCCC
 
         static Dictionary<string, object> ThucHienSpec(Document doc, string json, out bool zoom)
         {
+            System.Diagnostics.Stopwatch dongHo = System.Diagnostics.Stopwatch.StartNew();
             JavaScriptSerializer js = new JavaScriptSerializer();
             js.MaxJsonLength = int.MaxValue;
             Dictionary<string, object> goi = js.DeserializeObject(json) as Dictionary<string, object>;
@@ -230,6 +231,7 @@ namespace TKPCCC
             if (g.KqVung.Count > 0) kq["vung_tu_dong"] = g.KqVung;
             kq["ban_ve"] = Path.GetFileName(doc.Name);
             kq["don_vi"] = TenDonVi(g.Db);
+            kq["ms"] = dongHo.ElapsedMilliseconds; // thời gian chạy gói (đo lag, review 15/11)
             return kq;
         }
 
