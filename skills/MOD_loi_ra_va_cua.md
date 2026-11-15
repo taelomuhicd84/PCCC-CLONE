@@ -28,7 +28,7 @@ Cách dùng khi đọc bản vẽ:
 1. Cửa cuốn hoặc cửa quay (kể cả cửa quay vòng tròn ở sảnh): loại khỏi danh sách lối ra thoát nạn, ghi lý do vào cột "Cửa bị loại" (SKILL_thoat_nan.md mục 1 và 8). Cần chú ý cửa cuốn ở mặt tiền karaoke/cửa hàng.
 2. Cửa trượt hoặc cửa xếp: chỉ được làm lối ra khi không thuộc ba trường hợp trừ. Bản vẽ phải có ghi chú loại cửa và chiều mở; thiếu ghi chú → khoanh nghi vấn (SKILL_thoat_nan.md mục 6).
 3. Cửa thoát nạn phải là cửa chống cháy (EI60 như FD1) hoặc phải tự đóng → cửa trượt/xếp không được dùng, dùng cửa bản lề (xem MOD_hanh_lang_bao_che.md).
-4. Cửa kính D1 1,9×2,3 m và D2 1,5×2,1 m của Hoàng Anh 1 là cửa mở (cánh bản lề), không phải cửa cuốn/quay → hợp lệ theo 3.2.3.
+4. Cửa kính D1 1,9×2,3 m và D2 1,5×2,1 m của DA-10 1 là cửa mở (cánh bản lề), không phải cửa cuốn/quay → hợp lệ theo 3.2.3.
 
 ## 10. Điều 3.2.10 – chiều mở cửa trên đường thoát nạn (user cung cấp, QCVN 06 sửa đổi 01)
 Các cửa của lối ra thoát nạn và các cửa khác trên đường thoát nạn phải mở theo chiều lối thoát từ trong nhà ra ngoài.
@@ -57,7 +57,7 @@ Các lối ra sau cũng được coi là lối ra thoát nạn:
 - **d)** Các cửa mở quay có bản lề trên cửa ra vào dành cho phương tiện vận tải đường sắt hoặc đường bộ.
 - Cho phép bố trí **khoang đệm** tại lối ra ngoài trực tiếp từ nhà, từ tầng hầm và tầng nửa hầm.
 
-Cách dùng: khi công trình có tầng hầm/nửa hầm, kiểm tra lối ra theo điều này (cùng 3.2.1d); tầng nổi vẫn theo 3.2.1. Hoàng Anh 1 (2 tầng nổi, không có tầng hầm) không áp dụng điều này.
+Cách dùng: khi công trình có tầng hầm/nửa hầm, kiểm tra lối ra theo điều này (cùng 3.2.1d); tầng nổi vẫn theo 3.2.1. DA-10 1 (2 tầng nổi, không có tầng hầm) không áp dụng điều này.
 ## Điều 3.2.4 – số lượng, chiều rộng lối ra và lối ra qua khoang cháy công năng khác (user cung cấp, QCVN 06 sửa đổi 01)
 **Nội dung:** số lượng và chiều rộng các lối ra thoát nạn từ gian phòng, tầng và nhà được xác định theo (1) số người thoát nạn lớn nhất có thể đi qua chúng và (2) khoảng cách giới hạn cho phép từ chỗ xa nhất có thể có người (sinh hoạt, làm việc) tới lối ra thoát nạn gần nhất.
 - CHÚ THÍCH 1: Số người thoát nạn lớn nhất của các không gian khác nhau xác định theo G.3, Phụ lục G (Bảng G.9 khi thiết kế không ghi).
@@ -73,7 +73,7 @@ Cách dùng:
 2. Đếm số lối ra của mỗi khoang cháy trên mỗi tầng; số lối dẫn qua khoang cháy lân cận phải ≤ 50% tổng số lối của khoang đó. Ví dụ khoang có 2 lối thì tối đa 1 lối dẫn vào khoang lân cận; khoang có 1 lối thì không được dùng lối qua khoang khác (user đã xác nhận cách hiểu này).
 3. Lối ra dẫn vào khoang cháy nhóm F5 không được tính vào phần 50% cho phép; phần nhà F5 luôn có lối riêng.
 4. Số lượng lối ra tối thiểu và bề rộng: số người theo G.3 + bề rộng theo Phụ lục G (PHU_LUC_G_QCVN06.md, MOD_tinh_toan_khoang_cach.md).
-5. Công trình một công năng (như karaoke Hoàng Anh 1, không chia khoang cháy khác công năng) chưa áp dụng phần khoang cháy; chỉ áp dụng phần số lượng/bề rộng.
+5. Công trình một công năng (như karaoke DA-10 1, không chia khoang cháy khác công năng) chưa áp dụng phần khoang cháy; chỉ áp dụng phần số lượng/bề rộng.
 ## Điều 3.1 – Quy định chung (rút gọn, bản sửa đổi 01)
 - Đường thoát nạn trong phạm vi gian phòng phải đảm bảo thoát nạn an toàn qua lối ra của phòng đó **mà không tính** phương tiện chống khói và chữa cháy có trong phòng (3.1.4). Bảo vệ đường thoát nạn ngoài phòng tính theo nhóm công năng, số người, bậc chịu lửa, cấp nguy hiểm cháy kết cấu, số lối ra tầng và nhà. Vật liệu hoàn thiện hạn chế theo công năng (xem MOD_vat_lieu_hoan_thien.md).
 - 3.1.5: khi bố trí thoát nạn **không tính** biện pháp, phương tiện cứu nạn, cũng như lối ra không đáp ứng 3.2.1.
@@ -93,7 +93,7 @@ Cách dùng:
 ### Lối thoát nạn chỉ là lối ra ngoài
 - Cửa vào phòng (kể cả phòng kỹ thuật dưới thang) không phải lối thoát nạn, không đếm vào số lối ra. Lối vào buồng thang để trống không cánh: chỉ cần thông thủy ≥ 0,9 m (≥ bản thang) và cao ≥ 1,9 m; có lắp cửa hay không do người thiết kế quyết định.
 
-### Cách áp dụng bề rộng 3.2.9 (đã thống nhất với user, Hoàng Anh 1)
+### Cách áp dụng bề rộng 3.2.9 (đã thống nhất với user, DA-10 1)
 - **Cửa của gian phòng và lối ra khỏi nhà:** theo 3.2.9: ≥ 0,8 m; ≥ 1,2 m khi hơn 50 người thoát (F1.1 hơn 15 người).
 - **Lối vào buồng thang từ hành lang và cửa ra ngoài của buồng thang:** KHÔNG áp mức 1,2 m. Tính theo Phụ lục G.2.1.1: n = số người / 165 (bậc I, II), / 115 (III, IV), / 80 (V); cửa không nhỏ hơn giá trị tính toán và không nhỏ hơn bề rộng bản thang theo 3.4.1 (≥ 0,9 m).
 - Khi một lối bị chặn (3.2.8): kiểm tra từng lối còn lại: công suất = bề rộng × 165 (bậc II) phải ≥ toàn bộ số người của tầng. Ví dụ FD1 0,9 m: 0,9 × 165 = 148 người ≥ 105.

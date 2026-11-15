@@ -62,7 +62,7 @@ Sau bảng: liệt kê lỗi thiết kế phát hiện được, điểm cần x
 | Loại cầu thang/buồng thang (L1, L2, N1–N3), từ loại thang suy ra lối ra thoát nạn hợp lệ, khi nào cần N1 (2.4.2, 2.4.3, 3.2.1b, 3.4.1–3.4.17) | [MOD_cau_thang_buong_thang.md](MOD_cau_thang_buong_thang.md) |
 | Bảo vệ chống khói: hút xả khói, cấp khí áp dương (Phụ lục D) | [MOD_chong_khoi_PL_D.md](MOD_chong_khoi_PL_D.md) |
 | Nhận dạng loại thang trên hình, các dạng khoảng đệm N1; hình phân tán, tầng hầm (Hình I.1–I.9) | [MOD_hinh_Phu_luc_I_cau_thang.md](MOD_hinh_Phu_luc_I_cau_thang.md) |
-| Ví dụ thực tế đã làm với Hoàng Anh 1 (đối chiếu cách tư duy, số liệu mẫu) | [VI_DU_hoang_anh_1.md](VI_DU_hoang_anh_1.md) |
+| Ví dụ thực tế đã làm với DA-10 1 (đối chiếu cách tư duy, số liệu mẫu) | [VI_DU_da10_1.md](VI_DU_da10_1.md) |
 | Định nghĩa QCVN (gian phòng chung, hành lang bên, gian phòng có người làm việc thường xuyên) | [../knowledge/dinh-nghia/dinh-nghia.md](../knowledge/dinh-nghia/dinh-nghia.md) |
 | Dữ liệu cần lấy từ skill khác (Sprinkler, nhóm nhà, bậc chịu lửa...) | [DU_LIEU_TU_SKILL_KHAC.md](DU_LIEU_TU_SKILL_KHAC.md) |
 | Ngăn cháy công năng, tỉ lệ cửa/tường | [SKILL_ngan_chay_cong_nang.md](SKILL_ngan_chay_cong_nang.md) |

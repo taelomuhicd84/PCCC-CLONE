@@ -5,7 +5,7 @@ Lớp tri thức (knowledge), không phải điều kiện xét. Các skill và 
 Gian phòng có công năng dùng để tổ chức sự kiện (ví dụ hội họp, hội thảo, trình diễn, thể thao và tương tự), có sự tập trung cùng lúc một nhóm người trong một khoảng thời gian ấn định. Nhóm người này có đặc điểm chung là không quen thuộc với địa điểm tập trung (không thường xuyên hoặc không định kỳ có mặt).
 Không phải gian phòng chung: văn phòng, gian phòng sản xuất và các gian phòng dùng chủ yếu cho người trong nội bộ tòa nhà (phòng họp nội bộ, phòng ăn nội bộ, phòng sinh hoạt chung nội bộ và tương tự).
 **Dùng ở:** 3.5.3 (Bảng B.9), 3.5.10 (có chữa cháy tự động thì không yêu cầu cấp nguy hiểm cháy vật liệu) và 3.2.2c (phòng chờ, gửi đồ, hút thuốc, vệ sinh tầng hầm) → xem `skills/MOD_vat_lieu_hoan_thien.md`.
-**Ví dụ:** bản vẽ Hoàng Anh 1 xem các phòng karaoke là gian phòng chung (khách bên ngoài, không nội bộ). Hành lang, tiền sảnh, buồng thang trên đường thoát nạn không phải gian phòng chung; chúng theo Bảng B.8.
+**Ví dụ:** bản vẽ DA-10 1 xem các phòng karaoke là gian phòng chung (khách bên ngoài, không nội bộ). Hành lang, tiền sảnh, buồng thang trên đường thoát nạn không phải gian phòng chung; chúng theo Bảng B.8.
 
 ## 1.4.22 Gian phòng có người làm việc thường xuyên
 Gian phòng mà con người có mặt không ít hơn 2 giờ liên tục hoặc có mặt tổng cộng 6 giờ trong một ngày đêm.

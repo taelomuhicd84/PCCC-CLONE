@@ -35,7 +35,7 @@ Công trình khi thiết kế, cải tạo, thay đổi công năng sử dụng,
 - **Dự án** đầu tư xây dựng có công trình thuộc diện thẩm định thì **các công trình, hạng mục khác** có yêu cầu về PCCC (khoản 1 Điều 16 Luật PCCC và CNCH) thuộc dự án đó **cũng phải thẩm định**.
 - Cấp công trình xác định theo pháp luật về xây dựng. GT: tổng dung tích của phương tiện theo pháp luật về hàng hải.
 **Trừ (Điều 9 khoản 1 NĐ 105):** công trình tạm theo pháp luật xây dựng; công trình thuộc dự án đầu tư đặc biệt; công trình của cơ sở quốc phòng hoạt động quân sự; phương tiện giao thông chế tạo hoặc hoán cải chuyên dùng cho quân sự.
-**Ví dụ áp dụng:** karaoke 1 tầng 925 m² (như Karaoke Hoàng Yến) **không** đạt ngưỡng mục 5 (cần từ 4 tầng hoặc từ 1.000 m²), trừ khi thuộc dự án có công trình khác thuộc diện hoặc là nhà hỗn hợp theo mục 8. Karaoke từ tầng 3 trở lên trong nhà hỗn hợp: xét theo mục 8.
+**Ví dụ áp dụng:** karaoke 1 tầng 925 m² (như Karaoke DA-11) **không** đạt ngưỡng mục 5 (cần từ 4 tầng hoặc từ 1.000 m²), trừ khi thuộc dự án có công trình khác thuộc diện hoặc là nhà hỗn hợp theo mục 8. Karaoke từ tầng 3 trở lên trong nhà hỗn hợp: xét theo mục 8.
 
 ## 3. Ba nơi thẩm định (NĐ 105/2025 đã sửa bởi NĐ 347/2026)
 | Cơ quan | Điều | Đối tượng |

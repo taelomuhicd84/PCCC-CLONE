@@ -14,7 +14,7 @@ Bảng cấp nguy hiểm cháy vật liệu (B.7, B.8, B.9) nằm ở Phụ lụ
   - Không yêu cầu cấp nguy hiểm cháy với vật liệu ở lớp ngoài cùng dày ≤ 1 mm trên nền không cháy, hoặc khi cảnh sát PCCC có thẩm quyền xác định nguy cơ cháy lan, sinh khói thấp hoặc không có.
   - Không yêu cầu khi tổng diện tích vật liệu ≤ 20% diện tích tường/trần gắn vào (cao su, nhựa, vật liệu trùng hợp ≤ 10%) và phân bố tương đối rời rạc.
   - Gian phòng chung không đạt cấp vật liệu phải: có báo cháy tự động; kết cấu bao che là bộ phận ngăn cháy tối thiểu EI (hoặc EIW) 45 với nhà bậc I, II, III và/hoặc cao PCCC ≥ 28 m; EI 30 với nhà bậc I, II, III cao PCCC < 28 m; EI 15 với nhà bậc IV.
-- Hoàng Anh 1: gian phòng karaoke là gian phòng chung có sprinkler → không yêu cầu cấp nguy hiểm cháy vật liệu (điều 3.5.10).
+- DA-10 1: gian phòng karaoke là gian phòng chung có sprinkler → không yêu cầu cấp nguy hiểm cháy vật liệu (điều 3.5.10).
 ## Phụ lục B – phân loại vật liệu và yêu cầu về an toàn cháy (QCVN 06 sửa đổi 01, bản 10.2023)
 **B.1.1** Vật liệu **không cháy**: trong thử nghiệm (TCVN 12695 / ISO 1182) lò đốt tăng nhiệt ≤ 50 °C, mẫu giảm khối lượng ≤ 50%, ngọn lửa kéo dài ≤ 10 s. Không thỏa một trong ba yếu tố là vật liệu cháy. Ví dụ không cháy: bê tông, gạch đất sét nung, gốm, kim loại, khối xây, vữa trát và vật liệu vô cơ tương tự.
 
@@ -48,6 +48,6 @@ Bảng cấp nguy hiểm cháy vật liệu (B.7, B.8, B.9) nằm ở Phụ lụ
 - Gian phòng chung có chữa cháy tự động thì không yêu cầu cấp vật liệu (3.5.10 ở trên).
 ## Áp dụng "gian phòng chung" khi kiểm tra vật liệu
 Định nghĩa gian phòng chung: xem `knowledge/dinh-nghia/dinh-nghia.md` (1.4.21a).
-- Hoàng Anh 1: phòng karaoke được xem là gian phòng chung → áp dụng 3.5.10 và Bảng B.9 cho phòng.
-- **Hành lang, tiền sảnh, buồng thang trên đường thoát nạn không phải gian phòng chung:** phòng karaoke có sprinkler được miễn cấp vật liệu theo 3.5.10, nhưng đường thoát nạn vẫn phải theo Bảng B.8 / 3.3.4. Karaoke F2.1: tường và trần tiền sảnh, buồng thang CV0, hành lang chung CV1; sàn tiền sảnh, buồng thang CV1, hành lang chung CV2. Bản vẽ Hoàng Anh 1 ghi trần thạch cao là vật liệu không cháy (đạt phần trần); vật liệu tường và sàn hành lang không ghi → khoanh "cần kiểm tra".
+- DA-10 1: phòng karaoke được xem là gian phòng chung → áp dụng 3.5.10 và Bảng B.9 cho phòng.
+- **Hành lang, tiền sảnh, buồng thang trên đường thoát nạn không phải gian phòng chung:** phòng karaoke có sprinkler được miễn cấp vật liệu theo 3.5.10, nhưng đường thoát nạn vẫn phải theo Bảng B.8 / 3.3.4. Karaoke F2.1: tường và trần tiền sảnh, buồng thang CV0, hành lang chung CV1; sàn tiền sảnh, buồng thang CV1, hành lang chung CV2. Bản vẽ DA-10 1 ghi trần thạch cao là vật liệu không cháy (đạt phần trần); vật liệu tường và sàn hành lang không ghi → khoanh "cần kiểm tra".
 - Chữa cháy tự động ở 3.5.10: phòng chung có chữa cháy tự động thì không yêu cầu cấp vật liệu, trừ phòng > 20 m² điều trị nội trú, dưỡng lão, chăm sóc người khuyết tật.

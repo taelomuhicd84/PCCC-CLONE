@@ -55,4 +55,4 @@ Khu vực ướt, hồ bơi, phòng tắm, phòng rửa, **phòng vệ sinh (WC)
 
 ## Chưa chốt (chờ người dùng xác nhận)
 - Khoảng không trên trần giả của karaoke có đường ống bọc vật liệu cháy hoặc máng cáp ≥ 220 V không: phải xem bản vẽ điện/mặt cắt trần (nếu có thì cần đầu báo KHÓI ở khoảng không đó, dù phòng bên dưới dùng nhiệt).
-- Ca nguồn: Karaoke Galaxy tầng trệt, 2026-10-30 (bài thử: phòng hát dùng nhiệt H, hành lang dùng ký hiệu T của người thiết kế, suy ra khói).
+- Ca nguồn: Karaoke DA-15 tầng trệt, 2026-10-30 (bài thử: phòng hát dùng nhiệt H, hành lang dùng ký hiệu T của người thiết kế, suy ra khói).

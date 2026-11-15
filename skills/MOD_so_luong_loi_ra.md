@@ -30,5 +30,5 @@ Nguồn: `QCVN 06 SỬA ĐỔI BỔ SUNG 10.2023.pdf`, Điều 3. Đã loại c�
 - Tầng có ít nhất 1 gian phòng yêu cầu ≥ 2 lối ra thì tầng đó phải có ≥ 2 lối ra thoát nạn.
 - Số lối ra của nhà không được ít hơn số lối ra của bất kỳ tầng nào của nhà đó.
 
-## Áp dụng karaoke Hoàng Anh 1
+## Áp dụng karaoke DA-10 1
 Tầng có phòng ≥ 50 người hoặc F2.1 → ≥ 2 lối: tầng trệt có D1, D2; Lầu 1 có CT1, CT2: đạt về số lượng. Phòng VIP/Party ≤ 15 người, khoảng cách từ chỗ xa nhất trong phòng tới cửa phòng ≤ 25 m: một cửa phòng là đủ theo 3.2.5.

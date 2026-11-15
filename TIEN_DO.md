@@ -55,26 +55,26 @@ thiếu số liệu vẫn ra D / KD thay vì XM; trang xoay làm sập máy ki�
    i. `CLAUDE.md` + memory `luu-tien-do-truoc-het-usage`: luật 85–95 % và ngữ cảnh 50 % cho mọi việc; dọn `.claude/worktrees/` cũ (hỏi người dùng trước khi xoá nhánh).
 4. Mỗi đợt xong: `npm test`, pytest, `cad\test\chay_thu.ps1` (khi đụng CAD), cập nhật file này + `LICH_SU.md`, commit. `git push` vẫn treo ở tab Terminal (chờ người dùng đăng nhập).
 **CAD tự động (MCP CAD, từ 2026-11-10): tiến độ và nhật ký RIÊNG ở `cad/TIEN_DO.md`, `cad/LICH_SU.md`; kế hoạch `cad/KE_HOACH.md`.**
-**XONG 06/11 (sáng): BCKS "Văn phòng Q.7 – Tân Quy Đông 1"** ở `ket_qua/tanquydong1/` (BCKS_Van_phong_Tan_Quy_Dong_1.xlsx/.pdf, ban_ve_ghi_chu.pdf, doi_chieu.xlsx, bang_doi_chieu.md; không commit; `dien.py`, `ghichu.py` dựng lại). 4 tầng nổi + hầm, cao PCCC ≈ 12 m (ước lượng), sàn ≈ 1.170 m², F4.3 theo tên hồ sơ (bản vẽ: trệt văn phòng, tầng trên căn A/B/E). Còn 👤: công năng thật (nhà ở KD thì hầm xe/báo cháy khác), vị trí tường/cửa PA1 (ước lượng từ ảnh), số người, mặt bằng mái. Usage tuần ≈ 97 % lúc làm.
+**XONG 06/11 (sáng): BCKS "Văn phòng Q.7 – DA-07 1"** ở `ket_qua/da071/` (BCKS_Van_phong_DA07_1.xlsx/.pdf, ban_ve_ghi_chu.pdf, doi_chieu.xlsx, bang_doi_chieu.md; không commit; `dien.py`, `ghichu.py` dựng lại). 4 tầng nổi + hầm, cao PCCC ≈ 12 m (ước lượng), sàn ≈ 1.170 m², F4.3 theo tên hồ sơ (bản vẽ: trệt văn phòng, tầng trên căn A/B/E). Còn 👤: công năng thật (nhà ở KD thì hầm xe/báo cháy khác), vị trí tường/cửa PA1 (ước lượng từ ảnh), số người, mặt bằng mái. Usage tuần ≈ 97 % lúc làm.
 **XONG 06/11 tối: BCKS "Nhà phố – Căn hộ dịch vụ 8 m" (Q.2)** ở `ket_qua/canho8m/v7/` (BCKS xlsx, ban_ve_ghi_chu.pdf, doi_chieu.xlsx, bang_doi_chieu.md; không commit). Công năng giả định F1.2 theo tên file; 5 tầng nổi + hầm; cao PCCC ≈ 15,0 m.
 Người dùng đã chỉnh nhiều vòng, TẤT CẢ đã chép vào skill/knowledge: `knowledge/nhan-dien-thang-thoat-nan.md` (checklist vẽ buồng thang cuối file: tầng nổi trên không tường quây; hầm + trệt tường cách bậc đầu ≈ 900 mm theo từng vế,
 thang máy ngoài cửa E30, hầm 1 cửa vế trái, cửa EI sát mép phía phòng T-01/T-02; cửa phòng mở vào phòng không bàn cung vế), `knowledge/hoc/du-an/so-bo-thiet-ke.md` (bài Căn hộ DV 8 m), skill `tkpccc-bang-doi-chieu` (BCKS: nhà không thẩm định ⇒ khoảng cách/giao thông "-Đảm bảo",
 hệ thống: họng nước = chữa cháy vách tường, bể 126/9 m3 chữ đỏ đậm khi có vách tường/sprinkler, cùng một font; hàm `_rich` trong `bang_doi_chieu.py`), skill `tkpccc-ghi-chu-ban-ve`, `tkpccc-khao-sat-tu-van`.
 Còn 👤: người dùng xem lại vị trí tường/cửa PA1 (ước lượng từ ảnh), công năng thật, cao độ mặt đường (cao PCCC sát 15 m), hầm xe hay kỹ thuật (bể 126 m3), BCKS chưa xuất PDF xem ảnh bản in. `ket_qua/canho8m/dien.py` + `bcks_fix.py` là bản cũ, bản đúng nằm ở `v7/doi_chieu.json`.
 Quy tắc ghi chú PDF đủ mọi TT 6–27 (memory `ghi-chu-pdf-du-moi-tt`). Usage tuần ≈ 95 % lúc làm (reset ≈ 04:59 07/11 UTC+7).
-**XONG 06/11: BCKS "Nhà ở gia đình 81 Phạm Ngũ Lão, TX. Thủ Dầu Một" (PDF Downloads "ĐƯỜNG PHAM NGÕ1 LÀO 7,5 mét")** ở `ket_qua/lao_7_5/`
-(BCKS_Pham_Ngu_Lao xlsx+pdf, ban_ve_ghi_chu.pdf, bang_doi_chieu.md, doi_chieu.xlsx; sinh bằng `dien.py` từ mẫu v4 Nguyễn Viết Thanh).
+**XONG 06/11: BCKS "Nhà ở gia đình DA-06 (nhà phố)" (PDF Downloads "DA-06 7,5 mét")** ở `ket_qua/da06/`
+(BCKS_DA06 xlsx+pdf, ban_ve_ghi_chu.pdf, bang_doi_chieu.md, doi_chieu.xlsx; sinh bằng `dien.py` từ mẫu v4 DA-02).
 27 dòng KS: 3 ĐẠT, 1 CHƯA ĐẠT (thang hở 4 tầng), 5 CẦN XÁC NHẬN, 13 KHÔNG ÁP DỤNG. 👤 Chờ người dùng xem: chiếu nghỉ nét chéo (bậc chéo?),
-ô gạch chéo cạnh WC, vị trí tường/cửa PA1 trên PDF (đo sơ), cao PCCC ≈ 12,4 m. Công năng người dùng cấp sau: CĂN HỘ CHO THUÊ (F1.2) → bản đúng ở `ket_qua/lao_7_5/cho_thue/` (sinh bằng `bien_the.py`; 2 ĐẠT, 4 CHƯA ĐẠT: thang, báo cháy độc lập, bình/dụng cụ/mặt nạ, chống sét; 8 CẦN XÁC NHẬN; 8 KHÔNG ÁP DỤNG). Bản nhà ở thuần ở thư mục cha chỉ để tham khảo. Usage tuần ≈ 91 % lúc làm (reset ≈ 04:59 07/11 UTC+7).
-**XONG 05/11 (người dùng bảo làm tiếp): BCKS "BVXP ĐIỀU CHỈNH - NGUYỄN VIẾT THANH"** đã ra đủ file ở `ket_qua/nguyen_viet_thanh/` (BCKS xlsx + pdf, ban_ve_ghi_chu.pdf, bang_doi_chieu.md, doi_chieu.xlsx; 27 dòng KS: 2 ĐẠT, 14 CẦN XÁC NHẬN, 7 KHÔNG ÁP DỤNG, 4 thông tin). Còn 👤 người dùng xem; TCVN 13967:2024 (nhà ở riêng lẻ) chưa nạp nên thang/số lối để CẦN XÁC NHẬN. Phần dưới là ghi chú lúc dừng.
+ô gạch chéo cạnh WC, vị trí tường/cửa PA1 trên PDF (đo sơ), cao PCCC ≈ 12,4 m. Công năng người dùng cấp sau: CĂN HỘ CHO THUÊ (F1.2) → bản đúng ở `ket_qua/da06/cho_thue/` (sinh bằng `bien_the.py`; 2 ĐẠT, 4 CHƯA ĐẠT: thang, báo cháy độc lập, bình/dụng cụ/mặt nạ, chống sét; 8 CẦN XÁC NHẬN; 8 KHÔNG ÁP DỤNG). Bản nhà ở thuần ở thư mục cha chỉ để tham khảo. Usage tuần ≈ 91 % lúc làm (reset ≈ 04:59 07/11 UTC+7).
+**XONG 05/11 (người dùng bảo làm tiếp): BCKS "BVXP ĐIỀU CHỈNH - NGUYỄN VIẾT THANH"** đã ra đủ file ở `ket_qua/da02/` (BCKS xlsx + pdf, ban_ve_ghi_chu.pdf, bang_doi_chieu.md, doi_chieu.xlsx; 27 dòng KS: 2 ĐẠT, 14 CẦN XÁC NHẬN, 7 KHÔNG ÁP DỤNG, 4 thông tin). Còn 👤 người dùng xem; TCVN 13967:2024 (nhà ở riêng lẻ) chưa nạp nên thang/số lối để CẦN XÁC NHẬN. Phần dưới là ghi chú lúc dừng.
 Cập nhật 05/11 chiều: người dùng sửa BCKS kinh doanh, đã học và áp cho 3 bản (kết quả cuối ở `.../v4/`): công năng chỉ ghi người dùng cấp (kinh doanh: hầm để xe, T1 dạy tiếng Anh, T2 văn phòng, T3–4 ở) và ghi 1 góc bản vẽ; BCKS không ngoặc giải thích, không khuyến nghị, thêm chống sét; bỏ ngăn cháy KD/ở và lối ra thứ hai; thêm tách thang hầm–T1 (tường quây + vách ngăn + 2 cửa EI 60, ghi chú mũi tên) xem `knowledge/nhan-dien-thang-thoat-nan.md`, ảnh mẫu ở `knowledge/hinh/`. Bài học ghi `knowledge/hoc/du-an/so-bo-thiet-ke.md`. Còn lại: xác nhận số 126 m³ bể hầm; vị trí tường/cửa trên PDF cần người dùng xem; cho_thue còn cảnh báo kiem "khung 9 chưa vẽ".
-Thêm 05/11: 2 biến thể công năng cho cùng bản vẽ: `ket_qua/nguyen_viet_thanh/kinh_doanh/` (nhà ở kết hợp kinh doanh, giả định kinh doanh T1 ≈ 19 % sàn: không bắt buộc hệ thống, hầm xe máy CẦN XÁC NHẬN) và `cho_thue/` (căn hộ cho thuê F1.2, lửng tính tầng ⇒ 5 tầng nổi: CHƯA ĐẠT thang hở 3.4.16, báo cháy tự động, họng nước + bơm, bình/dụng cụ/mặt nạ; cần bể nước). Sinh bằng `ket_qua/nguyen_viet_thanh/bien_the.py` từ `doi_chieu.json` gốc.
+Thêm 05/11: 2 biến thể công năng cho cùng bản vẽ: `ket_qua/da02/kinh_doanh/` (nhà ở kết hợp kinh doanh, giả định kinh doanh T1 ≈ 19 % sàn: không bắt buộc hệ thống, hầm xe máy CẦN XÁC NHẬN) và `cho_thue/` (căn hộ cho thuê F1.2, lửng tính tầng ⇒ 5 tầng nổi: CHƯA ĐẠT thang hở 3.4.16, báo cháy tự động, họng nước + bơm, bình/dụng cụ/mặt nạ; cần bể nước). Sinh bằng `ket_qua/da02/bien_the.py` từ `doi_chieu.json` gốc.
 Người dùng giao lập báo cáo khảo sát từ `C:\Users\HP\Downloads\BVXP ĐIỀU CHỈNH - NGUYỄN VIẾT THANH-KQ-signed(1)-signed(1)-signed(1)-signed(1).pdf`
-(đã chép `ket_qua/nguyen_viet_thanh/ban_ve.pdf`, 2 trang; `doi_chieu.json` mới `lamviec KS`, CHƯA điền; `anh/` có luoi_1/2.png và ảnh cắt thang t_*.png).
+(đã chép `ket_qua/da02/ban_ve.pdf`, 2 trang; `doi_chieu.json` mới `lamviec KS`, CHƯA điền; `anh/` có luoi_1/2.png và ảnh cắt thang t_*.png).
 Chạy skill `tkpccc-khao-sat-tu-van` từ bước 1. Đã nhận diện (chưa ghi vào JSON):
 - Trang 1: tổng mặt bằng, MB tầng 1, MB hầm, mặt đứng, mặt cắt A-A, khung tên. Trang 2: MB lửng, 2+3, 4, mái che cầu thang, mái, móng, HTH.
-  Nhà ở RIÊNG LẺ (F1.4) ông Nguyễn Viết Thanh, bà Trần Thị Tuyết Như; 12 Đường số 11, KP3, P. Linh Trung (nay P. Linh Xuân), TP.HCM;
-  thửa 542, tờ 105, 261,8 m²; GPXD 212/GPXD 25/06/2026, điều chỉnh lần 1 số 280/PLGPXD 29/07/2026; thiết kế Phú Thiện Phát.
+  Nhà ở RIÊNG LẺ (F1.4) chủ hộ DA-02 (tên, địa chỉ: hồ sơ trong `ket_qua/`, không commit);
+  261,8 m²; có GPXD và giấy phép điều chỉnh lần 1 (số, ngày: hồ sơ trong `ket_qua/`); đơn vị thiết kế (ẩn tên).
 - Cao độ: hầm -1,650 (đỗ xe máy, ram dốc i = 18 %, có ram cong), T1 +0,700, lửng +3,250, T2 +5,800, T3 +8,800, T4 +11,800, sân thượng +14,800,
   mái che thang +17,800, đỉnh +19,000. Hầm cao 2,6 m, sâu 1,65 m (> 1/2 nên là tầng hầm). 8 trục, dài 24 m, rộng 8,43 m (đầu trái) → 4,55 m (đầu phải);
   mỗi tầng ≈ 170 m² (TỰ TÍNH thô, tính lại bằng đa giác). Lửng có ô thông tầng lớn bên trái nên ≈ 50 % T1 (≤ 65 % thì không tính tầng, kiểm lại).
@@ -82,7 +82,7 @@ Chạy skill `tkpccc-khao-sat-tu-van` từ bước 1. Đã nhận diện (chưa 
   Sơ bộ 4 tầng nổi + hầm 1; chiều cao PCCC ≈ +11,8 m + mép dưới cửa sổ (chốt theo 3.5 QCVN 06); nhãn công năng: PHÒNG NGỦ khoảng 9, P. SHC, WC, bếp, phòng khách.
 - Thang: MỘT thang bộ + MỘT thang máy cạnh nhau ở giữa nhà (trục 3–5); thang 2 vế thẳng + chiếu nghỉ phẳng, không bậc chéo, vế ≈ 0,95–1,1 m (đo sơ);
   KHÔNG có buồng thang đóng kín (hở vào P. SHC mọi tầng, không cửa); thang máy ngoài buồng. Hầm: ram dốc + thang nhỏ cạnh thang máy. Chưa xem mặt cắt (hầm → T1).
-  Cần xét: đóng kín buồng thang, tách thang hầm, số lối (1 thang) theo 3.2.6.2, lối ra mái, báo cháy, hầm xe máy (bài học Lưu Xuân Lộc: sprinkler hầm + bể 126 m³).
+  Cần xét: đóng kín buồng thang, tách thang hầm, số lối (1 thang) theo 3.2.6.2, lối ra mái, báo cháy, hầm xe máy (bài học DA-01: sprinkler hầm + bể 126 m³).
 Việc kế: đọc `knowledge/hoc/du-an/so-bo-thiet-ke.md`, `knowledge/nhan-dien-thang-thoat-nan.md`; điền 27 dòng KS; ghi chú PDF (PA đóng kín buồng thang); `kiem`, `xlsx`, `md`, `bcks`; XEM ảnh; gửi file.
 
 **DỞ (03/11, dừng vì usage 5 giờ 99 %; reset ≈ 12:10 UTC+7, tuần 82 %): sửa Q.4 theo bài train "đường thoát nạn đo từ vị trí xa nhất
@@ -91,7 +91,7 @@ xanh dương: từ góc P. ngủ 06 (757, 623) → (757, 456) → (333, 457) →
 1. Q.4 khảo sát (`ket_qua/q4/doi_chieu.json`) và thẩm định (`ket_qua/q4_tham_dinh/doi_chieu.json`): đổi L1 7,9 m → ≈ 9,2 m ở KS dòng 12, 15,
    KT7.1 #96, các ô Kết luận có "7,9 m"; sửa `ghi_chu` trang 5: nét "L1 ≈ 7,9 m" thành nét xanh từ góc xa trong P. ngủ 06 như người dùng vẽ
    (tọa độ trên), nhãn "L1 ≈ 9,2 m"; chạy `kiem`, `ve --anh`, XEM ảnh, `xlsx`, `md`.
-2. BCKS Q.4 v2 (`ket_qua/q4/BCKS_CHDV_Doan_Nhu_Hai_Q4_v2.xlsx`): thêm ảnh ghi chú ở cột GHI CHÚ (người dùng dặn: phải có ảnh như bản cũ):
+2. BCKS Q.4 v2 (`ket_qua/q4/BCKS_CHDV_DA18_Q4_v2.xlsx`): thêm ảnh ghi chú ở cột GHI CHÚ (người dùng dặn: phải có ảnh như bản cũ):
    `bcks.ghi_chu.tu_van.anh` (thang Trệt + xe máy trang 1; đường thoát nạn Lầu 2 trang 5), chạy lại `bcks`, xuất PDF bằng Excel, XEM ảnh.
 3. Cửa chống cháy "ngay cửa phòng": người dùng chưa nói rõ cách áp dụng cho PA1; đang vẽ cửa ở lối vào buồng thang. Ghi "cần người dùng xem xét".
 **Xong 03/11 chiều (máy D:/1_Claude/TKPCCC):**
@@ -127,7 +127,7 @@ cửa, chữ). Sắp xếp lại: mỗi module một skill (bảng module ↔ sk
 Chừa đường thiết kế CAD qua MCP (ROADMAP Pha 6, chưa làm). Đã kiểm: npm test 57, pytest 9 (thamdinh 2 + ghi chú 4 + bảng 3),
 CAD TAT CA DAT; chạy thử ghi chú trang 3 hồ sơ `ket_qua/canho` (trang xoay 270°): khung, callout đúng chỗ.
 Việc tiếp theo của luồng mới:
-1. ✅ 02/11 chiều: chạy trọn luồng khảo sát trên `ket_qua/canho` (Lưu Xuân Lộc) → bản 7: `doi_chieu.json` khung KS (26 dòng + 11a–11e;
+1. ✅ 02/11 chiều: chạy trọn luồng khảo sát trên `ket_qua/canho` (DA-01) → bản 7: `doi_chieu.json` khung KS (26 dòng + 11a–11e;
    thang hở loại 2 đưa vào Kết luận dòng 11c kèm 3.4.16, 3.3.2), `ban_ve_ghi_chu.pdf` (68 annotation, PA1 tím, PA2 xanh lá, PA3 xanh),
    `doi_chieu.xlsx`, `bang_doi_chieu_ban7.md` (không commit). Điểm mới so bản 6: vế thang giữa đo sơ ≈ 0,84–0,89 m (< 0,9 m?);
    bãi đỗ xe được miễn theo chú thích 1) Bảng 14 nếu họng tiếp nước cách đường ≤ 18 m; thang máy xuống hầm cần khoang đệm ngăn cháy
@@ -136,26 +136,26 @@ Việc tiếp theo của luồng mới:
    `ket_qua/canho/ban_ve_ghi_chu_moi_tang_2.pdf` (167 annotation, bản mới nhất).
    CHỜ người dùng xem bản 7 và sửa.
 1b. ✅ 02/11 khuya (máy F:\…\PCCCVIP): MẪU BÁO CÁO KHẢO SÁT MẶC ĐỊNH = BCKS Excel của người dùng (người dùng dặn: luôn dùng nếu không gửi mẫu
-   khác). Mẫu trắng `data/mau_bao_cao/BCKS_mau.xlsx` (giữ logo, tiêu đề công ty; xoá nội dung Lưu Xuân Lộc; sửa chữ "HỒ HƠ PHÁP LÍ").
+   khác). Mẫu trắng `data/mau_bao_cao/BCKS_mau.xlsx` (giữ logo, tiêu đề công ty; xoá nội dung DA-01; sửa chữ "HỒ HƠ PHÁP LÍ").
    Lệnh mới `bang_doi_chieu.py bcks` điền khoá `bcks` của `doi_chieu.json` + ảnh cắt từ `ban_ve_ghi_chu.pdf` vào cột GHI CHÚ (tự thu nhỏ
    ảnh cho vừa 409 pt/hàng; Excel in hàng thấp hơn ảnh ≈ 7 % nên tính 0,81 pt/px). Đã kiểm bản in bằng Excel (ExportAsFixedFormat): 1 trang.
    Làm lại khảo sát Q.4 trên máy này (`ket_qua/q4/`, không commit): 7 CHƯA ĐẠT, 8 CẦN XÁC NHẬN, 9 KHÔNG ÁP DỤNG; tum có WC-07 nên tính
    1 tầng (QCVN 10 1.4.24 CT1) → 4 tầng, cao ≈ 11,6 m; thang hở L ≈ 33 m > 25 m; xe máy trong sảnh chân thang; mặt bậc đo sơ ≈ 235 mm.
-   👤 Chờ người dùng xem `BCKS_CHDV_Doan_Nhu_Hai_Q4.xlsx/.pdf`, `ban_ve_ghi_chu.pdf` (66 annotation, PA1 tím) và cho biết có coi WC nhỏ trên tum
+   👤 Chờ người dùng xem `BCKS_CHDV_DA18_Q4.xlsx/.pdf`, `ban_ve_ghi_chu.pdf` (66 annotation, PA1 tím) và cho biết có coi WC nhỏ trên tum
    là tum không tính tầng không (nếu có: 3 tầng, cao ≈ 8,2 m, nhưng vẫn phải đóng kín thang vì L ≈ 33 m).
 2. ⏳ ĐANG DỞ (03/11): thử luồng thẩm định trên hồ sơ Q.4 (KT7.1 + A5 + B1, B12, B13, B14): xong 6/7 job, còn B14 rồi gộp, vẽ, báo cáo; chi tiết ở khối đầu mục này.
 3. Pha 5b (ROADMAP): web chạy luồng, Word theo mẫu A/B, điền mẫu báo cáo khảo sát của người dùng (chờ người dùng gửi mẫu).
 
 **Đọc thêm `LICH_SU.md` mục 2026-11-02 "Lưu ý cho phiên sau" trước khi làm.**
 **NHẮC NGƯỜI DÙNG ĐẦU PHIÊN (người dùng dặn):** thang hở (loại 2) chỉ là kiến thức dùng để tư vấn, không phải dòng đối chiếu: bảng
-Lưu Xuân Lộc bản 6 còn dòng 14 "Thang hở (loại 2)" phải bỏ, ghi vào cột Kết luận của dòng thang; vẫn chờ người dùng train điều kiện thang loại 2.
+DA-01 bản 6 còn dòng 14 "Thang hở (loại 2)" phải bỏ, ghi vào cột Kết luận của dòng thang; vẫn chờ người dùng train điều kiện thang loại 2.
 **Phiên 2026-11-02: tư vấn thử hồ sơ thật, người dùng đang train phần thang thoát nạn.**
 - Đã ghi tri thức: quy trình đánh giá thang thoát nạn trong nhà (`knowledge/nhan-dien-thang-thoat-nan.md`, mục cuối): nhận diện từng thang →
   đạt/không → phương án từng thang → kiểm khả thi (chặn cửa căn hộ, mép bậc tới tường ≥ bản thang 3.4.3, cung mở cửa, cửa giếng thang máy
   E 30 khi thang máy ngoài buồng 4.23, tách thang hầm 3.2.1) → thang ngoài nhà → không có thì báo người dùng xem xét. Ô lấy sáng không phải
   lý do loại thang (3.4.8b chiếu sáng nhân tạo). Đã sửa cho khớp: bài học (1b), (2) `knowledge/hoc/du-an/so-bo-thiet-ke.md`,
   `data/mau_giai_phap/thoat_nan.json`, `CLAUDE.md`. Trước đó: bản vẽ cải tạo xét theo mặt bằng cải tạo; tầng thượng đã xây kín tính 1 tầng.
-- Kết quả thử (KHÔNG commit): `ket_qua/luu_xuan_loc_thu/` (`tu_van_thiet_ke.md` dạng bảng, `tu_van_khoanh.pdf` vẽ bằng `ve_khoanh.py`).
+- Kết quả thử (KHÔNG commit): `ket_qua/da01_thu/` (`tu_van_thiet_ke.md` dạng bảng, `tu_van_khoanh.pdf` vẽ bằng `ve_khoanh.py`).
   **Mục 4 Thoát nạn và PDF còn ghi "chọn thang trái cải tạo": SAI theo bài học mới.**
 
 Việc tiếp theo:
@@ -164,7 +164,7 @@ Việc tiếp theo:
 2. 👤 Chờ người dùng: (a) train tiếp điều kiện thang loại 2 (3.2.6, 3.4.15, 3.4.16; đoạn 3.2.6 trong bản hợp nhất bị lỗi chữ); đã train 02/11 phần
    đường thoát nạn 3.3.2: L1 + 3H + L3 ≤ Phụ lục G (`skills/MOD_tinh_toan_khoang_cach.md`);
    (b) căn hộ mở cửa thẳng vào buồng thang: chỉ báo cáo kèm căn cứ 3.2.1b, người dùng tự quyết (dặn 2026-11-02: không hỏi chọn);
-   (c) duyệt bài học "Đối chiếu BCKS Lưu Xuân Lộc" (đang `cho_nguoi_dung_duyet`).
+   (c) duyệt bài học "Đối chiếu BCKS DA-01" (đang `cho_nguoi_dung_duyet`).
 3. Hỏi người dùng có muốn chép ngược thay đổi `thoat_nan.json`, `nhan-dien-thang-thoat-nan.md` sang SKILL-PCCC-NEW không.
 
 ## Trạng thái các pha (cập nhật 2026-11-01 tối)
@@ -201,20 +201,20 @@ Pha 3 đã làm (chi tiết, phần đã cắt/sửa: `thamdinh/README.md`):
 - Web tab "Thẩm định PDF": 9 ô thông tin công trình (→ `--set`), bảng KD đỏ / XM cam nghiêng / Đạt xanh, cột # khớp nhãn PDF.
 
 Việc người dùng cần làm:
-- 👤 Đưa PDF hồ sơ thật (vd KS Hoàng Hùng 18 trang) vào máy này để thử tab Thẩm định PDF (kết quả nằm trong `ket_qua/`, không commit).
-- 👤 Lưu ý: repo `SKILL-PCCC-NEW` đã công khai cùng 284 file `ket_qua/` hồ sơ khách (Hoàng Hùng, Hoàng Anh, Galaxy…) và PDF TCVN trong
+- 👤 Đưa PDF hồ sơ thật (vd KS DA-14 18 trang) vào máy này để thử tab Thẩm định PDF (kết quả nằm trong `ket_qua/`, không commit).
+- 👤 Lưu ý: repo `SKILL-PCCC-NEW` đã công khai cùng 284 file `ket_qua/` hồ sơ khách (DA-14, DA-10, DA-15…) và PDF TCVN trong
   `8_TAILIEUHOCTAP/`. Muốn ẩn phải xoá khỏi cả lịch sử git hoặc chuyển repo về private. `PcccVipPro` sạch.
 - 👤 Máy có AutoCAD: tắt hẳn AutoCAD rồi mở lại để nạp plugin mới.
 - 👤 Gửi file đơn giá mẫu của bạn (khi có) để tool đọc đúng cột.
 
-- Thẩm định thử KS Hoàng Hùng (người dùng giao 2026-11-01, PDF kiến trúc 10/27 tờ, `Downloads\23-10-2026-...kien truc KS Hoàng Hùng 25-06.pdf`): báo cáo `ket_qua/ks_hoang_hung_thu/bao_cao.md` (không commit). Máy 0 Đạt/0 KD/13 XM; đọc bằng mắt: nghi KD buồng thang N1 (3.4.13, nhà ~34 m), lối ra BTB1 qua bếp (3.4.7), sảnh ngăn khói hầm; thiếu mặt bằng T3–10 và bản vẽ PCCC. Chờ người dùng bổ sung hồ sơ.
-- Người dùng đổi hồ sơ thử sang Căn hộ DV Lưu Xuân Lộc (Huy Phát, 6 tờ kiến trúc): báo cáo `ket_qua/luu_xuan_loc_thu/bao_cao.md` (không commit). Nghi KD: 2 thang cách ≈ 9,7 m < ½ đường chéo ≈ 10,8 m (bản điều chỉnh); cao PCCC sát 15 m; hầm xe chỉ 1 thang.
-- (bản 3, 2026-11-02) Đối chiếu BCKS thật của người dùng (xlsx, 6 tầng + hầm, cao PCCC 18,4 m, KHÔNG thuộc diện thẩm định): sửa tư vấn thành bảng (`ket_qua/luu_xuan_loc_thu/tu_van_thiet_ke.md`), PDF khoanh làm lại. Bài học mới ghi vào `knowledge/hoc/du-an/so-bo-thiet-ke.md` (trạng thái cho_nguoi_dung_duyet); form tư vấn dạng BẢNG ghi ở `knowledge/khao-sat-bao-gia.md`.
-- (bản 2, 2026-11-01 tối) Người dùng nhắc: phải áp phần đã train và ghi note lên PDF. Đã chép `data/mau_giai_phap/thoat_nan.json`, `knowledge/hoc/du-an/so-bo-thiet-ke.md`, `knowledge/nhan-dien-thang-thoat-nan.md`; viết lại `ket_qua/luu_xuan_loc_thu/tu_van_thiet_ke.md` và khoanh PDF `tu_van_khoanh.pdf` (`ve_khoanh.py`). Bắt được lỗi bản 1: cả 2 thang có bậc chéo (3.4.4), ≤ 15 người/tầng. CÒN: thẻ `data/ban_ve_mau` (36 MB) chưa chép; chưa tích hợp tạo khoanh PDF vào tab web.
-- Tư vấn thiết kế Lưu Xuân Lộc bản 1 (đã thay bằng bản 2): `ket_qua/luu_xuan_loc_thu/tu_van_thiet_ke.md` (form 7 mục; KHÔNG thuộc diện thẩm định; 2 lối: buồng thang L1 trái + thang ngoài phải; báo cháy + họng + bể ≥ 12 m³, không sprinkler). Sửa nhận định cũ: hầm 160 m² chỉ cần 1 lối (3.2.6.1e).
+- Thẩm định thử KS DA-14 (người dùng giao 2026-11-01, PDF kiến trúc 10/27 tờ, `Downloads\23-10-2026-...kien truc KS DA-14 25-06.pdf`): báo cáo `ket_qua/ks_da14_thu/bao_cao.md` (không commit). Máy 0 Đạt/0 KD/13 XM; đọc bằng mắt: nghi KD buồng thang N1 (3.4.13, nhà ~34 m), lối ra BTB1 qua bếp (3.4.7), sảnh ngăn khói hầm; thiếu mặt bằng T3–10 và bản vẽ PCCC. Chờ người dùng bổ sung hồ sơ.
+- Người dùng đổi hồ sơ thử sang Căn hộ DV DA-01 (đơn vị thiết kế ẩn tên, 6 tờ kiến trúc): báo cáo `ket_qua/da01_thu/bao_cao.md` (không commit). Nghi KD: 2 thang cách ≈ 9,7 m < ½ đường chéo ≈ 10,8 m (bản điều chỉnh); cao PCCC sát 15 m; hầm xe chỉ 1 thang.
+- (bản 3, 2026-11-02) Đối chiếu BCKS thật của người dùng (xlsx, 6 tầng + hầm, cao PCCC 18,4 m, KHÔNG thuộc diện thẩm định): sửa tư vấn thành bảng (`ket_qua/da01_thu/tu_van_thiet_ke.md`), PDF khoanh làm lại. Bài học mới ghi vào `knowledge/hoc/du-an/so-bo-thiet-ke.md` (trạng thái cho_nguoi_dung_duyet); form tư vấn dạng BẢNG ghi ở `knowledge/khao-sat-bao-gia.md`.
+- (bản 2, 2026-11-01 tối) Người dùng nhắc: phải áp phần đã train và ghi note lên PDF. Đã chép `data/mau_giai_phap/thoat_nan.json`, `knowledge/hoc/du-an/so-bo-thiet-ke.md`, `knowledge/nhan-dien-thang-thoat-nan.md`; viết lại `ket_qua/da01_thu/tu_van_thiet_ke.md` và khoanh PDF `tu_van_khoanh.pdf` (`ve_khoanh.py`). Bắt được lỗi bản 1: cả 2 thang có bậc chéo (3.4.4), ≤ 15 người/tầng. CÒN: thẻ `data/ban_ve_mau` (36 MB) chưa chép; chưa tích hợp tạo khoanh PDF vào tab web.
+- Tư vấn thiết kế DA-01 bản 1 (đã thay bằng bản 2): `ket_qua/da01_thu/tu_van_thiet_ke.md` (form 7 mục; KHÔNG thuộc diện thẩm định; 2 lối: buồng thang L1 trái + thang ngoài phải; báo cháy + họng + bể ≥ 12 m³, không sprinkler). Sửa nhận định cũ: hầm 160 m² chỉ cần 1 lối (3.2.6.1e).
 
 Việc tiếp theo (đề xuất):
-1. Thử thẩm định trên hồ sơ thật khi có PDF; so với lần chạy CLI gốc 31/10 trên Hoàng Hùng (Đạt 0, KD 3 đều "không đọc được số liệu", XM 3 →
+1. Thử thẩm định trên hồ sơ thật khi có PDF; so với lần chạy CLI gốc 31/10 trên DA-14 (Đạt 0, KD 3 đều "không đọc được số liệu", XM 3 →
    nay 3 dòng KD đó phải thành XM).
 2. Thủy lực: làm theo câu trả lời 2 câu hỏi trên; thử trên mặt bằng sprinkler thật; mở rộng (hỏi trước): kho nhóm 5–7 (Bảng 2), ô HCB2 cụm van
    trong Excel mẫu, nút "chọn số đầu C07" (`chonSoDau` đã có trong lõi).
@@ -237,5 +237,5 @@ Vấn đề còn mở / giới hạn đã biết:
 - Bash của Claude bị bộ lọc chặn chạy code của repo tải về; muốn so với bản gốc thì chạy trên bản đã chép trong `thamdinh/`.
 - Lõi gốc còn chưa chép (để khi cần): Gemini đọc bản scan, `project_info.py` (đọc thông tin công trình), bảng đối chiếu `rules/checklists/`
   B4–B50, xuất DXF/Word.
-- Hoàng Hùng (CLI gốc 31/10): KD là STAIR-DATA BTB1/BTB2 tr 4, EXIT-DOOR-DATA D01 tr 6; thiếu `height_pccc_m`, bậc chịu lửa, tỉ lệ bản vẽ;
+- DA-14 (CLI gốc 31/10): KD là STAIR-DATA BTB1/BTB2 tr 4, EXIT-DOOR-DATA D01 tr 6; thiếu `height_pccc_m`, bậc chịu lửa, tỉ lệ bản vẽ;
   không nhận diện được lối ra tr 17.

@@ -1,6 +1,6 @@
 # Hút khói / thoát khói cho không gian thông tầng (sảnh thông tầng, thang hở nối tầng)
 
-Bài học người dùng dạy 2026-11-06, bổ sung từ bản vẽ KT-21/KT-22 (Karaoke Hoàng Anh 2). Áp cho tư vấn và thẩm định. CHỈ xét các tầng NỔI;
+Bài học người dùng dạy 2026-11-06, bổ sung từ bản vẽ KT-21/KT-22 (Karaoke DA-10 2). Áp cho tư vấn và thẩm định. CHỈ xét các tầng NỔI;
 tầng hầm là khoang cháy riêng, không ghi bài này cho hầm. Phần CHỐNG KHÓI thôi; phần nhận diện thang nằm ở
 `knowledge/nhan-dien-thang-thoat-nan.md`, phần ngăn cháy 4.35 a)–d), f), g) nằm ở `knowledge/qcvn06-dieu-4.md`.
 
@@ -34,7 +34,7 @@ tầng hầm là khoang cháy riêng, không ghi bài này cho hầm. Phần CH�
 "Thang hở / sảnh nối tầng … – … thành không gian thông tầng (4.35): cùng khoang cháy, màn ngăn khói E 45 ở lỗ mở hoặc đóng kín;
 hút xả khói chung, hút đồng thời các tầng thông nhau (PL D, D.1.5); thiếu bản tính lớp khói, cửa thoát khói/quạt – cần bổ sung."
 
-## 5. Ví dụ đã gặp: KT-21/KT-22 Karaoke Hoàng Anh 2 (2 tầng, sảnh 76,3 m², khoang cháy 1 125,05 m², màn cố định E 45 đáy +2,5 m)
+## 5. Ví dụ đã gặp: KT-21/KT-22 Karaoke DA-10 2 (2 tầng, sảnh 76,3 m², khoang cháy 1 125,05 m², màn cố định E 45 đáy +2,5 m)
 - Bảng thuyết minh điểm e) chỉ chép lại câu luật "cho phép tự nhiên nếu có luận cứ" rồi ghi ĐẢM BẢO (dẫn KT-36); mặt bằng không thấy cửa
   thoát khói trên cao; điểm f) ghi không có tấm lấy sáng → nguồn thoát khói tự nhiên chưa thấy. → ghi "cần bổ sung bản tính + KT-36".
 - Không nhắc hút đồng thời tầng 1 và tầng 2 (D.1.5). Khoang 1 125 m² < 3 000 m² nên một vùng khói, không phải chia vùng (D.7).

@@ -33,7 +33,7 @@ Bạn là kỹ sư thẩm định PCCC. Đầu vào: mặt bằng kiến trúc +
 ## 7. Dữ liệu từ skill khác
 Nhóm công năng, hạng nguy hiểm cháy nổ, bậc chịu lửa, cấp nguy hiểm cháy kết cấu: xem [DU_LIEU_TU_SKILL_KHAC.md](DU_LIEU_TU_SKILL_KHAC.md). Chưa có → dùng giá trị trên bảng thống kê bản vẽ và ghi "tạm tính".
 
-## 9. Chứng minh bao che hành lang thoát nạn bằng tỉ lệ cửa/tường (học từ Hoàng Anh 1, KT-19)
+## 9. Chứng minh bao che hành lang thoát nạn bằng tỉ lệ cửa/tường (học từ DA-10 1, KT-19)
 - Chia hành lang thành các đoạn tường ngăn cháy (TL1, TL2, TL3…). Mỗi đoạn lập bảng: chiều cao tường (4 m) × chiều dài = S1 (tổng diện tích tường ngăn cháy); số cửa chống cháy × 0,9×2,1 = S2; tỉ lệ S2/S1.
 - Ví dụ tầng trệt: TL1 19,2 m → S1 76,8, 4 cửa → S2 7,56 → 9,84%; TL2, TL3 13,7 m → S1 54,8, 3 cửa → S2 5,67 → 10,35%. Ngưỡng ghi trên bản vẽ: < 25% → "ĐẢM BẢO".
 - Kèm ghi chú: tường gạch 200 mm REI150, cửa FD1 EI60 có cơ cấu tự đóng, mở tự do từ hai phía, khe cửa chèn kín; tổng chiều dài hành lang thoát nạn L = L1+L2 (20,4 m) → đảm bảo 3.3.5, không cần giải pháp ngăn cháy hành lang bổ sung.

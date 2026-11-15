@@ -49,7 +49,7 @@ Chỉ mở khi kiểm tra hút xả khói, cấp không khí chống khói, tho�
 - **D.13:** quạt đẩy đặt trong phòng không có quạt khác (bao che GHCL không thấp hơn kết cấu giao cắt với ống), hoặc trong khoang cháy, hoặc trên mái/ngoài nhà có bao che. Ống và kênh vật liệu không cháy, kín cấp B, GHCL: **EI 120** (giếng gom, kênh ngoài khoang cháy được phục vụ; kênh bảo vệ khoang đệm thang máy chữa cháy); **EI 60** (kênh vào khoang đệm lối vào N2, N3, gara kín); **EI 30** (giếng gom, kênh trong khoang cháy được phục vụ). Cửa lấy không khí ngoài cách cửa xả khói ≥ 5 m. Van ngăn cháy thường đóng trong kênh cấp khí vào khoang đệm: EI 120 (thang máy chữa cháy), EI 60 (N2, N3, sảnh thông tầng, gara…), EI 30 (các mục f, g, i, m của D.10); hệ chỉ phục vụ một khoang đệm không cần van; không dùng cánh van không cách nhiệt. Cửa thu khói của hút xả (D.10 i) cách cửa cấp không khí ≥ 1,5 m theo phương đứng.
 - **D.14.1** Kết cấu bao che phòng đặt thiết bị thông gió chung nằm trong khoang cháy phục vụ có GHCL không thấp hơn EI 45; phòng đặt thiết bị thoát khói theo D.9 và D.13a.
 
-## Cách kiểm tra bản vẽ hút khói hành lang (học từ Hoàng Anh 1)
+## Cách kiểm tra bản vẽ hút khói hành lang (học từ DA-10 1)
 - Đếm số miệng hút mỗi tầng; chia chiều dài hành lang cho mức D.6 (≤ 45 m thẳng, ≤ 30 m gấp khúc, ≤ 20 m vòng khép kín). Hành lang các nhánh nối nhau thành vòng (qua sảnh, lối ở đầu) thì phải xác định có coi là vòng khép kín không; chưa rõ thì CẦN XÁC NHẬN.
 - Kiểm tra bảng bù khí: lưu lượng quạt (m³/s) chia tổng diện tích lỗ bù phải ra đúng vận tốc ghi; so với ngưỡng thiết kế (bản vẽ ghi 6 m/s).
 - Ống gió thép mạ kẽm ≥ 1,2 mm có sprinkler trên và dưới ống: miễn GHCL (D.9 chú thích 4), đúng khi đủ cả ba điều kiện trong chú thích.

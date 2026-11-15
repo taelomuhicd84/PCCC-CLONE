@@ -15,7 +15,7 @@
 
 ### Cửa WC và rà bảng ký hiệu cửa
 3. **Đừng nhầm hai việc khác nhau về cửa WC:** ngoại lệ "buồng vệ sinh" của 3.2.10 chỉ miễn **chiều mở cửa**. Nó KHÔNG miễn yêu cầu **cửa chống cháy** ở phần bao che hành lang phía trên. Cửa WC mở ra hành lang/sảnh thoát nạn của karaoke vẫn phải là cửa chống cháy (EI60); ghi "-" ở cột GHCL = CHƯA ĐẠT.
-   - Hoàng Anh 1: D3 (cửa 0,8×2,1 m, GHCL "-") là cửa vào khu WC mở ra hành lang E–D → khoanh CHƯA ĐẠT theo 4A. D4 (cửa WC 0,8×1,9 m) nằm trong khối WC (cửa buồng), chỉ kiểm tra nếu mở ra hành lang.
+   - DA-10 1: D3 (cửa 0,8×2,1 m, GHCL "-") là cửa vào khu WC mở ra hành lang E–D → khoanh CHƯA ĐẠT theo 4A. D4 (cửa WC 0,8×1,9 m) nằm trong khối WC (cửa buồng), chỉ kiểm tra nếu mở ra hành lang.
    - Bảng tỉ lệ cửa/tường TL1–TL3 chỉ tính FD1; đoạn hành lang trước khối WC không nằm trong TL1–TL3 → cần khoanh nghi vấn "đoạn tường và cửa D3 trước khối WC chưa được bao che".
 4. Khi duyệt một tầng karaoke, sau khi xét 3.2.3 và 3.2.10, **luôn rà lại toàn bộ bảng ký hiệu cửa** theo phần bao che hành lang phía trên: cửa nào mở ra hành lang/sảnh mà GHCL là "-" đều phải khoanh, kể cả cửa kho, WC, kỹ thuật, nhân viên.
 
