@@ -26,7 +26,7 @@ if exist "%OUT%\TKPCCC.Cad.dll" move /y "%OUT%\TKPCCC.Cad.dll" "%OUT%\TKPCCC.Cad
 
 "%FW%\csc.exe" /nologo /target:library /platform:x64 /codepage:65001 /optimize+ %DEF% %RES% /out:"%OUT%\TKPCCC.Cad.dll" ^
   /r:"%ACAD%\acdbmgd.dll" /r:"%ACAD%\accoremgd.dll" ^
-  /r:"%FW%\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll ^
+  /r:"%FW%\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Management.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll ^
   "%~dp0module\plugin\*.cs" "%~dp0module\chung\HangDoi.cs" || exit /b 1
 
 copy /y "%~dp0..\data\vat_tu.json" "%OUT%\vat_tu.json" >nul
@@ -69,7 +69,7 @@ echo OK: %BIN%\TKPCCC.Mcp.exe
 
 rem App tao key ban quyen cho chu plugin (khong phat hanh cho khach).
 "%FW%\csc.exe" /nologo /target:winexe /codepage:65001 /optimize+ /out:"%BIN%\TKPCCC.KeyGen.exe" ^
-  /r:"%FW%\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll ^
+  /r:"%FW%\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Management.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll ^
   "%~dp0module\banquyen\KeyGen.cs" "%~dp0module\plugin\BanQuyen.cs" || exit /b 1
 echo OK: %BIN%\TKPCCC.KeyGen.exe
 echo Neu AutoCAD dang mo: tat han AutoCAD roi mo lai de nap ban moi.

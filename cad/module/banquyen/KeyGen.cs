@@ -2,8 +2,10 @@
 // Không đối số: cửa sổ WinForms. Có đối số (bộ test và người quen dòng lệnh):
 //   tao <thư mục khoá công khai> <thư mục khoá riêng>   tạo cặp khoá RSA 2048 (không ghi đè)
 //   ky <khoa_rieng.xml> <email> <mã máy> <yyyy-MM-dd>    in key
-//   kiem <khoa_cong_khai.xml> <key> <email> <mã máy>     mã thoát 0 = hợp lệ, 1 = từ chối (in lý do)
-//   may                                                  in mã máy này
+//   kiem <khoa_cong_khai.xml> <key> <email> <mã máy> [yyyy-MM-dd hôm nay]   mã thoát 0 = hợp lệ, 1 = từ chối (in lý do)
+//   kiem_may <khoa_cong_khai.xml> <key> <email>          như plugin: mã máy mới (seri ổ đĩa) rồi mã cũ (MachineGuid)
+//   may | may_cu                                         in mã máy này (seri ổ chứa Windows) | mã cũ theo MachineGuid
+// Bản Python tương đương (không cần .NET): module/banquyen/keygen.py.
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -32,10 +34,12 @@ namespace TKPCCC
                 if (a[0] == "tao" && a.Length == 3) { TaoCapKhoa(a[1], a[2], false); return 0; }
                 if (a[0] == "ky" && a.Length == 5) { Console.WriteLine(BanQuyen.Ky(File.ReadAllText(a[1]), a[2], a[3], a[4])); return 0; }
                 if (a[0] == "may") { Console.WriteLine(BanQuyen.MaMay()); return 0; }
-                if (a[0] == "kiem" && a.Length == 5)
+                if (a[0] == "may_cu") { Console.WriteLine(BanQuyen.MaMayCu()); return 0; }
+                if ((a[0] == "kiem" && (a.Length == 5 || a.Length == 6)) || (a[0] == "kiem_may" && a.Length == 4))
                 {
-                    DateTime han;
-                    string loi = BanQuyen.Kiem(a[2], a[3], a[4], File.ReadAllText(a[1]), out han);
+                    DateTime han, nay = a.Length == 6 ? DateTime.ParseExact(a[5], "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture) : DateTime.Today;
+                    string loi = a[0] == "kiem_may" ? BanQuyen.KiemMayNay(a[2], a[3], File.ReadAllText(a[1]), nay, out han)
+                        : BanQuyen.Kiem(a[2], a[3], a[4], File.ReadAllText(a[1]), nay, out han);
                     Console.WriteLine(loi ?? "HOP LE " + han.ToString("yyyy-MM-dd"));
                     return loi == null ? 0 : 1;
                 }

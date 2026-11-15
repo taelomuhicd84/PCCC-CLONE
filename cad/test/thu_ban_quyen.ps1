@@ -12,7 +12,7 @@ function Kiem($ten, $dat) { if ($dat) { "DAT  $ten" } else { "HONG $ten"; $scrip
 
 # Ban /target:exe de doc duoc dong lenh (build.bat build ban winexe co cua so).
 & "$FW\csc.exe" /nologo /target:exe /codepage:65001 /out:"$T\kg.exe" `
-  /r:"$FW\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll `
+  /r:"$FW\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Management.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll `
   "$GOC\cad\module\banquyen\KeyGen.cs" "$GOC\cad\module\plugin\BanQuyen.cs"
 if ($LASTEXITCODE) { throw 'Bien dich KeyGen loi' }
 $kg = "$T\kg.exe"
@@ -43,6 +43,28 @@ Kiem 'sua 1 byte chu ky bi tu choi' (-not (Nhan ($p[0] + '.' + (-join $c)) $emai
 $c = $p[0].ToCharArray(); $c[3] = if ($c[3] -eq 'A') { 'B' } else { 'A' }
 Kiem 'sua 1 byte noi dung bi tu choi' (-not (Nhan ((-join $c) + '.' + $p[1]) $email $may))
 
+# Ma may moi theo seri o chua Windows (WMI), ma cu MachineGuid van nhan; keygen.py in cung ma may va ky trung tung byte.
+$mayCu = (& $kg may_cu | Out-String).Trim()
+Kiem "ma may cu dang XXXX-XXXX-XXXX-XXXX ($mayCu)" ($mayCu -cmatch '^[0-9A-F]{4}(-[0-9A-F]{4}){3}$')
+Kiem "ma may moi theo seri o dia bat dau bang D ($may0), khac ma cu" ($may0 -cmatch '^D' -and $may0 -ne $mayCu)
+function NhanMayNay($key) { & $kg kiem_may $cong $key $email | Out-Null; return ($LASTEXITCODE -eq 0) }
+Kiem 'key cap theo ma may moi: plugin nhan' (NhanMayNay ((& $kg ky $rieng $email $may0 $han | Out-String).Trim()))
+Kiem 'key cap theo ma may cu (MachineGuid, truoc 15/11): plugin van nhan' (NhanMayNay ((& $kg ky $rieng $email $mayCu $han | Out-String).Trim()))
+Kiem 'key cap cho may khac: plugin tu choi' (-not (NhanMayNay $k1))
+# Chong lui dong ho: moc ngay da thay (HMAC theo ma may) lon hon hom nay thi hop dong so han theo moc.
+$bq = [Reflection.Assembly]::LoadFile($kg).GetType('TKPCCC.BanQuyen')
+$d0 = (Get-Date).Date; $d40 = $d0.AddDays(40); $luu = $bq::DauNgay($d40, $may0)
+Kiem 'moc ngay +40 hop le: ngay so han = moc' ($bq::NgayHieuLuc($d0, $luu, $may0) -eq $d40)
+Kiem 'moc sua tay ngay (sai HMAC): bo qua' ($bq::NgayHieuLuc($d0, $luu.Replace($d40.ToString('yyyy-MM-dd'), $d0.AddDays(41).ToString('yyyy-MM-dd')), $may0) -eq $d0)
+Kiem 'moc chep tu may khac: bo qua' ($bq::NgayHieuLuc($d0, $luu, $may) -eq $d0)
+& $kg kiem $cong $k1 $email $may $d40.ToString('yyyy-MM-dd') | Out-Null
+Kiem 'key han +30 ngay, ngay so han +40 (lui dong ho): tu choi' ($LASTEXITCODE -eq 1)
+$py = "$GOC\cad\module\banquyen\keygen.py"
+Kiem 'keygen.py ky (PEM) trung key KeyGen' ((& python $py ky $email $may $han --khoa $pem | Out-String).Trim() -eq $k1)
+Kiem 'keygen.py ky (XML) trung key KeyGen' ((& python $py ky $email $may $han --khoa $rieng | Out-String).Trim() -eq $k1)
+$mayPy = (& python $py may | Out-String).Trim()
+Kiem "keygen.py may trung KeyGen may ($mayPy)" ($mayPy -eq $may0)
+
 # Gia lap Apps Script: Utilities gia dung crypto cua Node, PEM PKCS#8 do KeyGen xuat. base64EncodeWebSafe giu dau "=" nhu Google.
 $js = @'
 const fs = require('fs'), vm = require('vm'), crypto = require('crypto');
@@ -54,12 +76,15 @@ const U = { Charset: { UTF_8: 'UTF-8' },
 const pemHong = fs.readFileSync(pem, 'utf8').replace(/\n/g, ' ');
 const tu = new Date(2026, 0, 1);
 const ok = ctx.chuanHan('', 30, tu) === '2026-01-31' && ctx.chuanHan('5/3/2027', 1, tu) === '2027-03-05' && ctx.chuanHan('2027-3-5', 1, tu) === '2027-03-05'
-  && ctx.chuanHan('sai', 1, tu) === '' && ctx.timCot(['Dau thoi gian', 'Dia chi email', 'Ma may'], 'email') === 1;
+  && ctx.chuanHan('sai', 1, tu) === '' && ctx.timCot(['Dau thoi gian', 'Dia chi email', 'Ma may'], 'email') === 1
+  && ctx.hopLeEmail('chu.nha+1@vi-du.com.vn') && !ctx.hopLeEmail('=1+1@x.vn') && !ctx.hopLeEmail('+a@x.vn')
+  && !ctx.hopLeEmail('=importxml(concat("http://x.vn/",a2),"//a")&"@x.vn"') && !ctx.hopLeEmail('a@b')
+  && ctx.hopLeMay('D1A2-0123-4567-89EF') && !ctx.hopLeMay('G1A2-0123-4567-89EF');
 console.log((ok ? '' : 'HAM_THUAN_HONG ') + ctx.taoKey(email, may, han, ctx.chuanPem(pemHong), U));
 '@
 Set-Content "$T\gs.js" $js -Encoding ascii
 $k2 = (& node "$T\gs.js" "$GOC\cad\module\banquyen\apps_script\Code.gs" $pem ' Chu.Nha@ViDu.vn' $may $han | Out-String).Trim()
-Kiem 'ham thuan Code.gs (chuanHan, timCot)' (-not $k2.StartsWith('HAM_THUAN_HONG'))
+Kiem 'ham thuan Code.gs (chuanHan, timCot, hopLeEmail chan chen cong thuc, hopLeMay)' (-not $k2.StartsWith('HAM_THUAN_HONG'))
 $k2 = $k2.Replace('HAM_THUAN_HONG ', '')
 Kiem 'key Apps Script (Node) co dau = van nhan' ($k2.Contains('=') -and (Nhan $k2 $email $may))
 Kiem 'key Apps Script trung key KeyGen (PKCS#1 v1.5 tat dinh)' ($k2.Replace('=', '') -eq $k1)
@@ -70,7 +95,7 @@ Remove-Item -Recurse -Force "$T\rieng" # khoa rieng thu khong de lai tren may
 
 # Ban phat hanh: bien dich duoc voi BAN_QUYEN va co khoa cong khai nhung trong DLL.
 & "$FW\csc.exe" /nologo /target:library /platform:x64 /codepage:65001 /define:BAN_QUYEN "/resource:$cong,khoa_cong_khai.xml" /out:"$T\TKPCCC.Cad.dll" `
-  /r:"$ACAD\acdbmgd.dll" /r:"$ACAD\accoremgd.dll" /r:"$FW\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll `
+  /r:"$ACAD\acdbmgd.dll" /r:"$ACAD\accoremgd.dll" /r:"$FW\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Management.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll `
   "$GOC\cad\module\plugin\*.cs" "$GOC\cad\module\chung\HangDoi.cs"
 Kiem 'bien dich ban phat hanh' ($LASTEXITCODE -eq 0)
 $a = [Reflection.Assembly]::LoadFile("$T\TKPCCC.Cad.dll")

@@ -55,15 +55,16 @@ namespace TKPCCC
             hang.Controls.Add(Nut("Kích hoạt", 100, delegate { KichHoat(oKey.Text); }));
             hang.Controls.Add(Nut("Đăng ký", 100, delegate
             {
-                Dictionary<string, object> d = BanQuyen.GoiWeb("dang_ky", CanEmail());
-                TB(Lay(d, "tb"), GiaoDien.ChuDam);
+                GoiNen("dang_ky", delegate(Dictionary<string, object> d) { TB(Lay(d, "tb"), GiaoDien.ChuDam); });
             }));
             hang.Controls.Add(Nut("Lấy key tự động", 130, delegate
             {
-                Dictionary<string, object> d = BanQuyen.GoiWeb("lay_key", CanEmail());
-                string k = Lay(d, "key");
-                if (k == "") TB(Lay(d, "tb") == "" ? "Chưa có key, thử lại sau ít phút." : Lay(d, "tb"), GiaoDien.Cam);
-                else { oKey.Text = k; KichHoat(k); }
+                GoiNen("lay_key", delegate(Dictionary<string, object> d)
+                {
+                    string k = Lay(d, "key");
+                    if (k == "") TB(Lay(d, "tb") == "" ? "Chưa có key, thử lại sau ít phút." : Lay(d, "tb"), GiaoDien.Cam);
+                    else { oKey.Text = k; KichHoat(k); }
+                });
             }));
             string form = BanQuyen.CauHinh("google_form");
             if (form != "") hang.Controls.Add(Nut("Mở form", 90, delegate { System.Diagnostics.Process.Start(form); }));
@@ -103,6 +104,30 @@ namespace TKPCCC
             string e = BanQuyen.ChuanEmail(oEmail.Text);
             if (e.IndexOf('@') < 1) throw new System.Exception("Nhập email trước.");
             return e;
+        }
+
+        /// Gọi web app ở luồng nền (AutoCAD không treo khi mạng chậm), xong thì chạy xong() trên luồng giao diện.
+        void GoiNen(string hd, Action<Dictionary<string, object>> xong)
+        {
+            string e = CanEmail();
+            Enabled = false;
+            TB("Đang gọi máy chủ bản quyền...", GiaoDien.ChuMo);
+            System.Threading.Tasks.Task.Factory.StartNew(delegate
+            {
+                Dictionary<string, object> d = null;
+                string loi = null;
+                try { d = BanQuyen.GoiWeb(hd, e); }
+                catch (System.Exception ex) { loi = "Không gọi được máy chủ: " + ex.Message; }
+                try
+                {
+                    BeginInvoke((Action)delegate
+                    {
+                        Enabled = true;
+                        if (loi != null) TB(loi, GiaoDien.Do); else GiaoDien.An(delegate { xong(d); });
+                    });
+                }
+                catch (System.Exception) { } // hộp đã đóng
+            });
         }
 
         void KichHoat(string key)

@@ -3,7 +3,10 @@
 Làm MỘT lần theo thứ tự dưới đây. Không cần biết lập trình. Mỗi bước chỉ bấm và dán.
 
 ## Cách hoạt động (đọc 1 phút)
-- Mỗi máy có một **mã máy** (dạng `ABCD-1234-...`). Khách gõ `PCCC_BANQUYEN` trong AutoCAD là thấy mã máy của họ.
+- Mỗi máy có một **mã máy** (dạng `D434-5958-...`). Khách gõ `PCCC_BANQUYEN` trong AutoCAD là thấy mã máy của họ.
+  Từ 15/11/2026 mã máy lấy từ **số seri ổ cứng chứa Windows** (bắt đầu bằng `D`): cài lại Windows không đổi mã, thay ổ cứng thì đổi mã (cấp key mới).
+  Máy không đọc được seri (vài máy ảo, RAID) dùng mã cũ theo Windows. Key cấp theo mã cũ trước ngày đó vẫn dùng được, không phải cấp lại.
+- Lùi đồng hồ Windows không kéo dài được key: plugin nhớ ngày lớn nhất đã thấy.
 - Bạn có **cặp khoá**: khoá RIÊNG để ký key (GIỮ KÍN, chỉ bạn có), khoá CÔNG KHAI nằm trong plugin để kiểm key.
 - **Key** = chữ ký của bạn cho bộ (email, mã máy, hạn). Key đúng máy, đúng email, còn hạn thì plugin mở khoá.
 - Chỉ bản build `cad\build.bat phat_hanh` mới khoá lệnh. Bản build thường (`cad\build.bat`) dùng nội bộ, không khoá.
@@ -30,7 +33,8 @@ Làm MỘT lần theo thứ tự dưới đây. Không cần biết lập trình
    | Thuộc tính | Giá trị |
    |---|---|
    | `KHOA_RIENG` | mở KeyGen, bấm **Chép khoá riêng PEM**, dán vào (mất xuống dòng cũng được) |
-   | `TU_DONG_CAP` | `true` = ai đăng ký cũng được cấp ngay; bỏ trống = chỉ cấp hàng bạn gõ `Duyệt` ở cột Trạng thái |
+   | `TU_DONG_CAP` | `true` = ai đăng ký cũng được cấp ngay (người lạ cũng có key: chỉ bật khi phát dùng thử); bỏ trống (KHUYÊN DÙNG) = chỉ cấp hàng bạn gõ `Duyệt` ở cột Trạng thái |
+   | `MAX_DANG_KY` | số đăng ký mới tối đa mỗi giờ, chống spam (mặc định 30) |
    | `SO_NGAY` | số ngày dùng khi ô Hạn trống (mặc định 365) |
    | `GUI_MAIL` | `true` = gửi key vào email khách (tuỳ chọn) |
 4. Quay lại trình soạn mã, chọn hàm **caiDat** ở thanh trên, bấm **Chạy**. Lần đầu Google hỏi quyền: chọn tài khoản →
@@ -50,5 +54,10 @@ Làm MỘT lần theo thứ tự dưới đây. Không cần biết lập trình
 - Khách: `PCCC_BANQUYEN` → nhập email → **Đăng ký** → chờ vài phút → **Lấy key tự động** (hoặc dán key bạn gửi, bấm **Kích hoạt**).
 - Bạn: không bật `TU_DONG_CAP` thì gõ `Duyệt` vào cột Trạng thái hàng muốn cấp; muốn chặn gõ `Khoá`. Gõ ngày vào cột Hạn trước khi duyệt nếu muốn hạn khác mặc định.
 - Cấp tay không cần Google: KeyGen phần **2. Ký key tay** (email, mã máy, hạn) → **Ký key** → **Chép key** gửi khách.
+- Dùng Python thay KeyGen: `python cad\module\banquyen\keygen.py ky <email> <mã máy> <yyyy-MM-dd>` (chỉ thư viện chuẩn;
+  khoá riêng mặc định `C:\Users\<bạn>\TKPCCC_KHOA\khoa_rieng.pem`, đổi bằng `--khoa <file>`). `python keygen.py may` in mã máy của máy đang chạy.
+  Key từ KeyGen.exe, keygen.py và Google Sheet giống nhau từng ký tự.
 - Gia hạn: xoá ô Key của hàng đó, sửa Hạn, (gõ `Duyệt`) → 5 phút sau có key mới; khách bấm **Lấy key tự động**.
 - Khi chưa có bản quyền, bản phát hành chặn mọi lệnh `PCCC*` (trừ `PCCC`, `PCCC_BANQUYEN`, `PCCC_CAIDAT`, `PCCC_HELP`) và việc vẽ qua MCP trả lỗi "Chưa có bản quyền".
+- Web app từ chối email lạ (có `=`, ngoặc, dấu cách...): chặn chèn công thức vào Sheet làm lộ email khách.
+- Giới hạn: mã nguồn plugin công khai trên GitHub nên ai biết build vẫn tạo được bản không khoá; bản quyền chỉ chặn người dùng thông thường.

@@ -8,7 +8,7 @@ $T = Join-Path $env:TEMP ('tkpccc_thu_' + [guid]::NewGuid().ToString('N').Substr
 New-Item -ItemType Directory $T | Out-Null
 
 & "$FW\csc.exe" /nologo /target:library /platform:x64 /codepage:65001 /out:"$T\TKPCCC.Cad.dll" `
-  /r:"$ACAD\acdbmgd.dll" /r:"$ACAD\accoremgd.dll" /r:"$FW\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll `
+  /r:"$ACAD\acdbmgd.dll" /r:"$ACAD\accoremgd.dll" /r:"$FW\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Management.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll `
   "$GOC\cad\module\plugin\*.cs" "$GOC\cad\module\chung\HangDoi.cs"
 if ($LASTEXITCODE) { throw 'Bien dich loi' }
 # DLL giao dien (bang PCCC_BLOCK): accoreconsole khong nap duoc nen o day chi kiem bien dich; chay that phai thu trong AutoCAD.

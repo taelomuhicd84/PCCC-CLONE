@@ -3,7 +3,7 @@
 //   nội dung = "TKPCCC1|<email chữ thường>|<mã máy>|<hạn yyyy-MM-dd>" (UTF-8); chữ ký RSA SHA-256 PKCS#1 v1.5;
 //   key = base64url(nội dung) + "." + base64url(chữ ký).
 // Script Properties: KHOA_RIENG (PEM "-----BEGIN PRIVATE KEY-----", từ TKPCCC.KeyGen.exe), TU_DONG_CAP ("true" = cấp không cần duyệt),
-//   SO_NGAY (hạn mặc định, 365), GUI_MAIL ("true" = gửi key qua mail), TEN_TRANG (tên trang tính, bỏ trống = trang đầu).
+//   SO_NGAY (hạn mặc định, 365), MAX_DANG_KY (số đăng ký mới tối đa mỗi giờ, 30), GUI_MAIL ("true" = gửi key qua mail), TEN_TRANG (tên trang tính, bỏ trống = trang đầu).
 
 var TEN_COT = { email: 'Email', may: 'Mã máy', han: 'Hạn', key: 'Key', tt: 'Trạng thái' };
 
@@ -47,6 +47,13 @@ function timCot(tieuDe, k) {
   if (i < 0 && k === 'email') for (var j = 0; j < t.length; j++) if (t[j].indexOf('email') >= 0) return j;
   return i;
 }
+
+/** Email chữ thường hợp lệ để ghi vào Sheet: chỉ chữ, số, . _ % + - (không bắt đầu bằng + - để Sheet không hiểu thành công thức).
+ *  Chặn chèn công thức kiểu =IMPORTXML(...)&"@x.vn" (lấy cắp email khách ở các dòng khác). */
+function hopLeEmail(email) { return /^[a-z0-9_][a-z0-9._%+-]*@[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}$/.test(email); }
+
+/** Mã máy XXXX-XXXX-XXXX-XXXX (hex hoa; mã theo seri ổ đĩa bắt đầu bằng D, vẫn là hex). */
+function hopLeMay(may) { return /^[0-9A-F]{4}(-[0-9A-F]{4}){3}$/.test(may); }
 
 function boDau(s) { return String(s || '').trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd'); }
 
@@ -116,8 +123,7 @@ function traJson(o) { return ContentService.createTextOutput(JSON.stringify(o)).
 function doGet(e) {
   var q = (e && e.parameter) || {};
   var email = String(q.email || '').trim().toLowerCase(), may = String(q.may || '').trim().toUpperCase();
-  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) || !/^[0-9A-F]{4}(-[0-9A-F]{4}){3}$/.test(may))
-    return traJson({ ok: false, tb: 'Email hoặc mã máy sai dạng.' });
+  if (!hopLeEmail(email) || !hopLeMay(may)) return traJson({ ok: false, tb: 'Email hoặc mã máy sai dạng.' });
   if (q.hd !== 'dang_ky' && q.hd !== 'lay_key') return traJson({ ok: false, tb: 'Thiếu hd.' });
   var lock = LockService.getScriptLock();
   if (!lock.tryLock(20000)) return traJson({ ok: false, tb: 'Máy chủ bận, thử lại.' });
@@ -132,6 +138,10 @@ function doGet(e) {
       return traJson({ ok: false, tb: r ? 'Đã đăng ký, chưa được cấp key. Thử lại sau ít phút.' : 'Chưa đăng ký: bấm Đăng ký trước.' });
     }
     if (r) return traJson({ ok: true, tb: String(r[c.key]).trim() ? 'Đã cấp key: bấm Lấy key tự động.' : 'Đã đăng ký trước đó, chờ cấp key.' });
+    // Chặn spam đăng ký: tối đa MAX_DANG_KY (mặc định 30) dòng mới mỗi giờ cho cả Sheet.
+    var cache = CacheService.getScriptCache(), soDk = Number(cache.get('so_dang_ky') || 0);
+    if (soDk >= (Number(prop('MAX_DANG_KY')) || 30)) return traJson({ ok: false, tb: 'Quá nhiều đăng ký trong giờ này, thử lại sau.' });
+    cache.put('so_dang_ky', String(soDk + 1), 3600);
     var hang = []; for (var j = 0; j < n; j++) hang.push('');
     hang[c.email] = email; hang[c.may] = may;
     sh.appendRow(hang);
