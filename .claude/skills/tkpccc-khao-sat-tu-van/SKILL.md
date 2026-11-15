@@ -23,10 +23,12 @@ Không đọc cả `knowledge/`: mở file theo cột "Tra ở" của từng dò
 - Khoanh và ghi chú lên CHÍNH PDF bản vẽ, khung đánh số trùng TT. Không chỉ trả văn bản chung chung.
 - Việc của Claude là BÁO CÁO (nhận diện, đánh giá, phương án, khả thi, căn cứ); chấp nhận hay không là việc người dùng: không hỏi người dùng
   chọn, kể cả câu hỏi cuối lượt; điểm luật không rõ thì ghi "cần người dùng xem xét". Thiếu kiến thức thì nhờ người dùng train.
-- Chỉ CẦN XÁC NHẬN khi thiếu số liệu thật (người dùng dặn 2026-11-02). Tum đủ tiêu chí 1.4.24 (≤ 30% sàn mái, chỉ che thang) không tính tầng: ghi thông tin, không hỏi.
-  Cách xét tầng thượng/tum (người dùng dặn 2026-11-03): (1) có công năng sử dụng không (WC, kho nhỏ trong tum là phụ trợ, không phải
-  công năng); (2) có thì phần công năng chiếm bao nhiêu % sàn mái; (3) > 30% ⇒ tính 1 tầng, ≤ 30% ⇒ không tính. Không viết "có WC nên
-  tính 1 tầng", không đưa 2 phương án chiều cao.
+- Chỉ CẦN XÁC NHẬN khi thiếu số liệu thật (người dùng dặn 2026-11-02). Tum đủ tiêu chí thì ghi thông tin, không hỏi.
+  Tum không tính tầng (sửa 2026-11-15, một cách đọc duy nhất): căn cứ chính là nguyên văn QCVN 10:2025 mục 1.4.24 chú thích (1) (`knowledge/qcvn10-2025-chung.md`):
+  "Tầng tum không tính vào số tầng khi chỉ có chức năng bao che lồng cầu thang bộ/giếng thang máy và che chắn thiết bị kỹ thuật, diện tích mái tum không vượt quá 30 % diện tích sàn mái."
+  ⇒ KHÔNG tính tầng khi ĐỦ HAI: (a) chỉ che thang bộ, giếng thang máy, thiết bị kỹ thuật; (b) diện tích mái tum ≤ 30 % diện tích sàn mái. Ghi số đo cả hai điều kiện.
+  Ghi chú áp dụng (người dùng dặn 2026-11-03): WC, kho nhỏ trong tum là phụ trợ, không làm tum có "công năng" ở điều kiện (a); không viết "có WC nên tính 1 tầng", không đưa 2 phương án chiều cao.
+  Tum có phòng sử dụng (ngủ, làm việc, kinh doanh…) mà mái tum ≤ 30 %, hoặc tum chỉ thang + WC mà mái tum > 30 %: nguyên văn và cách xét cũ của người dùng ("phần công năng > 30 % mới tính") cho kết quả khác nhau ⇒ dòng số tầng là CẦN XÁC NHẬN, nêu cả hai căn cứ và số đo.
   Khoảng cách thoát nạn tính ra (hoặc Bảng G) vượt giới hạn ⇒ CHƯA ĐẠT + phương án, không để CẦN XÁC NHẬN.
 - Đường thoát nạn đo từ ĐIỂM XA NHẤT TRONG PHÒNG (không từ cửa phòng), vẽ nét xanh có mũi tên đầu trong phòng; cửa chống cháy đặt ngay cửa
   phòng (người dùng dặn 2026-11-03; chi tiết và lỗi Q.4 7,9 m → ≈ 9,2 m: `knowledge/nhan-dien-thang-thoat-nan.md`).
