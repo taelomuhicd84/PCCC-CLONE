@@ -207,3 +207,5 @@
   (pytest 13 → 41 ca); R4 web 4 commit (sửa lỗi, tách `frontend/` + `backend/`, agent web; vitest 230 → 64 ca vì hết quét worktree); R3b CAD 2 commit (ảnh block màu layer, key theo seri ổ cứng + `keygen.py`).
   Đầu não chạy lại npm test 64 đạt, pytest 41 đạt; test CAD chưa chạy lại.
 - 15:10 đợt 2: giao R3a (CAD lõi: phủ xuyên tường, khoang dầm, INSUNITS, vẽ mượt), R5 (bảng đối chiếu + lược đồ thông số công trình), R2 (`scripts/kiem_lien_ket.py`), R4 (xoá findings cũ). Tuần 77 %, dừng ở 85 %.
+- 15:10–chiều đợt 2: R3a sửa 4 lỗi CAD NGHIÊM TRỌNG / CAO (55113c3); R5 bảng đối chiếu + lược đồ thông số công trình (5 commit, pytest 47 ca); R2 viết `scripts/kiem_lien_ket.py` (e1e8d60, 0 lỗi, 44 cảnh báo);
+  R4 xoá kết quả thẩm định cũ trước khi chạy (fc75f95). Hạn mức tuần chạm 85 % ⇒ dừng. Chưa làm: CAD vẽ mượt, suy nhóm F, 44 cảnh báo liên kết, review cuối mốc, push.
