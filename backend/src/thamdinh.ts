@@ -1,6 +1,6 @@
 // Thẩm định PDF: gọi lõi Python thamdinh/ (pccc_checker, đọc chữ vector + luật QCVN 06, offline, không API key).
 import { spawn } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, rmSync } from "node:fs";
 import path from "node:path";
 import { docSoVN } from "../shared/src/bao_gia";
 
@@ -60,6 +60,11 @@ const DE_XUAT: Record<string, TrangThai> = { "KHÔNG ĐẠT": "KD", "CẦN XÁC 
 export function tachDeXuat(traLoi: string): TrangThai {
   const m = traLoi.match(/ĐỀ\s*XUẤT\s*\**\s*[:：]\s*\**\s*(KHÔNG\s+ĐẠT|CẦN\s+XÁC\s+MINH|CẦN\s+XÁC\s+NHẬN|ĐẠT)/iu);
   return m ? DE_XUAT[m[1].toUpperCase().replace(/\s+/g, " ")] : "XM";
+}
+
+/** Xoá kết quả của lượt chạy trước (giữ ban_ve.pdf) để lõi Python lỗi thì web không hiện kết quả cũ của bản vẽ khác. */
+export function xoaKetQuaCu(thuMuc: string): void {
+  for (const f of ["findings.jsonl", "tom_tat.json", "claude_xet.json", "ban_ve_annotated.pdf", "extraction.md"]) rmSync(path.join(thuMuc, f), { force: true });
 }
 
 /** Chạy `python -m pccc_checker run <pdf> --out <out>` trong thư mục `thamdinh/`; trả dòng JSON tóm tắt cuối stdout. */

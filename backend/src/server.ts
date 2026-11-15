@@ -9,7 +9,7 @@ import { chuanHoaKhaoSat, ghepGoiY, khoiLuongSoBo, tachJsonKhaoSat, HE_THONG, ty
 import { docDonGia, taoMauDonGia, xuatBaoGia } from "./xuat_xlsx";
 import { xuatKhaoSat } from "./xuat_docx";
 import { hoiClaude } from "./engines/claude";
-import { cauHoiXet, chayThamDinh, docKetLuan, KHOA_CHU, KHOA_CO_KHONG, KHOA_SO, tachDeXuat } from "./thamdinh";
+import { cauHoiXet, chayThamDinh, xoaKetQuaCu, docKetLuan, KHOA_CHU, KHOA_CO_KHONG, KHOA_SO, tachDeXuat } from "./thamdinh";
 import { soBoThuyLuc, tinhThuyLuc, toiUuThuyLuc, type SoLieuThuyLuc } from "../shared/src/thuy_luc";
 import { chuanHoaMatBang, chuanHoaSoLieu, xuatThuyLucExcel } from "./thuy_luc";
 import { marked } from "marked";
@@ -190,8 +190,9 @@ async function xuLy(req: IncomingMessage, res: ServerResponse) {
       writeFileSync(pdf, buf);
     } else if (!existsSync(pdf)) throw new LoiNguoiDung("Chưa chọn file PDF");
     const nhap = Object.fromEntries([...KHOA_CHU, ...KHOA_SO, ...KHOA_CO_KHONG].flatMap((k) => (q.get(k) ? [[k, q.get(k)]] : [])));
-    const tomTat = await chayThamDinh(GOC, pdf, d, nhap);
     const cu = docJson(path.join(d, "tom_tat.json"), {});
+    xoaKetQuaCu(d); // lõi lỗi thì trả lỗi, không để GET /api/tham-dinh trả kết quả cũ
+    const tomTat = await chayThamDinh(GOC, pdf, d, nhap);
     ghiJson(path.join(d, "tom_tat.json"), { ...tomTat, ten_file: q.get("ten") || (buf.length ? "ban_ve.pdf" : cu.ten_file), thong_tin_nhap: nhap, luc: new Date().toISOString() });
     rmSync(path.join(d, "claude_xet.json"), { force: true }); // mã dòng (PC-001…) đánh lại mỗi lần chạy
     return json(res, ketQuaTD(q.get("du_an")));

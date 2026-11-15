@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { cauHoiXet, chayThamDinh, docKetLuan, tachDeXuat, thamSoSet } from "../src/thamdinh";
+import { cauHoiXet, chayThamDinh, docKetLuan, tachDeXuat, thamSoSet, xoaKetQuaCu } from "../src/thamdinh";
 
 const GOC = path.resolve(__dirname, "..", "..");
 const coPython = spawnSync("python", ["-c", "import pymupdf, yaml"], { windowsHide: true }).status === 0;
@@ -47,4 +47,17 @@ describe("thamdinh", () => {
     expect(thang.dieu_khoan).toContain("3.4.1");
     expect(dong.some((r) => r.tt === "D")).toBe(true);
   }, 60_000);
+});
+
+describe("kết quả cũ không sống sót khi lõi lỗi", () => {
+  it("xoaKetQuaCu xoá findings/tom_tat/pdf ghi chú, giữ ban_ve.pdf; lõi lỗi trên file hỏng không còn kết quả cũ", async () => {
+    const d = mkdtempSync(path.join(os.tmpdir(), "td-"));
+    for (const f of ["findings.jsonl", "tom_tat.json", "claude_xet.json", "ban_ve_annotated.pdf", "extraction.md", "ban_ve.pdf"]) writeFileSync(path.join(d, f), "cu");
+    xoaKetQuaCu(d);
+    expect(["findings.jsonl", "tom_tat.json", "claude_xet.json", "ban_ve_annotated.pdf", "extraction.md"].some((f) => existsSync(path.join(d, f)))).toBe(false);
+    expect(existsSync(path.join(d, "ban_ve.pdf"))).toBe(true);
+    if (!coPython) return;
+    await expect(chayThamDinh(GOC, path.join(d, "ban_ve.pdf"), d)).rejects.toThrow(); // "cu" không phải PDF
+    expect(docKetLuan(path.join(d, "findings.jsonl"))).toEqual([]);
+  });
 });
