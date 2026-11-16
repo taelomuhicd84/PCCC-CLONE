@@ -3,6 +3,16 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## VIỆC 16/11 TỐI — THIẾT KẾ THỬ TẦNG 8 KOCHAM (BÁO CHÁY + SPRINKLER): XONG, CHỜ NGƯỜI DÙNG NHẬN XÉT ĐỂ TRAIN TIẾP
+Người dùng gửi DWG Drive "TKTD KOCHAM FINAL 16-12.dwg" (hồ sơ thẩm duyệt điều chỉnh tầng 8 văn phòng, ~30 tờ), bảo xoá thiết bị PCCC, tự rải báo cháy,
+chữa cháy, đi dây, đi ống, báo cáo "hiểu tới đâu". Kết quả ở `ket_qua/cad_test/2026-11-16/cong_trinh_drive/` (gitignore, hồ sơ khách): gốc `goc/`,
+mặt bằng sạch `t8_mat_bang.dwg`, `t8_bao_chay.dwg`, `t8_sprinkler.dwg`, spec `skills/b4_bao_chay.json`, `skills/b5_sprinkler.json`, báo cáo `bao_cao_thiet_ke_thu_t8.pdf`.
+- Mặt bằng mọi tờ PCCC là một block "2333" chèn lệch xa tờ (dò bằng LISP `ssget "C"` trong accoreconsole); tách bằng xoá phần còn lại + EXPLODE + MOVE.
+- Báo cháy: 8 đầu khói (gốc 18: gốc vẽ khung từng đầu, nghi khoang dầm), tổ hợp, EOL, dây 47 m. Sprinkler nhóm 1: 31 đầu (= gốc 28 + 3), ống DN65/50/32/25.
+VIỆC ĐỂ TRAIN (điểm yếu plugin lộ ra, chưa sửa): (a) `vung_tu_dong` gộp hành lang với buồng thang; (b) `rai` vùng chữ L thêm đầu "phủ kín" ngay trên tường
+(sprinkler không có cách tường tối thiểu); (c) `tuyen noi_tiep` đi chéo cắt lõi thang, chưa né tường; (d) chưa đọc mặt bằng dầm để chia khoang đầu báo;
+(e) `bang ky_hieu` sprinkler dư cột "KÝ HIỆU" trống; nhãn DN đè ký hiệu đầu phun. Chờ người dùng trả lời: cao độ trần, dầm, hộp kỹ thuật thật, WC có đầu báo không.
+
 ## VIỆC 16/11 ĐÊM — RẢI NHANH, BỎ PHÒNG RÁC, THEO VÙNG VẼ SẴN, DIM THEO MẪU: XONG MÃ + TEST, CHƯA XEM TRONG AUTOCAD
 Gốc: người dùng dán lỗi `PCCC_RAI` (mặt 763 079 m², "bước quá nhỏ"), mặt bằng phải rải đứng máy, "vừa dở vừa lag"; gửi ảnh mẫu dim (`ket_qua/cad_test/2026-11-16/dim_mau.png`).
 1. Nhanh (`NhanVung.cs` `CacMat`): dựng phòng block "Factory 1A4- 1st" 74 s → 2,9–4 s, giữ 57 phòng / 112 đầu như cũ. Đo từng bước: nối khe thẳng hàng ≤ 3 m

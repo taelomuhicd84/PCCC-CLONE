@@ -521,3 +521,8 @@ Phiên tự chạy khi hạn mức reset (người dùng cho phép). Đo từng 
 Ảnh cả tờ cho thấy "dở" vì: Enter mọi phòng nhận cả hình chi tiết trong block tờ, và không dùng vùng PCCC_VUNG người dùng vẽ sẵn → bỏ cụm nhỏ xa, thay phòng bằng vùng vẽ sẵn.
 Dim theo ảnh mẫu người dùng (hàng trùng dim 1 lần, chỉ dim thêm thiết bị lệch, dim sát): ô chữ L rải so le của test lộ lỗi chuỗi riêng từng đầu chồng chữ → hàng lệch ≥ 2 đầu một chuỗi.
 Bẫy: block tờ xoay 270° (toạ độ trong block không phải toạ độ bản vẽ); ảnh `anh` (in bằng `-PLOT`) của bản gốc không thấy các hình chi tiết đó (nghi layer không in) mà plugin vẫn dựng phòng từ chúng.
+
+## 2026-11-16 tối — Thiết kế thử tầng 8 KOCHAM từ DWG Drive
+Người dùng muốn xem Claude hiểu tới đâu trước khi train tiếp. Tải DWG, tách mặt bằng tầng 8 (block "2333"), dựng vùng, rải đầu báo khói (TCVN 7568-14) và sprinkler
+nhóm 1 (TCVN 7336 Bảng 1), đi dây và ống bằng spec qua `chay_spec.ps1`, xuất PDF 8 trang so với bản gốc. Sprinkler khớp số đầu bản gốc; báo cháy ít hơn
+(8 so với 18) vì chưa xét dầm. Bẫy: mặt bằng tờ PCCC không nằm ở model quanh khung tờ mà trong block chèn ở toạ độ xa; `dump` theo điểm chèn không thấy, phải `ssget "C"`.
