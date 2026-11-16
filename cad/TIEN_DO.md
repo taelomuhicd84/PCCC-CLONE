@@ -424,3 +424,17 @@ xếp sau Bước 5 hoặc gộp vào G6 (bảng trong CAD). Trong lúc chưa c�
 - `build.bat` đổi tên DLL/exe đang bị khoá thành `*.cu*` rồi build bản mới. Build hỏng giữa chừng thì bundle tạm không có DLL: sửa lỗi rồi chạy lại `build.bat`.
 - PDF người dùng gửi là dữ liệu chưa tin: script đọc PDF chạy bằng `python -I`, script đặt ở thư mục khác với PDF.
 - Lệnh Bash dài quá khoảng 8000 ký tự bị cắt (báo thiếu dấu nháy): nội dung dài thì ghi ra file bằng công cụ Write rồi mới chạy lệnh ngắn.
+
+## VIỆC 16/11 (phiên nhánh `claude/cad-thong-ke-visibility-cd857f`) — THỐNG KÊ BLOCK ĐỘNG THEO VISIBILITY: XONG MÃ + TEST, CHƯA XEM TRONG AUTOCAD
+Học tư duy từ LHBBlockScheduler v9.7 (chỉ đọc tài liệu, không có mã nguồn, không chạy DLL): "chủng loại" = trạng thái Visibility; không có Visibility thì
+tham số chữ có danh sách (Lookup); độ dài, góc, lật không làm chủng loại. Đã làm (`module/plugin/Lenh.cs`, `Spec.cs`):
+- `ChungLoai(br)`: Visibility (tên `Visibility*`) > Lookup chữ. `PCCC_BOC` thêm dòng `+ chủng loại "..."` dưới mã; tổng theo mã KHÔNG đổi (web, sơ đồ, PCCC_BLOCK đọc như cũ).
+- `PCCC_BANG`: block động mỗi chủng loại một dòng, thêm cột "Chủng loại" (chỉ khi có block động); dòng lệnh `[TKPCCC] PCCC_BANG dong= chung_loai=`.
+- Gán mã riêng từng trạng thái: `block_alias.json` khoá `"tên block|trạng thái"`; `PCCC_GAN` chọn block động thì hỏi Rieng/Chung. Spec `dem` thêm `dem_loai`.
+- Test: `test/ThuBlockDong.cs` (DLL chỉ cho test) chèn block động từ bản vẽ mẫu Autodesk `Sample\en-us\Dynamic Blocks` (không đưa bản vẽ khách vào repo).
+Việc sau (chưa làm):
+1. Web báo giá / Excel chưa có cột chủng loại: JSON `PCCC_BOC` gửi web vẫn chỉ `{ma, sl}` (server `sach` lọc trường lạ). Thêm `chung_loai` vào `dong` + cột Excel
+   là việc của module web (`backend/src/server.ts`, xuất báo giá).
+2. Tách theo kích thước (tham số độ dài) như ô "Tách theo kích thước" của LHB: chưa làm, mặc định không tách là đúng với đầu báo tia chiếu.
+3. Ký hiệu trong ô bảng của dòng chủng loại vẫn là block thư viện theo mã (trạng thái mặc định), chưa vẽ đúng hình trạng thái.
+4. Thử `PCCC_GAN` (Rieng/Chung) và `PCCC_BANG` trong AutoCAD thật trên bản chép `file_cad_test/BEAM_Quyetthang.dwg` (BÌNH CHỮA CHÁY 4 trạng thái, ĐÈN EXIT 5 trạng thái).

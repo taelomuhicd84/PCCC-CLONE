@@ -506,3 +506,11 @@ Người dùng dán lỗi PCCC_RAI (mặt 763 079 m², 533 đỉnh → lưới 6
 Đã làm: bỏ riêng vùng lưới quá lớn, hỏi khi điểm bấm rơi vào mặt bao ≥ 3 phòng, in thời gian từng pha. Đo bản chép `rai_phai.dwg`:
 dựng phòng 78,7 s (37 365 mặt từ 1 block cả mặt bằng), rải 0,27 s → việc kế: tối ưu `MatChon` (cad/TIEN_DO.md).
 Luật mới của người dùng: 95–98 % dừng, ghi tiến độ + lịch sử; reset thì phiên nhánh ngữ cảnh sạch làm tiếp, không hỏi.
+
+## 2026-11-16 chiều (phiên nhánh) — Thống kê block động tách theo Visibility
+Người dùng chỉ ra: thống kê block không tách block động theo trạng thái Visibility; đặt LHBBlockScheduler v9.7 Premium ở `thamkhao_plugincad/` để học tư duy (không commit).
+Dò bản vẽ thật (chỉ đọc): `BEAM_Quyetthang.dwg` có BÌNH CHỮA CHÁY (Visibility1: BỘT ABC 4KG / 8KG / + CO2), ĐÈN EXIT (1 HƯỚNG, 2 HƯỚNG...), tủ 1/2 cuộn vòi;
+`PCCC_TANTUONGKHAN.dwg` có bơm điện/diesel theo model. Tên tham số mặc định `Visibility`, `Visibility1`; Lookup tên tự đặt (`Size`, `Opening Angle`).
+Làm: `ChungLoai`, dòng tách (mã, chủng loại) trong `KetQua`, cột Chủng loại ở `PCCC_BANG`, alias `tên|trạng thái`, `PCCC_GAN` Rieng/Chung, `dem_loai` của spec `dem`.
+Bẫy: accoreconsole không có `setpropertyvalue`/`getpropertyvalue`/`dumpallproperties` (LISP) nên đặt trạng thái block động trong test bằng DLL phụ `test/ThuBlockDong.cs`;
+`-INSERT` block có thuộc tính trong kịch bản phải `ATTREQ 0`. Phần đầu `TU_VUNG.md` đã 1893/1900 ký tự: mô tả `dem_loai` chỉ ghi ở bảng chi tiết.

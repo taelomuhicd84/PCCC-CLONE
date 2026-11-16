@@ -27,7 +27,7 @@ cad/
 │  ├─ mcp/                 Mcp.cs -> bin/TKPCCC.Mcp.exe (công cụ cad_tt, cad_chay, cad_anh)
 │  ├─ chung/               HangDoi.cs: hàng đợi file dùng chung plugin + máy chủ MCP
 │  └─ lisp/                TKPCCC.lsp (nạp DLL thay NETLOAD) + LISP của người dùng (nạp tay bằng APPLOAD)
-├─ test/                   chay_thu.ps1 (plugin + PCCC_SPEC) · thu_mcp.ps1 (máy chủ MCP), không cần mở AutoCAD · mau_kt.pdf (PDF thử 1:200, sinh bằng tao_pdf_mau.py) · thu_gui.ps1 (tự mở AutoCAD thật, không bắt buộc) · thu_ban_quyen.ps1 (key KeyGen + Apps Script giả lập)
+├─ test/                   chay_thu.ps1 (plugin + PCCC_SPEC) · thu_mcp.ps1 (máy chủ MCP), không cần mở AutoCAD · mau_kt.pdf (PDF thử 1:200, sinh bằng tao_pdf_mau.py) · thu_gui.ps1 (tự mở AutoCAD thật, không bắt buộc) · thu_ban_quyen.ps1 (key KeyGen + Apps Script giả lập) · ThuBlockDong.cs (DLL chỉ cho chay_thu: chèn block động mẫu Autodesk, đặt Visibility)
 ├─ build.bat               build DLL + exe, chép dữ liệu vào bundle
 ├─ cai_dat.bat             cài một lần: liên kết bundle vào %APPDATA%\Autodesk\ApplicationPlugins (AutoCAD tự nạp, khỏi NETLOAD); `/go` để gỡ
 ├─ bin/                    kết quả build máy chủ MCP (không commit)

@@ -19,6 +19,20 @@ if ($LASTEXITCODE) { throw 'Bien dich loi' }
   /r:"$FW\WPF\PresentationCore.dll" /r:"$FW\WPF\WindowsBase.dll" /r:"$FW\System.Xaml.dll" `
   /r:System.Core.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll /r:"$T\TKPCCC.Cad.dll" "$GOC\cad\module\ui\*.cs"
 if ($LASTEXITCODE) { throw 'Bien dich TKPCCC.UI.dll loi' }
+# DLL chi cho test: chen block dong tu ban ve mau Autodesk (cai cung AutoCAD) va dat trang thai Visibility (accoreconsole khong co setpropertyvalue).
+& "$FW\csc.exe" /nologo /target:library /platform:x64 /codepage:65001 /out:"$T\ThuBlockDong.dll" `
+  /r:"$ACAD\acdbmgd.dll" /r:"$ACAD\accoremgd.dll" /r:System.Core.dll "$PSScriptRoot\ThuBlockDong.cs"
+if ($LASTEXITCODE) { throw 'Bien dich ThuBlockDong.dll loi' }
+# Block dong (16/11, hoc tu duy LHBBlockScheduler): "Pilot Light" tham so Color (khong ten Visibility -> nhanh Lookup), "Hex Socket Bolt" co ca
+# Size (Lookup, dung truoc) va Visibility (phai lay Visibility). Gan ma: ca block = DEN_EXIT / BINH_BOT, rieng trang thai Amber = DEN_SUCO.
+$mauDong = "$ACAD\Sample\en-us\Dynamic Blocks"
+@("$mauDong\Electrical - Metric.dwg|Pilot Light - Metric|Color|Red|300000|0", "$mauDong\Electrical - Metric.dwg|Pilot Light - Metric|Color|Red|305000|0",
+  "$mauDong\Electrical - Metric.dwg|Pilot Light - Metric|Color|Green|310000|0", "$mauDong\Electrical - Metric.dwg|Pilot Light - Metric|Color|Amber|315000|0",
+  "$mauDong\Mechanical - Metric.dwg|Hex Socket Bolt (Side) - Metric|Visibility|M8|320000|0",
+  "$mauDong\Mechanical - Metric.dwg|Hex Socket Bolt (Side) - Metric|Visibility|M10|325000|0",
+  "$mauDong\Mechanical - Metric.dwg|Hex Socket Bolt (Side) - Metric|Visibility|M10|330000|0") | Set-Content -Encoding ascii "$T\thu_dong.txt"
+$env:TKPCCC_THU_DONG = "$T\thu_dong.txt"
+'{"Pilot Light - Metric":"DEN_EXIT","Pilot Light - Metric|Amber":"DEN_SUCO","Hex Socket Bolt (Side) - Metric":"BINH_BOT"}' | Set-Content -Encoding ascii "$T\block_alias.json"
 Copy-Item "$GOC\data\vat_tu.json" $T
 Copy-Item "$GOC\data\khoang_cach_rai.json" $T  # tri so rai theo tieu chuan (rai / PCCC_RAI khong co s)
 Copy-Item "$GOC\data\ong_nhanh_dn.json" $T  # bang DN theo so dau phun (PCCC_TUYEN TuDong)
@@ -63,7 +77,8 @@ $kb = @('INSUNITS', '4', 'NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '_.SAVEAS', '2018',
   'PCCC_KYHIEU', '', '0,-20000', '', 'PCCC_QUYDINH', '0,-40000', '',
   'RECTANG', '0,-60000', '10000,-58000', 'PCCC_THOATNAN', 'L', '', 'PCCC_DAT', 'HVT_TU', '20000,-60000', '', 'PCCC_VUNGBV', 'HVT_TU', '26',
   'PCCC_THUYETMINH', '0,-80000', '',
-  'PCCC_BOC', 'Khong', '', 'ThuPlugin', '_.QSAVE')
+  'NETLOAD', "`"$T\ThuBlockDong.dll`"", 'THU_BLOCKDONG',
+  'PCCC_BOC', 'Khong', '', 'ThuPlugin', 'PCCC_BANG', '300000,-20000', '250', '_.QSAVE')
 $kb -join "`r`n" | Set-Content -Encoding ascii "$T\kb.scr"
 $p = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb.out.txt"
 if (-not $p.WaitForExit(180000)) { Stop-Process -Id $p.Id -Force; throw "accoreconsole qua 3 phut (kich ban sai dau nhac?): $T\kb.out.txt" }
@@ -97,6 +112,13 @@ foreach ($c in $can) { if ($out -match $c[0]) { "DAT   $($c[1])" } else { "LOI  
 # Lan boc thu 2 (sau khi chen bang + vung bao ve) van phai ra 2 / 7: bang thong ke va vong tron khong bi dem.
 $lan2 = $out.Substring($out.LastIndexOf('Command: PCCC_BOC')) # 'Command: ': thong bao loi runner cung co chu PCCC_BOC
 if ($lan2 -match 'BC_KHOI\s+2 ' -and $lan2 -match 'BC_NHIET\s+7 ') { 'DAT   boc lai sau PCCC_BANG khong dem ky hieu trong bang' } else { 'LOI   boc lai sau PCCC_BANG'; $loi++ }
+# Block dong tach theo chung loai (Visibility, Lookup): tong theo ma giu nguyen, dong '+ chung loai' duoi ma, gan rieng trang thai Amber sang ma khac.
+if ($out -match 'THU_BLOCKDONG chen=7 sai=0') { 'DAT   chen 7 block dong mau Autodesk, dat duoc trang thai' } else { "LOI   THU_BLOCKDONG (thieu $mauDong ?)"; $loi++ }
+$cl = '[^"\r\n]*"'
+if ($lan2 -match "DEN_EXIT\s+3 [^\r\n]*[\r\n]+\s+\+ $cl`Green`": 1[\r\n]+\s+\+ $cl`Red`": 2[\r\n]") { 'DAT   block dong tach chung loai: DEN_EXIT 3 = Green 1 + Red 2 (tham so Color, nhanh Lookup)' } else { 'LOI   DEN_EXIT tach chung loai Green 1 / Red 2'; $loi++ }
+if ($lan2 -match "DEN_SUCO\s+1 [^\r\n]*[\r\n]+\s+\+ $cl`Amber`": 1[\r\n]") { 'DAT   gan rieng trang thai (block_alias "ten|Amber") ra ma khac DEN_SUCO' } else { 'LOI   alias rieng trang thai Amber -> DEN_SUCO'; $loi++ }
+if ($lan2 -match "BINH_BOT\s+3 [^\r\n]*[\r\n]+\s+\+ $cl`M10`": 2[\r\n]+\s+\+ $cl`M8`": 1[\r\n]") { 'DAT   block co ca Lookup Size va Visibility: tach theo Visibility (M10 2, M8 1)' } else { 'LOI   BINH_BOT tach theo Visibility M10 2 / M8 1'; $loi++ }
+if ($lan2 -match 'PCCC_BANG dong=\d+ chung_loai=BINH_BOT:M10;BINH_BOT:M8;DEN_SUCO:Amber;DEN_EXIT:Green;DEN_EXIT:Red(\r|\n)') { 'DAT   PCCC_BANG co cot Chung loai, moi trang thai mot dong' } else { 'LOI   PCCC_BANG cot Chung loai'; $loi++ }
 if ($out -match '\[TKPCCC\] L') { 'LOI   co lenh bao loi:'; ($out -split "`n" | Select-String '\[TKPCCC\] L'); $loi++ }
 # PCCC_THEMBLOCK ghi them 1 dong vao vat_tu.json canh DLL va vao file goc (nguon_vat_tu.txt tro toi ban chep tam $T\goc, repo khong bi dung toi).
 $dmThu = Get-Content -Raw -Encoding UTF8 "$T\vat_tu.json" | ConvertFrom-Json
