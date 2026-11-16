@@ -95,6 +95,7 @@ namespace TKPCCC
             public List<List<Point2d>> GachCheo = new List<List<Point2d>>();             // biên hatch gạch chéo = công trình hiện hữu (người dùng 14/11)
             public bool ChiCua;                                                           // đang đi trong block layer bị bỏ: chỉ gom ký hiệu cửa
             public HashSet<string> BoMau;                                                 // khoá "LAYER|màu" bỏ ra (nét dầm khi dựng tường)
+            public List<Point2d> KhuKhong = new List<Point2d>();                          // dấu hiệu lõi thang, buồng thang, WC (GomKhu)
         }
 
         /// Màu thật của nét: ByLayer theo layer thật, ByBlock theo màu block chứa nó (chaMau; ngoài block coi như 7). "A3" = ACI 3, "R0,255,0" = màu thật.
@@ -218,6 +219,7 @@ namespace TKPCCC
             // tường AAP-TUONG bên trong bị bỏ nên PCCC_RAI gộp lõi thang + sảnh vào văn phòng).
             bool chiCua = (n.ChiCua && loai != 2) || (loai == 0 && n.Mau == null);
             GomCua(n, e, lop);
+            GomKhu(n, e, lop);
             ObjectId net = KieuNet(n, e, lop, chaNet);
             string mau = n.Mau == null && n.BoMau == null ? null : MauKhoa(n, e, lop, chaMau);
             BlockReference br = e as BlockReference;
@@ -322,6 +324,38 @@ namespace TKPCCC
                 if (!t.Contains("CUA") && !t.Contains("DOOR")) return;
                 Extents3d x = br.GeometricExtents;
                 n.Cua.Add(new[] { new Point2d(x.MinPoint.X, x.MinPoint.Y), new Point2d(x.MaxPoint.X, x.MaxPoint.Y) });
+            }
+            catch (System.Exception) { } // block hỏng, không có hộp bao: bỏ
+        }
+
+        static readonly string[] KHU_KHONG_BAO = { "THANGMAY", "LIFT", "ELEVATOR", "THANGBO", "STAIR", "TOILET", "VESINH", "LAVABO", "BONCAU", "XIBET", "URINAL", "TIEUNAM" };
+
+        /// Người dùng dặn 16/11: lõi thang máy, buồng thang, WC không đặt đầu báo. Dấu hiệu: block (tên, layer) thang máy, thang bộ, thiết bị vệ sinh
+        /// (tâm hộp bao); chữ tên phòng WC, VỆ SINH, THANG MÁY, THANG BỘ (điểm chèn; bỏ chữ có "SẢNH": sảnh thang máy vẫn đặt đầu báo).
+        static void GomKhu(NenVung n, Entity e, ObjectId lop)
+        {
+            try
+            {
+                BlockReference br = e as BlockReference;
+                DBText dt = e as DBText;
+                MText mt = e as MText;
+                if (br != null && !(br is Table))
+                {
+                    string ten = br.Name;
+                    if (br.IsDynamicBlock) ten += " " + ((BlockTableRecord)n.Tr.GetObject(br.DynamicBlockTableRecord, OpenMode.ForRead)).Name;
+                    LayerTableRecord l = n.Tr.GetObject(lop, OpenMode.ForRead) as LayerTableRecord;
+                    string t = ChuanTen(ten + " " + (l == null ? "" : l.Name));
+                    if (!KHU_KHONG_BAO.Any(k => t.Contains(k))) return;
+                    Extents3d x = br.GeometricExtents;
+                    n.KhuKhong.Add(new Point2d((x.MinPoint.X + x.MaxPoint.X) / 2, (x.MinPoint.Y + x.MaxPoint.Y) / 2));
+                }
+                else if (dt != null || mt != null)
+                {
+                    string t = ChuanTen(dt != null ? dt.TextString : mt.Text);
+                    if (t.Length > 24 || t.Contains("SANH") || !(t.StartsWith("WC") || KHU_KHONG_BAO.Any(k => t.Contains(k)))) return;
+                    Point3d p = dt != null ? dt.Position : mt.Location;
+                    n.KhuKhong.Add(new Point2d(p.X, p.Y));
+                }
             }
             catch (System.Exception) { } // block hỏng, không có hộp bao: bỏ
         }
@@ -954,15 +988,17 @@ namespace TKPCCC
         {
             int[] dem;
             Dictionary<List<Point2d>, List<Point2d>> khoang;
-            MatChon(db, ids, mau, null, null, null, out co, out mat, out oX, out gach, out dem, out khoang);
+            List<Point2d> khu;
+            MatChon(db, ids, mau, null, null, null, out co, out mat, out oX, out gach, out dem, out khoang, out khu);
         }
 
         /// khoang: khoang dầm chia ra từ vùng PCCC_VUNG vẽ sẵn -> vùng cha (KOCHAM 16/11: có vùng vẽ sẵn thì trước đây không chia theo dầm), đã thay vào co.
         static void MatChon(Database db, ObjectId[] ids, HashSet<string> mau, HashSet<string> damMau, Func<Point2d[], bool> giuDam, List<Point2d[]> damThem,
             out List<List<Point2d>> co, out List<List<Point2d>> mat, out List<List<Point2d>> oX, out List<List<Point2d>> gach, out int[] demDam,
-            out Dictionary<List<Point2d>, List<Point2d>> khoang)
+            out Dictionary<List<Point2d>, List<Point2d>> khoang, out List<Point2d> khuKhong)
         {
             khoang = new Dictionary<List<Point2d>, List<Point2d>>();
+            khuKhong = new List<Point2d>();
             co = new List<List<Point2d>>();
             mat = new List<List<Point2d>>();
             oX = new List<List<Point2d>>();
@@ -989,7 +1025,7 @@ namespace TKPCCC
                 {
                     if (co.Count > 0 || mat.Count > 0 || (chiTuong && !coTuong)) continue;
                     n.ChiTuong = chiTuong;
-                    n.Cua.Clear(); n.GachCheo.Clear();
+                    n.Cua.Clear(); n.GachCheo.Clear(); n.KhuKhong.Clear();
                     List<Point2d[]> doan = new List<Point2d[]>();
                     n.BoMau = coDam ? damMau : null;
                     foreach (Entity e in ds) { if (doan.Count % 64 == 0) KiemEsc(); ThuNet(n, e, ObjectId.Null, ObjectId.Null, null, 0, doan); }
@@ -1040,6 +1076,7 @@ namespace TKPCCC
                     }
                     co = moi;
                 }
+                khuKhong = new List<Point2d>(n.KhuKhong);
                 tr.Commit();
             }
         }

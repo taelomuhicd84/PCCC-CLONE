@@ -1397,7 +1397,8 @@ namespace TKPCCC
             int[] demDam;
             System.Diagnostics.Stopwatch dongHo = System.Diagnostics.Stopwatch.StartNew(); // người dùng 16/11: rải lâu, đứng máy: in thời gian từng pha
             Dictionary<List<Point2d>, List<Point2d>> khoangChia; // khoang -> vùng vẽ sẵn chứa nó
-            MatChon(db, conLai, mau.Count > 0 ? mau : null, damMau, giuDam, damThem, out vung, out mat, out oX, out gach, out demDam, out khoangChia);
+            List<Point2d> khuKhong;
+            MatChon(db, conLai, mau.Count > 0 ? mau : null, damMau, giuDam, damThem, out vung, out mat, out oX, out gach, out demDam, out khoangChia, out khuKhong);
             if (khoangChia.Count > 0) ed.WriteMessage("\n[TKPCCC] chia_khoang=" + khoangChia.Count + " (vùng " + LAYER_VUNG + " vẽ sẵn chia theo dầm sâu; nét khoang vẽ trên layer " + LAYER_KHOANG + ")");
             ed.WriteMessage("\n[TKPCCC] thoi_gian dung_phong=" + dongHo.ElapsedMilliseconds + "ms doi_tuong=" + conLai.Length + " mat=" + mat.Count);
             if (khoangDam && demDam[0] + demDam[1] > 0)
@@ -1430,6 +1431,16 @@ namespace TKPCCC
                         List<List<Point2d>> pt = PhongThat(mat, m);
                         vung = pt.Where(f0 => !MatKhongRai(f0, oX, gach)).ToList();
                         if (pt.Count > vung.Count) ed.WriteMessage("\n[TKPCCC] bo_phong=" + (pt.Count - vung.Count) + " (ô X, gạch chéo).");
+                        // Người dùng dặn 16/11: đầu báo không đặt trong lõi thang máy, buồng thang, WC (phòng ≤ 60 m² chứa dấu hiệu GomKhu).
+                        // shortcut: nhận theo tên block, layer, chữ phòng; bản vẽ không có các dấu hiệu đó thì vẫn rải: bấm điểm từng phòng.
+                        if (v.he == "BC")
+                        {
+                            List<List<Point2d>> boKhu = vung.Where(f0 => DienTichDaGiac(f0) * m * m <= 60 && khuKhong.Any(p => TrongDaGiac(f0, p))).ToList();
+                            vung = vung.Where(f0 => !boKhu.Contains(f0)).ToList();
+                            if (boKhu.Count > 0) ed.WriteMessage("\n[TKPCCC] bo_khu_khong_bao=" + boKhu.Count + " m2="
+                                + string.Join(",", boKhu.Select(f0 => Math.Round(DienTichDaGiac(f0) * m * m, 1).ToString(CultureInfo.InvariantCulture)))
+                                + " (lõi thang máy, buồng thang, WC: không đặt đầu báo; cần rải thì bấm điểm trong phòng đó).");
+                        }
                         int boPhong, boCum;
                         vung = CumChinh(vung, 2 / m, out boPhong, out boCum);
                         if (boPhong > 0) ed.WriteMessage("\n[TKPCCC] bo_cum=" + boCum + " phong=" + boPhong + " (cụm phòng nhỏ tách xa mặt bằng chính: hình chi tiết, mặt cắt; cần rải thì bấm điểm trong phòng).");
