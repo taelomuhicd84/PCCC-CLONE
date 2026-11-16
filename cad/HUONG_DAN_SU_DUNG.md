@@ -41,6 +41,7 @@ Plugin thiết kế PCCC cho AutoCAD 2021 trở lên: rải đầu báo cháy, �
 ### 3.1. Phân vùng (bước 2)
 
 - `PCCC_RAI` tự dựng phòng từ nét tường trong khung chọn (bỏ trục, nét khuất, cửa, nội thất, chữ, dim). Khe cửa nhỏ hơn 3 m được nối.
+- Tường nằm trong block (vd block lõi thang đặt trên layer nội thất) vẫn được nhận nếu nét bên trong nằm trên layer tường (`TUONG`, `WALL`...).
 - Phòng dò sai (gộp lõi thang, gộp buồng thang, phòng hở): vẽ tay polyline kín trên layer `PCCC_VUNG` rồi chạy lại. Có polyline `PCCC_VUNG` kín trong khung chọn thì `PCCC_RAI` dùng luôn các vùng đó, không dò tường và không hỏi điểm phòng.
 - Vùng vẽ sẵn nằm trong một phòng tự dựng (diện tích không quá 1,3 lần phòng đó) thì thay cho phòng đó, không vẽ chồng.
 - Phòng chữ L rải sprinkler: nên chia 2 vùng chữ nhật (`PCCC_TACHVUNG` hoặc vẽ 2 polyline). Chia thì đầu phun không bị thêm sát tường ở góc trong.
@@ -61,9 +62,11 @@ Không cần nhập khoảng cách: bước tối đa, cách tường, chéo gó
 
 Sau khi rải, plugin tự dim theo trang Cài đặt (mặc định "chuỗi"): một chuỗi ngang dọc hàng đông nhất, một chuỗi đứng dọc cột đông nhất, đặt sát thiết bị. Hàng trùng toạ độ chỉ dim một lần, thiết bị lệch lưới mới dim thêm.
 
+Trần hở có dầm (`Dam`) với vùng `PCCC_VUNG` vẽ sẵn (vd vẽ một đường bao văn phòng): plugin tự chia vùng theo các dầm sâu hơn 0,3 m thành khoang (`chia_khoang=`), vẽ nét khoang và m² trên layer `PCCC_KHOANG_M2`, rải từng khoang, dim chung trên cả vùng (`kt_gom`). Nét dầm sơ đồ dừng cách dầm biên vài trăm mm vẫn khép khoang (plugin nối dài nét dầm 0,4 m). Bấm nét dầm mẫu đúng nét dầm, không bấm vào chữ nhãn (phóng to sát nét dầm trước khi bấm).
+
 ### 3.3. Đi dây báo cháy (bước 6)
 
-`PCCC_DAYBC`: chọn `Thuong` (hệ thường) hoặc `DiaChi` (hệ địa chỉ, gồm module ZM, CM, R2ML). Quét chọn thiết bị của MỘT zone (đầu báo, nút ấn, chuông; có tủ thì chọn luôn), Enter, rồi bấm vị trí tủ trung tâm hoặc điểm dây đi về tủ. Plugin đi dây vuông góc, nối tiếp không rẽ chữ T, tự thêm điện trở cuối dây và dây nguồn chuông, layer theo trang Báo cháy. Kết quả in số tín hiệu, mét dây.
+`PCCC_DAYBC`: chọn `Thuong` (hệ thường) hoặc `DiaChi` (hệ địa chỉ, gồm module ZM, CM, R2ML). Quét chọn thiết bị của MỘT zone (đầu báo, nút ấn, chuông; có tủ thì chọn luôn), Enter, rồi bấm vị trí tủ trung tâm hoặc điểm dây đi về tủ. Plugin đi dây vuông góc, nối tiếp không rẽ chữ T, tự thêm điện trở cuối dây và dây nguồn chuông, layer theo trang Báo cháy. Có vùng `PCCC_VUNG` thì dây đi trong các vùng (qua tường ở khe giữa hai vùng kề nhau); đoạn nào cắt ra ngoài vùng (lõi thang máy, buồng thang) thì tự đi vòng (`ne_loi=` số đoạn đã đi vòng). Kết quả in số tín hiệu, mét dây.
 
 `PCCC_DAY` (đi tay hơn): mã dây, chọn thiết bị, bấm điểm đầu (tủ), điểm cuối (Enter = dừng ở thiết bị cuối, `Vong` = về điểm đầu), tên zone.
 
@@ -73,7 +76,7 @@ Mỗi zone một lần `PCCC_DAYBC`. Hệ thường: zone không quá 25 đầu 
 
 `PCCC_RAI` với `SPR_DAU_UP` (hướng lên, trần hở), `SPR_DAU_DOWN` (hướng xuống, trần giả), `SPR_DAU_SIDE` (gắn tường):
 
-1. Bước tối đa S (m) theo tiêu chuẩn áp dụng. TCVN 7336:2021 Bảng 1, nhóm 1 đến 4.1: 4 m.
+1. Bước tối đa S (m) theo tiêu chuẩn áp dụng. TCVN 7336:2021 Bảng 1, nhóm 1 đến 4.1: 4 m. Từ khoá `Dam` (gõ `Dam` rồi mới nhập S): trần hở, dầm cao hơn 300 mm thì đầu phun đặt trong từng khoang dầm; chia khoang như mục 3.2 (bấm nét dầm mẫu sau bước chọn).
 2. Diện tích bảo vệ tối đa một đầu (m²): nhóm 1–3: 12; nhóm 4–7: 9. Enter = không xét.
 3. Khoảng cách tới tường (m), Enter = chia đều (tối đa S/2).
 4. Chia lại theo hàng (Enter = Không).
@@ -83,9 +86,9 @@ Plugin chọn số cột × số hàng ÍT đầu nhất mà ô lưới không v
 
 ### 3.5. Ống sprinkler (bước 8, 9)
 
-- `PCCC_ONG`: nhập mã ống (`ONG_DN65`...), plugin đặt layer `PCCC_ONG_DN65` rồi mở `PLINE`; bấm các điểm của ống. Ống, dây đếm khối lượng theo layer `PCCC_<mã>`.
+- `PCCC_ONG`: nhập mã ống (`ONG_DN65`...), bấm điểm đầu rồi các điểm tiếp theo, Enter = xong; plugin vẽ polyline trên layer `PCCC_ONG_DN65` (đặt luôn layer hiện hành) và in số đoạn, mét. Chạy được cả trong file kịch bản `.scr`. Ống, dây đếm khối lượng theo layer `PCCC_<mã>`.
 - `PCCC_TUYEN`: mã ống nhánh, hoặc `TuDong` (rồi `Den05` = đầu phun áp đến 0,5 MPa, `Tren05`) để cỡ ống theo số đầu phun phía sau (`data/ong_nhanh_dn.json`: DN25 ≤ 2 đầu, DN32 ≤ 3, DN40 ≤ 5, DN50 ≤ 10, DN65 ≤ 20...). Chọn các đầu phun của MỘT phòng, chọn ống chính, bấm vị trí ống góp (Enter = cột đầu phun gần giữa phòng). Kết quả: ống góp vuông góc ống chính tới hàng xa nhất (cả hai phía), mỗi hàng một nhánh.
-- Mẹo chọn đầu phun: dùng `WP` (đa giác theo đường bao phòng) để không dính đầu phun phòng bên cạnh. Ký hiệu cắt qua mép khung thì không được chọn: chừa mép rộng hơn bán kính ký hiệu.
+- Chọn dính đầu phun phòng khác: plugin nhóm đầu phun theo (cụm vùng `PCCC_VUNG` kề nhau, loại đầu phun) và chỉ nối nhóm đông nhất, in `tuyen_loc giu= bo=`. Đầu phun hướng xuống ở WC, hành lang lọt vào khung chọn văn phòng sẽ bị bỏ. Phòng bên cạnh cùng loại đầu phun và vùng sát nhau (qua một tường) vẫn bị gộp: khi đó chọn bằng `WP` theo đường bao phòng, chừa mép rộng hơn bán kính ký hiệu.
 - `PCCC_DOIDN`: đổi cỡ một đoạn ống đã vẽ.
 
 ### 3.6. Thống kê và hồ sơ (bước 12)
@@ -199,13 +202,14 @@ Block của bạn: `PCCC_THEMBLOCK` (thêm mã mới) hoặc `PCCC_GAN` (gán bl
 
 ## 7. Lưu ý đã gặp khi thiết kế thật
 
-1. Tự dò tường có thể gộp lõi thang máy, buồng thang vào phòng bên cạnh (tường trong block, cửa sát lõi). Xem vùng `PCCC_VUNG` vẽ ra; sai thì xoá, vẽ tay polyline kín rồi rải lại.
+1. Tự dò tường có thể gộp lõi thang máy, buồng thang vào phòng bên cạnh (cửa sát lõi, tường lõi vẽ trên layer không phải layer tường). Đã sửa trường hợp tường lõi nằm trong block đặt trên layer nội thất. Xem vùng `PCCC_VUNG` vẽ ra; sai thì xoá, vẽ tay polyline kín rồi rải lại. Mép trong tường vẽ trên layer `0` thì vùng có thể lấy mép ngoài tường (lệch bằng bề dày tường).
 2. Có sẵn vùng `PCCC_VUNG` trong khung chọn thì `PCCC_RAI` không hỏi điểm phòng: muốn dò tường cho phòng khác thì chọn khung không chứa vùng có sẵn.
 3. Phòng chữ L rải sprinkler: chia 2 vùng chữ nhật, nếu không có thể có đầu phun thêm sát tường ở góc trong.
-4. `PCCC_TUYEN`: chọn đầu phun đúng một phòng (dùng `WP`); chọn dính phòng khác thì nhánh kéo xuyên tường.
-5. Chưa tự xét dầm khi không bật `Dam`; trần có dầm sâu hơn 0,3 m thì bật `Dam` và cho cỡ dầm.
+4. `PCCC_TUYEN`: plugin bỏ đầu phun khác loại hoặc ở vùng tách rời (mục 3.5); phòng cùng loại đầu phun nằm sát nhau vẫn phải chọn bằng `WP`.
+5. Chưa tự xét dầm khi không bật `Dam`; trần có dầm sâu hơn 0,3 m thì bật `Dam` (đầu báo và sprinkler) và cho cỡ dầm. Nhãn dầm được ghép với nét dầm cùng phương chữ trước. Nét dầm sơ đồ hẹp hơn dầm thật (vd vẽ 200, thật 250) thì khoang đo được lớn hơn thật: khoang sát 12 m² có thể thành 2 đầu phun.
 6. Cỡ ống `TuDong` là theo số đầu, chưa phải tính thủy lực: kiểm lại bằng module thủy lực (web TKPCCC, tab Thủy lực).
 7. Hình dim, chữ có thể đè nhau ở chỗ hai chuỗi cắt nhau: dời bằng `PCCC_CANDIM` hoặc kéo tay.
+8. Khung chọn `W` chỉ lấy đối tượng nằm trọn trong khung: nét dầm thò ra ngoài khung bị bỏ, khoang không khép. Quét khung ôm trọn nét dầm.
 
 ## 8. Dùng cùng Claude (MCP)
 

@@ -547,3 +547,10 @@ trước khi chèn vì cùng tên `AAP-TUONG` với tường kiến trúc (bộ 
 ## 2026-11-16 tối (5) — Đọc nhãn dầm: số lớn là chiều cao
 Người dùng chốt: quy tắc đọc dầm vẫn là b x h (rộng x cao); bản kết cấu KOCHAM ghi ngược là ngoại lệ, trước mắt lấy số lớn làm chiều cao. `DocBxh` (Rai.cs)
 đổi sang min = b, max = h; test vùng C trong `chay_thu.ps1` đổi nhãn sang `DS 700X300` (trước sửa sẽ ra d = 0,3 → bỏ dầm). Dầm bẹt thật sẽ đọc sai: gặp thì thêm lựa chọn.
+
+## 2026-11-16 tối (6) — Sửa 6 lỗi plugin lộ ra ở tầng 8 KOCHAM
+Hạn mức reset, tự chạy theo lời dặn. (1) Lõi thang là block trên layer nội thất nên tường bên trong bị bỏ: nét lồng trên layer tường vẫn lấy.
+(2) `PCCC_ONG` tự hỏi điểm, chạy được trong .scr. (3) `PCCC_TUYEN` lọc đầu phun theo cụm vùng + loại. (4) `Dam` chia vùng vẽ sẵn thành khoang; hai bẫy
+dữ liệu thật: nét dầm sơ đồ dừng cách dầm biên 200 mm (kéo dài 0,4 m), nhãn dầm cắt ngang gần hơn (ghép theo phương chữ). (5) `PCCC_DAYBC` tìm đường
+vuông góc trong hợp các vùng. (6) Dim chung cho khoang của một vùng; sprinkler có `Dam`. Bẫy script: bấm nét dầm mẫu trúng chữ nhãn → zoom trong suốt
+(`'_.ZOOM W`) sát nét dầm rồi bấm; khung W phải ôm trọn nét dầm. Test 6 ca trong `chay_thu.ps1`.

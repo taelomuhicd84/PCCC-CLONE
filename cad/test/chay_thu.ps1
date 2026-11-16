@@ -817,6 +817,51 @@ $n4 = 0; foreach ($mm in [regex]::Matches($out4, 'PCCC_RAI BC_KHOI n=(\d+) luoi=
 Kiem ($out4 -match 'bo_cum=1 phong=1 ' -and $out4 -match 'theo_vung_co_san=1 ' -and ([regex]::Matches($out4, 'V\S+ng t\S+ d\S+ng m2=300 ')).Count -eq 1 -and $n4 -eq 8) `
   "Enter moi phong: bo cum chi tiet xa, phong co PCCC_VUNG ve san rai theo vung do khong ve chong, 2 phong x 4 dau, moi phong 6 dim (n=$n4)"
 
+# --- Sua 6 loi lo ra o tang 8 KOCHAM 16/11 (cad/TIEN_DO.md): moi loi mot ca, cung mot ban ve ---
+'{"ops":[{"op":"vung_tu_dong","p":[[12000,5000]],"l":"TAM"}]}' | Set-Content -Encoding ascii "$T\vtd6.json"
+(@('INSUNITS', '4', 'NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '_.SAVEAS', '2018', "`"$T\sua6.dwg`"", 'OSMODE', '0',
+  # 1: phong 20 x 15 m tuong layer TUONG, loi thang 5 x 5 m goc tren trai: tuong TUONG nam trong block CORE1 chen tren layer HANA_FURNITURE
+  #    (truoc sua: block layer noi that bo ca net tuong ben trong, PCCC_RAI gop loi vao phong = 300 m2; vung_tu_dong cung vay)
+  '-LAYER', 'M', 'TUONG', '', '_.RECTANG', '0,0', '20000,15000', 'PLINE', '0,10000', '5000,10000', '5000,15000', '0,15000', 'C',
+  '-BLOCK', 'CORE1', '0,0', 'L', '', '-LAYER', 'M', 'HANA_FURNITURE', '', '-INSERT', 'CORE1', '0,0', '1', '', '0', '-LAYER', 'S', '0', '',
+  '_.ZOOM', 'W', '-1000,-1000', '21000,16000', 'PCCC_RAI', 'BC_KHOI', '', '', 'C', '-500,-500', '20500,15500', '', '', '12000,5000', '',
+  'PCCC_SPEC', "$T\vtd6.json",
+  # 2: PCCC_ONG tu hoi diem (truoc sua: SendStringToExecute PLINE, trong .scr toa do bi doc thanh lenh "Unknown command")
+  'PCCC_ONG', 'ONG_DN50', '100000,0', '105000,0', '105000,3000', '',
+  # 3: vung A 10 x 6 m (4 dau UP), vung B cach 2 m (2 dau UP), vung C sat A 0,2 m (1 dau DOWN, nhu WC); khung W lay ca 7 dau -> giu 4 dau cua A
+  '-LAYER', 'M', 'PCCC_VUNG', '', '_.RECTANG', '200000,0', '210000,6000', '_.RECTANG', '200000,8000', '210000,11000', '_.RECTANG', '210200,0', '213000,6000',
+  '-LAYER', 'S', '0', '', 'PCCC_DAT', 'SPR_DAU_UP', '202500,1500', '207500,1500', '202500,4500', '207500,4500', '',
+  'PCCC_DAT', 'SPR_DAU_UP', '202500,9500', '207500,9500', '', 'PCCC_DAT', 'SPR_DAU_DOWN', '211600,3000', '',
+  'PCCC_ONG', 'ONG_DN50', '199000,-1000', '214000,-1000', '', '_.ZOOM', 'W', '198000,-2000', '215000,12000',
+  'PCCC_TUYEN', 'ONG_DN25', 'W', '199000,-500', '214000,12000', '', 'L', '205000,3000',
+  # 4 + 6: vung ve san 12 x 6 m, dam B1 (300x600) doc x = 4, 8 m, ngang y = 3 m -> 6 khoang 4 x 3 m, moi khoang 1 dau; dim chung tren vung
+  #    (truoc sua: co vung ve san thi khong chia khoang, 1 vung 2 dau; dim tung khoang 6 x 4 = 24)
+  '-LAYER', 'M', 'PCCC_VUNG', '', '_.RECTANG', '300000,0', '312000,6000', '-LAYER', 'M', 'DAM', '',
+  '_.LINE', '304000,0', '304000,6000', '', '_.LINE', '308000,0', '308000,6000', '', '_.LINE', '300000,3000', '312000,3000', '',
+  '_.TEXT', '304300,4500', '250', '0', 'B1 (300x600)', '-LAYER', 'S', '0', '', '_.ZOOM', 'W', '299000,-1000', '313000,7000',
+  'PCCC_RAI', 'BC_KHOI', 'Dam', '3.5', '', 'W', '299500,-500', '312500,6500', '', '', '304000,1000', '',
+  # 5: sanh 4 x 3 m, van phong 9,7 x 14 m (cach sanh 0,3 m), dai tren loi 4 x 6 m; loi 4 x 5 m giua sanh va dai khong co vung.
+  #    Tu o sanh, dau bao o dai va van phong: duong gay goc tu -> dai cat loi, phai vong qua van phong
+  '-LAYER', 'M', 'PCCC_VUNG', '', '_.RECTANG', '400000,0', '404000,3000', '_.RECTANG', '404300,0', '414000,14000', '_.RECTANG', '400000,8000', '404000,14000',
+  '-LAYER', 'S', '0', '', 'PCCC_DAT', 'BC_KHOI', '402000,11000', '409000,7000', '', '_.ZOOM', 'W', '399000,-1000', '415000,15000',
+  'PCCC_DAYBC', 'Thuong', 'C', '399500,-500', '414500,14500', '', '401000,1500',
+  '_.QSAVE') -join "`r`n") | Set-Content -Encoding ascii "$T\kb6.scr"
+$p6 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb6.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb6.out.txt"
+if (-not $p6.WaitForExit(180000)) { Stop-Process -Id $p6.Id -Force; throw "accoreconsole qua 3 phut (sua 6 loi): $T\kb6.out.txt" }
+$out6 = [Text.Encoding]::Unicode.GetString([IO.File]::ReadAllBytes("$T\kb6.out.txt")) -replace "`0", ''
+$v6 = DocKq 'vtd6'
+Kiem ($out6 -match 'V\S+ng t\S+ d\S+ng m2=275 ' -and $v6 -and $v6.vung_tu_dong[0].m2 -eq 275) `
+  "Loi 1: tuong TUONG trong block layer noi that van la tuong: PCCC_RAI bam diem va vung_tu_dong cung ra 275 m2, khong gop loi thang (vtd=$($v6.vung_tu_dong[0].m2))"
+Kiem ($out6 -match 'PCCC_ONG ONG_DN50 doan=2 m=8(\r|\n)' -and $out6 -notmatch 'Unknown command "?100000') 'Loi 2: PCCC_ONG tu hoi diem, chay duoc trong .scr: 2 doan 8 m'
+Kiem ($out6 -match 'tuyen_loc giu=4 bo=3 nhom=3 ' -and $out6 -match 'PCCC_TUYEN ONG_DN25 doan=\d+ m=') 'Loi 3: PCCC_TUYEN khung W lay 7 dau: bo 2 dau vung tach roi + 1 dau khac loai, noi 4 dau'
+Kiem ($out6 -match 'chia_khoang=6 ' -and $out6 -match 'khoang_dam nguong=4 lon=6 nho=0' -and [regex]::Matches($out6, 'PCCC_RAI BC_KHOI n=1 luoi=1x1 buoc=4000x3000 m2=12(\r|\n)').Count -eq 6) `
+  'Loi 4: Dam + vung PCCC_VUNG ve san: chia 6 khoang 12 m2, moi khoang 1 dau bao'
+$m6 = [regex]::Match($out6, 'kt_gom n=6 kt=(\d+) ')
+Kiem ($m6.Success -and [int]$m6.Groups[1].Value -le 8) "Loi 6: 6 khoang cua mot vung ve san dim chung: 1 chuoi X + 1 chuoi Y ($($m6.Groups[1].Value) dim; truoc sua 24)"
+$m5 = [regex]::Match($out6, 'PCCC_DAYBC he=thuong tin_hieu=2 m=([\d.]+) [^\r\n]* ne_loi=(\d+)')
+Kiem ($m5.Success -and [int]$m5.Groups[2].Value -ge 1 -and [double]$m5.Groups[1].Value -gt 25) `
+  "Loi 5: PCCC_DAYBC: doan tu -> dai cat loi thang (ngoai vung) di vong qua van phong (m=$($m5.Groups[1].Value), ne_loi=$($m5.Groups[2].Value); duong thang 22 m)"
+
 # Thoi gian dung phong tren ban ve that cua nguoi dung (gitignore, chi chay khi co): truoc sua 78 s (23 trieu diem cat), nay < 10 s.
 $bvThat = Get-ChildItem "$GOC\file_cad_test" -Filter 'test b*o ch*y.dwg' -ErrorAction SilentlyContinue | Select-Object -First 1
 if ($bvThat) {

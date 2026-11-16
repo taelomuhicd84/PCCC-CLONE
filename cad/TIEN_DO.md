@@ -3,6 +3,29 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## VIỆC 16/11 TỐI (5) — SỬA 6 LỖI PLUGIN LỘ RA Ở TẦNG 8 KOCHAM: XONG MÃ + TEST, CHƯA XEM TRONG AUTOCAD CÓ GIAO DIỆN
+Người dùng dặn 16/11 tối: "Sửa 3 vấn đề về plugin đi" (1–3), cộng 3 lỗi lộ ra khi thiết kế theo dầm (4–6). Test mới: mục "Sua 6 loi" trong
+`cad/test/chay_thu.ps1` (một bản vẽ, 6 ca). `chay_thu.ps1`, `thu_mcp.ps1` TAT CA DAT; bundle đã build (AutoCAD đang mở thì tắt hẳn rồi mở lại).
+1. Gộp lõi thang: block lõi "CORE" đặt trên layer "HANA FURNITURE" (nội thất = bỏ) nên tường `AAP-TUONG` bên trong bị bỏ. `ThuNet` (`NhanVung.cs`): nét lồng
+   có layer RIÊNG là tường vẫn lấy dù block cha trên layer bỏ; `DocDs` (vung_tu_dong) không bỏ block trên layer bỏ. Tầng 8: 293,19 → 271,72 m²
+   (vung_tu_dong 269,35; lệch 2,4 m² = bề dày tường trái dải trên vì mép trong tường vẽ trên layer `0`, chế độ chỉ-tường không thấy).
+2. `PCCC_ONG` (`Lenh.cs` `VeOng`): tự hỏi điểm (GetPoint vòng lặp, thêm đỉnh dần), không còn `SendStringToExecute("_.PLINE")`; in `PCCC_ONG <mã> doan= m=`.
+3. `PCCC_TUYEN` (`Rai.cs` `LocDauPhun`): nhóm đầu phun theo (cụm vùng `PCCC_VUNG` hộp bao cách ≤ 0,6 m, mã thiết bị), nối nhóm đông nhất, in `tuyen_loc`.
+   Tầng 8 khung W: bỏ 5 đầu hướng xuống (WC, hành lang), giữ 31 đầu hướng lên (cả 1 đầu sảnh, vùng sảnh sát văn phòng).
+4. `Dam` + vùng vẽ sẵn (`MatChon` → `ChiaKhoang`): chia vùng theo nét dầm sâu (kéo dài mỗi đầu 0,4 m: nét dầm sơ đồ dừng cách dầm biên 200 mm),
+   bỏ dải lòng dầm (`PhongThat`), vẽ nét khoang trên `PCCC_KHOANG_M2`, in `chia_khoang=`. Nhãn dầm ghép với nét cùng phương chữ trước (trước: nhãn dầm
+   cắt ngang gần hơn làm dầm sâu thành nông, 2 cặp khoang gộp). Tầng 8: 20 khoang, 20 đầu báo (+ sảnh, hành lang = 22).
+5. `PCCC_DAYBC` (`DayBc.cs` `LuoiDay`, `NeLoi`): có vùng `PCCC_VUNG` (≤ 10 m quanh thiết bị) thì đoạn gãy góc phải nằm trong vùng, hoặc khe giữa HAI vùng
+   ≤ 0,5 m (qua tường), hoặc ≤ 1 m quanh điểm dừng; không được thì thử góc gãy kia, rồi Dijkstra lưới ô 0,25 m (rẽ phạt 2 m). In `ne_loi=`. Tầng 8: dây
+   sảnh → dải trên đi qua văn phòng (x 36020), không cắt lõi.
+6. Dim: khoang chia từ một vùng vẽ sẵn dim chung trên vùng đó sau vòng rải (`kt_gom`). Tầng 8: 80 dim → 15. Thêm từ khoá `Dam` cho sprinkler ở dấu nhắc S
+   (chia khoang, dim chung như đầu báo).
+Chạy lại: `scripts/tao_dam.py` (S = thư mục scripts) sinh `kb_bc3.txt`, `kb_spr3.txt` chạy trên `t8_mat_bang_dam.dwg` → `t8_bc_dam_sua.dwg/.png`,
+`t8_spr_dam_sua.dwg/.png` (ket_qua, gitignore). Sprinkler: 31 đầu hướng lên vì khoang đo theo nét dầm sơ đồ rộng 200 (thật 250) ra 12,1–12,4 m² > 12 m².
+CÒN LẠI (chưa làm): (a) khoang vẽ tay từng polyline `PCCC_VUNG` (không qua `Dam`) vẫn dim từng khoang — không phân biệt được khoang với phòng;
+(b) lọc đầu phun không tách được hai phòng cùng loại đầu phun sát nhau qua một tường; (c) dây đi sát mép vùng (trùng nét tường) khi vòng qua lõi;
+(d) chưa tự loại lõi thang, buồng thang, WC khỏi "Enter = mọi phòng" của đầu báo (luật người dùng: không đặt đầu báo ở đó); (e) độ rộng dầm lấy theo nét vẽ, chưa theo nhãn.
+
 ## VIỆC 16/11 TỐI (4) — ỐP MẶT BẰNG DẦM VÀO KIẾN TRÚC + VẼ KHOANG DẦM: XONG
 `ket_qua/cad_test/2026-11-16/cong_trinh_drive/t8_mat_bang_dam.dwg`: mặt bằng tầng 8 + dầm chép nguyên nét từ file kết cấu (tờ "MẶT BẰNG DẦM TẦNG 7"), đổi layer
 `AAP-TUONG`→`KC_DAM`, `AAP-TEXT`→`KC_DAM_CHU`, `AAP-TRUC`→`KC_TRUC`... (để không lẫn tường), dời khớp trục dx −1106627, dy −366924 (`scripts/tach_dam.lsp`,
@@ -10,29 +33,6 @@ chèn `-INSERT *kc_dam_t8.dwg`). 20 khoang K1–K20 polyline `PCCC_VUNG` theo m�
 Dùng file này làm bản thử cho lỗi 4 bên dưới. Nhãn dầm của bộ kết cấu này ghi ngược `DS hXb` (`DS 400X250` = b 250, h 400, theo mặt cắt cùng tờ).
 ĐÃ SỬA 16/11 (người dùng chốt): quy tắc vẫn là b x h (rộng x cao), nhưng `DocBxh` (Rai.cs) lấy số LỚN làm h nên đọc đúng cả nhãn ngược;
 test `chay_thu.ps1` vùng C dùng nhãn `DS 700X300`. Giới hạn: dầm bẹt (rộng > cao) sẽ bị đọc thành dầm cao — gặp thì thêm lựa chọn.
-
-## VIỆC TIẾP THEO (làm ngay khi hạn mức reset, phiên nhánh tự chạy) — SỬA 6 LỖI PLUGIN LỘ RA Ở TẦNG 8 KOCHAM
-Người dùng dặn 16/11 tối: "Sửa 3 vấn đề về plugin đi" (1–3), cộng 3 lỗi mới lộ ra khi thiết kế theo dầm (4–6). Luật người dùng (memory
-`khong-tran-co-dam-va-vung-khong-dau-bao`): lõi thang máy, buồng thang, WC KHÔNG đặt đầu báo; "không trần" = có dầm nhô, xét khoang dầm; hộp kỹ thuật = hộp gen thông tầng.
-Bản vẽ thử + kịch bản dựng lại lỗi: `ket_qua/cad_test/2026-11-16/cong_trinh_drive/` (gitignore): `t8_mat_bang.dwg` (mặt bằng sạch, mm), `scripts/lenh.ps1`
-(`-Vao <dwg> -Ra <dwg> -Kb <kb.txt>`: chạy chuỗi câu trả lời lệnh trong accoreconsole, ghi `.log`), `scripts/kb_*.txt`, `scripts/tao_kb.py`, `scripts/tao_dam.py`
-(đường dẫn `S` trong 2 file .py trỏ scratchpad cũ: đổi về thư mục `scripts/`), `scripts/dam_ve.json` (17 dầm + nhãn `DS (250x400)` layer `KC_DAM`).
-Toạ độ: văn phòng chữ L (vung_tu_dong ra đúng) `[[47017.5,40347.7],[31842.5,40347.7],[31842.5,33072.7],[35967.5,33072.7],[35967.5,20947.7],[37767.5,20947.7],[37767.5,18247.7],[47017.5,18247.7]]`.
-1. `PCCC_RAI` dò phòng theo khung chọn (`NhanVung.cs` `MatChon`) gộp lõi thang máy + sảnh vào văn phòng: `ZOOM W 30500,17500 48000,41000`, `PCCC_RAI BC_KHOI 3 Enter C 31000,17800 47500,41000 Enter Enter 41000,30000 Enter`
-   ra 293,19 m² (đỉnh (31517.5,28247.7)...), trong khi spec `vung_tu_dong` p (41000,30000) ra đúng 269,35 m². Hai đường dò phải cho cùng kết quả; thêm test.
-   Cân nhắc nhận diện tự loại trừ lõi thang máy (ô có chữ X / cabin), buồng thang (bậc), WC (block xí, lavabo) khỏi "Enter = mọi phòng" của đầu báo.
-2. `PCCC_ONG` (`Lenh.cs` `VeOng`) đặt layer rồi `SendStringToExecute("_.PLINE ")`: trong file .scr toạ độ sau bị đọc thành lệnh ("Unknown command"). Sửa để chạy được trong
-   kịch bản (tự hỏi điểm bằng GetPoint vòng lặp, vẽ polyline layer `PCCC_<mã>`), thêm dòng kiểm trong `chay_thu.ps1`.
-3. `PCCC_TUYEN` chọn đầu phun bằng khung W lấy dính đầu phun WC, hành lang (nhánh DN25 kéo xuyên buồng thang). Sửa: lọc đầu phun theo vùng `PCCC_VUNG` (vd chỉ giữ
-   đầu phun nằm trong cùng vùng/nhóm vùng với đa số, hoặc thêm lựa chọn bấm điểm trong vùng), cảnh báo khi đầu phun thuộc nhiều phòng tách biệt.
-4. `PCCC_RAI` từ khoá `Dam`: nhận nét dầm mẫu + 17 ký hiệu (`dam ky_hieu=17`) nhưng KHÔNG chia khoang khi vùng `PCCC_VUNG` vẽ sẵn (`khoang_dam ... lon=3`, văn phòng
-   vẫn 2x3 = 6 đầu). Đúng: chia vùng theo dầm thành 18 + 2 khoang, mỗi khoang ≥ 4 m² một đầu (TCVN 7568-14:2025 5.9.1.1.6 d, `skills/MOD_dau_bao_khoi_khoang_dam.md`) = 20 đầu.
-   Dựng lại: `kb_bc3.txt` bản đầu (vùng = đa giác văn phòng VP + `PCCC_RAI BC_KHOI Dam 3.5 Enter W 31450,17900 47500,40700 Enter Enter 39715,24000 Enter`).
-5. `PCCC_DAYBC` (`DayBc.cs`): dây từ sảnh lên dải văn phòng phía trên lõi đi thẳng xuyên lõi thang máy. Sửa: tuyến giữa hai thiết bị không cắt tường / lõi (đi trong
-   hợp các vùng `PCCC_VUNG`, qua ô cửa), thứ tự nối theo vùng kề nhau.
-6. Dim sau `PCCC_RAI` (`Rai.cs` `KtLuoi`) ghi cho từng khoang dầm → dày đặc (20 khoang). Nhiều vùng kề nhau cùng lưới thì gom: một chuỗi ngang, một chuỗi đứng cho cả
-   dãy khoang (memory `cad-dim-gom-hang`).
-Xong mỗi lỗi: `cad\test\chay_thu.ps1`, `cad\test\thu_mcp.ps1` TAT CA DAT, build, chạy lại `kb_bc3.txt` / `kb_spr3.txt` xem ảnh; cập nhật `cad/HUONG_DAN_SU_DUNG.md` mục 7 (lưu ý) cho khớp.
 
 ## VIỆC 16/11 TỐI (2) — THIẾT KẾ LẠI TẦNG 8 BẰNG LỆNH GÕ TAY + HƯỚNG DẪN SỬ DỤNG: XONG
 Người dùng muốn thấy plugin thiết kế bằng chính lệnh `PCCC_*`, báo cáo từng bước dùng lệnh nào, và file hướng dẫn dùng plugin.
