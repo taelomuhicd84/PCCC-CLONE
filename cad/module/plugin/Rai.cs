@@ -930,7 +930,8 @@ namespace TKPCCC
         /// Chỉ chọn cột có chân ống góp nằm trong đoạn ống chính; không cột nào được thì lấy cột chân gần đoạn nhất.
         /// Hoà thì lấy cột có chân X nhỏ hơn, rồi Y nhỏ hơn (WCS): đảo chiều vẽ "truc" không đổi kết quả.
         /// Chân ống góp (kể cả theo "qua") ra ngoài CẢ polyline ống chính thì nối thêm một đoạn về điểm gần nhất của ống chính.
-        static List<List<Point3d>> TuyenXuongCa(List<Point3d> ps, List<Point3d> truc, Point3d? tu, Point3d? qua, double saiSo)
+        /// dem != null (PCCC_TUYEN TuDong): nhánh cắt tại từng đầu phun, ống góp cắt tại từng hàng; dem nhận, theo thứ tự đoạn, số đầu phun phía sau đoạn đó.
+        static List<List<Point3d>> TuyenXuongCa(List<Point3d> ps, List<Point3d> truc, Point3d? tu, Point3d? qua, double saiSo, List<int> dem = null)
         {
             Point3d tam = new Point3d(ps.Average(p => p.X), ps.Average(p => p.Y), 0);
             int i0 = DoanGan(truc, tam);
@@ -952,6 +953,31 @@ namespace TKPCCC
             }
             List<List<Point3d>> hang = Gom(ps, fd, saiSo), kq = new List<List<Point3d>>();
             double thap = Math.Min(0, hang.Min(h => h.Average(fd))), cao = Math.Max(0, hang.Max(h => h.Average(fd)));
+            if (dem != null)
+            {
+                // Nước đi: ống chính -> chân ống góp -> ống góp (ra hai phía ống chính) -> nhánh (ra hai phía ống góp). Mỗi đoạn mang số đầu phun ở phía ngoài nó.
+                Action<Point3d, Point3d, int> them = (p, q, c) => { if (p.DistanceTo(q) > 1e-6) { kq.Add(new List<Point3d> { p, q }); dem.Add(c); } };
+                if (ngoai(af) > 1e-6) them(ChanTruc(truc, A + u * af), A + u * af, ps.Count);
+                foreach (int sg in new[] { 1, -1 })
+                {
+                    List<List<Point3d>> hs = hang.Where(h => h.Average(fd) * sg > saiSo).OrderBy(h => Math.Abs(h.Average(fd))).ToList();
+                    int con = hs.Sum(h => h.Count);
+                    double truoc = 0;
+                    foreach (List<Point3d> h in hs) { double d = h.Average(fd); them(A + u * af + n * truoc, A + u * af + n * d, con); con -= h.Count; truoc = d; }
+                }
+                foreach (List<Point3d> h in hang)
+                {
+                    double d = h.Average(fd);
+                    foreach (int sg in new[] { 1, -1 })
+                    {
+                        // Đầu phun đứng ngay trên ống góp (lệch ≤ saiSo) nối thẳng vào ống góp, không thuộc nhánh nào.
+                        List<double> x = h.Select(fa).Where(a => (a - af) * sg > saiSo).OrderBy(a => Math.Abs(a - af)).ToList();
+                        double truoc = af;
+                        for (int i = 0; i < x.Count; i++) { them(A + u * truoc + n * d, A + u * x[i] + n * d, x.Count - i); truoc = x[i]; }
+                    }
+                }
+                return kq;
+            }
             if (cao - thap > 1e-6) kq.Add(new List<Point3d> { A + u * af + n * thap, A + u * af + n * cao });
             if (ngoai(af) > 1e-6) kq.Add(new List<Point3d> { A + u * af, ChanTruc(truc, A + u * af) });
             foreach (List<Point3d> h in hang)
@@ -1386,6 +1412,7 @@ namespace TKPCCC
             }
 
             int tong = 0, soHo = 0;
+            int[] ghi = { 0, 0, 0 };
             using (Transaction tr = db.TransactionManager.StartTransaction())
             {
                 BlockTableRecord ms = (BlockTableRecord)tr.GetObject(db.CurrentSpaceId, OpenMode.ForWrite);
@@ -1479,11 +1506,59 @@ namespace TKPCCC
                 }
                 } finally { tienDo.Stop(); tienDo.Dispose(); }
                 if (xem) ed.WriteMessage("\n[TKPCCC] xem_truoc=" + soTam + " (vẽ tạm trên layer " + LAYER_XEM_TRUOC + ", không in, tự xoá khi rải thật)");
+                // Ý từ video VPTTOOL 16/11: ghi m² từng khoang cho người thẩm duyệt kiểm; tắt ở tab Khoang dầm (cai_dat.json "kd_ghi_m2").
+                if (khoangDam && !tia && !xem && CaiDat.Doc("kd_ghi_m2", "Co") != "Khong")
+                {
+                    ghi = GhiKhoang(db, tr, ms, vung, nho, m);
+                    ed.WriteMessage("\n[TKPCCC] ghi_khoang=" + ghi[0] + " dau_x=" + ghi[1] + " bo_nho_1m2=" + ghi[2]
+                        + " (chữ m² giữa khoang, dấu X = khoang dưới ngưỡng: đầu báo lắp ở mặt dưới dầm; layer " + LAYER_KHOANG + ")");
+                }
                 tr.Commit();
             }
             ed.WriteMessage("\n" + (xem ? "Xem trước: sẽ rải " : "Đã rải tổng ") + tong + " " + v.ten + (tia ? " (tia)" : "") + " trong " + vung.Count + " phòng.");
-            KetQuaRaiCuoi = (xem ? "Xem trước (chưa vẽ): " : "Lượt cuối: ") + tong + " " + v.ma + (tia ? " (tia)" : "") + " trong " + vung.Count + " phòng"
+            KetQuaRaiCuoi = (xem ? "Xem trước (chưa vẽ): " : "Lượt cuối: ") + tong + " " + v.ma + (tia ? " (tia)" : "") + " trong " + vung.Count + (khoangDam && !tia ? " khoang" : " phòng")
+                + (ghi[0] > 0 ? " (" + ghi[1] + " khoang nhỏ đánh X" + (ghi[2] > 0 ? ", " + ghi[2] + " khoang < 1 m² không ghi" : "") + ")" : "")
                 + (soHo > 0 ? " · " + soHo + " phòng chưa phủ hết (HO, xem dòng lệnh)" : tia ? "" : " · phủ kín");
+        }
+
+        const string LAYER_KHOANG = "PCCC_KHOANG_M2"; // chữ m² từng khoang dầm + dấu X khoang nhỏ; in được, xoá cả layer nếu không cần
+
+        /// Ghi diện tích giữa từng khoang (dưới tâm, không đè đầu báo ở tâm); khoang dưới ngưỡng 5.9.1.1.6 (c, e) thêm dấu X hồng ở tâm.
+        /// Khoang < 1 m² (khe giữa dầm đôi, lõi cột) không ghi. Trả { số khoang ghi, số dấu X, số khoang bỏ }.
+        static int[] GhiKhoang(Database db, Transaction tr, BlockTableRecord ms, List<List<Point2d>> vung, List<List<Point2d>> nho, double m)
+        {
+            int[] n = new int[3];
+            double cao = LaySo(NhomKyHieu("chu"), "cao", 250) * 0.001 / m;
+            ObjectId lop = DamBaoLayer(db, tr, LAYER_KHOANG, 6);
+            foreach (List<Point2d> d in vung)
+            {
+                double s = DienTichDaGiac(d) * m * m;
+                if (s < 1) { n[2]++; continue; }
+                Point2d c = DiemTrongMat(d);
+                if (nho.Contains(d))
+                {
+                    double r = Math.Min(Math.Min(d.Max(p => p.X) - d.Min(p => p.X), d.Max(p => p.Y) - d.Min(p => p.Y)) * 0.2, 0.4 / m);
+                    foreach (int sg in new[] { 1, -1 })
+                    {
+                        Line l = new Line(new Point3d(c.X - r, c.Y - sg * r, 0), new Point3d(c.X + r, c.Y + sg * r, 0));
+                        l.LayerId = lop;
+                        ms.AppendEntity(l);
+                        tr.AddNewlyCreatedDBObject(l, true);
+                    }
+                    n[1]++;
+                }
+                Point2d o = new Point2d(c.X, c.Y - 2 * cao);
+                MText t = new MText();
+                t.Contents = Math.Round(s, 1).ToString("0.0", CultureInfo.InvariantCulture).Replace('.', ',') + " m²";
+                t.TextHeight = cao;
+                t.Attachment = AttachmentPoint.MiddleCenter;
+                t.Location = TrongDaGiac(d, o) ? new Point3d(o.X, o.Y, 0) : new Point3d(c.X, c.Y, 0); // khoang hẹp: về tâm
+                t.LayerId = lop;
+                ms.AppendEntity(t);
+                tr.AddNewlyCreatedDBObject(t, true);
+                n[0]++;
+            }
+            return n;
         }
 
         const string LAYER_TIA = "PCCC_BC_TIA";
@@ -1669,8 +1744,37 @@ namespace TKPCCC
             Document doc = AcApp.DocumentManager.MdiActiveDocument;
             Database db = doc.Database;
             Editor ed = doc.Editor;
-            VatTu v = HoiMa(ed, DocDanhMuc(), "tuyen", "Mã ống nhánh (vd ONG_DN25)");
-            if (v == null) return;
+            FileDanhMuc dm = DocDanhMuc();
+            // Người dùng 16/11 (ý từ video VPTTOOL): TuDong = mỗi đoạn lấy DN theo số đầu phun phía sau, bảng data/ong_nhanh_dn.json, chọn mức áp suất đầu phun.
+            PromptStringOptions o0 = new PromptStringOptions("\nMã ống nhánh (vd ONG_DN25), TuDong = DN theo số đầu phun phía sau, ? = danh sách: ");
+            o0.AllowSpaces = false;
+            PromptResult r0 = ed.GetString(o0);
+            if (r0.Status != PromptStatus.OK || r0.StringResult.Trim() == "") return;
+            string s0 = r0.StringResult.Trim();
+            bool tuDong = s0.Equals("TuDong", StringComparison.OrdinalIgnoreCase) || s0.Equals("T", StringComparison.OrdinalIgnoreCase);
+            VatTu v = null;
+            string muc = "";
+            List<KeyValuePair<string, int>> bang = null;
+            if (tuDong)
+            {
+                PromptKeywordOptions ko = new PromptKeywordOptions("\nÁp suất đầu phun: Den05 = đến 0,5 MPa (thường dùng), Tren05 = 0,5 MPa trở lên");
+                ko.Keywords.Add("Den05"); ko.Keywords.Add("Tren05");
+                ko.Keywords.Default = "Den05";
+                ko.AllowNone = true;
+                PromptResult kr = ed.GetKeywords(ko);
+                if (kr.Status == PromptStatus.Cancel) return;
+                muc = kr.StringResult == "Tren05" ? "Tren05" : "Den05";
+                string tenMuc;
+                bang = BangDn(muc, out tenMuc);
+                ed.WriteMessage("\n[TKPCCC] Cỡ ống theo bảng ong_nhanh_dn.json, mức \"" + tenMuc + "\": "
+                    + string.Join(", ", bang.Where(x => x.Value != 0).Select(x => x.Key.Substring(4) + (x.Value < 0 ? " trên" : " ≤ " + x.Value))) + " đầu phun.");
+            }
+            else
+            {
+                v = dm.vat_tu.FirstOrDefault(x => x.loai == "tuyen" && string.Equals(x.ma, s0, StringComparison.OrdinalIgnoreCase));
+                if (v == null) v = HoiMa(ed, dm, "tuyen", "Mã ống nhánh (vd ONG_DN25)");
+                if (v == null) return;
+            }
             PromptSelectionOptions c1 = new PromptSelectionOptions();
             c1.MessageForAdding = "\nChọn các đầu phun của một phòng: ";
             PromptSelectionResult r1 = ed.GetSelection(c1, new SelectionFilter(new TypedValue[] { new TypedValue((int)DxfCode.Start, "INSERT") }));
@@ -1689,6 +1793,8 @@ namespace TKPCCC
 
             double m = HeSoMet(db), dai = 0;
             int soDoan = 0;
+            HashSet<string> thay = new HashSet<string>();
+            Dictionary<string, int> theoMa = new Dictionary<string, int>(); // TuDong: số đoạn theo mã ống
             using (Transaction tr = db.TransactionManager.StartTransaction())
             {
                 List<Point3d> ps = new List<Point3d>(), truc = new List<Point3d>();
@@ -1705,19 +1811,86 @@ namespace TKPCCC
                 if (pl != null) for (int i = 0; i < pl.NumberOfVertices; i++) truc.Add(pl.GetPoint3dAt(i));
                 else if (ln != null) { truc.Add(ln.StartPoint); truc.Add(ln.EndPoint); }
                 if (ps.Count == 0 || truc.Count < 2) throw new System.Exception("cần ít nhất một đầu phun (block) và một ống chính có 2 điểm trở lên");
-                ObjectId layer = DamBaoLayer(db, tr, TIEN_TO_LAYER + v.ma, MauHe(v.he));
                 BlockTableRecord ms = (BlockTableRecord)tr.GetObject(db.CurrentSpaceId, OpenMode.ForWrite);
-                foreach (List<Point3d> d in TuyenXuongCa(ps, truc, null, qua, 0.1 / m))
+                List<int> dem = tuDong ? new List<int>() : null;
+                List<List<Point3d>> ds = TuyenXuongCa(ps, truc, null, qua, 0.1 / m, dem);
+                ObjectId lNhan = tuDong ? DamBaoLayer(db, tr, LAYER_NHAN, 7) : ObjectId.Null;
+                double cao = LaySo(NhomKyHieu("chu"), "cao", 250) * 0.001 / m;
+                string maTruoc = null;
+                Point3d? cuoiTruoc = null;
+                for (int i = 0; i < ds.Count; i++)
                 {
-                    Polyline ong = TaoPline(d, false, layer);
+                    List<Point3d> d = ds[i];
+                    VatTu vd = tuDong ? MaDn(dm, bang, dem[i], thay) : v;
+                    Polyline ong = TaoPline(d, false, DamBaoLayer(db, tr, TIEN_TO_LAYER + vd.ma, MauHe(vd.he)));
                     ms.AppendEntity(ong);
                     tr.AddNewlyCreatedDBObject(ong, true);
                     dai += ong.Length;
                     soDoan++;
+                    if (!tuDong) continue;
+                    theoMa[vd.ma] = (theoMa.ContainsKey(vd.ma) ? theoMa[vd.ma] : 0) + 1;
+                    // Chữ DN ở đoạn đầu mỗi tuyến và chỗ đổi cỡ (đoạn nối tiếp cùng cỡ không ghi lại).
+                    if (!cuoiTruoc.HasValue || cuoiTruoc.Value.DistanceTo(d[0]) > 1e-6 || vd.ma != maTruoc)
+                        ChuDn(tr, ms, d[0], d[d.Count - 1], vd.ma.StartsWith("ONG_", StringComparison.OrdinalIgnoreCase) ? vd.ma.Substring(4) : vd.ma, cao, lNhan);
+                    maTruoc = vd.ma;
+                    cuoiTruoc = d[d.Count - 1];
                 }
                 tr.Commit();
             }
-            ed.WriteMessage("\n[TKPCCC] PCCC_TUYEN " + v.ma + " doan=" + soDoan + " m=" + Math.Round(dai * m, 2).ToString(CultureInfo.InvariantCulture));
+            foreach (string t in thay) ed.WriteMessage("\n[TKPCCC] " + t);
+            ed.WriteMessage("\n[TKPCCC] PCCC_TUYEN " + (tuDong ? "TuDong " + muc : v.ma) + " doan=" + soDoan + " m=" + Math.Round(dai * m, 2).ToString(CultureInfo.InvariantCulture)
+                + (tuDong ? " " + string.Join(" ", bang.Where(x => theoMa.ContainsKey(x.Key)).Select(x => x.Key.Substring(4) + "=" + theoMa[x.Key])) : ""));
+        }
+
+        /// Bảng DN theo số đầu phun (data/ong_nhanh_dn.json cạnh DLL), mức "Den05" / "Tren05": { mã ống theo DN tăng dần, số đầu tối đa } (0 = cỡ không dùng, -1 = không giới hạn).
+        static List<KeyValuePair<string, int>> BangDn(string muc, out string ten)
+        {
+            string f = Path.Combine(ThuMuc, "ong_nhanh_dn.json");
+            if (!File.Exists(f)) throw new System.Exception("Thiếu " + f + ": chạy lại cad\\build.bat.");
+            Dictionary<string, object> d;
+            try { d = new JavaScriptSerializer().DeserializeObject(File.ReadAllText(f, Encoding.UTF8)) as Dictionary<string, object>; }
+            catch (System.Exception ex) { throw new System.Exception("ong_nhanh_dn.json sai cú pháp: " + ex.Message); }
+            Dictionary<string, object> cacMuc = d == null ? null : Lay(d, "muc") as Dictionary<string, object>;
+            Dictionary<string, object> mm = cacMuc == null ? null : Lay(cacMuc, muc) as Dictionary<string, object>;
+            IList ma = d == null ? null : Lay(d, "ma") as IList, td = mm == null ? null : Lay(mm, "toi_da") as IList;
+            if (ma == null || td == null || ma.Count != td.Count) throw new System.Exception("ong_nhanh_dn.json: thiếu mức \"" + muc + "\", hoặc \"ma\" và \"toi_da\" lệch số cột.");
+            ten = LayChu(mm, "ten", muc);
+            List<KeyValuePair<string, int>> kq = new List<KeyValuePair<string, int>>();
+            for (int i = 0; i < ma.Count; i++) kq.Add(new KeyValuePair<string, int>(Convert.ToString(ma[i]), td[i] == null ? -1 : Convert.ToInt32(td[i], CultureInfo.InvariantCulture)));
+            return kq;
+        }
+
+        /// Cỡ nhỏ nhất chở được soDau đầu phun; mã chưa có trong danh mục (vd ONG_DN20) thì lấy cỡ lớn kế tiếp có trong danh mục, ghi vào thay.
+        static VatTu MaDn(FileDanhMuc dm, List<KeyValuePair<string, int>> bang, int soDau, HashSet<string> thay)
+        {
+            int i = bang.FindIndex(x => x.Value != 0 && (x.Value < 0 || x.Value >= soDau));
+            if (i < 0) i = bang.Count - 1;
+            for (int j = i; j < bang.Count; j++)
+            {
+                VatTu v = dm.vat_tu.FirstOrDefault(x => x.loai == "tuyen" && string.Equals(x.ma, bang[j].Key, StringComparison.OrdinalIgnoreCase));
+                if (v == null) continue;
+                if (j > i) thay.Add(bang[i].Key + " chưa có trong vat_tu.json: dùng " + v.ma + " (thêm mã vào data/vat_tu.json nếu cần đúng cỡ).");
+                return v;
+            }
+            throw new System.Exception("Không mã ống nào từ " + bang[i].Key + " trở lên có trong vat_tu.json.");
+        }
+
+        /// Chữ DN song song đoạn ống, ở giữa đoạn, phía trên (góc đọc được: -90° < góc ≤ 90°), layer PCCC_NHAN (PCCC_BOC không đếm).
+        static void ChuDn(Transaction tr, BlockTableRecord ms, Point3d a, Point3d b, string chu, double cao, ObjectId lop)
+        {
+            Vector3d t = b - a;
+            if (t.Length < 1e-9) return;
+            double g = Math.Atan2(t.Y, t.X);
+            if (g > Math.PI / 2 + 1e-9) g -= Math.PI; else if (g <= -Math.PI / 2 + 1e-9) g += Math.PI;
+            MText c = new MText();
+            c.Contents = chu;
+            c.TextHeight = cao;
+            c.Attachment = AttachmentPoint.BottomCenter;
+            c.Rotation = g;
+            c.Location = a + t * 0.5 + new Vector3d(-Math.Sin(g), Math.Cos(g), 0) * cao * 0.4;
+            c.LayerId = lop;
+            ms.AppendEntity(c);
+            tr.AddNewlyCreatedDBObject(c, true);
         }
 
         /// PCCC_DAY (ý "Vẽ dây Loop" của addin mẫu, 14/11): dây nối tiếp các thiết bị đã chọn, đi theo hàng kiểu rắn bò (RanBo, như tuyen noi_tiep),

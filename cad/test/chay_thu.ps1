@@ -21,6 +21,7 @@ if ($LASTEXITCODE) { throw 'Bien dich loi' }
 if ($LASTEXITCODE) { throw 'Bien dich TKPCCC.UI.dll loi' }
 Copy-Item "$GOC\data\vat_tu.json" $T
 Copy-Item "$GOC\data\khoang_cach_rai.json" $T  # tri so rai theo tieu chuan (rai / PCCC_RAI khong co s)
+Copy-Item "$GOC\data\ong_nhanh_dn.json" $T  # bang DN theo so dau phun (PCCC_TUYEN TuDong)
 Copy-Item "$GOC\cad\knowledge\mau-thuyet-minh-pccc.md" $T  # van thuyet minh mau (PCCC_THUYETMINH)
 Copy-Item "$GOC\cad\data\ky_hieu\hinh_bc.json" $T  # hinh block mac dinh (lay tu PDF trang 11): PCCC_LIB tao thu vien moi theo hinh nay
 # File danh muc "goc" cua repo: tro toi ban chep tam (nhu build.bat ghi nguon_vat_tu.txt) de PCCC_THEMBLOCK ghi ca hai file ma khong dung repo.
@@ -56,6 +57,7 @@ $kb = @('INSUNITS', '4', 'NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '_.SAVEAS', '2018',
   'RECTANG', '100000,0', '114000,10000', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '', '1.5', '', 'L', '', '', '',
   'PLINE', '200000,0', '212000,0', '212000,8000', '203000,8000', '203000,5000', '200000,5000', 'C', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '', '', 'Co', 'L', '', '', '',
   'PLINE', '49000,-1000', '67000,-1000', '', '_.ZOOM', '_E', 'OSMODE', '0', 'PCCC_TUYEN', 'ONG_DN25', 'W', '50000,0', '66000,12000', '', 'L', '65000,2000',
+  'PLINE', '49000,-1000', '67000,-1000', '', 'PCCC_TUYEN', 'TuDong', '', 'W', '50000,0', '66000,12000', '', 'L', '65000,2000',
   'CIRCLE', '80000,0', '150', '-BLOCK', 'VAN_KHACH', '80000,0', 'L', '', '-INSERT', 'VAN_KHACH', '80000,0', '1', '', '0',
   'PCCC_THEMBLOCK', 'L', 'van_khach', 'Van khach them', 'SPR', '', 'PCCC_DAT', 'VAN_KHACH', '81000,0', '',
   'PCCC_KYHIEU', '', '0,-20000', '', 'PCCC_QUYDINH', '0,-40000', '',
@@ -81,6 +83,8 @@ $can = @(
   # theo_hang go tay (tra loi Co): phong chu L 12000x8000 khoet 3000x3000 goc tren trai: luoi 6 dau con HO 1,1 % (viec 1, 13/11: phu kin them 1 dau) ra 7 dau, khong HO
   @('PCCC_RAI SPR_DAU_DOWN n=7 luoi=3x2 buoc=4000x4000 m2=16( kt=\d+)?(\r|\n)', 'PCCC_RAI go tay tra loi Co (theo_hang): phong chu L phu kin 7 dau, khong HO'),
   @('PCCC_TUYEN ONG_DN25 doan=5 m=63\.5\b', 'PCCC_TUYEN: ong gop qua diem bam x = 65000 (ngoai cac cot) + 4 nhanh, dai 63,5 m'),
+  # TuDong (bang data/ong_nhanh_dn.json, muc Den05): 4 hang x 4 dau; ong gop 16, 12 dau DN65 (DN70 cua bang), 8 DN50, 4 DN40; moi nhanh 4 DN40, 3 DN32, 2 + 1 DN25 (DN20 '-')
+  @('PCCC_TUYEN TuDong Den05 doan=20 m=63\.5 DN25=8 DN32=4 DN40=5 DN50=1 DN65=2(\r|\n)', 'PCCC_TUYEN TuDong: cat tung dau phun, DN theo so dau phia sau (den 0,5 MPa), cung 63,5 m'),
   @('PCCC_THEMBLOCK VAN_KHACH', 'PCCC_THEMBLOCK: block ten VAN_KHACH them duoi ma van_khach (ma trung ten block khong bi bao trung)'),
   @('VAN_KHACH\s+2 ', 'block moi them: PCCC_DAT dat duoc, PCCC_BOC dem 2 cai (ban chen tay + ban PCCC_DAT)'),
   @('PCCC_KYHIEU dong=\d+ [^\r\n]*BC_KHOI[^\r\n]*BC_NHIET', 'PCCC_KYHIEU: bang ky hieu liet ke thiet bi co trong ban ve (dau khoi, dau nhiet)'),
@@ -681,6 +685,9 @@ Kiem ($out2 -match 'dam ky_hieu=0 d_chung=0.3[\s\S]{0,300}dam_sau=0 dam_nong=1[\
   'Dam khong ky hieu: hoi co chung 250x300 (d = 0,3) -> bo dam, phong 10 x 10 m rai nhu tran phang'
 Kiem ($out2 -match 'tung_dam d=0.6 m: 1 [\s\S]{0,800}tung_dam d=0.25 m: 1 [\s\S]{0,300}dam ky_hieu=0 tung_dam=1[\s\S]{0,300}dam_sau=1 dam_nong=0[\s\S]{0,600}khoang_dam nguong=9 lon=2 nho=0') `
   'TungDam: line doc 400x600 chia 2 khoang 50 m2, line 200x250 bo (khong lam tuong, khong chia khoang)'
+# Y tu video VPTTOOL 16/11: ghi m2 giua tung khoang, dau X o khoang duoi nguong (layer PCCC_KHOANG_M2); tat bang kd_ghi_m2 = Khong trong cai_dat.json.
+Kiem ($out2 -match 'khoang_dam nguong=9 lon=5 nho=18[\s\S]{0,8000}ghi_khoang=23 dau_x=18 bo_nho_1m2=0' -and $out2 -match 'khoang_dam nguong=9 lon=0 nho=2[\s\S]{0,3000}ghi_khoang=2 dau_x=2 ') `
+  'Ghi m2 tung khoang: 5 khoang lon + 18 khoang 4 m2 ghi 23 chu, 18 dau X; 2 khoang nho 2 phong: 2 chu, 2 dau X'
 Kiem ($out2 -match 'PCCC_RAI BC_KHOI n=4 luoi=2x2 buoc=10000x10000 m2=100[\s\S]{0,600}PCCC_KT phong=1 mu=0% diem_mu=0[\s\S]{0,80}Command: PCCC_TACHVUNG') `
   'Vung tron PCCC_VUNG (CIRCLE r 10 m): PCCC_RAI 2 x 2 buoc 10 m trong vong tron, PCCC_KT phu kin'
 $moi = if (Test-Path "$T\moi.txt") { Get-Content -Raw "$T\moi.txt" } else { '' }

@@ -3,6 +3,15 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## VIỆC 16/11 TỐI (TIẾP) — GHI m² KHOANG + ỐNG NHÁNH TỰ CHỌN DN: XONG MÃ + TEST, CHƯA XEM TRONG AUTOCAD
+1. `PCCC_RAI` khoang dầm (Dam, đầu khói): ghi "x,x m²" dưới tâm mỗi khoang, dấu X hồng ở khoang dưới ngưỡng 4 / 9 m², khoang < 1 m² bỏ ghi; layer `PCCC_KHOANG_M2`;
+   tắt ở tab Khoang dầm (khoá `kd_ghi_m2`). Dòng lệnh `ghi_khoang= dau_x= bo_nho_1m2=`.
+2. `PCCC_TUYEN` gõ `TuDong` thay mã ống: hỏi mức áp suất Den05 (đến 0,5 MPa, mặc định) / Tren05; ống góp cắt tại từng hàng, nhánh cắt tại từng đầu phun,
+   mỗi đoạn DN nhỏ nhất có "số đầu tối đa" ≥ số đầu phun phía sau (bảng người dùng gửi 16/11: `data/ong_nhanh_dn.json`; DN70 = ONG_DN65; ONG_DN20 chưa có
+   trong vat_tu.json nên lấy DN25 và báo); chữ DN ở đoạn đầu mỗi tuyến và chỗ đổi cỡ (layer PCCC_NHAN). Thẻ "DN≤", "DN>" ở trang Chữa cháy.
+Test mới trong `chay_thu.ps1` (phòng 4 x 4 đầu: 20 đoạn, DN25 = 8, DN32 = 4, DN40 = 5, DN50 = 1, DN65 = 2) đạt, cả bộ TAT CA DAT.
+CHƯA: in ảnh xem chữ DN, chữ m² đặt có đẹp không (dừng ở 81 % hạn mức 5 giờ); thu_gui.ps1; spec MCP `tuyen` chưa có TuDong.
+
 ## VIỆC 16/11 TỐI — GIAO DIỆN MỚI THEO 3 VIDEO PLUGIN (VPTTOOL, HTS_DESIGN): XONG MÃ + TEST, CHƯA XEM TRONG AUTOCAD
 Người dùng gửi 3 video TikTok, dặn: lấy tư duy hay, nhanh, tự động, không phụ thuộc AI, giao diện đẹp như mẫu. Phân tích + việc chưa làm: `cad/knowledge/hoc-video-plugin-16-11.md`.
 Đã làm (chỉ `module/ui/` + 1 hàm đọc ở `DayBc.cs`): thanh dọc thành ô biểu tượng màu; widget `NutIcon`, `ThanhTab`, `TieuDeNhom`, `KhungTrangThai` (`GiaoDien.cs`);

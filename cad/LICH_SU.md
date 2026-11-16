@@ -494,3 +494,9 @@ Giao diện: thanh biểu tượng, nút tròn chuyển sắc, tab viên thuốc
 Bẫy: RadioButton AutoSize không xuống dòng (đặt cỡ cố định); thanh cuộn dọc hiện ra không đổi Size nên không có Resize: trừ sẵn bề rộng thanh cuộn (`GiaoDien.RongDung`);
 tab ẩn không nhận Resize: xếp lại khi chuyển tab. Xem thử giao diện không cần AutoCAD: exe giả lập `Autodesk.AutoCAD.ApplicationServices`, `CaiDat`, `Lenh` rồi `DrawToBitmap`.
 Kiến thức + việc chưa làm: `knowledge/hoc-video-plugin-16-11.md`. `chay_thu.ps1`, `thu_mcp.ps1` đạt; `thu_gui.ps1` chưa chạy (AutoCAD đang mở).
+
+## 2026-11-16 tối (tiếp) — Ghi m² khoang dầm, ống nhánh tự chọn DN
+Người dùng chọn việc 1 (ghi m² từng khoang), giữa chừng gửi bảng số đầu phun theo DN (2 mức áp suất, thường dùng mức đến 0,5 MPa, phải chọn được mức).
+`GhiKhoang` (Rai.cs) ghi m² + dấu X khoang nhỏ; `TuyenXuongCa` thêm tham số `dem`: cắt ống tại từng đầu phun / hàng, kèm số đầu phun phía sau; `PCCC_TUYEN TuDong`
+chọn DN theo `data/ong_nhanh_dn.json`. Câu hỏi mã ống của PCCC_TUYEN nhận mã đúng như cũ (kịch bản test cũ không đổi), gõ khác thì về HoiMa.
+Bẫy: heredoc trong công cụ Bash nuốt `\\` (thành `\`) khi chạy python: viết script vá ra file bằng Write rồi chạy.

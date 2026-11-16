@@ -22,9 +22,9 @@ Người dùng dặn: lấy tư duy hay đưa vào plugin, nhanh, tự động, 
 - Dim tự động sau khi rải (`KtSauRai`), preset, xem trước số lượng, vùng loại trừ, bố trí nhanh khung chữ nhật / đa giác.
 
 ## 3. Ý hay CHƯA làm (việc kế, xếp theo lợi ích; đều là thuật toán xác định, không cần AI)
-1. **Ghi diện tích từng khoang + đánh dấu ô nhỏ** (VPTTOOL): sau khi rải khoang dầm, ghi chữ "17,3 m²" giữa mỗi khoang, ô dưới ngưỡng đánh dấu X màu hồng
+1. ĐÃ LÀM 16/11 (`GhiKhoang`, phần bấm tay đặt giữa dầm chưa làm vì plugin đã tự rải khoang nhỏ ở mặt dưới dầm). **Ghi diện tích từng khoang + đánh dấu ô nhỏ** (VPTTOOL): sau khi rải khoang dầm, ghi chữ "17,3 m²" giữa mỗi khoang, ô dưới ngưỡng đánh dấu X màu hồng
    + bảng kết quả (n đầu đã rải, n khoang nhỏ, n khoang bỏ < 1 m²). Rồi chế độ bấm tay: bấm gần dầm → đặt đầu báo giữa bề rộng dầm gần nhất. Sửa ở `Rai.cs` (nhánh `khoangDam`).
-2. **Ống nhánh tự chọn DN theo số đầu phun phía sau** (VPTTOOL "Ghi chú kích thước", bảng Đoạn 1 → DN25, 2 → DN32, 3 → DN32, 4–5 → DN40...): bảng sửa được ở trang Cài đặt,
+2. ĐÃ LÀM 16/11 (`PCCC_TUYEN` TuDong, bảng người dùng gửi ở `data/ong_nhanh_dn.json`). **Ống nhánh tự chọn DN theo số đầu phun phía sau** (VPTTOOL "Ghi chú kích thước", bảng Đoạn 1 → DN25, 2 → DN32, 3 → DN32, 4–5 → DN40...): bảng sửa được ở trang Cài đặt,
    `PCCC_TUYEN` đếm đầu phun từ cuối nhánh về ống chính, gán layer `PCCC_ONG_DNxx` + chữ DN. Cần người dùng chốt bảng DN theo số đầu (TCVN 7336 không có bảng này, theo thói quen công ty).
 3. **Bước nhảy (làm tròn bước rải tới 100 mm) và rải so le** (VPTTOOL hộp "Công cụ rải đầu phun"): thêm tuỳ chọn vào `ChiaBuoc` / `LuoiVung` (`Rai.cs`), mặc định tắt.
 4. **Rải đa giác "Từng vùng"**: tách phòng chữ L, U thành các chữ nhật rồi rải riêng từng phần (ít góc chết). Hiện có "chia theo từng hàng" (`theo_hang`) gần giống.

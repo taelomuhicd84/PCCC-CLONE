@@ -284,6 +284,17 @@ namespace TKPCCC
             f.Controls.Add(tranKd);
             f.Controls.Add(Chu("h < 2 m: như trần phẳng. 2 ≤ h ≤ 4 m: ô ≥ 4 m² đặt trong ô. h ≥ 4 m: ô ≥ 9 m². Độ sâu dầm d lấy từ ký hiệu b x h (vd B1 (300x600)); "
                 + "bản vẽ không ghi thì plugin hỏi một cỡ chung hoặc TungDam. Dầm d ≤ 0,3 m bỏ (trần phẳng).", 0));
+            CheckBox ghiM2 = new CheckBox();
+            ghiM2.Text = "Ghi m² từng khoang, đánh X khoang nhỏ (layer PCCC_KHOANG_M2)";
+            ghiM2.ForeColor = GiaoDien.ChuDam;
+            ghiM2.AutoSize = false;
+            ghiM2.Size = new Size(300, 36);
+            ghiM2.CheckAlign = ContentAlignment.TopLeft;
+            ghiM2.TextAlign = ContentAlignment.TopLeft;
+            ghiM2.Margin = new Padding(0, 6, 0, 0);
+            ghiM2.Checked = GiaoDien.DocCaiDat("kd_ghi_m2", "Co") != "Khong"; // Rai.cs GhiKhoang đọc cùng khoá
+            ghiM2.CheckedChanged += delegate { GiaoDien.LuuCaiDat("kd_ghi_m2", ghiM2.Checked ? "Co" : "Khong"); };
+            f.Controls.Add(ghiM2);
 
             f.Controls.Add(new TieuDeNhom("Rải & làm lại", GiaoDien.MauLuc));
             FlowLayoutPanel r = Luoi();

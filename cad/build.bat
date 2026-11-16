@@ -32,6 +32,8 @@ if exist "%OUT%\TKPCCC.Cad.dll" move /y "%OUT%\TKPCCC.Cad.dll" "%OUT%\TKPCCC.Cad
 copy /y "%~dp0..\data\vat_tu.json" "%OUT%\vat_tu.json" >nul
 rem Tri so rai thiet bi theo tieu chuan (rai / PCCC_RAI khong co "s"): nguon o data\khoang_cach_rai.json goc repo.
 copy /y "%~dp0..\data\khoang_cach_rai.json" "%OUT%\khoang_cach_rai.json" >nul
+rem Bang DN ong nhanh theo so dau phun (PCCC_TUYEN TuDong): nguon duy nhat data\ong_nhanh_dn.json goc repo.
+copy /y "%~dp0..\data\ong_nhanh_dn.json" "%OUT%\ong_nhanh_dn.json" >nul
 rem Bang chon loai dau bao theo cong nang (trang Bao chay doc bang "Loai theo khu vuc"): nguon duy nhat knowledge\chon-loai-dau-bao.md.
 copy /y "%~dp0..\knowledge\chon-loai-dau-bao.md" "%OUT%\chon-loai-dau-bao.md" >nul
 rem Van thuyet minh mau (PCCC_THUYETMINH): nguon duy nhat cad\knowledge\mau-thuyet-minh-pccc.md.

@@ -9,6 +9,9 @@ namespace TKPCCC
             new[] { "1", "DAT", "Đặt đầu phun, thiết bị", "Đặt từng cái theo mã vật tư", "PCCC_DAT\n" },
             new[] { "1", "R", "Vùng bảo vệ R", "Vòng R quanh đầu phun, báo đứng lẻ", "PCCC_VUNGBV\n" },
             new[] { "2", "TUY", "Ống nhánh xương cá", "Chọn đầu phun, ống chính, bấm ống góp", "PCCC_TUYEN\n" },
+            // Người dùng 16/11: DN theo số đầu phun phía sau (data/ong_nhanh_dn.json), hai mức áp suất đầu phun.
+            new[] { "2", "DN≤", "Ống nhánh tự chọn DN", "Đầu phun đến 0,5 MPa: DN theo số đầu phía sau", "PCCC_TUYEN\nTuDong\nDen05\n" },
+            new[] { "2", "DN>", "Ống nhánh tự chọn DN (≥ 0,5 MPa)", "Đầu phun 0,5 MPa trở lên: DN theo số đầu", "PCCC_TUYEN\nTuDong\nTren05\n" },
             new[] { "2", "PD", "Vẽ ống theo DN", "Chọn cỡ ống DN25–DN400, vẽ tuyến", "PCCC_ONG\n" },
             new[] { "2", "DN", "Cập nhật DN", "Đổi cỡ đoạn ống đã chọn", "PCCC_DOIDN\n" },
             new[] { "2", "ADIM", "Dim đầu phun, ống", "Trang 5 bước: chuỗi dim tự động", "#adim" },
