@@ -614,15 +614,52 @@ namespace TKPCCC
             Document doc = AcApp.DocumentManager.MdiActiveDocument;
             Database db = doc.Database;
             FileDanhMuc dm = DocDanhMuc();
-            VatTu v = HoiMa(doc.Editor, dm, "tuyen", "Mã ống/dây (vd ONG_DN50, DAY_BC)");
+            Editor ed = doc.Editor;
+            VatTu v = HoiMa(ed, dm, "tuyen", "Mã ống/dây (vd ONG_DN50, DAY_BC)");
             if (v == null) return;
+            ObjectId lop;
             using (Transaction tr = db.TransactionManager.StartTransaction())
             {
-                db.Clayer = DamBaoLayer(db, tr, TIEN_TO_LAYER + v.ma, MauHe(v.he));
+                lop = DamBaoLayer(db, tr, TIEN_TO_LAYER + v.ma, MauHe(v.he));
+                db.Clayer = lop;
                 tr.Commit();
             }
-            doc.Editor.WriteMessage("\nLayer hiện hành: " + TIEN_TO_LAYER + v.ma + ". Vẽ polyline tuyến " + v.ten + ".");
-            doc.SendStringToExecute("_.PLINE ", true, false, false);
+            ed.WriteMessage("\nLayer hiện hành: " + TIEN_TO_LAYER + v.ma + ". Vẽ tuyến " + v.ten + ".");
+            // Tự hỏi điểm (16/11: SendStringToExecute("_.PLINE") chạy sau khi lệnh xong nên trong file .scr toạ độ bị đọc thành lệnh).
+            List<Point3d> ps = new List<Point3d>();
+            ObjectId id = ObjectId.Null;
+            while (true)
+            {
+                PromptPointOptions o = new PromptPointOptions(ps.Count == 0 ? "\nĐiểm đầu tuyến: " : "\nĐiểm tiếp theo <Enter = xong>: ");
+                o.AllowNone = ps.Count > 0;
+                if (ps.Count > 0) { o.UseBasePoint = true; o.BasePoint = ps[ps.Count - 1].TransformBy(ed.CurrentUserCoordinateSystem.Inverse()); }
+                PromptPointResult r = ed.GetPoint(o);
+                if (r.Status != PromptStatus.OK) break;
+                Point3d p = r.Value.TransformBy(ed.CurrentUserCoordinateSystem);
+                if (ps.Count > 0 && p.DistanceTo(ps[ps.Count - 1]) < 1e-6) continue;
+                ps.Add(p);
+                if (ps.Count < 2) continue;
+                using (Transaction tr = db.TransactionManager.StartTransaction())
+                {
+                    if (id.IsNull)
+                    {
+                        BlockTableRecord ms = (BlockTableRecord)tr.GetObject(db.CurrentSpaceId, OpenMode.ForWrite);
+                        Polyline pl = TaoPline(ps, false, lop);
+                        id = ms.AppendEntity(pl);
+                        tr.AddNewlyCreatedDBObject(pl, true);
+                    }
+                    else
+                    {
+                        Polyline pl = (Polyline)tr.GetObject(id, OpenMode.ForWrite);
+                        pl.AddVertexAt(pl.NumberOfVertices, new Point2d(p.X, p.Y), 0, 0, 0);
+                    }
+                    tr.Commit();
+                }
+            }
+            if (id.IsNull) { ed.WriteMessage("\n[TKPCCC] PCCC_ONG: cần ít nhất 2 điểm, chưa vẽ."); return; }
+            double dai = 0;
+            for (int i = 1; i < ps.Count; i++) dai += ps[i].DistanceTo(ps[i - 1]);
+            ed.WriteMessage("\n[TKPCCC] PCCC_ONG " + v.ma + " doan=" + (ps.Count - 1) + " m=" + Math.Round(dai * HeSoMet(db), 2).ToString(CultureInfo.InvariantCulture));
         }
 
         // ---------- Bóc khối lượng ----------
