@@ -345,12 +345,126 @@ namespace TKPCCC
             return t.Loai; // zm, cm, r2ml, ngoai_vi
         }
 
+        /// Lưới ô vuông trên hợp các vùng PCCC_VUNG (lỗi 5 KOCHAM 16/11: dây từ sảnh lên dải văn phòng cắt ngang lõi thang máy).
+        /// Ô đi được: trong một vùng, hoặc cách hai vùng ≤ Noi (qua tường giữa hai vùng kề nhau), hoặc cách một điểm dừng ≤ 1 m (tủ trong hộp kỹ thuật).
+        class LuoiDay
+        {
+            public double X0, Y0, O, Noi;
+            public int Nx, Ny;
+            public bool[] Di;
+            public List<List<Point2d>> Vung;
+            public List<Point2d> Dung;
+            public int Ne; // số đoạn đã đi vòng
+        }
+
+        // shortcut: lưới ô 0,25 m tối đa 600 nghìn ô (mặt bằng ~190 x 190 m); lớn hơn thì không né, vẽ gãy góc như cũ.
+        static LuoiDay TaoLuoiDay(List<List<Point2d>> vung, List<Point2d> dung, double m)
+        {
+            // Chỉ vùng gần các điểm dừng (≤ 10 m): bản vẽ nhiều tầng không dựng lưới cả bản vẽ.
+            double cach = 10 / m, ax = dung.Min(p => p.X) - cach, ay = dung.Min(p => p.Y) - cach, bx = dung.Max(p => p.X) + cach, by = dung.Max(p => p.Y) + cach;
+            vung = vung.Where(z => z.Max(p => p.X) >= ax && z.Min(p => p.X) <= bx && z.Max(p => p.Y) >= ay && z.Min(p => p.Y) <= by).ToList();
+            if (vung.Count == 0) return null;
+            LuoiDay g = new LuoiDay { O = 0.25 / m, Noi = 0.5 / m, Vung = vung, Dung = dung };
+            IEnumerable<Point2d> tat = vung.SelectMany(z => z).Concat(dung);
+            g.X0 = tat.Min(p => p.X) - 1 / m; g.Y0 = tat.Min(p => p.Y) - 1 / m;
+            g.Nx = (int)((tat.Max(p => p.X) + 1 / m - g.X0) / g.O) + 1; g.Ny = (int)((tat.Max(p => p.Y) + 1 / m - g.Y0) / g.O) + 1;
+            if ((long)g.Nx * g.Ny > 600000) return null;
+            g.Di = new bool[g.Nx * g.Ny];
+            for (int j = 0; j < g.Ny; j++)
+                for (int i = 0; i < g.Nx; i++)
+                    g.Di[j * g.Nx + i] = DiDuoc(g, new Point2d(g.X0 + i * g.O, g.Y0 + j * g.O));
+            return g;
+        }
+
+        static bool DiDuoc(LuoiDay g, Point2d p)
+        {
+            // Qua tường chỉ ở khe giữa HAI vùng (sát mép một vùng thôi là trong tường lõi thang, không đi).
+            int gan = 0;
+            foreach (List<Point2d> z in g.Vung)
+            {
+                if (TrongDaGiac(z, p)) return true;
+                if (CachVien(z, p) <= g.Noi && ++gan >= 2) return true;
+            }
+            foreach (Point2d q in g.Dung) if (q.GetDistanceTo(p) <= 4 * g.O) return true;
+            return false;
+        }
+
+        static bool DoanDiDuoc(LuoiDay g, List<Point2d> d)
+        {
+            for (int k = 0; k + 1 < d.Count; k++)
+            {
+                int so = (int)Math.Ceiling(d[k].GetDistanceTo(d[k + 1]) / (g.O / 2));
+                for (int i = 0; i <= so; i++) if (!DiDuoc(g, d[k] + (d[k + 1] - d[k]) * ((double)i / Math.Max(so, 1)))) return false;
+            }
+            return true;
+        }
+
+        /// Đoạn gãy góc a -> b ra ngoài vùng: thử góc gãy kia, rồi đường vuông góc ngắn nhất trên lưới (Dijkstra, mỗi lần rẽ phạt 8 ô = 2 m).
+        /// Không tìm được thì giữ đoạn cũ.
+        static List<Point2d> NeLoi(LuoiDay g, List<Point2d> d)
+        {
+            if (g == null || DoanDiDuoc(g, d)) return d;
+            Point2d a = d[0], b = d[d.Count - 1];
+            foreach (Point2d c in new[] { new Point2d(a.X, b.Y), new Point2d(b.X, a.Y) })
+            {
+                List<Point2d> t = new List<Point2d> { a, c, b };
+                if (DoanDiDuoc(g, t)) { g.Ne++; return t; }
+            }
+            Func<Point2d, int> o = p => Math.Min(g.Ny - 1, Math.Max(0, (int)Math.Round((p.Y - g.Y0) / g.O))) * g.Nx
+                + Math.Min(g.Nx - 1, Math.Max(0, (int)Math.Round((p.X - g.X0) / g.O)));
+            int n = g.Nx * g.Ny, s0 = o(a), s1 = o(b);
+            int[] dx = { 1, 0, -1, 0 }, dy = { 0, 1, 0, -1 };
+            int[] kc = Enumerable.Repeat(int.MaxValue, 4 * n).ToArray(), truoc = new int[4 * n];
+            SortedSet<long> hang = new SortedSet<long>();
+            for (int h = 0; h < 4; h++) { kc[4 * s0 + h] = 0; truoc[4 * s0 + h] = -1; hang.Add(4 * s0 + h); }
+            int cuoi = -1;
+            while (hang.Count > 0)
+            {
+                long k = hang.Min;
+                hang.Remove(k);
+                int st = (int)(k % (4 * n)), c = (int)(k / (4 * n));
+                if (c > kc[st]) continue;
+                int o0 = st / 4, h0 = st % 4;
+                if (o0 == s1) { cuoi = st; break; }
+                int x = o0 % g.Nx, y = o0 / g.Nx;
+                for (int h = 0; h < 4; h++)
+                {
+                    if (h == (h0 + 2) % 4) continue;
+                    int x2 = x + dx[h], y2 = y + dy[h];
+                    if (x2 < 0 || y2 < 0 || x2 >= g.Nx || y2 >= g.Ny || !g.Di[y2 * g.Nx + x2]) continue;
+                    int st2 = 4 * (y2 * g.Nx + x2) + h, c2 = c + 1 + (h == h0 || truoc[st] == -1 ? 0 : 8);
+                    if (c2 >= kc[st2]) continue;
+                    kc[st2] = c2; truoc[st2] = st;
+                    hang.Add((long)c2 * 4 * n + st2);
+                }
+            }
+            if (cuoi < 0) return d;
+            List<Point2d> o2 = new List<Point2d>();
+            for (int st = cuoi; st >= 0; st = truoc[st])
+            {
+                Point2d p = new Point2d(g.X0 + (st / 4) % g.Nx * g.O, g.Y0 + (st / 4) / g.Nx * g.O);
+                if (o2.Count >= 2 && (Math.Abs(o2[o2.Count - 2].X - p.X) < 1e-9 && Math.Abs(o2[o2.Count - 1].X - p.X) < 1e-9
+                    || Math.Abs(o2[o2.Count - 2].Y - p.Y) < 1e-9 && Math.Abs(o2[o2.Count - 1].Y - p.Y) < 1e-9)) o2[o2.Count - 1] = p;
+                else o2.Add(p);
+            }
+            o2.Reverse();
+            if (o2.Count < 3) return d; // cùng hàng / cột ô: đoạn gãy góc thường đã là tốt nhất
+            // Ô đầu, ô cuối về đúng a, b: dời đoạn đầu (cuối) cho thẳng hàng với a (b).
+            Func<Point2d, Point2d, Point2d, Point2d> doi = (moc, q, ke) => Math.Abs(q.Y - ke.Y) < 1e-9 ? new Point2d(ke.X, moc.Y) : new Point2d(moc.X, ke.Y);
+            o2[1] = doi(a, o2[0], o2[1]);
+            o2[o2.Count - 2] = doi(b, o2[o2.Count - 1], o2[o2.Count - 2]);
+            o2[0] = a; o2[o2.Count - 1] = b;
+            g.Ne++;
+            return o2;
+        }
+
         /// Vẽ một chuỗi dây qua các điểm dừng n (đã có cả đầu, cuối). lop(i) = layer của đoạn i (n[i] -> n[i+1]). Đoạn liền nhau cùng layer gộp một polyline.
         /// dtcd != null: kéo dây thêm 0,5 m ở mút cuối, đặt điện trở cuối dây. Trả chiều dài (đơn vị bản vẽ), đếm đoạn xéo vào xeo.
-        static double VeChuoiDay(Database db, Transaction tr, BlockTableRecord ms, List<Point2d> n, Func<int, string> lop, VatTu dtcd, double eps, ref int xeo)
+        /// luoi != null: đoạn ra ngoài các vùng PCCC_VUNG thì đi vòng trong vùng (NeLoi).
+        static double VeChuoiDay(Database db, Transaction tr, BlockTableRecord ms, List<Point2d> n, Func<int, string> lop, VatTu dtcd, double eps, ref int xeo, LuoiDay luoi = null)
         {
             if (n.Count < 2) return 0;
-            List<List<Point2d>> doan = DoanVuong(n, eps);
+            List<List<Point2d>> doan = DoanVuong(n, eps).Select(d => NeLoi(luoi, d)).ToList();
             double m = HeSoMet(db), dai = 0;
             if (dtcd != null)
             {
@@ -446,6 +560,7 @@ namespace TKPCCC
                 if (!co) NapVaoBanVe(doc, dm);
             }
 
+            LuoiDay luoi = TaoLuoiDay(VungCoSan(db), ds.Select(t => t.P).Concat(new[] { T }).ToList(), m);
             List<TbBc> tinHieu = ds.Where(t => t.Loai == "dau_bao" || t.Loai == "nut_nhan").ToList();
             List<TbBc> chuong = ds.Where(t => t.Loai == "chuong" || t.CoChuong).ToList();
             List<string> bao = new List<string>();
@@ -465,7 +580,7 @@ namespace TKPCCC
                     List<Point2d> n = ChuoiDung(goc, xa != null ? xa.P : (Point2d?)null,
                         nhom.Where(t => t.Loai == "dau_bao" && t != xa).Select(t => t.P).ToList(),
                         nhom.Where(t => t.Loai != "dau_bao" && t != xa).Select(t => t.P).ToList(), eps);
-                    mTinHieu += VeChuoiDay(db, tr, ms, n, i => CaiDat.DayVaiTro(VaiTro(tai(nhom, n[i + 1]), false)), dtcd, eps, ref xeo);
+                    mTinHieu += VeChuoiDay(db, tr, ms, n, i => CaiDat.DayVaiTro(VaiTro(tai(nhom, n[i + 1]), false)), dtcd, eps, ref xeo, luoi);
                     soDtcd++;
                 };
                 // Dây chuông mạch cụt kiểu xương cá: tủ -> (module) rồi cây nhánh vuông góc tới các chuông.
@@ -473,9 +588,9 @@ namespace TKPCCC
                 {
                     if (nhom.Count == 0) return;
                     string l = CaiDat.DayVaiTro("chuong");
-                    if (mod.HasValue) mChuong += VeChuoiDay(db, tr, ms, new List<Point2d> { T, mod.Value }, i => l, null, eps, ref xeo);
+                    if (mod.HasValue) mChuong += VeChuoiDay(db, tr, ms, new List<Point2d> { T, mod.Value }, i => l, null, eps, ref xeo, luoi);
                     foreach (List<Point2d> nhanh in CayXuongCa(mod.HasValue ? mod.Value : T, nhom.Select(t => t.P).ToList(), eps))
-                        mChuong += VeChuoiDay(db, tr, ms, nhanh, i => l, null, eps, ref xeo);
+                        mChuong += VeChuoiDay(db, tr, ms, nhanh, i => l, null, eps, ref xeo, luoi);
                 };
 
                 if (!diaChi)
@@ -502,7 +617,7 @@ namespace TKPCCC
                     // Mạch vòng: tủ -> thiết bị địa chỉ + module -> về tủ; đoạn về tủ theo layer thiết bị cuối.
                     List<Point2d> n = ChuoiDung(T, T, vong.Where(t => t.Loai == "dau_bao").Select(t => t.P).ToList(),
                         vong.Where(t => t.Loai != "dau_bao").Select(t => t.P).ToList(), eps);
-                    mVong = VeChuoiDay(db, tr, ms, n, i => CaiDat.DayVaiTro(VaiTro(tai(vong, i + 1 < n.Count - 1 ? n[i + 1] : n[i]) ?? vong[0], true)), null, eps, ref xeo);
+                    mVong = VeChuoiDay(db, tr, ms, n, i => CaiDat.DayVaiTro(VaiTro(tai(vong, i + 1 < n.Count - 1 ? n[i + 1] : n[i]) ?? vong[0], true)), null, eps, ref xeo, luoi);
                     foreach (KeyValuePair<TbBc, List<TbBc>> g in GanModule(thuong, zm)) machHo(g.Key.P, g.Value, false);
                     foreach (KeyValuePair<TbBc, List<TbBc>> g in GanModule(chThuong, cm)) dayChuong(g.Key.P, g.Value);
                     foreach (KeyValuePair<TbBc, List<TbBc>> g in GanModule(chDc, r2)) dayChuong(g.Key.P, g.Value);
@@ -513,7 +628,7 @@ namespace TKPCCC
             ed.WriteMessage("\n[TKPCCC] PCCC_DAYBC he=" + (diaChi ? "dia_chi" : "thuong") + " tin_hieu=" + tinHieu.Count
                 + " m=" + Math.Round(mTinHieu * m, 2).ToString(CultureInfo.InvariantCulture) + " dtcd=" + soDtcd
                 + " chuong=" + chuong.Count + " m_chuong=" + Math.Round(mChuong * m, 2).ToString(CultureInfo.InvariantCulture)
-                + (bao.Count > 0 ? " " + string.Join(" ", bao) : "") + " xeo=" + xeo + (tu != null ? " (tủ: block BC_TT trong vùng chọn)" : ""));
+                + (bao.Count > 0 ? " " + string.Join(" ", bao) : "") + " xeo=" + xeo + (luoi != null ? " ne_loi=" + luoi.Ne : "") + (tu != null ? " (tủ: block BC_TT trong vùng chọn)" : ""));
         }
     }
 }
