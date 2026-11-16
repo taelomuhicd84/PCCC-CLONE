@@ -214,7 +214,9 @@ namespace TKPCCC
             int loai = LoaiLop(n, lop);
             if (loai < 0 && n.Mau == null) return;
             // Layer bỏ (cửa, nội thất...) không có nét mẫu: không lấy nét tường nhưng vẫn gom ký hiệu cửa. Có nét mẫu thì chỉ lọc theo mẫu (nét vùng có thể nằm trên layer bất kỳ).
-            bool chiCua = n.ChiCua || (loai == 0 && n.Mau == null);
+            // Nét trong block layer bỏ mà layer RIÊNG là tường vẫn lấy (KOCHAM 16/11: block lõi thang "CORE" đặt trên layer "HANA FURNITURE",
+            // tường AAP-TUONG bên trong bị bỏ nên PCCC_RAI gộp lõi thang + sảnh vào văn phòng).
+            bool chiCua = (n.ChiCua && loai != 2) || (loai == 0 && n.Mau == null);
             GomCua(n, e, lop);
             ObjectId net = KieuNet(n, e, lop, chaNet);
             string mau = n.Mau == null && n.BoMau == null ? null : MauKhoa(n, e, lop, chaMau);
@@ -457,7 +459,9 @@ namespace TKPCCC
             foreach (ObjectId id in ms)
             {
                 Entity e = n.Tr.GetObject(id, OpenMode.ForRead) as Entity;
-                if (e == null || !e.Visible || LoaiLop(n, e.LayerId) <= 0) continue;
+                if (e == null || !e.Visible) continue;
+                int lo = LoaiLop(n, e.LayerId);
+                if (lo < 0 || (lo == 0 && !(e is BlockReference))) continue; // block trên layer bỏ vẫn đọc: nét tường bên trong (ThuNet)
                 if (!(e is Curve || e is Hatch || e is BlockReference) || e is Table || e is Xline || e is Ray) continue;
                 Extents3d x;
                 try { x = e.GeometricExtents; } catch (System.Exception) { continue; }
