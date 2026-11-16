@@ -7,7 +7,7 @@ Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.m
 Người dùng dán dòng lệnh `PCCC_RAI BC_KHOI` (Enter trần, theo hàng Khong): quét chọn ra "1 found" (một đối tượng: nghi block cả tờ / xref),
 Enter nét mẫu, `gach_cheo=553`, Enter mọi phòng → `Vùng tự dựng m2=763079.12 (533 đỉnh)` → `Lỗi: bước quá nhỏ so với vùng (60 x 139 thiết bị)`.
 Người dùng dặn: sửa lỗi này VÀ tối ưu thời gian rải (rải đầu phun lâu, có thể đứng máy).
-Bản vẽ: AutoCAD đang mở `1. BVTK-CAP-NUOC.dwg` (chưa biết đường dẫn: tìm trên D:\ và Downloads; không thấy thì hỏi người dùng). Chép ra `ket_qua/cad_test/2026-11-16/` rồi mới thử, không sửa file gốc.
+Bản vẽ (người dùng xác nhận): `file_cad_test\test báo cháy.dwg` gốc repo (gitignore; INSUNITS 1 mà vẽ mm, xem việc 16/11 chiều). Chép ra `ket_qua/cad_test/2026-11-16/` rồi mới thử, không sửa file gốc.
 Bước tiếp:
 1. Tái hiện bằng accoreconsole trên bản chép (skill `tkpccc-cad-console`): in thời gian từng pha (MatChon, PhongThat, LuoiVung, PhuBu, ChenThietBi, KtSauRai) bằng Stopwatch.
 2. Gốc lỗi (giả thuyết): Enter mọi phòng nhận cả mặt bao ngoài (chứa các mặt khác) thành phòng. Sửa ở `PhongThat` / `MatChon` (`NhanVung.cs`):
