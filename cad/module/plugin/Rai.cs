@@ -165,7 +165,18 @@ namespace TKPCCC
         {
             List<Point2d> d = new List<Point2d>();
             for (int i = 0; i < pl.NumberOfVertices; i++) d.Add(pl.GetPoint2dAt(i)); // shortcut: cung (bulge) coi là đoạn thẳng, phòng tường cong thì thêm chia cung
+            if (d.Count > 3 && d[0].GetDistanceTo(d[d.Count - 1]) <= SaiSoKin(pl)) d.RemoveAt(d.Count - 1); // đỉnh cuối trùng đỉnh đầu (KinPl)
             return d;
+        }
+
+        static double SaiSoKin(Polyline pl) { return Math.Max(1e-6, 1e-7 * pl.Length); }
+
+        /// Polyline vùng kín: cờ Closed, hoặc điểm cuối trùng điểm đầu (người dùng 16/11: vùng xanh lá vẽ tay về đúng điểm đầu nhưng không gõ C,
+        /// Closed = 0, plugin bỏ qua vùng đó rồi rải sang chỗ khác).
+        static bool KinPl(Polyline pl)
+        {
+            if (pl == null || pl.NumberOfVertices < 3) return false;
+            return pl.Closed || (pl.NumberOfVertices >= 4 && pl.GetPoint2dAt(0).GetDistanceTo(pl.GetPoint2dAt(pl.NumberOfVertices - 1)) <= SaiSoKin(pl));
         }
 
         static Point3d ChanVuongGoc(Point3d p, Point3d a, Point3d b)
@@ -675,7 +686,7 @@ namespace TKPCCC
             foreach (Entity e in Loc(g, LayChu(o, "l", "PCCC_VUNG"), h))
             {
                 Polyline pl = e as Polyline;
-                if (pl != null && pl.Closed && pl.NumberOfVertices >= 3) kq.Add(DinhPl(pl));
+                if (KinPl(pl)) kq.Add(DinhPl(pl));
             }
             if (kq.Count == 0)
                 throw new System.Exception("không có vùng để rải: đưa \"vung\" [[x,y],...] hoặc \"hop\" [x1,y1,x2,y2], hoặc vẽ polyline kín trên layer \"l\" (mặc định PCCC_VUNG)");
@@ -1102,6 +1113,7 @@ namespace TKPCCC
             Document doc = AcApp.DocumentManager.MdiActiveDocument;
             Database db = doc.Database;
             Editor ed = doc.Editor;
+            KiemDonVi(doc); // trước mọi phép đổi m -> đơn vị bản vẽ
             FileDanhMuc dm = DocDanhMuc();
             VatTu v = HoiMa(ed, dm, "block", "Mã thiết bị cần rải");
             if (v == null) return;
@@ -1493,7 +1505,7 @@ namespace TKPCCC
                     if (e != null && (pl != null || ci != null) && string.Equals(e.Layer, LAYER_LOAI_TRU, StringComparison.OrdinalIgnoreCase))
                     {
                         if (ci != null) kq.Add(DaGiacTron(ci, 72));
-                        else if (pl.Closed && pl.NumberOfVertices >= 3) kq.Add(DinhPl(pl));
+                        else if (KinPl(pl)) kq.Add(DinhPl(pl));
                     }
                     else con.Add(id);
                 }
@@ -1521,7 +1533,7 @@ namespace TKPCCC
                     if ((pl != null || ci != null) && DUOI_ONG_GIO.Any(k => lop.Contains(k)))
                     {
                         if (ci != null) kq.Add(DaGiacTron(ci, 72));
-                        else if (pl.Closed && pl.NumberOfVertices >= 3) kq.Add(DinhPl(pl));
+                        else if (KinPl(pl)) kq.Add(DinhPl(pl));
                     }
                     else con.Add(id);
                 }
@@ -1789,7 +1801,7 @@ namespace TKPCCC
                     foreach (ObjectId id in ms)
                     {
                         Polyline pl = tr.GetObject(id, OpenMode.ForRead) as Polyline;
-                        if (pl == null || !pl.Closed || !string.Equals(pl.Layer, LAYER_VUNG, StringComparison.OrdinalIgnoreCase)) continue;
+                        if (!KinPl(pl) || !string.Equals(pl.Layer, LAYER_VUNG, StringComparison.OrdinalIgnoreCase)) continue;
                         List<Point2d> vg = DinhPl(pl);
                         if (ps.Any(p => TrongDaGiac(vg, new Point2d(p.X, p.Y)))) m2 += Math.Abs(pl.Area) * m * m;
                     }

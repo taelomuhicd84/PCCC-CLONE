@@ -263,6 +263,31 @@ namespace TKPCCC
         }
         static IntPtr canhBaoDonVi;
 
+        /// Người dùng 16/11 (ảnh "rải linh tinh"): bản vẽ để INSUNITS 1 (inch) mà vẽ theo mm, PCCC_RAI coi 1 m = 39 đơn vị: khe cửa không khép,
+        /// lòng tường thành phòng, bước rải 0,4 m (thử lại: 8 837 đầu báo trong 684 "phòng"; đặt mm thì 112 đầu, 57 phòng).
+        /// Khổ bản vẽ (EXTMIN–EXTMAX) theo INSUNITS phi lý (trên 2 km, hoặc dưới 2 m) mà theo mm (hoặc m) ra 5 m – 2 km thì đổi INSUNITS, có báo.
+        /// Chỉ xét INSUNITS là đơn vị dài đã biết (Unitless thì HeSoMet đã tự đoán). Gọi đầu lệnh gõ tay, trước mọi phép đổi m sang đơn vị bản vẽ.
+        static void KiemDonVi(Document doc)
+        {
+            Database db = doc.Database;
+            UnitsValue cu = db.Insunits;
+            if (cu != UnitsValue.Inches && cu != UnitsValue.Feet && cu != UnitsValue.Millimeters && cu != UnitsValue.Centimeters
+                && cu != UnitsValue.Decimeters && cu != UnitsValue.Meters) return;
+            Point3d a = db.Extmin, b = db.Extmax;
+            if (!(b.X > a.X && b.Y > a.Y)) return;
+            double kho = Math.Max(b.X - a.X, b.Y - a.Y), met = kho * HeSoMet(db);
+            UnitsValue moi;
+            if (met > 2000 && kho * 0.001 >= 5 && kho * 0.001 <= 2000) moi = UnitsValue.Millimeters;
+            else if (met < 2 && kho >= 5 && kho <= 2000) moi = UnitsValue.Meters;
+            else return;
+            if (moi == cu) return;
+            db.Insunits = moi;
+            doc.Editor.WriteMessage("\n[TKPCCC] Chú ý: INSUNITS = " + (int)cu + " (" + cu + ") thì bản vẽ rộng "
+                + Math.Round(met, 1).ToString(CultureInfo.InvariantCulture) + " m, không hợp lý; khổ " + Math.Round(kho).ToString(CultureInfo.InvariantCulture)
+                + " đơn vị hợp với " + (moi == UnitsValue.Millimeters ? "mm" : "m") + ": đã đặt INSUNITS = " + (int)moi
+                + ". Sai thì gõ INSUNITS đặt lại. don_vi_doi=" + (int)cu + "->" + (int)moi);
+        }
+
         /// Tên đơn vị bản vẽ cho kết quả spec ("don_vi"): đơn vị đoán thì thêm " (doan)".
         static string TenDonVi(Database db)
         {

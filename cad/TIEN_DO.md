@@ -3,6 +3,13 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## VIỆC 16/11 CHIỀU — SỬA "NHẬN SAI VÙNG, RẢI LINH TINH" (ảnh người dùng trên `test báo cháy.dwg`): XONG MÃ + TEST
+Nguyên nhân 1: file để INSUNITS 1 (inch) mà vẽ mm → plugin coi 1 m = 39 đơn vị (khe cửa không khép, lòng tường thành phòng, bước 0,4 m): 8 837 đầu trong 684 "phòng".
+Sửa: `KiemDonVi` (`Lenh.cs`, gọi đầu `PCCC_RAI`, `PCCC_DAYBC`): khổ EXTMIN–EXTMAX theo INSUNITS > 2 km (hoặc < 2 m) mà theo mm (m) ra 5 m – 2 km thì đặt lại INSUNITS, báo `don_vi_doi=`.
+Nguyên nhân 2: vùng xanh lá bên phải (PCCC_VUNG) vẽ về đúng điểm đầu nhưng Closed = 0 → không được coi là vùng. Sửa: `KinPl` (`Rai.cs`) cho mọi chỗ đọc vùng.
+Chạy lại trên bản chép file mẫu: rải đúng 2 vùng xanh, mỗi vùng 15 đầu, lưới 3 × 5 bước 7,9 × 9,4 m (ảnh `ket_qua/cad_test/2026-11-16/rai_xanh.png`).
+`chay_thu.ps1` 147/147, `thu_mcp.ps1` đạt, bundle build lại. CHƯA: người dùng tắt hẳn AutoCAD mở lại để nạp, thử lại trên máy.
+
 ## VIỆC 16/11 — 5 YÊU CẦU BÁO CHÁY (người dùng gửi `file_cad_test\test báo cháy.dwg`: trái hệ địa chỉ, phải hệ thường): XONG MÃ + TEST
 Bản chép, dump, ảnh ở `ket_qua/cad_test/2026-11-16/` (gitignore). Kiến thức đọc từ mẫu: `cad/knowledge/di-day-bao-chay.md`.
 1. Phân vùng: vùng tự dựng bám khấc cột, cung cửa (44–53 đỉnh) → `LamGon` (`NhanVung.cs`, ngưỡng 1 m): bỏ khấc nhỏ ra đường ngoài, giữ khấc lớn (lõi thang);

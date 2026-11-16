@@ -59,7 +59,7 @@ namespace TKPCCC
                     Polyline pl = e as Polyline;
                     BlockReference br = e as BlockReference;
                     Circle ci = e as Circle;
-                    List<Point2d> dg = pl != null && pl.Closed && pl.NumberOfVertices >= 3 ? DinhPl(pl) : ci != null ? DaGiacTron(ci, 72) : null;
+                    List<Point2d> dg = KinPl(pl) ? DinhPl(pl) : ci != null ? DaGiacTron(ci, 72) : null;
                     if (dg != null)
                     {
                         if (string.Equals(e.Layer, LAYER_VUNG, StringComparison.OrdinalIgnoreCase)) phong.Add(dg);
@@ -209,7 +209,7 @@ namespace TKPCCC
                 foreach (ObjectId id in (BlockTableRecord)tr.GetObject(db.CurrentSpaceId, OpenMode.ForRead))
                 {
                     Polyline pl = tr.GetObject(id, OpenMode.ForRead) as Polyline;
-                    if (pl != null && pl.Closed && pl.NumberOfVertices >= 3 && string.Equals(pl.Layer, LAYER_VUNG, StringComparison.OrdinalIgnoreCase)) vung.Add(DinhPl(pl));
+                    if (KinPl(pl) && string.Equals(pl.Layer, LAYER_VUNG, StringComparison.OrdinalIgnoreCase)) vung.Add(DinhPl(pl));
                 }
                 tr.Commit();
             }

@@ -675,7 +675,7 @@ namespace TKPCCC
                 foreach (Entity e in Loc(g, l ?? "PCCC_VUNG", hop))
                 {
                     Polyline pl = e as Polyline;
-                    if (pl == null || !pl.Closed) continue;
+                    if (!KinPl(pl)) continue;
                     if (++n > DOC_TOI_DA) continue;
                     Extents3d x = pl.GeometricExtents;
                     List<object> dinh = new List<object>();

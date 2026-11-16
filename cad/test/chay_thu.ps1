@@ -709,7 +709,10 @@ $adG[5] = @(24003, 13000)
 # loi thang 3 x 3 m goc duoi trai. Vung ra 6 dinh: lap khac nho (< 1 m) ra duong ngoai, giu loi thang: 20 x 15 - 3,15 x 3 = 290,55 m2.
 ('{"goc":[200000,0],"ops":[{"op":"net","l":"KT_A","kin":true,"p":[[3150,0],[10000,0],[10050,40],[10150,40],[10200,0],[19600,0],[19600,400],[20000,400],' +
  '[20000,15000],[12000,15000],[12000,14600],[6000,14600],[6000,15000],[0,15000],[0,8000],[150,8000],[150,3000],[3150,3000]]},' +
- '{"op":"vung_tu_dong","p":[[10000,8000]]}]}') | Set-Content -Encoding ascii "$T\gon.json"
+ '{"op":"vung_tu_dong","p":[[10000,8000]]},' +
+ # Vung PCCC_VUNG ve tay ve dung diem dau nhung khong khep (Closed = 0, nguoi dung 16/11): van la vung kin.
+ '{"op":"net","l":"PCCC_VUNG","p":[[30000,0],[50000,0],[50000,15000],[30000,15000],[30000,0]]},{"op":"doc","gi":"vung","hop":[29000,-1000,51000,16000]}]}') |
+  Set-Content -Encoding ascii "$T\gon.json"
 @('INSUNITS', '4', 'NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '_.SAVEAS', '2018', "`"$T\kt.dwg`"",
   'PCCC_SPEC', "$T\kt.json", 'PCCC_SPEC', "$T\kt_dat.json", '-LAYER', 'M', 'ADIM_L', '', '_.ZOOM', '_E', 'OSMODE', '0',
   'PCCC_ADIM', '', 'W', '19000,9000', '30000,20000', '', '19500,10000', '28500,10000', '', '20000,19000',
@@ -731,6 +734,8 @@ $adG[5] = @(24003, 13000)
   'PCCC_DAYBC', 'Thuong', 'W', '299000,-1000', '317000,17000', '', '308000,-3000',
   'PCCC_DAYBC', 'DiaChi', 'W', '329000,-4000', '348000,17000', '',
   'PCCC_DAYBC', 'DiaChi', 'W', '299000,-1000', '317000,17000', '', '308000,-3000',
+  # Nguoi dung 16/11 (anh rai linh tinh): ban ve mm de INSUNITS 1 (inch) -> PCCC_RAI tu doi ve mm truoc khi rai (kho 378 000 don vi = 9,6 km neu la inch).
+  '_.ZOOM', '_E', 'INSUNITS', '1', 'PCCC_RAI', 'BC_KHOI', '', '', 'C', '199000,-1000', '221000,16000', '', '',
   '_.QSAVE') -join "`r`n" | Set-Content -Encoding ascii "$T\kb3.scr"
 $p3 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb3.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb3.out.txt"
 if (-not $p3.WaitForExit(180000)) { Stop-Process -Id $p3.Id -Force; throw "accoreconsole qua 3 phut (kien truc): $T\kb3.out.txt" }
@@ -757,10 +762,15 @@ Kiem ($out3 -match 'PCCC_TRUC 4x2 truc ve=' -and $out3 -match 'PCCC_TUONG tuong 
 $kgon = DocKq 'gon'
 Kiem ($kgon -and @($kgon.vung_tu_dong).Count -eq 1 -and $kgon.vung_tu_dong[0].dinh -eq 6 -and $kgon.vung_tu_dong[0].m2 -eq 290.55) `
   "Lam gon vung (nguoi dung 16/11): hoc tran, buoc tuong, khac cot, go cua lap ra duong ngoai, giu loi thang: 6 dinh 290,55 m2 ($($kgon.vung_tu_dong | ConvertTo-Json -Compress -Depth 3))"
+$vgKin = @(if ($kgon -and $kgon.doc) { $kgon.doc[0].ds })  # @() ngoai: if tra 1 phan tu thi PowerShell 5 bo mang
+Kiem ($vgKin.Count -eq 1 -and $vgKin[0].m2 -eq 300) "PCCC_VUNG ve ve dung diem dau ma Closed = 0 van la vung kin 300 m2 ($($vgKin | ConvertTo-Json -Compress -Depth 3))"
 Kiem ($out3 -match 'PCCC_DAYBC he=thuong tin_hieu=10 m=[\d.]+ dtcd=1 chuong=2 m_chuong=[\d.]+ xeo=0') `
   'PCCC_DAYBC he thuong: 1 duong qua 9 dau bao + nut nhan, 1 dien tro cuoi day, chuong 1 duong rieng, khong doan xeo'
 Kiem ($out3 -match 'PCCC_DAYBC he=dia_chi tin_hieu=9 m=[\d.]+ dtcd=1 chuong=2 m_chuong=[\d.]+ vong=4 m_vong=[\d.]+ xeo=0 \(t') `
   'PCCC_DAYBC he dia chi: mach vong tu BC_TT qua 2 dau dia chi + ZM + CM; 7 thiet bi thuong ve ZM (1 dien tro), 2 chuong ve CM, khong doan xeo'
+$mInch = [regex]::Match($out3, 'don_vi_doi=1->4[\s\S]{0,1500}?PCCC_RAI BC_KHOI n=(\d+) ')
+Kiem ($mInch.Success -and [int]$mInch.Groups[1].Value -ge 2 -and [int]$mInch.Groups[1].Value -le 8) `
+  "INSUNITS 1 tren ban ve mm: PCCC_RAI tu dat INSUNITS 4 roi rai phong 20 x 15 m ra vai dau (thay $($mInch.Groups[1].Value); truoc sua: hang tram dau)"
 Kiem ($out3 -match 'L\S+i: 10 [^\r\n]{0,40}module ZM') 'PCCC_DAYBC he dia chi khong co ZM ma co dau bao thuong: bao loi, khong ve'
 
 # chay_spec.ps1: -Dwg tuong doi tinh theo thu muc hien tai cua PowerShell; thu muc co dau (chu a huyen) va dau cach.

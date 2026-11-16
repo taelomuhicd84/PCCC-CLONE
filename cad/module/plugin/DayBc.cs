@@ -373,6 +373,7 @@ namespace TKPCCC
             Document doc = AcApp.DocumentManager.MdiActiveDocument;
             Database db = doc.Database;
             Editor ed = doc.Editor;
+            KiemDonVi(doc);
             FileDanhMuc dm = DocDanhMuc();
             PromptKeywordOptions ko = new PromptKeywordOptions("\nHệ báo cháy");
             ko.Keywords.Add("Thuong"); ko.Keywords.Add("DiaChi");

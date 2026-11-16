@@ -481,3 +481,8 @@ Người dùng gửi `file_cad_test\test báo cháy.dwg` (trái hệ địa ch�
 - `HoiMa`: gõ đúng cả tên thì nhận mã đó (thêm BC_NHIET_DC làm "dau bao nhiet" khớp 2 mã, test PCCC_DAT hỏng).
 Đã thử thêm phần đoán INSUNITS inch (file mẫu INSUNITS 1 mà vẽ mm): làm hỏng test inch, ngoài yêu cầu → gỡ lại, chỉ ghi chú cho người dùng.
 Kiểm: `chay_thu.ps1` 145/145, `thu_mcp.ps1`, `npm test` 68/68. Chưa chạy `thu_gui.ps1` (AutoCAD đang mở).
+## 2026-11-16 chiều — Sửa "nhận diện sai vùng, rải linh tinh"
+Người dùng gửi ảnh: rải hàng nghìn đầu báo trong lòng tường, cầu thang, không rải 2 xưởng; vùng cần rải là 2 polyline xanh lá (PCCC_VUNG) trong file.
+Tái hiện trên bản chép: INSUNITS 1 → 8 837 đầu / 684 "phòng"; INSUNITS 4 → 112 đầu / 57 phòng. Polyline xanh phải Closed = 0 (điểm cuối trùng điểm đầu) nên bị bỏ.
+Sửa: `KiemDonVi` tự đặt lại INSUNITS khi khổ bản vẽ phi lý (có báo); `KinPl` coi polyline về đúng điểm đầu là kín, `DinhPl` bỏ đỉnh cuối trùng.
+Kết quả: 2 vùng xanh × 15 đầu. Bẫy test PowerShell 5: `if` trả mảng 1 phần tử bị bỏ mảng, bọc `@( if ... )`. `chay_thu.ps1` 147/147.
