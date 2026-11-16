@@ -1875,16 +1875,24 @@ namespace TKPCCC
             int soDoan = 0;
             HashSet<string> thay = new HashSet<string>();
             Dictionary<string, int> theoMa = new Dictionary<string, int>(); // TuDong: số đoạn theo mã ống
+            List<List<Point2d>> vungCo = VungCoSan(db);
             using (Transaction tr = db.TransactionManager.StartTransaction())
             {
-                List<Point3d> ps = new List<Point3d>(), truc = new List<Point3d>();
+                List<Point3d> ps, truc = new List<Point3d>();
+                List<KeyValuePair<Point3d, string>> dau = new List<KeyValuePair<Point3d, string>>();
                 BoiCanh bc = new BoiCanh { Tr = tr, Dm = DocDanhMuc(), Alias = DocAlias() };
                 foreach (ObjectId id in r1.Value.GetObjectIds())
                 {
                     BlockReference br = tr.GetObject(id, OpenMode.ForRead) as BlockReference;
                     // Chỉ block là thiết bị (có mã vật tư): quét cửa sổ quanh phòng không lấy nhầm đồ nội thất.
-                    if (br != null && !(br is Table) && MaThietBi(br, bc) != null) ps.Add(new Point3d(br.Position.X, br.Position.Y, 0));
+                    string ma = br == null || br is Table ? null : MaThietBi(br, bc);
+                    if (ma != null) dau.Add(new KeyValuePair<Point3d, string>(new Point3d(br.Position.X, br.Position.Y, 0), ma));
                 }
+                int boDau, soNhom;
+                ps = LocDauPhun(dau, vungCo, 0.6 / m, out boDau, out soNhom);
+                if (boDau > 0)
+                    ed.WriteMessage("\n[TKPCCC] tuyen_loc giu=" + ps.Count + " bo=" + boDau + " nhom=" + soNhom
+                        + " (đầu phun khác loại hoặc ở vùng " + LAYER_VUNG + " tách rời: chỉ nối nhóm đông nhất; cần nối nhóm khác thì chọn riêng).");
                 Entity e = (Entity)tr.GetObject(r2.Value.GetObjectIds()[0], OpenMode.ForRead);
                 Polyline pl = e as Polyline;
                 Line ln = e as Line;
@@ -1920,6 +1928,36 @@ namespace TKPCCC
             foreach (string t in thay) ed.WriteMessage("\n[TKPCCC] " + t);
             ed.WriteMessage("\n[TKPCCC] PCCC_TUYEN " + (tuDong ? "TuDong " + muc : v.ma) + " doan=" + soDoan + " m=" + Math.Round(dai * m, 2).ToString(CultureInfo.InvariantCulture)
                 + (tuDong ? " " + string.Join(" ", bang.Where(x => theoMa.ContainsKey(x.Key)).Select(x => x.Key.Substring(4) + "=" + theoMa[x.Key])) : ""));
+        }
+
+        /// PCCC_TUYEN (KOCHAM 16/11: khung chọn phòng chữ L dính đầu phun WC, hành lang): nhóm đầu phun theo (cụm vùng PCCC_VUNG có hộp bao cách nhau ≤ ke,
+        /// mã thiết bị), giữ nhóm đông nhất; đầu phun ngoài mọi vùng cùng mã thì giữ. Khoang dầm kề nhau (qua dầm ≤ ke) là một cụm.
+        static List<Point3d> LocDauPhun(List<KeyValuePair<Point3d, string>> dau, List<List<Point2d>> vung, double ke, out int bo, out int soNhom)
+        {
+            int n = vung.Count;
+            double[][] hb = vung.Select(d => new[] { d.Min(p => p.X), d.Min(p => p.Y), d.Max(p => p.X), d.Max(p => p.Y) }).ToArray();
+            int[] cha = Enumerable.Range(0, n).ToArray();
+            Func<int, int> goc = null;
+            goc = i => cha[i] == i ? i : (cha[i] = goc(cha[i]));
+            for (int i = 0; i < n; i++)
+                for (int j = i + 1; j < n; j++)
+                    if (hb[i][0] <= hb[j][2] + ke && hb[j][0] <= hb[i][2] + ke && hb[i][1] <= hb[j][3] + ke && hb[j][1] <= hb[i][3] + ke) cha[goc(i)] = goc(j);
+            int[] nhom = dau.Select(kv =>
+            {
+                Point2d q = new Point2d(kv.Key.X, kv.Key.Y);
+                for (int i = 0; i < n; i++) if (TrongDaGiac(vung[i], q)) return goc(i);
+                return -1;
+            }).ToArray();
+            Dictionary<string, int> dem = new Dictionary<string, int>();
+            for (int i = 0; i < dau.Count; i++) { string k = nhom[i] + "|" + dau[i].Value; int c; dem.TryGetValue(k, out c); dem[k] = c + 1; }
+            soNhom = dem.Count;
+            if (dem.Count == 0) { bo = 0; return new List<Point3d>(); }
+            string tot = dem.OrderByDescending(kv => kv.Key.StartsWith("-1|") ? 0 : kv.Value).ThenByDescending(kv => kv.Value).First().Key;
+            int gTot = int.Parse(tot.Substring(0, tot.IndexOf('|')), CultureInfo.InvariantCulture);
+            string maTot = tot.Substring(tot.IndexOf('|') + 1);
+            List<Point3d> kq = Enumerable.Range(0, dau.Count).Where(i => dau[i].Value == maTot && (nhom[i] == gTot || nhom[i] == -1)).Select(i => dau[i].Key).ToList();
+            bo = dau.Count - kq.Count;
+            return kq;
         }
 
         /// Bảng DN theo số đầu phun (data/ong_nhanh_dn.json cạnh DLL), mức "Den05" / "Tren05": { mã ống theo DN tăng dần, số đầu tối đa } (0 = cỡ không dùng, -1 = không giới hạn).
