@@ -6,6 +6,7 @@ Plugin AutoCAD 2021 và đường vẽ tự động qua MCP. Phiên mới đọc
 ```
 cad/
 ├─ CLAUDE.md · README.md · KE_HOACH.md · TIEN_DO.md · LICH_SU.md   luật riêng, bản đồ, kế hoạch, tiến độ, nhật ký
+├─ HUONG_DAN_SU_DUNG.md     hướng dẫn dùng plugin cho kỹ sư (cài, quy trình, mọi lệnh, mã, layer, lưu ý); sửa lệnh thì sửa cả file này + `DS_LENH`
 ├─ .mcp.json               khai máy chủ MCP "cad" khi mở Claude Code ngay tại cad/ (gốc repo có bản riêng)
 ├─ .claude/
 │  ├─ agents/              cad-thiet-ke (lập spec) · cad-ve (chạy spec) · cad-kiem (soát bản vẽ) · cad-lap-trinh (sửa plugin) · cad-review (review mỗi mốc, Write chỉ để ghi báo cáo); bảng việc ở CLAUDE.md

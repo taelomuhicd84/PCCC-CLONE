@@ -526,3 +526,9 @@ Bẫy: block tờ xoay 270° (toạ độ trong block không phải toạ độ 
 Người dùng muốn xem Claude hiểu tới đâu trước khi train tiếp. Tải DWG, tách mặt bằng tầng 8 (block "2333"), dựng vùng, rải đầu báo khói (TCVN 7568-14) và sprinkler
 nhóm 1 (TCVN 7336 Bảng 1), đi dây và ống bằng spec qua `chay_spec.ps1`, xuất PDF 8 trang so với bản gốc. Sprinkler khớp số đầu bản gốc; báo cháy ít hơn
 (8 so với 18) vì chưa xét dầm. Bẫy: mặt bằng tờ PCCC không nằm ở model quanh khung tờ mà trong block chèn ở toạ độ xa; `dump` theo điểm chèn không thấy, phải `ssget "C"`.
+
+## 2026-11-16 tối (2) — Tầng 8 KOCHAM vẽ bằng lệnh gõ tay, hướng dẫn sử dụng
+Chạy lại thiết kế bằng `PCCC_RAI`, `PCCC_KT`, `PCCC_DAT`, `PCCC_DAYBC`, `PCCC_TUYEN TuDong`, `PCCC_KYHIEU`, `PCCC_QUYDINH`, `PCCC_BOC`, `PCCC_BANG` trong accoreconsole.
+Bằng lệnh thì plugin tự thêm dim kiểu người dùng, EOL, dây chuông, bảng biểu, cỡ ống theo số đầu (spec JSON không có). Bẫy: có `PCCC_VUNG` trong khung chọn thì
+`PCCC_RAI` không hỏi điểm phòng (kịch bản lệch dòng); `PCCC_ONG` không chạy trong .scr; chọn đầu phun bằng `WP` theo đường bao phòng, nới mép hơn bán kính ký hiệu.
+Viết `cad/HUONG_DAN_SU_DUNG.md` (nguồn: `DS_LENH` trong `Lenh.cs` + dấu nhắc đọc từ mã) và báo cáo quy trình PDF.

@@ -3,6 +3,14 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## VIỆC 16/11 TỐI (2) — THIẾT KẾ LẠI TẦNG 8 BẰNG LỆNH GÕ TAY + HƯỚNG DẪN SỬ DỤNG: XONG
+Người dùng muốn thấy plugin thiết kế bằng chính lệnh `PCCC_*`, báo cáo từng bước dùng lệnh nào, và file hướng dẫn dùng plugin.
+Kịch bản lệnh chạy trong accoreconsole (`kb_bc2.txt`, `kb_spr2.txt`), kết quả `t8_bc_lenh.dwg`, `t8_spr_lenh.dwg`, `BAO_CAO_QUY_TRINH_LENH_PLUGIN.pdf`
+(trong `ket_qua/cad_test/2026-11-16/cong_trinh_drive/`, gitignore). Hướng dẫn: `cad/HUONG_DAN_SU_DUNG.md` (repo) → `HUONG_DAN_SU_DUNG_PLUGIN.pdf`.
+VIỆC ĐỂ LẠI (lỗi lộ ra khi chạy lệnh): (a) `PCCC_RAI` dò phòng theo khung chọn (`MatChon`) gộp lõi thang máy + sảnh vào văn phòng (293 m²) trong khi
+`vung_tu_dong` ra đúng 269 m² — hai đường dò phải cho cùng kết quả; (b) `PCCC_ONG` mở PLINE bằng `SendStringToExecute` nên không chạy được trong
+file .scr (toạ độ bị đọc thành lệnh); (c) `PCCC_TUYEN` chọn đầu phun bằng khung dễ dính phòng bên cạnh: nên lọc đầu phun theo vùng `PCCC_VUNG`.
+
 ## VIỆC 16/11 TỐI — THIẾT KẾ THỬ TẦNG 8 KOCHAM (BÁO CHÁY + SPRINKLER): XONG, CHỜ NGƯỜI DÙNG NHẬN XÉT ĐỂ TRAIN TIẾP
 Người dùng gửi DWG Drive "TKTD KOCHAM FINAL 16-12.dwg" (hồ sơ thẩm duyệt điều chỉnh tầng 8 văn phòng, ~30 tờ), bảo xoá thiết bị PCCC, tự rải báo cháy,
 chữa cháy, đi dây, đi ống, báo cáo "hiểu tới đâu". Kết quả ở `ket_qua/cad_test/2026-11-16/cong_trinh_drive/` (gitignore, hồ sơ khách): gốc `goc/`,
