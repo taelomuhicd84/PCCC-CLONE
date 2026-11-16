@@ -56,7 +56,7 @@ Dấu nhắc của `PCCC_RAI` với đầu báo khói, nhiệt:
 3. Mỗi hàng chia lại theo bề rộng thật của hàng? Enter = Không (Co cho phòng chữ L có WC).
 4. Quét chọn mặt bằng (tường các phòng hoặc các vùng `PCCC_VUNG`), Enter.
 5. Bấm nét phân vùng mẫu, Enter = tự nhận từ tường.
-6. Enter = mọi phòng, hoặc bấm điểm trong từng phòng rồi Enter. Enter = mọi phòng với đầu báo: plugin tự bỏ phòng ≤ 60 m² có block hoặc layer thang máy, thang bộ, thiết bị vệ sinh (`THANG MAY`, `LIFT`, `THANG BO`, `STAIR`, `TOILET`, `LAVABO`, `BON CAU`, `XI BET`...) hoặc chữ tên phòng `WC`, `VỆ SINH`, `THANG MÁY`, `THANG BỘ` (chữ có "SẢNH" không tính), in `bo_khu_khong_bao= m2=`. Phòng bị bỏ nhầm thì bấm điểm trong phòng đó.
+6. Enter = mọi phòng, hoặc bấm điểm trong từng phòng rồi Enter. Enter = mọi phòng với đầu báo: plugin tự bỏ phòng ≤ 60 m² có block hoặc layer thang máy, thang bộ, thiết bị vệ sinh (`THANG MAY`, `LIFT`, `THANG BO`, `STAIR`, `TOILET`, `LAVABO`, `BON CAU`, `XI BET`...) hoặc chữ tên phòng `WC`, `VỆ SINH`, `THANG MÁY`, `THANG BỘ` (kể cả "SẢNH THANG MÁY": sảnh thang máy không đặt đầu báo), in `bo_khu_khong_bao= m2=`. Phòng bị bỏ nhầm thì bấm điểm trong phòng đó.
 
 Không cần nhập khoảng cách: bước tối đa, cách tường, chéo góc lấy từ `data/khoang_cach_rai.json` (chép nguyên văn TCVN 7568-14:2025; khói điểm: bước 10,2 m, cách tường 5,1 m, bán kính 7,2 m). Dòng lệnh in kết quả từng vùng: `n`, lưới, bước, m², số dim.
 

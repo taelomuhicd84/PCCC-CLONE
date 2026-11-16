@@ -845,9 +845,10 @@ Kiem ($out4 -match 'bo_cum=1 phong=1 ' -and $out4 -match 'theo_vung_co_san=1 ' -
   '-LAYER', 'M', 'PCCC_VUNG', '', '_.RECTANG', '400000,0', '404000,3000', '_.RECTANG', '404300,0', '414000,14000', '_.RECTANG', '400000,8000', '404000,14000',
   '-LAYER', 'S', '0', '', 'PCCC_DAT', 'BC_KHOI', '402000,11000', '409000,7000', '', '_.ZOOM', 'W', '399000,-1000', '415000,15000',
   'PCCC_DAYBC', 'Thuong', 'C', '399500,-500', '414500,14500', '', '401000,1500',
-  # 7 (nguoi dung 16/11: loi thang, buong thang, WC khong dat dau bao): 3 phong 20 / 5 / 5 x 10 m; phong giua co block BON_CAU, phong phai chu
-  #    "THANG BO". Enter moi phong: chi rai phong 200 m2, bo 2 phong 50 m2
+  # 7 (nguoi dung 16/11: loi thang, sanh thang may, buong thang, WC khong dat dau bao): 4 phong 15 / 5 / 5 / 5 x 10 m; chu "SANH THANG MAY",
+  #    block BON_CAU, chu "THANG BO". Enter moi phong: chi rai phong 150 m2, bo 3 phong 50 m2
   '-LAYER', 'M', 'TUONG', '', '_.RECTANG', '500000,0', '530000,10000', '_.LINE', '520000,0', '520000,10000', '', '_.LINE', '525000,0', '525000,10000', '',
+  '_.LINE', '515000,0', '515000,10000', '', '-LAYER', 'S', '0', '', '_.TEXT', '516000,5000', '250', '0', 'SANH THANG MAY', '-LAYER', 'S', 'TUONG', '',
   '-LAYER', 'S', '0', '', '_.CIRCLE', '522500,5000', '300', '-BLOCK', 'BON_CAU', '522500,5000', 'L', '', '-INSERT', 'BON_CAU', '522500,5000', '1', '', '0',
   '_.TEXT', '526000,5000', '250', '0', 'THANG BO', '_.ZOOM', 'W', '499000,-1000', '531000,11000',
   'PCCC_RAI', 'BC_KHOI', '', '', 'C', '499500,-500', '530500,10500', '', '', '',
@@ -869,8 +870,8 @@ Kiem ($m5.Success -and [int]$m5.Groups[2].Value -ge 1 -and [double]$m5.Groups[1]
   "Loi 5: PCCC_DAYBC: doan tu -> dai cat loi thang (ngoai vung) di vong qua van phong (m=$($m5.Groups[1].Value), ne_loi=$($m5.Groups[2].Value); duong thang 22 m)"
 # Nguoi dung 16/11: day vong khong bam mep vung. Truoc: doan dung o x 404500 (cach mep van phong 0,2 m), 27 m; nay x 404750 (0,45 m), 27,5 m
 Kiem ($m5.Success -and [double]$m5.Groups[1].Value -ge 27.4) "Day di vong cach mep vung >= 0,4 m, khong trung net tuong (m=$($m5.Groups[1].Value); bam mep 27)"
-Kiem ($out6 -match 'bo_khu_khong_bao=2 m2=50,50 ' -and ([regex]::Matches($out6, 'V\S+ng t\S+ d\S+ng m2=200 ')).Count -eq 1) `
-  'Enter moi phong: bo phong co block BON_CAU va phong co chu THANG BO (2 x 50 m2), chi rai phong 200 m2'
+Kiem ($out6 -match 'bo_khu_khong_bao=3 m2=50,50,50 ' -and ([regex]::Matches($out6, 'V\S+ng t\S+ d\S+ng m2=150 ')).Count -eq 1) `
+  'Enter moi phong: bo phong chu SANH THANG MAY, phong block BON_CAU, phong chu THANG BO (3 x 50 m2), chi rai phong 150 m2'
 
 # Thoi gian dung phong tren ban ve that cua nguoi dung (gitignore, chi chay khi co): truoc sua 78 s (23 trieu diem cat), nay < 10 s.
 $bvThat = Get-ChildItem "$GOC\file_cad_test" -Filter 'test b*o ch*y.dwg' -ErrorAction SilentlyContinue | Select-Object -First 1

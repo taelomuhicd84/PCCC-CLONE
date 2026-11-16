@@ -3,6 +3,14 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## VIỆC TIẾP THEO — TẦNG 8 KOCHAM LÀM LẠI THEO CÁCH NGƯỜI DÙNG DUYỆT VÙNG TRƯỚC (CHỜ NGƯỜI DÙNG TRẢ LỜI)
+Người dùng dặn tối 16/11: (1) sảnh thang máy cũng không đặt đầu báo (đã sửa `GomKhu`, test ca 7); (2) TRƯỚC KHI RẢI phải gửi vùng rải + khoang để
+duyệt, duyệt rồi mới rải (memory `duyet-vung-truoc-khi-rai`); (3) "rải khoang dầm sai": gửi bản mẫu (nhà xưởng, `ket_qua/cad_test/2026-11-16/khoang_dam_mau/`,
+hồ sơ khách, gitignore). Đã học: `cad/knowledge/mau-rai-khoang-dam.md` (lưới chung cả tầng, lề 2 m tới trục dầm, 2 x 2 mỗi khoang 10 x 10,6 m, vòng R7200
+ở đầu biên). Đang hỏi người dùng: tầng 8 tính khoang theo mọi dầm sâu > 0,3 m (dầm sàn 400 cách 3,7 m → 20 khoang) hay chỉ dầm trên trục cột.
+Có câu trả lời thì: vẽ vùng + khoang tầng 8 (bỏ lõi thang, sảnh thang máy, buồng thang, WC), in ảnh gửi duyệt; duyệt xong mới sửa `PCCC_RAI` (rải lưới chung
+cho các khoang, lề cố định tới dầm) và rải lại.
+
 ## VIỆC 16/11 TỐI (5) — SỬA 6 LỖI PLUGIN LỘ RA Ở TẦNG 8 KOCHAM: XONG MÃ + TEST, CHƯA XEM TRONG AUTOCAD CÓ GIAO DIỆN
 Người dùng dặn 16/11 tối: "Sửa 3 vấn đề về plugin đi" (1–3), cộng 3 lỗi lộ ra khi thiết kế theo dầm (4–6). Test mới: mục "Sua 6 loi" trong
 `cad/test/chay_thu.ps1` (một bản vẽ, 6 ca). `chay_thu.ps1`, `thu_mcp.ps1` TAT CA DAT; bundle đã build (AutoCAD đang mở thì tắt hẳn rồi mở lại).

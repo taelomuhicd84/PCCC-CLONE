@@ -559,3 +559,8 @@ vuông góc trong hợp các vùng. (6) Dim chung cho khoang của một vùng; 
 Người dùng hỏi vì sao chưa tự bỏ lõi thang, WC và dây "chạy sát mép" là sao, rồi bảo làm cả hai. Enter = mọi phòng của đầu báo bỏ phòng ≤ 60 m² có
 block/layer/chữ thang máy, thang bộ, thiết bị vệ sinh (chữ có "SẢNH" không tính). Dây đi vòng: phạt ô sát mép vùng ≤ 0,4 m. Báo cáo PDF
 `BAO_CAO_TANG8_SAU_SUA_LOI.pdf` (ket_qua) giải thích 4 điểm người dùng hỏi bằng ảnh.
+
+## 2026-11-16 tối (8) — Sảnh thang máy không đầu báo; duyệt vùng trước; học mẫu rải khoang dầm
+Người dùng: sảnh thang máy cũng không cần đầu báo; xác nhận vùng rải cho duyệt rồi mới rải; "rải khoang dầm sai", gửi bản mẫu (file .bak 43 MB, DWG 2018).
+Mẫu là nhà xưởng: dò tờ theo tiêu đề chữ (\U+ giải mã), đo toạ độ 118 block đầu báo: lưới 10 x 10,6 m, mỗi khoang 2 x 2 đầu cách trục 2 m, bước 6 / 6,6 m,
+qua dầm 4 m, vòng R7200 ở đầu biên. Ghi ở `cad/knowledge/mau-rai-khoang-dam.md`. `GomKhu` bỏ ngoại lệ "SẢNH".

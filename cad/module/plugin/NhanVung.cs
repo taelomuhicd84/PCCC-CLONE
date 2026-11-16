@@ -331,7 +331,7 @@ namespace TKPCCC
         static readonly string[] KHU_KHONG_BAO = { "THANGMAY", "LIFT", "ELEVATOR", "THANGBO", "STAIR", "TOILET", "VESINH", "LAVABO", "BONCAU", "XIBET", "URINAL", "TIEUNAM" };
 
         /// Người dùng dặn 16/11: lõi thang máy, buồng thang, WC không đặt đầu báo. Dấu hiệu: block (tên, layer) thang máy, thang bộ, thiết bị vệ sinh
-        /// (tâm hộp bao); chữ tên phòng WC, VỆ SINH, THANG MÁY, THANG BỘ (điểm chèn; bỏ chữ có "SẢNH": sảnh thang máy vẫn đặt đầu báo).
+        /// (tâm hộp bao); chữ tên phòng WC, VỆ SINH, THANG MÁY, THANG BỘ (điểm chèn). Sảnh thang máy cũng không đặt đầu báo (người dùng dặn tối 16/11).
         static void GomKhu(NenVung n, Entity e, ObjectId lop)
         {
             try
@@ -352,7 +352,7 @@ namespace TKPCCC
                 else if (dt != null || mt != null)
                 {
                     string t = ChuanTen(dt != null ? dt.TextString : mt.Text);
-                    if (t.Length > 24 || t.Contains("SANH") || !(t.StartsWith("WC") || KHU_KHONG_BAO.Any(k => t.Contains(k)))) return;
+                    if (t.Length > 24 || !(t.StartsWith("WC") || KHU_KHONG_BAO.Any(k => t.Contains(k)))) return;
                     Point3d p = dt != null ? dt.Position : mt.Location;
                     n.KhuKhong.Add(new Point2d(p.X, p.Y));
                 }
