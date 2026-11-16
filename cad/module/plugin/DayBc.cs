@@ -351,7 +351,7 @@ namespace TKPCCC
         {
             public double X0, Y0, O, Noi;
             public int Nx, Ny;
-            public bool[] Di;
+            public bool[] Di, Sat; // Sat: ô cách mép vùng ≤ 0,4 m (dây đi vòng tránh bám nét tường)
             public List<List<Point2d>> Vung;
             public List<Point2d> Dung;
             public int Ne; // số đoạn đã đi vòng
@@ -370,9 +370,14 @@ namespace TKPCCC
             g.Nx = (int)((tat.Max(p => p.X) + 1 / m - g.X0) / g.O) + 1; g.Ny = (int)((tat.Max(p => p.Y) + 1 / m - g.Y0) / g.O) + 1;
             if ((long)g.Nx * g.Ny > 600000) return null;
             g.Di = new bool[g.Nx * g.Ny];
+            g.Sat = new bool[g.Nx * g.Ny];
             for (int j = 0; j < g.Ny; j++)
                 for (int i = 0; i < g.Nx; i++)
-                    g.Di[j * g.Nx + i] = DiDuoc(g, new Point2d(g.X0 + i * g.O, g.Y0 + j * g.O));
+                {
+                    Point2d p = new Point2d(g.X0 + i * g.O, g.Y0 + j * g.O);
+                    g.Di[j * g.Nx + i] = DiDuoc(g, p);
+                    g.Sat[j * g.Nx + i] = g.Di[j * g.Nx + i] && g.Vung.Any(z => CachVien(z, p) <= 0.4 / m);
+                }
             return g;
         }
 
@@ -399,7 +404,8 @@ namespace TKPCCC
             return true;
         }
 
-        /// Đoạn gãy góc a -> b ra ngoài vùng: thử góc gãy kia, rồi đường vuông góc ngắn nhất trên lưới (Dijkstra, mỗi lần rẽ phạt 8 ô = 2 m).
+        /// Đoạn gãy góc a -> b ra ngoài vùng: thử góc gãy kia, rồi đường vuông góc ngắn nhất trên lưới (Dijkstra, mỗi lần rẽ phạt 8 ô = 2 m;
+        /// ô sát mép vùng ≤ 0,4 m phạt thêm 4 lần: người dùng 16/11, dây vòng qua lõi thang chạy trùng nét tường, nhìn không thấy).
         /// Không tìm được thì giữ đoạn cũ.
         static List<Point2d> NeLoi(LuoiDay g, List<Point2d> d)
         {
@@ -432,7 +438,7 @@ namespace TKPCCC
                     if (h == (h0 + 2) % 4) continue;
                     int x2 = x + dx[h], y2 = y + dy[h];
                     if (x2 < 0 || y2 < 0 || x2 >= g.Nx || y2 >= g.Ny || !g.Di[y2 * g.Nx + x2]) continue;
-                    int st2 = 4 * (y2 * g.Nx + x2) + h, c2 = c + 1 + (h == h0 || truoc[st] == -1 ? 0 : 8);
+                    int st2 = 4 * (y2 * g.Nx + x2) + h, c2 = c + 1 + (h == h0 || truoc[st] == -1 ? 0 : 8) + (g.Sat[y2 * g.Nx + x2] ? 4 : 0);
                     if (c2 >= kc[st2]) continue;
                     kc[st2] = c2; truoc[st2] = st;
                     hang.Add((long)c2 * 4 * n + st2);
