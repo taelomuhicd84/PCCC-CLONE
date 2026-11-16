@@ -3,6 +3,17 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## VIỆC ĐANG DỞ 16/11 (dừng 84 % hạn mức 5 giờ, hẹn tự làm tiếp sau 16:20) — LỖI "BƯỚC QUÁ NHỎ" + RẢI QUÁ LÂU, ĐỨNG MÁY
+Người dùng dán dòng lệnh `PCCC_RAI BC_KHOI` (Enter trần, theo hàng Khong): quét chọn ra "1 found" (một đối tượng: nghi block cả tờ / xref),
+Enter nét mẫu, `gach_cheo=553`, Enter mọi phòng → `Vùng tự dựng m2=763079.12 (533 đỉnh)` → `Lỗi: bước quá nhỏ so với vùng (60 x 139 thiết bị)`.
+Người dùng dặn: sửa lỗi này VÀ tối ưu thời gian rải (rải đầu phun lâu, có thể đứng máy).
+Bản vẽ: AutoCAD đang mở `1. BVTK-CAP-NUOC.dwg` (chưa biết đường dẫn: tìm trên D:\ và Downloads; không thấy thì hỏi người dùng). Chép ra `ket_qua/cad_test/2026-11-16/` rồi mới thử, không sửa file gốc.
+Bước tiếp:
+1. Tái hiện bằng accoreconsole trên bản chép (skill `tkpccc-cad-console`): in thời gian từng pha (MatChon, PhongThat, LuoiVung, PhuBu, ChenThietBi, KtSauRai) bằng Stopwatch.
+2. Gốc lỗi (giả thuyết): Enter mọi phòng nhận cả mặt bao ngoài (chứa các mặt khác) thành phòng. Sửa ở `PhongThat` / `MatChon` (`NhanVung.cs`):
+   mặt chứa mặt khác hoặc rộng phi lý thì bỏ, báo `bo_bao_ngoai=`; vùng nào lưới quá lớn thì BỎ vùng đó, báo, rải tiếp vùng khác (không ném lỗi cả lệnh).
+3. Tối ưu chỗ chậm đo được (giảm phép thử điểm trong đa giác, gom insert, dim), thêm ca test đo thời gian vào `chay_thu.ps1`.
+
 ## VIỆC 16/11 TỐI (TIẾP) — GHI m² KHOANG + ỐNG NHÁNH TỰ CHỌN DN: XONG MÃ + TEST, CHƯA XEM TRONG AUTOCAD
 1. `PCCC_RAI` khoang dầm (Dam, đầu khói): ghi "x,x m²" dưới tâm mỗi khoang, dấu X hồng ở khoang dưới ngưỡng 4 / 9 m², khoang < 1 m² bỏ ghi; layer `PCCC_KHOANG_M2`;
    tắt ở tab Khoang dầm (khoá `kd_ghi_m2`). Dòng lệnh `ghi_khoang= dau_x= bo_nho_1m2=`.
