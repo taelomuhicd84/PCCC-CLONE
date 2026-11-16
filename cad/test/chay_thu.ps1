@@ -780,6 +780,35 @@ Kiem ($mInch.Success -and [int]$mInch.Groups[1].Value -ge 2 -and [int]$mInch.Gro
   "INSUNITS 1 tren ban ve mm: PCCC_RAI tu dat INSUNITS 4 roi rai phong 20 x 15 m ra vai dau (thay $($mInch.Groups[1].Value); truoc sua: hang tram dau)"
 Kiem ($out3 -match 'L\S+i: 10 [^\r\n]{0,40}module ZM') 'PCCC_DAYBC he dia chi khong co ZM ma co dau bao thuong: bao loi, khong ve'
 
+# --- Nguoi dung 16/11 (rai "do" sau khi chep net PCCC_VUNG huong dan, block ca to co hinh chi tiet): 2 phong 15 x 20 m (tuong layer TUONG),
+# 1 phong chi tiet 3 x 3 m cach xa 70 m, phong trai da co polyline PCCC_VUNG ve san (khong chon). Enter moi phong: bo cum chi tiet,
+# phong trai rai theo vung ve san (khong ve chong), phong phai tu dung; 2 x 4 dau. Luoi 2 x 2 khong lech: moi phong 1 chuoi X (3) + 1 chuoi Y (3).
+('{"ops":[{"op":"net","l":"TUONG","p":[[0,0],[30000,0],[30000,20000],[0,20000]],"kin":true},{"op":"net","l":"TUONG","p":[[15000,0],[15000,20000]]},' +
+ '{"op":"net","l":"TUONG","p":[[100000,0],[103000,0],[103000,3000],[100000,3000]],"kin":true},' +
+ '{"op":"net","l":"PCCC_VUNG","p":[[0,0],[15000,0],[15000,20000],[0,20000]],"kin":true}]}') | Set-Content -Encoding ascii "$T\cum.json"
+(@('INSUNITS', '4', 'NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '_.SAVEAS', '2018', "`"$T\cum.dwg`"", 'PCCC_SPEC', "$T\cum.json", '_.ZOOM', '_E',
+  '(setq ss (ssget "X" (list (cons 8 "TUONG"))))', 'PCCC_RAI', 'BC_KHOI', '', '', '!ss', '', '', '', '_.QSAVE') -join "`r`n") | Set-Content -Encoding ascii "$T\kb4.scr"
+$p4 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb4.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb4.out.txt"
+if (-not $p4.WaitForExit(180000)) { Stop-Process -Id $p4.Id -Force; throw "accoreconsole qua 3 phut (cum phong): $T\kb4.out.txt" }
+$out4 = [Text.Encoding]::Unicode.GetString([IO.File]::ReadAllBytes("$T\kb4.out.txt")) -replace "`0", ''
+$n4 = 0; foreach ($mm in [regex]::Matches($out4, 'PCCC_RAI BC_KHOI n=(\d+) luoi=2x2 [^\r\n]* kt=(\d+)')) { if ($mm.Groups[2].Value -eq '6') { $n4 += [int]$mm.Groups[1].Value } }
+Kiem ($out4 -match 'bo_cum=1 phong=1 ' -and $out4 -match 'theo_vung_co_san=1 ' -and ([regex]::Matches($out4, 'V\S+ng t\S+ d\S+ng m2=300 ')).Count -eq 1 -and $n4 -eq 8) `
+  "Enter moi phong: bo cum chi tiet xa, phong co PCCC_VUNG ve san rai theo vung do khong ve chong, 2 phong x 4 dau, moi phong 6 dim (n=$n4)"
+
+# Thoi gian dung phong tren ban ve that cua nguoi dung (gitignore, chi chay khi co): truoc sua 78 s (23 trieu diem cat), nay < 10 s.
+$bvThat = Get-ChildItem "$GOC\file_cad_test" -Filter 'test b*o ch*y.dwg' -ErrorAction SilentlyContinue | Select-Object -First 1
+if ($bvThat) {
+  Copy-Item $bvThat.FullName "$T\that.dwg"
+  (@('NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '(setq ss (ssget "X" (list (cons 0 "INSERT") (cons 2 "Factory 1A4- 1st"))))',
+    'PCCC_RAI', 'BC_KHOI', '', '', '!ss', '', '', '', '_.QUIT', '_Y') -join "`r`n") | Set-Content -Encoding ascii "$T\kb5.scr"
+  $p5 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/i `"$T\that.dwg`" /s `"$T\kb5.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb5.out.txt"
+  if (-not $p5.WaitForExit(300000)) { Stop-Process -Id $p5.Id -Force; throw "accoreconsole qua 5 phut (ban ve that): $T\kb5.out.txt" }
+  $out5 = [Text.Encoding]::Unicode.GetString([IO.File]::ReadAllBytes("$T\kb5.out.txt")) -replace "`0", ''
+  $mT = [regex]::Match($out5, 'thoi_gian dung_phong=(\d+)ms')
+  Kiem ($mT.Success -and [int]$mT.Groups[1].Value -lt 10000 -and $out5 -match 'thoi_gian rai=\d+ms vung=[1-9]') `
+    "Ban ve that test bao chay.dwg: dung phong $($mT.Groups[1].Value) ms (< 10 s; truoc sua 78 s), rai duoc"
+} else { 'BO    ban ve that file_cad_test\test bao chay.dwg khong co: bo ca thoi gian' }
+
 # chay_spec.ps1: -Dwg tuong doi tinh theo thu muc hien tai cua PowerShell; thu muc co dau (chu a huyen) va dau cach.
 $tmVN = "$T\Nh$([char]0xE0) A"
 New-Item -ItemType Directory $tmVN | Out-Null

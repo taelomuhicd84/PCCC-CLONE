@@ -3,23 +3,22 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
-## VIỆC ĐANG DỞ 16/11 (dừng 84 % hạn mức 5 giờ, hẹn tự làm tiếp sau 16:20) — LỖI "BƯỚC QUÁ NHỎ" + RẢI QUÁ LÂU, ĐỨNG MÁY
-Người dùng dán dòng lệnh `PCCC_RAI BC_KHOI` (Enter trần, theo hàng Khong): quét chọn ra "1 found" (một đối tượng: nghi block cả tờ / xref),
-Enter nét mẫu, `gach_cheo=553`, Enter mọi phòng → `Vùng tự dựng m2=763079.12 (533 đỉnh)` → `Lỗi: bước quá nhỏ so với vùng (60 x 139 thiết bị)`.
-Người dùng dặn: sửa lỗi này VÀ tối ưu thời gian rải (rải đầu phun lâu, có thể đứng máy).
-Bản vẽ (người dùng xác nhận): `file_cad_test\test báo cháy.dwg` gốc repo (gitignore; INSUNITS 1 mà vẽ mm, xem việc 16/11 chiều). Chép ra `ket_qua/cad_test/2026-11-16/` rồi mới thử, không sửa file gốc.
-Người dùng nói thêm: mặt bằng BÊN PHẢI rải bị đứng máy (lần đầu rải không sao). 2 polyline trắng layer PCCC_VUNG (ngoài 2 mặt bằng) là vùng plugin tự phân
-lần đầu, "chuẩn gần 90 %"; người dùng chép 2 đường xanh (cùng layer PCCC_VUNG) vào mặt bằng trái để hướng dẫn; "từ đó trở về sau làm dở ẹc": xem lại vì sao lượt sau kém.
-ĐÃ LÀM (chưa commit lúc ghi, test `chay_thu.ps1` TAT CA DAT): vùng nào lưới > 5000 thiết bị thì bỏ riêng vùng đó (`bo_vung`), không vẽ vùng, rải tiếp;
-bấm điểm mà mặt nhỏ nhất chứa điểm bao ≥ 3 phòng ≥ 4 m² thì hỏi Co/Khong (mặc định Khong, `bo_mat_bao`); in `thoi_gian dung_phong=`, `thoi_gian rai=`.
-ĐO trên bản chép `ket_qua/cad_test/2026-11-16/rai_phai.dwg` (kịch bản `rai_phai.scr`: ssget block "Factory 1A4- 1st", Enter mọi phòng):
-`thoi_gian dung_phong=78671ms doi_tuong=1 mat=37365`, `thoi_gian rai=266ms vung=57`, 112 đầu / 57 phòng. => CHẬM Ở `MatChon` (NhanVung.cs), không phải ở rải.
-Bước tiếp:
-1. Đọc `MatChon` (NhanVung.cs): xem bước nào O(n²) (cắt đoạn, dò mặt, lọc) với ~37 nghìn mặt; tối ưu (lưới ô vuông chia không gian cho phép cắt / điểm trong đa giác,
-   bỏ sớm nét không phải tường: chữ, hatch, đồ nội thất nhỏ), đo lại bằng `rai_phai.scr` (mục tiêu < 5 s), giữ nguyên kết quả 57 phòng / 112 đầu.
-2. Gốc lỗi (giả thuyết): Enter mọi phòng nhận cả mặt bao ngoài (chứa các mặt khác) thành phòng. Sửa ở `PhongThat` / `MatChon` (`NhanVung.cs`):
-   mặt chứa mặt khác hoặc rộng phi lý thì bỏ, báo `bo_bao_ngoai=`; vùng nào lưới quá lớn thì BỎ vùng đó, báo, rải tiếp vùng khác (không ném lỗi cả lệnh).
-3. Tối ưu chỗ chậm đo được (giảm phép thử điểm trong đa giác, gom insert, dim), thêm ca test đo thời gian vào `chay_thu.ps1`.
+## VIỆC 16/11 ĐÊM — RẢI NHANH, BỎ PHÒNG RÁC, THEO VÙNG VẼ SẴN, DIM THEO MẪU: XONG MÃ + TEST, CHƯA XEM TRONG AUTOCAD
+Gốc: người dùng dán lỗi `PCCC_RAI` (mặt 763 079 m², "bước quá nhỏ"), mặt bằng phải rải đứng máy, "vừa dở vừa lag"; gửi ảnh mẫu dim (`ket_qua/cad_test/2026-11-16/dim_mau.png`).
+1. Nhanh (`NhanVung.cs` `CacMat`): dựng phòng block "Factory 1A4- 1st" 74 s → 2,9–4 s, giữ 57 phòng / 112 đầu như cũ. Đo từng bước: nối khe thẳng hàng ≤ 3 m
+   nối MỌI đoạn cùng hàng (không chỉ đoạn gần nhất) sinh cầu chồng nhau, 23 triệu điểm cắt; HashSet<long> khoá cặp đỉnh băm hi ^ lo trùng hàng loạt
+   (bước đỉnh 15 s, đi mặt 34–51 s); bước khe chữ T có cửa quét cả 30 nghìn đoạn mỗi đầu (15–19 s). Sửa: chỉ nối khe gần nhất ở cả hai đầu,
+   bộ băm `KhoaLong`, lưới ô `LuoiDoan` cho bước 1b.
+2. "Dở" (`Rai.cs` nhánh Enter mọi phòng + `NhanVung.cs`): (a) quét chọn cả block tờ thì nhận cả phòng trong hình chi tiết, mặt cắt (7 cụm, 18 phòng ngoài mặt bằng):
+   `CumChinh` bỏ cụm (hộp bao cách ≤ 2 m) có tổng diện tích < 20 % cụm lớn nhất, báo `bo_cum=`; (b) polyline PCCC_VUNG người dùng vẽ sẵn (nét xanh hướng dẫn) không
+   được dùng, plugin dựng phòng rồi vẽ chồng: `TheoVungCoSan` vùng vẽ sẵn nằm trong một phòng tự dựng (≤ 1,3 lần diện tích phòng) thay phòng đó, không vẽ lại,
+   báo `theo_vung_co_san=`. Mặt bằng phải còn 39 phòng / 91 đầu, không còn đầu rơi ngoài mặt bằng.
+3. Dim (`KtLuoi`, `Rai.cs`) theo mẫu người dùng: MỘT chuỗi ngang dọc hàng đông nhất (trên cùng), MỘT chuỗi đứng dọc cột đông nhất (gần giữa vùng), đường dim
+   cách 2 x cao (sát thiết bị, trước đặt ngoài mép vùng); hàng / cột lệch lưới ≥ 2 thiết bị (so le) một chuỗi cho cả hàng; thiết bị lẻ: tường gần – thiết bị – lưới gần nhất.
+Test mới `chay_thu.ps1`: cụm chi tiết + vùng vẽ sẵn (2 phòng x 4 đầu, 6 dim/phòng); thời gian dựng phòng trên `file_cad_test\test báo cháy.dwg` < 10 s (có file mới chạy).
+`chay_thu.ps1`, `thu_mcp.ps1` TAT CA DAT; bundle đã build.
+CHƯA: người dùng tắt hẳn AutoCAD mở lại để nạp bản mới, thử lại mặt bằng phải; chữ dim chuỗi đứng có thể đè chữ chuỗi ngang chỗ hai chuỗi cắt nhau (chưa né chữ);
+ngưỡng cụm 2 m / 20 % cố định (nhà nhỏ tách rời bị bỏ thì bấm điểm trong phòng). Bước nối khe (`noi`) còn ~1,3 s, chưa tối ưu.
 
 ## VIỆC 16/11 TỐI (TIẾP) — GHI m² KHOANG + ỐNG NHÁNH TỰ CHỌN DN: XONG MÃ + TEST, CHƯA XEM TRONG AUTOCAD
 1. `PCCC_RAI` khoang dầm (Dam, đầu khói): ghi "x,x m²" dưới tâm mỗi khoang, dấu X hồng ở khoang dưới ngưỡng 4 / 9 m², khoang < 1 m² bỏ ghi; layer `PCCC_KHOANG_M2`;

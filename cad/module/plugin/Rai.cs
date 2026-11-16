@@ -707,41 +707,37 @@ namespace TKPCCC
             }
         }
 
-        /// Chuỗi kích thước thiết bị (người dùng 16/11: "tự động dim khoảng cách giữa các đầu, trùng hàng trùng cột chỉ dim 1 lần theo X và Y"):
-        /// mọi toạ độ X của thiết bị trong vùng gom thành MỘT chuỗi ngang đặt trên vùng, mọi toạ độ Y thành MỘT chuỗi đứng bên trái vùng
-        /// (thiết bị cách nhau ≤ eps theo phương đo là một mốc); hai đầu chuỗi là mép vùng ngang qua thiết bị đầu, cuối (khoảng cách tới tường).
-        /// Đường gióng lấy từ thiết bị trên cùng của cột / trái cùng của hàng. cheo: thêm kích thước chéo từ thiết bị gần nhất tới mỗi góc lồi.
+        /// Chuỗi kích thước thiết bị theo bản mẫu người dùng gửi 16/11 (hàng trùng toạ độ chỉ dim một lần, khác lưới mới dim thêm, dim sát thiết bị):
+        /// lưới = cột (cùng X trong eps) có ≥ 2 thiết bị hoặc có thiết bị ở hàng chính (hàng đông nhất, trên cùng), hàng tương tự với cột chính (cột đông nhất, gần giữa vùng).
+        /// MỘT chuỗi ngang tường – các cột lưới – tường dọc hàng chính, đường dim cách hàng 2 x cao; MỘT chuỗi đứng tường – các hàng lưới – tường dọc cột chính.
+        /// Thiết bị lệch lưới: chuỗi riêng tường gần – thiết bị – cột (hàng) lưới gần nhất phía kia, sát thiết bị. cheo: thêm dim chéo tới góc lồi.
         /// Trả các dim chưa thêm vào bản vẽ (nơi gọi đặt layer, cỡ).
         static List<Dimension> KtLuoi(List<Point2d> vung, List<Point3d> diem, bool cheo, ObjectId kieu, double cao, double eps)
         {
             List<Dimension> kq = new List<Dimension>();
             if (diem.Count == 0) return kq;
-            double x0 = vung.Min(p => p.X), y1 = vung.Max(p => p.Y), ra = 4 * cao;
+            double ra = 2 * cao;
             List<Point2d> chuyen = vung.Select(p => new Point2d(p.Y, p.X)).ToList();
-            foreach (bool doX in new[] { true, false })
+            List<List<Point3d>> hang = NhomToaDo(diem, false, eps), cot = NhomToaDo(diem, true, eps);
+            List<Point3d> hangChinh = hang.OrderByDescending(h => h.Count).ThenByDescending(h => h[0].Y).First();
+            double giua = (vung.Min(p => p.X) + vung.Max(p => p.X)) / 2;
+            List<Point3d> cotChinh = cot.OrderByDescending(c => c.Count).ThenBy(c => Math.Abs(c[0].X - giua)).First();
+            List<double> xs = cot.Where(c => c.Count >= 2 || hangChinh.Any(q => Math.Abs(q.X - c[0].X) <= eps)).Select(c => c[0].X).ToList();
+            List<double> ys = hang.Where(h => h.Count >= 2 || cotChinh.Any(q => Math.Abs(q.Y - h[0].Y) <= eps)).Select(h => h[0].Y).ToList();
+            kq.AddRange(ChuoiTuong(vung, xs, hangChinh[0].Y, hangChinh[0].X, true, ra, kieu, false));
+            kq.AddRange(ChuoiTuong(chuyen, ys, cotChinh[0].X, cotChinh[0].Y, false, ra, kieu, false));
+            // Hàng (cột) có thiết bị lệch lưới: ≥ 2 thiết bị (rải so le) thì một chuỗi cho cả hàng; một thiết bị thì chuỗi riêng tường – thiết bị – lưới.
+            foreach (List<Point3d> h in hang)
             {
-                // Mốc: một điểm cho mỗi cột (đo X) / hàng (đo Y), lấy thiết bị gần đường dim nhất.
-                List<Point3d> moc = new List<Point3d>();
-                foreach (Point3d p in diem.OrderBy(q => doX ? q.X : q.Y))
-                {
-                    Point3d tr = moc.Count > 0 ? moc[moc.Count - 1] : Point3d.Origin;
-                    if (moc.Count > 0 && (doX ? p.X - tr.X : p.Y - tr.Y) <= eps)
-                    {
-                        if (doX ? p.Y > tr.Y : p.X < tr.X) moc[moc.Count - 1] = p;
-                        continue;
-                    }
-                    moc.Add(p);
-                }
-                // Hai đầu: mép vùng trên đường ngang (dọc) qua thiết bị đầu và cuối.
-                Point3d dau = moc[0], cuoi = moc[moc.Count - 1];
-                double[] k0 = KhoangNgang(doX ? vung : chuyen, doX ? dau.Y : dau.X).FirstOrDefault(k => k[0] <= (doX ? dau.X : dau.Y) + 1e-6 && k[1] >= (doX ? dau.X : dau.Y) - 1e-6);
-                double[] k1 = KhoangNgang(doX ? vung : chuyen, doX ? cuoi.Y : cuoi.X).FirstOrDefault(k => k[0] <= (doX ? cuoi.X : cuoi.Y) + 1e-6 && k[1] >= (doX ? cuoi.X : cuoi.Y) - 1e-6);
-                if (k0 != null) moc.Insert(0, doX ? new Point3d(k0[0], dau.Y, 0) : new Point3d(dau.X, k0[0], 0));
-                if (k1 != null) moc.Add(doX ? new Point3d(k1[1], cuoi.Y, 0) : new Point3d(cuoi.X, k1[1], 0));
-                moc = GomMoc(moc, doX, 1e-6);
-                if (moc.Count < 2) continue;
-                Point3d qua = doX ? new Point3d(x0, y1 + ra, 0) : new Point3d(x0 - ra, y1, 0);
-                kq.AddRange(ChuoiKt(moc, doX, qua, kieu));
+                if (h == hangChinh || h.All(p => xs.Any(x => Math.Abs(x - p.X) <= eps))) continue;
+                if (h.Count >= 2) kq.AddRange(ChuoiTuong(vung, h.Select(p => p.X).ToList(), h[0].Y, h[0].X, true, ra, kieu, false));
+                else kq.AddRange(ChuoiTuong(vung, xs, h[0].Y, h[0].X, true, ra, kieu, true));
+            }
+            foreach (List<Point3d> c in cot)
+            {
+                if (c == cotChinh || c.All(p => ys.Any(y => Math.Abs(y - p.Y) <= eps))) continue;
+                if (c.Count >= 2) kq.AddRange(ChuoiTuong(chuyen, c.Select(p => p.Y).ToList(), c[0].X, c[0].Y, false, ra, kieu, false));
+                else kq.AddRange(ChuoiTuong(chuyen, ys, c[0].X, c[0].Y, false, ra, kieu, true));
             }
             if (cheo)
                 foreach (Point2d[] c in CheoGoc(vung, diem))
@@ -751,6 +747,46 @@ namespace TKPCCC
                     kq.Add(new AlignedDimension(a, b, new Point3d((a.X + b.X) / 2, (a.Y + b.Y) / 2, 0), "", kieu));
                 }
             return kq;
+        }
+
+        /// Thiết bị gom theo X (doX, thành cột) hoặc Y (thành hàng): toạ độ liền nhau cách ≤ eps là một nhóm, phần tử đầu là mốc.
+        static List<List<Point3d>> NhomToaDo(List<Point3d> diem, bool doX, double eps)
+        {
+            List<List<Point3d>> kq = new List<List<Point3d>>();
+            foreach (Point3d p in diem.OrderBy(q => doX ? q.X : q.Y))
+            {
+                List<Point3d> cuoi = kq.Count > 0 ? kq[kq.Count - 1] : null;
+                if (cuoi != null && (doX ? p.X - cuoi[cuoi.Count - 1].X : p.Y - cuoi[cuoi.Count - 1].Y) <= eps) cuoi.Add(p);
+                else kq.Add(new List<Point3d> { p });
+            }
+            return kq;
+        }
+
+        /// Một chuỗi dim dọc đường "duong" (doX: đường ngang y = duong, toạ độ đo là X; không thì d là đa giác đã đổi X/Y) qua điểm có toạ độ t.
+        /// le = false: tường – mọi toạ độ lưới trong khoảng – tường. le = true (thiết bị lệch lưới tại t): tường gần – t – toạ độ lưới gần nhất phía kia.
+        static List<RotatedDimension> ChuoiTuong(List<Point2d> d, List<double> luoi, double duong, double t, bool doX, double ra, ObjectId kieu, bool le)
+        {
+            double[] k = KhoangNgang(d, duong).FirstOrDefault(x => x[0] <= t + 1e-6 && x[1] >= t - 1e-6);
+            List<double> v = new List<double>();
+            if (!le)
+            {
+                v.AddRange(k == null ? luoi : luoi.Where(x => x >= k[0] - 1e-6 && x <= k[1] + 1e-6));
+                if (k != null) { v.Add(k[0]); v.Add(k[1]); }
+            }
+            else
+            {
+                v.Add(t);
+                if (k != null)
+                {
+                    bool trai = t - k[0] <= k[1] - t; // tường gần ở phía nhỏ
+                    v.Add(trai ? k[0] : k[1]);
+                    IEnumerable<double> kia = trai ? luoi.Where(x => x > t && x <= k[1]) : luoi.Where(x => x < t && x >= k[0]);
+                    if (kia.Any()) v.Add(trai ? kia.Min() : kia.Max());
+                }
+            }
+            List<Point3d> moc = GomMoc(v.Select(x => doX ? new Point3d(x, duong, 0) : new Point3d(duong, x, 0)), doX, 1e-6);
+            if (moc.Count < 2) return new List<RotatedDimension>();
+            return ChuoiKt(moc, doX, doX ? new Point3d(moc[0].X, duong + ra, 0) : new Point3d(duong + ra, moc[0].Y, 0), kieu);
         }
 
         /// Dim tự động sau PCCC_RAI theo trang Cài đặt (kiểu dim, cách dim, layer). Trả số dim đã vẽ.
@@ -1347,6 +1383,7 @@ namespace TKPCCC
             }
             if (gach.Count > 0) ed.WriteMessage("\n[TKPCCC] gach_cheo=" + gach.Count + " (hatch gạch chéo = công trình hiện hữu: Enter mọi phòng thì bỏ qua).");
             bool veVung = vung.Count == 0;
+            HashSet<List<Point2d>> daCo = new HashSet<List<Point2d>>(); // vùng PCCC_VUNG vẽ sẵn dùng thay phòng tự dựng: không vẽ lại
             if (veVung)
             {
                 if (mat.Count == 0)
@@ -1367,6 +1404,9 @@ namespace TKPCCC
                         List<List<Point2d>> pt = PhongThat(mat, m);
                         vung = pt.Where(f0 => !MatKhongRai(f0, oX, gach)).ToList();
                         if (pt.Count > vung.Count) ed.WriteMessage("\n[TKPCCC] bo_phong=" + (pt.Count - vung.Count) + " (ô X, gạch chéo).");
+                        int boPhong, boCum;
+                        vung = CumChinh(vung, 2 / m, out boPhong, out boCum);
+                        if (boPhong > 0) ed.WriteMessage("\n[TKPCCC] bo_cum=" + boCum + " phong=" + boPhong + " (cụm phòng nhỏ tách xa mặt bằng chính: hình chi tiết, mặt cắt; cần rải thì bấm điểm trong phòng).");
                         break;
                     }
                     if (pr.Status != PromptStatus.OK) break;
@@ -1395,6 +1435,12 @@ namespace TKPCCC
                 }
                 // Người dùng 16/11: vùng vẽ ra là đa giác gọn (bỏ khấc cột, cung cửa, gờ < 1 m), không bám từng nét tường.
                 vung = vung.Select(d => LamGon(d, LAM_GON_M / m, 0.002 / m)).ToList();
+                List<List<Point2d>> coSan = VungCoSan(db);
+                if (coSan.Count > 0)
+                {
+                    vung = TheoVungCoSan(vung, coSan, daCo);
+                    if (daCo.Count > 0) ed.WriteMessage("\n[TKPCCC] theo_vung_co_san=" + daCo.Count + " (vùng " + LAYER_VUNG + " vẽ sẵn trong phòng: rải theo vùng đó, không vẽ chồng).");
+                }
             }
 
             // Khoang dầm (TCVN 7568-14:2025 5.9.1.1.6 c–f; bộ bản vẽ mẫu ghi "khoang < 9 m² => không bố trí theo khoang dầm"): khoang nhỏ hơn ngưỡng
@@ -1484,6 +1530,7 @@ namespace TKPCCC
                     if (veVung && !xem)
                         foreach (List<Point2d> dv in laHopNho ? nhoD : new List<List<Point2d>> { d })
                         {
+                            if (daCo.Contains(dv)) continue;
                             Polyline pl = PlVung(dv, lop);
                             ms.AppendEntity(pl);
                             tr.AddNewlyCreatedDBObject(pl, true);

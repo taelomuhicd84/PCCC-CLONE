@@ -506,3 +506,10 @@ Người dùng dán lỗi PCCC_RAI (mặt 763 079 m², 533 đỉnh → lưới 6
 Đã làm: bỏ riêng vùng lưới quá lớn, hỏi khi điểm bấm rơi vào mặt bao ≥ 3 phòng, in thời gian từng pha. Đo bản chép `rai_phai.dwg`:
 dựng phòng 78,7 s (37 365 mặt từ 1 block cả mặt bằng), rải 0,27 s → việc kế: tối ưu `MatChon` (cad/TIEN_DO.md).
 Luật mới của người dùng: 95–98 % dừng, ghi tiến độ + lịch sử; reset thì phiên nhánh ngữ cảnh sạch làm tiếp, không hỏi.
+
+## 2026-11-16 đêm — Rải nhanh 74 s → 3 s, bỏ phòng rác, theo vùng vẽ sẵn, dim theo mẫu
+Phiên tự chạy khi hạn mức reset (người dùng cho phép). Đo từng bước `CacMat` trên bản chép `rai_phai.dwg`: chậm do cầu nối khe thẳng hàng tới mọi đoạn cùng hàng
+(23 triệu điểm cắt) và HashSet<long> băm trùng; sửa chỉ nối khe gần nhất + bộ băm + lưới ô, kết quả phòng / đầu không đổi.
+Ảnh cả tờ cho thấy "dở" vì: Enter mọi phòng nhận cả hình chi tiết trong block tờ, và không dùng vùng PCCC_VUNG người dùng vẽ sẵn → bỏ cụm nhỏ xa, thay phòng bằng vùng vẽ sẵn.
+Dim theo ảnh mẫu người dùng (hàng trùng dim 1 lần, chỉ dim thêm thiết bị lệch, dim sát): ô chữ L rải so le của test lộ lỗi chuỗi riêng từng đầu chồng chữ → hàng lệch ≥ 2 đầu một chuỗi.
+Bẫy: block tờ xoay 270° (toạ độ trong block không phải toạ độ bản vẽ); ảnh `anh` (in bằng `-PLOT`) của bản gốc không thấy các hình chi tiết đó (nghi layer không in) mà plugin vẫn dựng phòng từ chúng.
