@@ -564,3 +564,8 @@ block/layer/chữ thang máy, thang bộ, thiết bị vệ sinh (chữ có "S�
 Người dùng: sảnh thang máy cũng không cần đầu báo; xác nhận vùng rải cho duyệt rồi mới rải; "rải khoang dầm sai", gửi bản mẫu (file .bak 43 MB, DWG 2018).
 Mẫu là nhà xưởng: dò tờ theo tiêu đề chữ (\U+ giải mã), đo toạ độ 118 block đầu báo: lưới 10 x 10,6 m, mỗi khoang 2 x 2 đầu cách trục 2 m, bước 6 / 6,6 m,
 qua dầm 4 m, vòng R7200 ở đầu biên. Ghi ở `cad/knowledge/mau-rai-khoang-dam.md`. `GomKhu` bỏ ngoại lệ "SẢNH".
+
+## 2026-11-17 — d = h dầm − dày sàn, rải thử tầng 8 trần 4,5 m
+Người dùng: khoang dầm theo vì kèo, trừ nhà nhiều tầng sàn deck/BTCT (như KOCHAM); có dầm < 0,3 m phải xem kỹ; d phải trừ dày sàn. File kết cấu không ghi
+dày sàn (mặt cắt dầm không vẽ sàn): với sàn 100–150 dầm 300/400 bỏ, 500/700/1400 giữ. Gửi đề xuất vùng 2 lần, duyệt lần 2. Thêm từ khoá `DaySan`.
+Rải: báo cháy 8 đầu, sprinkler 26 + 5 đầu.

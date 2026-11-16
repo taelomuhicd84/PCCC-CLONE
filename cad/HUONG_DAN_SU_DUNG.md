@@ -52,7 +52,7 @@ Plugin thiết kế PCCC cho AutoCAD 2021 trở lên: rải đầu báo cháy, �
 Dấu nhắc của `PCCC_RAI` với đầu báo khói, nhiệt:
 
 1. Mã thiết bị: `BC_KHOI` (khói điểm), `BC_KHOI_TRAN`, `BC_NHIET`, `BC_BEAM` (tia chiếu: vẽ tia nối hai tường).
-2. Chiều cao trần (m), Enter = không xét. Từ khoá: `HeSo` = mức tối ưu k 50–100 % (rải dày hơn tiêu chuẩn); `Dam` = trần có dầm sâu hơn 0,3 m (xét từng khoang dầm, đọc cỡ `b x h` = rộng x cao trên mặt bằng dầm hoặc nhập cỡ; nhãn ghi ngược như `DS 400X250` vẫn đúng vì plugin lấy số lớn làm chiều cao); `XemTruoc` = chỉ đếm, không vẽ.
+2. Chiều cao trần (m), Enter = không xét. Từ khoá: `HeSo` = mức tối ưu k 50–100 % (rải dày hơn tiêu chuẩn); `Dam` = trần có dầm sâu hơn 0,3 m (xét từng khoang dầm; `DaySan` = nhập chiều dày sàn mm, độ sâu dầm d = h dầm − dày sàn, dầm còn d ≤ 0,3 m thì bỏ; đọc cỡ `b x h` = rộng x cao trên mặt bằng dầm hoặc nhập cỡ; nhãn ghi ngược như `DS 400X250` vẫn đúng vì plugin lấy số lớn làm chiều cao); `XemTruoc` = chỉ đếm, không vẽ.
 3. Mỗi hàng chia lại theo bề rộng thật của hàng? Enter = Không (Co cho phòng chữ L có WC).
 4. Quét chọn mặt bằng (tường các phòng hoặc các vùng `PCCC_VUNG`), Enter.
 5. Bấm nét phân vùng mẫu, Enter = tự nhận từ tường.

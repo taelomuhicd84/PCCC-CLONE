@@ -852,6 +852,11 @@ Kiem ($out4 -match 'bo_cum=1 phong=1 ' -and $out4 -match 'theo_vung_co_san=1 ' -
   '-LAYER', 'S', '0', '', '_.CIRCLE', '522500,5000', '300', '-BLOCK', 'BON_CAU', '522500,5000', 'L', '', '-INSERT', 'BON_CAU', '522500,5000', '1', '', '0',
   '_.TEXT', '526000,5000', '250', '0', 'THANG BO', '_.ZOOM', 'W', '499000,-1000', '531000,11000',
   'PCCC_RAI', 'BC_KHOI', '', '', 'C', '499500,-500', '530500,10500', '', '', '',
+  # 8 (nguoi dung 16/11: d = h dam - day san): vung 12 x 6 m, luoi dam B2 (250x400), san 120 -> d = 0,28 <= 0,3: bo dam, khong chia khoang
+  '-LAYER', 'M', 'PCCC_VUNG', '', '_.RECTANG', '600000,0', '612000,6000', '-LAYER', 'M', 'DAM', '',
+  '_.LINE', '604000,0', '604000,6000', '', '_.LINE', '608000,0', '608000,6000', '', '_.LINE', '600000,3000', '612000,3000', '',
+  '_.TEXT', '604300,4500', '250', '0', 'B2 (250x400)', '-LAYER', 'S', '0', '', '_.ZOOM', 'W', '599000,-1000', '613000,7000',
+  'PCCC_RAI', 'BC_KHOI', 'Dam', 'DaySan', '120', '4.5', '', 'W', '599500,-500', '612500,6500', '', '', '604000,1000', '',
   '_.QSAVE') -join "`r`n") | Set-Content -Encoding ascii "$T\kb6.scr"
 $p6 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb6.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb6.out.txt"
 if (-not $p6.WaitForExit(180000)) { Stop-Process -Id $p6.Id -Force; throw "accoreconsole qua 3 phut (sua 6 loi): $T\kb6.out.txt" }
@@ -872,6 +877,7 @@ Kiem ($m5.Success -and [int]$m5.Groups[2].Value -ge 1 -and [double]$m5.Groups[1]
 Kiem ($m5.Success -and [double]$m5.Groups[1].Value -ge 27.4) "Day di vong cach mep vung >= 0,4 m, khong trung net tuong (m=$($m5.Groups[1].Value); bam mep 27)"
 Kiem ($out6 -match 'bo_khu_khong_bao=3 m2=50,50,50 ' -and ([regex]::Matches($out6, 'V\S+ng t\S+ d\S+ng m2=150 ')).Count -eq 1) `
   'Enter moi phong: bo phong chu SANH THANG MAY, phong block BON_CAU, phong chu THANG BO (3 x 50 m2), chi rai phong 150 m2'
+Kiem ($out6 -match 'dam ky_hieu=1 day_san=120[\s\S]{0,600}dam_sau=0 dam_nong=3 ') 'Dam + DaySan 120: dam 250x400 con d = 0,28 m <= 0,3: bo ca 3 net dam, khong chia khoang'
 
 # Thoi gian dung phong tren ban ve that cua nguoi dung (gitignore, chi chay khi co): truoc sua 78 s (23 trieu diem cat), nay < 10 s.
 $bvThat = Get-ChildItem "$GOC\file_cad_test" -Filter 'test b*o ch*y.dwg' -ErrorAction SilentlyContinue | Select-Object -First 1

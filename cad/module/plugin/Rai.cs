@@ -1185,6 +1185,17 @@ namespace TKPCCC
             if (v == null) return;
             double m = HeSoMet(db), s, k = 0.001 / m, dt = 0, le = -1, tuongMax = 0, cachMin = 0;
             bool xem = false, tia = false, khoangDam = false;
+            // Người dùng chốt tối 16/11: độ sâu dầm d = h dầm TRỪ chiều dày sàn (phần nhô dưới sàn). Từ khoá DaySan ở dấu nhắc trần / bước S.
+            double daySan = 0;
+            Func<bool> hoiSan = () =>
+            {
+                PromptDoubleOptions o = new PromptDoubleOptions("\nChiều dày sàn (mm), độ sâu dầm d = h dầm - dày sàn: ");
+                o.AllowNegative = false; o.AllowZero = true;
+                PromptDoubleResult rs = ed.GetDouble(o);
+                if (rs.Status != PromptStatus.OK) return false;
+                daySan = rs.Value / 1000;
+                return true;
+            };
             double hTran = 0;
             Dictionary<string, object> tc = TieuChuanRai(v.ma, 0);
             if (tc != null)
@@ -1197,16 +1208,18 @@ namespace TKPCCC
                 PromptDoubleResult hcr;
                 while (true)
                 {
-                    string them = (heSo < 100 ? ", k = " + heSo + " %" : "") + (coDam ? ", có dầm" : "") + (xem ? ", xem trước" : "");
+                    string them = (heSo < 100 ? ", k = " + heSo + " %" : "") + (coDam ? ", có dầm" : "") + (daySan > 0 ? ", sàn " + Math.Round(daySan * 1000) + " mm" : "") + (xem ? ", xem trước" : "");
                     PromptDoubleOptions hc = new PromptDoubleOptions("\nChiều cao trần (m), Enter = không xét" + (them != "" ? " (" + them.Substring(2) + ")" : ""));
                     hc.Keywords.Add("HeSo"); // AutoCAD tự nối " [HeSo/Dam/XemTruoc]: "
                     hc.Keywords.Add("Dam");
+                    hc.Keywords.Add("DaySan");
                     hc.Keywords.Add("XemTruoc");
                     hc.AllowNegative = false; hc.AllowZero = false; hc.AllowNone = true;
                     hcr = ed.GetDouble(hc);
                     if (hcr.Status != PromptStatus.Keyword) break;
                     if (hcr.StringResult == "Dam") { coDam = true; continue; }
                     if (hcr.StringResult == "XemTruoc") { xem = true; continue; }
+                    if (hcr.StringResult == "DaySan") { if (!hoiSan()) return; continue; }
                     PromptIntegerOptions ko = new PromptIntegerOptions("\nMức tối ưu k (%) so với khoảng cách tối đa của tiêu chuẩn, 50–100: ");
                     ko.LowerLimit = 50; ko.UpperLimit = 100; ko.DefaultValue = heSo; ko.UseDefaultValue = true;
                     PromptIntegerResult kr = ed.GetInteger(ko);
@@ -1246,13 +1259,15 @@ namespace TKPCCC
                 // Mã chưa có trị số tiêu chuẩn (sprinkler...): người thiết kế nhập theo TCVN đang áp dụng.
                 // Dam (KOCHAM 16/11: trần hở, dầm > 300 mm thì đầu phun bố trí trong từng khoang dầm): chia vùng theo dầm sâu như đầu báo, rải từng khoang.
                 PromptDoubleOptions so = new PromptDoubleOptions("\nBước tối đa S giữa hai thiết bị (m) theo tiêu chuẩn áp dụng" + (khoangDam ? " (có dầm)" : ""));
-                so.Keywords.Add("Dam"); // AutoCAD tự nối " [Dam]: "
+                so.Keywords.Add("Dam"); // AutoCAD tự nối " [Dam/DaySan]: "
+                so.Keywords.Add("DaySan");
                 so.AllowNegative = false; so.AllowZero = false;
                 PromptDoubleResult sr;
                 while (true)
                 {
                     sr = ed.GetDouble(so);
                     if (sr.Status != PromptStatus.Keyword) break;
+                    if (sr.StringResult == "DaySan") { if (!hoiSan()) return; continue; }
                     khoangDam = true;
                     so.Message = "\nBước tối đa S giữa hai thiết bị (m) theo tiêu chuẩn áp dụng (có dầm)";
                 }
@@ -1354,10 +1369,10 @@ namespace TKPCCC
                             foreach (ObjectId id in lr.Value.GetObjectIds())
                             {
                                 idDam.Add(id);
-                                if (d > 0.3 + 1e-9) damThem.AddRange(DoanNet(db, id));
+                                if (d - daySan > 0.3 + 1e-9) damThem.AddRange(DoanNet(db, id));
                             }
                             ed.WriteMessage("\n[TKPCCC] tung_dam d=" + d.ToString(CultureInfo.InvariantCulture) + " m: " + lr.Value.Count + " nét"
-                                + (d > 0.3 + 1e-9 ? " (sâu, chia khoang " + (damThem.Count - truoc) + " đoạn)" : " (≤ 0,3 m: bỏ, trần phẳng)"));
+                                + (d - daySan > 0.3 + 1e-9 ? " (sâu, chia khoang " + (damThem.Count - truoc) + " đoạn)" : " (≤ 0,3 m: bỏ, trần phẳng)"));
                         }
                     }
                     else if (tl != "")
@@ -1381,10 +1396,10 @@ namespace TKPCCC
                         }
                         if (gan <= 10 / m) break;
                     }
-                    if (gan <= 10 / m) return d > 0.3 + 1e-9;               // ký hiệu gần nhất trong 10 m
-                    return sauChung > 0 ? sauChung > 0.3 + 1e-9 : true;     // không ký hiệu gần, không cỡ chung: coi là dầm sâu (chia khoang, rải dày hơn)
+                    if (gan <= 10 / m) return d - daySan > 0.3 + 1e-9;               // ký hiệu gần nhất trong 10 m
+                    return sauChung > 0 ? sauChung - daySan > 0.3 + 1e-9 : true;     // không ký hiệu gần, không cỡ chung: coi là dầm sâu (chia khoang, rải dày hơn)
                 };
-                ed.WriteMessage("\n[TKPCCC] dam ky_hieu=" + nhan.Count + (sauChung > 0 ? " d_chung=" + sauChung.ToString(CultureInfo.InvariantCulture) : "")
+                ed.WriteMessage("\n[TKPCCC] dam ky_hieu=" + nhan.Count + (daySan > 0 ? " day_san=" + Math.Round(daySan * 1000) : "") + (sauChung > 0 ? " d_chung=" + sauChung.ToString(CultureInfo.InvariantCulture) : "")
                     + (damThem != null ? " tung_dam=" + damThem.Count : ""));
             }
             List<List<Point2d>> vung, mat, oX, gach;
