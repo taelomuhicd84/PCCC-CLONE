@@ -66,9 +66,9 @@ namespace TKPCCC
         }
 
         /// Ký hiệu dầm "b x h" trong các đối tượng (cả chữ trong block lồng nhau): tâm hộp bao chữ -> độ sâu (m).
-        static List<KeyValuePair<Point2d, double>> NhanDam(ObjectId[] ids)
+        static List<KeyValuePair<Point2d, Vector2d>> NhanDam(ObjectId[] ids)
         {
-            List<KeyValuePair<Point2d, double>> kq = new List<KeyValuePair<Point2d, double>>();
+            List<KeyValuePair<Point2d, Vector2d>> kq = new List<KeyValuePair<Point2d, Vector2d>>();
             Database db = ids.Length > 0 ? ids[0].Database : null;
             if (db == null) return kq;
             using (Transaction tr = db.TransactionManager.StartTransaction())
@@ -83,7 +83,7 @@ namespace TKPCCC
             return kq;
         }
 
-        static void ChuDam(Entity e, int sau, List<KeyValuePair<Point2d, double>> kq)
+        static void ChuDam(Entity e, int sau, List<KeyValuePair<Point2d, Vector2d>> kq)
         {
             if (!e.Visible) return;
             BlockReference br = e as BlockReference;
@@ -108,7 +108,8 @@ namespace TKPCCC
             if (d <= 0) return;
             Point3d p = dt != null ? dt.Position : mt.Location;
             try { Extents3d x = e.GeometricExtents; p = x.MinPoint + (x.MaxPoint - x.MinPoint) * 0.5; } catch (System.Exception) { }
-            kq.Add(new KeyValuePair<Point2d, double>(new Point2d(p.X, p.Y), d));
+            Vector2d huong = dt != null ? new Vector2d(Math.Cos(dt.Rotation), Math.Sin(dt.Rotation)) : new Vector2d(mt.Direction.X, mt.Direction.Y).GetNormal();
+            kq.Add(new KeyValuePair<Point2d, Vector2d>(new Point2d(p.X, p.Y), huong * d)); // hướng chữ, dài = độ sâu dầm (m)
         }
 
         /// Các đoạn thẳng của một line / polyline (cung coi là dây cung).
@@ -1316,7 +1317,7 @@ namespace TKPCCC
                     mau.Remove(kh); // nét dầm không dựng làm tường
                     if (damMau.Add(kh)) ed.WriteMessage("\n[TKPCCC] Nét dầm mẫu: layer " + kh.Replace("|", ", màu ") + ".");
                 }
-                List<KeyValuePair<Point2d, double>> nhan = NhanDam(qr.Value.GetObjectIds());
+                List<KeyValuePair<Point2d, Vector2d>> nhan = NhanDam(qr.Value.GetObjectIds());
                 double sauChung = -1;
                 if (damMau.Count == 0 || nhan.Count == 0)
                 {
@@ -1359,7 +1360,18 @@ namespace TKPCCC
                 giuDam = dn =>
                 {
                     double gan = double.MaxValue, d = -1;
-                    foreach (KeyValuePair<Point2d, double> kv in nhan) { double c = CachDoan(dn, kv.Key); if (c < gan) { gan = c; d = kv.Value; } }
+                    // KOCHAM 16/11: nhãn gần nhất hay là nhãn dầm cắt ngang (dầm sâu bị coi nông, 2 cặp khoang gộp): ưu tiên nhãn chữ song song nét dầm.
+                    Vector2d u = (dn[1] - dn[0]).GetNormal();
+                    foreach (bool songSong in new[] { true, false })
+                    {
+                        foreach (KeyValuePair<Point2d, Vector2d> kv in nhan)
+                        {
+                            if (songSong && Math.Abs(u.X * kv.Value.Y - u.Y * kv.Value.X) > 0.26 * kv.Value.Length) continue;
+                            double c = CachDoan(dn, kv.Key);
+                            if (c < gan) { gan = c; d = kv.Value.Length; }
+                        }
+                        if (gan <= 10 / m) break;
+                    }
                     if (gan <= 10 / m) return d > 0.3 + 1e-9;               // ký hiệu gần nhất trong 10 m
                     return sauChung > 0 ? sauChung > 0.3 + 1e-9 : true;     // không ký hiệu gần, không cỡ chung: coi là dầm sâu (chia khoang, rải dày hơn)
                 };
@@ -1375,7 +1387,9 @@ namespace TKPCCC
             if (idDam.Count > 0) conLai = conLai.Where(id => !idDam.Contains(id)).ToArray(); // line dầm chọn tay không làm tường
             int[] demDam;
             System.Diagnostics.Stopwatch dongHo = System.Diagnostics.Stopwatch.StartNew(); // người dùng 16/11: rải lâu, đứng máy: in thời gian từng pha
-            MatChon(db, conLai, mau.Count > 0 ? mau : null, damMau, giuDam, damThem, out vung, out mat, out oX, out gach, out demDam);
+            Dictionary<List<Point2d>, List<Point2d>> khoangChia; // khoang -> vùng vẽ sẵn chứa nó
+            MatChon(db, conLai, mau.Count > 0 ? mau : null, damMau, giuDam, damThem, out vung, out mat, out oX, out gach, out demDam, out khoangChia);
+            if (khoangChia.Count > 0) ed.WriteMessage("\n[TKPCCC] chia_khoang=" + khoangChia.Count + " (vùng " + LAYER_VUNG + " vẽ sẵn chia theo dầm sâu; nét khoang vẽ trên layer " + LAYER_KHOANG + ")");
             ed.WriteMessage("\n[TKPCCC] thoi_gian dung_phong=" + dongHo.ElapsedMilliseconds + "ms doi_tuong=" + conLai.Length + " mat=" + mat.Count);
             if (khoangDam && demDam[0] + demDam[1] > 0)
                 ed.WriteMessage("\n[TKPCCC] dam_sau=" + demDam[0] + " dam_nong=" + demDam[1] + " (dầm nông d ≤ 0,3 m bỏ, rải như trần phẳng: 5.9.1.1.6 a)");
@@ -1494,6 +1508,12 @@ namespace TKPCCC
                 ObjectId lopTam = xem ? LopXemTruoc(db, tr) : ObjectId.Null;
                 double rTam = tc == null ? 0 : LaySo(tc, "r", 0) * s / D(Lay(tc, "s")); // R tiêu chuẩn (m) nhân cùng tỉ lệ với bước (k, dầm, đổi đơn vị)
                 int soTam = 0;
+                Dictionary<List<Point2d>, List<Point3d>> diemCha = new Dictionary<List<Point2d>, List<Point3d>>();
+                if (!xem && khoangChia.Count > 0)
+                {
+                    ObjectId lopK = DamBaoLayer(db, tr, LAYER_KHOANG, 6);
+                    foreach (List<Point2d> kc in khoangChia.Keys) { Polyline pk = PlVung(kc, lopK); ms.AppendEntity(pk); tr.AddNewlyCreatedDBObject(pk, true); }
+                }
                 // Thanh tiến độ + Esc mỗi phòng (review 15/11: lệnh dài không dừng được, AutoCAD "Not Responding"). Esc: ném lỗi, transaction không commit.
                 Autodesk.AutoCAD.Runtime.ProgressMeter tienDo = new Autodesk.AutoCAD.Runtime.ProgressMeter();
                 tienDo.SetLimit(vungRai.Count);

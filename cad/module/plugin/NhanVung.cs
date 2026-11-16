@@ -953,12 +953,16 @@ namespace TKPCCC
             out List<List<Point2d>> oX, out List<List<Point2d>> gach)
         {
             int[] dem;
-            MatChon(db, ids, mau, null, null, null, out co, out mat, out oX, out gach, out dem);
+            Dictionary<List<Point2d>, List<Point2d>> khoang;
+            MatChon(db, ids, mau, null, null, null, out co, out mat, out oX, out gach, out dem, out khoang);
         }
 
+        /// khoang: khoang dầm chia ra từ vùng PCCC_VUNG vẽ sẵn -> vùng cha (KOCHAM 16/11: có vùng vẽ sẵn thì trước đây không chia theo dầm), đã thay vào co.
         static void MatChon(Database db, ObjectId[] ids, HashSet<string> mau, HashSet<string> damMau, Func<Point2d[], bool> giuDam, List<Point2d[]> damThem,
-            out List<List<Point2d>> co, out List<List<Point2d>> mat, out List<List<Point2d>> oX, out List<List<Point2d>> gach, out int[] demDam)
+            out List<List<Point2d>> co, out List<List<Point2d>> mat, out List<List<Point2d>> oX, out List<List<Point2d>> gach, out int[] demDam,
+            out Dictionary<List<Point2d>, List<Point2d>> khoang)
         {
+            khoang = new Dictionary<List<Point2d>, List<Point2d>>();
             co = new List<List<Point2d>>();
             mat = new List<List<Point2d>>();
             oX = new List<List<Point2d>>();
@@ -1012,8 +1016,48 @@ namespace TKPCCC
                     if (doan.Count >= 3)
                         mat = CacMat(doan, n.Tol, HO_CUA_M / HeSoMet(db), n.Cua, HO_CUA_MAX_M / HeSoMet(db)).Select(v => BoThangHang(v, n.Tol)).ToList();
                 }
+                // Vùng vẽ sẵn + dầm: chia từng vùng theo dầm sâu (5.9.1.1.6 d) thành khoang.
+                if (co.Count > 0 && (coDam || damThem != null))
+                {
+                    List<Point2d[]> dd = new List<Point2d[]>();
+                    if (coDam)
+                    {
+                        n.Mau = damMau; n.ChiTuong = false;
+                        foreach (Entity e in ds) ThuNet(n, e, ObjectId.Null, ObjectId.Null, null, 0, dd);
+                        n.Mau = mau;
+                    }
+                    List<Point2d[]> sau = new List<Point2d[]>();
+                    foreach (Point2d[] s in dd)
+                        if (giuDam == null || giuDam(s)) { sau.Add(s); demDam[0]++; }
+                        else demDam[1]++;
+                    if (damThem != null) { sau.AddRange(damThem); demDam[0] += damThem.Count; }
+                    List<List<Point2d>> moi = new List<List<Point2d>>();
+                    foreach (List<Point2d> z in co)
+                    {
+                        List<List<Point2d>> k = ChiaKhoang(z, sau, n.Tol, HeSoMet(db));
+                        moi.AddRange(k);
+                        if (k.Count > 1) foreach (List<Point2d> kc in k) khoang[kc] = z;
+                    }
+                    co = moi;
+                }
                 tr.Commit();
             }
+        }
+
+        /// Vùng z cắt bởi các đoạn dầm: khoang là mặt nằm trong z, bỏ lòng dầm và dải hẹp (PhongThat: rộng TB < 1 m). Không chia được thì trả z.
+        static List<List<Point2d>> ChiaKhoang(List<Point2d> z, List<Point2d[]> dam, double tol, double m)
+        {
+            double x0 = z.Min(p => p.X), y0 = z.Min(p => p.Y), x1 = z.Max(p => p.X), y1 = z.Max(p => p.Y);
+            List<Point2d[]> s = new List<Point2d[]>();
+            for (int i = 0; i < z.Count; i++) s.Add(new[] { z[i], z[(i + 1) % z.Count] });
+            // KOCHAM 16/11: nét dầm sơ đồ dừng ở mặt cột, cách dầm biên 200 mm, khoang không khép: kéo dài mỗi đầu 0,4 m (đoạn thò ra không chia khoang).
+            double e = 0.4 / m;
+            s.AddRange(dam.Where(d => Math.Max(d[0].X, d[1].X) >= x0 - e && Math.Min(d[0].X, d[1].X) <= x1 + e && Math.Max(d[0].Y, d[1].Y) >= y0 - e && Math.Min(d[0].Y, d[1].Y) <= y1 + e)
+                .Select(d => { Vector2d u = (d[1] - d[0]).GetNormal() * e; return new[] { d[0] - u, d[1] + u }; }));
+            if (s.Count == z.Count) return new List<List<Point2d>> { z };
+            List<List<Point2d>> f = PhongThat(CacMat(s, tol, HO_CUA_M / m).Select(v => BoThangHang(v, tol)).ToList(), m)
+                .Where(v => TrongDaGiac(z, DiemTrongMat(v))).ToList();
+            return f.Count > 1 ? f : new List<List<Point2d>> { z };
         }
 
         /// Vùng PCCC_VUNG vẽ sẵn (polyline kín, tròn) trong không gian hiện hành.
