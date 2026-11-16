@@ -10,7 +10,9 @@ hồ sơ khách, gitignore). Đã học: `cad/knowledge/mau-rai-khoang-dam.md` (
 ở đầu biên). Người dùng chốt: khoang theo vì kèo (trục cột), trừ nhà nhiều tầng sàn deck / BTCT thì theo dầm sàn như KOCHAM; dầm ≤ 0,3 m bỏ.
 Bảo thử trần > 4 m: đã gửi đề xuất vùng `ket_qua/.../cong_trinh_drive/t8_de_xuat_vung_tran4m.dwg/.png` (20 khoang theo dầm sàn 400; 19 khoang ≥ 9 m²
 rải trong khoang (5.9.1.1.6 f), K18 7,7 m² và hành lang 4,2 m² < 9 m² lắp mặt dưới dầm (e); dầm 300X200 bỏ; sảnh thang máy, lõi, buồng thang, WC không rải).
-CHỜ DUYỆT. Còn hỏi: d lấy theo h nhãn dầm hay h trừ chiều dày sàn (file kết cấu không ghi dày sàn; trừ sàn ≥ 100 mm thì dầm 400 thành ≤ 0,3 m).
+Người dùng chốt: d = h dầm TRỪ dày sàn. File kết cấu, kiến trúc không ghi dày sàn (mặt cắt dầm không vẽ sàn); với sàn 100–150 mm: dầm 300/400 d ≤ 0,3 bỏ,
+dầm 500/700/1400 giữ. Đề xuất lần 2 `t8_de_xuat_vung_tran4m_lan2.dwg/.png`: khoang 1 văn phòng 231,4 m² (2 x 3 = 6 đầu), khoang 2 dải trên lõi 29,2 m² (1 đầu),
+hành lang 4,2 m² (1 đầu) = 8 đầu. CHỜ DUYỆT + dày sàn thật. Plugin CHƯA trừ dày sàn: thêm dấu nhắc "dày sàn" ở `PCCC_RAI` Dam (`DocBxh`/giuDam: d = h - t).
 Duyệt xong: rải (`PCCC_RAI BC_KHOI Dam 4.5`, kiểm khoang < 9 m² đặt đúng mặt dưới dầm), rồi sửa plugin rải lưới chung cho các khoang.
 
 ## VIỆC 16/11 TỐI (5) — SỬA 6 LỖI PLUGIN LỘ RA Ở TẦNG 8 KOCHAM: XONG MÃ + TEST, CHƯA XEM TRONG AUTOCAD CÓ GIAO DIỆN
