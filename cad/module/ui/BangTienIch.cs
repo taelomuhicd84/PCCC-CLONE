@@ -52,7 +52,7 @@ namespace TKPCCC
         readonly FlowLayoutPanel luoi = new FlowLayoutPanel();
         readonly List<TheNho> the = new List<TheNho>();
         readonly List<Label> dau = new List<Label>();
-        readonly List<Label> nut = new List<Label>();
+        ThanhTab nut;
         readonly ToolTip goiY = new ToolTip(); // thẻ hẹp cắt mô tả: rê chuột xem đủ
         readonly Action<string> moTrang;
         readonly string nhanDem;
@@ -73,28 +73,10 @@ namespace TKPCCC
             luoi.Padding = new Padding(6, 4, 6, 6);
             Controls.Add(luoi);
 
-            FlowLayoutPanel loc = new FlowLayoutPanel();
-            loc.Dock = DockStyle.Top;
-            loc.AutoSize = true;
-            loc.BackColor = GiaoDien.Nen;
-            loc.Padding = new Padding(6, 2, 6, 2);
-            for (int i = 0; i < NUT.Length; i++)
-            {
-                string ma = i == 0 ? "" : i.ToString();
-                Label l = new Label();
-                l.Text = NUT[i];
-                l.Font = GiaoDien.Nho;
-                l.UseMnemonic = false; // "Layer & Ống": không biến & thành phím tắt
-                l.AutoSize = true;
-                l.Padding = new Padding(6, 2, 6, 2);
-                l.Margin = new Padding(0, 0, 4, 4);
-                l.Cursor = Cursors.Hand;
-                l.Tag = ma;
-                l.Click += delegate { nhomChon = ma; Loc(); };
-                nut.Add(l);
-                loc.Controls.Add(l);
-            }
-            Controls.Add(loc);
+            // Nút lọc nhóm = hàng tab viên thuốc (ý từ video plugin 16/11); bỏ số thứ tự "1. " cho viên gọn.
+            nut = new ThanhTab(NUT.Select(x => System.Text.RegularExpressions.Regex.Replace(x, @"^\d+\.\s*", "").ToUpperInvariant()).ToArray());
+            nut.DaChon += delegate(int i) { nhomChon = i == 0 ? "" : i.ToString(); Loc(); };
+            Controls.Add(nut);
 
             for (int g = 0; g < NHOM.Length; g++)
             {
@@ -128,10 +110,10 @@ namespace TKPCCC
 
         void XepCo()
         {
-            int w = Math.Max(200, luoi.ClientSize.Width - luoi.Padding.Horizontal - 2);
+            int w = GiaoDien.RongDung(luoi), cot = w < 380 ? 1 : 2; // palette hẹp: một cột cho đọc đủ tên + mô tả
             luoi.SuspendLayout();
             foreach (Label d in dau) d.Width = w;
-            foreach (TheNho t in the) t.Width = (w - 6) / 2;
+            foreach (TheNho t in the) t.Width = cot == 1 ? w - 6 : (w - 6) / 2;
             luoi.ResumeLayout();
         }
 
@@ -152,12 +134,8 @@ namespace TKPCCC
                 if (t.Visible) n++;
             }
             foreach (Label d in dau) d.Visible = the.Any(t => t.Visible && t.Nhom == (string)d.Tag);
-            foreach (Label l in nut)
-            {
-                bool chon = (string)l.Tag == nhomChon;
-                l.BackColor = chon ? GiaoDien.Xanh : GiaoDien.The;
-                l.ForeColor = chon ? Color.White : GiaoDien.ChuDam;
-            }
+            nut.Chon = nhomChon == "" ? 0 : int.Parse(nhomChon);
+            nut.Invalidate();
             luoi.ResumeLayout();
             luoi.Text = nhanDem + ": " + n; // thu_gui.ps1 đọc số thẻ đang hiện
         }
@@ -176,17 +154,22 @@ namespace TKPCCC
         }
     }
 
-    /// Thẻ nhỏ của lưới 2 cột: tên đậm, mô tả mờ một dòng, huy hiệu mã tắt góc phải trên (kèm phím tắt người dùng đặt nếu có).
+    /// Thẻ nhỏ của lưới 2 cột: vòng tròn màu nhóm ghi mã tắt (ý từ video plugin 16/11), tên đậm, mô tả mờ; phím tắt người dùng đặt (nếu có) ở góc phải trên.
     class TheNho : Control
     {
         public readonly string Nhom, Ma, Ten, MoTa, ChuTim;
+        readonly string maGoc, phim;
+        bool tren;
 
         public TheNho(string nhom, string ma, string ten, string moTa, string lenh)
         {
-            Nhom = nhom; Ma = ma; Ten = ten; MoTa = moTa;
+            Nhom = nhom; Ma = ma; Ten = ten; MoTa = moTa; maGoc = ma;
             string l = lenh.StartsWith("#") ? "" : lenh.Split('\n')[0];
             string pt;
             if (PhimTat.TheoLenh.TryGetValue(l, out pt)) Ma = ma + " · " + pt;
+            phim = pt ?? "";
+            MouseEnter += delegate { tren = true; Invalidate(); };
+            MouseLeave += delegate { tren = false; Invalidate(); };
             ChuTim = (ten + " " + moTa + " " + ma + " " + l + " " + (pt ?? "")).ToLowerInvariant();
             Height = 50;
             Margin = new Padding(0, 0, 6, 6);
@@ -205,15 +188,22 @@ namespace TKPCCC
             using (GraphicsPath p = GiaoDien.BoGoc(new Rectangle(0, 0, Width - 1, Height - 1), 8))
             {
                 using (SolidBrush b = new SolidBrush(GiaoDien.The)) g.FillPath(b, p);
-                using (Pen v = new Pen(GiaoDien.Vien)) g.DrawPath(v, p);
+                Color mau = GiaoDien.MauNhom[(int.Parse(Nhom) - 1) % GiaoDien.MauNhom.Length];
+                using (Pen v = new Pen(tren ? mau : GiaoDien.Vien)) g.DrawPath(v, p);
+                GiaoDien.VeTron(g, new Rectangle(7, 7, 36, 36), mau, maGoc, maGoc.Length > 3 ? GiaoDien.NhoDam : GiaoDien.Dam, tren);
             }
-            Size hs = TextRenderer.MeasureText(Ma, GiaoDien.Nho);
-            Rectangle h = new Rectangle(Width - hs.Width - 10, 6, hs.Width + 4, hs.Height);
-            using (SolidBrush b = new SolidBrush(GiaoDien.Nen)) g.FillRectangle(b, h);
-            TextRenderer.DrawText(g, Ma, GiaoDien.Nho, h, GiaoDien.Xanh, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
-            TextFormatFlags dong = TextFormatFlags.Left | TextFormatFlags.EndEllipsis | TextFormatFlags.SingleLine;
-            TextRenderer.DrawText(g, Ten, GiaoDien.Dam, new Rectangle(8, 6, h.Left - 10, 18), GiaoDien.ChuDam, dong);
-            TextRenderer.DrawText(g, MoTa, GiaoDien.Nho, new Rectangle(8, 26, Width - 14, 16), GiaoDien.ChuMo, dong);
+            int x = 50, phai = Width - 6;
+            if (phim != "")
+            {
+                Size hs = TextRenderer.MeasureText(phim, GiaoDien.Nho);
+                Rectangle h = new Rectangle(Width - hs.Width - 10, 6, hs.Width + 4, hs.Height);
+                using (SolidBrush b = new SolidBrush(GiaoDien.Nen)) g.FillRectangle(b, h);
+                TextRenderer.DrawText(g, phim, GiaoDien.Nho, h, GiaoDien.Xanh, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+                phai = h.Left - 2;
+            }
+            TextFormatFlags dong = TextFormatFlags.Left | TextFormatFlags.EndEllipsis | TextFormatFlags.SingleLine | TextFormatFlags.NoPrefix;
+            TextRenderer.DrawText(g, Ten, GiaoDien.Dam, new Rectangle(x, 7, phai - x, 18), GiaoDien.ChuDam, dong);
+            TextRenderer.DrawText(g, MoTa, GiaoDien.Nho, new Rectangle(x, 26, Width - x - 6, 16), GiaoDien.ChuMo, dong);
         }
     }
 }

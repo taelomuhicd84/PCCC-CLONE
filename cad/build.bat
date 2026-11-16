@@ -36,6 +36,8 @@ rem Bang chon loai dau bao theo cong nang (trang Bao chay doc bang "Loai theo kh
 copy /y "%~dp0..\knowledge\chon-loai-dau-bao.md" "%OUT%\chon-loai-dau-bao.md" >nul
 rem Van thuyet minh mau (PCCC_THUYETMINH): nguon duy nhat cad\knowledge\mau-thuyet-minh-pccc.md.
 copy /y "%~dp0knowledge\mau-thuyet-minh-pccc.md" "%OUT%\mau-thuyet-minh-pccc.md" >nul
+rem Bang khoang dam 5.9.1.1.6 (nut Tra cuu TCVN, tab Khoang dam trang Bao chay): nguon duy nhat skills\MOD_dau_bao_khoi_khoang_dam.md goc repo.
+copy /y "%~dp0..\skills\MOD_dau_bao_khoi_khoang_dam.md" "%OUT%\MOD_dau_bao_khoi_khoang_dam.md" >nul
 rem PCCC_THEMBLOCK ghi ma moi vao ca file goc cua repo (nguon duy nhat cua danh muc): de lai duong dan cho plugin.
 echo %~dp0..\data\vat_tu.json>"%OUT%\nguon_vat_tu.txt"
 rem Mac dinh ky hieu truc, kich thuoc, chu: nguoi dung sua o cad\data\ky_hieu, plugin doc ban chep canh DLL.

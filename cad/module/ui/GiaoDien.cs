@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Drawing.Drawing2D;
@@ -30,8 +31,80 @@ namespace TKPCCC
         public static readonly Font Dam = new Font("Segoe UI", 9f, FontStyle.Bold);
         public static readonly Font Nho = new Font("Segoe UI", 8f);
         public static readonly Font To = new Font("Segoe UI", 18f, FontStyle.Bold);
+        public static readonly Font NhoDam = new Font("Segoe UI", 7.5f, FontStyle.Bold);
+        /// Biểu tượng: emoji Unicode vẽ bằng GDI (TextRenderer) ra hình đơn sắc theo màu chữ; máy không có Segoe UI Emoji thì Windows tự thay phông.
+        public static readonly Font Icon = new Font("Segoe UI Emoji", 13f), IconTo = new Font("Segoe UI Emoji", 16f);
+
+        /// Màu nút biểu tượng (ý từ video plugin 16/11: mỗi nhóm một màu tươi, giữ nguyên ở cả 3 kiểu nền).
+        public static readonly Color MauLa = Color.FromArgb(20, 184, 166), MauCam = Color.FromArgb(249, 115, 22), MauDuong = Color.FromArgb(59, 130, 246),
+            MauTim = Color.FromArgb(139, 92, 246), MauDo = Color.FromArgb(239, 68, 68), MauVang = Color.FromArgb(234, 179, 8), MauHong = Color.FromArgb(236, 72, 153),
+            MauXam = Color.FromArgb(100, 116, 139), MauLuc = Color.FromArgb(34, 197, 94);
+        public static readonly Color[] MauNhom = { MauLa, MauCam, MauDuong, MauTim, MauDo, MauVang, MauHong, MauLuc, MauXam };
 
         static GiaoDien() { BangMau(DocCaiDat("chu_de", "toi")); }
+
+        /// Hình tròn tô chuyển sắc (sáng trên, đậm dưới) + viền mảnh; chữ / biểu tượng trắng ở giữa. Dùng cho nút biểu tượng, số bước, thẻ tiện ích.
+        public static void VeTron(Graphics g, Rectangle r, Color mau, string chu, Font font, bool sang)
+        {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            Color tren = ControlPaint.Light(mau, sang ? 0.6f : 0.25f), duoi = sang ? mau : ControlPaint.Dark(mau, 0.05f);
+            using (LinearGradientBrush b = new LinearGradientBrush(new Rectangle(r.X, r.Y - 1, r.Width, r.Height + 2), tren, duoi, LinearGradientMode.Vertical))
+                g.FillEllipse(b, r);
+            using (Pen p = new Pen(Color.FromArgb(sang ? 200 : 90, Color.White), sang ? 2f : 1f))
+                g.DrawEllipse(p, r.X + 1, r.Y + 1, r.Width - 2, r.Height - 2);
+            if (!string.IsNullOrEmpty(chu))
+                TextRenderer.DrawText(g, chu, font, new Rectangle(r.X - 4, r.Y + 1, r.Width + 8, r.Height), Color.White,
+                    TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding | TextFormatFlags.SingleLine);
+        }
+
+        /// Ô vuông bo góc tô chuyển sắc (biểu tượng thanh dọc chọn phân hệ).
+        public static void VeVuong(Graphics g, Rectangle r, Color mau, string chu, Font font, bool sang)
+        {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            using (GraphicsPath p = BoGoc(r, 9))
+            {
+                using (LinearGradientBrush b = new LinearGradientBrush(new Rectangle(r.X, r.Y - 1, r.Width, r.Height + 2),
+                    ControlPaint.Light(mau, sang ? 0.5f : 0.2f), mau, LinearGradientMode.Vertical))
+                    g.FillPath(b, p);
+                if (sang) using (Pen v = new Pen(Color.FromArgb(220, Color.White), 2f)) g.DrawPath(v, p);
+            }
+            TextRenderer.DrawText(g, chu, font, new Rectangle(r.X - 4, r.Y + 1, r.Width + 8, r.Height), Color.White,
+                TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding | TextFormatFlags.SingleLine);
+        }
+
+        /// Lưới nút biểu tượng (ba nút một hàng, co theo bề rộng palette).
+        public static FlowLayoutPanel LuoiNut()
+        {
+            FlowLayoutPanel p = new FlowLayoutPanel();
+            p.AutoSize = true;
+            p.WrapContents = true;
+            p.BackColor = Nen;
+            p.Margin = new Padding(0, 2, 0, 4);
+            return p;
+        }
+
+        /// Thêm nút biểu tượng vào lưới; bề rộng do XepLuoi đặt.
+        public static NutIcon NutLuoi(FlowLayoutPanel p, string icon, string chu, Color mau, Action viec)
+        {
+            NutIcon n = new NutIcon(icon, chu, mau);
+            n.Click += delegate { An(viec); };
+            p.Controls.Add(n);
+            return n;
+        }
+
+        /// Chia đều nút trong lưới theo bề rộng w (3 nút một hàng; hẹp dưới 240 px thì 2).
+        /// Bề rộng dùng được của khung cuộn: trừ sẵn thanh cuộn dọc (thanh cuộn hiện ra không đổi Size nên không có Resize để xếp lại).
+        public static int RongDung(ScrollableControl t)
+        {
+            return Math.Max(200, t.ClientSize.Width - t.Padding.Horizontal - (t.VerticalScroll.Visible ? 0 : SystemInformation.VerticalScrollBarWidth) - 2);
+        }
+
+        public static void XepLuoi(FlowLayoutPanel p, int w)
+        {
+            int cot = w < 240 ? 2 : 3, rong = (w - 6 * cot) / cot;
+            p.MaximumSize = new Size(w + 2, 0);
+            foreach (Control c in p.Controls) if (c is NutIcon) { c.Width = rong; c.Margin = new Padding(0, 0, 6, 6); }
+        }
 
         static Color H(int rgb) { return Color.FromArgb(255, Color.FromArgb(rgb)); }
 
@@ -385,6 +458,188 @@ namespace TKPCCC
             TextRenderer.DrawText(g, Nhan, GiaoDien.Dam, new Rectangle(0, 4, Width, 20), GiaoDien.Do, giua);
             TextRenderer.DrawText(g, So, GiaoDien.To, new Rectangle(0, 22, Width, 36), GiaoDien.XanhLa, giua);
             TextRenderer.DrawText(g, Phu, GiaoDien.Nho, new Rectangle(0, 58, Width, 18), GiaoDien.ChuMo, giua);
+        }
+    }
+
+    /// Nút biểu tượng (ý từ video plugin 16/11): hình tròn màu chuyển sắc có biểu tượng, nhãn hai dòng bên dưới; rê chuột thì sáng viền.
+    class NutIcon : Control
+    {
+        bool tren;
+        public readonly string Icon;
+        public Color Mau;
+
+        public NutIcon(string icon, string chu, Color mau)
+        {
+            Icon = icon; Text = chu; Mau = mau;
+            Size = new Size(88, 78);
+            DoubleBuffered = true;
+            Cursor = Cursors.Hand;
+            AccessibleName = chu;
+            AccessibleRole = AccessibleRole.PushButton;
+            MouseEnter += delegate { tren = true; Invalidate(); };
+            MouseLeave += delegate { tren = false; Invalidate(); };
+            EnabledChanged += delegate { Invalidate(); };
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            Graphics g = e.Graphics;
+            g.Clear(Parent != null ? Parent.BackColor : GiaoDien.Nen);
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            if (tren && Enabled)
+                using (GraphicsPath p = GiaoDien.BoGoc(new Rectangle(0, 0, Width - 1, Height - 1), 8))
+                using (SolidBrush b = new SolidBrush(GiaoDien.The)) g.FillPath(b, p);
+            int d = 40;
+            GiaoDien.VeTron(g, new Rectangle((Width - d) / 2, 4, d, d), Enabled ? Mau : Color.FromArgb(120, 130, 145), Icon, GiaoDien.Icon, tren && Enabled);
+            TextRenderer.DrawText(g, Text.ToUpperInvariant(), GiaoDien.NhoDam, new Rectangle(2, d + 8, Width - 4, Height - d - 8),
+                Enabled ? GiaoDien.ChuDam : GiaoDien.ChuMo, TextFormatFlags.HorizontalCenter | TextFormatFlags.Top | TextFormatFlags.WordBreak | TextFormatFlags.NoPrefix);
+        }
+    }
+
+    /// Hàng tab dạng viên thuốc (ý từ video plugin 16/11): tab đang chọn tô màu nhấn; hẹp thì xếp nhiều hàng đều nhau.
+    class ThanhTab : Control
+    {
+        public readonly string[] Ten;
+        public int Chon;
+        public event Action<int> DaChon;
+        readonly List<Rectangle> o = new List<Rectangle>();
+        int tren = -1;
+
+        public ThanhTab(string[] ten)
+        {
+            Ten = ten;
+            DoubleBuffered = true;
+            Cursor = Cursors.Hand;
+            Dock = DockStyle.Top;
+            Height = 36;
+            AccessibleRole = AccessibleRole.PageTabList;
+            Resize += delegate { Xep(); };
+            MouseMove += delegate(object s, MouseEventArgs e) { int i = o.FindIndex(r => r.Contains(e.Location)); if (i != tren) { tren = i; Invalidate(); } };
+            MouseLeave += delegate { tren = -1; Invalidate(); };
+            MouseClick += delegate(object s, MouseEventArgs e) { int i = o.FindIndex(r => r.Contains(e.Location)); if (i >= 0) ChonTab(i); };
+        }
+
+        public void ChonTab(int i)
+        {
+            Chon = i;
+            Invalidate();
+            if (DaChon != null) GiaoDien.An(delegate { DaChon(i); });
+        }
+
+        void Xep()
+        {
+            o.Clear();
+            int w = Math.Max(120, Width - 12), cot = Ten.Length;
+            // Mỗi viên ít nhất 84 px: không đủ thì giảm số cột (4 tab trên palette 320 px -> 2 x 2 như mẫu).
+            while (cot > 1 && w / cot < 84) cot--;
+            cot = (Ten.Length + (Ten.Length + cot - 1) / cot - 1) / ((Ten.Length + cot - 1) / cot); // chia hàng đều: 4 tab 3 + 1 -> 2 x 2
+            int hang = (Ten.Length + cot - 1) / cot, rong = (w - 6 * (cot - 1)) / cot;
+            for (int i = 0; i < Ten.Length; i++) o.Add(new Rectangle(6 + (i % cot) * (rong + 6), 6 + (i / cot) * 30, rong, 26));
+            int cao = 10 + hang * 30;
+            if (Height != cao) Height = cao;
+            Invalidate();
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            Graphics g = e.Graphics;
+            g.Clear(GiaoDien.Nen);
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            if (o.Count != Ten.Length) Xep();
+            for (int i = 0; i < o.Count; i++)
+            {
+                bool c = i == Chon;
+                using (GraphicsPath p = GiaoDien.BoGoc(o[i], 12))
+                {
+                    if (c) using (LinearGradientBrush b = new LinearGradientBrush(o[i], ControlPaint.Light(GiaoDien.MauTim, 0.3f), GiaoDien.MauTim, LinearGradientMode.Vertical)) g.FillPath(b, p);
+                    else using (SolidBrush b = new SolidBrush(i == tren ? GiaoDien.Vien : GiaoDien.The)) g.FillPath(b, p);
+                }
+                TextRenderer.DrawText(g, Ten[i], GiaoDien.NhoDam, o[i], c ? Color.White : GiaoDien.ChuDam,
+                    TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPrefix);
+            }
+        }
+    }
+
+    /// Tiêu đề nhóm nhỏ: chữ hoa mờ + vạch màu nhấn bên dưới (ý từ video plugin 16/11).
+    class TieuDeNhom : Control
+    {
+        readonly Color mau;
+
+        public TieuDeNhom(string chu, Color mau)
+        {
+            Text = chu;
+            this.mau = mau;
+            Height = 22;
+            Margin = new Padding(0, 10, 0, 4);
+            DoubleBuffered = true;
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            Graphics g = e.Graphics;
+            g.Clear(Parent != null ? Parent.BackColor : GiaoDien.Nen);
+            TextRenderer.DrawText(g, Text.ToUpperInvariant(), GiaoDien.NhoDam, new Rectangle(0, 0, Width, 16), GiaoDien.ChuMo,
+                TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPrefix);
+            using (SolidBrush b = new SolidBrush(mau)) g.FillRectangle(b, 0, 18, Math.Min(Width, 48), 2);
+            using (SolidBrush b = new SolidBrush(GiaoDien.Vien)) g.FillRectangle(b, 48, 19, Math.Max(0, Width - 48), 1);
+        }
+    }
+
+    /// Khung TRẠNG THÁI (ý từ video plugin 16/11): mỗi dòng một dấu ✔ xanh (đủ), ⚠ vàng (cần làm), • mờ (thông tin).
+    class KhungTrangThai : Control
+    {
+        public const int DAT = 1, CANH_BAO = 0, TIN = -1;
+        readonly List<KeyValuePair<int, string>> dong = new List<KeyValuePair<int, string>>();
+
+        public KhungTrangThai()
+        {
+            DoubleBuffered = true;
+            Margin = new Padding(0, 10, 0, 6);
+            Height = 40;
+            Resize += delegate { DoCao(); };
+        }
+
+        public void Dat(params KeyValuePair<int, string>[] ds)
+        {
+            dong.Clear();
+            dong.AddRange(ds.Where(x => !string.IsNullOrEmpty(x.Value)));
+            AccessibleName = "Trạng thái: " + string.Join("; ", dong.Select(x => x.Value));
+            DoCao();
+            Invalidate();
+        }
+
+        public static KeyValuePair<int, string> D(int loai, string chu) { return new KeyValuePair<int, string>(loai, chu); }
+
+        void DoCao()
+        {
+            int h = 30;
+            foreach (KeyValuePair<int, string> x in dong)
+                h += TextRenderer.MeasureText(x.Value, GiaoDien.Nho, new Size(Math.Max(60, Width - 34), 0), TextFormatFlags.WordBreak).Height + 3;
+            if (Height != h + 6) Height = h + 6;
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            Graphics g = e.Graphics;
+            g.Clear(Parent != null ? Parent.BackColor : GiaoDien.Nen);
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            using (GraphicsPath p = GiaoDien.BoGoc(new Rectangle(0, 0, Width - 1, Height - 1), 8))
+            {
+                using (SolidBrush b = new SolidBrush(GiaoDien.The)) g.FillPath(b, p);
+                using (Pen v = new Pen(GiaoDien.Vien)) g.DrawPath(v, p);
+            }
+            using (SolidBrush b = new SolidBrush(GiaoDien.MauDuong)) g.FillRectangle(b, 10, 10, 3, 12);
+            TextRenderer.DrawText(g, "TRẠNG THÁI", GiaoDien.NhoDam, new Point(18, 9), GiaoDien.ChuDam);
+            int y = 30;
+            foreach (KeyValuePair<int, string> x in dong)
+            {
+                Color m = x.Key == DAT ? GiaoDien.MauLuc : x.Key == CANH_BAO ? (GiaoDien.ChuDe == "toi" ? GiaoDien.MauVang : GiaoDien.Cam) : GiaoDien.ChuMo;
+                TextRenderer.DrawText(g, x.Key == DAT ? "✔" : x.Key == CANH_BAO ? "⚠" : "•", GiaoDien.Dam, new Point(10, y - 1), m);
+                Size s = TextRenderer.MeasureText(x.Value, GiaoDien.Nho, new Size(Math.Max(60, Width - 34), 0), TextFormatFlags.WordBreak);
+                TextRenderer.DrawText(g, x.Value, GiaoDien.Nho, new Rectangle(28, y, Width - 34, s.Height), x.Key == TIN ? GiaoDien.ChuMo : m,
+                    TextFormatFlags.WordBreak | TextFormatFlags.NoPrefix);
+                y += s.Height + 3;
+            }
         }
     }
 }

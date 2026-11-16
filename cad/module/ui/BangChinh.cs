@@ -74,16 +74,20 @@ namespace TKPCCC
             Controls.Add(noiDung);
 
             ben.Dock = DockStyle.Left;
-            ben.Width = 84;
+            ben.Width = 66;
             ben.FlowDirection = FlowDirection.TopDown;
             ben.WrapContents = false;
             ben.AutoScroll = true; // palette kéo thấp hơn 9 nút thì cuộn, không mất nút cuối
             ben.BackColor = GiaoDien.Nen;
             ben.Padding = new Padding(0, 6, 0, 0);
-            foreach (string t in new[] { QUY_TRINH, TIEN_ICH, BO_TRI, CHUA_CHAY, THONG_KE, THU_VIEN, LENH, BOT, CAI_DAT })
+            // Thanh biểu tượng (ý từ video plugin 16/11): mỗi phân hệ một ô màu có biểu tượng, nhãn ngắn bên dưới.
+            string[] ds = { QUY_TRINH, TIEN_ICH, BO_TRI, CHUA_CHAY, THONG_KE, THU_VIEN, LENH, BOT, CAI_DAT };
+            string[] icon = { "📐", "🔧", "🔔", "💧", "📊", "📚", "⌨", "💬", "⚙" };
+            Color[] mau = { GiaoDien.MauLa, GiaoDien.MauDuong, GiaoDien.MauDo, GiaoDien.MauCam, GiaoDien.MauTim, GiaoDien.MauLuc, GiaoDien.MauXam, GiaoDien.MauHong, GiaoDien.MauXam };
+            for (int i = 0; i < ds.Length; i++)
             {
-                string ten = t;
-                NutBen n = new NutBen(ten);
+                string ten = ds[i];
+                NutBen n = new NutBen(ten, icon[i], mau[i]);
                 n.Click += delegate { GiaoDien.An(delegate { ChonTrang(ten); }); };
                 nutBen[ten] = n;
                 ben.Controls.Add(n);
@@ -478,29 +482,38 @@ namespace TKPCCC
         }
     }
 
-    /// Nút của thanh dọc bên trái: chữ hai dòng, đang chọn thì nền thẻ + vạch nhấn bên trái.
+    /// Nút của thanh dọc bên trái: ô biểu tượng màu + nhãn ngắn; đang chọn thì nền thẻ, vạch nhấn trái, viền trắng quanh ô.
     class NutBen : Control
     {
         public bool Chon;
+        readonly string icon;
+        readonly Color mau;
+        bool tren;
 
-        public NutBen(string chu)
+        public NutBen(string chu, string icon, Color mau)
         {
             Text = chu;
-            Size = new Size(84, 40); // 9 phân hệ: 9 x 42 px vừa palette cao 700
-            Margin = new Padding(0, 0, 0, 2);
+            this.icon = icon;
+            this.mau = mau;
+            Size = new Size(66, 60); // 9 phân hệ x 61 px: palette cao 700 còn cuộn được (ben.AutoScroll)
+            Margin = new Padding(0, 0, 0, 1);
             Cursor = Cursors.Hand;
             DoubleBuffered = true;
             AccessibleRole = AccessibleRole.PageTab;
             AccessibleName = chu;
+            MouseEnter += delegate { tren = true; Invalidate(); };
+            MouseLeave += delegate { tren = false; Invalidate(); };
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-            g.Clear(Chon ? GiaoDien.The : GiaoDien.Nen);
-            if (Chon) using (SolidBrush b = new SolidBrush(GiaoDien.Xanh)) g.FillRectangle(b, 0, 6, 3, Height - 12);
-            TextRenderer.DrawText(g, Text, Chon ? GiaoDien.Dam : GiaoDien.Chu, new Rectangle(4, 0, Width - 6, Height), Chon ? GiaoDien.Xanh : GiaoDien.ChuDam,
-                TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.WordBreak);
+            g.Clear(Chon || tren ? GiaoDien.The : GiaoDien.Nen);
+            if (Chon) using (SolidBrush b = new SolidBrush(mau)) g.FillRectangle(b, 0, 8, 3, Height - 16);
+            GiaoDien.VeVuong(g, new Rectangle((Width - 34) / 2, 5, 34, 34), mau, icon, GiaoDien.Icon, Chon);
+            string ngan = Text == BangChinh.QUY_TRINH ? "Quy trình" : Text;
+            TextRenderer.DrawText(g, ngan, GiaoDien.NhoDam, new Rectangle(0, 41, Width, 16), Chon ? GiaoDien.ChuDam : GiaoDien.ChuMo,
+                TextFormatFlags.HorizontalCenter | TextFormatFlags.Top | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPrefix);
         }
     }
 
@@ -567,10 +580,8 @@ namespace TKPCCC
             int x = 10;
             if (So > 0)
             {
-                Rectangle r = new Rectangle(10, 10, 24, 24);
-                using (SolidBrush b = new SolidBrush(GiaoDien.Xanh)) g.FillEllipse(b, r);
-                TextRenderer.DrawText(g, So.ToString(), GiaoDien.Dam, r, Color.White, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
-                x = 42;
+                GiaoDien.VeTron(g, new Rectangle(10, 10, 26, 26), GiaoDien.MauNhom[(So - 1) % GiaoDien.MauNhom.Length], So.ToString(), GiaoDien.Dam, false);
+                x = 44;
             }
             TextFormatFlags dong = TextFormatFlags.Left | TextFormatFlags.EndEllipsis | TextFormatFlags.SingleLine;
             TextRenderer.DrawText(g, Ten, GiaoDien.Dam, new Rectangle(x, 8, Width - x - 8, 18), GiaoDien.ChuDam, dong);

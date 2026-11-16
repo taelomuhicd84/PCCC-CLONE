@@ -3,6 +3,17 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## VIỆC 16/11 TỐI — GIAO DIỆN MỚI THEO 3 VIDEO PLUGIN (VPTTOOL, HTS_DESIGN): XONG MÃ + TEST, CHƯA XEM TRONG AUTOCAD
+Người dùng gửi 3 video TikTok, dặn: lấy tư duy hay, nhanh, tự động, không phụ thuộc AI, giao diện đẹp như mẫu. Phân tích + việc chưa làm: `cad/knowledge/hoc-video-plugin-16-11.md`.
+Đã làm (chỉ `module/ui/` + 1 hàm đọc ở `DayBc.cs`): thanh dọc thành ô biểu tượng màu; widget `NutIcon`, `ThanhTab`, `TieuDeNhom`, `KhungTrangThai` (`GiaoDien.cs`);
+trang Báo cháy 4 tab RẢI ĐẦU BÁO · KHOANG DẦM (ranh giới, Tra cứu TCVN, h trần, rải `PCCC_RAI BC_KHOI Dam h`) · KIỂM TRA · ĐI DÂY, khung TRẠNG THÁI cuối mỗi tab
+(`Lenh.DemVung` đếm PCCC_VUNG / PCCC_LOAITRU); lưới Tiện ích / Chữa cháy / Thống kê: tab viên thuốc + vòng tròn màu ghi mã tắt, palette hẹp thì 1 cột;
+`BangTraCuu.cs` (bảng 5.9.1.1.6 đọc từ `skills/MOD_dau_bao_khoi_khoang_dam.md`, build.bat chép cạnh DLL).
+Xem thử ngoài AutoCAD: dựng exe giả lập lớp AutoCAD (scratchpad, không commit), chụp tab tối + sáng: đạt. `chay_thu.ps1`, `thu_mcp.ps1` TAT CA DAT, bundle đã build.
+CHƯA: `thu_gui.ps1` (AutoCAD đang mở bản vẽ của người dùng); người dùng tắt hẳn AutoCAD mở lại để nạp, xem tận mắt.
+VIỆC KẾ (chờ người dùng chọn, xem mục 3 file kiến thức): 1 ghi m² từng khoang + đánh dấu ô nhỏ + bấm tay đặt giữa dầm; 2 ống nhánh tự chọn DN theo số đầu phun
+(cần người dùng chốt bảng DN); 3 bước nhảy 100 mm + rải so le; 5 rải bằng block mẫu lấy trên bản vẽ.
+
 ## VIỆC 16/11 CHIỀU — SỬA "NHẬN SAI VÙNG, RẢI LINH TINH" (ảnh người dùng trên `test báo cháy.dwg`): XONG MÃ + TEST
 Nguyên nhân 1: file để INSUNITS 1 (inch) mà vẽ mm → plugin coi 1 m = 39 đơn vị (khe cửa không khép, lòng tường thành phòng, bước 0,4 m): 8 837 đầu trong 684 "phòng".
 Sửa: `KiemDonVi` (`Lenh.cs`, gọi đầu `PCCC_RAI`, `PCCC_DAYBC`): khổ EXTMIN–EXTMAX theo INSUNITS > 2 km (hoặc < 2 m) mà theo mm (m) ra 5 m – 2 km thì đặt lại INSUNITS, báo `don_vi_doi=`.

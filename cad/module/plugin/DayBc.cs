@@ -295,6 +295,29 @@ namespace TKPCCC
         }
 
         /// Trang Cài đặt: tên các kiểu kích thước (DimStyle) của bản vẽ đang mở.
+        /// Khung TRẠNG THÁI của palette: số polyline kín trong model space trên PCCC_VUNG và PCCC_LOAITRU { vùng, loại trừ }. Không có bản vẽ: { 0, 0 }.
+        public static int[] DemVung()
+        {
+            int[] kq = new int[2];
+            Document doc = AcApp.DocumentManager.MdiActiveDocument;
+            if (doc == null) return kq;
+            using (doc.LockDocument())
+            using (Transaction tr = doc.Database.TransactionManager.StartTransaction())
+            {
+                BlockTableRecord ms = (BlockTableRecord)tr.GetObject(SymbolUtilityServices.GetBlockModelSpaceId(doc.Database), OpenMode.ForRead);
+                foreach (ObjectId id in ms)
+                {
+                    if (id.ObjectClass.DxfName != "LWPOLYLINE") continue;
+                    Polyline pl = (Polyline)tr.GetObject(id, OpenMode.ForRead);
+                    if (!KinPl(pl)) continue;
+                    if (string.Equals(pl.Layer, LAYER_VUNG, StringComparison.OrdinalIgnoreCase)) kq[0]++;
+                    else if (string.Equals(pl.Layer, LAYER_LOAI_TRU, StringComparison.OrdinalIgnoreCase)) kq[1]++;
+                }
+                tr.Commit();
+            }
+            return kq;
+        }
+
         public static List<string> DsKieuDim()
         {
             List<string> kq = new List<string>();

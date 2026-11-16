@@ -1,6 +1,7 @@
 ﻿// Phân hệ "Bố trí BC" của palette PCCC (lệnh PCCC_BOTRI), ý lấy từ addin mẫu 14/11: chọn thiết bị kèm trị số tiêu chuẩn (data/khoang_cach_rai.json),
 // chiều cao trần, thanh "mức tối ưu k" 50–100 % hiện ngay bước, cách tường, R dùng thật, trần có dầm; BỐ TRÍ / Xem trước = gửi PCCC_RAI đã điền sẵn câu trả lời
 // (mã, HeSo k, Dam, XemTruoc, trần, theo hàng): người dùng chỉ còn quét chọn mặt bằng. Kiểm cự ly (nút ấn, đèn ≤ 45 m) = PCCC_VUNGBV với R = d / 2.
+// Giao diện 16/11 (ý từ video plugin VPTTOOL): 4 tab viên thuốc Rải đầu báo · Khoang dầm · Kiểm tra · Đi dây, nút biểu tượng tròn, khung TRẠNG THÁI cuối tab.
 // Chỉ giao diện: mọi xử lý bản vẽ ở Rai.cs, Lenh.cs.
 using System;
 using System.Collections;
@@ -20,7 +21,12 @@ namespace TKPCCC
         class ThietBi { public string Ma, Ten, CanCu, CanCuDam; public double S, Tuong, TuongMin, R, HMax, HeSoDam; public bool Tia; }
         class CuLy { public string Ma, Ten, CanCu; public double D; }
 
-        readonly FlowLayoutPanel f = new FlowLayoutPanel();
+        FlowLayoutPanel f; // tab đang dựng: Muc, Chu, Luoi thêm vào đây
+        readonly FlowLayoutPanel[] tab = new FlowLayoutPanel[4];
+        readonly KhungTrangThai[] tt = new KhungTrangThai[4];
+        readonly ThanhTab thanh = new ThanhTab(new[] { "RẢI ĐẦU BÁO", "KHOANG DẦM", "KIỂM TRA", "ĐI DÂY" });
+        readonly TextBox tranKd = new TextBox();
+        int[] vungDem = { -1, -1 }; // { PCCC_VUNG, PCCC_LOAITRU } đếm lần gần nhất (DemLai)
         readonly List<ThietBi> ds = new List<ThietBi>();
         readonly List<CuLy> cuLy = new List<CuLy>();
         readonly List<RadioButton> chon = new List<RadioButton>();
@@ -32,18 +38,35 @@ namespace TKPCCC
         readonly ComboBox preset = new ComboBox(), congNang = new ComboBox();
         readonly Label goiYCn = new Label();
         readonly List<string[]> bangCn = new List<string[]>(); // { khu vực, loại, căn cứ }
-        NutBo phuR;
+        NutIcon phuR;
 
         public BangBoTri()
         {
             BackColor = GiaoDien.Nen;
-            f.Dock = DockStyle.Fill;
-            f.FlowDirection = FlowDirection.TopDown;
-            f.WrapContents = false;
-            f.AutoScroll = true;
-            f.BackColor = GiaoDien.Nen;
-            f.Padding = new Padding(8, 6, 8, 8);
-            Controls.Add(f);
+            for (int i = 0; i < tab.Length; i++)
+            {
+                FlowLayoutPanel t = new FlowLayoutPanel();
+                t.Dock = DockStyle.Fill;
+                t.FlowDirection = FlowDirection.TopDown;
+                t.WrapContents = false;
+                t.AutoScroll = true;
+                t.BackColor = GiaoDien.Nen;
+                t.Padding = new Padding(8, 4, 8, 8);
+                t.Visible = i == 0;
+                t.Resize += delegate { XepLai(t); };
+                tab[i] = t;
+                tt[i] = new KhungTrangThai();
+                Controls.Add(t);
+            }
+            thanh.DaChon += delegate(int i)
+            {
+                for (int j = 0; j < tab.Length; j++) tab[j].Visible = j == i;
+                XepLai(tab[i]);
+                DemLai();
+            };
+            Controls.Add(thanh); // thêm sau các tab Fill: Dock Top nằm trên
+            VisibleChanged += delegate { if (Visible) DemLai(); };
+            f = tab[0];
             DocTieuChuan();
             f.Text = "BoTri: " + ds.Count; // thu_gui.ps1 đọc số thiết bị (chữ của cửa sổ)
 
@@ -177,53 +200,179 @@ namespace TKPCCC
             xem.Click += delegate { GiaoDien.An(delegate { BoTri(true, null); }); };
             f.Controls.Add(xem);
             // Nút BỐ TRÍ, Xem trước, thanh k theo bề rộng palette (kéo hẹp tới MinimumSize vẫn không tràn ngang).
-            f.Resize += delegate { int w = Math.Max(200, f.ClientSize.Width - f.Padding.Horizontal - 4); boTri.Width = w; xem.Width = w; k.Width = w; };
+            boTri.Tag = xem.Tag = k.Tag = "rong"; // XepLai giãn theo bề rộng tab
             f.Controls.Add(Chu("Gửi PCCC_RAI đã điền sẵn: còn quét chọn mặt bằng, bấm nét phân vùng mẫu (Enter = tự nhận), Enter = mọi phòng.", 0));
             ketQua.Font = GiaoDien.Dam;
             ketQua.AutoSize = true;
             ketQua.MaximumSize = new Size(290, 0);
             ketQua.Margin = new Padding(0, 4, 0, 0);
             f.Controls.Add(ketQua);
-            FlowLayoutPanel nut = HangNut();
-            NutNho(nut, "↶ Hoàn tác lượt", delegate { GiaoDien.GuiLenh("_.U\n", null, null); });
-            phuR = NutNho(nut, "Kiểm tra phủ R", delegate { ThietBi t = Dang(); if (t != null && t.R > 0) GiaoDien.GuiLenh("PCCC_VUNGBV\n" + t.Ma + "\n" + Ct(t.R) + "\n", null, null); });
-            NutNho(nut, "⚡ Bố trí nhanh", delegate { GiaoDien.An(delegate { BoTri(false, "RECTANG"); }); });
-            NutNho(nut, "⬡ Đa giác đều", delegate { GiaoDien.An(delegate { BoTri(false, "POLYGON"); }); });
-            NutNho(nut, "◯ Tròn", delegate { GiaoDien.An(delegate { BoTri(false, "CIRCLE"); }); });
-            NutNho(nut, "Vẽ vùng tay", delegate { GiaoDien.GuiLenh("_.-LAYER\n_M\nPCCC_VUNG\n\n_.PLINE\n", null, null); });
-            NutNho(nut, "Vùng loại trừ", delegate { GiaoDien.GuiLenh("_.-LAYER\n_M\nPCCC_LOAITRU\n\n_.PLINE\n", null, null); });
-            f.Controls.Add(nut);
+            f.Controls.Add(new TieuDeNhom("Vùng rải & làm lại", GiaoDien.MauLa));
+            FlowLayoutPanel nut = Luoi();
+            GiaoDien.NutLuoi(nut, "\u25AD", "Bố trí nhanh", GiaoDien.MauLa, delegate { BoTri(false, "RECTANG"); });
+            GiaoDien.NutLuoi(nut, "\u2B21", "Đa giác đều", GiaoDien.MauDuong, delegate { BoTri(false, "POLYGON"); });
+            GiaoDien.NutLuoi(nut, "\u25EF", "Tròn", GiaoDien.MauTim, delegate { BoTri(false, "CIRCLE"); });
+            GiaoDien.NutLuoi(nut, "\u270F", "Vẽ vùng tay", GiaoDien.MauCam, delegate { GiaoDien.GuiLenh("_.-LAYER\n_M\nPCCC_VUNG\n\n_.PLINE\n", "PLINE", DemLai); });
+            GiaoDien.NutLuoi(nut, "\u26D4", "Vùng loại trừ", GiaoDien.MauDo, delegate { GiaoDien.GuiLenh("_.-LAYER\n_M\nPCCC_LOAITRU\n\n_.PLINE\n", "PLINE", DemLai); });
+            GiaoDien.NutLuoi(nut, "\u21B6", "Hoàn tác lượt", GiaoDien.MauXam, delegate { GiaoDien.GuiLenh("_.U\n", "U", DemLai); });
             f.Controls.Add(Chu("Bố trí nhanh: bấm 2 góc khung chữ nhật, rải ngay trong khung. Vẽ vùng tay, vùng loại trừ (lỗ thang, giếng trời): polyline KÍN (gõ C để khép), "
                 + "rồi BỐ TRÍ quét chọn cả hai: không rải trong vùng loại trừ.", 0));
+            f.Controls.Add(tt[0]);
 
-            Muc("5", "KIỂM TRA, ĐI DÂY, THỐNG KÊ", "");
-            FlowLayoutPanel kiem = HangNut();
-            NutNho(kiem, "✓ Kiểm vùng mù", delegate
-            {
-                GiaoDien.GuiLenh("PCCC_KT\n", "PCCC_KT", delegate
-                {
-                    ketQua.Text = Lenh.KetQuaKtCuoi; // chân trang: độ phủ, cảnh báo (spec addin mẫu)
-                    ketQua.ForeColor = Lenh.KetQuaKtCuoi.Contains("phủ kín") ? GiaoDien.XanhLa : GiaoDien.Do;
-                });
-            });
+            TaoKhoangDam();
+
+            // ---------- Tab KIỂM TRA ----------
+            f = tab[2];
+            f.Controls.Add(new TieuDeNhom("Kiểm tra bố trí", GiaoDien.MauLuc));
+            FlowLayoutPanel kiem = Luoi();
+            GiaoDien.NutLuoi(kiem, "\u2714", "Kiểm vùng mù", GiaoDien.MauLuc, delegate { GiaoDien.GuiLenh("PCCC_KT\n", "PCCC_KT", DemLai); });
+            phuR = GiaoDien.NutLuoi(kiem, "\u25CE", "Kiểm phủ R", GiaoDien.MauDuong, delegate { ThietBi t = Dang(); if (t != null && t.R > 0) GiaoDien.GuiLenh("PCCC_VUNGBV\n" + t.Ma + "\n" + Ct(t.R) + "\n", null, null); });
             foreach (CuLy c in cuLy)
             {
                 CuLy cc = c;
-                NutBo n = NutNho(kiem, "Cự ly " + c.Ma + " ≤ " + So(c.D) + " m", delegate { GiaoDien.GuiLenh("PCCC_VUNGBV\n" + cc.Ma + "\n" + Ct(cc.D / 2) + "\n", null, null); });
-                n.Width = 144;
+                NutIcon n = GiaoDien.NutLuoi(kiem, "\U0001F4CF", "Cự ly " + c.Ma + " ≤ " + So(c.D) + " m", GiaoDien.MauCam, delegate { GiaoDien.GuiLenh("PCCC_VUNGBV\n" + cc.Ma + "\n" + Ct(cc.D / 2) + "\n", null, null); });
                 n.AccessibleDescription = c.Ten + " — " + c.CanCu;
             }
-            NutNho(kiem, "Vẽ dây loop", delegate { GiaoDien.GuiLenh("PCCC_DAY\nDAY_BC\n", null, null); });
-            NutNho(kiem, "Dim tự động", delegate { GiaoDien.GuiLenh("PCCC_ADIM\n", null, null); });
-            NutNho(kiem, "Đặt thiết bị khác", delegate { GiaoDien.GuiLenh("PCCC_DAT\n", null, null); });
-            NutNho(kiem, "Bóc khối lượng", delegate { GiaoDien.GuiLenh("PCCC_BOC\n", null, null); });
-            NutNho(kiem, "Chèn bảng TK", delegate { GiaoDien.GuiLenh("PCCC_BANG\n", null, null); });
-            f.Controls.Add(kiem);
+            GiaoDien.NutLuoi(kiem, "\u29C9", "Kiểm trùng", GiaoDien.MauTim, delegate { GiaoDien.GuiLenh("PCCC_TRUNG\n", null, null); });
+            GiaoDien.NutLuoi(kiem, "\u2630", "Kiểm layer", GiaoDien.MauXam, delegate { GiaoDien.GuiLenh("PCCC_LOPCHUAN\n", null, null); });
             if (cuLy.Count > 0)
                 f.Controls.Add(Chu("Cự ly: vẽ vòng R = d / 2 quanh từng thiết bị, báo thiết bị đứng lẻ (cách thiết bị cùng loại gần nhất > d, đo thẳng; quãng đường đi thật dài hơn). "
                     + string.Join("; ", cuLy.Select(c => c.Ten + " " + c.CanCu)), 0));
+            f.Controls.Add(new TieuDeNhom("Hoàn thiện & thống kê", GiaoDien.MauTim));
+            FlowLayoutPanel ht = Luoi();
+            GiaoDien.NutLuoi(ht, "\u2194", "Dim tự động", GiaoDien.MauDuong, delegate { GiaoDien.GuiLenh("PCCC_ADIM\n", null, null); });
+            GiaoDien.NutLuoi(ht, "\U0001F4CD", "Đặt thiết bị khác", GiaoDien.MauCam, delegate { GiaoDien.GuiLenh("PCCC_DAT\n", null, null); });
+            GiaoDien.NutLuoi(ht, "#", "Đánh số", GiaoDien.MauLa, delegate { GiaoDien.GuiLenh("PCCC_DANHSO\n", null, null); });
+            GiaoDien.NutLuoi(ht, "\U0001F4CB", "Bóc khối lượng", GiaoDien.MauTim, delegate { GiaoDien.GuiLenh("PCCC_BOC\n", null, null); });
+            GiaoDien.NutLuoi(ht, "\u25A6", "Chèn bảng TK", GiaoDien.MauLuc, delegate { GiaoDien.GuiLenh("PCCC_BANG\n", null, null); });
+            GiaoDien.NutLuoi(ht, "\u2139", "Bảng ký hiệu", GiaoDien.MauHong, delegate { GiaoDien.GuiLenh("PCCC_KYHIEU\n", null, null); });
+            f.Controls.Add(tt[2]);
             TaoDiDay();
             TinhLai();
+            DemLai();
+        }
+
+        // ---------- Tab KHOANG DẦM (ý từ video plugin 16/11): chuẩn bị ranh giới, tra cứu 5.9.1.1.6 tại chỗ, chiều cao trần, rải ----------
+
+        void TaoKhoangDam()
+        {
+            f = tab[1];
+            f.Controls.Add(Chu("Đầu báo khói, trần có dầm: plugin đọc ký hiệu dầm b x h trên mặt bằng, chia khoang, xét từng ô theo TCVN 7568-14:2025 5.9.1.1.6 "
+                + "(ô đủ ngưỡng thì mỗi ô ít nhất một đầu báo, ô nhỏ lắp ở mặt dưới dầm).", 0));
+            f.Controls.Add(new TieuDeNhom("Chuẩn bị", GiaoDien.MauLa));
+            FlowLayoutPanel cb = Luoi();
+            GiaoDien.NutLuoi(cb, "\u25AD", "Ranh giới chữ nhật", GiaoDien.MauLa, delegate { GiaoDien.GuiLenh("_.-LAYER\n_M\nPCCC_VUNG\n\n_.RECTANG\n", "RECTANG", DemLai); });
+            GiaoDien.NutLuoi(cb, "\u270F", "Ranh giới đa giác", GiaoDien.MauCam, delegate { GiaoDien.GuiLenh("_.-LAYER\n_M\nPCCC_VUNG\n\n_.PLINE\n", "PLINE", DemLai); });
+            GiaoDien.NutLuoi(cb, "\U0001F4D6", "Tra cứu TCVN", GiaoDien.MauDuong, delegate { BangTraCuu.Mo(); });
+
+            f.Controls.Add(new TieuDeNhom("Thông số", GiaoDien.MauCam));
+            Label nh = new Label();
+            nh.Text = "CHIỀU CAO TRẦN h (m)";
+            nh.Font = GiaoDien.NhoDam;
+            nh.ForeColor = GiaoDien.ChuMo;
+            nh.AutoSize = true;
+            f.Controls.Add(nh);
+            tranKd.Width = 120;
+            tranKd.Font = new Font("Segoe UI", 11f, FontStyle.Bold);
+            tranKd.BackColor = GiaoDien.The;
+            tranKd.ForeColor = GiaoDien.MauCam;
+            tranKd.BorderStyle = BorderStyle.FixedSingle;
+            tranKd.TextAlign = HorizontalAlignment.Center;
+            tranKd.AccessibleName = "Chiều cao trần khoang dầm (m)";
+            tranKd.Text = GiaoDien.DocCaiDat("kd_h", GiaoDien.DocCaiDat("bt_h", ""));
+            tranKd.TextChanged += delegate { CapNhatTrangThai(); };
+            f.Controls.Add(tranKd);
+            f.Controls.Add(Chu("h < 2 m: như trần phẳng. 2 ≤ h ≤ 4 m: ô ≥ 4 m² đặt trong ô. h ≥ 4 m: ô ≥ 9 m². Độ sâu dầm d lấy từ ký hiệu b x h (vd B1 (300x600)); "
+                + "bản vẽ không ghi thì plugin hỏi một cỡ chung hoặc TungDam. Dầm d ≤ 0,3 m bỏ (trần phẳng).", 0));
+
+            f.Controls.Add(new TieuDeNhom("Rải & làm lại", GiaoDien.MauLuc));
+            FlowLayoutPanel r = Luoi();
+            GiaoDien.NutLuoi(r, "\U0001F514", "Rải đầu báo khoang", GiaoDien.MauLuc, RaiKhoang);
+            GiaoDien.NutLuoi(r, "\u21B6", "Hoàn tác lượt", GiaoDien.MauXam, delegate { GiaoDien.GuiLenh("_.U\n", "U", DemLai); });
+            GiaoDien.NutLuoi(r, "\u2714", "Kiểm vùng mù", GiaoDien.MauDuong, delegate { GiaoDien.GuiLenh("PCCC_KT\n", "PCCC_KT", DemLai); });
+            f.Controls.Add(Chu("RẢI gửi PCCC_RAI BC_KHOI Dam + h: quét chọn mặt bằng (ranh giới + nét dầm), Enter = tự nhận phòng, bấm một nét DẦM mẫu, Enter.", 0));
+            f.Controls.Add(tt[1]);
+        }
+
+        /// Chiều cao trần của tab Khoang dầm ("3,5" = 3.5); trống = 0; gõ sai = -1.
+        double TranKd()
+        {
+            string s = tranKd.Text.Trim().Replace(',', '.');
+            if (s == "") return 0;
+            double h;
+            return double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out h) && h > 0 ? h : -1;
+        }
+
+        void RaiKhoang()
+        {
+            double h = TranKd();
+            if (h <= 0) throw new System.Exception("Nhập chiều cao trần h (m): ngưỡng ô 4 m² hay 9 m² tính theo h (5.9.1.1.6).");
+            if (!ds.Any(t => t.Ma == "BC_KHOI")) throw new System.Exception("Không có BC_KHOI trong khoang_cach_rai.json: chạy lại cad\\build.bat.");
+            GiaoDien.LuuCaiDat("kd_h", tranKd.Text.Trim());
+            // Thứ tự dấu nhắc PCCC_RAI (Rai.cs RaiTay): mã → Dam → trần → theo hàng.
+            GiaoDien.GuiLenh("PCCC_RAI\nBC_KHOI\nDam\n" + Ct(h) + "\nKhong\n", "PCCC_RAI", delegate
+            {
+                ketQua.Text = Lenh.KetQuaRaiCuoi;
+                ketQua.ForeColor = Lenh.KetQuaRaiCuoi.Contains("HO") ? GiaoDien.Do : GiaoDien.XanhLa;
+                DemLai();
+            });
+        }
+
+        // ---------- Bố cục, trạng thái ----------
+
+        /// Lưới nút biểu tượng trong tab đang dựng.
+        FlowLayoutPanel Luoi()
+        {
+            FlowLayoutPanel p = GiaoDien.LuoiNut();
+            f.Controls.Add(p);
+            return p;
+        }
+
+        /// Co nút, tiêu đề nhóm, khung trạng thái theo bề rộng tab (gọi khi đổi cỡ và khi chuyển tab: tab ẩn không nhận Resize).
+        static void XepLai(FlowLayoutPanel t)
+        {
+            int w = GiaoDien.RongDung(t);
+            t.SuspendLayout();
+            foreach (Control c in t.Controls)
+            {
+                FlowLayoutPanel p = c as FlowLayoutPanel;
+                if (p != null && p.Controls.OfType<NutIcon>().Any()) GiaoDien.XepLuoi(p, w);
+                else if (c is TieuDeNhom || c is KhungTrangThai || "rong".Equals(c.Tag)) c.Width = w; // Tag "rong": nút, thanh trượt giãn đủ ngang
+            }
+            t.ResumeLayout();
+        }
+
+        /// Đếm lại vùng trong bản vẽ (sau lệnh, khi mở trang, khi đổi tab) rồi vẽ lại khung trạng thái.
+        void DemLai()
+        {
+            try { vungDem = Lenh.DemVung(); } catch (System.Exception) { vungDem = new[] { -1, -1 }; } // đang chạy lệnh khác: để lần sau
+            CapNhatTrangThai();
+        }
+
+        void CapNhatTrangThai()
+        {
+            const int DAT = KhungTrangThai.DAT, CB = KhungTrangThai.CANH_BAO, TIN = KhungTrangThai.TIN;
+            KeyValuePair<int, string> vung = vungDem[0] < 0 ? KhungTrangThai.D(TIN, "")
+                : vungDem[0] > 0 ? KhungTrangThai.D(DAT, "Bản vẽ có " + vungDem[0] + " vùng PCCC_VUNG" + (vungDem[1] > 0 ? ", " + vungDem[1] + " vùng loại trừ" : ""))
+                : KhungTrangThai.D(CB, "Chưa có vùng PCCC_VUNG: BỐ TRÍ tự nhận phòng từ tường, hoặc vẽ ranh giới trước");
+            string rc = Lenh.KetQuaRaiCuoi;
+            KeyValuePair<int, string> rai = KhungTrangThai.D(rc.Contains("HO") ? CB : DAT, rc == "" ? "" : "Lượt rải cuối: " + rc);
+            ThietBi t = Dang();
+            double h = Tran(), hk = TranKd();
+            tt[0].Dat(KhungTrangThai.D(t != null ? DAT : CB, t != null ? "Thiết bị: " + t.Ten + " (" + t.Ma + ")" : "Chưa chọn thiết bị"),
+                KhungTrangThai.D(h > 0 ? DAT : TIN, h > 0 ? "Trần h = " + So(h) + " m" : "Trần: chưa nhập (không xét giới hạn chiều cao)"), vung, rai);
+            string nguong = hk <= 0 ? (hk < 0 ? "Chiều cao trần phải là số dương" : "Chưa nhập chiều cao trần h")
+                : hk < 2 ? "h = " + So(hk) + " m < 2 m: rải như trần phẳng (5.9.1.1.6 b)"
+                : hk > 15 ? "h = " + So(hk) + " m > 15 m: đầu báo khói điểm không áp dụng (5.9.1.1.1)"
+                : "h = " + So(hk) + " m: ô ≥ " + (hk >= 4 ? "9" : "4") + " m² đặt trong ô, ô nhỏ hơn lắp ở mặt dưới dầm" + (hk == 4 ? " (h = 4 m đúng ranh giới: chọn yêu cầu chặt hơn)" : "");
+            tt[1].Dat(KhungTrangThai.D(hk >= 2 && hk <= 15 ? DAT : CB, nguong), vung, rai);
+            string kt = Lenh.KetQuaKtCuoi;
+            tt[2].Dat(KhungTrangThai.D(kt == "" ? TIN : kt.Contains("phủ kín") ? DAT : CB, kt == "" ? "Chưa kiểm vùng mù lượt này" : kt), vung);
+            int lop = 0;
+            try { lop = CaiDat.LopDay().Count(r => r[3] == "BC"); } catch (System.Exception) { }
+            tt[3].Dat(KhungTrangThai.D(DAT, "Hệ " + (heDiaChi.Checked ? "địa chỉ" : "thường")),
+                KhungTrangThai.D(lop > 0 ? DAT : CB, lop > 0 ? lop + " layer dây báo cháy trong bảng Cài đặt" : "Chưa có layer dây báo cháy: thêm ở trang Cài đặt"));
+            foreach (KhungTrangThai k in tt) k.Invalidate();
         }
 
         // ---------- Mục 6: đi dây báo cháy (người dùng 16/11): hệ thường / hệ địa chỉ, chọn layer dây cho từng loại thiết bị ----------
@@ -232,20 +381,24 @@ namespace TKPCCC
 
         void TaoDiDay()
         {
-            Muc("6", "ĐI DÂY BÁO CHÁY", "vuông góc, không đi xéo");
+            f = tab[3];
+            Muc("1", "ĐI DÂY BÁO CHÁY", "vuông góc, không đi xéo");
             bool dc = GiaoDien.DocCaiDat("he_bc", "Thuong") == "DiaChi";
             heThuong.Text = "Hệ thường: 1 đường qua đầu báo + nút nhấn, điện trở cuối ở thiết bị xa tủ nhất; chuông 1 đường nguồn mạch cụt";
             heDiaChi.Text = "Hệ địa chỉ: mạch vòng tủ → module, thiết bị địa chỉ → về tủ; đầu báo, nút nhấn thường về ZM; chuông thường về CM, chuông địa chỉ về R2ML";
             foreach (RadioButton r in new[] { heThuong, heDiaChi })
             {
                 r.ForeColor = GiaoDien.ChuDam;
-                r.AutoSize = true;
-                r.MaximumSize = new Size(300, 0);
+                // RadioButton AutoSize không xuống dòng: cỡ cố định, chữ canh trên để đọc đủ câu dài.
+                r.AutoSize = false;
+                r.Size = new Size(300, 50);
+                r.CheckAlign = ContentAlignment.TopLeft;
+                r.TextAlign = ContentAlignment.TopLeft;
                 r.Margin = new Padding(0, 4, 0, 0);
                 f.Controls.Add(r);
             }
             heThuong.Checked = !dc; heDiaChi.Checked = dc;
-            heThuong.CheckedChanged += delegate { GiaoDien.LuuCaiDat("he_bc", heDiaChi.Checked ? "DiaChi" : "Thuong"); };
+            heThuong.CheckedChanged += delegate { GiaoDien.LuuCaiDat("he_bc", heDiaChi.Checked ? "DiaChi" : "Thuong"); CapNhatTrangThai(); };
             f.Controls.Add(Chu("Dây cho từng loại thiết bị (layer lấy từ bảng ở trang Cài đặt):", 0));
             TableLayoutPanel bang = new TableLayoutPanel();
             bang.ColumnCount = 2;
@@ -278,9 +431,15 @@ namespace TKPCCC
             di.Margin = new Padding(0, 6, 0, 4);
             di.Click += delegate { GiaoDien.GuiLenh("PCCC_DAYBC\n" + (heDiaChi.Checked ? "DiaChi" : "Thuong") + "\n", null, null); };
             f.Controls.Add(di);
-            f.Resize += delegate { di.Width = Math.Max(200, f.ClientSize.Width - f.Padding.Horizontal - 4); };
+            di.Tag = "rong";
             f.Controls.Add(Chu("Gửi PCCC_DAYBC: quét chọn thiết bị một zone (kể cả module ZM, CM, R2ML và tủ nếu có), bấm vị trí tủ TTBC khi vùng chọn không có tủ. "
                 + "Thiết bị địa chỉ: mã có đuôi _DC (BC_KHOI_DC, BC_NUTAN_DC, BC_CHUONG_DC) hoặc tên block có \"DIA CHI\".", 0));
+            f.Controls.Add(new TieuDeNhom("Dây tay, sơ đồ", GiaoDien.MauDo));
+            FlowLayoutPanel tay = Luoi();
+            GiaoDien.NutLuoi(tay, "\u27F2", "Vẽ dây loop", GiaoDien.MauCam, delegate { GiaoDien.GuiLenh("PCCC_DAY\nDAY_BC\n", null, null); });
+            GiaoDien.NutLuoi(tay, "\U0001F4DC", "Bảng quy định lắp đặt", GiaoDien.MauTim, delegate { GiaoDien.GuiLenh("PCCC_QUYDINH\n", null, null); });
+            GiaoDien.NutLuoi(tay, "\u21B6", "Hoàn tác lượt", GiaoDien.MauXam, delegate { GiaoDien.GuiLenh("_.U\n", null, null); });
+            f.Controls.Add(tt[3]);
         }
 
         void NapChonDay()
@@ -375,8 +534,9 @@ namespace TKPCCC
             oBuoc.Dat(So(s), "m");
             oTuong.Dat(So(t.Tuong * kk), "m");
             oR.Dat(t.R > 0 ? So(t.R * kk) : "–", t.R > 0 ? "m" : "");
-            phuR.Enabled = t.R > 0;
+            if (phuR != null) phuR.Enabled = t.R > 0;
             // Lưới vuông bước s: mỗi thiết bị phủ s² m²; tia: mỗi tia phủ dải rộng s, tính theo m dài tia.
+            if (tt[3] != null) CapNhatTrangThai();
             uoc.Text = t.Tia ? "≈ 1 tia cho mỗi dải rộng " + So(s) + " m (tia song song cạnh dài phòng)"
                 : "≈ " + So(Math.Round(100 / (s * s), 1)) + " thiết bị / 100 m² (lưới vuông, chưa tính chia lẻ theo phòng)";
         }
@@ -469,6 +629,7 @@ namespace TKPCCC
             {
                 ketQua.Text = Lenh.KetQuaRaiCuoi;
                 ketQua.ForeColor = Lenh.KetQuaRaiCuoi.Contains("HO") ? GiaoDien.Do : GiaoDien.XanhLa;
+                DemLai();
             };
             // Chọn L (khung vừa vẽ), Enter kết thúc chọn, Enter = không nét mẫu: khung là polyline kín PCCC_VUNG nên rải luôn, không hỏi điểm phòng.
             if (nhanh != null) GiaoDien.GuiLenh("_.-LAYER\n_M\nPCCC_VUNG\n\n_." + nhanh + "\n", nhanh, delegate { GiaoDien.GuiLenh(cau + "_L\n\n\n", "PCCC_RAI", xong); });

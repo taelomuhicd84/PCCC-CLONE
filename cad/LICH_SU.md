@@ -486,3 +486,11 @@ Người dùng gửi ảnh: rải hàng nghìn đầu báo trong lòng tường,
 Tái hiện trên bản chép: INSUNITS 1 → 8 837 đầu / 684 "phòng"; INSUNITS 4 → 112 đầu / 57 phòng. Polyline xanh phải Closed = 0 (điểm cuối trùng điểm đầu) nên bị bỏ.
 Sửa: `KiemDonVi` tự đặt lại INSUNITS khi khổ bản vẽ phi lý (có báo); `KinPl` coi polyline về đúng điểm đầu là kín, `DinhPl` bỏ đỉnh cuối trùng.
 Kết quả: 2 vùng xanh × 15 đầu. Bẫy test PowerShell 5: `if` trả mảng 1 phần tử bị bỏ mảng, bọc `@( if ... )`. `chay_thu.ps1` 147/147.
+
+## 2026-11-16 tối — Giao diện mới học từ 3 video plugin PCCC
+Người dùng gửi 3 video (VPTTOOL tối 2 video, HTS_DESIGN sáng 1 video). Xem bằng khung hình tách bởi ffmpeg của `imageio_ffmpeg` (máy không có ffmpeg trên PATH)
++ lời thoại do Gemini (agy) nghe, ~25 nghìn token Gemini mỗi video, Claude chỉ đọc file .md kết quả.
+Giao diện: thanh biểu tượng, nút tròn chuyển sắc, tab viên thuốc, khung TRẠNG THÁI, tab Khoang dầm + Tra cứu TCVN. Biểu tượng là emoji Unicode vẽ bằng TextRenderer (ra hình đơn sắc, không cần file ảnh).
+Bẫy: RadioButton AutoSize không xuống dòng (đặt cỡ cố định); thanh cuộn dọc hiện ra không đổi Size nên không có Resize: trừ sẵn bề rộng thanh cuộn (`GiaoDien.RongDung`);
+tab ẩn không nhận Resize: xếp lại khi chuyển tab. Xem thử giao diện không cần AutoCAD: exe giả lập `Autodesk.AutoCAD.ApplicationServices`, `CaiDat`, `Lenh` rồi `DrawToBitmap`.
+Kiến thức + việc chưa làm: `knowledge/hoc-video-plugin-16-11.md`. `chay_thu.ps1`, `thu_mcp.ps1` đạt; `thu_gui.ps1` chưa chạy (AutoCAD đang mở).
