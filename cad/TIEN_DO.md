@@ -7,9 +7,11 @@ Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.m
 Người dùng dặn tối 16/11: (1) sảnh thang máy cũng không đặt đầu báo (đã sửa `GomKhu`, test ca 7); (2) TRƯỚC KHI RẢI phải gửi vùng rải + khoang để
 duyệt, duyệt rồi mới rải (memory `duyet-vung-truoc-khi-rai`); (3) "rải khoang dầm sai": gửi bản mẫu (nhà xưởng, `ket_qua/cad_test/2026-11-16/khoang_dam_mau/`,
 hồ sơ khách, gitignore). Đã học: `cad/knowledge/mau-rai-khoang-dam.md` (lưới chung cả tầng, lề 2 m tới trục dầm, 2 x 2 mỗi khoang 10 x 10,6 m, vòng R7200
-ở đầu biên). Đang hỏi người dùng: tầng 8 tính khoang theo mọi dầm sâu > 0,3 m (dầm sàn 400 cách 3,7 m → 20 khoang) hay chỉ dầm trên trục cột.
-Có câu trả lời thì: vẽ vùng + khoang tầng 8 (bỏ lõi thang, sảnh thang máy, buồng thang, WC), in ảnh gửi duyệt; duyệt xong mới sửa `PCCC_RAI` (rải lưới chung
-cho các khoang, lề cố định tới dầm) và rải lại.
+ở đầu biên). Người dùng chốt: khoang theo vì kèo (trục cột), trừ nhà nhiều tầng sàn deck / BTCT thì theo dầm sàn như KOCHAM; dầm ≤ 0,3 m bỏ.
+Bảo thử trần > 4 m: đã gửi đề xuất vùng `ket_qua/.../cong_trinh_drive/t8_de_xuat_vung_tran4m.dwg/.png` (20 khoang theo dầm sàn 400; 19 khoang ≥ 9 m²
+rải trong khoang (5.9.1.1.6 f), K18 7,7 m² và hành lang 4,2 m² < 9 m² lắp mặt dưới dầm (e); dầm 300X200 bỏ; sảnh thang máy, lõi, buồng thang, WC không rải).
+CHỜ DUYỆT. Còn hỏi: d lấy theo h nhãn dầm hay h trừ chiều dày sàn (file kết cấu không ghi dày sàn; trừ sàn ≥ 100 mm thì dầm 400 thành ≤ 0,3 m).
+Duyệt xong: rải (`PCCC_RAI BC_KHOI Dam 4.5`, kiểm khoang < 9 m² đặt đúng mặt dưới dầm), rồi sửa plugin rải lưới chung cho các khoang.
 
 ## VIỆC 16/11 TỐI (5) — SỬA 6 LỖI PLUGIN LỘ RA Ở TẦNG 8 KOCHAM: XONG MÃ + TEST, CHƯA XEM TRONG AUTOCAD CÓ GIAO DIỆN
 Người dùng dặn 16/11 tối: "Sửa 3 vấn đề về plugin đi" (1–3), cộng 3 lỗi lộ ra khi thiết kế theo dầm (4–6). Test mới: mục "Sua 6 loi" trong

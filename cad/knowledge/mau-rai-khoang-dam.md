@@ -23,5 +23,5 @@ nhà xưởng 2 tầng, tầng 1 có 118 đầu, tầng 2 có 120 đầu báo kh
 ## Khác với cách plugin đang rải (tầng 8 KOCHAM 16/11)
 - Plugin rải từng khoang độc lập: một đầu ở tâm mỗi khoang, hàng cột giữa các khoang lệch nhau theo kích thước khoang.
 - Mẫu: một lưới chung cho cả tầng, lề cố định tới dầm, số đầu mỗi khoang theo kích thước khoang (7,2 m / 10,2 m).
-- Plugin coi mọi dầm sâu hơn 0,3 m là biên khoang (tầng 8: dầm sàn 400 mm cách 3,7 m, ra 20 khoang nhỏ). Mẫu lấy khoang theo dầm trên trục cột.
-  Chưa rõ người dùng muốn tầng 8 tính khoang theo dầm nào: hỏi trước khi sửa thuật toán.
+- Người dùng chốt tối 16/11: khoang dầm thường theo **vì kèo (trục cột)** (nhà xưởng mái kèo, như mẫu); nhà nhiều tầng có **sàn deck hoặc sàn BTCT** thì
+  khoang theo dầm sàn (như tầng 8 KOCHAM: dầm sàn 400 cách 3,7 m ra 20 khoang). Luôn xét TỪNG dầm: dầm d ≤ 0,3 m (vd 300X200) bỏ, coi như trần phẳng.
