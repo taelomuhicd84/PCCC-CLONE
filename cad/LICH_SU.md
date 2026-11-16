@@ -467,3 +467,17 @@ Lỗi gặp: `DAY_BC` có hệ ONG (không phải BC) nên điều kiện điệ
 Người dùng bổ sung: tiêu chuẩn (5.9.1.1.6) xét cả chiều cao dầm và chiều cao trần; có mặt bằng dầm thì quét ký hiệu b x h (vd B1 (400x600)), không có thì
 hỏi người dùng một cỡ cho cả mặt bằng hoặc để họ vẽ line chọn cỡ từng vị trí. Làm trong `PCCC_RAI` (Dam): bước nét DẦM mẫu, `NhanDam`/`DocBxh`, `TungDam`,
 `MatChon` dựng tường không có nét dầm rồi chỉ giữ dầm sâu > 0,3 m. 3 ca test mới đạt; bản trước chỉ xét h, coi mọi nét dầm là dầm sâu.
+
+## 2026-11-16 — 5 yêu cầu báo cháy theo bản vẽ mẫu hai trường phái
+Người dùng gửi `file_cad_test\test báo cháy.dwg` (trái hệ địa chỉ, phải hệ thường; vùng xanh lá là vùng anh tự sửa) và 5 yêu cầu. Đã làm:
+- Vùng: `LamGon` (`NhanVung.cs`) gộp cạnh song song lệch < 1 m về đường ngoài, thay chuỗi cạnh ngắn bằng góc giao; đa giác 44 / 53 đỉnh của mẫu ra 8 đỉnh.
+  Test cũ đổi số: phòng có cột góc 0,2 x 0,2 m nay 27,84 m² (4 đỉnh), hai phòng thông nhau 55,88 m².
+- Dim: `KtLuoi` gom mọi cột thành một chuỗi X, mọi hàng thành một chuỗi Y; `PCCC_RAI` tự dim theo trang Cài đặt (phòng 3 x 2 ra kt=7).
+- `CaiDat.cs`: `cai_dat.json` dùng chung plugin + palette (`GiaoDien` gọi lại); biến môi trường `TKPCCC_CAI_DAT` cho test.
+- `PCCC_DAYBC` (`DayBc.cs`): rắn bò + chèn rẻ nhất + 2-opt Manhattan, đoạn gãy vuông góc; hệ thường cuối ở thiết bị xa tủ nhất; chuông xương cá; hệ địa chỉ mạch vòng,
+  nhóm ZM / CM / R2ML gần nhất. Lần chạy đầu trên file mẫu: dây chuông đi vòng chồng hàng đầu báo, nhóm ZM bị ép cuối ở điểm xa nhất nên đi ngược → đổi chuông sang cây
+  xương cá, nhóm ZM cuối tự do (dây ZM 149 → 116 m, chuông 97 → 85 m).
+- Trang Cài đặt: kiểu dim, cách dim, layer dim; bảng layer dây / ống. Trang Báo cháy mục 6: hệ, dây cho 9 loại thiết bị, nút ĐI DÂY.
+- `HoiMa`: gõ đúng cả tên thì nhận mã đó (thêm BC_NHIET_DC làm "dau bao nhiet" khớp 2 mã, test PCCC_DAT hỏng).
+Đã thử thêm phần đoán INSUNITS inch (file mẫu INSUNITS 1 mà vẽ mm): làm hỏng test inch, ngoài yêu cầu → gỡ lại, chỉ ghi chú cho người dùng.
+Kiểm: `chay_thu.ps1` 145/145, `thu_mcp.ps1`, `npm test` 68/68. Chưa chạy `thu_gui.ps1` (AutoCAD đang mở).

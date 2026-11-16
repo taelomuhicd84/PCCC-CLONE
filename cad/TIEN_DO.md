@@ -3,6 +3,21 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## VIỆC 16/11 — 5 YÊU CẦU BÁO CHÁY (người dùng gửi `file_cad_test\test báo cháy.dwg`: trái hệ địa chỉ, phải hệ thường): XONG MÃ + TEST
+Bản chép, dump, ảnh ở `ket_qua/cad_test/2026-11-16/` (gitignore). Kiến thức đọc từ mẫu: `cad/knowledge/di-day-bao-chay.md`.
+1. Phân vùng: vùng tự dựng bám khấc cột, cung cửa (44–53 đỉnh) → `LamGon` (`NhanVung.cs`, ngưỡng 1 m): bỏ khấc nhỏ ra đường ngoài, giữ khấc lớn (lõi thang);
+   đa giác của mẫu ra 8 đỉnh, 1 029 m² (vùng anh vẽ tay 1 041 m²). Áp cho `PCCC_RAI` và `vung_tu_dong`.
+2. Dim: `PCCC_RAI` tự dim sau khi rải (`KtLuoi`, `KtSauRai` trong `Rai.cs`): mọi cột một chuỗi X, mọi hàng một chuỗi Y, hai đầu tới mép vùng; spec `rai` `kt` dùng chung.
+3. Trang Cài đặt: kiểu dim (DimStyle bản vẽ hoặc PCCC_KT), cách dim (chuỗi / chuỗi + chéo góc / không), layer dim; lưu `cai_dat.json` qua `CaiDat.cs` (plugin + palette dùng chung).
+4. `PCCC_DAYBC` (`DayBc.cs`): hệ thường một đường vuông góc, điện trở cuối ở thiết bị xa tủ nhất, chuông xương cá; hệ địa chỉ mạch vòng tủ → module / thiết bị địa chỉ → tủ,
+   đầu báo + nút nhấn thường về ZM gần nhất, chuông thường về CM, chuông địa chỉ về R2ML. Nhận block lạ theo chữ (ZM, CM, RM/R2ML, NUT NHAN, CHUONG). Mã mới trong
+   `data/vat_tu.json`: BC_KHOI_DC, BC_NHIET_DC, BC_NUTAN_DC, BC_CHUONG_DC, BC_ZM, BC_CM, BC_R2ML. Chạy trên bản chép file mẫu: 0 đoạn xéo (ảnh `ket_qua/cad_test/2026-11-16/daybc.png`).
+5. Bảng layer dây / ống ở trang Cài đặt (thêm, xoá, lấy layer có sẵn trong bản vẽ, Lưu); trang Báo cháy mục 6 chọn dây cho 9 loại thiết bị + nút ĐI DÂY.
+Kèm: `PCCC_DAT` gõ đúng cả tên ("dau bao nhiet") nhận mã đó dù tên khác chứa nó. `chay_thu.ps1` 145/145, `thu_mcp.ps1`, `npm test` 68/68 đạt; `build.bat` đã build vào bundle.
+CHƯA: `thu_gui.ps1` (AutoCAD đang mở lúc làm, không chạy được), xem tận mắt trang Cài đặt + Báo cháy mục 6 trong AutoCAD; dây khác layer còn chồng nhau trên cùng đoạn
+(chưa dời song song); mạch vòng địa chỉ đi đường ngắn, chưa bám chu vi như mẫu. File mẫu để INSUNITS 1 (inch) mà vẽ theo mm: đặt INSUNITS 4 trước khi chạy plugin.
+VIỆC KẾ: chờ người dùng thử, báo lỗi thì sửa theo bảng "Sửa gì vào đâu" của `cad/README.md`.
+
 ## VIỆC 15/11 — LUẬT DẦM (người dùng bổ sung): XONG
 Khoang dầm phải xét cả độ sâu dầm d (b x h) lẫn chiều cao trần h (5.9.1.1.6). `PCCC_RAI` từ khoá Dam: bấm nét DẦM mẫu (tách khỏi nét tường, `NenVung.BoMau`);
 d lấy từ ký hiệu "b x h" (vd `B1 (400x600)`, chữ trong block cũng đọc) gần nhất trong 10 m; không có ký hiệu thì hỏi một cỡ cho cả mặt bằng hoặc `TungDam`

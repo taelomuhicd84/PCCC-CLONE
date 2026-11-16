@@ -123,44 +123,10 @@ namespace TKPCCC
 
         // ---------- Cài đặt %APPDATA%\TKPCCC\cai_dat.json: JSON phẳng, giá trị là chuỗi ----------
 
-        public static string FileCaiDat
-        {
-            get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TKPCCC", "cai_dat.json"); }
-        }
-
-        static Dictionary<string, string> DocTatCa()
-        {
-            Dictionary<string, string> d = new Dictionary<string, string>();
-            try
-            {
-                if (File.Exists(FileCaiDat))
-                    foreach (Match m in Regex.Matches(File.ReadAllText(FileCaiDat, Encoding.UTF8), "\"([A-Za-z_]+)\"\\s*:\\s*\"([^\"\\\\]*)\""))
-                        d[m.Groups[1].Value] = m.Groups[2].Value;
-            }
-            catch (System.Exception) { } // file hỏng: dùng mặc định
-            return d;
-        }
-
-        public static string DocCaiDat(string khoa, string macDinh)
-        {
-            string v;
-            return DocTatCa().TryGetValue(khoa, out v) && v != "" ? v : macDinh;
-        }
-
-        /// Ghi một khoá, giữ các khoá khác (giá trị bỏ dấu " và \ để JSON luôn hợp lệ).
-        public static void LuuCaiDat(string khoa, string giaTri)
-        {
-            Dictionary<string, string> d = DocTatCa();
-            d[khoa] = (giaTri ?? "").Replace("\"", "").Replace("\\", "");
-            List<string> dong = new List<string>();
-            foreach (KeyValuePair<string, string> p in d) dong.Add("  \"" + p.Key + "\": \"" + p.Value + "\"");
-            try
-            {
-                Directory.CreateDirectory(Path.GetDirectoryName(FileCaiDat));
-                File.WriteAllText(FileCaiDat, "{\r\n" + string.Join(",\r\n", dong) + "\r\n}\r\n", new UTF8Encoding(false));
-            }
-            catch (System.Exception) { } // không ghi được: kiểu vẫn đổi trong phiên này
-        }
+        // Đọc, ghi ở TKPCCC.CaiDat (TKPCCC.Cad.dll): plugin cũng đọc bảng layer dây, dây theo thiết bị, kiểu dim.
+        public static string FileCaiDat { get { return CaiDat.FileCaiDat; } }
+        public static string DocCaiDat(string khoa, string macDinh) { return CaiDat.Doc(khoa, macDinh); }
+        public static void LuuCaiDat(string khoa, string giaTri) { CaiDat.Luu(khoa, giaTri); }
 
         public static Label TieuDe(string t)
         {

@@ -276,6 +276,11 @@ namespace TKPCCC
             f.Controls.Add(nhan("Model bot chat"));
             f.Controls.Add(NhomChon(new[] { "sonnet", "opus" }, new[] { "Sonnet (mặc định, nhanh, ít hạn mức)", "Opus (kỹ hơn, tốn hạn mức hơn)" },
                 GiaoDien.DocCaiDat("model", "sonnet"), delegate(string m) { GiaoDien.LuuCaiDat("model", m); }));
+            // Người dùng 16/11: chọn loại dim; bảng layer dây báo cháy, ống chữa cháy thêm / xoá được.
+            f.Controls.Add(nhan("Kích thước (dim) tự động sau khi rải"));
+            f.Controls.Add(CaiDim());
+            f.Controls.Add(nhan("Layer dây báo cháy, ống chữa cháy"));
+            f.Controls.Add(BangLopDay());
             f.Controls.Add(nhan("Bản quyền"));
             NutBo bq = new NutBo("Bản quyền...", GiaoDien.XanhDam);
             bq.Size = new Size(160, 32);
@@ -290,6 +295,166 @@ namespace TKPCCC
             goi.Margin = new Padding(0, 14, 0, 0);
             f.Controls.Add(goi);
             return f;
+        }
+
+        const string KIEU_DIM_MAC_DINH = "(PCCC_KT mặc định)";
+
+        /// Kiểu dim (DimStyle của bản vẽ đang mở), cách dim, layer dim: PCCC_RAI đọc lúc rải (CaiDat.DimKieu / DimDang / DimLop).
+        static Control CaiDim()
+        {
+            FlowLayoutPanel p = new FlowLayoutPanel();
+            p.FlowDirection = FlowDirection.TopDown;
+            p.AutoSize = true;
+            p.WrapContents = false;
+            p.BackColor = GiaoDien.Nen;
+            Func<string, Label> ghi = delegate(string t)
+            {
+                Label l = new Label();
+                l.Text = t;
+                l.ForeColor = GiaoDien.ChuDam;
+                l.AutoSize = true;
+                l.Margin = new Padding(0, 4, 0, 2);
+                return l;
+            };
+            p.Controls.Add(ghi("Kiểu dim (DimStyle):"));
+            ComboBox kieu = new ComboBox();
+            kieu.DropDownStyle = ComboBoxStyle.DropDownList;
+            kieu.Width = 260;
+            kieu.AccessibleName = "Kiểu dim";
+            Action nap = delegate
+            {
+                string dang = CaiDat.DimKieu();
+                kieu.Items.Clear();
+                kieu.Items.Add(KIEU_DIM_MAC_DINH);
+                try { foreach (string s in Lenh.DsKieuDim()) kieu.Items.Add(s); } catch (System.Exception) { }
+                if (dang != "" && !kieu.Items.Contains(dang)) kieu.Items.Add(dang); // kiểu chưa có trong bản vẽ này: vẫn giữ lựa chọn
+                kieu.SelectedItem = dang == "" ? KIEU_DIM_MAC_DINH : dang;
+            };
+            nap();
+            kieu.SelectedIndexChanged += delegate
+            {
+                string s = kieu.SelectedItem == null ? "" : kieu.SelectedItem.ToString();
+                CaiDat.Luu("dim_kieu", s == KIEU_DIM_MAC_DINH ? "" : s);
+            };
+            kieu.DropDown += delegate { string chon = kieu.SelectedItem as string; nap(); if (chon != null) kieu.SelectedItem = chon; }; // bản vẽ khác: đọc lại
+            p.Controls.Add(kieu);
+            p.Controls.Add(ghi("Cách dim:"));
+            p.Controls.Add(NhomChon(new[] { CaiDat.DIM_CHUOI, CaiDat.DIM_CHUOI_CHEO, CaiDat.DIM_KHONG },
+                new[] { "Chuỗi X + Y (trùng hàng, trùng cột chỉ dim 1 lần)", "Chuỗi X + Y và chéo góc tới thiết bị gần nhất", "Không tự dim" },
+                CaiDat.DimDang(), delegate(string d) { CaiDat.Luu("dim_dang", d); }));
+            p.Controls.Add(ghi("Layer dim:"));
+            TextBox lop = new TextBox();
+            lop.Width = 200;
+            lop.Text = CaiDat.DimLop();
+            lop.AccessibleName = "Layer dim";
+            lop.Leave += delegate { CaiDat.Luu("dim_lop", lop.Text.Trim()); };
+            p.Controls.Add(lop);
+            return p;
+        }
+
+        /// Bảng layer dây, ống (CaiDat.LopDay): sửa ô trực tiếp, Thêm / Xoá dòng, lấy layer có sẵn trong bản vẽ, Lưu. Trang Báo cháy chọn dây từ nhóm BC.
+        static Control BangLopDay()
+        {
+            Panel p = new Panel();
+            p.Size = new Size(300, 330);
+            p.BackColor = GiaoDien.Nen;
+            DataGridView g = GiaoDien.Bang();
+            g.Dock = DockStyle.None;
+            g.Location = new Point(0, 0);
+            g.Size = new Size(300, 190);
+            g.SelectionMode = DataGridViewSelectionMode.CellSelect;
+            string[] tieuDe = { "Layer", "Màu", "Kiểu nét", "Nhóm", "Ghi chú" };
+            int[] rong = { 130, 40, 80, 50, 160 };
+            for (int i = 0; i < tieuDe.Length; i++)
+            {
+                DataGridViewColumn c;
+                if (i == 3)
+                {
+                    DataGridViewComboBoxColumn cb = new DataGridViewComboBoxColumn();
+                    cb.Items.AddRange("BC", "CC");
+                    cb.FlatStyle = FlatStyle.Flat;
+                    c = cb;
+                }
+                else c = new DataGridViewTextBoxColumn();
+                c.HeaderText = tieuDe[i];
+                c.Width = rong[i];
+                c.SortMode = DataGridViewColumnSortMode.NotSortable;
+                g.Columns.Add(c);
+            }
+            Action<IEnumerable<string[]>> nap = delegate(IEnumerable<string[]> ds) { g.Rows.Clear(); foreach (string[] r in ds) g.Rows.Add(r[0], r[1], r[2], r[3] == "CC" ? "CC" : "BC", r[4]); };
+            nap(CaiDat.LopDay());
+            p.Controls.Add(g);
+
+            Label tb = new Label();
+            tb.Font = GiaoDien.Nho;
+            tb.ForeColor = GiaoDien.ChuMo;
+            tb.Location = new Point(0, 296);
+            tb.Size = new Size(300, 34);
+            tb.Text = "Layer tên PCCC_<mã dây/ống> (vd PCCC_DAY_BC) thì PCCC_BOC cộng chiều dài vào mã đó. Xoá dòng trùng rồi bấm Lưu.";
+            p.Controls.Add(tb);
+            Func<string, int, int, int, EventHandler, NutBo> nut = delegate(string t, int x, int y, int w, EventHandler bam)
+            {
+                NutBo n = new NutBo(t, GiaoDien.Xanh);
+                n.Location = new Point(x, y);
+                n.Size = new Size(w, 26);
+                n.Click += bam;
+                p.Controls.Add(n);
+                return n;
+            };
+            nut("Thêm dòng", 0, 196, 72, delegate { g.Rows.Add("PCCC_", "7", "Continuous", "BC", ""); g.CurrentCell = g.Rows[g.Rows.Count - 1].Cells[0]; g.BeginEdit(true); });
+            nut("Xoá dòng", 76, 196, 72, delegate
+            {
+                List<int> xoa = g.SelectedCells.Cast<DataGridViewCell>().Select(c => c.RowIndex).Distinct().OrderByDescending(i => i).ToList();
+                foreach (int i in xoa) g.Rows.RemoveAt(i);
+            });
+            nut("Mặc định", 152, 196, 70, delegate { nap(CaiDat.LOP_MAC_DINH); });
+            NutBo luu = nut("Lưu", 226, 196, 74, delegate
+            {
+                GiaoDien.An(delegate
+                {
+                    List<string[]> ds = new List<string[]>();
+                    foreach (DataGridViewRow r in g.Rows)
+                    {
+                        string[] d = Enumerable.Range(0, 5).Select(i => Convert.ToString(r.Cells[i].Value ?? "").Trim()).ToArray();
+                        if (d[0] == "") continue;
+                        int mau;
+                        if (!int.TryParse(d[1], out mau) || mau < 1 || mau > 255) throw new System.Exception("Layer " + d[0] + ": màu phải là số ACI 1–255 (đang là \"" + d[1] + "\").");
+                        if (ds.Any(x => string.Equals(x[0], d[0], StringComparison.OrdinalIgnoreCase))) throw new System.Exception("Layer " + d[0] + " lặp hai dòng: xoá một dòng.");
+                        ds.Add(d);
+                    }
+                    CaiDat.LuuLopDay(ds);
+                    tb.Text = "Đã lưu " + ds.Count + " layer. Trang Báo cháy đọc lại khi mở.";
+                });
+            });
+            // Lấy layer có sẵn trong bản vẽ (layer báo cháy của mẫu người dùng, vd $.1.FA-FR-SMOKE).
+            ComboBox banVe = new ComboBox();
+            banVe.DropDownStyle = ComboBoxStyle.DropDownList;
+            banVe.Location = new Point(0, 228);
+            banVe.Width = 222;
+            banVe.AccessibleName = "Layer trong bản vẽ";
+            List<string[]> lopBv = new List<string[]>();
+            banVe.DropDown += delegate
+            {
+                try { lopBv = Lenh.DsLopBanVe(); } catch (System.Exception) { lopBv = new List<string[]>(); }
+                banVe.Items.Clear();
+                foreach (string[] l in lopBv) banVe.Items.Add(l[0]);
+            };
+            p.Controls.Add(banVe);
+            nut("Thêm", 226, 226, 74, delegate
+            {
+                string[] l = lopBv.FirstOrDefault(x => x[0] == (banVe.SelectedItem as string));
+                if (l == null) return;
+                foreach (DataGridViewRow r in g.Rows) if (string.Equals(Convert.ToString(r.Cells[0].Value), l[0], StringComparison.OrdinalIgnoreCase)) return;
+                g.Rows.Add(l[0], l[1], l[2], "BC", "Layer có sẵn trong bản vẽ");
+            });
+            Label gy = new Label();
+            gy.Font = GiaoDien.Nho;
+            gy.ForeColor = GiaoDien.ChuMo;
+            gy.Location = new Point(0, 258);
+            gy.Size = new Size(300, 34);
+            gy.Text = "Chọn layer có sẵn trong bản vẽ rồi bấm Thêm (bấm Lưu để ghi). Sửa ô: bấm đúp.";
+            p.Controls.Add(gy);
+            return p;
         }
 
         static Control NhomChon(string[] ma, string[] chu, string dangChon, Action<string> doi)

@@ -27,6 +27,13 @@
     { "ma": "BC_CHI_THI_HL", "ten": "Thiết bị chỉ thị đầu báo trên trần khu hành lang", "dvt": "cái", "he": "BC", "loai": "block", "ky_hieu": "CTHL" },
     { "ma": "BC_COI_DEN", "ten": "Còi đèn kết hợp báo cháy", "dvt": "cái", "he": "BC", "loai": "block", "ky_hieu": "CD" },
     { "ma": "BC_DIEN_THOAI", "ten": "Điện thoại kết nối PCCC", "dvt": "cái", "he": "BC", "loai": "block", "ky_hieu": "DT" },
+    { "ma": "BC_KHOI_DC", "ten": "Đầu báo khói địa chỉ", "dvt": "cái", "he": "BC", "loai": "block", "ky_hieu": "SA" },
+    { "ma": "BC_NHIET_DC", "ten": "Đầu báo nhiệt địa chỉ", "dvt": "cái", "he": "BC", "loai": "block", "ky_hieu": "HA" },
+    { "ma": "BC_NUTAN_DC", "ten": "Nút ấn báo cháy địa chỉ", "dvt": "cái", "he": "BC", "loai": "block", "ky_hieu": "NA" },
+    { "ma": "BC_CHUONG_DC", "ten": "Chuông báo cháy địa chỉ", "dvt": "cái", "he": "BC", "loai": "block", "ky_hieu": "CA" },
+    { "ma": "BC_ZM", "ten": "Module giám sát ZM (nối đầu báo, nút ấn thường vào mạch địa chỉ)", "dvt": "cái", "he": "BC", "loai": "block", "ky_hieu": "ZM" },
+    { "ma": "BC_CM", "ten": "Module điều khiển CM (chuông thường)", "dvt": "cái", "he": "BC", "loai": "block", "ky_hieu": "CM" },
+    { "ma": "BC_R2ML", "ten": "Module rơ le nguồn R2ML (chuông địa chỉ)", "dvt": "cái", "he": "BC", "loai": "block", "ky_hieu": "R2ML" },
 
     { "ma": "SPR_DAU_UP", "ten": "Đầu phun sprinkler hướng lên", "dvt": "cái", "he": "SPR", "loai": "block", "ky_hieu": "U" },
     { "ma": "SPR_DAU_DOWN", "ten": "Đầu phun sprinkler hướng xuống", "dvt": "cái", "he": "SPR", "loai": "block", "ky_hieu": "D" },

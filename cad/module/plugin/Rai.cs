@@ -686,29 +686,85 @@ namespace TKPCCC
         /// (đặt bên trái vùng), tường lấy theo giao của hàng / cột với đa giác; mỗi góc lồi một kích thước chéo từ thiết bị gần nhất tới góc.
         static void KtRai(GoiSpec g, List<Point2d> vung, LuoiRai r)
         {
-            double x0 = vung.Min(p => p.X), y1 = vung.Max(p => p.Y);
-            double cao = LaySo(NhomKyHieu("kt"), "cao", 250), ra = 4 * cao, y = r.Diem.Max(p => p.Y), x = r.Diem.Min(p => p.X);
+            double cao = LaySo(NhomKyHieu("kt"), "cao", 250);
             ObjectId l = DamBaoLayer(g.Db, g.Tr, LAYER_KT_RAI, 8);
-            List<double> xs = r.Diem.Where(p => Math.Abs(p.Y - y) < 1e-6).Select(p => p.X).OrderBy(v => v).ToList();
-            List<double> ys = r.Diem.Where(p => Math.Abs(p.X - x) < 1e-6).Select(p => p.Y).OrderBy(v => v).ToList();
-            ChuoiTuong(xs, KhoangNgang(vung, y));
-            ChuoiTuong(ys, KhoangNgang(vung.Select(p => new Point2d(p.Y, p.X)).ToList(), x));
-            for (int i = 0; i + 1 < xs.Count; i++)
-                if (xs[i + 1] - xs[i] > 1e-6) VeKt(g, new Point3d(xs[i], y, 0), new Point3d(xs[i + 1], y, 0), y1 - y + ra, cao, l);
-            for (int i = 0; i + 1 < ys.Count; i++)
-                if (ys[i + 1] - ys[i] > 1e-6) VeKt(g, new Point3d(x, ys[i], 0), new Point3d(x, ys[i + 1], 0), x - x0 + ra, cao, l);
-            foreach (Point2d[] c in CheoGoc(vung, r.Diem))
-                if (c[0].GetDistanceTo(c[1]) > 1e-6) VeKt(g, new Point3d(c[1].X, c[1].Y, 0), new Point3d(c[0].X, c[0].Y, 0), 0, cao, l);
+            foreach (Dimension d in KtLuoi(vung, r.Diem, true, DamBaoKieuKt(g), cao, EPS_DIM_M / HeSoMet(g.Db)))
+            {
+                d.Dimscale = cao / 2.5;
+                d.LayerId = l;
+                Them(g, d);
+            }
         }
 
-        /// Thêm hai đầu tường vào chuỗi toạ độ thiết bị (đã xếp tăng): mép khoảng giao chứa thiết bị đầu và thiết bị cuối.
-        static void ChuoiTuong(List<double> ds, List<double[]> khoang)
+        /// Chuỗi kích thước thiết bị (người dùng 16/11: "tự động dim khoảng cách giữa các đầu, trùng hàng trùng cột chỉ dim 1 lần theo X và Y"):
+        /// mọi toạ độ X của thiết bị trong vùng gom thành MỘT chuỗi ngang đặt trên vùng, mọi toạ độ Y thành MỘT chuỗi đứng bên trái vùng
+        /// (thiết bị cách nhau ≤ eps theo phương đo là một mốc); hai đầu chuỗi là mép vùng ngang qua thiết bị đầu, cuối (khoảng cách tới tường).
+        /// Đường gióng lấy từ thiết bị trên cùng của cột / trái cùng của hàng. cheo: thêm kích thước chéo từ thiết bị gần nhất tới mỗi góc lồi.
+        /// Trả các dim chưa thêm vào bản vẽ (nơi gọi đặt layer, cỡ).
+        static List<Dimension> KtLuoi(List<Point2d> vung, List<Point3d> diem, bool cheo, ObjectId kieu, double cao, double eps)
         {
-            double dau = ds[0], cuoi = ds[ds.Count - 1];
-            double[] k0 = khoang.Where(k => k[0] <= dau + 1e-6).OrderByDescending(k => k[0]).FirstOrDefault();
-            double[] k1 = khoang.Where(k => k[1] >= cuoi - 1e-6).OrderBy(k => k[1]).FirstOrDefault();
-            if (k0 != null) ds.Insert(0, k0[0]);
-            if (k1 != null) ds.Add(k1[1]);
+            List<Dimension> kq = new List<Dimension>();
+            if (diem.Count == 0) return kq;
+            double x0 = vung.Min(p => p.X), y1 = vung.Max(p => p.Y), ra = 4 * cao;
+            List<Point2d> chuyen = vung.Select(p => new Point2d(p.Y, p.X)).ToList();
+            foreach (bool doX in new[] { true, false })
+            {
+                // Mốc: một điểm cho mỗi cột (đo X) / hàng (đo Y), lấy thiết bị gần đường dim nhất.
+                List<Point3d> moc = new List<Point3d>();
+                foreach (Point3d p in diem.OrderBy(q => doX ? q.X : q.Y))
+                {
+                    Point3d tr = moc.Count > 0 ? moc[moc.Count - 1] : Point3d.Origin;
+                    if (moc.Count > 0 && (doX ? p.X - tr.X : p.Y - tr.Y) <= eps)
+                    {
+                        if (doX ? p.Y > tr.Y : p.X < tr.X) moc[moc.Count - 1] = p;
+                        continue;
+                    }
+                    moc.Add(p);
+                }
+                // Hai đầu: mép vùng trên đường ngang (dọc) qua thiết bị đầu và cuối.
+                Point3d dau = moc[0], cuoi = moc[moc.Count - 1];
+                double[] k0 = KhoangNgang(doX ? vung : chuyen, doX ? dau.Y : dau.X).FirstOrDefault(k => k[0] <= (doX ? dau.X : dau.Y) + 1e-6 && k[1] >= (doX ? dau.X : dau.Y) - 1e-6);
+                double[] k1 = KhoangNgang(doX ? vung : chuyen, doX ? cuoi.Y : cuoi.X).FirstOrDefault(k => k[0] <= (doX ? cuoi.X : cuoi.Y) + 1e-6 && k[1] >= (doX ? cuoi.X : cuoi.Y) - 1e-6);
+                if (k0 != null) moc.Insert(0, doX ? new Point3d(k0[0], dau.Y, 0) : new Point3d(dau.X, k0[0], 0));
+                if (k1 != null) moc.Add(doX ? new Point3d(k1[1], cuoi.Y, 0) : new Point3d(cuoi.X, k1[1], 0));
+                moc = GomMoc(moc, doX, 1e-6);
+                if (moc.Count < 2) continue;
+                Point3d qua = doX ? new Point3d(x0, y1 + ra, 0) : new Point3d(x0 - ra, y1, 0);
+                kq.AddRange(ChuoiKt(moc, doX, qua, kieu));
+            }
+            if (cheo)
+                foreach (Point2d[] c in CheoGoc(vung, diem))
+                {
+                    if (c[0].GetDistanceTo(c[1]) <= 1e-6) continue;
+                    Point3d a = new Point3d(c[1].X, c[1].Y, 0), b = new Point3d(c[0].X, c[0].Y, 0);
+                    kq.Add(new AlignedDimension(a, b, new Point3d((a.X + b.X) / 2, (a.Y + b.Y) / 2, 0), "", kieu));
+                }
+            return kq;
+        }
+
+        /// Dim tự động sau PCCC_RAI theo trang Cài đặt (kiểu dim, cách dim, layer). Trả số dim đã vẽ.
+        static int KtSauRai(Database db, Transaction tr, BlockTableRecord ms, List<Point2d> vung, List<Point3d> diem)
+        {
+            string dang = CaiDat.DimDang();
+            if (dang == CaiDat.DIM_KHONG || diem.Count == 0) return 0;
+            DimStyleTable dst = (DimStyleTable)tr.GetObject(db.DimStyleTableId, OpenMode.ForRead);
+            string ten = CaiDat.DimKieu();
+            bool coKieu = ten != "" && dst.Has(ten);
+            ObjectId kieu = coKieu ? dst[ten] : DamBaoKieuKt(db, tr); // chưa chọn: kiểu PCCC_KT như thao tác spec kt
+            double cao = LaySo(NhomKyHieu("kt"), "cao", 250);
+            ObjectId lop = DamBaoLayer(db, tr, CaiDat.DimLop(), 8);
+            int n = 0;
+            foreach (Dimension d in KtLuoi(vung, diem, dang == CaiDat.DIM_CHUOI_CHEO, kieu, cao, EPS_DIM_M / HeSoMet(db)))
+            {
+                d.SetDatabaseDefaults(db);
+                d.DimensionStyle = kieu;
+                if (!coKieu) d.Dimscale = cao / 2.5; // chưa chọn kiểu: cỡ chữ theo ky_hieu.json như thao tác kt
+                d.LayerId = lop;
+                ms.AppendEntity(d);
+                tr.AddNewlyCreatedDBObject(d, true);
+                n++;
+            }
+            return n;
         }
 
         /// Trị số rải theo tiêu chuẩn của mã thiết bị (data/khoang_cach_rai.json ở gốc repo, build.bat chép cạnh DLL; đơn vị m):
@@ -1280,6 +1336,8 @@ namespace TKPCCC
                     else if (MatKhongRai(f, oX, new List<List<Point2d>>())) ed.WriteMessage("\nÔ có dấu X (lỗ thông tầng): không rải.");
                     else if (!vung.Contains(f)) vung.Add(f);
                 }
+                // Người dùng 16/11: vùng vẽ ra là đa giác gọn (bỏ khấc cột, cung cửa, gờ < 1 m), không bám từng nét tường.
+                vung = vung.Select(d => LamGon(d, LAM_GON_M / m, 0.002 / m)).ToList();
             }
 
             // Khoang dầm (TCVN 7568-14:2025 5.9.1.1.6 c–f; bộ bản vẽ mẫu ghi "khoang < 9 m² => không bố trí theo khoang dầm"): khoang nhỏ hơn ngưỡng
@@ -1387,7 +1445,13 @@ namespace TKPCCC
                         else ket++;
                     }
                     if (dich + ket > 0) ed.WriteMessage("\n[TKPCCC] dich_ong_gio=" + dich + (ket > 0 ? " ket=" + ket + " (không dịch ra được: kiểm lại tay)" : ""));
-                    if (!xem) foreach (Point3d p in r.Diem) ChenThietBi(db, tr, v, p, k, 0);
+                    int soKtRai = 0;
+                    if (!xem)
+                    {
+                        foreach (Point3d p in r.Diem) ChenThietBi(db, tr, v, p, k, 0);
+                        // Người dùng 16/11: tự dim khoảng cách giữa các đầu (một chuỗi X, một chuỗi Y), kiểu dim theo trang Cài đặt.
+                        soKtRai = KtSauRai(db, tr, ms, d, r.Diem);
+                    }
                     else foreach (Point3d p in r.Diem)
                     {
                         soTam += VeTam(tr, ms, new Circle(p, Vector3d.ZAxis, 0.15 / m), lopTam);
@@ -1398,7 +1462,8 @@ namespace TKPCCC
                     ed.WriteMessage("\n[TKPCCC] PCCC_RAI " + v.ma + " n=" + r.Diem.Count + " luoi=" + r.Nx + "x" + r.Ny
                         + " buoc=" + Lt(r.Bx).ToString(CultureInfo.InvariantCulture) + "x" + Lt(r.By).ToString(CultureInfo.InvariantCulture)
                         + " m2=" + Math.Round(r.O * m * m, 2).ToString(CultureInfo.InvariantCulture)
-                        + (r.Ho > 0 ? " HO=" + r.Ho.ToString(CultureInfo.InvariantCulture) + "% (vùng chưa phủ hết, kiểm lại)" : "") + duoi);
+                        + (r.Ho > 0 ? " HO=" + r.Ho.ToString(CultureInfo.InvariantCulture) + "% (vùng chưa phủ hết, kiểm lại)" : "")
+                        + (soKtRai > 0 ? " kt=" + soKtRai : "") + duoi);
                 }
                 } finally { tienDo.Stop(); tienDo.Dispose(); }
                 if (xem) ed.WriteMessage("\n[TKPCCC] xem_truoc=" + soTam + " (vẽ tạm trên layer " + LAYER_XEM_TRUOC + ", không in, tự xoá khi rải thật)");

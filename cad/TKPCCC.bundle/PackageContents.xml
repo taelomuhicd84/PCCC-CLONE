@@ -25,6 +25,7 @@
         <Command Local="PCCC_DANHSO" Global="PCCC_DANHSO" />
         <Command Local="PCCC_DAT" Global="PCCC_DAT" />
         <Command Local="PCCC_DAY" Global="PCCC_DAY" />
+        <Command Local="PCCC_DAYBC" Global="PCCC_DAYBC" />
         <Command Local="PCCC_DOIBLOCK" Global="PCCC_DOIBLOCK" />
         <Command Local="PCCC_DOIDN" Global="PCCC_DOIDN" />
         <Command Local="PCCC_GAN" Global="PCCC_GAN" />

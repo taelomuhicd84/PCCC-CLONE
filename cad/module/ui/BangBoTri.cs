@@ -222,7 +222,81 @@ namespace TKPCCC
             if (cuLy.Count > 0)
                 f.Controls.Add(Chu("Cự ly: vẽ vòng R = d / 2 quanh từng thiết bị, báo thiết bị đứng lẻ (cách thiết bị cùng loại gần nhất > d, đo thẳng; quãng đường đi thật dài hơn). "
                     + string.Join("; ", cuLy.Select(c => c.Ten + " " + c.CanCu)), 0));
+            TaoDiDay();
             TinhLai();
+        }
+
+        // ---------- Mục 6: đi dây báo cháy (người dùng 16/11): hệ thường / hệ địa chỉ, chọn layer dây cho từng loại thiết bị ----------
+        readonly RadioButton heThuong = new RadioButton(), heDiaChi = new RadioButton();
+        readonly List<KeyValuePair<string, ComboBox>> chonDay = new List<KeyValuePair<string, ComboBox>>();
+
+        void TaoDiDay()
+        {
+            Muc("6", "ĐI DÂY BÁO CHÁY", "vuông góc, không đi xéo");
+            bool dc = GiaoDien.DocCaiDat("he_bc", "Thuong") == "DiaChi";
+            heThuong.Text = "Hệ thường: 1 đường qua đầu báo + nút nhấn, điện trở cuối ở thiết bị xa tủ nhất; chuông 1 đường nguồn mạch cụt";
+            heDiaChi.Text = "Hệ địa chỉ: mạch vòng tủ → module, thiết bị địa chỉ → về tủ; đầu báo, nút nhấn thường về ZM; chuông thường về CM, chuông địa chỉ về R2ML";
+            foreach (RadioButton r in new[] { heThuong, heDiaChi })
+            {
+                r.ForeColor = GiaoDien.ChuDam;
+                r.AutoSize = true;
+                r.MaximumSize = new Size(300, 0);
+                r.Margin = new Padding(0, 4, 0, 0);
+                f.Controls.Add(r);
+            }
+            heThuong.Checked = !dc; heDiaChi.Checked = dc;
+            heThuong.CheckedChanged += delegate { GiaoDien.LuuCaiDat("he_bc", heDiaChi.Checked ? "DiaChi" : "Thuong"); };
+            f.Controls.Add(Chu("Dây cho từng loại thiết bị (layer lấy từ bảng ở trang Cài đặt):", 0));
+            TableLayoutPanel bang = new TableLayoutPanel();
+            bang.ColumnCount = 2;
+            bang.AutoSize = true;
+            bang.BackColor = GiaoDien.Nen;
+            bang.Margin = new Padding(0, 2, 0, 4);
+            foreach (string[] v in CaiDat.VAI_TRO)
+            {
+                string khoa = v[0];
+                Label l = new Label();
+                l.Text = v[1];
+                l.ForeColor = GiaoDien.ChuDam;
+                l.AutoSize = true;
+                l.Margin = new Padding(0, 6, 6, 0);
+                ComboBox c = new ComboBox();
+                c.DropDownStyle = ComboBoxStyle.DropDownList;
+                c.Width = 170;
+                c.AccessibleName = "Dây " + v[1];
+                c.SelectedIndexChanged += delegate { if (c.SelectedItem != null) GiaoDien.LuuCaiDat("day_" + khoa, c.SelectedItem.ToString()); };
+                bang.Controls.Add(l);
+                bang.Controls.Add(c);
+                chonDay.Add(new KeyValuePair<string, ComboBox>(khoa, c));
+            }
+            f.Controls.Add(bang);
+            NapChonDay();
+            // Bảng layer có thể đổi ở trang Cài đặt: mở lại trang này thì nạp lại danh sách.
+            VisibleChanged += delegate { if (Visible) NapChonDay(); };
+            NutBo di = new NutBo("▶  ĐI DÂY", GiaoDien.XanhDam);
+            di.Size = new Size(300, 36);
+            di.Margin = new Padding(0, 6, 0, 4);
+            di.Click += delegate { GiaoDien.GuiLenh("PCCC_DAYBC\n" + (heDiaChi.Checked ? "DiaChi" : "Thuong") + "\n", null, null); };
+            f.Controls.Add(di);
+            f.Resize += delegate { di.Width = Math.Max(200, f.ClientSize.Width - f.Padding.Horizontal - 4); };
+            f.Controls.Add(Chu("Gửi PCCC_DAYBC: quét chọn thiết bị một zone (kể cả module ZM, CM, R2ML và tủ nếu có), bấm vị trí tủ TTBC khi vùng chọn không có tủ. "
+                + "Thiết bị địa chỉ: mã có đuôi _DC (BC_KHOI_DC, BC_NUTAN_DC, BC_CHUONG_DC) hoặc tên block có \"DIA CHI\".", 0));
+        }
+
+        void NapChonDay()
+        {
+            List<string> lop = CaiDat.LopDay().Where(r => r[3] == "BC").Select(r => r[0]).ToList();
+            foreach (KeyValuePair<string, ComboBox> kv in chonDay)
+            {
+                string dang = CaiDat.DayVaiTro(kv.Key);
+                ComboBox c = kv.Value;
+                c.BeginUpdate();
+                c.Items.Clear();
+                foreach (string l in lop) c.Items.Add(l);
+                if (!lop.Contains(dang)) c.Items.Add(dang); // layer đã xoá khỏi bảng: vẫn hiện để biết đang dùng gì
+                c.SelectedItem = dang;
+                c.EndUpdate();
+            }
         }
 
         void DocTieuChuan()

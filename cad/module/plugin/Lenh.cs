@@ -142,6 +142,7 @@ namespace TKPCCC
             new[] { "PCCC_KHUVUC", "Quản lý khu vực (MZ): đặt tên vùng, tổng m²", "Bấm điểm trong vùng PCCC_VUNG, gõ tên (ghi chữ tên + m²), Enter = xong" },
             new[] { "PCCC_KT","Kiểm tra vùng mù đầu báo (PCKT, CKO)", "Quét phòng PCCC_VUNG + thiết bị (Enter = cả bản vẽ): % mù từng phòng theo R, khoanh đỏ điểm mù trên PCCC_KIEM_MU" },
             new[] { "PCCC_DAY", "Dây báo cháy nối tiếp thiết bị (dây loop)", "Nhập mã dây (DAY_BC), chọn thiết bị, bấm điểm đầu (tủ), điểm cuối: Enter = dừng ở thiết bị cuối, Vong = về điểm đầu" },
+            new[] { "PCCC_DAYBC", "Đi dây báo cháy tự động: hệ thường hoặc hệ địa chỉ", "Chọn Thuong / DiaChi, quét chọn thiết bị một zone (kể cả module ZM, CM, R2ML), bấm tủ TTBC; dây vuông góc, layer theo trang Báo cháy" },
             new[] { "PCCC_THEMBLOCK", "Thêm block của bạn (kể cả block động) vào thư viện", "Chọn block, nhập mã vật tư mới, tên, hệ, đơn vị tính" },
             new[] { "PCCC_GAN", "Gán block có sẵn trong bản vẽ vào mã vật tư", "Chọn block rồi nhập mã: bóc được bản vẽ không vẽ bằng plugin" },
             new[] { "PCCC_BOC", "Bóc khối lượng, gửi lên web báo giá", "Chọn vùng (Enter = cả bản vẽ), tách theo tầng, khu nếu muốn" },
@@ -299,6 +300,9 @@ namespace TKPCCC
                 if (v != null) return v;
                 string k = BoDau(s);
                 List<VatTu> tim = cung.Where(x => BoDau(x.ma).Contains(k) || BoDau(x.ten).Contains(k)).ToList();
+                // Gõ đúng cả tên ("dau bao nhiet") thì nhận mã đó, dù tên khác chứa nó ("Đầu báo nhiệt địa chỉ").
+                List<VatTu> dungTen = tim.Where(x => BoDau(x.ten) == k).ToList();
+                if (dungTen.Count == 1) tim = dungTen;
                 if (tim.Count == 1) { ed.WriteMessage("\n  -> " + tim[0].ma + "  " + tim[0].ten); return tim[0]; }
                 if (tim.Count == 0) ed.WriteMessage("\nKhông có mã/tên nào chứa \"" + s + "\". Gõ ? để xem danh sách.");
                 else

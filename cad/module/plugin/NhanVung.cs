@@ -706,6 +706,125 @@ namespace TKPCCC
             return tot;
         }
 
+        // Người dùng 16/11 (test báo cháy.dwg): vùng tự dựng bám từng khấc cột, cung cửa, gờ tường (44–53 đỉnh); vùng người dùng sửa tay là đa giác
+        // vuông góc 8–9 đỉnh: bỏ khấc nông, lấp hốc cột, giữ khấc lớn (lõi thang 2,6 x 7,2 m).
+        // shortcut: ngưỡng cố định 1 m (khấc cột, hốc tường, gờ cửa nhỏ hơn); cần giữ chi tiết nhỏ hơn thì vẽ polyline PCCC_VUNG tay.
+        const double LAM_GON_M = 1.0;
+
+        class CanhChinh
+        {
+            public Point2d P, Q;                                  // đầu, cuối cạnh (đa giác ngược chiều kim đồng hồ)
+            public List<Point2d> Sau = new List<Point2d>();       // đỉnh của chuỗi cạnh ngắn sau Q, trước cạnh chính kế
+            public bool Giu;                                      // chuỗi ngắn dài quá (cung tường cong): giữ nguyên, không nối qua
+            public Vector2d Huong { get { return (Q - P).GetNormal(); } }
+        }
+
+        static Point2d ChieuLen(Point2d p, Point2d goc, Vector2d d) { return goc + d * (p - goc).DotProduct(d); }
+
+        /// Làm gọn đa giác vùng (người dùng 16/11): cạnh dài ≥ t là cạnh chính, chuỗi cạnh ngắn giữa hai cạnh chính (khấc cột, cung cửa, gờ)
+        /// thay bằng giao điểm hai cạnh đó; hai cạnh chính song song cùng chiều lệch nhau < t (khấc nông) gộp về đường NGOÀI.
+        /// Không làm gọn được (ít hơn 3 cạnh chính, ra đa giác tự cắt, diện tích lệch quá 25 %) thì trả đa giác cũ.
+        static List<Point2d> LamGon(List<Point2d> v0, double t, double tol)
+        {
+            List<Point2d> v = BoThangHang(new List<Point2d>(v0), tol);
+            if (v.Count < 5) return v;
+            double a0 = DienTichDaGiac(v);
+            if (a0 < 0) { v.Reverse(); a0 = -a0; }
+            int n = v.Count, dau = -1;
+            for (int i = 0; i < n && dau < 0; i++) if (v[i].GetDistanceTo(v[(i + 1) % n]) >= t) dau = i;
+            if (dau < 0) return v;
+            List<CanhChinh> c = new List<CanhChinh>();
+            for (int k = 0; k < n; k++)
+            {
+                int i = (dau + k) % n;
+                Point2d p = v[i], q = v[(i + 1) % n];
+                if (p.GetDistanceTo(q) >= t) c.Add(new CanhChinh { P = p, Q = q });
+                else c[c.Count - 1].Sau.Add(q);
+            }
+            if (c.Count < 3) return v;
+            // Đỉnh cuối của chuỗi là đầu cạnh chính kế: bỏ khỏi Sau. Chuỗi dài hơn 3t (tường cong) thì giữ.
+            for (int i = 0; i < c.Count; i++)
+            {
+                CanhChinh a = c[i];
+                if (a.Sau.Count > 0) a.Sau.RemoveAt(a.Sau.Count - 1);
+                double dai = 0;
+                Point2d tr = a.Q;
+                foreach (Point2d s in a.Sau.Concat(new[] { c[(i + 1) % c.Count].P })) { dai += tr.GetDistanceTo(s); tr = s; }
+                a.Giu = dai > 3 * t;
+            }
+            const double SIN_SS = 0.035; // 2°
+            for (int vong = 0; vong < 1000 && c.Count >= 3; vong++)
+            {
+                bool gop = false;
+                for (int i = 0; i < c.Count && !gop; i++)
+                {
+                    int j = (i + 1) % c.Count;
+                    CanhChinh A = c[i], B = c[j];
+                    if (A.Giu) continue;
+                    Vector2d da = A.Huong, db = B.Huong;
+                    if (Math.Abs(da.X * db.Y - da.Y * db.X) > SIN_SS || da.DotProduct(db) <= 0) continue;
+                    Vector2d ngoai = new Vector2d(da.Y, -da.X); // lòng đa giác ở bên trái cạnh
+                    double lech = (B.P - A.P).DotProduct(ngoai);
+                    if (Math.Abs(lech) >= t) continue;
+                    Point2d goc = lech > 0 ? B.P : A.P;
+                    A.P = ChieuLen(A.P, goc, da);
+                    A.Q = ChieuLen(B.Q, goc, da);
+                    A.Sau = B.Sau; A.Giu = B.Giu;
+                    c.RemoveAt(j);
+                    gop = true;
+                }
+                if (!gop) break;
+            }
+            if (c.Count < 3) return v;
+            Point2d[] S = c.Select(x => x.P).ToArray(), E = c.Select(x => x.Q).ToArray();
+            List<Point2d>[] noi = new List<Point2d>[c.Count];
+            for (int i = 0; i < c.Count; i++)
+            {
+                int j = (i + 1) % c.Count;
+                CanhChinh A = c[i], B = c[j];
+                noi[i] = new List<Point2d>();
+                if (A.Giu) { noi[i].AddRange(A.Sau); continue; }
+                Vector2d da = A.Huong, db = B.Huong;
+                double cheo = da.X * db.Y - da.Y * db.X;
+                if (Math.Abs(cheo) > SIN_SS)
+                {
+                    Vector2d w = B.P - A.P;
+                    Point2d x = A.P + da * ((w.X * db.Y - w.Y * db.X) / cheo);
+                    if (x.GetDistanceTo(A.Q) <= 3 * t && x.GetDistanceTo(B.P) <= 3 * t) { E[i] = x; S[j] = x; }
+                }
+                else if (da.DotProduct(db) > 0) S[j] = ChieuLen(A.Q, B.P, db); // bậc lớn ≥ t: cạnh nối vuông góc tại cuối A
+            }
+            List<Point2d> kq = new List<Point2d>();
+            for (int i = 0; i < c.Count; i++) { kq.Add(S[i]); kq.Add(E[i]); kq.AddRange(noi[i]); }
+            List<Point2d> gon = new List<Point2d>();
+            foreach (Point2d p in kq) if (gon.Count == 0 || gon[gon.Count - 1].GetDistanceTo(p) > tol) gon.Add(p);
+            if (gon.Count > 1 && gon[0].GetDistanceTo(gon[gon.Count - 1]) <= tol) gon.RemoveAt(gon.Count - 1);
+            gon = BoThangHang(gon, tol);
+            double a1 = DienTichDaGiac(gon);
+            if (gon.Count < 3 || a1 < 0.8 * a0 || a1 > 1.25 * a0 || TuCat(gon, tol)) return v;
+            return gon;
+        }
+
+        /// Đa giác tự cắt: hai cạnh không kề nhau cắt nhau.
+        static bool TuCat(List<Point2d> d, double tol)
+        {
+            int n = d.Count;
+            for (int i = 0; i < n; i++)
+                for (int j = i + 2; j < n; j++)
+                {
+                    if (i == 0 && j == n - 1) continue;
+                    Point2d a = d[i], b = d[(i + 1) % n], p = d[j], q = d[(j + 1) % n];
+                    Vector2d r = b - a, s = q - p;
+                    double cr = r.X * s.Y - r.Y * s.X;
+                    if (Math.Abs(cr) < 1e-12) continue;
+                    Vector2d w = p - a;
+                    double u = (w.X * s.Y - w.Y * s.X) / cr, z = (w.X * r.Y - w.Y * r.X) / cr;
+                    double eu = tol / r.Length, ez = tol / s.Length;
+                    if (u > eu && u < 1 - eu && z > ez && z < 1 - ez) return true;
+                }
+            return false;
+        }
+
         /// Đa giác phòng chứa điểm p (WCS). ho: khe thẳng hàng tối đa được nối (đơn vị bản vẽ). null + lyDo khi không dò được.
         /// Dò trong ô vuông quanh p, nới gấp đôi tới khi mặt tìm được nằm trọn trong ô (nét ngoài ô không thể cắt mặt đó) hoặc ô phủ cả bản vẽ.
         /// Có layer tường / cột thì dò bằng các layer đó trước, không ra mới dò mọi nét liền.
@@ -868,7 +987,7 @@ namespace TKPCCC
                 if (d == null)
                     throw new System.Exception("điểm " + i + " [" + Lt(ps[i].X - g.Gx).ToString(CultureInfo.InvariantCulture) + ","
                         + Lt(ps[i].Y - g.Gy).ToString(CultureInfo.InvariantCulture) + "]: " + lyDo);
-                ds.Add(d);
+                ds.Add(LamGon(d, LAM_GON_M / m, 0.002 / m));
             }
             ObjectId lop = DamBaoLayer(g.Db, g.Tr, LayChu(o, "l", LAYER_VUNG), (short)LaySo(o, "mau", 6));
             foreach (List<Point2d> d in ds)

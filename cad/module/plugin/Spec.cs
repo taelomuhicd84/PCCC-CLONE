@@ -414,18 +414,20 @@ namespace TKPCCC
             return m;
         }
 
-        static ObjectId DamBaoKieuKt(GoiSpec g)
+        static ObjectId DamBaoKieuKt(GoiSpec g) { return DamBaoKieuKt(g.Db, g.Tr); }
+
+        static ObjectId DamBaoKieuKt(Database db, Transaction tr)
         {
-            DimStyleTable t = (DimStyleTable)g.Tr.GetObject(g.Db.DimStyleTableId, OpenMode.ForRead);
+            DimStyleTable t = (DimStyleTable)tr.GetObject(db.DimStyleTableId, OpenMode.ForRead);
             if (t.Has(KIEU_KT)) return t[KIEU_KT];
             t.UpgradeOpen();
             DimStyleTableRecord s = new DimStyleTableRecord();
             s.Name = KIEU_KT;
             s.Dimtxt = 2.5; s.Dimasz = 1.5; s.Dimexe = 1.25; s.Dimexo = 1.0; s.Dimgap = 0.8;
             s.Dimdec = 0; s.Dimtad = 1; s.Dimtih = false; s.Dimtoh = false;
-            s.Dimtxsty = DamBaoKieuChu(g.Db, g.Tr);
+            s.Dimtxsty = DamBaoKieuChu(db, tr);
             ObjectId id = t.Add(s);
-            g.Tr.AddNewlyCreatedDBObject(s, true);
+            tr.AddNewlyCreatedDBObject(s, true);
             return id;
         }
 
