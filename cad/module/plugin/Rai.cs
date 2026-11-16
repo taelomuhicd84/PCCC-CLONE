@@ -1335,7 +1335,9 @@ namespace TKPCCC
             if (ongGio.Count > 0) ed.WriteMessage("\n[TKPCCC] " + ongGio.Count + " ống gió (polyline kín layer có ONG_GIO / DUCT): đầu rơi vào ống thì dịch ra ngoài biên.");
             if (idDam.Count > 0) conLai = conLai.Where(id => !idDam.Contains(id)).ToArray(); // line dầm chọn tay không làm tường
             int[] demDam;
+            System.Diagnostics.Stopwatch dongHo = System.Diagnostics.Stopwatch.StartNew(); // người dùng 16/11: rải lâu, đứng máy: in thời gian từng pha
             MatChon(db, conLai, mau.Count > 0 ? mau : null, damMau, giuDam, damThem, out vung, out mat, out oX, out gach, out demDam);
+            ed.WriteMessage("\n[TKPCCC] thoi_gian dung_phong=" + dongHo.ElapsedMilliseconds + "ms doi_tuong=" + conLai.Length + " mat=" + mat.Count);
             if (khoangDam && demDam[0] + demDam[1] > 0)
                 ed.WriteMessage("\n[TKPCCC] dam_sau=" + demDam[0] + " dam_nong=" + demDam[1] + " (dầm nông d ≤ 0,3 m bỏ, rải như trần phẳng: 5.9.1.1.6 a)");
             if (oX.Count > 0)
@@ -1372,7 +1374,24 @@ namespace TKPCCC
                     List<Point2d> f = mat.Where(x => TrongDaGiac(x, new Point2d(q.X, q.Y))).OrderBy(x => DienTichDaGiac(x)).FirstOrDefault();
                     if (f == null) ed.WriteMessage("\nĐiểm không nằm trong phòng kín nào của vùng đã chọn.");
                     else if (MatKhongRai(f, oX, new List<List<Point2d>>())) ed.WriteMessage("\nÔ có dấu X (lỗ thông tầng): không rải.");
-                    else if (!vung.Contains(f)) vung.Add(f);
+                    else
+                    {
+                        // Người dùng 16/11: phòng quanh điểm bấm hở thì mặt nhỏ nhất chứa điểm là mặt bao nhiều phòng (763 079 m², rải treo máy): hỏi trước.
+                        double sf = DienTichDaGiac(f);
+                        int bao = mat.Count(x => x != f && DienTichDaGiac(x) * m * m >= 4 && DienTichDaGiac(x) < sf && TrongDaGiac(f, DiemTrongMat(x)));
+                        if (bao >= 3)
+                        {
+                            PromptKeywordOptions bo = new PromptKeywordOptions("\nĐiểm bấm rơi vào mặt " + Math.Round(sf * m * m).ToString(CultureInfo.InvariantCulture)
+                                + " m² bao " + bao + " phòng khác: phòng quanh điểm này chưa kín (khe tường > 3 m không có ký hiệu cửa?). Vẫn rải cả mặt này?");
+                            bo.Keywords.Add("Co"); bo.Keywords.Add("Khong");
+                            bo.Keywords.Default = "Khong";
+                            bo.AllowNone = true;
+                            PromptResult br = ed.GetKeywords(bo);
+                            if (br.Status == PromptStatus.Cancel) return;
+                            if (br.StringResult != "Co") { ed.WriteMessage("\n[TKPCCC] bo_mat_bao m2=" + Math.Round(sf * m * m).ToString(CultureInfo.InvariantCulture) + " phong_trong=" + bao + ": vẽ polyline kín layer " + LAYER_VUNG + " quanh phòng rồi chọn lại."); continue; }
+                        }
+                        if (!vung.Contains(f)) vung.Add(f);
+                    }
                 }
                 // Người dùng 16/11: vùng vẽ ra là đa giác gọn (bỏ khấc cột, cung cửa, gờ < 1 m), không bám từng nét tường.
                 vung = vung.Select(d => LamGon(d, LAM_GON_M / m, 0.002 / m)).ToList();
@@ -1411,8 +1430,9 @@ namespace TKPCCC
                     + (hTran <= 0 ? " (không nhập trần: lấy ngưỡng 4 m² của trần 2–4 m, an toàn)" : ""));
             }
 
-            int tong = 0, soHo = 0;
+            int tong = 0, soHo = 0, soBo = 0;
             int[] ghi = { 0, 0, 0 };
+            dongHo.Restart();
             using (Transaction tr = db.TransactionManager.StartTransaction())
             {
                 BlockTableRecord ms = (BlockTableRecord)tr.GetObject(db.CurrentSpaceId, OpenMode.ForWrite);
@@ -1452,6 +1472,15 @@ namespace TKPCCC
                     }
                     List<List<Point2d>> nhoD;
                     bool laHopNho = nhoCuaHop.TryGetValue(d, out nhoD);
+                    LuoiRai r;
+                    // Người dùng 16/11: vùng nhận sai (mặt bao cả mặt bằng, 763 079 m²) cho lưới hàng nghìn thiết bị: bỏ riêng vùng đó, không vẽ vùng, rải tiếp vùng khác.
+                    try { r = LuoiVung(d, s, s, 0, 0, le, le, 0.05 / m, dt, 0, theoHang, tuongMax, cachMin); }
+                    catch (System.Exception ex)
+                    {
+                        soBo++;
+                        ed.WriteMessage("\n[TKPCCC] bo_vung m2=" + Math.Round(DienTichDaGiac(d) * m * m, 2).ToString(CultureInfo.InvariantCulture) + ": " + ex.Message);
+                        continue;
+                    }
                     if (veVung && !xem)
                         foreach (List<Point2d> dv in laHopNho ? nhoD : new List<List<Point2d>> { d })
                         {
@@ -1461,7 +1490,6 @@ namespace TKPCCC
                             ed.WriteMessage("\n[TKPCCC] Vùng tự dựng m2=" + Math.Round(DienTichDaGiac(dv) * m * m, 2).ToString(CultureInfo.InvariantCulture)
                                 + " (" + dv.Count + " đỉnh) trên layer " + LAYER_VUNG + ".");
                         }
-                    LuoiRai r = LuoiVung(d, s, s, 0, 0, le, le, 0.05 / m, dt, 0, theoHang, tuongMax, cachMin);
                     if (laHopNho)
                     {
                         int ngoai = r.Diem.RemoveAll(p => !nhoD.Any(q => TrongDaGiac(q, new Point2d(p.X, p.Y)) || CachVien(q, new Point2d(p.X, p.Y)) <= 0.6 / m));
@@ -1505,6 +1533,7 @@ namespace TKPCCC
                         + (soKtRai > 0 ? " kt=" + soKtRai : "") + duoi);
                 }
                 } finally { tienDo.Stop(); tienDo.Dispose(); }
+                ed.WriteMessage("\n[TKPCCC] thoi_gian rai=" + dongHo.ElapsedMilliseconds + "ms vung=" + vungRai.Count);
                 if (xem) ed.WriteMessage("\n[TKPCCC] xem_truoc=" + soTam + " (vẽ tạm trên layer " + LAYER_XEM_TRUOC + ", không in, tự xoá khi rải thật)");
                 // Ý từ video VPTTOOL 16/11: ghi m² từng khoang cho người thẩm duyệt kiểm; tắt ở tab Khoang dầm (cai_dat.json "kd_ghi_m2").
                 if (khoangDam && !tia && !xem && CaiDat.Doc("kd_ghi_m2", "Co") != "Khong")
@@ -1518,7 +1547,8 @@ namespace TKPCCC
             ed.WriteMessage("\n" + (xem ? "Xem trước: sẽ rải " : "Đã rải tổng ") + tong + " " + v.ten + (tia ? " (tia)" : "") + " trong " + vung.Count + " phòng.");
             KetQuaRaiCuoi = (xem ? "Xem trước (chưa vẽ): " : "Lượt cuối: ") + tong + " " + v.ma + (tia ? " (tia)" : "") + " trong " + vung.Count + (khoangDam && !tia ? " khoang" : " phòng")
                 + (ghi[0] > 0 ? " (" + ghi[1] + " khoang nhỏ đánh X" + (ghi[2] > 0 ? ", " + ghi[2] + " khoang < 1 m² không ghi" : "") + ")" : "")
-                + (soHo > 0 ? " · " + soHo + " phòng chưa phủ hết (HO, xem dòng lệnh)" : tia ? "" : " · phủ kín");
+                + (soBo > 0 ? " · BỎ " + soBo + " vùng lưới quá lớn (vùng nhận sai, xem dòng lệnh)" : "")
+                + (soHo > 0 ? " · " + soHo + " phòng chưa phủ hết (HO, xem dòng lệnh)" : tia ? "" : soBo > 0 ? "" : " · phủ kín");
         }
 
         const string LAYER_KHOANG = "PCCC_KHOANG_M2"; // chữ m² từng khoang dầm + dấu X khoang nhỏ; in được, xoá cả layer nếu không cần

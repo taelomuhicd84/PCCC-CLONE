@@ -8,8 +8,15 @@ Người dùng dán dòng lệnh `PCCC_RAI BC_KHOI` (Enter trần, theo hàng Kh
 Enter nét mẫu, `gach_cheo=553`, Enter mọi phòng → `Vùng tự dựng m2=763079.12 (533 đỉnh)` → `Lỗi: bước quá nhỏ so với vùng (60 x 139 thiết bị)`.
 Người dùng dặn: sửa lỗi này VÀ tối ưu thời gian rải (rải đầu phun lâu, có thể đứng máy).
 Bản vẽ (người dùng xác nhận): `file_cad_test\test báo cháy.dwg` gốc repo (gitignore; INSUNITS 1 mà vẽ mm, xem việc 16/11 chiều). Chép ra `ket_qua/cad_test/2026-11-16/` rồi mới thử, không sửa file gốc.
+Người dùng nói thêm: mặt bằng BÊN PHẢI rải bị đứng máy (lần đầu rải không sao). 2 polyline trắng layer PCCC_VUNG (ngoài 2 mặt bằng) là vùng plugin tự phân
+lần đầu, "chuẩn gần 90 %"; người dùng chép 2 đường xanh (cùng layer PCCC_VUNG) vào mặt bằng trái để hướng dẫn; "từ đó trở về sau làm dở ẹc": xem lại vì sao lượt sau kém.
+ĐÃ LÀM (chưa commit lúc ghi, test `chay_thu.ps1` TAT CA DAT): vùng nào lưới > 5000 thiết bị thì bỏ riêng vùng đó (`bo_vung`), không vẽ vùng, rải tiếp;
+bấm điểm mà mặt nhỏ nhất chứa điểm bao ≥ 3 phòng ≥ 4 m² thì hỏi Co/Khong (mặc định Khong, `bo_mat_bao`); in `thoi_gian dung_phong=`, `thoi_gian rai=`.
+ĐO trên bản chép `ket_qua/cad_test/2026-11-16/rai_phai.dwg` (kịch bản `rai_phai.scr`: ssget block "Factory 1A4- 1st", Enter mọi phòng):
+`thoi_gian dung_phong=78671ms doi_tuong=1 mat=37365`, `thoi_gian rai=266ms vung=57`, 112 đầu / 57 phòng. => CHẬM Ở `MatChon` (NhanVung.cs), không phải ở rải.
 Bước tiếp:
-1. Tái hiện bằng accoreconsole trên bản chép (skill `tkpccc-cad-console`): in thời gian từng pha (MatChon, PhongThat, LuoiVung, PhuBu, ChenThietBi, KtSauRai) bằng Stopwatch.
+1. Đọc `MatChon` (NhanVung.cs): xem bước nào O(n²) (cắt đoạn, dò mặt, lọc) với ~37 nghìn mặt; tối ưu (lưới ô vuông chia không gian cho phép cắt / điểm trong đa giác,
+   bỏ sớm nét không phải tường: chữ, hatch, đồ nội thất nhỏ), đo lại bằng `rai_phai.scr` (mục tiêu < 5 s), giữ nguyên kết quả 57 phòng / 112 đầu.
 2. Gốc lỗi (giả thuyết): Enter mọi phòng nhận cả mặt bao ngoài (chứa các mặt khác) thành phòng. Sửa ở `PhongThat` / `MatChon` (`NhanVung.cs`):
    mặt chứa mặt khác hoặc rộng phi lý thì bỏ, báo `bo_bao_ngoai=`; vùng nào lưới quá lớn thì BỎ vùng đó, báo, rải tiếp vùng khác (không ném lỗi cả lệnh).
 3. Tối ưu chỗ chậm đo được (giảm phép thử điểm trong đa giác, gom insert, dim), thêm ca test đo thời gian vào `chay_thu.ps1`.
