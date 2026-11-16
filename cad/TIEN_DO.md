@@ -22,9 +22,12 @@ Người dùng dặn 16/11 tối: "Sửa 3 vấn đề về plugin đi" (1–3),
    (chia khoang, dim chung như đầu báo).
 Chạy lại: `scripts/tao_dam.py` (S = thư mục scripts) sinh `kb_bc3.txt`, `kb_spr3.txt` chạy trên `t8_mat_bang_dam.dwg` → `t8_bc_dam_sua.dwg/.png`,
 `t8_spr_dam_sua.dwg/.png` (ket_qua, gitignore). Sprinkler: 31 đầu hướng lên vì khoang đo theo nét dầm sơ đồ rộng 200 (thật 250) ra 12,1–12,4 m² > 12 m².
+THÊM 16/11 tối (người dùng đồng ý làm cả hai): (d) Enter = mọi phòng của đầu báo tự bỏ phòng ≤ 60 m² có dấu hiệu lõi thang, buồng thang, WC
+(`GomKhu` trong `NhanVung.cs`: tên block/layer, chữ phòng), in `bo_khu_khong_bao= m2=`; tầng 8 bỏ 2 WC (10,7; 13 m²), hành lang không tách được phòng
+(gộp với buồng thang, giới hạn dò phòng có từ trước); (c) dây đi vòng: ô lưới cách mép vùng ≤ 0,4 m phạt x4, tầng 8 dây từ x 36020 sang 36520
+(cách mép lõi 0,55 m). Test: ca 7 + kiểm dây cách mép trong mục "Sua 6 loi" của `chay_thu.ps1`.
 CÒN LẠI (chưa làm): (a) khoang vẽ tay từng polyline `PCCC_VUNG` (không qua `Dam`) vẫn dim từng khoang — không phân biệt được khoang với phòng;
-(b) lọc đầu phun không tách được hai phòng cùng loại đầu phun sát nhau qua một tường; (c) dây đi sát mép vùng (trùng nét tường) khi vòng qua lõi;
-(d) chưa tự loại lõi thang, buồng thang, WC khỏi "Enter = mọi phòng" của đầu báo (luật người dùng: không đặt đầu báo ở đó); (e) độ rộng dầm lấy theo nét vẽ, chưa theo nhãn.
+(b) lọc đầu phun không tách được hai phòng cùng loại đầu phun sát nhau qua một tường; (e) độ rộng dầm lấy theo nét vẽ, chưa theo nhãn.
 
 ## VIỆC 16/11 TỐI (4) — ỐP MẶT BẰNG DẦM VÀO KIẾN TRÚC + VẼ KHOANG DẦM: XONG
 `ket_qua/cad_test/2026-11-16/cong_trinh_drive/t8_mat_bang_dam.dwg`: mặt bằng tầng 8 + dầm chép nguyên nét từ file kết cấu (tờ "MẶT BẰNG DẦM TẦNG 7"), đổi layer

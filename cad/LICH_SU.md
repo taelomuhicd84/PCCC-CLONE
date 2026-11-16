@@ -554,3 +554,8 @@ Hạn mức reset, tự chạy theo lời dặn. (1) Lõi thang là block trên 
 dữ liệu thật: nét dầm sơ đồ dừng cách dầm biên 200 mm (kéo dài 0,4 m), nhãn dầm cắt ngang gần hơn (ghép theo phương chữ). (5) `PCCC_DAYBC` tìm đường
 vuông góc trong hợp các vùng. (6) Dim chung cho khoang của một vùng; sprinkler có `Dam`. Bẫy script: bấm nét dầm mẫu trúng chữ nhãn → zoom trong suốt
 (`'_.ZOOM W`) sát nét dầm rồi bấm; khung W phải ôm trọn nét dầm. Test 6 ca trong `chay_thu.ps1`.
+
+## 2026-11-16 tối (7) — Tự bỏ lõi thang, buồng thang, WC; dây đi cách tường
+Người dùng hỏi vì sao chưa tự bỏ lõi thang, WC và dây "chạy sát mép" là sao, rồi bảo làm cả hai. Enter = mọi phòng của đầu báo bỏ phòng ≤ 60 m² có
+block/layer/chữ thang máy, thang bộ, thiết bị vệ sinh (chữ có "SẢNH" không tính). Dây đi vòng: phạt ô sát mép vùng ≤ 0,4 m. Báo cáo PDF
+`BAO_CAO_TANG8_SAU_SUA_LOI.pdf` (ket_qua) giải thích 4 điểm người dùng hỏi bằng ảnh.
