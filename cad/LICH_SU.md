@@ -543,3 +543,7 @@ Lỗi plugin gom 6 mục vào `cad/TIEN_DO.md`, giao phiên nhánh chạy khi h�
 Người dùng: copy mặt bằng dầm ốp vào mặt bằng kiến trúc rồi vẽ khoang dầm. Khớp bằng trục (khoảng trục 4200/7425/3750 và 3700/3700/3650/3650/3700/3700 trùng kích thước
 kiến trúc), không theo mép tường (lần trước lệch 47 mm). Bẫy console: `EXPLODE L` báo *Invalid selection* → chèn bằng `-INSERT *file` (nổ khi chèn). Đổi layer nét dầm
 trước khi chèn vì cùng tên `AAP-TUONG` với tường kiến trúc (bộ dò phòng sẽ coi dầm là tường). 20 khoang, 233,5 m².
+
+## 2026-11-16 tối (5) — Đọc nhãn dầm: số lớn là chiều cao
+Người dùng chốt: quy tắc đọc dầm vẫn là b x h (rộng x cao); bản kết cấu KOCHAM ghi ngược là ngoại lệ, trước mắt lấy số lớn làm chiều cao. `DocBxh` (Rai.cs)
+đổi sang min = b, max = h; test vùng C trong `chay_thu.ps1` đổi nhãn sang `DS 700X300` (trước sửa sẽ ra d = 0,3 → bỏ dầm). Dầm bẹt thật sẽ đọc sai: gặp thì thêm lựa chọn.

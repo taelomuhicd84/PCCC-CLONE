@@ -54,11 +54,14 @@ namespace TKPCCC
         }
 
         /// Độ sâu dầm (m) từ ký hiệu "b x h" (mm), vd "B1 (400x600)", "300X700", "250×500". -1 = không phải ký hiệu dầm.
+        /// Số lớn hơn là h (người dùng dặn 16/11): có bộ kết cấu ghi ngược h x b ("DS 400X250" = rộng 250, cao 400).
         static double DocBxh(string s)
         {
             System.Text.RegularExpressions.Match k = System.Text.RegularExpressions.Regex.Match(s ?? "", @"(\d{2,4})\s*[xX×\*]\s*(\d{2,4})");
             if (!k.Success) return -1;
-            double b = double.Parse(k.Groups[1].Value, CultureInfo.InvariantCulture), h = double.Parse(k.Groups[2].Value, CultureInfo.InvariantCulture);
+            double m1 = double.Parse(k.Groups[1].Value, CultureInfo.InvariantCulture), m2 = double.Parse(k.Groups[2].Value, CultureInfo.InvariantCulture);
+            // shortcut: dầm bẹt (rộng > cao) bị đọc thành dầm cao; gặp bản vẽ có dầm bẹt thì thêm lựa chọn "đọc đúng b x h".
+            double b = Math.Min(m1, m2), h = Math.Max(m1, m2);
             return b >= 50 && b <= 2000 && h >= 100 && h <= 3000 ? h / 1000 : -1;
         }
 

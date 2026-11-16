@@ -7,8 +7,9 @@ Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.m
 `ket_qua/cad_test/2026-11-16/cong_trinh_drive/t8_mat_bang_dam.dwg`: mặt bằng tầng 8 + dầm chép nguyên nét từ file kết cấu (tờ "MẶT BẰNG DẦM TẦNG 7"), đổi layer
 `AAP-TUONG`→`KC_DAM`, `AAP-TEXT`→`KC_DAM_CHU`, `AAP-TRUC`→`KC_TRUC`... (để không lẫn tường), dời khớp trục dx −1106627, dy −366924 (`scripts/tach_dam.lsp`,
 chèn `-INSERT *kc_dam_t8.dwg`). 20 khoang K1–K20 polyline `PCCC_VUNG` theo mép trong dầm + chữ m² layer `PCCC_KHOANG_M2` (`scripts/tao_khoang.py`).
-Dùng file này làm bản thử cho lỗi 4 bên dưới. Lưu ý: nhãn dầm của bộ kết cấu này ghi `DS hXb` (`DS 400X250` = b 250, h 400, theo mặt cắt cùng tờ) — `NhanDam`
-đọc "b x h" sẽ ra d = 0,25 m (sai). Cần hỏi / cho chọn thứ tự (hoặc lấy số lớn là h khi một số ≤ 300) và báo ra dòng lệnh.
+Dùng file này làm bản thử cho lỗi 4 bên dưới. Nhãn dầm của bộ kết cấu này ghi ngược `DS hXb` (`DS 400X250` = b 250, h 400, theo mặt cắt cùng tờ).
+ĐÃ SỬA 16/11 (người dùng chốt): quy tắc vẫn là b x h (rộng x cao), nhưng `DocBxh` (Rai.cs) lấy số LỚN làm h nên đọc đúng cả nhãn ngược;
+test `chay_thu.ps1` vùng C dùng nhãn `DS 700X300`. Giới hạn: dầm bẹt (rộng > cao) sẽ bị đọc thành dầm cao — gặp thì thêm lựa chọn.
 
 ## VIỆC TIẾP THEO (làm ngay khi hạn mức reset, phiên nhánh tự chạy) — SỬA 6 LỖI PLUGIN LỘ RA Ở TẦNG 8 KOCHAM
 Người dùng dặn 16/11 tối: "Sửa 3 vấn đề về plugin đi" (1–3), cộng 3 lỗi mới lộ ra khi thiết kế theo dầm (4–6). Luật người dùng (memory
