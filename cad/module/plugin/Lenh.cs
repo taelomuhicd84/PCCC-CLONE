@@ -651,6 +651,23 @@ namespace TKPCCC
             return ((BlockTableRecord)tr.GetObject(bid, OpenMode.ForRead)).Name;
         }
 
+        /// Chủng loại của block động = trạng thái Visibility hiện tại (BÌNH CHỮA CHÁY: "BỘT ABC 8KG", ĐÈN EXIT: "2 HƯỚNG"); không có Visibility
+        /// thì tham số chữ có danh sách giá trị (Lookup). Độ dài, góc, lật, toạ độ không làm chủng loại. null = block thường hoặc không có tham số đó.
+        static string ChungLoai(BlockReference br)
+        {
+            if (!br.IsDynamicBlock) return null;
+            string kq = null;
+            foreach (DynamicBlockReferenceProperty p in br.DynamicBlockReferencePropertyCollection)
+            {
+                string v = p.Value as string;
+                if (string.IsNullOrWhiteSpace(v) || p.GetAllowedValues().Length == 0) continue;
+                // .NET không có cờ "đây là Visibility": nhận theo tên mặc định Visibility, Visibility1... (tên đổi tay thì rơi vào nhánh Lookup, vẫn ra chủng loại)
+                if (p.PropertyName.StartsWith("Visibility", StringComparison.OrdinalIgnoreCase)) return v.Trim();
+                if (kq == null) kq = v.Trim();
+            }
+            return kq;
+        }
+
         static void GanBlock()
         {
             Document doc = AcApp.DocumentManager.MdiActiveDocument;
@@ -665,21 +682,33 @@ namespace TKPCCC
                 o.AllowNone = true;
                 PromptEntityResult r = ed.GetEntity(o);
                 if (r.Status != PromptStatus.OK) break;
-                string ten;
+                string ten, loai = null;
                 using (Transaction tr = doc.Database.TransactionManager.StartTransaction())
                 {
                     DBObject o2 = tr.GetObject(r.ObjectId, OpenMode.ForRead);
                     ten = o2 is Table ? null : TenBlock((BlockReference)o2, tr);
+                    if (ten != null) loai = ChungLoai((BlockReference)o2);
                     tr.Commit();
                 }
                 if (ten == null) { ed.WriteMessage("\nĐó là bảng, không phải block thiết bị."); continue; }
-                string cu;
-                if (alias.TryGetValue(ten, out cu)) ed.WriteMessage("\nBlock \"" + ten + "\" đang gán " + cu + ".");
-                VatTu v = HoiMa(ed, dm, "block", "Mã vật tư cho block \"" + ten + "\"");
+                // Block động nhiều trạng thái (bình 4 kg / 8 kg...): gán riêng trạng thái đang chọn thì khoá "tên|trạng thái" (MaThietBi xét trước khoá tên).
+                if (loai != null)
+                {
+                    PromptKeywordOptions ko = new PromptKeywordOptions("\nBlock động đang ở trạng thái \"" + loai + "\". Gán mã Rieng trạng thái này hay Chung mọi trạng thái?");
+                    ko.Keywords.Add("Rieng"); ko.Keywords.Add("Chung");
+                    ko.Keywords.Default = "Rieng";
+                    ko.AllowNone = true;
+                    PromptResult kr = ed.GetKeywords(ko);
+                    if (kr.Status == PromptStatus.Cancel) continue;
+                    if (kr.StringResult == "Chung") loai = null;
+                }
+                string khoa = loai == null ? ten : ten + "|" + loai, cu;
+                if (alias.TryGetValue(khoa, out cu)) ed.WriteMessage("\nBlock \"" + khoa + "\" đang gán " + cu + ".");
+                VatTu v = HoiMa(ed, dm, "block", "Mã vật tư cho block \"" + khoa + "\"");
                 if (v == null) continue;
-                alias[ten] = v.ma;
+                alias[khoa] = v.ma;
                 File.WriteAllText(FileAlias, new JavaScriptSerializer().Serialize(alias), Encoding.UTF8);
-                ed.WriteMessage("\nĐã gán \"" + ten + "\" = " + v.ma + " (" + v.ten + "). Lưu ở " + FileAlias);
+                ed.WriteMessage("\nĐã gán \"" + khoa + "\" = " + v.ma + " (" + v.ten + "). Lưu ở " + FileAlias);
             }
         }
 
@@ -768,7 +797,15 @@ namespace TKPCCC
             public List<string> TenKhu = new List<string>();
             public HashSet<string> ViTri = new HashSet<string>();
             public int Trung, NgoaiDanhMuc, QuaSau;
+            /// Dòng tách chủng loại block động: khoá DongKhoa(mã, chủng loại). Tong, TheoKhu giữ theo mã cho web, sơ đồ, bảng PCCC_BLOCK.
+            public Dictionary<string, double> Dong = new Dictionary<string, double>();
+            public Dictionary<string, Dictionary<string, double>> DongKhu = new Dictionary<string, Dictionary<string, double>>();
         }
+
+        const char TACH_LOAI = '\t'; // mã \t chủng loại ("" = block thường, ống)
+        static string DongKhoa(string ma, string loai) { return ma + TACH_LOAI + (loai ?? ""); }
+        static string MaCuaDong(string dong) { return dong.Substring(0, dong.IndexOf(TACH_LOAI)); }
+        static string LoaiCuaDong(string dong) { return dong.Substring(dong.IndexOf(TACH_LOAI) + 1); }
 
         class BoiCanh
         {
@@ -780,6 +817,14 @@ namespace TKPCCC
             public KetQua Kq;
             /// Định nghĩa block -> có thể chứa thiết bị / nét PCCC_ không (review 15/11: không duyệt lại nội thất cho từng bản chèn).
             public Dictionary<ObjectId, bool> CoTb = new Dictionary<ObjectId, bool>();
+            HashSet<string> tenAliasLoai;
+            /// Tên block có alias riêng theo chủng loại ("tên|trạng thái"): chỉ những block này mới phải đọc tham số động trong MaThietBi.
+            public bool CoAliasLoai(string ten)
+            {
+                if (tenAliasLoai == null)
+                    tenAliasLoai = new HashSet<string>(Alias.Keys.Where(k => k.IndexOf('|') > 0).Select(k => k.Substring(0, k.IndexOf('|'))), StringComparer.OrdinalIgnoreCase);
+                return tenAliasLoai.Contains(ten);
+            }
         }
 
         /// Block bid (kể cả block lồng) có thể chứa thứ được đếm: bản chèn mang mã thiết bị hoặc Curve trên layer PCCC_. Nhớ theo định nghĩa.
@@ -807,17 +852,20 @@ namespace TKPCCC
             kl[ma] = cu + sl;
         }
 
-        static void Ghi(BoiCanh bc, string ma, double sl, Point3d p)
+        static void Ghi(BoiCanh bc, string ma, double sl, Point3d p, string loai)
         {
             Cong(bc.Kq.Tong, ma, sl);
+            Cong(bc.Kq.Dong, DongKhoa(ma, loai), sl);
             if (bc.Khu.Count == 0) return;
             Khu k = bc.Khu.FirstOrDefault(x => x.Chua(p));
             string ten = k != null ? k.Ten : KHU_NGOAI;
-            if (!bc.Kq.TheoKhu.ContainsKey(ten)) bc.Kq.TheoKhu[ten] = new Dictionary<string, double>();
+            if (!bc.Kq.TheoKhu.ContainsKey(ten)) { bc.Kq.TheoKhu[ten] = new Dictionary<string, double>(); bc.Kq.DongKhu[ten] = new Dictionary<string, double>(); }
             Cong(bc.Kq.TheoKhu[ten], ma, sl);
+            Cong(bc.Kq.DongKhu[ten], DongKhoa(ma, loai), sl);
         }
 
-        /// Mã thiết bị của block: attribute MA_VT > tên block là mã trong danh mục > tên block đã gán (PCCC_GAN). null = không phải thiết bị.
+        /// Mã thiết bị của block: attribute MA_VT > gán riêng trạng thái block động ("tên|chủng loại", PCCC_GAN Rieng) > tên block là mã
+        /// trong danh mục > tên block đã gán (PCCC_GAN). null = không phải thiết bị.
         static string MaThietBi(BlockReference br, BoiCanh bc)
         {
             foreach (ObjectId id in br.AttributeCollection)
@@ -825,10 +873,14 @@ namespace TKPCCC
                 AttributeReference ar = bc.Tr.GetObject(id, OpenMode.ForRead) as AttributeReference;
                 if (ar != null && ar.Tag.ToUpperInvariant() == TAG_MA && ar.TextString.Trim() != "") return ar.TextString.Trim();
             }
-            string ten = TenBlock(br, bc.Tr);
+            string ten = TenBlock(br, bc.Tr), ma;
+            if (br.IsDynamicBlock && bc.CoAliasLoai(ten))
+            {
+                string loai = ChungLoai(br);
+                if (loai != null && bc.Alias.TryGetValue(ten + "|" + loai, out ma)) return ma;
+            }
             VatTu v = TimMa(bc.Dm, ten);
             if (v != null && v.loai == "block") return v.ma;
-            string ma;
             return bc.Alias.TryGetValue(ten, out ma) ? ma : null;
         }
 
@@ -857,7 +909,7 @@ namespace TKPCCC
                         if (!bc.Kq.ViTri.Add(key)) { bc.Kq.Trung++; return; }
                     }
                     if (TimMa(bc.Dm, ma) == null) bc.Kq.NgoaiDanhMuc += lap;
-                    Ghi(bc, ma, lap, p);
+                    Ghi(bc, ma, lap, p, ChungLoai(br));
                     return;
                 }
                 if (sau >= SAU_TOI_DA) { bc.Kq.QuaSau++; return; }
@@ -878,7 +930,7 @@ namespace TKPCCC
             try { dai = c.GetDistanceAtParameter(c.EndParam) - c.GetDistanceAtParameter(c.StartParam); }
             catch (Autodesk.AutoCAD.Runtime.Exception) { return; } // đường suy biến (độ dài 0), xline/ray
             // Đoạn tính vào khu chứa trung điểm.
-            Ghi(bc, v.ma, nhan * dai * bc.HeSo * Math.Abs(tf.GetScale()), c.GetPointAtDist(dai / 2).TransformBy(tf));
+            Ghi(bc, v.ma, nhan * dai * bc.HeSo * Math.Abs(tf.GetScale()), c.GetPointAtDist(dai / 2).TransformBy(tf), null);
         }
 
         static void BocKhoiLuong()
@@ -936,6 +988,8 @@ namespace TKPCCC
             {
                 VatTu v = TimMa(bc.Dm, p.Key);
                 ed.WriteMessage("\n  " + p.Key.PadRight(16) + So(p.Value).PadLeft(10) + " " + (v != null ? v.dvt + "  " + v.ten : "(ngoài danh mục)"));
+                foreach (KeyValuePair<string, double> d in kq.Dong.Where(x => MaCuaDong(x.Key) == p.Key && LoaiCuaDong(x.Key) != "").OrderBy(x => x.Key))
+                    ed.WriteMessage("\n      + chủng loại \"" + LoaiCuaDong(d.Key) + "\": " + So(d.Value));
             }
             foreach (string t in kq.TenKhu)
                 ed.WriteMessage("\n  [" + t + "] " + string.Join(", ", kq.TheoKhu.ContainsKey(t) ? kq.TheoKhu[t].OrderBy(x => x.Key).Select(x => x.Key + "=" + So(x.Value)).ToArray() : new string[0]));
@@ -1014,11 +1068,13 @@ namespace TKPCCC
             if (hr.Status != PromptStatus.OK) return;
             double h = hr.Value;
 
-            // Thứ tự dòng theo danh mục (nhóm theo hệ), mã ngoài danh mục ở cuối.
+            // Thứ tự dòng theo danh mục (nhóm theo hệ), mã ngoài danh mục ở cuối; block động mỗi chủng loại (Visibility) một dòng.
             List<string> ma = dm.vat_tu.Select(v => v.ma).Where(m => kq.Tong.ContainsKey(m)).ToList();
             ma.AddRange(kq.Tong.Keys.Where(m => !ma.Contains(m)).OrderBy(m => m));
-            bool coKhu = kq.TenKhu.Count > 0;
-            int nCot = 4 + (coKhu ? kq.TenKhu.Count : 0) + 1;
+            List<string> dong = ma.SelectMany(m => kq.Dong.Keys.Where(d => MaCuaDong(d) == m).OrderBy(d => d)).ToList();
+            bool coKhu = kq.TenKhu.Count > 0, coLoai = dong.Any(d => LoaiCuaDong(d) != "");
+            int cLoai = coLoai ? 1 : 0; // cột "Chủng loại" chỉ có khi có block động: bảng block thường giữ như cũ
+            int nCot = 4 + cLoai + (coKhu ? kq.TenKhu.Count : 0) + 1;
 
             using (Transaction tr = db.TransactionManager.StartTransaction())
             {
@@ -1027,36 +1083,38 @@ namespace TKPCCC
                 Table t = new Table();
                 t.TableStyle = db.Tablestyle;
                 t.Position = pp.Value.TransformBy(ed.CurrentUserCoordinateSystem);
-                t.SetSize(ma.Count + 2, nCot);
+                t.SetSize(dong.Count + 2, nCot);
                 try { t.MergeCells(CellRange.Create(t, 0, 0, 0, nCot - 1)); }
                 catch (Autodesk.AutoCAD.Runtime.Exception) { } // kiểu bảng đã tự gộp dòng tiêu đề
                 t.Cells[0, 0].TextString = "BẢNG THỐNG KÊ THIẾT BỊ, VẬT TƯ PCCC";
-                string[] dau = new string[] { "STT", "Ký hiệu", "Tên vật tư", "ĐVT" };
-                for (int c = 0; c < 4; c++) t.Cells[1, c].TextString = dau[c];
-                for (int k = 0; coKhu && k < kq.TenKhu.Count; k++) t.Cells[1, 4 + k].TextString = kq.TenKhu[k];
+                string[] dau = coLoai ? new string[] { "STT", "Ký hiệu", "Tên vật tư", "Chủng loại", "ĐVT" } : new string[] { "STT", "Ký hiệu", "Tên vật tư", "ĐVT" };
+                for (int c = 0; c < dau.Length; c++) t.Cells[1, c].TextString = dau[c];
+                for (int k = 0; coKhu && k < kq.TenKhu.Count; k++) t.Cells[1, 4 + cLoai + k].TextString = kq.TenKhu[k];
                 t.Cells[1, nCot - 1].TextString = coKhu ? "Tổng" : "Số lượng";
-                for (int i = 0; i < ma.Count; i++)
+                for (int i = 0; i < dong.Count; i++)
                 {
                     int r = i + 2;
-                    VatTu v = TimMa(dm, ma[i]);
+                    string m = MaCuaDong(dong[i]);
+                    VatTu v = TimMa(dm, m);
                     t.Cells[r, 0].TextString = (i + 1).ToString();
-                    if (bt.Has(ma[i]))
+                    if (bt.Has(m))
                     {
-                        t.Cells[r, 1].BlockTableRecordId = bt[ma[i]];
+                        t.Cells[r, 1].BlockTableRecordId = bt[m];
                         t.Cells[r, 1].Contents[0].IsAutoScale = true; // ký hiệu co theo ô
                     }
-                    else t.Cells[r, 1].TextString = v != null && v.loai == "tuyen" ? "—" : ma[i];
-                    t.Cells[r, 2].TextString = " " + (v != null ? v.ten : ma[i]); // cách mép trái ô (lề mặc định của kiểu bảng rất nhỏ)
-                    t.Cells[r, 3].TextString = v != null ? v.dvt : "";
+                    else t.Cells[r, 1].TextString = v != null && v.loai == "tuyen" ? "—" : m;
+                    t.Cells[r, 2].TextString = " " + (v != null ? v.ten : m); // cách mép trái ô (lề mặc định của kiểu bảng rất nhỏ)
+                    if (coLoai) t.Cells[r, 3].TextString = LoaiCuaDong(dong[i]);
+                    t.Cells[r, 3 + cLoai].TextString = v != null ? v.dvt : "";
                     for (int k = 0; coKhu && k < kq.TenKhu.Count; k++)
                     {
                         double sl;
                         Dictionary<string, double> d;
-                        if (kq.TheoKhu.TryGetValue(kq.TenKhu[k], out d) && d.TryGetValue(ma[i], out sl)) t.Cells[r, 4 + k].TextString = So(sl);
+                        if (kq.DongKhu.TryGetValue(kq.TenKhu[k], out d) && d.TryGetValue(dong[i], out sl)) t.Cells[r, 4 + cLoai + k].TextString = So(sl);
                     }
-                    t.Cells[r, nCot - 1].TextString = So(kq.Tong[ma[i]]);
+                    t.Cells[r, nCot - 1].TextString = So(kq.Dong[dong[i]]);
                 }
-                for (int r = 0; r < ma.Count + 2; r++)
+                for (int r = 0; r < dong.Count + 2; r++)
                 {
                     t.Rows[r].Height = h * 2.2;
                     for (int c = 0; c < nCot; c++)
@@ -1066,13 +1124,14 @@ namespace TKPCCC
                         t.Cells[r, c].Alignment = c == 2 && r > 1 ? CellAlignment.MiddleLeft : CellAlignment.MiddleCenter;
                     }
                 }
-                double[] rong = new double[] { 4, 6, 26, 5 };
-                for (int c = 0; c < nCot; c++) t.Columns[c].Width = h * (c < 4 ? rong[c] : 7);
+                double[] rong = coLoai ? new double[] { 4, 6, 26, 14, 5 } : new double[] { 4, 6, 26, 5 };
+                for (int c = 0; c < nCot; c++) t.Columns[c].Width = h * (c < rong.Length ? rong[c] : 7);
                 t.GenerateLayout();
                 BlockTableRecord space = (BlockTableRecord)tr.GetObject(db.CurrentSpaceId, OpenMode.ForWrite);
                 space.AppendEntity(t); tr.AddNewlyCreatedDBObject(t, true);
                 tr.Commit();
             }
+            ed.WriteMessage("\n[TKPCCC] PCCC_BANG dong=" + dong.Count + (coLoai ? " chung_loai=" + string.Join(";", dong.Where(d => LoaiCuaDong(d) != "").Select(d => MaCuaDong(d) + ":" + LoaiCuaDong(d)).ToArray()) : ""));
         }
 
         // ----- Vùng bảo vệ -----

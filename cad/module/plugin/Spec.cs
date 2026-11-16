@@ -33,7 +33,7 @@ namespace TKPCCC
             public Extents3d? Hop;
             public List<object> Loi = new List<object>();
             public List<object> KqDoc = new List<object>();
-            public Dictionary<string, object> Dem;
+            public Dictionary<string, object> Dem, DemLoai;
             public List<object> KqRai = new List<object>(), KqTuyen = new List<object>();   // cad/module/plugin/Rai.cs
             public List<List<Point3d>> DiemRai = new List<List<Point3d>>();                 // điểm của "rai" gần nhất, theo từng vùng, để "tuyen" dùng lại
             public List<List<Point2d>> VungRai = new List<List<Point2d>>();                 // đa giác của từng vùng đó (cùng chỉ số): "tuyen" nhận "qua" theo vùng
@@ -222,6 +222,7 @@ namespace TKPCCC
             }
             if (g.Loi.Count > 0) kq["loi"] = g.Loi.OrderBy(x => (int)((Dictionary<string, object>)x)["i"]).ToList(); // pdf chạy trước, anh chạy sau: xếp lại theo thứ tự thao tác
             if (g.Dem != null) kq["dem"] = g.Dem;
+            if (g.DemLoai != null) kq["dem_loai"] = g.DemLoai;
             if (g.KqDoc.Count > 0) kq["doc"] = g.KqDoc;
             if (g.KqRai.Count > 0) kq["rai"] = g.KqRai;
             if (g.KqTuyen.Count > 0) kq["tuyen"] = g.KqTuyen;
@@ -719,6 +720,14 @@ namespace TKPCCC
             }
             g.Dem = new Dictionary<string, object>();
             foreach (KeyValuePair<string, double> p in bc.Kq.Tong.OrderBy(x => x.Key)) g.Dem[p.Key] = Math.Round(p.Value, 2);
+            // Block động: số theo chủng loại (Visibility) riêng ở "dem_loai" {mã: {chủng loại: số}}; "dem" giữ {mã: số} cho so_do và các bên đọc cũ.
+            foreach (KeyValuePair<string, double> p in bc.Kq.Dong.Where(x => LoaiCuaDong(x.Key) != "").OrderBy(x => x.Key))
+            {
+                if (g.DemLoai == null) g.DemLoai = new Dictionary<string, object>();
+                string ma = MaCuaDong(p.Key);
+                if (!g.DemLoai.ContainsKey(ma)) g.DemLoai[ma] = new Dictionary<string, object>();
+                ((Dictionary<string, object>)g.DemLoai[ma])[LoaiCuaDong(p.Key)] = Math.Round(p.Value, 2);
+            }
         }
     }
 }
