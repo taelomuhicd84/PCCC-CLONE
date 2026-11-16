@@ -3,6 +3,13 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## VIỆC 16/11 TỐI (4) — ỐP MẶT BẰNG DẦM VÀO KIẾN TRÚC + VẼ KHOANG DẦM: XONG
+`ket_qua/cad_test/2026-11-16/cong_trinh_drive/t8_mat_bang_dam.dwg`: mặt bằng tầng 8 + dầm chép nguyên nét từ file kết cấu (tờ "MẶT BẰNG DẦM TẦNG 7"), đổi layer
+`AAP-TUONG`→`KC_DAM`, `AAP-TEXT`→`KC_DAM_CHU`, `AAP-TRUC`→`KC_TRUC`... (để không lẫn tường), dời khớp trục dx −1106627, dy −366924 (`scripts/tach_dam.lsp`,
+chèn `-INSERT *kc_dam_t8.dwg`). 20 khoang K1–K20 polyline `PCCC_VUNG` theo mép trong dầm + chữ m² layer `PCCC_KHOANG_M2` (`scripts/tao_khoang.py`).
+Dùng file này làm bản thử cho lỗi 4 bên dưới. Lưu ý: nhãn dầm của bộ kết cấu này ghi `DS hXb` (`DS 400X250` = b 250, h 400, theo mặt cắt cùng tờ) — `NhanDam`
+đọc "b x h" sẽ ra d = 0,25 m (sai). Cần hỏi / cho chọn thứ tự (hoặc lấy số lớn là h khi một số ≤ 300) và báo ra dòng lệnh.
+
 ## VIỆC TIẾP THEO (làm ngay khi hạn mức reset, phiên nhánh tự chạy) — SỬA 6 LỖI PLUGIN LỘ RA Ở TẦNG 8 KOCHAM
 Người dùng dặn 16/11 tối: "Sửa 3 vấn đề về plugin đi" (1–3), cộng 3 lỗi mới lộ ra khi thiết kế theo dầm (4–6). Luật người dùng (memory
 `khong-tran-co-dam-va-vung-khong-dau-bao`): lõi thang máy, buồng thang, WC KHÔNG đặt đầu báo; "không trần" = có dầm nhô, xét khoang dầm; hộp kỹ thuật = hộp gen thông tầng.

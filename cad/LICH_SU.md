@@ -538,3 +538,8 @@ Người dùng gửi file kết cấu, dặn: không trần = có dầm nhô; l�
 (tên cũ tầng 8): nhãn mặt bằng ghi h X b (`DS 400X250` = 250 x 400, mặt cắt xác nhận), dầm vẽ polyline 200 sơ đồ. Dời dầm theo mép lõi thang, vẽ `KC_DAM`.
 Báo cháy 22 đầu (mỗi khoang một đầu, 5.9.1.1.6 d), dây 86,9 m; sprinkler 23 lên + 5 xuống, mỗi khoang. Plugin `Dam` không chia khoang khi vùng vẽ sẵn → vẽ tay 20 khoang.
 Lỗi plugin gom 6 mục vào `cad/TIEN_DO.md`, giao phiên nhánh chạy khi hạn mức reset.
+
+## 2026-11-16 tối (4) — Ốp mặt bằng dầm, vẽ khoang dầm
+Người dùng: copy mặt bằng dầm ốp vào mặt bằng kiến trúc rồi vẽ khoang dầm. Khớp bằng trục (khoảng trục 4200/7425/3750 và 3700/3700/3650/3650/3700/3700 trùng kích thước
+kiến trúc), không theo mép tường (lần trước lệch 47 mm). Bẫy console: `EXPLODE L` báo *Invalid selection* → chèn bằng `-INSERT *file` (nổ khi chèn). Đổi layer nét dầm
+trước khi chèn vì cùng tên `AAP-TUONG` với tường kiến trúc (bộ dò phòng sẽ coi dầm là tường). 20 khoang, 233,5 m².
