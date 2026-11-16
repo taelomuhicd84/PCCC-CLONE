@@ -10,6 +10,9 @@ trần (đầu báo) và bước S (sprinkler), giuDam/TungDam/cỡ chung so d �
 `t8_spr_tran45.dwg/.png`: 21 + 4 + sảnh 1 = 26 đầu lên, 5 đầu xuống (WC, hành lang), nhánh TuDong 94,5 m.
 GHI CHÚ: hàng đầu báo khoang 1 nằm sát dầm 400 (cách tim 0,1–0,2 m) — đúng luật (dầm nông coi trần phẳng) nhưng lắp dưới đáy dầm; nếu người dùng muốn
 tránh dầm nông thì thêm bước dịch hàng/cột ra giữa ô (như mẫu: lề cố định tới dầm). Lưới chung cho nhiều khoang (bài học mẫu) chưa làm trong plugin.
+17/11 người dùng sửa: dầm nhãn "DS 1400X250" qua sảnh thang máy thật là RỘNG 1400, CAO 700 (công trình ghi h x b ngược đời). d = 0,58 m vẫn sâu; dầm nằm
+ở sảnh/lõi (không rải đầu báo) nên kết quả không đổi. Plugin đọc nhãn này ra h = 1400 (mẹo "số lớn là h" sai với dầm bẹt) — cần cho nhập tay cỡ
+từng dầm khi nhãn sai (mở `TungDam` cả khi có nhãn) và vẽ bề rộng thật của dầm bẹt khi chia khoang.
 
 ## VIỆC 16/11 TỐI (5) — SỬA 6 LỖI PLUGIN LỘ RA Ở TẦNG 8 KOCHAM: XONG MÃ + TEST, CHƯA XEM TRONG AUTOCAD CÓ GIAO DIỆN
 Người dùng dặn 16/11 tối: "Sửa 3 vấn đề về plugin đi" (1–3), cộng 3 lỗi lộ ra khi thiết kế theo dầm (4–6). Test mới: mục "Sua 6 loi" trong
