@@ -1244,9 +1244,18 @@ namespace TKPCCC
             else
             {
                 // Mã chưa có trị số tiêu chuẩn (sprinkler...): người thiết kế nhập theo TCVN đang áp dụng.
-                PromptDoubleOptions so = new PromptDoubleOptions("\nBước tối đa S giữa hai thiết bị (m) theo tiêu chuẩn áp dụng: ");
+                // Dam (KOCHAM 16/11: trần hở, dầm > 300 mm thì đầu phun bố trí trong từng khoang dầm): chia vùng theo dầm sâu như đầu báo, rải từng khoang.
+                PromptDoubleOptions so = new PromptDoubleOptions("\nBước tối đa S giữa hai thiết bị (m) theo tiêu chuẩn áp dụng" + (khoangDam ? " (có dầm)" : ""));
+                so.Keywords.Add("Dam"); // AutoCAD tự nối " [Dam]: "
                 so.AllowNegative = false; so.AllowZero = false;
-                PromptDoubleResult sr = ed.GetDouble(so);
+                PromptDoubleResult sr;
+                while (true)
+                {
+                    sr = ed.GetDouble(so);
+                    if (sr.Status != PromptStatus.Keyword) break;
+                    khoangDam = true;
+                    so.Message = "\nBước tối đa S giữa hai thiết bị (m) theo tiêu chuẩn áp dụng (có dầm)";
+                }
                 if (sr.Status != PromptStatus.OK) return;
                 s = sr.Value / m;
                 PromptDoubleOptions dtHoi = new PromptDoubleOptions("\nDiện tích bảo vệ tối đa của một thiết bị (m2) theo tiêu chuẩn áp dụng, Enter = không xét: ");
@@ -1587,7 +1596,15 @@ namespace TKPCCC
                     {
                         foreach (Point3d p in r.Diem) ChenThietBi(db, tr, v, p, k, 0);
                         // Người dùng 16/11: tự dim khoảng cách giữa các đầu (một chuỗi X, một chuỗi Y), kiểu dim theo trang Cài đặt.
-                        soKtRai = KtSauRai(db, tr, ms, d, r.Diem);
+                        // Lỗi 6 KOCHAM 16/11 (20 khoang, mỗi khoang 4 dim): khoang chia từ một vùng vẽ sẵn dim chung trên vùng đó, sau vòng rải.
+                        List<Point2d> cha;
+                        if (khoangChia.TryGetValue(d, out cha))
+                        {
+                            List<Point3d> l;
+                            if (!diemCha.TryGetValue(cha, out l)) { l = new List<Point3d>(); diemCha[cha] = l; }
+                            l.AddRange(r.Diem);
+                        }
+                        else soKtRai = KtSauRai(db, tr, ms, d, r.Diem);
                     }
                     else foreach (Point3d p in r.Diem)
                     {
@@ -1603,6 +1620,8 @@ namespace TKPCCC
                         + (soKtRai > 0 ? " kt=" + soKtRai : "") + duoi);
                 }
                 } finally { tienDo.Stop(); tienDo.Dispose(); }
+                foreach (KeyValuePair<List<Point2d>, List<Point3d>> kv in diemCha)
+                    ed.WriteMessage("\n[TKPCCC] kt_gom n=" + kv.Value.Count + " kt=" + KtSauRai(db, tr, ms, kv.Key, kv.Value) + " (dim chung các khoang của một vùng vẽ sẵn)");
                 ed.WriteMessage("\n[TKPCCC] thoi_gian rai=" + dongHo.ElapsedMilliseconds + "ms vung=" + vungRai.Count);
                 if (xem) ed.WriteMessage("\n[TKPCCC] xem_truoc=" + soTam + " (vẽ tạm trên layer " + LAYER_XEM_TRUOC + ", không in, tự xoá khi rải thật)");
                 // Ý từ video VPTTOOL 16/11: ghi m² từng khoang cho người thẩm duyệt kiểm; tắt ở tab Khoang dầm (cai_dat.json "kd_ghi_m2").
