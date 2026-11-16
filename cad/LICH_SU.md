@@ -532,3 +532,9 @@ Chạy lại thiết kế bằng `PCCC_RAI`, `PCCC_KT`, `PCCC_DAT`, `PCCC_DAYBC`
 Bằng lệnh thì plugin tự thêm dim kiểu người dùng, EOL, dây chuông, bảng biểu, cỡ ống theo số đầu (spec JSON không có). Bẫy: có `PCCC_VUNG` trong khung chọn thì
 `PCCC_RAI` không hỏi điểm phòng (kịch bản lệch dòng); `PCCC_ONG` không chạy trong .scr; chọn đầu phun bằng `WP` theo đường bao phòng, nới mép hơn bán kính ký hiệu.
 Viết `cad/HUONG_DAN_SU_DUNG.md` (nguồn: `DS_LENH` trong `Lenh.cs` + dấu nhắc đọc từ mã) và báo cáo quy trình PDF.
+
+## 2026-11-16 tối (3) — Tầng 8 KOCHAM theo dầm (trần hở)
+Người dùng gửi file kết cấu, dặn: không trần = có dầm nhô; lõi thang, buồng thang, WC không đặt đầu báo; hộp kỹ thuật = hộp gen thông tầng. Mặt bằng dầm "TẦNG 7"
+(tên cũ tầng 8): nhãn mặt bằng ghi h X b (`DS 400X250` = 250 x 400, mặt cắt xác nhận), dầm vẽ polyline 200 sơ đồ. Dời dầm theo mép lõi thang, vẽ `KC_DAM`.
+Báo cháy 22 đầu (mỗi khoang một đầu, 5.9.1.1.6 d), dây 86,9 m; sprinkler 23 lên + 5 xuống, mỗi khoang. Plugin `Dam` không chia khoang khi vùng vẽ sẵn → vẽ tay 20 khoang.
+Lỗi plugin gom 6 mục vào `cad/TIEN_DO.md`, giao phiên nhánh chạy khi hạn mức reset.
