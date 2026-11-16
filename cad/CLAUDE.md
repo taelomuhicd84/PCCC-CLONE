@@ -4,6 +4,7 @@ Luật chung nằm ở `CLAUDE.md` gốc repo và vẫn áp dụng. File này ch
 Mở Claude Code tại gốc repo hay ngay tại `cad/` đều làm việc được (`cad/.mcp.json`, `cad/.claude/`).
 
 - **Phiên mới: đọc `cad/TIEN_DO.md` trước.** Bản đồ thư mục và "sửa gì vào đâu": `cad/README.md`. Kế hoạch tổng: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`.
+- Cập nhật 2026-11-16 (thắng dòng dưới): tới 95–98 % dừng task gần nhất, ghi `cad/TIEN_DO.md` + `cad/LICH_SU.md`, commit; reset thì làm tiếp ở phiên nhánh ngữ cảnh sạch, không hỏi (luật đủ ở `CLAUDE.md` gốc).
 - Tới 95 % hạn mức (người dùng dặn 2026-11-14, thay mức 90 % ngày 11/11; cấp toàn quyền tự làm tiếp): dừng, ghi `cad/TIEN_DO.md` + `cad/LICH_SU.md`, commit, push, hẹn giờ tới lúc reset rồi TỰ làm tiếp việc trong `cad/TIEN_DO.md`, không hỏi người dùng.
 - Skill riêng của CAD ở `cad/.claude/skills/`: `tkpccc-ve-cad` (vẽ qua MCP), `tkpccc-cad-console` (build, kiểm thử, thêm lệnh). Agent riêng ở `cad/.claude/agents/`
   (model và effort ghi ở frontmatter từng file, nguồn duy nhất). Người dùng chốt tối 2026-11-11 (thay các lời dặn trước trong ngày): VIẾT CODE bằng Opus (`cad-lap-trinh`; effort do Claude chọn theo việc:

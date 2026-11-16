@@ -500,3 +500,9 @@ Người dùng chọn việc 1 (ghi m² từng khoang), giữa chừng gửi b�
 `GhiKhoang` (Rai.cs) ghi m² + dấu X khoang nhỏ; `TuyenXuongCa` thêm tham số `dem`: cắt ống tại từng đầu phun / hàng, kèm số đầu phun phía sau; `PCCC_TUYEN TuDong`
 chọn DN theo `data/ong_nhanh_dn.json`. Câu hỏi mã ống của PCCC_TUYEN nhận mã đúng như cũ (kịch bản test cũ không đổi), gõ khác thì về HoiMa.
 Bẫy: heredoc trong công cụ Bash nuốt `\\` (thành `\`) khi chạy python: viết script vá ra file bằng Write rồi chạy.
+
+## 2026-11-16 chiều muộn — Lỗi "bước quá nhỏ" + rải đứng máy (đang dở)
+Người dùng dán lỗi PCCC_RAI (mặt 763 079 m², 533 đỉnh → lưới 60 x 139), báo mặt bằng bên phải rải đứng máy, "vừa dở vừa lag".
+Đã làm: bỏ riêng vùng lưới quá lớn, hỏi khi điểm bấm rơi vào mặt bao ≥ 3 phòng, in thời gian từng pha. Đo bản chép `rai_phai.dwg`:
+dựng phòng 78,7 s (37 365 mặt từ 1 block cả mặt bằng), rải 0,27 s → việc kế: tối ưu `MatChon` (cad/TIEN_DO.md).
+Luật mới của người dùng: 95–98 % dừng, ghi tiến độ + lịch sử; reset thì phiên nhánh ngữ cảnh sạch làm tiếp, không hỏi.

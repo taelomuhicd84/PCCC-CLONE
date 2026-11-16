@@ -12,6 +12,9 @@ Bộ công cụ thiết kế PCCC: plugin AutoCAD 2021 + runner Node + web nội
 - Việc CAD (thư mục `cad/`, người dùng dặn 2026-11-10): tiến độ và nhật ký lưu RIÊNG ở `cad/TIEN_DO.md`, `cad/LICH_SU.md`
   (`TIEN_DO.md` gốc chỉ trỏ tới); tới 95 % (người dùng dặn 2026-11-14, thay mức 90 % ngày 11/11 cho việc CAD) thì dừng, ghi 2 file đó, commit, push, hẹn giờ tới lúc reset rồi TỰ làm tiếp, không hỏi người dùng.
   `cad/` là dự án con (người dùng dặn 2026-11-11): luật riêng `cad/CLAUDE.md`, bản đồ thư mục `cad/README.md`, skill và agent riêng trong `cad/.claude/`.
+- Cập nhật 2026-11-16 (người dùng dặn, thắng mọi mức ở dưới): cửa sổ 5 giờ tới 95–98 % ⇒ dừng ở task gần nhất, ghi tiến độ + lịch sử, commit;
+  khi usage reset lần tiếp theo thì phân nhánh phiên, xoá đoạn chat của phiên nhánh mới (= `start_session` context "fresh", brief trỏ tới TIEN_DO) và làm tiếp, KHÔNG hỏi quyền.
+  Cách hẹn: lúc dừng tạo luôn phiên nhánh fresh, brief bảo nó CronCreate một lần vài phút sau `resetsAt` rồi mới làm.
 - Cập nhật 2026-11-15, áp cho MỌI việc (thắng các mức ở trên khi mâu thuẫn): cửa sổ 5 giờ tới 85–95 % mà chưa xong ⇒ dừng ở task gần nhất,
   ghi tiến độ + lịch sử (đủ để làm tiếp), commit, hẹn giờ (CronCreate một lần, vài phút sau `resetsAt`) rồi TỰ làm tiếp khi reset, không hỏi,
   không xin quyền; lặp lại tới khi xong. Ngữ cảnh phiên > 50 % ⇒ đẩy việc sang phiên nhánh (mỗi agent một phiên nhánh, chạy song song;
