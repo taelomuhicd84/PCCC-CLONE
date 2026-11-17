@@ -1,5 +1,5 @@
 // TKPCCC Hub (cad\bin\TKPCCC.Hub.exe): MỘT chỗ cài mọi thứ plugin cần, chia theo tính năng (người dùng 17/11, tham khảo "MCP Hub Pro"):
-//   Nền tảng (AutoCAD, .NET 4.8, plugin tự nạp) · MCP cad (máy chủ + cấu hình cho từng AI) · Bot chat (lệnh claude, agy) · YouTube (WebView2).
+//   Nền tảng (AutoCAD, .NET 4.8, plugin tự nạp) · MCP cad (máy chủ + cấu hình cho từng AI) · Bot chat (lệnh claude, agy) · YouTube (WebView2; Brave tuỳ chọn).
 // Chạy ngoài AutoCAD, không tham chiếu thư viện Autodesk. Phần mềm của hãng khác: Hub chỉ MỞ TRANG TẢI CHÍNH THỨC, không tự tải, không tự chạy bộ cài.
 // Sửa file JSON thì sao lưu <file>.tkpccc_<giờ>.bak trước; Claude Code, Antigravity ghi qua CLI của chính nó (không sửa file của chúng bằng tay:
 // ~/.claude.json đang được Claude Code ghi liên tục). Nhật ký: %APPDATA%\TKPCCC\hub.log.
@@ -69,6 +69,7 @@ namespace TKPCCC
             const string URL_CLAUDE = "https://docs.claude.com/en/docs/claude-code/setup";
             const string URL_AGY = "https://antigravity.google/download";
             const string URL_WV2 = "https://developer.microsoft.com/microsoft-edge/webview2/";
+            const string URL_BRAVE = "https://brave.com/download/";
             return new List<Muc>
             {
                 // ---- Nền tảng ----
@@ -108,6 +109,12 @@ namespace TKPCCC
                     HoiCai = "Mở trang tải WebView2 Runtime của Microsoft (chọn Evergreen Bootstrapper): " + URL_WV2 },
                 new Muc { Ma = "wv2_dll", Nhom = YT, Ten = "Thư viện WebView2 cạnh plugin (3 DLL)", Kiem = KiemDllWv2, Cai = CaiDllWv2,
                     HoiCai = "Chép 3 DLL WebView2 từ " + Path.Combine(Cad, "module", "ui", "webview2") + " vào " + Contents + "." },
+                new Muc { Ma = "brave", Nhom = YT, Ten = "Brave (tuỳ chọn, xem YouTube cửa sổ riêng)", Kiem = delegate
+                    {
+                        string b = HangDoi.TimBrave();
+                        return b != null ? KQ(1, "có: " + b) : KQ(0, "chưa có (không bắt buộc: tab YouTube dùng WebView2)");
+                    },
+                    Cai = delegate { return MoTrang(URL_BRAVE); }, HoiCai = "Mở trang tải Brave chính thức: " + URL_BRAVE },
             };
         }
 

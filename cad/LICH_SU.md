@@ -614,3 +614,7 @@ Người dùng hướng dẫn quy trình rải đầu báo khi có khoang dầm 
 ## 2026-11-17 trưa — Hẹn việc palette sau reset
 Tab YouTube chạy trong AutoCAD (ảnh người dùng). Người dùng muốn ẩn thanh dọc và xem YouTube bằng Brave; hạn mức 5 giờ 99 % nên ghi việc vào
 `cad/TIEN_DO.md` (VIỆC KẾ), hẹn phiên nhánh ngữ cảnh sạch làm sau reset 13:40.
+
+## 2026-11-17 (13:45) — Palette thu gọn thanh dọc + YouTube bằng Brave
+Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ `ben_an`). Tab YouTube chọn trình xem WebView2 (trong palette) hoặc Brave
+(cửa sổ app riêng áp mép phải AutoCAD, nhớ `yt_trinh_duyet`). Hub thêm mục Brave (tuỳ chọn) ở nhóm YouTube. build + chay_thu, thu_mcp, thu_hub đạt.

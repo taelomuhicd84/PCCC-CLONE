@@ -56,7 +56,8 @@ AI chỉ viết một gói thao tác ngắn (spec JSON), plugin sinh hình. Mộ
 | Đổi cách nhập PDF làm nền (`pdf`) | `module/plugin/Spec.cs`, hàm `NhapPdf` |
 | Đổi cách tính tỉ lệ trang PDF từ chuỗi kích thước | `.claude/skills/tkpccc-ve-cad/scripts/pdf_ti_le.py` (kiểm bằng `test/chay_thu.ps1`) |
 | Đổi nhịp xem hàng đợi, điều kiện "AutoCAD đang rảnh" | `module/plugin/Cau.cs` |
-| Tab YouTube: trang chủ, cách tìm, dừng video khi rời tab; đổi bản WebView2 (thay 3 DLL trong `module/ui/webview2/`) | `module/ui/BangYoutube.cs`; chép DLL ở `build.bat` |
+| Tab YouTube: trang chủ, cách tìm, dừng video khi rời tab; đổi bản WebView2 (thay 3 DLL trong `module/ui/webview2/`) | `module/ui/BangYoutube.cs`; chép DLL ở `build.bat`; chế độ Brave (`yt_trinh_duyet`, tìm brave.exe: `HangDoi.TimBrave`) cũng ở đây |
+| Nút ☰ đầu palette (menu phân hệ, thu gọn thanh dọc `ben_an`) | `module/ui/BangChinh.cs` (`DauTrang`, `MenuPhanHe`) |
 | Hub: thêm thành phần / nhóm mới (mục, cách kiểm, cách cài, trang tải), câu hỏi xác nhận, cửa sổ | `module/hub/Hub.cs` (`DanhSach`, `SuaJson`, `ChayCli`, `CuaSoHub`); test `test/thu_hub.ps1` |
 | Đổi chỗ đặt hàng đợi | `module/chung/HangDoi.cs` hoặc biến môi trường `TKPCCC_CAD_HANG_DOI` |
 | Lệnh gõ tay `PCCC_*` | `module/plugin/Lenh.cs` (xem skill `tkpccc-cad-console`) |

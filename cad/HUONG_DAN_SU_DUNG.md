@@ -10,7 +10,7 @@ Plugin thiết kế PCCC cho AutoCAD 2021 trở lên: rải đầu báo cháy, �
    - Nền tảng (bắt buộc): AutoCAD 2021–2024, .NET Framework 4.8, Plugin tự nạp.
    - MCP cad (AI ngoài CAD vẽ vào bản vẽ): máy chủ MCP + ghi cấu hình cho Claude Code, Claude Desktop, Gemini CLI, Antigravity.
    - Bot chat (khung chat trong palette): lệnh `claude` (Claude Code CLI), lệnh `agy` (Antigravity, Gemini).
-   - YouTube (phân hệ YouTube): Microsoft Edge WebView2 Runtime, 3 DLL WebView2 cạnh plugin.
+   - YouTube (phân hệ YouTube): Microsoft Edge WebView2 Runtime, 3 DLL WebView2 cạnh plugin; Brave (tuỳ chọn, chỉ khi muốn xem YouTube bằng Brave).
    Bấm "Chọn mục còn thiếu" rồi "Cài mục đã chọn". Phần mềm của hãng khác: Hub chỉ mở trang tải chính thức, anh tự cài rồi bấm "Quét lại máy". Mỗi lần cài đều hỏi lại; file cấu hình được sao lưu trước khi sửa; nhật ký ở `%APPDATA%\TKPCCC\hub.log`.
    Hoặc cách cũ: chạy `cad\cai_dat.bat`. File này tạo liên kết `TKPCCC.bundle` trong `%APPDATA%\Autodesk\ApplicationPlugins`. Gỡ: `cad\cai_dat.bat /go`.
 4. Tắt hẳn AutoCAD rồi mở lại. Dòng lệnh báo `[TKPCCC] Đã nạp plugin PCCC`. Không tự nạp thì gõ `NETLOAD` và chọn `TKPCCC.Cad.dll`.
@@ -19,8 +19,8 @@ Plugin thiết kế PCCC cho AutoCAD 2021 trở lên: rải đầu báo cháy, �
 
 ## 2. Bắt đầu
 
-- `PCCC`: mở palette chính. Thanh dọc trái chọn phân hệ: Quy trình vẽ, Tiện ích, Báo cháy, Chữa cháy, Thống kê, Thư viện, Lệnh, Bot chat, YouTube, Cài đặt.
-- YouTube: xem video hướng dẫn ngay trong palette (Edge WebView2). Dán link hoặc gõ từ khoá rồi Enter; "Mở bằng trình duyệt" mở video đang xem ra ngoài; rời phân hệ thì video tự dừng. Lần sau mở lại đúng trang cuối.
+- `PCCC`: mở palette chính. Thanh dọc trái chọn phân hệ: Quy trình vẽ, Tiện ích, Báo cháy, Chữa cháy, Thống kê, Thư viện, Lệnh, Bot chat, YouTube, Cài đặt. Nút ☰ góc phải đầu palette: menu chuyển phân hệ và "Thu gọn thanh dọc" / "Hiện thanh dọc" (nhớ cho lần sau).
+- YouTube: xem video hướng dẫn ngay trong palette (Edge WebView2). Dán link hoặc gõ từ khoá rồi Enter; "Mở bằng trình duyệt" mở video đang xem ra ngoài; rời phân hệ thì video tự dừng. Lần sau mở lại đúng trang cuối. Nút "Xem bằng Brave": link / từ khoá mở trong cửa sổ Brave riêng áp mép phải AutoCAD (Brave không nhúng được vào palette); "Xem trong CAD" để quay lại. Lựa chọn được nhớ.
 - Bot chat: đầu khung chọn máy AI (Claude: đọc + vẽ CAD qua MCP; Gemini: chỉ đọc + trả lời) và model; "+ Thư mục dự án" gắn thẻ thư mục cho AI đọc hồ sơ (bấm thẻ để bỏ). Claude cần `claude` đăng nhập (`claude` rồi `/login`), Gemini cần Antigravity CLI `agy` đã đăng nhập.
 - `PCCC_HELP`: bảng mọi lệnh. Gõ chữ vào ô tìm để lọc. Sửa ô Phím tắt rồi Enter là lưu (file `phim_tat.txt`, mỗi dòng `PHIMTAT=LENH`).
 - Khi lệnh hỏi mã thiết bị: gõ `?` để mở bảng chọn, hoặc gõ một phần tên hay mã để tìm.

@@ -38,5 +38,17 @@ namespace TKPCCC
             File.WriteAllText(tam, noiDung, new UTF8Encoding(false));
             if (File.Exists(f)) File.Replace(tam, f, null); else File.Move(tam, f);
         }
+
+        /// brave.exe (cài cho mọi người hoặc cho riêng người dùng), không có thì null. Dùng chung Hub + phân hệ YouTube (file này biên dịch vào cả hai).
+        public static string TimBrave()
+        {
+            string duoi = Path.Combine("BraveSoftware", "Brave-Browser", "Application", "brave.exe");
+            foreach (Environment.SpecialFolder g in new[] { Environment.SpecialFolder.ProgramFiles, Environment.SpecialFolder.ProgramFilesX86, Environment.SpecialFolder.LocalApplicationData })
+            {
+                string f = Path.Combine(Environment.GetFolderPath(g), duoi);
+                if (File.Exists(f)) return f;
+            }
+            return null;
+        }
     }
 }

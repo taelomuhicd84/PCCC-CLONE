@@ -38,7 +38,7 @@ function Hub($doiSo, $ra) {
 }
 $coClaude = [bool](Get-Command claude -ErrorAction SilentlyContinue)
 $coAgy = [bool](Get-Command agy -ErrorAction SilentlyContinue) -or (Test-Path "$env:LOCALAPPDATA\agy\bin\agy.exe")
-$cai = @('plugin', 'claude_desktop', 'gemini', 'wv2_dll', 'net48', 'wv2_runtime', 'cli_claude') + $(if ($coClaude) { 'claude_code' }) + $(if ($coAgy) { 'agy' })
+$cai = @('plugin', 'claude_desktop', 'gemini', 'wv2_dll', 'net48', 'wv2_runtime', 'cli_claude', 'brave') + $(if ($coClaude) { 'claude_code' }) + $(if ($coAgy) { 'agy' })
 
 try {
   $r = Hub @('/cai', ($cai -join ',')) "$T\r1.txt"
@@ -53,12 +53,12 @@ try {
   if ($coClaude) { Kiem ($r.ra -match [regex]::Escape("(th") -and $r.ra -match [regex]::Escape("claude mcp add -s user cad `"$MCP`"")) 'Claude Code: nha gia chi ghi lenh claude mcp add, khong chay' }
   if ($coAgy) { Kiem ($r.ra -match [regex]::Escape("agy mcp add cad `"$MCP`"")) 'Antigravity: nha gia chi ghi lenh agy mcp add, khong chay' }
   Kiem (@($WV2 | Where-Object { Test-Path "$T\cad\TKPCCC.bundle\Contents\$_" }).Count -eq 3) 'YouTube: chep 3 DLL WebView2 vao bundle'
-  Kiem ($r.ra -match '\(th.\) m. https://dotnet\.microsoft\.com/' -and $r.ra -match '\(th.\) m. https://developer\.microsoft\.com/microsoft-edge/webview2/' -and $r.ra -match '\(th.\) m. https://docs\.claude\.com/')'phan mem hang khac: chi mo trang tai chinh thuc (nha gia: chi ghi, khong mo)'
+  Kiem ($r.ra -match '\(th.\) m. https://dotnet\.microsoft\.com/' -and $r.ra -match '\(th.\) m. https://developer\.microsoft\.com/microsoft-edge/webview2/' -and $r.ra -match '\(th.\) m. https://docs\.claude\.com/' -and $r.ra -match '\(th.\) m. https://brave\.com/download/')'phan mem hang khac: chi mo trang tai chinh thuc (nha gia: chi ghi, khong mo)'
 
   $r = Hub @('/kiem') "$T\r2.txt"
   Kiem ($r.ra -match 'KIEM mcp 1 ') 'kiem: may chu MCP bat tay duoc (initialize)'
   Kiem ($r.ra -match 'KIEM plugin 1 ' -and $r.ra -match 'KIEM claude_desktop 1 ' -and $r.ra -match 'KIEM gemini 1 ' -and $r.ra -match 'KIEM wv2_dll 1 ') 'kiem: plugin, Claude Desktop, Gemini, DLL WebView2 da xong'
-  Kiem ((@('acad', 'net48', 'plugin', 'mcp', 'claude_code', 'claude_desktop', 'gemini', 'agy', 'cli_claude', 'cli_agy', 'wv2_runtime', 'wv2_dll') | Where-Object { $r.ra -notmatch "KIEM $_ " }).Count -eq 0) 'kiem: du 12 muc trong 4 nhom'
+  Kiem ((@('acad', 'net48', 'plugin', 'mcp', 'claude_code', 'claude_desktop', 'gemini', 'agy', 'cli_claude', 'cli_agy', 'wv2_runtime', 'wv2_dll', 'brave') | Where-Object { $r.ra -notmatch "KIEM $_ " }).Count -eq 0) 'kiem: du 13 muc trong 4 nhom'
 
   $r = Hub @('/go', 'plugin,claude_desktop,gemini') "$T\r3.txt"
   Kiem ($r.ma -eq 0 -and -not (Test-Path $LK) -and (Test-Path "$T\cad\TKPCCC.bundle\Contents\TKPCCC.Cad.dll")) 'go plugin: bo lien ket, file trong bundle con nguyen'

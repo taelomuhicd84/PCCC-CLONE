@@ -1,5 +1,5 @@
 // Palette chính (lệnh PCCC; PCCC_BLOCK, PCCC_HELP mở đúng phân hệ): đầu trang [PCCC] + tên + phiên bản, ô tìm lọc thẻ, thanh dọc chọn phân hệ
-// (Quy trình vẽ · Tiện ích · Báo cháy · Chữa cháy · Thống kê · Thư viện · Lệnh · Bot chat · YouTube · Cài đặt), chân trang trạng thái cầu nối MCP + bản vẽ. Chỉ giao diện: lệnh vẽ gửi bằng tên qua GiaoDien.GuiLenh.
+// (Quy trình vẽ · Tiện ích · Báo cháy · Chữa cháy · Thống kê · Thư viện · Lệnh · Bot chat · YouTube · Cài đặt; nút ☰ đầu trang: menu phân hệ + thu gọn thanh dọc, nhớ `ben_an`), chân trang trạng thái cầu nối MCP + bản vẽ. Chỉ giao diện: lệnh vẽ gửi bằng tên qua GiaoDien.GuiLenh.
 // Bot chat ở BotChat.cs (chọn Claude/Gemini + model, gắn thẻ thư mục dự án).
 using System;
 using System.Collections.Generic;
@@ -45,6 +45,7 @@ namespace TKPCCC
             return "palette TKPCCC, phân hệ " + nd.dangXem + ".";
         }
 
+        static readonly string[] DS_PHAN_HE = { QUY_TRINH, TIEN_ICH, BO_TRI, CHUA_CHAY, THONG_KE, THU_VIEN, LENH, BOT, YOUTUBE, CAI_DAT };
         readonly TextBox tim = new TextBox();
         readonly Panel noiDung = new Panel();
         readonly FlowLayoutPanel ben = new FlowLayoutPanel();
@@ -80,7 +81,7 @@ namespace TKPCCC
             ben.BackColor = GiaoDien.Nen;
             ben.Padding = new Padding(0, 6, 0, 0);
             // Thanh biểu tượng (ý từ video plugin 16/11): mỗi phân hệ một ô màu có biểu tượng, nhãn ngắn bên dưới.
-            string[] ds = { QUY_TRINH, TIEN_ICH, BO_TRI, CHUA_CHAY, THONG_KE, THU_VIEN, LENH, BOT, YOUTUBE, CAI_DAT };
+            string[] ds = DS_PHAN_HE;
             string[] icon = { "📐", "🔧", "🔔", "💧", "📊", "📚", "⌨", "💬", "▶", "⚙" };
             Color[] mau = { GiaoDien.MauLa, GiaoDien.MauDuong, GiaoDien.MauDo, GiaoDien.MauCam, GiaoDien.MauTim, GiaoDien.MauLuc, GiaoDien.MauXam, GiaoDien.MauHong, GiaoDien.MauDo, GiaoDien.MauXam };
             for (int i = 0; i < ds.Length; i++)
@@ -92,6 +93,7 @@ namespace TKPCCC
                 ben.Controls.Add(n);
             }
             Controls.Add(ben);
+            ben.Visible = GiaoDien.DocCaiDat("ben_an", "0") != "1"; // người dùng 17/11: thu gọn thanh dọc, chuyển phân hệ bằng nút ☰
 
             // Đang xem Tiện ích thì ô tìm lọc thẻ tiện ích (tìm theo mã tắt SZ, CKC...); trang khác thì về Quy trình lọc thẻ lệnh.
             tim.TextChanged += delegate
@@ -149,7 +151,39 @@ namespace TKPCCC
             pb.AutoSize = true;
             pb.Location = new Point(64, 26);
             p.Controls.AddRange(new Control[] { huy, ten, pb });
+            // ☰: menu chuyển phân hệ + ẩn/hiện thanh dọc (khi thanh dọc ẩn đây là đường duy nhất để chuyển phân hệ).
+            Label menu = new Label();
+            menu.Text = "☰";
+            menu.Font = new Font("Segoe UI Symbol", 14f);
+            menu.ForeColor = GiaoDien.ChuDam;
+            menu.TextAlign = ContentAlignment.MiddleCenter;
+            menu.Dock = DockStyle.Right;
+            menu.Width = 40;
+            menu.Cursor = Cursors.Hand;
+            menu.AccessibleName = "Menu phân hệ";
+            menu.AccessibleRole = AccessibleRole.ButtonMenu;
+            menu.Click += delegate { GiaoDien.An(delegate { MenuPhanHe().Show(menu, new Point(menu.Width, menu.Height), ToolStripDropDownDirection.BelowLeft); }); };
+            p.Controls.Add(menu);
             return p;
+        }
+
+        ContextMenuStrip MenuPhanHe()
+        {
+            ContextMenuStrip m = new ContextMenuStrip();
+            ToolStripMenuItem an = new ToolStripMenuItem(ben.Visible ? "Thu gọn thanh dọc" : "Hiện thanh dọc");
+            an.Click += delegate { GiaoDien.An(delegate { ben.Visible = !ben.Visible; GiaoDien.LuuCaiDat("ben_an", ben.Visible ? "0" : "1"); }); };
+            m.Items.Add(an);
+            m.Items.Add(new ToolStripSeparator());
+            foreach (string t in DS_PHAN_HE)
+            {
+                string ten = t;
+                ToolStripMenuItem i = new ToolStripMenuItem(ten);
+                i.Checked = ten == dangXem;
+                i.Click += delegate { GiaoDien.An(delegate { ChonTrang(ten); }); };
+                m.Items.Add(i);
+            }
+            m.Closed += delegate { m.BeginInvoke((Action)m.Dispose); }; // menu dựng lại mỗi lần bấm: bỏ bản cũ
+            return m;
         }
 
         void CapNhatChan()

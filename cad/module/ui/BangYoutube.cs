@@ -2,11 +2,13 @@
 // Chromium có sẵn của AutoCAD 2021 (AcCef) là bản 77 đời 2019, YouTube hiện nay không chạy được nên không dùng.
 // Thư viện WebView2 (module/ui/webview2, Microsoft, giấy phép BSD, gói NuGet Microsoft.Web.WebView2 1.0.2903.40) build.bat chép cạnh TKPCCC.UI.dll.
 // Dữ liệu trình duyệt ở %LOCALAPPDATA%\TKPCCC\WebView2 (mặc định nằm cạnh acad.exe trong Program Files: không ghi được). Link cuối lưu `yt_cuoi`.
+// Người dùng 17/11: chọn trình xem `yt_trinh_duyet` = webview2 (trong palette) | brave (Brave không nhúng được: mở cửa sổ app riêng áp mép phải AutoCAD).
 using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.WinForms;
@@ -16,10 +18,12 @@ namespace TKPCCC
     class BangYoutube : UserControl
     {
         const string TRANG_CHU = "https://www.youtube.com/";
-        static bool daGan;
+        static bool daGan, daDatLoader;
         readonly TextBox o = new TextBox();
         readonly Panel khung = new Panel();
+        readonly Label doiTrinh;
         WebView2 web;
+        bool brave;
 
         public BangYoutube()
         {
@@ -34,19 +38,19 @@ namespace TKPCCC
             nut.Height = 30;
             nut.BackColor = GiaoDien.Nen;
             nut.Padding = new Padding(6, 0, 6, 0);
+            doiTrinh = Link("", delegate { DatTrinh(!brave); });
             nut.Controls.AddRange(new Control[]
             {
                 Link("◀ Lùi", delegate { if (SanSang() && web.CanGoBack) web.GoBack(); }),
                 Link("Trang chủ", delegate { Mo(TRANG_CHU); }),
                 Link("Mở bằng trình duyệt", delegate { Process.Start(SanSang() ? web.CoreWebView2.Source : TRANG_CHU); }),
+                doiTrinh,
             });
             Controls.Add(nut);
             o.KeyDown += delegate(object s, KeyEventArgs e) { if (e.KeyCode == Keys.Enter) { e.SuppressKeyPress = true; Xem(); } };
             Controls.Add(GiaoDien.OTim(o, "Dán link YouTube hoặc gõ từ khoá, Enter để xem"));
 
-            GanThuVien();
-            try { TaoWeb(); }
-            catch (Exception ex) { Loi(ex.Message); } // thiếu DLL WebView2: báo, không làm hỏng palette
+            DatTrinh(GiaoDien.DocCaiDat("yt_trinh_duyet", "webview2") == "brave");
             VisibleChanged += delegate { if (!Visible) Dung(); };
         }
 
@@ -63,6 +67,49 @@ namespace TKPCCC
             h.Cursor = Cursors.Hand;
             h.Click += delegate { GiaoDien.An(viec); };
             return h;
+        }
+
+        /// Đổi trình xem, lưu `yt_trinh_duyet`. Brave: bỏ WebView2 (đỡ RAM), khung chỉ còn hướng dẫn.
+        void DatTrinh(bool laBrave)
+        {
+            brave = laBrave;
+            GiaoDien.LuuCaiDat("yt_trinh_duyet", brave ? "brave" : "webview2");
+            doiTrinh.Text = brave ? "Xem trong CAD" : "Xem bằng Brave";
+            khung.Controls.Clear();
+            if (web != null) { web.Dispose(); web = null; }
+            if (brave)
+            {
+                string exe = HangDoi.TimBrave();
+                Bao("Chế độ Brave: dán link hoặc gõ từ khoá ở ô trên rồi Enter (hoặc bấm Trang chủ), video mở trong cửa sổ Brave riêng áp mép phải AutoCAD.\n\n"
+                    + (exe == null ? "CHƯA thấy Brave trên máy: cài ở https://brave.com/download/ (hoặc Hub TKPCCC, nhóm YouTube)." : "Brave: " + exe)
+                    + "\n\nBấm \"Xem trong CAD\" để quay lại xem ngay trong palette (WebView2).");
+                return;
+            }
+            GanThuVien();
+            try { TaoWeb(); }
+            catch (Exception ex) { Loi(ex.Message); } // thiếu DLL WebView2: báo, không làm hỏng palette
+        }
+
+        [DllImport("user32.dll")] static extern bool GetWindowRect(IntPtr h, out RECT r);
+        [StructLayout(LayoutKind.Sequential)] struct RECT { public int Trai, Tren, Phai, Duoi; }
+
+        /// Cửa sổ app Brave rộng 480 px áp mép phải bên trong cửa sổ AutoCAD (AutoCAD phóng to thì ngoài mép là ngoài màn hình).
+        /// shortcut: Brave đang mở sẵn thì có khi bỏ qua --window-position; cần thì dời bằng SetWindowPos theo cửa sổ mới.
+        void MoBrave(string url)
+        {
+            string exe = HangDoi.TimBrave();
+            if (exe == null) { Process.Start("https://brave.com/download/"); return; }
+            IntPtr h = Autodesk.AutoCAD.ApplicationServices.Application.MainWindow.Handle;
+            RECT r;
+            string viTri = "";
+            if (GetWindowRect(h, out r))
+            {
+                Rectangle man = Screen.FromHandle(h).WorkingArea;
+                int tren = Math.Max(r.Tren, man.Top), duoi = Math.Min(r.Duoi, man.Bottom), phai = Math.Min(r.Phai, man.Right), rong = 480;
+                viTri = " --window-position=" + (phai - rong) + "," + tren + " --window-size=" + rong + "," + (duoi - tren);
+            }
+            Process.Start(exe, "--app=\"" + url + "\"" + viTri);
+            GiaoDien.LuuCaiDat("yt_cuoi", url);
         }
 
         /// DLL WebView2 nằm cạnh TKPCCC.UI.dll nhưng AutoCAD dò thư viện ở thư mục acad.exe: chỉ đường trước khi JIT chạm kiểu WebView2 (TaoWeb).
@@ -83,25 +130,27 @@ namespace TKPCCC
             try
             {
                 string thuMuc = Path.GetDirectoryName(typeof(BangYoutube).Assembly.Location);
-                CoreWebView2Environment.SetLoaderDllFolderPath(thuMuc);
-                web = new WebView2();
-                web.Dock = DockStyle.Fill;
-                khung.Controls.Add(web);
+                if (!daDatLoader) { CoreWebView2Environment.SetLoaderDllFolderPath(thuMuc); daDatLoader = true; } // gọi lại sau khi đã tạo môi trường thì WebView2 báo lỗi
+                WebView2 w = web = new WebView2();
+                w.Dock = DockStyle.Fill;
+                khung.Controls.Add(w);
                 string duLieu = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TKPCCC", "WebView2");
                 CoreWebView2Environment env = await CoreWebView2Environment.CreateAsync(null, duLieu);
-                await web.EnsureCoreWebView2Async(env);
+                await w.EnsureCoreWebView2Async(env);
+                if (w != web) return; // đã đổi sang Brave trong lúc chờ (w đã Dispose)
                 // Link mở cửa sổ mới (target=_blank): mở luôn trong tab này.
-                web.CoreWebView2.NewWindowRequested += delegate(object s, CoreWebView2NewWindowRequestedEventArgs e) { e.Handled = true; web.CoreWebView2.Navigate(e.Uri); };
-                web.CoreWebView2.SourceChanged += delegate { GiaoDien.LuuCaiDat("yt_cuoi", web.CoreWebView2.Source); };
+                w.CoreWebView2.NewWindowRequested += delegate(object s, CoreWebView2NewWindowRequestedEventArgs e) { e.Handled = true; w.CoreWebView2.Navigate(e.Uri); };
+                w.CoreWebView2.SourceChanged += delegate { GiaoDien.LuuCaiDat("yt_cuoi", w.CoreWebView2.Source); };
                 Mo(GiaoDien.DocCaiDat("yt_cuoi", TRANG_CHU));
             }
-            catch (Exception ex) { Loi(ex.Message); } // async void: lỗi không được thoát ra ngoài (làm sập AutoCAD)
+            catch (Exception ex) { if (!brave) Loi(ex.Message); } // async void: lỗi không được thoát ra ngoài (làm sập AutoCAD)
         }
 
         bool SanSang() { return web != null && web.CoreWebView2 != null; }
 
         void Mo(string url)
         {
+            if (brave) { MoBrave(url); return; }
             if (!SanSang()) return;
             try { web.CoreWebView2.Navigate(url); }
             catch (ArgumentException) { web.CoreWebView2.Navigate(TRANG_CHU); } // link hỏng
@@ -124,13 +173,18 @@ namespace TKPCCC
 
         void Loi(string chiTiet)
         {
+            Bao("Không mở được trình xem YouTube trong CAD.\n\nCần Microsoft Edge WebView2 Runtime (Windows 10/11 thường có sẵn; tải ở trang Microsoft nếu thiếu) "
+                + "và 3 file WebView2 cạnh TKPCCC.UI.dll (chạy lại cad\\build.bat).\n\nVẫn xem được bằng nút \"Mở bằng trình duyệt\" hoặc \"Xem bằng Brave\".\n\nChi tiết: " + chiTiet);
+        }
+
+        void Bao(string chu)
+        {
             khung.Controls.Clear();
             Label l = new Label();
             l.Dock = DockStyle.Fill;
             l.Padding = new Padding(10);
             l.ForeColor = GiaoDien.ChuDam;
-            l.Text = "Không mở được trình xem YouTube trong CAD.\n\nCần Microsoft Edge WebView2 Runtime (Windows 10/11 thường có sẵn; tải ở trang Microsoft nếu thiếu) "
-                + "và 3 file WebView2 cạnh TKPCCC.UI.dll (chạy lại cad\\build.bat).\n\nVẫn xem được bằng nút \"Mở bằng trình duyệt\".\n\nChi tiết: " + chiTiet;
+            l.Text = chu;
             khung.Controls.Add(l);
         }
     }
