@@ -56,13 +56,13 @@ Dấu nhắc của `PCCC_RAI` với đầu báo khói, nhiệt:
 3. Mỗi hàng chia lại theo bề rộng thật của hàng? Enter = Không (Co cho phòng chữ L có WC).
 4. Quét chọn mặt bằng (tường các phòng hoặc các vùng `PCCC_VUNG`), Enter.
 5. Bấm nét phân vùng mẫu, Enter = tự nhận từ tường.
-6. Enter = mọi phòng, hoặc bấm điểm trong từng phòng rồi Enter. Enter = mọi phòng với đầu báo: plugin tự bỏ phòng ≤ 60 m² có block hoặc layer thang máy, thang bộ, thiết bị vệ sinh (`THANG MAY`, `LIFT`, `THANG BO`, `STAIR`, `TOILET`, `LAVABO`, `BON CAU`, `XI BET`...) hoặc chữ tên phòng `WC`, `VỆ SINH`, `THANG MÁY`, `THANG BỘ` (kể cả "SẢNH THANG MÁY": sảnh thang máy không đặt đầu báo), in `bo_khu_khong_bao= m2=`. Phòng bị bỏ nhầm thì bấm điểm trong phòng đó.
+6. Enter = mọi phòng, hoặc bấm điểm trong từng phòng rồi Enter. Enter = mọi phòng với đầu báo: plugin tự bỏ phòng ≤ 60 m² có block hoặc layer thang máy, thang bộ, thiết bị vệ sinh (`THANG MAY`, `LIFT`, `THANG BO`, `STAIR`, `TOILET`, `LAVABO`, `BON CAU`, `XI BET`...) hoặc chữ tên phòng `WC`, `VỆ SINH`, `THANG MÁY`, `THANG BỘ` (kể cả "SẢNH THANG MÁY": sảnh thang máy không đặt đầu báo), in `bo_khu_khong_bao= m2=`. Bản vẽ không ghi chữ sảnh: phòng ≤ 30 m² sát giếng thang máy (block thang máy, ô có dấu X, cách ≤ 0,6 m) coi là sảnh thang, bỏ, in `bo_sanh_thang= m2=`. Phòng bị bỏ nhầm thì bấm điểm trong phòng đó.
 
 Không cần nhập khoảng cách: bước tối đa, cách tường, chéo góc lấy từ `data/khoang_cach_rai.json` (chép nguyên văn TCVN 7568-14:2025; khói điểm: bước 10,2 m, cách tường 5,1 m, bán kính 7,2 m). Dòng lệnh in kết quả từng vùng: `n`, lưới, bước, m², số dim.
 
 Sau khi rải, plugin tự dim theo trang Cài đặt (mặc định "chuỗi"): một chuỗi ngang dọc hàng đông nhất, một chuỗi đứng dọc cột đông nhất, đặt sát thiết bị. Hàng trùng toạ độ chỉ dim một lần, thiết bị lệch lưới mới dim thêm.
 
-Trần hở có dầm (`Dam`) với vùng `PCCC_VUNG` vẽ sẵn (vd vẽ một đường bao văn phòng): plugin tự chia vùng theo các dầm sâu hơn 0,3 m thành khoang (`chia_khoang=`), vẽ nét khoang và m² trên layer `PCCC_KHOANG_M2`, rải từng khoang, dim chung trên cả vùng (`kt_gom`). Nét dầm sơ đồ dừng cách dầm biên vài trăm mm vẫn khép khoang (plugin nối dài nét dầm 0,4 m). Bấm nét dầm mẫu đúng nét dầm, không bấm vào chữ nhãn (phóng to sát nét dầm trước khi bấm).
+Trần hở có dầm (`Dam`), vùng tự dựng: vùng vẽ lên `PCCC_VUNG` là PHÒNG dựng từ tường (dầm không cắt phòng), dầm sâu chỉ chia khoang bên trong như dưới. Vùng `PCCC_VUNG` vẽ sẵn (vd vẽ một đường bao văn phòng): plugin tự chia vùng theo các dầm sâu hơn 0,3 m thành khoang (`chia_khoang=`), vẽ nét khoang và m² trên layer `PCCC_KHOANG_M2`, rải từng khoang, dim chung trên cả vùng (`kt_gom`). Nét dầm sơ đồ dừng cách dầm biên vài trăm mm vẫn khép khoang (plugin nối dài nét dầm 0,4 m). Bấm nét dầm mẫu đúng nét dầm, không bấm vào chữ nhãn (phóng to sát nét dầm trước khi bấm).
 
 ### 3.3. Đi dây báo cháy (bước 6)
 

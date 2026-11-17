@@ -3,6 +3,16 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## VIỆC 17/11 (2) — TỰ NHẬN VÙNG RẢI KHỚP VÙNG NGƯỜI DÙNG VẼ: XONG MÃ + TEST, CHỜ NGƯỜI DÙNG XEM
+Người dùng gửi 2 ảnh: ảnh 1 = plugin tự nhận vùng (nhiều vùng vụn), ảnh 2 = người dùng vẽ lại (1 vùng văn phòng chữ L, bỏ lõi thang, sảnh, WC).
+Chạy lại `PCCC_RAI BC_KHOI Dam DaySan 120 4.5`, khung C cả sàn, Enter mọi phòng trên `t8_mat_bang_dam.dwg` (kịch bản `scripts/kb_tu_nhan.txt`):
+TRƯỚC: 4 vùng (văn phòng bị dầm 700 cắt 30,1 + 231,4 m²; WC dưới 8,9 m² vì dầm cắt WC ra mảnh không có block có tên WC; sảnh 6,1 m²).
+SAU: 1 vùng 271,7 m² 8 đỉnh, trùng vùng người dùng vẽ (`t8_vung_tu_nhan_TRUOC_sua.png`, `t8_vung_tu_nhan_SAU_sua.png`).
+Sửa: (1) `MatChon` không đưa dầm vào dựng phòng, trả `damSau`; `PCCC_RAI` chia khoang trong phòng đã chọn (`ChiaKhoang`), vẽ phòng lên `PCCC_VUNG`,
+khoang lên `PCCC_KHOANG_M2`; (2) block thang máy (tên/layer THANG MAY, LIFT, ELEVATOR, hộp ≤ 20 m²) thành ô X; phòng ≤ 30 m² cách ô X ≤ 0,6 m = sảnh
+thang, đầu báo bỏ (`bo_sanh_thang=`). Test ca 10, 11 `chay_thu.ps1`. CHƯA RÕ: ảnh 1 có vùng ở hành lang trái lõi (vùng gạch chéo) và vùng phía dưới
+trục X-1; chạy trên `t8_mat_bang_dam.dwg` (khung C hay W) không ra các vùng đó, nên người dùng có thể đã chạy trên file khác: xin file đó để thử.
+
 ## VIỆC 17/11 — TẦNG 8 KOCHAM TRẦN 4,5 M, SÀN 120 (ĐỀ XUẤT LẦN 2 ĐÃ DUYỆT): ĐÃ RẢI, CHỜ NGƯỜI DÙNG NHẬN XÉT
 Người dùng duyệt đề xuất vùng lần 2 (d = h dầm − dày sàn; không cho số sàn, dùng 120: 100–150 kết quả như nhau). Plugin: từ khoá `DaySan` ở dấu nhắc
 trần (đầu báo) và bước S (sprinkler), giuDam/TungDam/cỡ chung so d − dày sàn > 0,3; test ca 8 `chay_thu.ps1`. Kịch bản `scripts/tao_dam.py` (kb_bc3, kb_spr3):

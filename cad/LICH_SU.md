@@ -573,3 +573,8 @@ Rải: báo cháy 8 đầu, sprinkler 26 + 5 đầu.
 ## 2026-11-17 — SuaDam: nhập tay cỡ dầm khi nhãn sai
 Người dùng: nhãn KOCHAM "DS 1400X250" thật rộng 1400 cao 700, "sửa luôn". Thêm từ khoá `SuaDam` (bấm nét dầm, nhập b x h thật, thắng nhãn);
 cỡ gõ tay đọc đúng rộng x cao. Test ca 9. Tầng 8 chạy lại: kết quả không đổi (dầm 0,7 vẫn sâu, nằm ở sảnh/lõi).
+
+## 2026-11-17 — Tự nhận vùng = phòng, bỏ sảnh thang máy
+Người dùng gửi ảnh vùng plugin nhận (vụn) và vùng tự vẽ (1 văn phòng chữ L). Gốc lỗi: bật `Dam` thì dầm sâu dựng phòng nên vùng bị cắt theo dầm,
+WC bị cắt ra mảnh không có dấu hiệu WC; sảnh thang không ghi chữ. Sửa: vùng dựng từ tường, dầm chỉ chia khoang trong phòng; block thang máy = ô X,
+phòng ≤ 30 m² sát nó = sảnh, đầu báo bỏ. Tầng 8: 4 vùng thành 1 vùng 271,7 m² trùng vùng người dùng vẽ. Test ca 10, 11.

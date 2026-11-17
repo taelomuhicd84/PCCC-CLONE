@@ -864,6 +864,19 @@ Kiem ($out4 -match 'bo_cum=1 phong=1 ' -and $out4 -match 'theo_vung_co_san=1 ' -
   '_.LINE', '704000,0', '704000,6000', '', '_.LINE', '707000,0', '707000,6000', '', '_.LINE', '700000,3000', '712000,3000', '',
   '_.TEXT', '704300,4500', '250', '0', 'DS 700X300', '-LAYER', 'S', '0', '', '_.ZOOM', 'W', '699000,-1000', '713000,7000',
   'PCCC_RAI', 'BC_KHOI', 'Dam', '4.5', '', 'W', '699500,-500', '712500,6500', '', '', '704000,1000', 'SuaDam', '704000,1000', '300x250', '707000,1000', '1400x700', '', '',
+  # 10 (nguoi dung 17/11, tang 8 KOCHAM: sanh thang may khong ghi chu "SANH"): van phong 10 x 10 m, dai trai 5 m chia 3 phong: duoi 20 m2,
+  #    giua 15 m2 (sanh), tren 15 m2 la gieng co block THANG_MAY. Enter moi phong: bo gieng + sanh (sat gieng 0,3 m), rai van phong 100 + phong 20 m2
+  '-LAYER', 'M', 'TUONG', '', '_.RECTANG', '800000,0', '815000,10000', '_.LINE', '805000,0', '805000,10000', '',
+  '_.LINE', '800000,4000', '805000,4000', '', '_.LINE', '800000,7000', '805000,7000', '', '-LAYER', 'S', '0', '', '_.ZOOM', 'W', '799000,-1000', '816000,11000',
+  '_.RECTANG', '800300,7300', '804700,9700', '_.LINE', '800300,7300', '804700,9700', '', '-BLOCK', 'THANG_MAY', '800000,7000', 'W', '800200,7200', '804800,9800', '',
+  '-INSERT', 'THANG_MAY', '800000,7000', '1', '', '0', '_.ZOOM', 'W', '799000,-1000', '816000,11000',
+  'PCCC_RAI', 'BC_KHOI', '', '', 'C', '799500,-500', '815500,10500', '', '', '',
+  # 11 (nguoi dung 17/11: vung la PHONG, dam chi chia khoang ben trong): phong tuong 12 x 6 m, dam B1 (300x600) doc x = 904, 908 m, Enter moi phong
+  #    -> 1 vung 72 m2 tren PCCC_VUNG (truoc sua: 3 vung 24 m2), 3 khoang tren PCCC_KHOANG_M2
+  '-LAYER', 'M', 'TUONG', '', '_.RECTANG', '900000,0', '912000,6000', '-LAYER', 'M', 'DAM', '',
+  '_.LINE', '904000,0', '904000,6000', '', '_.LINE', '908000,0', '908000,6000', '',
+  '_.TEXT', '904300,4500', '250', '0', 'B1 (300x600)', '-LAYER', 'S', '0', '', '_.ZOOM', 'W', '899000,-1000', '913000,7000',
+  'PCCC_RAI', 'BC_KHOI', 'Dam', '3.5', '', 'C', '899500,-500', '912500,6500', '', '', '904000,1000', '', '',
   '_.QSAVE') -join "`r`n") | Set-Content -Encoding ascii "$T\kb6.scr"
 $p6 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb6.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb6.out.txt"
 if (-not $p6.WaitForExit(180000)) { Stop-Process -Id $p6.Id -Force; throw "accoreconsole qua 3 phut (sua 6 loi): $T\kb6.out.txt" }
@@ -887,6 +900,12 @@ Kiem ($out6 -match 'bo_khu_khong_bao=3 m2=50,50,50 ' -and ([regex]::Matches($out
 Kiem ($out6 -match 'dam ky_hieu=1 day_san=120[\s\S]{0,600}dam_sau=0 dam_nong=3 ') 'Dam + DaySan 120: dam 250x400 con d = 0,28 m <= 0,3: bo ca 3 net dam, khong chia khoang'
 Kiem ($out6 -match 'sua_dam d=0.25 m doan=1 [\s\S]{0,400}sua_dam d=0.7 m doan=1 [\s\S]{0,400}dam ky_hieu=1 sua_dam=2[\s\S]{0,600}chia_khoang=4 [\s\S]{0,400}dam_sau=2 dam_nong=1 ') `
   'SuaDam: co nhap tay thang nhan (300x250 bo dam nhan 700X300), 1400x700 doc dung b x h (d 0,7): 2 dam sau, 1 nong, 4 khoang'
+$c10 = [regex]::Match($out6, 'bo_sanh_thang=1 m2=15 [\s\S]{0,3000}?PCCC_RAI BC_KHOI n=')
+$c10b = $out6.Substring([Math]::Max(0, $out6.IndexOf('bo_sanh_thang=')))
+Kiem ($c10.Success -and $c10b -match '^[\s\S]{0,3000}?m2=100 ' -and $c10b -match '^[\s\S]{0,3000}?m2=20 ' -and $c10b -notmatch '^[\s\S]{0,1500}?V\S+ng t\S+ d\S+ng m2=15 ') `
+  'Sanh thang may khong ghi chu: phong 15 m2 sat block THANG_MAY bo (bo_sanh_thang), gieng bo, rai van phong 100 m2 + phong 20 m2'
+Kiem ($out6 -match 'chia_khoang=3 \(ph\S+ng t\S+ d\S+ng[\s\S]{0,600}V\S+ng t\S+ d\S+ng m2=72 ' -and ([regex]::Matches($out6, 'V\S+ng t\S+ d\S+ng m2=24 ')).Count -eq 0) `
+  'Dam + tu dung phong: vung la phong 72 m2 (mot vung), dam sau chia 3 khoang 24 m2 ve tren PCCC_KHOANG_M2'
 
 # Thoi gian dung phong tren ban ve that cua nguoi dung (gitignore, chi chay khi co): truoc sua 78 s (23 trieu diem cat), nay < 10 s.
 $bvThat = Get-ChildItem "$GOC\file_cad_test" -Filter 'test b*o ch*y.dwg' -ErrorAction SilentlyContinue | Select-Object -First 1
