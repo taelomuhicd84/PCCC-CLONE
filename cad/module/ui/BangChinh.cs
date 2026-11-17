@@ -1,5 +1,5 @@
 // Palette chính (lệnh PCCC; PCCC_BLOCK, PCCC_HELP mở đúng phân hệ): đầu trang [PCCC] + tên + phiên bản, ô tìm lọc thẻ, thanh dọc chọn phân hệ
-// (Quy trình vẽ · Tiện ích · Báo cháy · Chữa cháy · Thống kê · Thư viện · Lệnh · Bot chat · Cài đặt), chân trang trạng thái cầu nối MCP + bản vẽ. Chỉ giao diện: lệnh vẽ gửi bằng tên qua GiaoDien.GuiLenh.
+// (Quy trình vẽ · Tiện ích · Báo cháy · Chữa cháy · Thống kê · Thư viện · Lệnh · Bot chat · YouTube · Cài đặt), chân trang trạng thái cầu nối MCP + bản vẽ. Chỉ giao diện: lệnh vẽ gửi bằng tên qua GiaoDien.GuiLenh.
 // Bot chat ở BotChat.cs (chọn Claude/Gemini + model, gắn thẻ thư mục dự án).
 using System;
 using System.Collections.Generic;
@@ -19,7 +19,7 @@ namespace TKPCCC
 {
     public class BangChinh : UserControl
     {
-        public const string QUY_TRINH = "Quy trình vẽ", TIEN_ICH = "Tiện ích", BO_TRI = "Báo cháy", CHUA_CHAY = "Chữa cháy", THONG_KE = "Thống kê", THU_VIEN = "Thư viện", LENH = "Lệnh", BOT = "Bot chat", CAI_DAT = "Cài đặt";
+        public const string QUY_TRINH = "Quy trình vẽ", TIEN_ICH = "Tiện ích", BO_TRI = "Báo cháy", CHUA_CHAY = "Chữa cháy", THONG_KE = "Thống kê", THU_VIEN = "Thư viện", LENH = "Lệnh", BOT = "Bot chat", YOUTUBE = "YouTube", CAI_DAT = "Cài đặt";
         public const string ADIM = "ADIM"; // trang con Dim đối tượng (không có nút ở thanh dọc)
         static PaletteSet ps;
         static BangChinh nd;
@@ -80,9 +80,9 @@ namespace TKPCCC
             ben.BackColor = GiaoDien.Nen;
             ben.Padding = new Padding(0, 6, 0, 0);
             // Thanh biểu tượng (ý từ video plugin 16/11): mỗi phân hệ một ô màu có biểu tượng, nhãn ngắn bên dưới.
-            string[] ds = { QUY_TRINH, TIEN_ICH, BO_TRI, CHUA_CHAY, THONG_KE, THU_VIEN, LENH, BOT, CAI_DAT };
-            string[] icon = { "📐", "🔧", "🔔", "💧", "📊", "📚", "⌨", "💬", "⚙" };
-            Color[] mau = { GiaoDien.MauLa, GiaoDien.MauDuong, GiaoDien.MauDo, GiaoDien.MauCam, GiaoDien.MauTim, GiaoDien.MauLuc, GiaoDien.MauXam, GiaoDien.MauHong, GiaoDien.MauXam };
+            string[] ds = { QUY_TRINH, TIEN_ICH, BO_TRI, CHUA_CHAY, THONG_KE, THU_VIEN, LENH, BOT, YOUTUBE, CAI_DAT };
+            string[] icon = { "📐", "🔧", "🔔", "💧", "📊", "📚", "⌨", "💬", "▶", "⚙" };
+            Color[] mau = { GiaoDien.MauLa, GiaoDien.MauDuong, GiaoDien.MauDo, GiaoDien.MauCam, GiaoDien.MauTim, GiaoDien.MauLuc, GiaoDien.MauXam, GiaoDien.MauHong, GiaoDien.MauDo, GiaoDien.MauXam };
             for (int i = 0; i < ds.Length; i++)
             {
                 string ten = ds[i];
@@ -189,6 +189,7 @@ namespace TKPCCC
             if (ten == THU_VIEN) return block = new BangBlock();
             if (ten == LENH) return bangLenh = new BangLenh();
             if (ten == BOT) return bot = new BotChat();
+            if (ten == YOUTUBE) return new BangYoutube();
             if (ten == CAI_DAT) return TrangCaiDat();
             if (ten == BO_TRI) return new BangBoTri();
             if (ten == ADIM) return adim = new BangAdim(delegate { ChonTrang(TIEN_ICH); });

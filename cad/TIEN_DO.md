@@ -3,6 +3,11 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## VIỆC 17/11 (5) — G8 TAB YOUTUBE: XONG, CHỜ XEM TRONG AUTOCAD
+Người dùng chọn WebView2 (Chromium có sẵn của AutoCAD 2021 `AcCef` là bản 77, YouTube không chạy). Tải gói NuGet Microsoft.Web.WebView2 1.0.2903.40 (được người dùng cho phép), lấy 3 DLL net462 + win-x64 (chữ ký Microsoft hợp lệ) vào `module/ui/webview2/`; build.bat chép cạnh TKPCCC.UI.dll khi thiếu.
+`module/ui/BangYoutube.cs`: phân hệ "YouTube" (nút ▶ thanh dọc): ô link / từ khoá, Lùi, Trang chủ, Mở bằng trình duyệt; dữ liệu trình duyệt `%LOCALAPPDATA%\TKPCCC\WebView2`; dừng video khi rời tab; nhớ link cuối `yt_cuoi`. Thử thật ngoài AutoCAD: Chrome 157, tìm ra 16 video.
+CHƯA thử trong AutoCAD (đang mở): rủi ro nạp DLL WebView2 từ thư mục bundle (đã gắn AssemblyResolve + SetLoaderDllFolderPath).
+
 ## VIỆC 17/11 (4) — G7 HUB CÀI MCP: XONG BẢN ĐẦU, CHỜ NGƯỜI DÙNG BẤM CÀI
 `module/hub/Hub.cs` → `bin/TKPCCC.Hub.exe` (build.bat). Mục: AutoCAD 2021–2024 (registry, đang mở, plugin đang nối theo song.json) · Plugin tự nạp (junction như cai_dat.bat; Gỡ chỉ bỏ liên kết, thư mục thật thì từ chối) · MCP cad (bắt tay initialize) · Claude Code (`claude mcp add -s user`) · Claude Desktop (`%APPDATA%\Claude\claude_desktop_config.json`) · Gemini CLI (`~/.gemini/settings.json`) · Antigravity (`agy mcp add`). JSON: sao lưu `.tkpccc_<giờ>.bak`, giữ khoá khác. Test `test/thu_hub.ps1` (nhà giả, CLI chỉ ghi lệnh) 14/14 DAT.
 Máy người dùng 17/11: AutoCAD 2021 mở + plugin nối, bundle đã liên kết, MCP bắt tay được; 4 AI CHƯA có cad (Claude chưa tự bấm: sửa cấu hình máy là việc người dùng).

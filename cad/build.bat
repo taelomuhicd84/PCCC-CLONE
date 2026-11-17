@@ -57,7 +57,10 @@ if exist "%OUT%\TKPCCC.UI.dll" move /y "%OUT%\TKPCCC.UI.dll" "%OUT%\TKPCCC.UI.dl
   /r:"%ACAD%\acdbmgd.dll" /r:"%ACAD%\accoremgd.dll" /r:"%ACAD%\acmgd.dll" /r:"%ACAD%\AdWindows.dll" ^
   /r:"%FW%\WPF\PresentationCore.dll" /r:"%FW%\WPF\WindowsBase.dll" /r:"%FW%\System.Xaml.dll" ^
   /r:"%FW%\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll /r:"%OUT%\TKPCCC.Cad.dll" ^
+  /r:"%~dp0module\ui\webview2\Microsoft.Web.WebView2.Core.dll" /r:"%~dp0module\ui\webview2\Microsoft.Web.WebView2.WinForms.dll" ^
   "%~dp0module\ui\*.cs" || exit /b 1
+rem Tab YouTube (WebView2): 3 DLL cua Microsoft canh TKPCCC.UI.dll. Chi chep khi thieu: AutoCAD dang mo giu khoa file.
+for %%f in (Microsoft.Web.WebView2.Core.dll Microsoft.Web.WebView2.WinForms.dll WebView2Loader.dll) do if not exist "%OUT%\%%f" copy /y "%~dp0module\ui\webview2\%%f" "%OUT%\%%f" >nul
 echo OK: %OUT%\TKPCCC.UI.dll
 
 rem May chu MCP (cad\bin\TKPCCC.Mcp.exe): AI goi cad_tt / cad_chay. Dang chay thi doi ten ban cu nhu DLL.

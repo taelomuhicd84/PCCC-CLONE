@@ -593,3 +593,7 @@ thư mục dự án làm ngữ cảnh. Bot chat sang `module/ui/BotChat.cs`: ch�
 Người dùng chọn làm Hub. `TKPCCC.Hub.exe`: một cửa sổ, mỗi mục một đèn + Cài/Gỡ (hỏi lại trước khi sửa), nhật ký. Cài plugin = liên kết bundle;
 MCP cad ghi cho Claude Code, Antigravity qua CLI của chúng, cho Claude Desktop, Gemini CLI bằng sửa JSON có sao lưu. Test trên nhà giả 14/14.
 Bẫy: file .ps1 lỡ có chữ Việt (công cụ Write đổi \u1ec7 thành chữ thật) thì PowerShell 5.1 đọc sai: dựng chuỗi bằng [char]0x1EC7.
+
+## 2026-11-17 — G8 tab YouTube trong palette
+AcCef của AutoCAD 2021 là Chromium 77 nên chọn WebView2 (người dùng duyệt tải gói NuGet của Microsoft). Phân hệ YouTube: link hoặc từ khoá,
+lùi, trang chủ, mở ra trình duyệt, tự dừng video khi rời tab. Thử ngoài AutoCAD: YouTube chạy, tìm ra 16 video.

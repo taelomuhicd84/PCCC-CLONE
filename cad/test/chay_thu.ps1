@@ -17,6 +17,7 @@ if ($LASTEXITCODE) { throw 'Bien dich loi' }
 & "$FW\csc.exe" /nologo /target:library /platform:x64 /codepage:65001 /out:"$T\TKPCCC.UI.dll" `
   /r:"$ACAD\acdbmgd.dll" /r:"$ACAD\accoremgd.dll" /r:"$ACAD\acmgd.dll" /r:"$ACAD\AdWindows.dll" `
   /r:"$FW\WPF\PresentationCore.dll" /r:"$FW\WPF\WindowsBase.dll" /r:"$FW\System.Xaml.dll" `
+  /r:"$GOC\cad\module\ui\webview2\Microsoft.Web.WebView2.Core.dll" /r:"$GOC\cad\module\ui\webview2\Microsoft.Web.WebView2.WinForms.dll" `
   /r:System.Core.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll /r:"$T\TKPCCC.Cad.dll" "$GOC\cad\module\ui\*.cs"
 if ($LASTEXITCODE) { throw 'Bien dich TKPCCC.UI.dll loi' }
 # DLL chi cho test: chen block dong tu ban ve mau Autodesk (cai cung AutoCAD) va dat trang thai Visibility (accoreconsole khong co setpropertyvalue).
