@@ -1450,7 +1450,26 @@ namespace TKPCCC
             Dictionary<List<Point2d>, List<Point2d>> khoangChia; // khoang -> vùng vẽ sẵn chứa nó
             List<Point2d> khuKhong;
             List<Point2d[]> damSau;
-            MatChon(db, conLai, mau.Count > 0 ? mau : null, damMau, giuDam, damThem, out vung, out mat, out oX, out gach, out demDam, out khoangChia, out khuKhong, out damSau);
+            // Khung quét chọn (W, C, WP, CP): chỉ dựng phòng trong khung. Có đối tượng chọn kiểu khác (bấm, L, !ss) thì không giới hạn.
+            double[] hopChon = null;
+            foreach (SelectedObject so in qr.Value)
+            {
+                CrossingOrWindowSelectedObject cw = so as CrossingOrWindowSelectedObject;
+                if (cw == null) { hopChon = null; break; }
+                foreach (PickPointDescriptor pd in cw.GetPickPoints())
+                {
+                    Point3d p = pd.PointOnLine;
+                    if (hopChon == null) hopChon = new[] { p.X, p.Y, p.X, p.Y };
+                    else hopChon = new[] { Math.Min(hopChon[0], p.X), Math.Min(hopChon[1], p.Y), Math.Max(hopChon[2], p.X), Math.Max(hopChon[3], p.Y) };
+                }
+            }
+            if (hopChon != null && (hopChon[2] - hopChon[0] < 1e-9 || hopChon[3] - hopChon[1] < 1e-9)) hopChon = null;
+            double[] khungTruc;
+            int boTruc;
+            MatChon(db, conLai, mau.Count > 0 ? mau : null, damMau, giuDam, damThem, hopChon, out vung, out mat, out oX, out gach, out demDam, out khoangChia, out khuKhong, out damSau, out khungTruc, out boTruc);
+            if (khungTruc != null) ed.WriteMessage("\n[TKPCCC] khung_truc x=" + string.Join("..", new[] { khungTruc[0], khungTruc[2] }.Select(t => double.IsNaN(t) ? "?" : Math.Round(t).ToString(CultureInfo.InvariantCulture)))
+                + " y=" + string.Join("..", new[] { khungTruc[1], khungTruc[3] }.Select(t => double.IsNaN(t) ? "?" : Math.Round(t).ToString(CultureInfo.InvariantCulture))));
+            if (boTruc > 0) ed.WriteMessage("\n[TKPCCC] bo_net_truc=" + boTruc + " (nét liền trùng đường trục: không coi là tường).");
             if (khoangChia.Count > 0) ed.WriteMessage("\n[TKPCCC] chia_khoang=" + khoangChia.Count + " (vùng " + LAYER_VUNG + " vẽ sẵn chia theo dầm sâu; nét khoang vẽ trên layer " + LAYER_KHOANG + ")");
             ed.WriteMessage("\n[TKPCCC] thoi_gian dung_phong=" + dongHo.ElapsedMilliseconds + "ms doi_tuong=" + conLai.Length + " mat=" + mat.Count);
             if (khoangDam && demDam[0] + demDam[1] > 0)
@@ -1484,6 +1503,16 @@ namespace TKPCCC
                         List<List<Point2d>> pt = PhongThat(mat, m);
                         vung = pt.Where(f0 => !MatKhongRai(f0, oX, gach)).ToList();
                         if (pt.Count > vung.Count) ed.WriteMessage("\n[TKPCCC] bo_phong=" + (pt.Count - vung.Count) + " (ô X, gạch chéo).");
+                        // Người dùng 17/11: ngoài đường trục ngoài cùng thì không phân vùng khi chưa được cho phép (bấm điểm trong phòng = cho phép).
+                        if (khungTruc != null)
+                        {
+                            double nt = 0.3 / m;
+                            Func<Point2d, bool> trongTruc = c => (double.IsNaN(khungTruc[0]) || (c.X >= khungTruc[0] - nt && c.X <= khungTruc[2] + nt))
+                                && (double.IsNaN(khungTruc[1]) || (c.Y >= khungTruc[1] - nt && c.Y <= khungTruc[3] + nt));
+                            int truoc = vung.Count;
+                            vung = vung.Where(f0 => trongTruc(DiemTrongMat(f0))).ToList();
+                            if (vung.Count < truoc) ed.WriteMessage("\n[TKPCCC] bo_ngoai_truc=" + (truoc - vung.Count) + " (phòng ngoài đường trục ngoài cùng: không phân vùng; cần rải thì bấm điểm trong phòng đó).");
+                        }
                         // Người dùng dặn 16/11: đầu báo không đặt trong lõi thang máy, buồng thang, WC (phòng ≤ 60 m² chứa dấu hiệu GomKhu).
                         // shortcut: nhận theo tên block, layer, chữ phòng; bản vẽ không có các dấu hiệu đó thì vẫn rải: bấm điểm từng phòng.
                         if (v.he == "BC")

@@ -578,3 +578,8 @@ cỡ gõ tay đọc đúng rộng x cao. Test ca 9. Tầng 8 chạy lại: kết
 Người dùng gửi ảnh vùng plugin nhận (vụn) và vùng tự vẽ (1 văn phòng chữ L). Gốc lỗi: bật `Dam` thì dầm sâu dựng phòng nên vùng bị cắt theo dầm,
 WC bị cắt ra mảnh không có dấu hiệu WC; sảnh thang không ghi chữ. Sửa: vùng dựng từ tường, dầm chỉ chia khoang trong phòng; block thang máy = ô X,
 phòng ≤ 30 m² sát nó = sảnh, đầu báo bỏ. Tầng 8: 4 vùng thành 1 vùng 271,7 m² trùng vùng người dùng vẽ. Test ca 10, 11.
+
+## 2026-11-17 — Vùng trong đường trục, trục không phải tường
+Người dùng: "ngoài đường trục thì không được phân vùng khi không được tôi cho phép". Trên file người dùng (bản tự lưu, thử trên bản chép): trục nét liền
+layer 0 trong block cắt văn phòng, đọc cả tờ khác, cung bồn cầu và hai khe song song khép khe 11 m. Sửa: đọc trong khung chọn, nhận khung trục từ ký hiệu trục,
+bỏ nét trùng trục, bỏ phòng ngoài trục, siết luật khép khe. Kết quả 1 vùng 270,8 m² như người dùng vẽ. Test ca 12.

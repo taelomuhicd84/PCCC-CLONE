@@ -10,8 +10,14 @@ TRƯỚC: 4 vùng (văn phòng bị dầm 700 cắt 30,1 + 231,4 m²; WC dưới
 SAU: 1 vùng 271,7 m² 8 đỉnh, trùng vùng người dùng vẽ (`t8_vung_tu_nhan_TRUOC_sua.png`, `t8_vung_tu_nhan_SAU_sua.png`).
 Sửa: (1) `MatChon` không đưa dầm vào dựng phòng, trả `damSau`; `PCCC_RAI` chia khoang trong phòng đã chọn (`ChiaKhoang`), vẽ phòng lên `PCCC_VUNG`,
 khoang lên `PCCC_KHOANG_M2`; (2) block thang máy (tên/layer THANG MAY, LIFT, ELEVATOR, hộp ≤ 20 m²) thành ô X; phòng ≤ 30 m² cách ô X ≤ 0,6 m = sảnh
-thang, đầu báo bỏ (`bo_sanh_thang=`). Test ca 10, 11 `chay_thu.ps1`. CHƯA RÕ: ảnh 1 có vùng ở hành lang trái lõi (vùng gạch chéo) và vùng phía dưới
-trục X-1; chạy trên `t8_mat_bang_dam.dwg` (khung C hay W) không ra các vùng đó, nên người dùng có thể đã chạy trên file khác: xin file đó để thử.
+thang, đầu báo bỏ (`bo_sanh_thang=`). Test ca 10, 11 `chay_thu.ps1`.
+LƯỢT 2 (cùng ngày): ảnh 1 chạy trên file người dùng "PHƯƠNG ÁN KT-KC-HT KOCHAM" (tìm thấy bản tự lưu .sv$ của AutoCAD, thử trên bản chép trong scratchpad,
+không lưu vào repo). Người dùng dặn: "ngoài đường trục thì không được phân vùng khi không được tôi cho phép" (memory `vung-trong-duong-truc`).
+File đó: cả hồ sơ là block "2333" trên layer `AAP-HATCH 50`, trục + mặt dựng là polyline layer 0 → dựng bằng mọi nét liền, trục cắt văn phòng; đọc cả tờ
+khác (vùng lặp, vùng dưới X-1, 9,5 s); cung nắp bồn cầu (= "cửa") làm khép khe 11 m; 2 khe song song (mặt cột + mặt vách lõi) khép khe 11 m. Sửa:
+(3) quét khung thì chỉ đọc nét trong khung nới 5 m, chỉ giữ phòng có điểm trong trong khung; (4) ký hiệu trục (block TRUC/AXIS/GRID, vòng có chữ) → khung
+trục; nét ≥ 3 m trùng trục bỏ khi dựng bằng mọi nét; Enter mọi phòng bỏ phòng ngoài khung trục (`bo_ngoai_truc=`); (5) hộp cửa phải phủ ≥ 25 % khe mới
+khép; hai khe song song chỉ khép khi ≤ 6 m. Kết quả file người dùng: 1 vùng 270,8 m² 8 đỉnh (= ảnh 2). Test ca 12.
 
 ## VIỆC 17/11 — TẦNG 8 KOCHAM TRẦN 4,5 M, SÀN 120 (ĐỀ XUẤT LẦN 2 ĐÃ DUYỆT): ĐÃ RẢI, CHỜ NGƯỜI DÙNG NHẬN XÉT
 Người dùng duyệt đề xuất vùng lần 2 (d = h dầm − dày sàn; không cho số sàn, dùng 120: 100–150 kết quả như nhau). Plugin: từ khoá `DaySan` ở dấu nhắc

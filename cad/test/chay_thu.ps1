@@ -877,6 +877,17 @@ Kiem ($out4 -match 'bo_cum=1 phong=1 ' -and $out4 -match 'theo_vung_co_san=1 ' -
   '_.LINE', '904000,0', '904000,6000', '', '_.LINE', '908000,0', '908000,6000', '',
   '_.TEXT', '904300,4500', '250', '0', 'B1 (300x600)', '-LAYER', 'S', '0', '', '_.ZOOM', 'W', '899000,-1000', '913000,7000',
   'PCCC_RAI', 'BC_KHOI', 'Dam', '3.5', '', 'C', '899500,-500', '912500,6500', '', '', '904000,1000', '', '',
+  # 12 (nguoi dung 17/11, file KOCHAM: truc ve bang net lien, khong co layer tuong; "ngoai duong truc thi khong phan vung"): phong 19,8 x 9,8 m
+  #    layer KT, truc net lien layer 0 (y 0 / 5 / 10 m, x 0 / 10 / 20 m) co block KI_HIEU_TRUC (vong + chu) o dau; phong nho 6 x 1,4 m duoi truc y = 0.
+  #    Truoc sua: truc cat phong thanh 6 vung, phong ngoai truc cung rai. Nay: 1 vung 194,04 m2, bo phong ngoai truc
+  '-LAYER', 'S', '0', '', '_.ZOOM', 'W', '998000,-2000', '1002000,2000', '_.CIRCLE', '1000000,0', '500', '_.TEXT', 'J', 'MC', '1000000,0', '250', '0', 'A',
+  '-BLOCK', 'KI_HIEU_TRUC', '1000000,0', 'W', '999000,-1000', '1001000,1000', '', '_.ZOOM', 'W', '1096000,-4000', '1124000,13000',
+  '_.LINE', '1098000,0', '1122000,0', '', '_.LINE', '1098000,5000', '1122000,5000', '', '_.LINE', '1098000,10000', '1122000,10000', '',
+  '_.LINE', '1100000,-2000', '1100000,12000', '', '_.LINE', '1110000,-2000', '1110000,12000', '', '_.LINE', '1120000,-2000', '1120000,12000', '',
+  '-INSERT', 'KI_HIEU_TRUC', '1097500,0', '1', '', '0', '-INSERT', 'KI_HIEU_TRUC', '1097500,5000', '1', '', '0', '-INSERT', 'KI_HIEU_TRUC', '1097500,10000', '1', '', '0',
+  '-INSERT', 'KI_HIEU_TRUC', '1100000,-2500', '1', '', '0', '-INSERT', 'KI_HIEU_TRUC', '1110000,-2500', '1', '', '0', '-INSERT', 'KI_HIEU_TRUC', '1120000,-2500', '1', '', '0',
+  '-LAYER', 'M', 'KT', '', '_.RECTANG', '1100100,100', '1119900,9900', '_.RECTANG', '1102000,-2000', '1108000,-600', '-LAYER', 'S', '0', '',
+  'PCCC_RAI', 'BC_KHOI', '', '', 'C', '1096500,-3500', '1123000,12500', '', '', '',
   '_.QSAVE') -join "`r`n") | Set-Content -Encoding ascii "$T\kb6.scr"
 $p6 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb6.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb6.out.txt"
 if (-not $p6.WaitForExit(180000)) { Stop-Process -Id $p6.Id -Force; throw "accoreconsole qua 3 phut (sua 6 loi): $T\kb6.out.txt" }
@@ -906,6 +917,10 @@ Kiem ($c10.Success -and $c10b -match '^[\s\S]{0,3000}?m2=100 ' -and $c10b -match
   'Sanh thang may khong ghi chu: phong 15 m2 sat block THANG_MAY bo (bo_sanh_thang), gieng bo, rai van phong 100 m2 + phong 20 m2'
 Kiem ($out6 -match 'chia_khoang=3 \(ph\S+ng t\S+ d\S+ng[\s\S]{0,600}V\S+ng t\S+ d\S+ng m2=72 ' -and ([regex]::Matches($out6, 'V\S+ng t\S+ d\S+ng m2=24 ')).Count -eq 0) `
   'Dam + tu dung phong: vung la phong 72 m2 (mot vung), dam sau chia 3 khoang 24 m2 ve tren PCCC_KHOANG_M2'
+$c12 = $out6.Substring([Math]::Max(0, $out6.LastIndexOf('khung_truc')))
+Kiem ($c12 -match '^khung_truc x=1100000\.\.1120000 y=0\.\.10000[\s\S]{0,300}bo_net_truc=\d+[\s\S]{0,600}bo_ngoai_truc=1 ' -and $c12 -match 'V\S+ng t\S+ d\S+ng m2=194\.04 ' `
+  -and ([regex]::Matches($c12, 'V\S+ng t\S+ d\S+ng m2=')).Count -eq 1) `
+  'Truc net lien co ky hieu truc: khong cat phong (1 vung 194,04 m2), phong ngoai truc ngoai cung khong phan vung (bo_ngoai_truc=1)'
 
 # Thoi gian dung phong tren ban ve that cua nguoi dung (gitignore, chi chay khi co): truoc sua 78 s (23 trieu diem cat), nay < 10 s.
 $bvThat = Get-ChildItem "$GOC\file_cad_test" -Filter 'test b*o ch*y.dwg' -ErrorAction SilentlyContinue | Select-Object -First 1
