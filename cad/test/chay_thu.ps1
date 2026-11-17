@@ -706,8 +706,8 @@ Kiem ($out2 -match 'dam ky_hieu=3(\r|\n)[\s\S]{0,300}dam_sau=10 dam_nong=7[\s\S]
   'Khoang dam theo ky hieu b x h: 10 net dam sau giu, 7 net B2 (d = 0,3) bo; 4 khoang 50 m2 + phong B phang rai tung khoang, 18 khoang 4 m2 gom 2 dau'
 Kiem ($out2 -match 'dam ky_hieu=0 d_chung=0.3[\s\S]{0,300}dam_sau=0 dam_nong=1[\s\S]{0,600}khoang_dam nguong=9 lon=1 nho=0') `
   'Dam khong ky hieu: hoi co chung 250x300 (d = 0,3) -> bo dam, phong 10 x 10 m rai nhu tran phang'
-Kiem ($out2 -match 'tung_dam d=0.6 m: 1 [\s\S]{0,800}tung_dam d=0.25 m: 1 [\s\S]{0,300}dam ky_hieu=0 tung_dam=1[\s\S]{0,300}dam_sau=1 dam_nong=0[\s\S]{0,600}khoang_dam nguong=9 lon=2 nho=0') `
-  'TungDam: line doc 400x600 chia 2 khoang 50 m2, line 200x250 bo (khong lam tuong, khong chia khoang)'
+Kiem ($out2 -match 'tung_dam d=0.6 m: 1 [\s\S]{0,800}tung_dam d=0.25 m: 1 [\s\S]{0,300}dam ky_hieu=0 tung_dam=2[\s\S]{0,300}dam_sau=2 dam_nong=0[\s\S]{0,600}khoang_dam nguong=9 lon=2 nho=0') `
+  'TungDam: line tim dam 400x600 doi ra 2 mep (+-200, mep dam = tuong) chia 2 khoang, line 200x250 bo (khong lam tuong, khong chia khoang)'
 # Y tu video VPTTOOL 16/11: ghi m2 giua tung khoang, dau X o khoang duoi nguong (layer PCCC_KHOANG_M2); tat bang kd_ghi_m2 = Khong trong cai_dat.json.
 Kiem ($out2 -match 'khoang_dam nguong=9 lon=5 nho=18[\s\S]{0,8000}ghi_khoang=23 dau_x=18 bo_nho_1m2=0' -and $out2 -match 'khoang_dam nguong=9 lon=0 nho=2[\s\S]{0,3000}ghi_khoang=2 dau_x=2 ') `
   'Ghi m2 tung khoang: 5 khoang lon + 18 khoang 4 m2 ghi 23 chu, 18 dau X; 2 khoang nho 2 phong: 2 chu, 2 dau X'
@@ -889,6 +889,15 @@ Kiem ($out4 -match 'bo_cum=1 phong=1 ' -and $out4 -match 'theo_vung_co_san=1 ' -
   '-INSERT', 'KI_HIEU_TRUC', '1100000,-2500', '1', '', '0', '-INSERT', 'KI_HIEU_TRUC', '1110000,-2500', '1', '', '0', '-INSERT', 'KI_HIEU_TRUC', '1120000,-2500', '1', '', '0',
   '-LAYER', 'M', 'KT', '', '_.RECTANG', '1100100,100', '1119900,9900', '_.RECTANG', '1102000,-2000', '1108000,-600', '-LAYER', 'S', '0', '',
   'PCCC_RAI', 'BC_KHOI', '', '', 'C', '1096500,-3500', '1123000,12500', '', '', '',
+  # 13 (nguoi dung 17/11: dau bao lap o mat duoi dam thi dat dung tim be rong dam; LoaiTran KhongTran): phong 12,6 x 8,4 m, dam 300 rong (2 mep)
+  #    cach 2,1 m -> o 1,8 x 1,8 m < 4 m2 (h 3,5): truoc sua bo loc rong < 1 m bo het o, khong chia khoang; nay 24 khoang, 2 dau tren tim dam y = 4,2 m
+  '-LAYER', 'M', 'TUONG', '', '_.ZOOM', 'W', '1199000,-1000', '1214000,9400', '_.RECTANG', '1200000,0', '1212600,8400', '-LAYER', 'M', 'DAM', '',
+  '_.RECTANG', '1202050,0', '1202350,8400', '_.RECTANG', '1204150,0', '1204450,8400', '_.RECTANG', '1206250,0', '1206550,8400',
+  '_.RECTANG', '1208350,0', '1208650,8400', '_.RECTANG', '1210450,0', '1210750,8400',
+  '_.RECTANG', '1200000,1950', '1212600,2250', '_.RECTANG', '1200000,4050', '1212600,4350', '_.RECTANG', '1200000,6150', '1212600,6450',
+  '_.TEXT', '1203000,7000', '150', '0', 'D1 (300x700)', '_.TEXT', '1209000,7000', '150', '0', 'D1 (300x700)', '_.TEXT', '1209000,1000', '150', '0', 'D1 (300x700)',
+  '-LAYER', 'S', '0', '',
+  'PCCC_RAI', 'BC_KHOI', 'LoaiTran', 'KhongTran', 'DaySan', '120', '3.5', '', 'W', '1199500,-500', '1213100,8900', '', '', '1202050,1000', '', '',
   '_.QSAVE') -join "`r`n") | Set-Content -Encoding ascii "$T\kb6.scr"
 $p6 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb6.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb6.out.txt"
 if (-not $p6.WaitForExit(180000)) { Stop-Process -Id $p6.Id -Force; throw "accoreconsole qua 3 phut (sua 6 loi): $T\kb6.out.txt" }
@@ -901,7 +910,8 @@ Kiem ($out6 -match 'tuyen_loc giu=4 bo=3 nhom=3 ' -and $out6 -match 'PCCC_TUYEN 
 Kiem ($out6 -match 'chia_khoang=6 ' -and $out6 -match 'khoang_dam nguong=4 lon=6 nho=0' -and [regex]::Matches($out6, 'PCCC_RAI BC_KHOI n=1 luoi=1x1 buoc=4000x3000 m2=12(\r|\n)').Count -eq 6) `
   'Loi 4: Dam + vung PCCC_VUNG ve san: chia 6 khoang 12 m2, moi khoang 1 dau bao'
 $m6 = [regex]::Match($out6, 'kt_gom n=6 kt=(\d+) ')
-Kiem ($m6.Success -and [int]$m6.Groups[1].Value -le 8) "Loi 6: 6 khoang cua mot vung ve san dim chung: 1 chuoi X + 1 chuoi Y ($($m6.Groups[1].Value) dim; truoc sua 24)"
+# 17/11: chuoi chung them moc mep dam (nguoi dung: dau bao trong khoang thi mep dam la tuong, dim tu mep dam): 7 -> 10 dim
+Kiem ($m6.Success -and [int]$m6.Groups[1].Value -le 10) "Loi 6: 6 khoang cua mot vung ve san dim chung: 1 chuoi X + 1 chuoi Y, moc mep dam ($($m6.Groups[1].Value) dim; truoc sua 24)"
 $m5 = [regex]::Match($out6, 'PCCC_DAYBC he=thuong tin_hieu=2 m=([\d.]+) [^\r\n]* ne_loi=(\d+)')
 Kiem ($m5.Success -and [int]$m5.Groups[2].Value -ge 1 -and [double]$m5.Groups[1].Value -gt 25) `
   "Loi 5: PCCC_DAYBC: doan tu -> dai cat loi thang (ngoai vung) di vong qua van phong (m=$($m5.Groups[1].Value), ne_loi=$($m5.Groups[2].Value); duong thang 22 m)"
@@ -919,9 +929,13 @@ Kiem ($c10.Success -and $c10b -match '^[\s\S]{0,3000}?m2=100 ' -and $c10b -match
 Kiem ($out6 -match 'chia_khoang=3 \(ph\S+ng t\S+ d\S+ng[\s\S]{0,600}V\S+ng t\S+ d\S+ng m2=72 ' -and ([regex]::Matches($out6, 'V\S+ng t\S+ d\S+ng m2=24 ')).Count -eq 0) `
   'Dam + tu dung phong: vung la phong 72 m2 (mot vung), dam sau chia 3 khoang 24 m2 ve tren PCCC_KHOANG_M2'
 $c12 = $out6.Substring([Math]::Max(0, $out6.LastIndexOf('khung_truc')))
+if ($c12.IndexOf('[CoTran/KhongTran/HonHop]') -gt 0) { $c12 = $c12.Substring(0, $c12.IndexOf('[CoTran/KhongTran/HonHop]')) } # bo phan ca 13
 Kiem ($c12 -match '^khung_truc x=1100000\.\.1120000 y=0\.\.10000[\s\S]{0,300}bo_net_truc=\d+[\s\S]{0,600}bo_ngoai_truc=1 ' -and $c12 -match 'V\S+ng t\S+ d\S+ng m2=194\.04 ' `
   -and ([regex]::Matches($c12, 'V\S+ng t\S+ d\S+ng m2=')).Count -eq 1) `
   'Truc net lien co ky hieu truc: khong cat phong (1 vung 194,04 m2), phong ngoai truc ngoai cung khong phan vung (bo_ngoai_truc=1)'
+$c13 = $out6.Substring([Math]::Max(0, $out6.LastIndexOf('[CoTran/KhongTran/HonHop]')))
+Kiem ($c13 -match 'tim_dam=8[\s\S]{0,600}chia_khoang=24 [\s\S]{0,400}nho=24 [\s\S]{0,400}khoang_nho_chung n=2 len_dam=2 ') `
+  'LoaiTran KhongTran, o 1,8 x 1,8 m < 4 m2: chia 24 khoang (o hep < 1 m van la khoang), 2 dau bao dat tren tim dam (mat duoi dam, 5.9.1.1.6 c)'
 
 # Thoi gian dung phong tren ban ve that cua nguoi dung (gitignore, chi chay khi co): truoc sua 78 s (23 trieu diem cat), nay < 10 s.
 $bvThat = Get-ChildItem "$GOC\file_cad_test" -Filter 'test b*o ch*y.dwg' -ErrorAction SilentlyContinue | Select-Object -First 1

@@ -26,6 +26,7 @@ namespace TKPCCC
         readonly KhungTrangThai[] tt = new KhungTrangThai[4];
         readonly ThanhTab thanh = new ThanhTab(new[] { "RẢI ĐẦU BÁO", "KHOANG DẦM", "KIỂM TRA", "ĐI DÂY" });
         readonly TextBox tranKd = new TextBox();
+        readonly ComboBox loaiTran = new ComboBox(); // tab Khoang dầm: 3 trường hợp trần (người dùng 17/11), thứ tự = Rai.cs LOAI_TRAN
         int[] vungDem = { -1, -1 }; // { PCCC_VUNG, PCCC_LOAITRU } đếm lần gần nhất (DemLai)
         readonly List<ThietBi> ds = new List<ThietBi>();
         readonly List<CuLy> cuLy = new List<CuLy>();
@@ -266,6 +267,24 @@ namespace TKPCCC
             GiaoDien.NutLuoi(cb, "\U0001F4D6", "Tra cứu TCVN", GiaoDien.MauDuong, delegate { BangTraCuu.Mo(); });
 
             f.Controls.Add(new TieuDeNhom("Thông số", GiaoDien.MauCam));
+            Label nl = new Label();
+            nl.Text = "LOẠI TRẦN";
+            nl.Font = GiaoDien.NhoDam;
+            nl.ForeColor = GiaoDien.ChuMo;
+            nl.AutoSize = true;
+            f.Controls.Add(nl);
+            loaiTran.DropDownStyle = ComboBoxStyle.DropDownList;
+            loaiTran.Width = 290;
+            loaiTran.AccessibleName = "Loại trần";
+            loaiTran.Items.Add("Có trần: rải như trần phẳng");
+            loaiTran.Items.Add("Không trần: đọc mặt bằng dầm, chia khoang");
+            loaiTran.Items.Add("Vừa có vừa không: vùng + dầm vẽ tay");
+            int lt;
+            loaiTran.SelectedIndex = int.TryParse(GiaoDien.DocCaiDat("kd_loai_tran", "1"), out lt) && lt >= 0 && lt <= 2 ? lt : 1;
+            loaiTran.SelectedIndexChanged += delegate { GiaoDien.LuuCaiDat("kd_loai_tran", loaiTran.SelectedIndex.ToString(CultureInfo.InvariantCulture)); };
+            f.Controls.Add(loaiTran);
+            f.Controls.Add(Chu("Không trần: khối mặt bằng dầm chép đè lên mặt bằng tầng; mép dầm là tường của khoang. Vừa có vừa không: vẽ polyline kín "
+                + "PCCC_VUNG quanh từng vùng, vẽ line dọc dầm (tim hoặc hai mép) ở vùng không trần; khi rải chọn line dầm, nhập b x h.", 0));
             Label nh = new Label();
             nh.Text = "CHIỀU CAO TRẦN h (m)";
             nh.Font = GiaoDien.NhoDam;
@@ -301,7 +320,7 @@ namespace TKPCCC
             GiaoDien.NutLuoi(r, "\U0001F514", "Rải đầu báo khoang", GiaoDien.MauLuc, RaiKhoang);
             GiaoDien.NutLuoi(r, "\u21B6", "Hoàn tác lượt", GiaoDien.MauXam, delegate { GiaoDien.GuiLenh("_.U\n", "U", DemLai); });
             GiaoDien.NutLuoi(r, "\u2714", "Kiểm vùng mù", GiaoDien.MauDuong, delegate { GiaoDien.GuiLenh("PCCC_KT\n", "PCCC_KT", DemLai); });
-            f.Controls.Add(Chu("RẢI gửi PCCC_RAI BC_KHOI Dam + h: quét chọn mặt bằng (ranh giới + nét dầm), Enter = tự nhận phòng, bấm một nét DẦM mẫu, Enter.", 0));
+            f.Controls.Add(Chu("RẢI gửi PCCC_RAI BC_KHOI + loại trần + h: quét chọn mặt bằng (ranh giới + nét dầm), Enter = tự nhận phòng, bấm một nét DẦM mẫu (vừa có vừa không: chọn line dầm), Enter.", 0));
             f.Controls.Add(tt[1]);
         }
 
@@ -317,11 +336,12 @@ namespace TKPCCC
         void RaiKhoang()
         {
             double h = TranKd();
-            if (h <= 0) throw new System.Exception("Nhập chiều cao trần h (m): ngưỡng ô 4 m² hay 9 m² tính theo h (5.9.1.1.6).");
+            if (h <= 0 && loaiTran.SelectedIndex != 0) throw new System.Exception("Nhập chiều cao trần h (m): ngưỡng ô 4 m² hay 9 m² tính theo h (5.9.1.1.6).");
             if (!ds.Any(t => t.Ma == "BC_KHOI")) throw new System.Exception("Không có BC_KHOI trong khoang_cach_rai.json: chạy lại cad\\build.bat.");
             GiaoDien.LuuCaiDat("kd_h", tranKd.Text.Trim());
             // Thứ tự dấu nhắc PCCC_RAI (Rai.cs RaiTay): mã → Dam → trần → theo hàng.
-            GiaoDien.GuiLenh("PCCC_RAI\nBC_KHOI\nDam\n" + Ct(h) + "\nKhong\n", "PCCC_RAI", delegate
+            string[] loai = { "CoTran", "KhongTran", "HonHop" }; // mã -> LoaiTran -> loại trần -> trần -> theo hàng
+            GiaoDien.GuiLenh("PCCC_RAI\nBC_KHOI\nLoaiTran\n" + loai[Math.Max(0, loaiTran.SelectedIndex)] + "\n" + (h > 0 ? Ct(h) : "") + "\nKhong\n", "PCCC_RAI", delegate
             {
                 ketQua.Text = Lenh.KetQuaRaiCuoi;
                 ketQua.ForeColor = Lenh.KetQuaRaiCuoi.Contains("HO") ? GiaoDien.Do : GiaoDien.XanhLa;

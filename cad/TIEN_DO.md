@@ -3,6 +3,26 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## VIỆC 17/11 (7) — KHOANG DẦM: 6 TRƯỜNG HỢP + 3 LOẠI TRẦN: XONG MÃ + TEST, CÒN CHẠY THỬ FILE "test vùng báo cháy.dwg"
+Người dùng dạy quy trình: (1) vẽ mặt bằng mô tả từng trường hợp 5.9.1.1.6 để xem hiểu đúng không; đầu báo lắp trên dầm phải nằm GIỮA bề rộng dầm.
+(2) Mặt bằng dầm sàn block lại, chép đè lên mặt bằng tầng; đọc cỡ dầm để biết trường hợp. Có trần: rải như tiêu chuẩn. Không trần: xác định trường hợp,
+vẽ vùng rồi mới rải; mép dầm chính coi như tường để dim (khi phải rải trong khoang ≥ 4 / ≥ 9 m²). Vừa có vừa không: người dùng vẽ tay vùng + dầm. Thêm list chọn 3 trường hợp.
+Đã làm (Rai.cs, NhanVung.cs, ui/BangBoTri.cs):
+- `PCCC_RAI` từ khoá `LoaiTran` [CoTran/KhongTran/HonHop] ở dấu nhắc trần (`Dam` cũ = KhongTran, ẩn); palette tab Khoang dầm có ô chọn "LOẠI TRẦN" (`kd_loai_tran`).
+  HonHop: bỏ bước nét dầm mẫu, chọn thẳng line dầm vẽ tay (TungDam) + b x h; bắt buộc có polyline PCCC_VUNG. Line ở tim dầm tự dời ra hai mép ± b/2 (`MepDam`).
+- Tim dầm (`TimDam`): ghép cặp mép dầm song song cách 0,1–1,6 m. Khoang nhỏ hơn ngưỡng (c, e): đầu báo dời về tim dầm gần nhất (`DatLenDam`), phủ bù trên tim dầm (`PhuBuDam`), dòng lệnh `len_dam=`.
+- Dim chung các khoang (`kt_gom`) thêm mốc mép dầm (đầu báo trong khoang: mép dầm = tường). Trần < 2 m không đánh X khoang.
+- SỬA LỖI: `ChiaKhoang` bỏ mọi ô < 1 m rộng TB (ô 1,8 x 1,8 m = 0,9 m) nên khoang nhỏ không bao giờ chia được; nay ngưỡng 0,5 m² / 0,4 m, lòng dầm bỏ theo tim dầm.
+- Hình minh hoạ 6 trường hợp a–f do plugin tự rải: `ket_qua/cad_test/2026-11-17/khoang_dam_6th/` (3 PNG + DWG, đã gửi người dùng). Sinh lại: `scratchpad` `tao_6th.py` (đã chép vào thư mục kết quả).
+- Test ca 13 (chay_thu kb6): 24 khoang 1,8 x 1,8 m, `len_dam=2`. Loi 6 nới ≤ 10 dim (thêm mốc mép dầm).
+CÒN (việc tiếp theo, làm ngay khi có hạn mức):
+1. Chạy thử trên bản chép `file_cad_test/test vùng báo cháy.dwg` (người dùng đang mở, KHÔNG sửa gốc): mặt bằng tầng = block "2333" (trục dọc x 711176 / 715376 / 726551,
+   trục ngang y 403864 / 411264 / 418564 / 425964); mặt bằng dầm tầng 7 ở x 739000–761000, y 400000–427000 (dầm = hình chữ nhật kín layer AAP-TUONG, nhãn "DS 400X250"
+   ghi ngược kiểu KOCHAM, layer AAP-TEXT). Chép đè: block phần mặt bằng dầm, dời (-30858, +750). Rồi `PCCC_RAI BC_KHOI LoaiTran KhongTran DaySan 120 4.5`, khung C phần
+   bên phải lõi + lõi, bấm nét dầm mẫu (AAP-TUONG trong block dầm). Lưu ý: layer dầm là AAP-TUONG (tên tường) — xem có bị dựng làm tường không. Vẽ vùng + khoang, gửi ảnh, CHỜ DUYỆT mới rải.
+   Phần trái mặt bằng có hatch BT-DA1X2 (4 hatch, layer AAP-HATCH 50): chưa rõ nghĩa (có thể là phần sân thượng / không thuộc phạm vi) → hỏi người dùng nếu plugin nhận làm vùng.
+2. Chưa thử palette trong AutoCAD có giao diện (AutoCAD người dùng đang mở; `thu_gui.ps1` chỉ chạy khi tắt AutoCAD).
+
 ## VIỆC 17/11 (6) — HUB BẢN 2: MỌI BỘ CÀI CHIA THEO TÍNH NĂNG: XONG, CHỜ NGƯỜI DÙNG DÙNG THỬ
 Người dùng (ảnh MCP Hub Pro): gom mọi bộ cài vào Hub, phân rõ từng loại. Hub thành bảng 12 mục, 4 nhóm, nút lọc theo nhóm, ô chọn, "Chọn mục còn thiếu", "Cài / Gỡ mục đã chọn" (một hộp xác nhận liệt kê từng việc), "Quét lại máy". Nền tảng: AutoCAD, .NET 4.8 (registry Release ≥ 528040), Plugin tự nạp · MCP cad: máy chủ + 4 AI · Bot chat: `claude`, `agy` (--version) · YouTube: WebView2 Runtime (registry EdgeUpdate pv), 3 DLL (Cài = chép từ module/ui/webview2). Phần mềm hãng khác: chỉ mở trang tải chính thức. `thu_hub.ps1` 17/17 DAT. Máy người dùng: 7/12 xong; chưa: 4 AI ← MCP cad.
 LƯU Ý 17/11: build.bat lúc đó hỏng ở `Rai.cs` (phiên khác đang sửa dở) → bundle mất TKPCCC.Cad.dll, đã chép lại bản 10:32 (TKPCCC.Cad.dll.cu1372).

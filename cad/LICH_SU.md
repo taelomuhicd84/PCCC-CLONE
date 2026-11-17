@@ -603,3 +603,11 @@ Người dùng gửi ảnh MCP Hub Pro, muốn gom mọi bộ cài vào Hub, ph�
 lọc theo nhóm, chọn nhiều mục rồi cài một lần. Phần mềm hãng khác chỉ mở trang tải chính thức. Test 17/17.
 Bẫy: script sửa build.bat thay '\n' bằng CRLF trên chuỗi đã có CRLF → dòng '\r\r\n'; đã sửa. build.bat đổi tên DLL cũ TRƯỚC khi biên dịch:
 biên dịch hỏng thì bundle mất DLL → chép lại bản .cu mới nhất.
+
+## 2026-11-17 — Khoang dầm: 6 trường hợp, 3 loại trần, đầu báo ở tim dầm, mép dầm là tường
+Người dùng hướng dẫn quy trình rải đầu báo khi có khoang dầm (TCVN 7568-14 5.9.1.1.6) và yêu cầu vẽ mặt bằng mô tả từng trường hợp, thêm list chọn có trần / không trần / vừa có vừa không.
+- `PCCC_RAI`: từ khoá `LoaiTran` [CoTran/KhongTran/HonHop]; palette tab Khoang dầm thêm ô chọn LOẠI TRẦN. HonHop dùng vùng PCCC_VUNG + line dầm vẽ tay (tim dầm tự dời ra hai mép ± b/2).
+- Khoang < ngưỡng: đầu báo đặt trên tim dầm (ghép cặp mép dầm). Dim chung thêm mốc mép dầm.
+- Sửa lỗi `ChiaKhoang`: ô hẹp < 1 m (vd 1,8 x 1,8 m) bị bỏ nên khoang nhỏ không chia được.
+- Hình 6 trường hợp a–f do plugin tự rải, gửi người dùng xem. Test ca 13. Còn chạy thử trên file "test vùng báo cháy.dwg" (xem TIEN_DO).
+

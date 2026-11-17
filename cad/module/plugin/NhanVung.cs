@@ -1181,6 +1181,7 @@ namespace TKPCCC
                         if (giuDam == null || giuDam(s)) { sau.Add(s); demDam[0]++; }
                         else demDam[1]++;
                     if (damThem != null) { sau.AddRange(damThem); demDam[0] += damThem.Count; }
+                    damSau = sau; // người gọi ghép tim dầm (đầu báo trên dầm) và mốc dim mép dầm
                     List<List<Point2d>> moi = new List<List<Point2d>>();
                     foreach (List<Point2d> z in co)
                     {
@@ -1206,8 +1207,11 @@ namespace TKPCCC
             s.AddRange(dam.Where(d => Math.Max(d[0].X, d[1].X) >= x0 - e && Math.Min(d[0].X, d[1].X) <= x1 + e && Math.Max(d[0].Y, d[1].Y) >= y0 - e && Math.Min(d[0].Y, d[1].Y) <= y1 + e)
                 .Select(d => { Vector2d u = (d[1] - d[0]).GetNormal() * e; return new[] { d[0] - u, d[1] + u }; }));
             if (s.Count == z.Count) return new List<List<Point2d>> { z };
-            List<List<Point2d>> f = PhongThat(CacMat(s, tol, HO_CUA_M / m).Select(v => BoThangHang(v, tol)).ToList(), m)
-                .Where(v => TrongDaGiac(z, DiemTrongMat(v))).ToList();
+            // Ô 1,8 x 1,8 m (rộng TB 0,9 m, 5.9.1.1.6 c) vẫn là khoang: ngưỡng 0,5 m² / rộng 0,4 m; lòng dầm (cả dầm bẹt 1400) bỏ theo tim dầm.
+            List<double> nua = new List<double>();
+            List<Point2d[]> tim = TimDam(s.Skip(z.Count).ToList(), m, nua);
+            List<List<Point2d>> f = PhongThat(CacMat(s, tol, HO_CUA_M / m).Select(v => BoThangHang(v, tol)).ToList(), m, 0.5, 0.4)
+                .Where(v => { Point2d c = DiemTrongMat(v); return TrongDaGiac(z, c) && !Enumerable.Range(0, tim.Count).Any(i => CachDoan(tim[i], c) < nua[i] - tol); }).ToList();
             return f.Count > 1 ? f : new List<List<Point2d>> { z };
         }
 
@@ -1273,13 +1277,13 @@ namespace TKPCCC
 
         // shortcut: ngưỡng phòng cố định (rộng trung bình 2A/P ≥ 1 m, ≥ 1 m²); WC, hộp kỹ thuật hẹp hơn thì bấm điểm hoặc vẽ polyline PCCC_VUNG.
         /// Mặt là phòng thật: bỏ lòng tường, cột; bỏ mặt CHỨA phòng khác (khung giấy, vòng tường ngoài tách rời; sảnh có lõi thang ở giữa thì bấm điểm).
-        static List<List<Point2d>> PhongThat(List<List<Point2d>> mat, double m)
+        static List<List<Point2d>> PhongThat(List<List<Point2d>> mat, double m, double aMin = 1, double rongMin = 1)
         {
             List<List<Point2d>> ung = mat.Where(v =>
             {
                 double a = DienTichDaGiac(v) * m * m, p = 0;
                 for (int i = 0; i < v.Count; i++) p += v[i].GetDistanceTo(v[(i + 1) % v.Count]) * m;
-                return a >= 1 && 2 * a / p >= 1;
+                return a >= aMin && 2 * a / p >= rongMin;
             }).ToList();
             Func<List<Point2d>, Point2d> diemTrong = g =>
             {
