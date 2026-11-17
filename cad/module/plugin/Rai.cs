@@ -1487,6 +1487,7 @@ namespace TKPCCC
             HashSet<ObjectId> idDam = new HashSet<ObjectId>();
             List<KeyValuePair<Point2d[], double>> suaDam = new List<KeyValuePair<Point2d[], double>>(); // đoạn dầm -> d (m) người dùng nhập, thắng nhãn
             List<Point2d[]> timTay = new List<Point2d[]>(); // tim dầm vẽ tay (TungDam) không dời được ra mép (thiếu b)
+            ObjectId khoiDam = ObjectId.Null; // block ngoài cùng chứa nét dầm mẫu đầu tiên (mặt bằng dầm chép đè)
             if (khoangDam)
             {
                 damMau = new HashSet<string>();
@@ -1527,6 +1528,8 @@ namespace TKPCCC
                     }
                     if (nr.Status != PromptStatus.OK) return;
                     string kh = KhoaNetMau(db, nr);
+                    ObjectId[] chua = nr.GetContainers();
+                    if (khoiDam.IsNull && chua.Length > 0) khoiDam = chua[chua.Length - 1];
                     mau.Remove(kh); // nét dầm không dựng làm tường
                     if (damMau.Add(kh)) ed.WriteMessage("\n[TKPCCC] Nét dầm mẫu: layer " + kh.Replace("|", ", màu ") + ".");
                 }
@@ -1633,7 +1636,7 @@ namespace TKPCCC
             if (hopChon != null && (hopChon[2] - hopChon[0] < 1e-9 || hopChon[3] - hopChon[1] < 1e-9)) hopChon = null;
             double[] khungTruc;
             int boTruc;
-            MatChon(db, conLai, mau.Count > 0 ? mau : null, damMau, giuDam, damThem, hopChon, out vung, out mat, out oX, out gach, out demDam, out khoangChia, out khuKhong, out damSau, out khungTruc, out boTruc);
+            MatChon(db, conLai, mau.Count > 0 ? mau : null, damMau, giuDam, damThem, hopChon, khoiDam, out vung, out mat, out oX, out gach, out demDam, out khoangChia, out khuKhong, out damSau, out khungTruc, out boTruc);
             if (khungTruc != null) ed.WriteMessage("\n[TKPCCC] khung_truc x=" + string.Join("..", new[] { khungTruc[0], khungTruc[2] }.Select(t => double.IsNaN(t) ? "?" : Math.Round(t).ToString(CultureInfo.InvariantCulture)))
                 + " y=" + string.Join("..", new[] { khungTruc[1], khungTruc[3] }.Select(t => double.IsNaN(t) ? "?" : Math.Round(t).ToString(CultureInfo.InvariantCulture))));
             if (boTruc > 0) ed.WriteMessage("\n[TKPCCC] bo_net_truc=" + boTruc + " (nét liền trùng đường trục: không coi là tường).");

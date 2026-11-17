@@ -94,6 +94,8 @@ namespace TKPCCC
             public List<Point2d[]> Cua = new List<Point2d[]>();                           // hộp bao [min, max] ký hiệu cửa (cung cánh, block cửa)
             public List<List<Point2d>> GachCheo = new List<List<Point2d>>();             // biên hatch gạch chéo = công trình hiện hữu (người dùng 14/11)
             public bool ChiCua;                                                           // đang đi trong block layer bị bỏ: chỉ gom ký hiệu cửa
+            public HashSet<string> LopKhoiDam;                                            // layer dầm khi đang đọc block mặt bằng dầm chép đè: khớp mọi màu
+            public bool DocDam;                                                           // lượt đọc nét dầm (Mau = nét dầm mẫu)
             public HashSet<string> BoMau;                                                 // khoá "LAYER|màu" bỏ ra (nét dầm khi dựng tường)
             public List<Point2d> KhuKhong = new List<Point2d>();                          // dấu hiệu lõi thang, buồng thang, WC (GomKhu)
             public List<List<Point2d>> GiengThang = new List<List<Point2d>>();           // hộp bao block thang máy (GomKhu): như ô X, phòng sát nó ≤ 30 m² = sảnh thang
@@ -256,8 +258,10 @@ namespace TKPCCC
             if (chiCua) return;
             Hatch hg = e as Hatch;
             if (hg != null && loai >= 0 && LaGachCheo(hg)) n.GachCheo.AddRange(VongHatch(hg)); // hatch của plugin (PCCC_THOAT_NAN...) không phải công trình hiện hữu
-            if (n.BoMau != null && !(e is Hatch) && n.BoMau.Contains(KhoaNet(n, lop, mau))) return;
-            if (n.Mau != null && (e is Hatch || !n.Mau.Contains(KhoaNet(n, lop, mau)))) return;
+            string kh = n.BoMau != null || n.Mau != null ? KhoaNet(n, lop, mau) : null;
+            bool lopDam = kh != null && n.LopKhoiDam != null && n.LopKhoiDam.Contains(kh.Substring(0, kh.IndexOf('|')));
+            if (n.BoMau != null && !(e is Hatch) && (n.BoMau.Contains(kh) || lopDam)) return;
+            if (n.Mau != null && (e is Hatch || !(n.Mau.Contains(kh) || (n.DocDam && lopDam)))) return;
             if (n.ChiTuong && loai != 2) return;
             if (!NetLien(n, net)) return; // trục (CENTER, DASHDOT), nét khuất
             try
@@ -1077,14 +1081,14 @@ namespace TKPCCC
             List<Point2d[]> damSau;
             double[] khungTruc;
             int boTruc;
-            MatChon(db, ids, mau, null, null, null, null, out co, out mat, out oX, out gach, out dem, out khoang, out khu, out damSau, out khungTruc, out boTruc);
+            MatChon(db, ids, mau, null, null, null, null, ObjectId.Null, out co, out mat, out oX, out gach, out dem, out khoang, out khu, out damSau, out khungTruc, out boTruc);
         }
 
         /// khoang: khoang dầm chia ra từ vùng PCCC_VUNG vẽ sẵn -> vùng cha (KOCHAM 16/11: có vùng vẽ sẵn thì trước đây không chia theo dầm), đã thay vào co.
         /// damSau: đoạn dầm sâu khi tự dựng phòng. Người dùng 17/11 (vẽ lại vùng tầng 8): vùng là PHÒNG dựng từ tường; dầm không dựng phòng
         /// (trước đây dầm cắt văn phòng thành 2 vùng, cắt WC ra mảnh không có dấu hiệu WC) — người gọi chia khoang trong phòng đã chọn (ChiaKhoang).
         /// hopChon: [x0, y0, x1, y1] khung quét chọn (null = chọn từng đối tượng, đọc hết): chỉ đọc nét trong khung nới 5 m, chỉ giữ phòng có điểm trong nằm trong khung.
-        static void MatChon(Database db, ObjectId[] ids, HashSet<string> mau, HashSet<string> damMau, Func<Point2d[], bool> giuDam, List<Point2d[]> damThem, double[] hopChon,
+        static void MatChon(Database db, ObjectId[] ids, HashSet<string> mau, HashSet<string> damMau, Func<Point2d[], bool> giuDam, List<Point2d[]> damThem, double[] hopChon, ObjectId khoiDam,
             out List<List<Point2d>> co, out List<List<Point2d>> mat, out List<List<Point2d>> oX, out List<List<Point2d>> gach, out int[] demDam,
             out Dictionary<List<Point2d>, List<Point2d>> khoang, out List<Point2d> khuKhong, out List<Point2d[]> damSau, out double[] khungTruc, out int boTruc)
         {
@@ -1116,6 +1120,11 @@ namespace TKPCCC
                     else if (e != null && !(e is Table)) ds.Add(e);
                 }
                 bool coTuong = mau == null && ds.Any(e => LoaiLop(n, e.LayerId) == 2);
+                // Người dùng 17/11: mặt bằng dầm block lại, chép đè lên mặt bằng tầng. Dầm trong block đó (layer nét dầm mẫu, MỌI màu) là dầm, không dựng tường.
+                // Chỉ khi còn khối / tường khác được chọn (cả tờ là một block thì vẫn lọc theo layer + màu như trước).
+                HashSet<string> lopDam = coDam && !khoiDam.IsNull && ds.Any(e => e.ObjectId == khoiDam)
+                    && ds.Any(e => e.ObjectId != khoiDam && (e is BlockReference || LoaiLop(n, e.LayerId) == 2))
+                    ? new HashSet<string>(damMau.Select(k => k.Substring(0, k.IndexOf('|')))) : null;
                 // Có layer tường / cột thì dựng bằng các layer đó trước, không ra phòng nào mới dùng mọi nét liền (như VungTaiDiem).
                 foreach (bool chiTuong in new[] { true, false })
                 {
@@ -1124,7 +1133,13 @@ namespace TKPCCC
                     n.Cua.Clear(); n.GachCheo.Clear(); n.KhuKhong.Clear(); n.GiengThang.Clear(); n.MocTruc.Clear(); n.Tron.Clear(); n.ChuNgan.Clear();
                     List<Point2d[]> doan = new List<Point2d[]>();
                     n.BoMau = coDam ? damMau : null;
-                    foreach (Entity e in ds) { if (doan.Count % 64 == 0) KiemEsc(); ThuNet(n, e, ObjectId.Null, ObjectId.Null, null, 0, doan); }
+                    foreach (Entity e in ds)
+                    {
+                        if (doan.Count % 64 == 0) KiemEsc();
+                        n.LopKhoiDam = lopDam != null && e.ObjectId == khoiDam ? lopDam : null;
+                        ThuNet(n, e, ObjectId.Null, ObjectId.Null, null, 0, doan);
+                    }
+                    n.LopKhoiDam = null;
                     n.BoMau = null;
                     foreach (KeyValuePair<Point2d, double> c in n.Tron)
                         if (n.ChuNgan.Any(p => p.GetDistanceTo(c.Key) <= c.Value)) n.MocTruc.Add(c.Key);
@@ -1147,9 +1162,9 @@ namespace TKPCCC
                         {
                             HashSet<string> cu = n.Mau;
                             bool ct = n.ChiTuong;
-                            n.Mau = damMau; n.ChiTuong = false;
-                            foreach (Entity e in ds) ThuNet(n, e, ObjectId.Null, ObjectId.Null, null, 0, dd);
-                            n.Mau = cu; n.ChiTuong = ct;
+                            n.Mau = damMau; n.ChiTuong = false; n.DocDam = true;
+                            foreach (Entity e in ds) { n.LopKhoiDam = lopDam != null && e.ObjectId == khoiDam ? lopDam : null; ThuNet(n, e, ObjectId.Null, ObjectId.Null, null, 0, dd); }
+                            n.Mau = cu; n.ChiTuong = ct; n.DocDam = false; n.LopKhoiDam = null;
                         }
                         demDam = new int[2];
                         damSau = new List<Point2d[]>();
@@ -1172,9 +1187,9 @@ namespace TKPCCC
                     List<Point2d[]> dd = new List<Point2d[]>();
                     if (coDam)
                     {
-                        n.Mau = damMau; n.ChiTuong = false;
-                        foreach (Entity e in ds) ThuNet(n, e, ObjectId.Null, ObjectId.Null, null, 0, dd);
-                        n.Mau = mau;
+                        n.Mau = damMau; n.ChiTuong = false; n.DocDam = true;
+                        foreach (Entity e in ds) { n.LopKhoiDam = lopDam != null && e.ObjectId == khoiDam ? lopDam : null; ThuNet(n, e, ObjectId.Null, ObjectId.Null, null, 0, dd); }
+                        n.Mau = mau; n.DocDam = false; n.LopKhoiDam = null;
                     }
                     List<Point2d[]> sau = new List<Point2d[]>();
                     foreach (Point2d[] s in dd)

@@ -15,7 +15,10 @@ vẽ vùng rồi mới rải; mép dầm chính coi như tường để dim (khi
 - SỬA LỖI: `ChiaKhoang` bỏ mọi ô < 1 m rộng TB (ô 1,8 x 1,8 m = 0,9 m) nên khoang nhỏ không bao giờ chia được; nay ngưỡng 0,5 m² / 0,4 m, lòng dầm bỏ theo tim dầm.
 - Hình minh hoạ 6 trường hợp a–f do plugin tự rải: `ket_qua/cad_test/2026-11-17/khoang_dam_6th/` (3 PNG + DWG, đã gửi người dùng). Sinh lại: `scratchpad` `tao_6th.py` (đã chép vào thư mục kết quả).
 - Test ca 13 (chay_thu kb6): 24 khoang 1,8 x 1,8 m, `len_dam=2`. Loi 6 nới ≤ 10 dim (thêm mốc mép dầm).
-CÒN (việc tiếp theo, làm ngay khi có hạn mức):
+ĐÃ CHẠY THỬ file test (13:46): block mặt bằng dầm (DAM_T7) dời (-30858, +750) khớp trục; khung C cả mặt bằng (cần lấy cả ký hiệu trục, khung hẹp thì trục ngang thành tường) → 1 vùng 270,82 m² (8 đỉnh), 2 khoang theo dầm sâu 700X250: 28,4 + 230,8 m² (≥ 9 m²), dầm 400X250 d = 0,28 bỏ, 7 đầu báo. Ảnh + DWG: `ket_qua/cad_test/2026-11-17/khoang_dam_file_test/` (đã gửi, CHỜ DUYỆT).
+SỬA thêm: dầm trong block mặt bằng dầm chép đè (block ngoài cùng chứa nét dầm mẫu) nhận theo LAYER, mọi màu (`NenVung.LopKhoiDam`), chỉ khi còn khối/tường khác được chọn.
+Mẹo console: nét dầm mẫu cách trục 100 mm, bấm phải zoom trong suốt (`'_.ZOOM W`) kẻo trúng trục.
+Cũ (đã làm xong):
 1. Chạy thử trên bản chép `file_cad_test/test vùng báo cháy.dwg` (người dùng đang mở, KHÔNG sửa gốc): mặt bằng tầng = block "2333" (trục dọc x 711176 / 715376 / 726551,
    trục ngang y 403864 / 411264 / 418564 / 425964); mặt bằng dầm tầng 7 ở x 739000–761000, y 400000–427000 (dầm = hình chữ nhật kín layer AAP-TUONG, nhãn "DS 400X250"
    ghi ngược kiểu KOCHAM, layer AAP-TEXT). Chép đè: block phần mặt bằng dầm, dời (-30858, +750). Rồi `PCCC_RAI BC_KHOI LoaiTran KhongTran DaySan 120 4.5`, khung C phần
@@ -23,7 +26,14 @@ CÒN (việc tiếp theo, làm ngay khi có hạn mức):
    Phần trái mặt bằng có hatch BT-DA1X2 (4 hatch, layer AAP-HATCH 50): chưa rõ nghĩa (có thể là phần sân thượng / không thuộc phạm vi) → hỏi người dùng nếu plugin nhận làm vùng.
 2. Chưa thử palette trong AutoCAD có giao diện (AutoCAD người dùng đang mở; `thu_gui.ps1` chỉ chạy khi tắt AutoCAD).
 
-## VIỆC KẾ (hẹn sau reset 5 giờ 17/11, ~13:45) — PALETTE: THU GỌN THANH DỌC + YOUTUBE BẰNG BRAVE
+## VIỆC 17/11 (8) — PALETTE: THU GỌN THANH DỌC + YOUTUBE BẰNG BRAVE: XONG MÃ + TEST, CHỜ NGƯỜI DÙNG XEM TRONG AUTOCAD
+ĐÃ LÀM (13:45): (1) nút ☰ góc phải đầu palette (`BangChinh.DauTrang`, `MenuPhanHe`): "Thu gọn thanh dọc" / "Hiện thanh dọc" (nhớ `ben_an`) + danh sách
+phân hệ để chuyển khi thanh dọc ẩn. (2) Tab YouTube nút "Xem bằng Brave" / "Xem trong CAD" (nhớ `yt_trinh_duyet`): chế độ Brave bỏ WebView2, Enter/Trang chủ
+chạy `brave.exe --app=<url> --window-position --window-size` rộng 480 px áp mép phải trong cửa sổ AutoCAD; chưa có Brave thì mở trang tải. Tìm brave.exe:
+`HangDoi.TimBrave` (Program Files, x86, LOCALAPPDATA). (3) Hub nhóm YouTube thêm mục `brave` (13 mục); `thu_hub.ps1` kiểm 13 mục + trang brave.com/download.
+Kiểm: build.bat OK, chay_thu / thu_mcp / thu_hub TAT CA DAT. CHƯA xem tận mắt (palette ngoài AutoCAD không chụp được: không viết harness; AutoCAD người dùng đang mở).
+CÒN: người dùng tắt hẳn AutoCAD, mở lại, gõ PCCC, thử ☰ và Brave; hỏi có muốn ẩn hẳn thanh dọc không. Brave đang mở sẵn có thể bỏ qua vị trí cửa sổ (shortcut ghi trong `BangYoutube.MoBrave`).
+YÊU CẦU GỐC:
 Người dùng 17/11 (ảnh palette đang xem YouTube, khoanh đỏ cả thanh biểu tượng dọc bên trái):
 1. "Build pallet sao cho ẩn mấy hàng tôi khoanh" = thanh dọc phân hệ (`ben` trong `module/ui/BangChinh.cs`). Ẩn hẳn thì mất đường chuyển phân hệ,
    nên làm: nút thu gọn / hiện thanh dọc (nhớ trạng thái trong cài đặt, vd khoá `ben_an`); thu gọn vẫn chuyển phân hệ được (vd menu ☰ ở đầu trang).
