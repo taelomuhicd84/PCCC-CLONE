@@ -11,8 +11,10 @@ trần (đầu báo) và bước S (sprinkler), giuDam/TungDam/cỡ chung so d �
 GHI CHÚ: hàng đầu báo khoang 1 nằm sát dầm 400 (cách tim 0,1–0,2 m) — đúng luật (dầm nông coi trần phẳng) nhưng lắp dưới đáy dầm; nếu người dùng muốn
 tránh dầm nông thì thêm bước dịch hàng/cột ra giữa ô (như mẫu: lề cố định tới dầm). Lưới chung cho nhiều khoang (bài học mẫu) chưa làm trong plugin.
 17/11 người dùng sửa: dầm nhãn "DS 1400X250" qua sảnh thang máy thật là RỘNG 1400, CAO 700 (công trình ghi h x b ngược đời). d = 0,58 m vẫn sâu; dầm nằm
-ở sảnh/lõi (không rải đầu báo) nên kết quả không đổi. Plugin đọc nhãn này ra h = 1400 (mẹo "số lớn là h" sai với dầm bẹt) — cần cho nhập tay cỡ
-từng dầm khi nhãn sai (mở `TungDam` cả khi có nhãn) và vẽ bề rộng thật của dầm bẹt khi chia khoang.
+ở sảnh/lõi (không rải đầu báo) nên kết quả không đổi. ĐÃ SỬA PLUGIN (người dùng "sửa luôn"): từ khoá `SuaDam` ở dấu nhắc "Bấm nét dầm màu khác"
+= bấm nét dầm, nhập cỡ thật b x h, thắng nhãn; cỡ gõ tay (SuaDam, TungDam, cỡ chung) đọc đúng thứ tự rộng x cao (`DocBxh(s, true)`); test ca 9 `chay_thu.ps1`.
+`kb_bc3`/`kb_spr3` thêm SuaDam nét y 30773 (x 32143–35418) = 1400x700: d 0,7, vẫn sâu, kết quả y như cũ (8 đầu báo, dây 54,58 m; 26 + 5 đầu phun, 94,5 m).
+Thử 300x250 trên cùng nét: dam_sau 83 → 82, chứng tỏ bấm trúng nét dầm. Chưa làm: vẽ bề rộng thật của dầm bẹt (bản kết cấu đã vẽ viền dầm, plugin dùng các nét đó).
 
 ## VIỆC 16/11 TỐI (5) — SỬA 6 LỖI PLUGIN LỘ RA Ở TẦNG 8 KOCHAM: XONG MÃ + TEST, CHƯA XEM TRONG AUTOCAD CÓ GIAO DIỆN
 Người dùng dặn 16/11 tối: "Sửa 3 vấn đề về plugin đi" (1–3), cộng 3 lỗi lộ ra khi thiết kế theo dầm (4–6). Test mới: mục "Sua 6 loi" trong

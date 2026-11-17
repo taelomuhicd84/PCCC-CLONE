@@ -569,3 +569,7 @@ qua dầm 4 m, vòng R7200 ở đầu biên. Ghi ở `cad/knowledge/mau-rai-khoa
 Người dùng: khoang dầm theo vì kèo, trừ nhà nhiều tầng sàn deck/BTCT (như KOCHAM); có dầm < 0,3 m phải xem kỹ; d phải trừ dày sàn. File kết cấu không ghi
 dày sàn (mặt cắt dầm không vẽ sàn): với sàn 100–150 dầm 300/400 bỏ, 500/700/1400 giữ. Gửi đề xuất vùng 2 lần, duyệt lần 2. Thêm từ khoá `DaySan`.
 Rải: báo cháy 8 đầu, sprinkler 26 + 5 đầu.
+
+## 2026-11-17 — SuaDam: nhập tay cỡ dầm khi nhãn sai
+Người dùng: nhãn KOCHAM "DS 1400X250" thật rộng 1400 cao 700, "sửa luôn". Thêm từ khoá `SuaDam` (bấm nét dầm, nhập b x h thật, thắng nhãn);
+cỡ gõ tay đọc đúng rộng x cao. Test ca 9. Tầng 8 chạy lại: kết quả không đổi (dầm 0,7 vẫn sâu, nằm ở sảnh/lõi).

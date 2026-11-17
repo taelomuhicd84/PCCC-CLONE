@@ -857,6 +857,13 @@ Kiem ($out4 -match 'bo_cum=1 phong=1 ' -and $out4 -match 'theo_vung_co_san=1 ' -
   '_.LINE', '604000,0', '604000,6000', '', '_.LINE', '608000,0', '608000,6000', '', '_.LINE', '600000,3000', '612000,3000', '',
   '_.TEXT', '604300,4500', '250', '0', 'B2 (250x400)', '-LAYER', 'S', '0', '', '_.ZOOM', 'W', '599000,-1000', '613000,7000',
   'PCCC_RAI', 'BC_KHOI', 'Dam', 'DaySan', '120', '4.5', '', 'W', '599500,-500', '612500,6500', '', '', '604000,1000', '',
+  # 9 (nguoi dung 17/11: nhan KOCHAM "DS 1400X250" that la rong 1400 cao 700): vung 12 x 6 m, luoi dam nhan "DS 700X300" (so lon = h: 0,7, sau).
+  #    SuaDam: net x = 704 m nhap 300x250 (nong, bo du nhan ghi sau), net x = 707 m nhap 1400x700 (doc dung b x h: d = 0,7, khong phai 1,4) -> 4 khoang
+  #    7 x 3 / 5 x 3 m (khong 4 x 3 m de khoi lan voi dem cua loi 4)
+  '-LAYER', 'M', 'PCCC_VUNG', '', '_.RECTANG', '700000,0', '712000,6000', '-LAYER', 'M', 'DAM', '',
+  '_.LINE', '704000,0', '704000,6000', '', '_.LINE', '707000,0', '707000,6000', '', '_.LINE', '700000,3000', '712000,3000', '',
+  '_.TEXT', '704300,4500', '250', '0', 'DS 700X300', '-LAYER', 'S', '0', '', '_.ZOOM', 'W', '699000,-1000', '713000,7000',
+  'PCCC_RAI', 'BC_KHOI', 'Dam', '4.5', '', 'W', '699500,-500', '712500,6500', '', '', '704000,1000', 'SuaDam', '704000,1000', '300x250', '707000,1000', '1400x700', '', '',
   '_.QSAVE') -join "`r`n") | Set-Content -Encoding ascii "$T\kb6.scr"
 $p6 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb6.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb6.out.txt"
 if (-not $p6.WaitForExit(180000)) { Stop-Process -Id $p6.Id -Force; throw "accoreconsole qua 3 phut (sua 6 loi): $T\kb6.out.txt" }
@@ -878,6 +885,8 @@ Kiem ($m5.Success -and [double]$m5.Groups[1].Value -ge 27.4) "Day di vong cach m
 Kiem ($out6 -match 'bo_khu_khong_bao=3 m2=50,50,50 ' -and ([regex]::Matches($out6, 'V\S+ng t\S+ d\S+ng m2=150 ')).Count -eq 1) `
   'Enter moi phong: bo phong chu SANH THANG MAY, phong block BON_CAU, phong chu THANG BO (3 x 50 m2), chi rai phong 150 m2'
 Kiem ($out6 -match 'dam ky_hieu=1 day_san=120[\s\S]{0,600}dam_sau=0 dam_nong=3 ') 'Dam + DaySan 120: dam 250x400 con d = 0,28 m <= 0,3: bo ca 3 net dam, khong chia khoang'
+Kiem ($out6 -match 'sua_dam d=0.25 m doan=1 [\s\S]{0,400}sua_dam d=0.7 m doan=1 [\s\S]{0,400}dam ky_hieu=1 sua_dam=2[\s\S]{0,600}chia_khoang=4 [\s\S]{0,400}dam_sau=2 dam_nong=1 ') `
+  'SuaDam: co nhap tay thang nhan (300x250 bo dam nhan 700X300), 1400x700 doc dung b x h (d 0,7): 2 dam sau, 1 nong, 4 khoang'
 
 # Thoi gian dung phong tren ban ve that cua nguoi dung (gitignore, chi chay khi co): truoc sua 78 s (23 trieu diem cat), nay < 10 s.
 $bvThat = Get-ChildItem "$GOC\file_cad_test" -Filter 'test b*o ch*y.dwg' -ErrorAction SilentlyContinue | Select-Object -First 1

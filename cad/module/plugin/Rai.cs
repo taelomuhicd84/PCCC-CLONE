@@ -54,14 +54,15 @@ namespace TKPCCC
         }
 
         /// Độ sâu dầm (m) từ ký hiệu "b x h" (mm), vd "B1 (400x600)", "300X700", "250×500". -1 = không phải ký hiệu dầm.
-        /// Số lớn hơn là h (người dùng dặn 16/11): có bộ kết cấu ghi ngược h x b ("DS 400X250" = rộng 250, cao 400).
-        static double DocBxh(string s)
+        /// Nhãn trên bản vẽ: số lớn hơn là h (người dùng dặn 16/11): có bộ kết cấu ghi ngược h x b ("DS 400X250" = rộng 250, cao 400).
+        /// dungThuTu = cỡ người dùng gõ tay: đọc đúng b x h (rộng x cao), dầm bẹt 1400x700 ra h = 0,7 m.
+        static double DocBxh(string s, bool dungThuTu = false)
         {
             System.Text.RegularExpressions.Match k = System.Text.RegularExpressions.Regex.Match(s ?? "", @"(\d{2,4})\s*[xX×\*]\s*(\d{2,4})");
             if (!k.Success) return -1;
             double m1 = double.Parse(k.Groups[1].Value, CultureInfo.InvariantCulture), m2 = double.Parse(k.Groups[2].Value, CultureInfo.InvariantCulture);
-            // shortcut: dầm bẹt (rộng > cao) bị đọc thành dầm cao; gặp bản vẽ có dầm bẹt thì thêm lựa chọn "đọc đúng b x h".
-            double b = Math.Min(m1, m2), h = Math.Max(m1, m2);
+            // Nhãn dầm bẹt (KOCHAM "DS 1400X250" thật rộng 1400 cao 700) bị đọc thành dầm cao: người dùng sửa bằng từ khoá SuaDam ở dấu nhắc nét dầm mẫu.
+            double b = dungThuTu ? m1 : Math.Min(m1, m2), h = dungThuTu ? m2 : Math.Max(m1, m2);
             return b >= 50 && b <= 2000 && h >= 100 && h <= 3000 ? h / 1000 : -1;
         }
 
@@ -1326,16 +1327,44 @@ namespace TKPCCC
             Func<Point2d[], bool> giuDam = null;
             List<Point2d[]> damThem = null;
             HashSet<ObjectId> idDam = new HashSet<ObjectId>();
+            List<KeyValuePair<Point2d[], double>> suaDam = new List<KeyValuePair<Point2d[], double>>(); // đoạn dầm -> d (m) người dùng nhập, thắng nhãn
             if (khoangDam)
             {
                 damMau = new HashSet<string>();
                 while (true)
                 {
                     PromptNestedEntityOptions no = new PromptNestedEntityOptions(damMau.Count == 0
-                        ? "\nBấm một nét DẦM mẫu (layer + màu của dầm), Enter = không có: " : "\nBấm nét dầm màu khác, Enter = xong: ");
+                        ? "\nBấm một nét DẦM mẫu (layer + màu của dầm), Enter = không có: " : "\nBấm nét dầm màu khác, Enter = xong; nhãn dầm ghi sai cỡ thì SuaDam");
                     no.AllowNone = true;
+                    if (damMau.Count > 0) no.Keywords.Add("SuaDam"); // AutoCAD tự nối " [SuaDam]: "
                     PromptNestedEntityResult nr = ed.GetNestedEntity(no);
                     if (nr.Status == PromptStatus.None) break;
+                    if (nr.Status == PromptStatus.Keyword)
+                    {
+                        // Người dùng 17/11: KOCHAM ghi "DS 1400X250" mà dầm thật rộng 1400 cao 700. Bấm từng nét dầm, nhập cỡ thật b x h; cỡ này thắng nhãn.
+                        while (true)
+                        {
+                            PromptNestedEntityOptions so = new PromptNestedEntityOptions("\nBấm nét dầm cần sửa cỡ, Enter = xong: ");
+                            so.AllowNone = true;
+                            PromptNestedEntityResult sr = ed.GetNestedEntity(so);
+                            if (sr.Status == PromptStatus.None) break;
+                            if (sr.Status != PromptStatus.OK) return;
+                            List<Point2d[]> doan = DoanNet(sr.ObjectId.Database, sr.ObjectId);
+                            if (doan.Count == 0) { ed.WriteMessage("\nKhông phải line / polyline: bấm lại nét dầm."); continue; }
+                            PromptResult cr = ed.GetString("\nKích thước THẬT b x h (rộng x cao, mm) của dầm này, vd 1400x700: ");
+                            if (cr.Status != PromptStatus.OK) return;
+                            double d = DocBxh(cr.StringResult, true);
+                            if (d <= 0) { ed.WriteMessage("\nKhông đọc được b x h \"" + cr.StringResult + "\": bấm lại."); continue; }
+                            foreach (Point2d[] dn in doan)
+                            {
+                                Point3d a = new Point3d(dn[0].X, dn[0].Y, 0).TransformBy(sr.Transform), b = new Point3d(dn[1].X, dn[1].Y, 0).TransformBy(sr.Transform);
+                                suaDam.Add(new KeyValuePair<Point2d[], double>(new[] { new Point2d(a.X, a.Y), new Point2d(b.X, b.Y) }, d));
+                            }
+                            ed.WriteMessage("\n[TKPCCC] sua_dam d=" + d.ToString(CultureInfo.InvariantCulture) + " m doan=" + doan.Count
+                                + (d - daySan > 0.3 + 1e-9 ? " (sâu)" : " (≤ 0,3 m: trần phẳng)"));
+                        }
+                        continue;
+                    }
                     if (nr.Status != PromptStatus.OK) return;
                     string kh = KhoaNetMau(db, nr);
                     mau.Remove(kh); // nét dầm không dựng làm tường
@@ -1363,7 +1392,7 @@ namespace TKPCCC
                             if (lr.Status != PromptStatus.OK) break;
                             PromptResult cr = ed.GetString("\nKích thước dầm b x h (mm) của các line này, vd 400x600: ");
                             if (cr.Status != PromptStatus.OK) return;
-                            double d = DocBxh(cr.StringResult);
+                            double d = DocBxh(cr.StringResult, true);
                             if (d <= 0) { ed.WriteMessage("\nKhông đọc được b x h \"" + cr.StringResult + "\": chọn lại."); continue; }
                             int truoc = damThem.Count;
                             foreach (ObjectId id in lr.Value.GetObjectIds())
@@ -1377,7 +1406,7 @@ namespace TKPCCC
                     }
                     else if (tl != "")
                     {
-                        sauChung = DocBxh(tl);
+                        sauChung = DocBxh(tl, true);
                         if (sauChung <= 0) { ed.WriteMessage("\nKhông đọc được b x h \"" + tl + "\"."); return; }
                     }
                 }
@@ -1386,6 +1415,13 @@ namespace TKPCCC
                     double gan = double.MaxValue, d = -1;
                     // KOCHAM 16/11: nhãn gần nhất hay là nhãn dầm cắt ngang (dầm sâu bị coi nông, 2 cặp khoang gộp): ưu tiên nhãn chữ song song nét dầm.
                     Vector2d u = (dn[1] - dn[0]).GetNormal();
+                    Point2d g = dn[0] + (dn[1] - dn[0]) * 0.5;
+                    foreach (KeyValuePair<Point2d[], double> kv in suaDam) // cỡ nhập tay (SuaDam): đoạn song song, trung điểm nằm trên nét đã bấm
+                    {
+                        Vector2d w = kv.Key[1] - kv.Key[0];
+                        if (w.Length > 1e-9 && Math.Abs(u.X * w.Y - u.Y * w.X) <= 0.02 * w.Length && CachDoan(kv.Key, g) <= 0.05 / m)
+                            return kv.Value - daySan > 0.3 + 1e-9;
+                    }
                     foreach (bool songSong in new[] { true, false })
                     {
                         foreach (KeyValuePair<Point2d, Vector2d> kv in nhan)
@@ -1400,7 +1436,7 @@ namespace TKPCCC
                     return sauChung > 0 ? sauChung - daySan > 0.3 + 1e-9 : true;     // không ký hiệu gần, không cỡ chung: coi là dầm sâu (chia khoang, rải dày hơn)
                 };
                 ed.WriteMessage("\n[TKPCCC] dam ky_hieu=" + nhan.Count + (daySan > 0 ? " day_san=" + Math.Round(daySan * 1000) : "") + (sauChung > 0 ? " d_chung=" + sauChung.ToString(CultureInfo.InvariantCulture) : "")
-                    + (damThem != null ? " tung_dam=" + damThem.Count : ""));
+                    + (damThem != null ? " tung_dam=" + damThem.Count : "") + (suaDam.Count > 0 ? " sua_dam=" + suaDam.Count : ""));
             }
             List<List<Point2d>> vung, mat, oX, gach;
             ObjectId[] conLai;
