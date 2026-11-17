@@ -23,6 +23,17 @@ CÒN (việc tiếp theo, làm ngay khi có hạn mức):
    Phần trái mặt bằng có hatch BT-DA1X2 (4 hatch, layer AAP-HATCH 50): chưa rõ nghĩa (có thể là phần sân thượng / không thuộc phạm vi) → hỏi người dùng nếu plugin nhận làm vùng.
 2. Chưa thử palette trong AutoCAD có giao diện (AutoCAD người dùng đang mở; `thu_gui.ps1` chỉ chạy khi tắt AutoCAD).
 
+## VIỆC KẾ (hẹn sau reset 5 giờ 17/11, ~13:45) — PALETTE: THU GỌN THANH DỌC + YOUTUBE BẰNG BRAVE
+Người dùng 17/11 (ảnh palette đang xem YouTube, khoanh đỏ cả thanh biểu tượng dọc bên trái):
+1. "Build pallet sao cho ẩn mấy hàng tôi khoanh" = thanh dọc phân hệ (`ben` trong `module/ui/BangChinh.cs`). Ẩn hẳn thì mất đường chuyển phân hệ,
+   nên làm: nút thu gọn / hiện thanh dọc (nhớ trạng thái trong cài đặt, vd khoá `ben_an`); thu gọn vẫn chuyển phân hệ được (vd menu ☰ ở đầu trang).
+   Làm xong hỏi người dùng có muốn ẩn hẳn không.
+2. "Dùng Brave để lướt YouTube thay WebView được không": Brave KHÔNG nhúng vào palette được (không có SDK nhúng). Làm: cài đặt chọn trình xem
+   YouTube = WebView2 (trong palette, như hiện tại) | Brave (cửa sổ riêng `brave.exe --app=<url>`, đặt sát cạnh phải cửa sổ AutoCAD). Tab YouTube ở chế độ
+   Brave: ô link/từ khoá + nút mở trong Brave. Brave ở `C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe` (tìm cả LOCALAPPDATA).
+   Hub (`module/hub/Hub.cs`, nhóm YouTube): thêm mục "Brave (tuỳ chọn)": kiểm có/không, Cài = mở https://brave.com/download/.
+3. Người dùng dặn: làm ở lần reset 5 giờ kế, compact (phiên nhánh ngữ cảnh sạch) rồi mới làm.
+
 ## VIỆC 17/11 (6) — HUB BẢN 2: MỌI BỘ CÀI CHIA THEO TÍNH NĂNG: XONG, CHỜ NGƯỜI DÙNG DÙNG THỬ
 Người dùng (ảnh MCP Hub Pro): gom mọi bộ cài vào Hub, phân rõ từng loại. Hub thành bảng 12 mục, 4 nhóm, nút lọc theo nhóm, ô chọn, "Chọn mục còn thiếu", "Cài / Gỡ mục đã chọn" (một hộp xác nhận liệt kê từng việc), "Quét lại máy". Nền tảng: AutoCAD, .NET 4.8 (registry Release ≥ 528040), Plugin tự nạp · MCP cad: máy chủ + 4 AI · Bot chat: `claude`, `agy` (--version) · YouTube: WebView2 Runtime (registry EdgeUpdate pv), 3 DLL (Cài = chép từ module/ui/webview2). Phần mềm hãng khác: chỉ mở trang tải chính thức. `thu_hub.ps1` 17/17 DAT. Máy người dùng: 7/12 xong; chưa: 4 AI ← MCP cad.
 LƯU Ý 17/11: build.bat lúc đó hỏng ở `Rai.cs` (phiên khác đang sửa dở) → bundle mất TKPCCC.Cad.dll, đã chép lại bản 10:32 (TKPCCC.Cad.dll.cu1372).

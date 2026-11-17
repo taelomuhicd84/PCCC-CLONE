@@ -611,3 +611,6 @@ Người dùng hướng dẫn quy trình rải đầu báo khi có khoang dầm 
 - Sửa lỗi `ChiaKhoang`: ô hẹp < 1 m (vd 1,8 x 1,8 m) bị bỏ nên khoang nhỏ không chia được.
 - Hình 6 trường hợp a–f do plugin tự rải, gửi người dùng xem. Test ca 13. Còn chạy thử trên file "test vùng báo cháy.dwg" (xem TIEN_DO).
 
+## 2026-11-17 trưa — Hẹn việc palette sau reset
+Tab YouTube chạy trong AutoCAD (ảnh người dùng). Người dùng muốn ẩn thanh dọc và xem YouTube bằng Brave; hạn mức 5 giờ 99 % nên ghi việc vào
+`cad/TIEN_DO.md` (VIỆC KẾ), hẹn phiên nhánh ngữ cảnh sạch làm sau reset 13:40.
