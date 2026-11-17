@@ -1,6 +1,6 @@
-// Phân hệ YouTube của palette PCCC: xem video hướng dẫn ngay trong CAD bằng WebView2 (Edge; runtime có sẵn trên Windows 10/11).
+// Plugin YouTube (bundle riêng TKPCCC_YouTube.bundle, lệnh TKYOUTUBE mở cửa sổ riêng co giãn, thu nhỏ được; tách khỏi palette PCCC 17/11): xem video hướng dẫn ngay trong CAD bằng WebView2 (Edge; runtime có sẵn trên Windows 10/11).
 // Chromium có sẵn của AutoCAD 2021 (AcCef) là bản 77 đời 2019, YouTube hiện nay không chạy được nên không dùng.
-// Thư viện WebView2 (module/ui/webview2, Microsoft, giấy phép BSD, gói NuGet Microsoft.Web.WebView2 1.0.2903.40) build.bat chép cạnh TKPCCC.UI.dll.
+// Thư viện WebView2 (module/youtube/webview2, Microsoft, giấy phép BSD, gói NuGet Microsoft.Web.WebView2 1.0.2903.40) build.bat chép cạnh TKPCCC.YouTube.dll.
 // Dữ liệu trình duyệt ở %LOCALAPPDATA%\TKPCCC\WebView2 (mặc định nằm cạnh acad.exe trong Program Files: không ghi được). Link cuối lưu `yt_cuoi`.
 // Người dùng 17/11: chọn trình xem `yt_trinh_duyet` = webview2 (trong palette) | brave (Brave không nhúng được: mở cửa sổ app riêng áp mép phải AutoCAD).
 using System;
@@ -174,7 +174,7 @@ namespace TKPCCC
         void Loi(string chiTiet)
         {
             Bao("Không mở được trình xem YouTube trong CAD.\n\nCần Microsoft Edge WebView2 Runtime (Windows 10/11 thường có sẵn; tải ở trang Microsoft nếu thiếu) "
-                + "và 3 file WebView2 cạnh TKPCCC.UI.dll (chạy lại cad\\build.bat).\n\nVẫn xem được bằng nút \"Mở bằng trình duyệt\" hoặc \"Xem bằng Brave\".\n\nChi tiết: " + chiTiet);
+                + "và 3 file WebView2 cạnh TKPCCC.YouTube.dll (chạy lại cad\\build.bat).\n\nVẫn xem được bằng nút \"Mở bằng trình duyệt\" hoặc \"Xem bằng Brave\".\n\nChi tiết: " + chiTiet);
         }
 
         void Bao(string chu)

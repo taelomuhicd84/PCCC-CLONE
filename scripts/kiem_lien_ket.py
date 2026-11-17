@@ -202,7 +202,8 @@ def phep8_9():
     layer = set(re.findall(r'"(PCCC_[A-Z0-9_]+)', cs))
     xml = ROOT / 'cad/TKPCCC.bundle/PackageContents.xml'
     if xml.exists():
-        kb = set(re.findall(r'Global="([A-Z_0-9]+)"', xml.read_text(encoding='utf-8')))
+        # 3 plugin (PCCC, YouTube, Bot chat), moi bundle mot PackageContents.xml
+        kb = set(re.findall(r'Global="([A-Z_0-9]+)"', ''.join(f.read_text(encoding='utf-8') for f in ROOT.glob('cad/*.bundle/PackageContents.xml'))))
         for l in sorted(lenh - kb):
             bao('CANH_BAO', 'lenh-cad', 'cad/TKPCCC.bundle/PackageContents.xml', f'lệnh {l} có CommandMethod nhưng chưa khai báo')
         for l in sorted(kb - lenh):

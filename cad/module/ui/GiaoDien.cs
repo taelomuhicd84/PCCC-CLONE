@@ -361,6 +361,18 @@ namespace TKPCCC
             catch (System.Exception ex) { MessageBox.Show(ex.Message, "TKPCCC"); }
         }
 
+        /// Mở plugin Bot chat (bundle riêng, lệnh TKBOTCHAT) kèm câu mẫu ("so_do" = sơ đồ nguyên lý); chưa cài thì chỉ đường cài.
+        public static void MoBotChat(string mau)
+        {
+            if (!AppDomain.CurrentDomain.GetAssemblies().Any(a => a.GetName().Name == "TKPCCC.BotChat"))
+            {
+                MessageBox.Show("Chưa nạp plugin Bot chat. Mở cad\\bin\\TKPCCC.Hub.exe, nhóm Bot chat, cài \"Plugin Bot chat\" rồi mở lại AutoCAD.", "TKPCCC");
+                return;
+            }
+            LuuCaiDat("bot_mau_cho", mau);
+            GuiLenh("TKBOTCHAT\n", null, null);
+        }
+
         /// Gửi lệnh cho bản vẽ đang mở. choLenh = tên lệnh mà khi nó kết thúc (xong, huỷ, lỗi) thì chạy sau() lúc AutoCAD rảnh.
         public static void GuiLenh(string lenh, string choLenh, Action sau)
         {

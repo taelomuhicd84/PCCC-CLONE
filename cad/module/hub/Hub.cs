@@ -50,7 +50,11 @@ namespace TKPCCC
         static string McpExe { get { return Path.Combine(Cad, "bin", "TKPCCC.Mcp.exe"); } }
         static string Bundle { get { return Path.Combine(Cad, "TKPCCC.bundle"); } }
         static string Contents { get { return Path.Combine(Bundle, "Contents"); } }
-        static string LienKet { get { return Path.Combine(appData, "Autodesk", "ApplicationPlugins", "TKPCCC.bundle"); } }
+        static string LienKet { get { return LienKetCua("TKPCCC.bundle"); } }
+        // Người dùng 17/11: tách 3 plugin (PCCC, YouTube, Bot chat), mỗi plugin một bundle, cài / gỡ riêng.
+        static string LienKetCua(string bundle) { return Path.Combine(appData, "Autodesk", "ApplicationPlugins", bundle); }
+        const string B_YT = "TKPCCC_YouTube.bundle", B_BOT = "TKPCCC_BotChat.bundle";
+        static string ContentsYt { get { return Path.Combine(Cad, B_YT, "Contents"); } }
         static string FileClaudeDesktop { get { return Path.Combine(appData, "Claude", "claude_desktop_config.json"); } }
         static string FileGemini { get { return Path.Combine(nha, ".gemini", "settings.json"); } }
         static string FileClaudeCode
@@ -76,8 +80,9 @@ namespace TKPCCC
                 new Muc { Ma = "acad", Nhom = NEN, Ten = "AutoCAD 2021–2024", Kiem = KiemAcad },
                 new Muc { Ma = "net48", Nhom = NEN, Ten = ".NET Framework 4.8", Kiem = KiemNet48,
                     Cai = delegate { return MoTrang(URL_NET); }, HoiCai = "Mở trang tải .NET Framework 4.8 của Microsoft: " + URL_NET },
-                new Muc { Ma = "plugin", Nhom = NEN, Ten = "Plugin tự nạp", Kiem = KiemPlugin, Cai = CaiPlugin, Go = GoPlugin,
-                    HoiCai = "Tạo liên kết " + LienKet + " tới " + Bundle + " để AutoCAD tự nạp plugin mỗi lần mở.",
+                new Muc { Ma = "plugin", Nhom = NEN, Ten = "Plugin PCCC (tự nạp)", Kiem = delegate { return KiemPlugin("TKPCCC.bundle", "TKPCCC.Cad.dll"); },
+                    Cai = delegate { return CaiPlugin("TKPCCC.bundle", "TKPCCC.Cad.dll"); }, Go = delegate { return GoPlugin("TKPCCC.bundle"); },
+                    HoiCai = "Tạo liên kết " + LienKet + " tới " + Bundle + " để AutoCAD tự nạp plugin PCCC mỗi lần mở.",
                     HoiGo = "Gỡ liên kết " + LienKet + " (không xoá file plugin)." },
                 // ---- MCP cad ----
                 new Muc { Ma = "mcp", Nhom = MCP, Ten = "Máy chủ MCP (TKPCCC.Mcp.exe)", Kiem = KiemMcp },
@@ -97,6 +102,10 @@ namespace TKPCCC
                     Go = delegate { return ChayCli("agy", "mcp remove cad"); },
                     HoiCai = "Chạy: agy mcp add cad \"" + McpExe + "\".", HoiGo = "Chạy: agy mcp remove cad." },
                 // ---- Bot chat ----
+                new Muc { Ma = "plugin_bot", Nhom = BOT, Ten = "Plugin Bot chat (lệnh TKBOTCHAT)", Kiem = delegate { return KiemPlugin(B_BOT, "TKPCCC.BotChat.dll"); },
+                    Cai = delegate { return CaiPlugin(B_BOT, "TKPCCC.BotChat.dll"); }, Go = delegate { return GoPlugin(B_BOT); },
+                    HoiCai = "Tạo liên kết " + LienKetCua(B_BOT) + " tới " + Path.Combine(Cad, B_BOT) + " để AutoCAD tự nạp plugin Bot chat.",
+                    HoiGo = "Gỡ liên kết " + LienKetCua(B_BOT) + " (không xoá file plugin)." },
                 new Muc { Ma = "cli_claude", Nhom = BOT, Ten = "Claude Code CLI (lệnh claude)", Kiem = delegate { return KiemCli("claude"); },
                     Cai = delegate { return MoTrang(URL_CLAUDE); },
                     HoiCai = "Mở trang hướng dẫn cài Claude Code: " + URL_CLAUDE + ". Cài xong mở terminal gõ claude rồi /login." },
@@ -104,11 +113,15 @@ namespace TKPCCC
                     Cai = delegate { return MoTrang(URL_AGY); },
                     HoiCai = "Mở trang tải Antigravity: " + URL_AGY + ". Cài xong mở terminal gõ agy để đăng nhập Google." },
                 // ---- YouTube ----
+                new Muc { Ma = "plugin_yt", Nhom = YT, Ten = "Plugin YouTube (lệnh TKYOUTUBE)", Kiem = delegate { return KiemPlugin(B_YT, "TKPCCC.YouTube.dll"); },
+                    Cai = delegate { return CaiPlugin(B_YT, "TKPCCC.YouTube.dll"); }, Go = delegate { return GoPlugin(B_YT); },
+                    HoiCai = "Tạo liên kết " + LienKetCua(B_YT) + " tới " + Path.Combine(Cad, B_YT) + " để AutoCAD tự nạp plugin YouTube.",
+                    HoiGo = "Gỡ liên kết " + LienKetCua(B_YT) + " (không xoá file plugin)." },
                 new Muc { Ma = "wv2_runtime", Nhom = YT, Ten = "Microsoft Edge WebView2 Runtime", Kiem = KiemWebView2,
                     Cai = delegate { return MoTrang(URL_WV2); },
                     HoiCai = "Mở trang tải WebView2 Runtime của Microsoft (chọn Evergreen Bootstrapper): " + URL_WV2 },
                 new Muc { Ma = "wv2_dll", Nhom = YT, Ten = "Thư viện WebView2 cạnh plugin (3 DLL)", Kiem = KiemDllWv2, Cai = CaiDllWv2,
-                    HoiCai = "Chép 3 DLL WebView2 từ " + Path.Combine(Cad, "module", "ui", "webview2") + " vào " + Contents + "." },
+                    HoiCai = "Chép 3 DLL WebView2 từ " + Path.Combine(Cad, "module", "youtube", "webview2") + " vào " + ContentsYt + "." },
                 new Muc { Ma = "brave", Nhom = YT, Ten = "Brave (tuỳ chọn, xem YouTube cửa sổ riêng)", Kiem = delegate
                     {
                         string b = HangDoi.TimBrave();
@@ -199,30 +212,32 @@ namespace TKPCCC
             catch (Exception) { return false; }
         }
 
-        static string DllBundle { get { return Path.Combine(Contents, "TKPCCC.Cad.dll"); } }
-
-        static KeyValuePair<int, string> KiemPlugin()
+        /// bundle: tên thư mục bundle trong cad\ (TKPCCC.bundle, TKPCCC_YouTube.bundle, TKPCCC_BotChat.bundle); dll: DLL chính trong Contents.
+        static KeyValuePair<int, string> KiemPlugin(string bundle, string dll)
         {
-            if (!File.Exists(DllBundle)) return KQ(0, "chưa build: chạy cad\\build.bat");
-            if (!Directory.Exists(LienKet)) return KQ(0, "chưa cài (AutoCAD chưa tự nạp)");
-            bool lk = (File.GetAttributes(LienKet) & FileAttributes.ReparsePoint) != 0;
-            if (!File.Exists(Path.Combine(LienKet, "Contents", "TKPCCC.Cad.dll"))) return KQ(0, "liên kết hỏng: Gỡ rồi Cài lại");
+            string lienKet = LienKetCua(bundle);
+            if (!File.Exists(Path.Combine(Cad, bundle, "Contents", dll))) return KQ(0, "chưa build: chạy cad\\build.bat");
+            if (!Directory.Exists(lienKet)) return KQ(0, "chưa cài (AutoCAD chưa tự nạp)");
+            bool lk = (File.GetAttributes(lienKet) & FileAttributes.ReparsePoint) != 0;
+            if (!File.Exists(Path.Combine(lienKet, "Contents", dll))) return KQ(0, "liên kết hỏng: Gỡ rồi Cài lại");
             return KQ(1, lk ? "đã liên kết, build xong là AutoCAD dùng bản mới" : "có bản chép (không tự theo bản build mới)");
         }
 
-        static string CaiPlugin()
+        static string CaiPlugin(string bundle, string dll)
         {
-            if (!File.Exists(DllBundle)) throw new Exception("chưa có " + DllBundle + ": chạy cad\\build.bat trước");
-            if (Directory.Exists(LienKet)) return "đã có " + LienKet + ", giữ nguyên";
-            Directory.CreateDirectory(Path.GetDirectoryName(LienKet));
+            string goc = Path.Combine(Cad, bundle), lienKet = LienKetCua(bundle), f = Path.Combine(goc, "Contents", dll);
+            if (!File.Exists(f)) throw new Exception("chưa có " + f + ": chạy cad\\build.bat trước");
+            if (Directory.Exists(lienKet)) return "đã có " + lienKet + ", giữ nguyên";
+            Directory.CreateDirectory(Path.GetDirectoryName(lienKet));
             int ma;
-            string ra = Chay("cmd.exe", "/d /c mklink /J \"" + LienKet + "\" \"" + Bundle + "\"", out ma);
-            if (ma != 0 || !Directory.Exists(LienKet)) throw new Exception("mklink lỗi: " + ra);
-            return "đã liên kết " + LienKet + " -> " + Bundle + ". Tắt hẳn AutoCAD rồi mở lại.";
+            string ra = Chay("cmd.exe", "/d /c mklink /J \"" + lienKet + "\" \"" + goc + "\"", out ma);
+            if (ma != 0 || !Directory.Exists(lienKet)) throw new Exception("mklink lỗi: " + ra);
+            return "đã liên kết " + lienKet + " -> " + goc + ". Tắt hẳn AutoCAD rồi mở lại.";
         }
 
-        static string GoPlugin()
+        static string GoPlugin(string bundle)
         {
+            string LienKet = LienKetCua(bundle); // che tên thuộc tính chung: gỡ đúng bundle được chọn
             if (!Directory.Exists(LienKet)) return "chưa có, không làm gì";
             if ((File.GetAttributes(LienKet) & FileAttributes.ReparsePoint) == 0)
                 throw new Exception(LienKet + " là thư mục thật, không phải liên kết: không xoá, gỡ tay nếu muốn");
@@ -379,23 +394,24 @@ namespace TKPCCC
 
         static KeyValuePair<int, string> KiemDllWv2()
         {
-            string[] thieu = DLL_WV2.Where(f => !File.Exists(Path.Combine(Contents, f))).ToArray();
-            return thieu.Length == 0 ? KQ(1, "đủ 3 file cạnh TKPCCC.UI.dll") : KQ(0, "thiếu " + string.Join(", ", thieu));
+            string[] thieu = DLL_WV2.Where(f => !File.Exists(Path.Combine(ContentsYt, f))).ToArray();
+            return thieu.Length == 0 ? KQ(1, "đủ 3 file cạnh TKPCCC.YouTube.dll") : KQ(0, "thiếu " + string.Join(", ", thieu));
         }
 
         static string CaiDllWv2()
         {
-            string nguon = Path.Combine(Cad, "module", "ui", "webview2");
+            string nguon = Path.Combine(Cad, "module", "youtube", "webview2");
+            Directory.CreateDirectory(ContentsYt);
             int n = 0;
             foreach (string f in DLL_WV2)
             {
-                string dich = Path.Combine(Contents, f);
+                string dich = Path.Combine(ContentsYt, f);
                 if (File.Exists(dich)) continue;
                 if (!File.Exists(Path.Combine(nguon, f))) throw new Exception("không thấy " + Path.Combine(nguon, f));
                 File.Copy(Path.Combine(nguon, f), dich);
                 n++;
             }
-            return n == 0 ? "đã đủ, giữ nguyên" : "đã chép " + n + " file vào " + Contents + ". Mở lại AutoCAD.";
+            return n == 0 ? "đã đủ, giữ nguyên" : "đã chép " + n + " file vào " + ContentsYt + ". Mở lại AutoCAD.";
         }
 
         // ---------- Chạy lệnh ----------

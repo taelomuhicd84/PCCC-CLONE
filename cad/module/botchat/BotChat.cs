@@ -1,7 +1,9 @@
-// Bot chat của palette PCCC (phân hệ "Bot chat"): chọn máy AI và model ngay trên khung, gắn thẻ thư mục dự án để AI đọc hồ sơ.
+// Plugin Bot chat (bundle riêng TKPCCC_BotChat.bundle, lệnh TKBOTCHAT; tách khỏi palette PCCC 17/11): chọn máy AI, model và effort ngay trên khung,
+// gắn thẻ thư mục dự án để AI đọc hồ sơ.
 // - Claude: `claude -p` (đăng nhập Claude Code, không API key) chạy NỀN ở <repo>\cad với MCP cad, vẽ được vào bản vẽ; giữ hội thoại bằng --resume.
 // - Gemini: `agy -p` (Antigravity CLI, đăng nhập Google) chế độ plan = chỉ đọc + trả lời; chưa có MCP cad nên KHÔNG vẽ; giữ hội thoại bằng --conversation.
-// Thẻ thư mục: truyền `--add-dir` cho cả hai CLI và ghi danh sách vào đầu lời nhắn. Lưu ở cai_dat.json (chat_ai, model, model_gemini, chat_thu_muc).
+// Thẻ thư mục: truyền `--add-dir` cho cả hai CLI và ghi danh sách vào đầu lời nhắn. Lưu ở cai_dat.json (chat_ai, model, model_gemini, chat_effort, chat_thu_muc).
+// Effort (người dùng 17/11): Claude `--effort low|medium|high|xhigh|max`; Gemini (agy) mức nằm trong tên model (gemini-4-argon-high): ghép gốc + "-" + mức.
 // Chạy nền nên luồng AutoCAD không bị khoá, cầu nối Cau.cs vẫn chạy hàng đợi trong lúc chờ.
 using System;
 using System.Collections.Generic;
@@ -28,14 +30,22 @@ namespace TKPCCC
         static readonly string[] TEN_AI = { "Claude", "Gemini" };
         static readonly string[][] MODEL = {
             new[] { "sonnet", "opus" },
-            new[] { "gemini-4-argon-medium", "gemini-4-argon-high", "gemini-4-carbon-high", "gemini-4-hydrogen-high" } };
+            new[] { "gemini-4-argon", "gemini-4-carbon", "gemini-4-hydrogen" } }; // Gemini: gốc model, mức effort ghép sau (agy models)
         static readonly string[] KHOA_MODEL = { "model", "model_gemini" };
+        static readonly string[] EFFORT_CLAUDE = { "low", "medium", "high", "xhigh", "max" };
+
+        /// Mức effort của model đang chọn: Claude theo cờ --effort; Gemini theo tên model agy có (hydrogen có thêm xhigh).
+        static string[] Effort(int ai, string model)
+        {
+            if (ai == 0) return EFFORT_CLAUDE;
+            return model.EndsWith("hydrogen") ? new[] { "low", "medium", "high", "xhigh" } : new[] { "low", "medium", "high" };
+        }
 
         readonly RichTextBox hoi = new RichTextBox();
         readonly TextBox nhap = new TextBox();
         readonly NutBo gui = new NutBo("Gửi", GiaoDien.XanhDam);
         readonly Label trangThai = new Label();
-        readonly ComboBox chonAi = new ComboBox(), chonModel = new ComboBox();
+        readonly ComboBox chonAi = new ComboBox(), chonModel = new ComboBox(), chonEffort = new ComboBox();
         readonly FlowLayoutPanel the = new FlowLayoutPanel();
         readonly ToolTip goiY = new ToolTip();
         readonly List<string> thuMuc;
@@ -61,11 +71,14 @@ namespace TKPCCC
             // Đầu khung: chọn máy AI + model.
             FlowLayoutPanel dau = new FlowLayoutPanel();
             dau.Dock = DockStyle.Top;
-            dau.Height = 34;
+            dau.AutoSize = true; // khung hẹp thì ô effort xuống dòng, không bị che
+            dau.MinimumSize = new Size(0, 34);
             dau.BackColor = GiaoDien.Nen;
             dau.Padding = new Padding(6, 5, 6, 0);
             KieuHop(chonAi, 80);
-            KieuHop(chonModel, 170);
+            KieuHop(chonModel, 150);
+            KieuHop(chonEffort, 80);
+            goiY.SetToolTip(chonEffort, "Effort: mức suy nghĩ của AI (cao hơn = kỹ hơn, chậm và tốn hạn mức hơn)");
             chonAi.Items.AddRange(TEN_AI);
             chonAi.SelectedIndex = Math.Max(0, Array.IndexOf(AI, GiaoDien.DocCaiDat("chat_ai", AI[0])));
             NapModel();
@@ -77,9 +90,11 @@ namespace TKPCCC
             chonModel.SelectedIndexChanged += delegate
             {
                 if (chonModel.SelectedIndex < 0) return; // Items.Clear() lúc đổi máy AI
-                GiaoDien.LuuCaiDat(KHOA_MODEL[chonAi.SelectedIndex], MODEL[chonAi.SelectedIndex][chonModel.SelectedIndex]);
+                NapEffort();
+                LuuModel();
             };
-            dau.Controls.AddRange(new Control[] { chonAi, chonModel });
+            chonEffort.SelectedIndexChanged += delegate { if (chonEffort.SelectedIndex >= 0) LuuModel(); };
+            dau.Controls.AddRange(new Control[] { chonAi, chonModel, chonEffort });
             Controls.Add(dau);
 
             Panel duoi = new Panel();
@@ -152,8 +167,33 @@ namespace TKPCCC
             int i = chonAi.SelectedIndex;
             chonModel.Items.Clear();
             chonModel.Items.AddRange(MODEL[i]);
-            chonModel.SelectedIndex = Math.Max(0, Array.IndexOf(MODEL[i], GiaoDien.DocCaiDat(KHOA_MODEL[i], MODEL[i][0])));
+            string luu = GiaoDien.DocCaiDat(KHOA_MODEL[i], MODEL[i][0]);
+            if (i == 1) luu = MODEL[1].FirstOrDefault(g => luu.StartsWith(g + "-")) ?? MODEL[1][0]; // "gemini-4-argon-high" -> gốc
+            chonModel.SelectedIndex = Math.Max(0, Array.IndexOf(MODEL[i], luu));
+            NapEffort();
             trangThai.Text = (i == 1 ? "Gemini: chỉ đọc + trả lời, chưa vẽ CAD." : "Claude: đọc + vẽ CAD qua MCP.") + " Ctrl+Enter để gửi.";
+        }
+
+        string ModelChon() { return MODEL[chonAi.SelectedIndex][Math.Max(0, chonModel.SelectedIndex)]; }
+        string EffortChon() { return chonEffort.SelectedIndex < 0 ? "high" : (string)chonEffort.Items[chonEffort.SelectedIndex]; }
+
+        /// Nạp mức effort hợp model đang chọn, giữ mức đã lưu (Claude: chat_effort; Gemini: đuôi của model_gemini).
+        void NapEffort()
+        {
+            int i = chonAi.SelectedIndex;
+            string[] ds = Effort(i, ModelChon());
+            string luu = i == 0 ? GiaoDien.DocCaiDat("chat_effort", "high") : GiaoDien.DocCaiDat(KHOA_MODEL[1], "");
+            if (i == 1) luu = luu.StartsWith(ModelChon() + "-") ? luu.Substring(ModelChon().Length + 1) : "high";
+            chonEffort.Items.Clear();
+            chonEffort.Items.AddRange(ds);
+            int k = Array.IndexOf(ds, luu);
+            chonEffort.SelectedIndex = k >= 0 ? k : Array.IndexOf(ds, "high");
+        }
+
+        void LuuModel()
+        {
+            if (chonAi.SelectedIndex == 0) { GiaoDien.LuuCaiDat(KHOA_MODEL[0], ModelChon()); GiaoDien.LuuCaiDat("chat_effort", EffortChon()); }
+            else GiaoDien.LuuCaiDat(KHOA_MODEL[1], ModelChon() + "-" + EffortChon());
         }
 
         /// Hàng thẻ: "+ Thư mục dự án" rồi mỗi thư mục một thẻ, bấm thẻ để bỏ.
@@ -221,7 +261,7 @@ namespace TKPCCC
         /// <repo>\cad suy từ nguon_vat_tu.txt (build.bat ghi <repo>\cad\..\data\vat_tu.json). null = không thấy.
         static string ThuMucCad()
         {
-            string f = Path.Combine(Path.GetDirectoryName(typeof(Lenh).Assembly.Location), "nguon_vat_tu.txt");
+            string f = Path.Combine(Path.GetDirectoryName(typeof(BotChat).Assembly.Location), "nguon_vat_tu.txt"); // build.bat ghi cạnh TKPCCC.BotChat.dll
             if (!File.Exists(f)) return null;
             string vt = Path.GetFullPath(File.ReadAllText(f).Trim());
             string cad = Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(vt)), "cad");
@@ -260,7 +300,7 @@ namespace TKPCCC
             string cad = ThuMucCad();
             if (cad == null) { trangThai.Text = "Không thấy thư mục repo (cad\\.mcp.json): chạy cad\\build.bat từ repo TKPCCC."; return; }
             int ai = chonAi.SelectedIndex;
-            string model = MODEL[ai][chonModel.SelectedIndex];
+            string model = ai == 0 ? ModelChon() : ModelChon() + "-" + EffortChon(), effort = EffortChon();
             if (aiPhien != ai) phien = null;
             List<string> co = thuMuc.Where(Directory.Exists).ToList();
             string themDir = string.Concat(co.Select(d => " --add-dir " + Ngoac(d)));
@@ -275,7 +315,7 @@ namespace TKPCCC
                 if (exe == null) { Ghi(null, CAI_CLAUDE, GiaoDien.Do); return; }
                 // Như runner/src/engines/claude.ts: không API key, không nạp cài đặt cá nhân; thêm MCP cad và chỉ cho công cụ đọc + 3 công cụ cad.
                 // --add-dir trước --tools: các cờ này nhận nhiều giá trị, cờ kế tiếp mới cắt.
-                doiSo = "-p --output-format stream-json --verbose --model " + model
+                doiSo = "-p --output-format stream-json --verbose --model " + model + " --effort " + effort
                     + " --mcp-config .mcp.json --strict-mcp-config --setting-sources project,local --disable-slash-commands"
                     + (phien != null ? " --resume " + phien : "") + themDir
                     + " --tools Read Grep Glob --allowedTools Read Grep Glob mcp__cad__cad_tt mcp__cad__cad_chay mcp__cad__cad_anh";

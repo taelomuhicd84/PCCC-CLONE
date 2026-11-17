@@ -145,7 +145,7 @@ namespace TKPCCC
             string thuMuc = Path.GetDirectoryName(typeof(Lenh).Assembly.Location);
             if (lenh == "#caidat") moTrang(BangChinh.CAI_DAT);
             else if (lenh == "#adim") moTrang(BangChinh.ADIM);
-            else if (lenh == "#bot") moTrang(BangChinh.BOT);
+            else if (lenh == "#bot") GiaoDien.MoBotChat("so_do");
             else if (lenh == "#botri") moTrang(BangChinh.BO_TRI);
             else if (lenh == "#thumuc") Process.Start("explorer.exe", "\"" + thuMuc + "\"");
             else if (lenh == "#tieuchuan") Process.Start("notepad.exe", "\"" + Path.Combine(thuMuc, "khoang_cach_rai.json") + "\"");

@@ -3,6 +3,19 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## VIỆC 17/11 (8) — TÁCH 3 PLUGIN (PCCC · YOUTUBE · BOT CHAT), BOT CHAT CHỌN EFFORT, YOUTUBE CỬA SỔ CO GIÃN: XONG, ĐÃ THỬ TRONG AUTOCAD
+Người dùng: "tách riêng plugin youtube, plugin TKPCCC-PCCC và plugin bot chat ra riêng làm 3 plugin ... bot chat cho chọn model và effort ... Youtube thu nhỏ lại,
+kéo giãn lên xuống trái phải được ... tự động chạy không cần hỏi quyền".
+- 3 bundle: `TKPCCC.bundle` (PCCC, như cũ) · `TKPCCC_YouTube.bundle` (`TKPCCC.YouTube.dll` + 3 DLL WebView2, lệnh `TKYOUTUBE`) · `TKPCCC_BotChat.bundle`
+  (`TKPCCC.BotChat.dll`, lệnh `TKBOTCHAT`). Mã: `module/youtube/`, `module/botchat/`, giao diện chung tối thiểu `module/nho/GiaoDienNho.cs` (cùng `cai_dat.json`,
+  cùng kiểu màu) → 2 plugin riêng KHÔNG cần DLL PCCC. Palette PCCC bỏ nút YouTube, Bot chat; thẻ "Sơ đồ nguyên lý" gọi `TKBOTCHAT` (khoá `bot_mau_cho`), chưa cài thì chỉ Hub.
+- YouTube: Form riêng `ShowModelessDialog` (AutoCAD nhớ vị trí, kích thước), thu nhỏ / phóng to / kéo giãn 4 cạnh, đóng thì dừng video.
+- Bot chat: ô effort. Claude `--effort low|medium|high|xhigh|max` (`chat_effort`); Gemini mức nằm trong tên model agy (`gemini-4-argon-high`): model = gốc + "-" + mức.
+- Hub: mục `plugin` (PCCC), `plugin_bot` (nhóm Bot chat), `plugin_yt` (nhóm YouTube) cài / gỡ riêng; DLL WebView2 chép vào bundle YouTube. `kiem_lien_ket.py` đọc mọi `cad/*.bundle/PackageContents.xml`.
+- Test: `chay_thu`, `thu_mcp`, `thu_hub` (15 mục, gỡ riêng YouTube), `thu_gui` (AutoCAD thật: TKYOUTUBE cửa sổ CanResize + CanMinimize, TKBOTCHAT mở palette) đều TAT CA DAT.
+- Máy người dùng: đã chạy Hub `/cai plugin_yt,plugin_bot` (2 liên kết mới trong ApplicationPlugins). Mở lại AutoCAD là có 3 plugin.
+CÒN: chưa gửi thử một câu Bot chat thật với effort (tốn hạn mức; cờ đã kiểm bằng `claude --help`, `agy models`).
+
 ## VIỆC 17/11 (7) — KHOANG DẦM: 6 TRƯỜNG HỢP + 3 LOẠI TRẦN: XONG MÃ + TEST, CÒN CHẠY THỬ FILE "test vùng báo cháy.dwg"
 Người dùng dạy quy trình: (1) vẽ mặt bằng mô tả từng trường hợp 5.9.1.1.6 để xem hiểu đúng không; đầu báo lắp trên dầm phải nằm GIỮA bề rộng dầm.
 (2) Mặt bằng dầm sàn block lại, chép đè lên mặt bằng tầng; đọc cỡ dầm để biết trường hợp. Có trần: rải như tiêu chuẩn. Không trần: xác định trường hợp,

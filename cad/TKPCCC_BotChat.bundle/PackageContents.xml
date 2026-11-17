@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ApplicationPackage SchemaVersion="1.0" AppVersion="0.1.0" Name="TKPCCC Bot chat"
+  Description="Khung chat Claude / Gemini trong AutoCAD: chọn model, effort, gắn thư mục dự án; Claude vẽ được qua MCP cad"
+  ProductCode="{648DF7D8-060D-4941-8FA5-1B7B418F390B}" UpgradeCode="{97277414-7EFC-4C6F-B9DF-0C2431542131}"
+  Author="TKPCCC">
+  <CompanyDetails Name="TKPCCC" />
+  <!-- Plugin riêng (người dùng 17/11: tách YouTube, PCCC, Bot chat thành 3 plugin). Vẽ CAD qua MCP cần plugin PCCC đang nạp (cầu nối Cau.cs). -->
+  <RuntimeRequirements OS="Win64" Platform="AutoCAD*" SeriesMin="R24.0" SeriesMax="R24.3" />
+  <Components>
+    <ComponentEntry AppName="TKPCCC_BotChat" ModuleName="./Contents/TKPCCC.BotChat.dll" LoadOnAutoCADStartup="True">
+      <Commands GroupName="TKPCCC_BOTCHAT">
+        <Command Local="TKBOTCHAT" Global="TKBOTCHAT" />
+      </Commands>
+    </ComponentEntry>
+  </Components>
+</ApplicationPackage>

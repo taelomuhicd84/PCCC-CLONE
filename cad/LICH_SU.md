@@ -618,3 +618,8 @@ Tab YouTube chạy trong AutoCAD (ảnh người dùng). Người dùng muốn �
 ## 2026-11-17 (13:45) — Palette thu gọn thanh dọc + YouTube bằng Brave
 Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ `ben_an`). Tab YouTube chọn trình xem WebView2 (trong palette) hoặc Brave
 (cửa sổ app riêng áp mép phải AutoCAD, nhớ `yt_trinh_duyet`). Hub thêm mục Brave (tuỳ chọn) ở nhóm YouTube. build + chay_thu, thu_mcp, thu_hub đạt.
+
+## 2026-11-17 — Chạy thử khoang dầm trên file test; tách 3 plugin
+- File "test vùng báo cháy.dwg" (bản chép): block mặt bằng dầm chép đè khớp trục → 1 vùng 270,82 m², 2 khoang theo dầm sâu, dầm 400X250 (d 0,28) bỏ. Sửa: dầm trong block dầm chép đè nhận theo layer, mọi màu.
+- Tách plugin YouTube (`TKYOUTUBE`, cửa sổ co giãn, thu nhỏ) và Bot chat (`TKBOTCHAT`, thêm chọn effort) ra bundle riêng; Hub cài / gỡ từng plugin. Thử trong AutoCAD thật đạt.
+

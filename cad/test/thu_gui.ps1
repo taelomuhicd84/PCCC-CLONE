@@ -11,12 +11,18 @@ if (Get-Process acad -ErrorAction SilentlyContinue) { throw 'Dang co AutoCAD mo:
 foreach ($f in "$B\TKPCCC.Cad.dll", "$B\TKPCCC.UI.dll", "$B\vat_tu.json", "$GOC\cad\bin\TKPCCC.Mcp.exe") { if (-not (Test-Path $f)) { throw "Thieu $f - chay cad\build.bat truoc" } }
 $T = Join-Path $env:TEMP ('tkpccc_gui_' + [guid]::NewGuid().ToString('N').Substring(0, 8))
 New-Item -ItemType Directory "$T\b" | Out-Null
-Copy-Item "$B\TKPCCC.Cad.dll", "$B\TKPCCC.UI.dll", "$B\vat_tu.json", "$B\ky_hieu.json", "$B\khoang_cach_rai.json", "$B\chon-loai-dau-bao.md", "$B\Microsoft.Web.WebView2.Core.dll", "$B\Microsoft.Web.WebView2.WinForms.dll", "$B\WebView2Loader.dll" "$T\b"
+Copy-Item "$B\TKPCCC.Cad.dll", "$B\TKPCCC.UI.dll", "$B\vat_tu.json", "$B\ky_hieu.json", "$B\khoang_cach_rai.json", "$B\chon-loai-dau-bao.md" "$T\b"
+# 17/11: YouTube, Bot chat la 2 plugin rieng (bundle rieng): nap tu ban chep, mo bang lenh rieng.
+$BYT = "$GOC\cad\TKPCCC_YouTube.bundle\Contents"; $BBOT = "$GOC\cad\TKPCCC_BotChat.bundle\Contents"
+New-Item -ItemType Directory "$T\yt", "$T\bot" | Out-Null
+Copy-Item "$BYT\TKPCCC.YouTube.dll", "$BYT\Microsoft.Web.WebView2.Core.dll", "$BYT\Microsoft.Web.WebView2.WinForms.dll", "$BYT\WebView2Loader.dll" "$T\yt"
+Copy-Item "$BBOT\TKPCCC.BotChat.dll" "$T\bot"
 $env:TKPCCC_CAD_HANG_DOI = "$T\hd"   # ca AutoCAD lan Mcp.exe mo tu day deu thua huong bien nay
 # Phim tat PHX = PCCC_HELP (phim_tat.txt canh DLL): kich ban go PHX, bang lenh hien ra = phim tat da dang ky va PCCC_HELP mo bang.
 'PHX=PCCC_HELP' | Set-Content -Encoding ascii "$T\b\phim_tat.txt"
 # PHX de cuoi: phim tat gui PCCC_HELP bat dong bo (SendStringToExecute), dat truoc thi lenh sau cua kich ban chen ngang.
 @('NETLOAD', "`"$T\b\TKPCCC.Cad.dll`"", 'INSUNITS', '4', 'PCCC', 'PCCC_BLOCK', 'PCCC_BOTRI', 'PCCC_TIENICH',
+  'NETLOAD', "`"$T\yt\TKPCCC.YouTube.dll`"", 'NETLOAD', "`"$T\bot\TKPCCC.BotChat.dll`"", 'TKYOUTUBE', 'TKBOTCHAT',
   'PCCC_DAT', '?', '3000000,0', '3001000,0', '', 'PHX') -join "`r`n" | Set-Content -Encoding ascii "$T\gui.scr"
 $loi = 0
 function Kiem($dk, $ten) { if ($dk) { "DAT   $ten" } else { "LOI   $ten"; $script:loi++ } }
@@ -166,6 +172,18 @@ public static class WinU {
   }
   Kiem ($khung -and -not $khung.Current.IsOffscreen) "lenh PCCC mo palette 'TKPCCC - PCCC'"
   Kiem ($so['The'] -eq 8) "Quy trinh ve: $($so['The']) the (can 8: 6 buoc + ADIM + CDIM)"
+  # Plugin rieng: TKYOUTUBE mo cua so rieng co gian, thu nho duoc; TKBOTCHAT mo palette Bot chat.
+  $yt = $AE::RootElement.FindFirst($TS::Descendants, (New-Object Windows.Automation.AndCondition(
+    (New-Object Windows.Automation.PropertyCondition($AE::ProcessIdProperty, $acad.Id)), (New-Object Windows.Automation.PropertyCondition($AE::NameProperty, 'TKPCCC - YouTube')))))
+  $coGian = $false; $thuNho = $false
+  if ($yt) {
+    try { $coGian = $yt.GetCurrentPattern([Windows.Automation.TransformPattern]::Pattern).Current.CanResize } catch { }
+    try { $thuNho = $yt.GetCurrentPattern([Windows.Automation.WindowPattern]::Pattern).Current.CanMinimize } catch { }
+  }
+  Kiem ($yt -and $coGian -and $thuNho) "plugin YouTube: TKYOUTUBE mo cua so rieng, keo gian ($coGian), thu nho ($thuNho) duoc"
+  $bot = $AE::RootElement.FindFirst($TS::Descendants, (New-Object Windows.Automation.AndCondition(
+    (New-Object Windows.Automation.PropertyCondition($AE::ProcessIdProperty, $acad.Id)), (New-Object Windows.Automation.PropertyCondition($AE::NameProperty, 'TKPCCC - Bot chat')))))
+  Kiem ($bot) "plugin Bot chat: TKBOTCHAT mo palette 'TKPCCC - Bot chat'"
   Kiem ($so['Block'] -eq $soBlock) "PCCC_BLOCK mo phan he Thu vien: $($so['Block']) dong block (can $soBlock)"
   $soLenh = [regex]::Matches((Get-Content -Raw -Encoding UTF8 "$GOC\cad\module\plugin\Lenh.cs"), 'new\[\] \{ "PCCC').Count
   Kiem ($so['Lenh'] -eq $soLenh) "phim tat PHX mo PCCC_HELP (phan he Lenh): $($so['Lenh']) lenh (can $soLenh)"

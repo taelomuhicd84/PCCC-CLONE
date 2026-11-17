@@ -37,3 +37,7 @@ cad/TKPCCC.bundle/Contents/cau_hinh_ban_quyen.json
 
 # Ban ve mau cua khach (nguoi dung de lai de Claude hoc), khong dua len repo cong khai
 file_cad_test/
+
+# Plugin YouTube, Bot chat (bundle rieng tu 17/11): DLL build
+cad/TKPCCC_YouTube.bundle/Contents/
+cad/TKPCCC_BotChat.bundle/Contents/

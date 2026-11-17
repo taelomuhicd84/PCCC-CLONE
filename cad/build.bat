@@ -57,11 +57,37 @@ if exist "%OUT%\TKPCCC.UI.dll" move /y "%OUT%\TKPCCC.UI.dll" "%OUT%\TKPCCC.UI.dl
   /r:"%ACAD%\acdbmgd.dll" /r:"%ACAD%\accoremgd.dll" /r:"%ACAD%\acmgd.dll" /r:"%ACAD%\AdWindows.dll" ^
   /r:"%FW%\WPF\PresentationCore.dll" /r:"%FW%\WPF\WindowsBase.dll" /r:"%FW%\System.Xaml.dll" ^
   /r:"%FW%\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll /r:"%OUT%\TKPCCC.Cad.dll" ^
-  /r:"%~dp0module\ui\webview2\Microsoft.Web.WebView2.Core.dll" /r:"%~dp0module\ui\webview2\Microsoft.Web.WebView2.WinForms.dll" ^
   "%~dp0module\ui\*.cs" || exit /b 1
-rem Tab YouTube (WebView2): 3 DLL cua Microsoft canh TKPCCC.UI.dll. Chi chep khi thieu: AutoCAD dang mo giu khoa file.
-for %%f in (Microsoft.Web.WebView2.Core.dll Microsoft.Web.WebView2.WinForms.dll WebView2Loader.dll) do if not exist "%OUT%\%%f" copy /y "%~dp0module\ui\webview2\%%f" "%OUT%\%%f" >nul
 echo OK: %OUT%\TKPCCC.UI.dll
+
+rem Nguoi dung 17/11: tach 3 plugin (PCCC, YouTube, Bot chat), moi plugin mot bundle rieng, nap / go doc lap (Hub TKPCCC).
+rem Hai plugin rieng khong tham chieu DLL PCCC: bien dich kem module\nho\GiaoDienNho.cs (mau, chu, cai_dat.json chung).
+set OUTYT=%~dp0TKPCCC_YouTube.bundle\Contents
+if not exist "%OUTYT%" mkdir "%OUTYT%"
+del /q "%OUTYT%\TKPCCC.YouTube.dll.cu*" >nul 2>&1
+if exist "%OUTYT%\TKPCCC.YouTube.dll" move /y "%OUTYT%\TKPCCC.YouTube.dll" "%OUTYT%\TKPCCC.YouTube.dll.cu%RANDOM%" >nul
+"%FW%\csc.exe" /nologo /target:library /platform:x64 /codepage:65001 /optimize+ /out:"%OUTYT%\TKPCCC.YouTube.dll" ^
+  /r:"%ACAD%\acdbmgd.dll" /r:"%ACAD%\accoremgd.dll" /r:"%ACAD%\acmgd.dll" /r:"%ACAD%\AdWindows.dll" ^
+  /r:"%FW%\WPF\PresentationCore.dll" /r:"%FW%\WPF\WindowsBase.dll" /r:"%FW%\System.Xaml.dll" ^
+  /r:"%FW%\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll ^
+  /r:"%~dp0module\youtube\webview2\Microsoft.Web.WebView2.Core.dll" /r:"%~dp0module\youtube\webview2\Microsoft.Web.WebView2.WinForms.dll" ^
+  "%~dp0module\youtube\*.cs" "%~dp0module\nho\GiaoDienNho.cs" "%~dp0module\chung\HangDoi.cs" || exit /b 1
+rem WebView2: 3 DLL cua Microsoft canh TKPCCC.YouTube.dll. Chi chep khi thieu: AutoCAD dang mo giu khoa file.
+for %%f in (Microsoft.Web.WebView2.Core.dll Microsoft.Web.WebView2.WinForms.dll WebView2Loader.dll) do if not exist "%OUTYT%\%%f" copy /y "%~dp0module\youtube\webview2\%%f" "%OUTYT%\%%f" >nul
+echo OK: %OUTYT%\TKPCCC.YouTube.dll
+
+set OUTBOT=%~dp0TKPCCC_BotChat.bundle\Contents
+if not exist "%OUTBOT%" mkdir "%OUTBOT%"
+del /q "%OUTBOT%\TKPCCC.BotChat.dll.cu*" >nul 2>&1
+if exist "%OUTBOT%\TKPCCC.BotChat.dll" move /y "%OUTBOT%\TKPCCC.BotChat.dll" "%OUTBOT%\TKPCCC.BotChat.dll.cu%RANDOM%" >nul
+"%FW%\csc.exe" /nologo /target:library /platform:x64 /codepage:65001 /optimize+ /out:"%OUTBOT%\TKPCCC.BotChat.dll" ^
+  /r:"%ACAD%\acdbmgd.dll" /r:"%ACAD%\accoremgd.dll" /r:"%ACAD%\acmgd.dll" /r:"%ACAD%\AdWindows.dll" ^
+  /r:"%FW%\WPF\PresentationCore.dll" /r:"%FW%\WPF\WindowsBase.dll" /r:"%FW%\System.Xaml.dll" ^
+  /r:"%FW%\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll ^
+  "%~dp0module\botchat\*.cs" "%~dp0module\nho\GiaoDienNho.cs" || exit /b 1
+rem Bot chat tim repo (cad\.mcp.json) tu duong dan nay, nhu plugin PCCC.
+echo %~dp0..\data\vat_tu.json>"%OUTBOT%\nguon_vat_tu.txt"
+echo OK: %OUTBOT%\TKPCCC.BotChat.dll
 
 rem May chu MCP (cad\bin\TKPCCC.Mcp.exe): AI goi cad_tt / cad_chay. Dang chay thi doi ten ban cu nhu DLL.
 set BIN=%~dp0bin

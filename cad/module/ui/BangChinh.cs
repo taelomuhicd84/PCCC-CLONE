@@ -1,6 +1,6 @@
 // Palette chính (lệnh PCCC; PCCC_BLOCK, PCCC_HELP mở đúng phân hệ): đầu trang [PCCC] + tên + phiên bản, ô tìm lọc thẻ, thanh dọc chọn phân hệ
-// (Quy trình vẽ · Tiện ích · Báo cháy · Chữa cháy · Thống kê · Thư viện · Lệnh · Bot chat · YouTube · Cài đặt; nút ☰ đầu trang: menu phân hệ + thu gọn thanh dọc, nhớ `ben_an`), chân trang trạng thái cầu nối MCP + bản vẽ. Chỉ giao diện: lệnh vẽ gửi bằng tên qua GiaoDien.GuiLenh.
-// Bot chat ở BotChat.cs (chọn Claude/Gemini + model, gắn thẻ thư mục dự án).
+// (Quy trình vẽ · Tiện ích · Báo cháy · Chữa cháy · Thống kê · Thư viện · Lệnh · Cài đặt; nút ☰ đầu trang: menu phân hệ + thu gọn thanh dọc, nhớ `ben_an`), chân trang trạng thái cầu nối MCP + bản vẽ. Chỉ giao diện: lệnh vẽ gửi bằng tên qua GiaoDien.GuiLenh.
+// Bot chat, YouTube là plugin riêng từ 17/11 (người dùng: tách 3 plugin cho đỡ rối): cad/module/botchat (TKBOTCHAT), cad/module/youtube (TKYOUTUBE).
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -19,7 +19,7 @@ namespace TKPCCC
 {
     public class BangChinh : UserControl
     {
-        public const string QUY_TRINH = "Quy trình vẽ", TIEN_ICH = "Tiện ích", BO_TRI = "Báo cháy", CHUA_CHAY = "Chữa cháy", THONG_KE = "Thống kê", THU_VIEN = "Thư viện", LENH = "Lệnh", BOT = "Bot chat", YOUTUBE = "YouTube", CAI_DAT = "Cài đặt";
+        public const string QUY_TRINH = "Quy trình vẽ", TIEN_ICH = "Tiện ích", BO_TRI = "Báo cháy", CHUA_CHAY = "Chữa cháy", THONG_KE = "Thống kê", THU_VIEN = "Thư viện", LENH = "Lệnh", CAI_DAT = "Cài đặt";
         public const string ADIM = "ADIM"; // trang con Dim đối tượng (không có nút ở thanh dọc)
         static PaletteSet ps;
         static BangChinh nd;
@@ -45,7 +45,7 @@ namespace TKPCCC
             return "palette TKPCCC, phân hệ " + nd.dangXem + ".";
         }
 
-        static readonly string[] DS_PHAN_HE = { QUY_TRINH, TIEN_ICH, BO_TRI, CHUA_CHAY, THONG_KE, THU_VIEN, LENH, BOT, YOUTUBE, CAI_DAT };
+        static readonly string[] DS_PHAN_HE = { QUY_TRINH, TIEN_ICH, BO_TRI, CHUA_CHAY, THONG_KE, THU_VIEN, LENH, CAI_DAT };
         readonly TextBox tim = new TextBox();
         readonly Panel noiDung = new Panel();
         readonly FlowLayoutPanel ben = new FlowLayoutPanel();
@@ -60,7 +60,6 @@ namespace TKPCCC
         BangTienIch tienIch;
         BangAdim adim;
         readonly Dictionary<string, BangTienIch> luoiKhac = new Dictionary<string, BangTienIch>(); // Chữa cháy, Thống kê
-        BotChat bot;
         int soBlock;
 
         BangChinh()
@@ -82,8 +81,8 @@ namespace TKPCCC
             ben.Padding = new Padding(0, 6, 0, 0);
             // Thanh biểu tượng (ý từ video plugin 16/11): mỗi phân hệ một ô màu có biểu tượng, nhãn ngắn bên dưới.
             string[] ds = DS_PHAN_HE;
-            string[] icon = { "📐", "🔧", "🔔", "💧", "📊", "📚", "⌨", "💬", "▶", "⚙" };
-            Color[] mau = { GiaoDien.MauLa, GiaoDien.MauDuong, GiaoDien.MauDo, GiaoDien.MauCam, GiaoDien.MauTim, GiaoDien.MauLuc, GiaoDien.MauXam, GiaoDien.MauHong, GiaoDien.MauDo, GiaoDien.MauXam };
+            string[] icon = { "📐", "🔧", "🔔", "💧", "📊", "📚", "⌨", "⚙" };
+            Color[] mau = { GiaoDien.MauLa, GiaoDien.MauDuong, GiaoDien.MauDo, GiaoDien.MauCam, GiaoDien.MauTim, GiaoDien.MauLuc, GiaoDien.MauXam, GiaoDien.MauXam };
             for (int i = 0; i < ds.Length; i++)
             {
                 string ten = ds[i];
@@ -222,8 +221,6 @@ namespace TKPCCC
         {
             if (ten == THU_VIEN) return block = new BangBlock();
             if (ten == LENH) return bangLenh = new BangLenh();
-            if (ten == BOT) return bot = new BotChat();
-            if (ten == YOUTUBE) return new BangYoutube();
             if (ten == CAI_DAT) return TrangCaiDat();
             if (ten == BO_TRI) return new BangBoTri();
             if (ten == ADIM) return adim = new BangAdim(delegate { ChonTrang(TIEN_ICH); });
@@ -249,8 +246,8 @@ namespace TKPCCC
             Them(4, "Thiết bị PCCC", "Rải đầu báo, đầu phun theo lưới; đặt từng thiết bị", new[] { BO_TRI, "PCCC_RAI", "PCCC_DAT" },
                 new Action[] { delegate { ChonTrang(BO_TRI); }, null, null }); // Thư viện đã có ở thanh dọc: bỏ huy hiệu cho thẻ không tràn
             Them(5, "Dây, ống", "Dây báo cháy, ống nhánh theo thiết bị đã rải; vẽ ống, dây tay", new[] { "PCCC_TUYEN", "PCCC_ONG" }, null);
-            Them(6, "Sơ đồ nguyên lý", "Nhờ bot chat vẽ từ mặt bằng đang mở", new[] { BOT },
-                new Action[] { delegate { ChonTrang(BOT); bot.DatCau(BotChat.MAU_SO_DO); } });
+            Them(6, "Sơ đồ nguyên lý", "Nhờ bot chat vẽ từ mặt bằng đang mở", new[] { "TKBOTCHAT" },
+                new Action[] { delegate { GiaoDien.MoBotChat("so_do"); } });
             Them(0, "Kích thước tự động", "Quét cửa sổ, chuỗi kích thước theo thiết bị (trang 5 bước)", new[] { "PCCC_ADIM" }, new Action[] { delegate { ChonTrang(ADIM); } });
             Them(0, "Kích thước tiếp tục", "Nối tiếp chuỗi kích thước vừa tạo", new[] { "PCCC_CDIM" }, null);
 

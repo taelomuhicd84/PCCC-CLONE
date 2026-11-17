@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ApplicationPackage SchemaVersion="1.0" AppVersion="0.1.0" Name="TKPCCC YouTube"
+  Description="Xem video YouTube trong cửa sổ riêng của AutoCAD (WebView2 hoặc Brave), thu nhỏ, kéo giãn được"
+  ProductCode="{5873ADFD-605D-4443-AE30-346353D28679}" UpgradeCode="{7B8391DF-84FF-4026-AC88-B523B3594D4D}"
+  Author="TKPCCC">
+  <CompanyDetails Name="TKPCCC" />
+  <!-- Plugin riêng (người dùng 17/11: tách YouTube, PCCC, Bot chat thành 3 plugin). Không cần plugin PCCC. -->
+  <RuntimeRequirements OS="Win64" Platform="AutoCAD*" SeriesMin="R24.0" SeriesMax="R24.3" />
+  <Components>
+    <ComponentEntry AppName="TKPCCC_YouTube" ModuleName="./Contents/TKPCCC.YouTube.dll" LoadOnAutoCADStartup="True">
+      <Commands GroupName="TKPCCC_YOUTUBE">
+        <Command Local="TKYOUTUBE" Global="TKYOUTUBE" />
+      </Commands>
+    </ComponentEntry>
+  </Components>
+</ApplicationPackage>
