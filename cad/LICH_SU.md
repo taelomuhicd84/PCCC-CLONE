@@ -597,3 +597,9 @@ Bẫy: file .ps1 lỡ có chữ Việt (công cụ Write đổi \u1ec7 thành ch
 ## 2026-11-17 — G8 tab YouTube trong palette
 AcCef của AutoCAD 2021 là Chromium 77 nên chọn WebView2 (người dùng duyệt tải gói NuGet của Microsoft). Phân hệ YouTube: link hoặc từ khoá,
 lùi, trang chủ, mở ra trình duyệt, tự dừng video khi rời tab. Thử ngoài AutoCAD: YouTube chạy, tìm ra 16 video.
+
+## 2026-11-17 — Hub bản 2: bộ cài chia theo tính năng
+Người dùng gửi ảnh MCP Hub Pro, muốn gom mọi bộ cài vào Hub, phân rõ từng loại. Hub: 12 mục trong 4 nhóm (Nền tảng, MCP cad, Bot chat, YouTube),
+lọc theo nhóm, chọn nhiều mục rồi cài một lần. Phần mềm hãng khác chỉ mở trang tải chính thức. Test 17/17.
+Bẫy: script sửa build.bat thay '\n' bằng CRLF trên chuỗi đã có CRLF → dòng '\r\r\n'; đã sửa. build.bat đổi tên DLL cũ TRƯỚC khi biên dịch:
+biên dịch hỏng thì bundle mất DLL → chép lại bản .cu mới nhất.

@@ -3,6 +3,10 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## VIỆC 17/11 (6) — HUB BẢN 2: MỌI BỘ CÀI CHIA THEO TÍNH NĂNG: XONG, CHỜ NGƯỜI DÙNG DÙNG THỬ
+Người dùng (ảnh MCP Hub Pro): gom mọi bộ cài vào Hub, phân rõ từng loại. Hub thành bảng 12 mục, 4 nhóm, nút lọc theo nhóm, ô chọn, "Chọn mục còn thiếu", "Cài / Gỡ mục đã chọn" (một hộp xác nhận liệt kê từng việc), "Quét lại máy". Nền tảng: AutoCAD, .NET 4.8 (registry Release ≥ 528040), Plugin tự nạp · MCP cad: máy chủ + 4 AI · Bot chat: `claude`, `agy` (--version) · YouTube: WebView2 Runtime (registry EdgeUpdate pv), 3 DLL (Cài = chép từ module/ui/webview2). Phần mềm hãng khác: chỉ mở trang tải chính thức. `thu_hub.ps1` 17/17 DAT. Máy người dùng: 7/12 xong; chưa: 4 AI ← MCP cad.
+LƯU Ý 17/11: build.bat lúc đó hỏng ở `Rai.cs` (phiên khác đang sửa dở) → bundle mất TKPCCC.Cad.dll, đã chép lại bản 10:32 (TKPCCC.Cad.dll.cu1372).
+
 ## VIỆC 17/11 (5) — G8 TAB YOUTUBE: XONG, CHỜ XEM TRONG AUTOCAD
 Người dùng chọn WebView2 (Chromium có sẵn của AutoCAD 2021 `AcCef` là bản 77, YouTube không chạy). Tải gói NuGet Microsoft.Web.WebView2 1.0.2903.40 (được người dùng cho phép), lấy 3 DLL net462 + win-x64 (chữ ký Microsoft hợp lệ) vào `module/ui/webview2/`; build.bat chép cạnh TKPCCC.UI.dll khi thiếu.
 `module/ui/BangYoutube.cs`: phân hệ "YouTube" (nút ▶ thanh dọc): ô link / từ khoá, Lùi, Trang chủ, Mở bằng trình duyệt; dữ liệu trình duyệt `%LOCALAPPDATA%\TKPCCC\WebView2`; dừng video khi rời tab; nhớ link cuối `yt_cuoi`. Thử thật ngoài AutoCAD: Chrome 157, tìm ra 16 video.

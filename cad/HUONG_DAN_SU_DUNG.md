@@ -6,7 +6,12 @@ Plugin thiết kế PCCC cho AutoCAD 2021 trở lên: rải đầu báo cháy, �
 
 1. Yêu cầu: AutoCAD 2021 (2021–2024 đều được), Windows.
 2. Build plugin một lần: chạy `cad\build.bat`. Kết quả: `cad\TKPCCC.bundle\Contents\TKPCCC.Cad.dll` và `TKPCCC.UI.dll`.
-3. Cài bằng Hub (khuyên dùng): mở `cad\bin\TKPCCC.Hub.exe`, bấm Cài ở "Plugin tự nạp" và ở từng AI muốn dùng MCP cad (Claude Code, Claude Desktop, Gemini CLI, Antigravity). Mỗi lần bấm đều hỏi lại; file cấu hình được sao lưu trước khi sửa; nhật ký ở `%APPDATA%\TKPCCC\hub.log`.
+3. Cài bằng Hub (khuyên dùng): mở `cad\bin\TKPCCC.Hub.exe`. Bảng liệt kê mọi thứ cần cài, chia theo tính năng:
+   - Nền tảng (bắt buộc): AutoCAD 2021–2024, .NET Framework 4.8, Plugin tự nạp.
+   - MCP cad (AI ngoài CAD vẽ vào bản vẽ): máy chủ MCP + ghi cấu hình cho Claude Code, Claude Desktop, Gemini CLI, Antigravity.
+   - Bot chat (khung chat trong palette): lệnh `claude` (Claude Code CLI), lệnh `agy` (Antigravity, Gemini).
+   - YouTube (phân hệ YouTube): Microsoft Edge WebView2 Runtime, 3 DLL WebView2 cạnh plugin.
+   Bấm "Chọn mục còn thiếu" rồi "Cài mục đã chọn". Phần mềm của hãng khác: Hub chỉ mở trang tải chính thức, anh tự cài rồi bấm "Quét lại máy". Mỗi lần cài đều hỏi lại; file cấu hình được sao lưu trước khi sửa; nhật ký ở `%APPDATA%\TKPCCC\hub.log`.
    Hoặc cách cũ: chạy `cad\cai_dat.bat`. File này tạo liên kết `TKPCCC.bundle` trong `%APPDATA%\Autodesk\ApplicationPlugins`. Gỡ: `cad\cai_dat.bat /go`.
 4. Tắt hẳn AutoCAD rồi mở lại. Dòng lệnh báo `[TKPCCC] Đã nạp plugin PCCC`. Không tự nạp thì gõ `NETLOAD` và chọn `TKPCCC.Cad.dll`.
 5. Bản quyền: gõ `PCCC_BANQUYEN`, nhập email, bấm Đăng ký (hoặc dán key) rồi Kích hoạt.
