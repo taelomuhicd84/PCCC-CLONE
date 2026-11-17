@@ -3,6 +3,11 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## VIỆC 17/11 (4) — G7 HUB CÀI MCP: XONG BẢN ĐẦU, CHỜ NGƯỜI DÙNG BẤM CÀI
+`module/hub/Hub.cs` → `bin/TKPCCC.Hub.exe` (build.bat). Mục: AutoCAD 2021–2024 (registry, đang mở, plugin đang nối theo song.json) · Plugin tự nạp (junction như cai_dat.bat; Gỡ chỉ bỏ liên kết, thư mục thật thì từ chối) · MCP cad (bắt tay initialize) · Claude Code (`claude mcp add -s user`) · Claude Desktop (`%APPDATA%\Claude\claude_desktop_config.json`) · Gemini CLI (`~/.gemini/settings.json`) · Antigravity (`agy mcp add`). JSON: sao lưu `.tkpccc_<giờ>.bak`, giữ khoá khác. Test `test/thu_hub.ps1` (nhà giả, CLI chỉ ghi lệnh) 14/14 DAT.
+Máy người dùng 17/11: AutoCAD 2021 mở + plugin nối, bundle đã liên kết, MCP bắt tay được; 4 AI CHƯA có cad (Claude chưa tự bấm: sửa cấu hình máy là việc người dùng).
+CÒN: VS Code / Codex chưa có mục; bot chat chạy Gemini ở `--mode plan` nên dù agy có cad vẫn chưa vẽ (cần thử quyền gọi MCP ở chế độ in); G8 YouTube chưa làm.
+
 ## VIỆC 17/11 (3) — BOT CHAT CHỌN CLAUDE/GEMINI + THẺ THƯ MỤC DỰ ÁN: XONG MÃ, CHỜ XEM TRONG AUTOCAD
 Người dùng gửi ảnh khung chat FP AI: chọn model Claude hay Gemini, gắn thẻ thư mục dự án làm ngữ cảnh. Bot chat tách ra `module/ui/BotChat.cs`:
 đầu khung chọn máy AI + model (bỏ ô model ở trang Cài đặt), hàng thẻ "+ Thư mục dự án" (`--add-dir` cho CLI + danh sách ở đầu lời nhắn, lưu `chat_thu_muc`).

@@ -71,6 +71,14 @@ if exist "%BIN%\TKPCCC.Mcp.exe" move /y "%BIN%\TKPCCC.Mcp.exe" "%BIN%\TKPCCC.Mcp
 copy /y "%~dp0skills\TU_VUNG.md" "%BIN%\TU_VUNG.md" >nul
 echo OK: %BIN%\TKPCCC.Mcp.exe
 
+rem Hub (cad\bin\TKPCCC.Hub.exe): cai plugin tu nap + ghi MCP cad cho cac AI tren may, chan doan.
+del /q "%BIN%\TKPCCC.Hub.exe.cu*" >nul 2>&1
+if exist "%BIN%\TKPCCC.Hub.exe" move /y "%BIN%\TKPCCC.Hub.exe" "%BIN%\TKPCCC.Hub.exe.cu%RANDOM%" >nul
+"%FW%\csc.exe" /nologo /target:winexe /codepage:65001 /optimize+ /out:"%BIN%\TKPCCC.Hub.exe" ^
+  /r:"%FW%\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll ^
+  "%~dp0module\hub\Hub.cs" "%~dp0module\chung\HangDoi.cs" || exit /b 1
+echo OK: %BIN%\TKPCCC.Hub.exe
+
 rem App tao key ban quyen cho chu plugin (khong phat hanh cho khach).
 "%FW%\csc.exe" /nologo /target:winexe /codepage:65001 /optimize+ /out:"%BIN%\TKPCCC.KeyGen.exe" ^
   /r:"%FW%\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Management.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll ^

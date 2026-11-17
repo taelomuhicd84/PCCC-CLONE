@@ -588,3 +588,8 @@ bỏ nét trùng trục, bỏ phòng ngoài trục, siết luật khép khe. K�
 Người dùng hỏi tab YouTube, Hub cài MCP đã làm chưa (chưa: G7, G8 vẫn trong kế hoạch) và muốn khung chat như FP AI: chọn Claude hay Gemini, gắn thẻ
 thư mục dự án làm ngữ cảnh. Bot chat sang `module/ui/BotChat.cs`: chọn máy AI + model trên khung, thẻ thư mục (`--add-dir`). Gemini qua `agy` chế độ plan
 (chỉ đọc; `agy` không nhận MCP theo phiên, vẽ CAD vẫn dùng Claude). Thử thật: Gemini đọc đúng file trong thư mục thẻ; Claude CLI cần đăng nhập lại.
+
+## 2026-11-17 — G7 Hub cài MCP (bản đầu)
+Người dùng chọn làm Hub. `TKPCCC.Hub.exe`: một cửa sổ, mỗi mục một đèn + Cài/Gỡ (hỏi lại trước khi sửa), nhật ký. Cài plugin = liên kết bundle;
+MCP cad ghi cho Claude Code, Antigravity qua CLI của chúng, cho Claude Desktop, Gemini CLI bằng sửa JSON có sao lưu. Test trên nhà giả 14/14.
+Bẫy: file .ps1 lỡ có chữ Việt (công cụ Write đổi \u1ec7 thành chữ thật) thì PowerShell 5.1 đọc sai: dựng chuỗi bằng [char]0x1EC7.

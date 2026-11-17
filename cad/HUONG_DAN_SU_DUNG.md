@@ -6,7 +6,8 @@ Plugin thiết kế PCCC cho AutoCAD 2021 trở lên: rải đầu báo cháy, �
 
 1. Yêu cầu: AutoCAD 2021 (2021–2024 đều được), Windows.
 2. Build plugin một lần: chạy `cad\build.bat`. Kết quả: `cad\TKPCCC.bundle\Contents\TKPCCC.Cad.dll` và `TKPCCC.UI.dll`.
-3. Cài để AutoCAD tự nạp: chạy `cad\cai_dat.bat`. File này tạo liên kết `TKPCCC.bundle` trong `%APPDATA%\Autodesk\ApplicationPlugins`. Gỡ: `cad\cai_dat.bat /go`.
+3. Cài bằng Hub (khuyên dùng): mở `cad\bin\TKPCCC.Hub.exe`, bấm Cài ở "Plugin tự nạp" và ở từng AI muốn dùng MCP cad (Claude Code, Claude Desktop, Gemini CLI, Antigravity). Mỗi lần bấm đều hỏi lại; file cấu hình được sao lưu trước khi sửa; nhật ký ở `%APPDATA%\TKPCCC\hub.log`.
+   Hoặc cách cũ: chạy `cad\cai_dat.bat`. File này tạo liên kết `TKPCCC.bundle` trong `%APPDATA%\Autodesk\ApplicationPlugins`. Gỡ: `cad\cai_dat.bat /go`.
 4. Tắt hẳn AutoCAD rồi mở lại. Dòng lệnh báo `[TKPCCC] Đã nạp plugin PCCC`. Không tự nạp thì gõ `NETLOAD` và chọn `TKPCCC.Cad.dll`.
 5. Bản quyền: gõ `PCCC_BANQUYEN`, nhập email, bấm Đăng ký (hoặc dán key) rồi Kích hoạt.
 6. Sau mỗi lần build lại: tắt hẳn AutoCAD rồi mở lại để nạp bản mới.

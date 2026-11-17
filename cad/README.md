@@ -26,12 +26,13 @@ cad/
 │  ├─ ui/                  BangChinh.cs (palette chính lệnh PCCC: Quy trình vẽ, Tiện ích, Báo cháy, Chữa cháy, Thống kê, Thư viện, Lệnh, Bot chat, Cài đặt) · BotChat.cs (phân hệ Bot chat: chọn Claude/Gemini + model, thẻ thư mục dự án) · BangBoTri.cs (phân hệ Báo cháy, PCCC_BOTRI) · BangTienIch.cs (phân hệ Tiện ích, PCCC_TIENICH) · BangBlock.cs (phân hệ Thư viện, PCCC_BLOCK) · BangLenh.cs (phân hệ Lệnh, PCCC_HELP) · BangChonVatTu.cs (gõ ? khi hỏi mã: bảng chọn thiết bị) · BangTraCuu.cs (nút Tra cứu TCVN: bảng khoang dầm 5.9.1.1.6) · GiaoDien.cs (3 kiểu màu, cai_dat.json, widget NutIcon / ThanhTab / TieuDeNhom / KhungTrangThai) -> TKPCCC.UI.dll; chỗ DUY NHẤT được tham chiếu acmgd, không xử lý bản vẽ
 │  ├─ banquyen/            KeyGen.cs -> bin/TKPCCC.KeyGen.exe (chủ plugin tạo khoá, ký key) · keygen.py (tạo key bằng Python, cùng hợp đồng key với KeyGen.exe, khoá riêng ngoài repo) · apps_script/Code.gs (Google Sheet tự cấp key) · HUONG_DAN.md · plugin/BanQuyen.cs + ui/BanQuyenUi.cs (PCCC_BANQUYEN)
 │  ├─ mcp/                 Mcp.cs -> bin/TKPCCC.Mcp.exe (công cụ cad_tt, cad_chay, cad_anh)
-│  ├─ chung/               HangDoi.cs: hàng đợi file dùng chung plugin + máy chủ MCP
+│  ├─ hub/                 Hub.cs -> bin/TKPCCC.Hub.exe (cài plugin tự nạp, ghi MCP cad cho Claude Code / Claude Desktop / Gemini CLI / Antigravity, bắt tay MCP, nhật ký)
+│  ├─ chung/               HangDoi.cs: hàng đợi file dùng chung plugin + máy chủ MCP + Hub
 │  └─ lisp/                TKPCCC.lsp (nạp DLL thay NETLOAD) + LISP của người dùng (nạp tay bằng APPLOAD)
-├─ test/                   chay_thu.ps1 (plugin + PCCC_SPEC) · thu_mcp.ps1 (máy chủ MCP), không cần mở AutoCAD · mau_kt.pdf (PDF thử 1:200, sinh bằng tao_pdf_mau.py) · thu_gui.ps1 (tự mở AutoCAD thật, không bắt buộc) · thu_ban_quyen.ps1 (key KeyGen + Apps Script giả lập) · ThuBlockDong.cs (DLL chỉ cho chay_thu: chèn block động mẫu Autodesk, đặt Visibility)
+├─ test/                   chay_thu.ps1 (plugin + PCCC_SPEC) · thu_mcp.ps1 (máy chủ MCP) · thu_hub.ps1 (Hub trên nhà giả), không cần mở AutoCAD · mau_kt.pdf (PDF thử 1:200, sinh bằng tao_pdf_mau.py) · thu_gui.ps1 (tự mở AutoCAD thật, không bắt buộc) · thu_ban_quyen.ps1 (key KeyGen + Apps Script giả lập) · ThuBlockDong.cs (DLL chỉ cho chay_thu: chèn block động mẫu Autodesk, đặt Visibility)
 ├─ build.bat               build DLL + exe, chép dữ liệu vào bundle
 ├─ cai_dat.bat             cài một lần: liên kết bundle vào %APPDATA%\Autodesk\ApplicationPlugins (AutoCAD tự nạp, khỏi NETLOAD); `/go` để gỡ
-├─ bin/                    kết quả build máy chủ MCP (không commit)
+├─ bin/                    kết quả build: TKPCCC.Mcp.exe, TKPCCC.Hub.exe, TKPCCC.KeyGen.exe (không commit)
 └─ TKPCCC.bundle/          gói AutoCAD tự nạp: PackageContents.xml, Contents/ (DLL, PCCC_Blocks.dwg, block_alias.json)
 ```
 
@@ -55,6 +56,7 @@ AI chỉ viết một gói thao tác ngắn (spec JSON), plugin sinh hình. Mộ
 | Đổi cách nhập PDF làm nền (`pdf`) | `module/plugin/Spec.cs`, hàm `NhapPdf` |
 | Đổi cách tính tỉ lệ trang PDF từ chuỗi kích thước | `.claude/skills/tkpccc-ve-cad/scripts/pdf_ti_le.py` (kiểm bằng `test/chay_thu.ps1`) |
 | Đổi nhịp xem hàng đợi, điều kiện "AutoCAD đang rảnh" | `module/plugin/Cau.cs` |
+| Hub: thêm AI mới (mục, file cấu hình, lệnh CLI), câu hỏi xác nhận, cửa sổ | `module/hub/Hub.cs` (`DanhSach`, `SuaJson`, `ChayCli`, `CuaSoHub`); test `test/thu_hub.ps1` |
 | Đổi chỗ đặt hàng đợi | `module/chung/HangDoi.cs` hoặc biến môi trường `TKPCCC_CAD_HANG_DOI` |
 | Lệnh gõ tay `PCCC_*` | `module/plugin/Lenh.cs` (xem skill `tkpccc-cad-console`) |
 | Tường, vách, cửa (`tuong`, `cua`, `kt_chuoi`; lệnh `PCCC_TRUC`, `PCCC_TUONG`, `PCCC_CUA`) | `module/plugin/KienTruc.cs`; layer, dày, rộng cửa mặc định ở nhóm `kien_truc` của `data/ky_hieu/ky_hieu.json`, chuẩn `layer/kien_truc.md` |
