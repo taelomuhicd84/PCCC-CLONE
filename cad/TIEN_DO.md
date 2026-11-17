@@ -3,6 +3,14 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## VIỆC 17/11 (3) — BOT CHAT CHỌN CLAUDE/GEMINI + THẺ THƯ MỤC DỰ ÁN: XONG MÃ, CHỜ XEM TRONG AUTOCAD
+Người dùng gửi ảnh khung chat FP AI: chọn model Claude hay Gemini, gắn thẻ thư mục dự án làm ngữ cảnh. Bot chat tách ra `module/ui/BotChat.cs`:
+đầu khung chọn máy AI + model (bỏ ô model ở trang Cài đặt), hàng thẻ "+ Thư mục dự án" (`--add-dir` cho CLI + danh sách ở đầu lời nhắn, lưu `chat_thu_muc`).
+Gemini = `agy -p ... --output-format stream-json --mode plan` (chỉ đọc), nói tiếp bằng `--conversation`. Đã chạy thật ngoài AutoCAD: Gemini đọc đúng file
+trong thư mục gắn thẻ; Claude CLI trên máy báo "OAuth session expired" (người dùng gõ `claude` rồi `/login`). CHƯA xem trong AutoCAD (đang mở nên chưa chạy thu_gui.ps1).
+CÒN: (a) Gemini vẽ CAD cần đăng ký MCP cad cho agy (`agy mcp add cad <repo>\cad\bin\TKPCCC.Mcp.exe`, sửa cấu hình máy: hỏi người dùng; `--settings` không nhận mcpServers)
+và cho phép công cụ MCP ở chế độ in; (b) G7 Hub (`module/hub/`) CHƯA làm; (c) G8 tab YouTube (WebView2) CHƯA làm.
+
 ## VIỆC 17/11 (2) — TỰ NHẬN VÙNG RẢI KHỚP VÙNG NGƯỜI DÙNG VẼ: XONG MÃ + TEST, CHỜ NGƯỜI DÙNG XEM
 Người dùng gửi 2 ảnh: ảnh 1 = plugin tự nhận vùng (nhiều vùng vụn), ảnh 2 = người dùng vẽ lại (1 vùng văn phòng chữ L, bỏ lõi thang, sảnh, WC).
 Chạy lại `PCCC_RAI BC_KHOI Dam DaySan 120 4.5`, khung C cả sàn, Enter mọi phòng trên `t8_mat_bang_dam.dwg` (kịch bản `scripts/kb_tu_nhan.txt`):

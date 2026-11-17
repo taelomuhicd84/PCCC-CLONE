@@ -583,3 +583,8 @@ phòng ≤ 30 m² sát nó = sảnh, đầu báo bỏ. Tầng 8: 4 vùng thành 
 Người dùng: "ngoài đường trục thì không được phân vùng khi không được tôi cho phép". Trên file người dùng (bản tự lưu, thử trên bản chép): trục nét liền
 layer 0 trong block cắt văn phòng, đọc cả tờ khác, cung bồn cầu và hai khe song song khép khe 11 m. Sửa: đọc trong khung chọn, nhận khung trục từ ký hiệu trục,
 bỏ nét trùng trục, bỏ phòng ngoài trục, siết luật khép khe. Kết quả 1 vùng 270,8 m² như người dùng vẽ. Test ca 12.
+
+## 2026-11-17 — Bot chat chọn Claude/Gemini, thẻ thư mục dự án
+Người dùng hỏi tab YouTube, Hub cài MCP đã làm chưa (chưa: G7, G8 vẫn trong kế hoạch) và muốn khung chat như FP AI: chọn Claude hay Gemini, gắn thẻ
+thư mục dự án làm ngữ cảnh. Bot chat sang `module/ui/BotChat.cs`: chọn máy AI + model trên khung, thẻ thư mục (`--add-dir`). Gemini qua `agy` chế độ plan
+(chỉ đọc; `agy` không nhận MCP theo phiên, vẽ CAD vẫn dùng Claude). Thử thật: Gemini đọc đúng file trong thư mục thẻ; Claude CLI cần đăng nhập lại.

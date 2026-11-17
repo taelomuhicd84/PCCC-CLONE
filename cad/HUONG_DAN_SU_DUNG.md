@@ -14,6 +14,7 @@ Plugin thiết kế PCCC cho AutoCAD 2021 trở lên: rải đầu báo cháy, �
 ## 2. Bắt đầu
 
 - `PCCC`: mở palette chính. Thanh dọc trái chọn phân hệ: Quy trình vẽ, Tiện ích, Báo cháy, Chữa cháy, Thống kê, Thư viện, Lệnh, Bot chat, Cài đặt.
+- Bot chat: đầu khung chọn máy AI (Claude: đọc + vẽ CAD qua MCP; Gemini: chỉ đọc + trả lời) và model; "+ Thư mục dự án" gắn thẻ thư mục cho AI đọc hồ sơ (bấm thẻ để bỏ). Claude cần `claude` đăng nhập (`claude` rồi `/login`), Gemini cần Antigravity CLI `agy` đã đăng nhập.
 - `PCCC_HELP`: bảng mọi lệnh. Gõ chữ vào ô tìm để lọc. Sửa ô Phím tắt rồi Enter là lưu (file `phim_tat.txt`, mỗi dòng `PHIMTAT=LENH`).
 - Khi lệnh hỏi mã thiết bị: gõ `?` để mở bảng chọn, hoặc gõ một phần tên hay mã để tìm.
 - Đơn vị bản vẽ: plugin đọc `INSUNITS`. Bản vẽ mm (khuyên dùng) thì nhập khoảng cách theo m khi lệnh hỏi m.
