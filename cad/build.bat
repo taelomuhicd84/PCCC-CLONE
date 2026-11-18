@@ -74,6 +74,9 @@ if exist "%OUTYT%\TKPCCC.YouTube.dll" move /y "%OUTYT%\TKPCCC.YouTube.dll" "%OUT
   "%~dp0module\youtube\*.cs" "%~dp0module\nho\GiaoDienNho.cs" "%~dp0module\chung\HangDoi.cs" || exit /b 1
 rem WebView2: 3 DLL cua Microsoft canh TKPCCC.YouTube.dll. Chi chep khi thieu: AutoCAD dang mo giu khoa file.
 for %%f in (Microsoft.Web.WebView2.Core.dll Microsoft.Web.WebView2.WinForms.dll WebView2Loader.dll) do if not exist "%OUTYT%\%%f" copy /y "%~dp0module\youtube\webview2\%%f" "%OUTYT%\%%f" >nul
+rem Extension Brave "toan man hinh trong khung" (nguoi dung 18/11), nap bang --load-extension khi mo Brave ho so rieng.
+if not exist "%OUTYT%\brave_khung" mkdir "%OUTYT%\brave_khung"
+copy /y "%~dp0module\youtube\brave_khung\*" "%OUTYT%\brave_khung\" >nul
 echo OK: %OUTYT%\TKPCCC.YouTube.dll
 
 set OUTBOT=%~dp0TKPCCC_BotChat.bundle\Contents

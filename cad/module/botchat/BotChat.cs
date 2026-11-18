@@ -5,19 +5,38 @@
 // Thẻ thư mục: truyền `--add-dir` cho cả hai CLI và ghi danh sách vào đầu lời nhắn. Lưu ở cai_dat.json (chat_ai, model, model_gemini, chat_effort, chat_thu_muc).
 // Effort (người dùng 17/11): Claude `--effort low|medium|high|xhigh|max`; Gemini (agy) mức nằm trong tên model (gemini-4-argon-high): ghép gốc + "-" + mức.
 // Chạy nền nên luồng AutoCAD không bị khoá, cầu nối Cau.cs vẫn chạy hàng đợi trong lúc chờ.
+// Người dùng 18/11 (như VS Code / Claude Code): Enter gửi, Shift+Enter xuống dòng; dán (Ctrl+V) / kéo thả / "+ Ảnh" đính kèm ảnh (lưu
+// %LOCALAPPDATA%\TKPCCC\botchat\anh, AI xem bằng Read qua --add-dir); thẻ "vùng chọn" = đối tượng đang quét chọn trên CAD (handle, thành phần,
+// hộp bao) gửi kèm để AI đọc (doc gi:"dt") và sửa (sua / xoa theo "h") đúng phần đó.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
+using AcAp = Autodesk.AutoCAD.ApplicationServices;
+using Db = Autodesk.AutoCAD.DatabaseServices;
 
 namespace TKPCCC
 {
+    /// Ô nhập lời nhắn: lệnh dán (Ctrl+V, menu chuột phải) có ảnh trong clipboard thì đính kèm ảnh thay vì dán chữ.
+    class ONhap : TextBox
+    {
+        public Func<bool> DanAnh;
+
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == 0x0302 && DanAnh != null && DanAnh()) return; // WM_PASTE
+            base.WndProc(ref m);
+        }
+    }
+
     class BotChat : UserControl
     {
         public const string MAU_PDF = "Vẽ theo quy trình 6 bước từ PDF: ";
@@ -42,11 +61,17 @@ namespace TKPCCC
         }
 
         readonly RichTextBox hoi = new RichTextBox();
-        readonly TextBox nhap = new TextBox();
+        readonly ONhap nhap = new ONhap();
         readonly NutBo gui = new NutBo("Gửi", GiaoDien.XanhDam);
         readonly Label trangThai = new Label();
         readonly ComboBox chonAi = new ComboBox(), chonModel = new ComboBox(), chonEffort = new ComboBox();
-        readonly FlowLayoutPanel the = new FlowLayoutPanel();
+        readonly FlowLayoutPanel the = new FlowLayoutPanel(), dinhKem = new FlowLayoutPanel();
+        readonly List<string> anh = new List<string>(); // ảnh đính kèm lời nhắn kế
+        static readonly string THU_MUC_ANH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TKPCCC", "botchat", "anh");
+        const int TOI_DA_HANDLE = 200; // handle gửi kèm tối đa: vùng lớn hơn thì AI lọc thêm bằng hop + l
+        AcAp.Document vungDoc;
+        Db.ObjectId[] vungId; // vùng quét chọn trên CAD; null = không có
+        bool vungGiu;         // chọn bằng TKBOTCHON: giữ cả khi người dùng bỏ chọn trên bản vẽ
         readonly ToolTip goiY = new ToolTip();
         readonly List<string> thuMuc;
         Process p;
@@ -99,7 +124,7 @@ namespace TKPCCC
 
             Panel duoi = new Panel();
             duoi.Dock = DockStyle.Bottom;
-            duoi.Height = 186;
+            duoi.Height = 236;
             duoi.BackColor = GiaoDien.Nen;
             duoi.Padding = new Padding(6, 6, 6, 6);
             the.Dock = DockStyle.Top;
@@ -112,7 +137,24 @@ namespace TKPCCC
             nhap.Dock = DockStyle.Fill;
             nhap.BackColor = GiaoDien.The;
             nhap.ForeColor = GiaoDien.ChuDam;
-            nhap.KeyDown += delegate(object s, KeyEventArgs e) { if (e.KeyCode == Keys.Enter && e.Control) { e.SuppressKeyPress = true; Gui(); } };
+            nhap.KeyDown += delegate(object s, KeyEventArgs e) { if (e.KeyCode == Keys.Enter && !e.Shift) { e.SuppressKeyPress = true; Gui(); } };
+            nhap.DanAnh = DanAnh;
+            nhap.AllowDrop = true;
+            nhap.DragEnter += delegate(object s, DragEventArgs e) { e.Effect = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None; };
+            nhap.DragDrop += delegate(object s, DragEventArgs e)
+            {
+                GiaoDien.An(delegate
+                {
+                    foreach (string f in (string[])e.Data.GetData(DataFormats.FileDrop) ?? new string[0])
+                        if (LaAnh(f)) ThemAnh(ChepAnh(f));
+                        else nhap.AppendText((nhap.TextLength > 0 ? " " : "") + f); // file khác: chèn đường dẫn để AI đọc
+                });
+            };
+            dinhKem.Dock = DockStyle.Top;
+            dinhKem.AutoSize = true;
+            dinhKem.BackColor = GiaoDien.Nen;
+            dinhKem.Padding = new Padding(0, 0, 0, 4);
+            VeDinhKem();
             FlowLayoutPanel nut = new FlowLayoutPanel();
             nut.Dock = DockStyle.Bottom;
             nut.Height = 66;
@@ -145,6 +187,7 @@ namespace TKPCCC
             trangThai.Font = GiaoDien.Nho;
             trangThai.ForeColor = GiaoDien.ChuMo;
             duoi.Controls.Add(nhap);
+            duoi.Controls.Add(dinhKem); // thêm trước "the" nên neo dưới hàng thẻ thư mục, sát ô nhập
             duoi.Controls.Add(the);
             duoi.Controls.Add(nut);
             duoi.Controls.Add(trangThai);
@@ -171,7 +214,7 @@ namespace TKPCCC
             if (i == 1) luu = MODEL[1].FirstOrDefault(g => luu.StartsWith(g + "-")) ?? MODEL[1][0]; // "gemini-4-argon-high" -> gốc
             chonModel.SelectedIndex = Math.Max(0, Array.IndexOf(MODEL[i], luu));
             NapEffort();
-            trangThai.Text = (i == 1 ? "Gemini: chỉ đọc + trả lời, chưa vẽ CAD." : "Claude: đọc + vẽ CAD qua MCP.") + " Ctrl+Enter để gửi.";
+            trangThai.Text = (i == 1 ? "Gemini: chỉ đọc + trả lời, chưa vẽ CAD." : "Claude: đọc + vẽ, sửa CAD qua MCP.") + " Enter gửi, Shift+Enter xuống dòng, Ctrl+V dán ảnh.";
         }
 
         string ModelChon() { return MODEL[chonAi.SelectedIndex][Math.Max(0, chonModel.SelectedIndex)]; }
@@ -226,6 +269,216 @@ namespace TKPCCC
         {
             GiaoDien.LuuCaiDat("chat_thu_muc", string.Join("|", thuMuc));
             VeThe();
+        }
+
+        // ---------- Đính kèm: ảnh + vùng chọn trên CAD ----------
+
+        static bool LaAnh(string f)
+        {
+            return new[] { ".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp" }.Contains(Path.GetExtension(f).ToLowerInvariant());
+        }
+
+        static bool daDon;
+
+        /// Tên file mới trong thư mục ảnh đính kèm; lần đầu mỗi phiên AutoCAD dọn ảnh quá 7 ngày.
+        static string FileAnhMoi(string duoi)
+        {
+            Directory.CreateDirectory(THU_MUC_ANH);
+            if (!daDon)
+            {
+                daDon = true;
+                foreach (string cu in Directory.GetFiles(THU_MUC_ANH))
+                    if (File.GetLastWriteTimeUtc(cu) < DateTime.UtcNow.AddDays(-7)) try { File.Delete(cu); } catch (System.Exception) { }
+            }
+            return Path.Combine(THU_MUC_ANH, DateTime.Now.ToString("yyyyMMdd_HHmmss_fff") + duoi);
+        }
+
+        /// Chép ảnh vào thư mục ảnh đính kèm: AI chỉ cần một --add-dir.
+        static string ChepAnh(string f)
+        {
+            string moi = FileAnhMoi(Path.GetExtension(f).ToLowerInvariant());
+            File.Copy(f, moi);
+            return moi;
+        }
+
+        void ThemAnh(string f)
+        {
+            anh.Add(f);
+            VeDinhKem();
+        }
+
+        /// Dán: ảnh trong clipboard (chụp màn hình) hoặc file ảnh đã copy. false = không có ảnh, dán chữ như thường.
+        bool DanAnh()
+        {
+            try
+            {
+                if (Clipboard.ContainsImage())
+                {
+                    using (Image i = Clipboard.GetImage())
+                    {
+                        if (i == null) return false;
+                        string f = FileAnhMoi(".png");
+                        i.Save(f, ImageFormat.Png);
+                        ThemAnh(f);
+                    }
+                    return true;
+                }
+                if (Clipboard.ContainsFileDropList())
+                {
+                    List<string> ds = Clipboard.GetFileDropList().Cast<string>().Where(LaAnh).ToList();
+                    foreach (string f in ds) ThemAnh(ChepAnh(f));
+                    return ds.Count > 0;
+                }
+            }
+            catch (System.Exception ex) { trangThai.Text = "Không dán được ảnh: " + ex.Message; return true; }
+            return false;
+        }
+
+        void ChonAnh()
+        {
+            using (OpenFileDialog d = new OpenFileDialog())
+            {
+                d.Filter = "Ảnh|*.png;*.jpg;*.jpeg;*.gif;*.bmp;*.webp";
+                d.Multiselect = true;
+                if (d.ShowDialog() == DialogResult.OK) foreach (string f in d.FileNames) ThemAnh(ChepAnh(f));
+            }
+        }
+
+        /// Ảnh thu nhỏ cho thẻ (không giữ khoá file). null = không đọc được (vd webp).
+        static Image ThuNho(string f)
+        {
+            try
+            {
+                using (Image i = Image.FromFile(f))
+                {
+                    double k = Math.Min(1, Math.Min(92.0 / i.Width, 80.0 / i.Height));
+                    return new Bitmap(i, Math.Max(1, (int)(i.Width * k)), Math.Max(1, (int)(i.Height * k)));
+                }
+            }
+            catch (System.Exception) { return null; }
+        }
+
+        /// Hàng đính kèm sát ô nhập: nút quét vùng, nút thêm ảnh, thẻ vùng chọn, thẻ từng ảnh (bấm thẻ để bỏ).
+        void VeDinhKem()
+        {
+            dinhKem.SuspendLayout();
+            List<Control> cu = dinhKem.Controls.Cast<Control>().ToList();
+            dinhKem.Controls.Clear();
+            foreach (Control c in cu) { if (c.BackgroundImage != null) c.BackgroundImage.Dispose(); c.Dispose(); }
+            Label q = Mau("⬚ Quét vùng CAD", QuetVung);
+            goiY.SetToolTip(q, "Quét chọn đối tượng trên bản vẽ để AI đọc và sửa đúng phần đó (lệnh TKBOTCHON).\nChọn sẵn trên bản vẽ rồi gõ yêu cầu cũng được.");
+            dinhKem.Controls.Add(q);
+            Label a = Mau("+ Ảnh", ChonAnh);
+            goiY.SetToolTip(a, "Đính kèm ảnh (hoặc Ctrl+V dán ảnh chụp màn hình, kéo thả file ảnh vào ô nhập)");
+            dinhKem.Controls.Add(a);
+            if (vungId != null)
+            {
+                Label v = Mau("⬚ " + vungId.Length + " đối tượng đang chọn  ✕", delegate { vungId = null; vungDoc = null; VeDinhKem(); });
+                v.ForeColor = GiaoDien.ChuDam;
+                goiY.SetToolTip(v, "Gửi kèm lời nhắn kế: handle, thành phần, hộp bao của vùng chọn.\nBấm để bỏ");
+                dinhKem.Controls.Add(v);
+            }
+            foreach (string f in anh)
+            {
+                string ff = f;
+                Label t = new Label();
+                t.Size = new Size(46, 40);
+                t.Margin = new Padding(0, 4, 6, 0);
+                t.BackColor = GiaoDien.The;
+                t.BackgroundImage = ThuNho(ff);
+                t.BackgroundImageLayout = ImageLayout.Zoom;
+                t.Text = t.BackgroundImage == null ? "ảnh ✕" : "✕";
+                t.TextAlign = ContentAlignment.TopRight;
+                t.ForeColor = t.BackgroundImage == null ? GiaoDien.ChuDam : Color.White;
+                t.Font = GiaoDien.Nho;
+                t.Cursor = Cursors.Hand;
+                t.Click += delegate { anh.Remove(ff); VeDinhKem(); };
+                goiY.SetToolTip(t, ff + "\nBấm để bỏ ảnh");
+                dinhKem.Controls.Add(t);
+            }
+            dinhKem.ResumeLayout();
+        }
+
+        void QuetVung()
+        {
+            AcAp.Document d = AcAp.Core.Application.DocumentManager.MdiActiveDocument;
+            if (d == null) { trangThai.Text = "Chưa mở bản vẽ nào."; return; }
+            d.SendStringToExecute("_TKBOTCHON ", true, false, false);
+        }
+
+        /// Gắn vùng chọn (TKBOTCHON: giu = true).
+        public void DatVung(AcAp.Document d, Db.ObjectId[] ids, bool giu)
+        {
+            vungDoc = ids.Length > 0 ? d : null;
+            vungId = ids.Length > 0 ? ids : null;
+            vungGiu = giu;
+            VeDinhKem();
+        }
+
+        /// Đối tượng đang chọn trên bản vẽ đổi: có thì thành vùng chọn; bỏ chọn hết thì bỏ thẻ (trừ vùng TKBOTCHON).
+        public void ChonDoi(AcAp.Document d, Db.ObjectId[] ids)
+        {
+            if (ids.Length > 0)
+            {
+                if (vungId != null && vungDoc == d && ids.SequenceEqual(vungId)) return;
+                DatVung(d, ids, false);
+            }
+            else if (vungId != null && !vungGiu && vungDoc == d) DatVung(d, ids, false);
+        }
+
+        static string So(double x) { return Math.Round(x).ToString(CultureInfo.InvariantCulture); }
+
+        /// Mô tả vùng chọn gửi kèm lời nhắn: tên bản vẽ, số đối tượng, hộp bao, thành phần (loại / block / layer), handle. "" = không có vùng.
+        string MoTaVung(bool claude)
+        {
+            if (vungId == null) return "";
+            AcAp.Document d = vungDoc;
+            if (!AcAp.Core.Application.DocumentManager.Cast<AcAp.Document>().Contains(d)) return ""; // bản vẽ đã đóng
+            List<Db.ObjectId> ids = vungId.Where(i => i.IsValid && !i.IsErased).ToList();
+            if (ids.Count == 0) return "";
+            Dictionary<string, int> dem = new Dictionary<string, int>();
+            Db.Extents3d? hop = null;
+            try
+            {
+                using (d.LockDocument())
+                using (Db.Transaction tr = d.Database.TransactionManager.StartTransaction())
+                {
+                    foreach (Db.ObjectId id in ids)
+                    {
+                        Db.Entity e = tr.GetObject(id, Db.OpenMode.ForRead) as Db.Entity;
+                        if (e == null) continue;
+                        string k = id.ObjectClass.DxfName;
+                        Db.BlockReference br = e as Db.BlockReference;
+                        if (br != null)
+                            k += " " + ((Db.BlockTableRecord)tr.GetObject(br.IsDynamicBlock ? br.DynamicBlockTableRecord : br.BlockTableRecord, Db.OpenMode.ForRead)).Name;
+                        k += " (layer " + e.Layer + ")";
+                        int c;
+                        dem.TryGetValue(k, out c);
+                        dem[k] = c + 1;
+                        try
+                        {
+                            Db.Extents3d x = e.GeometricExtents;
+                            if (hop.HasValue) { Db.Extents3d h = hop.Value; h.AddExtents(x); hop = h; } else hop = x;
+                        }
+                        catch (System.Exception) { }
+                    }
+                    tr.Commit();
+                }
+            }
+            catch (System.Exception) { } // bản vẽ đang bận (lệnh đang chạy): vẫn gửi số đối tượng + handle
+            StringBuilder s = new StringBuilder();
+            s.Append("Vùng tôi đang quét chọn trên bản vẽ \"" + Path.GetFileName(d.Name) + "\": " + ids.Count + " đối tượng");
+            if (hop.HasValue)
+                s.Append(", hộp bao [" + So(hop.Value.MinPoint.X) + "," + So(hop.Value.MinPoint.Y) + "," + So(hop.Value.MaxPoint.X) + "," + So(hop.Value.MaxPoint.Y) + "]");
+            s.Append(".\n");
+            if (dem.Count > 0)
+                s.Append("Thành phần: " + string.Join("; ", dem.OrderByDescending(p => p.Value).Take(15).Select(p => p.Value + " " + p.Key)) + (dem.Count > 15 ? "; ..." : "") + ".\n");
+            s.Append("Handle: " + string.Join(",", ids.Take(TOI_DA_HANDLE).Select(i => i.Handle.ToString()))
+                + (ids.Count > TOI_DA_HANDLE ? " (còn " + (ids.Count - TOI_DA_HANDLE) + " đối tượng, lọc thêm bằng hop + l)" : "") + "\n");
+            if (claude)
+                s.Append("Đọc chi tiết: cad_chay {\"ops\":[{\"op\":\"doc\",\"gi\":\"dt\",\"h\":[...]}]}; xem hình: op anh với hop trên. "
+                    + "Sửa: op sua (h, doi, xoay, tl, tam, l_moi, mau, t), xoa (h) hoặc vẽ mới. Chỉ đụng tới vùng này trừ khi tôi bảo khác.\n");
+            return s.Append("\n").ToString();
         }
 
         static Label Mau(string chu, Action viec)
@@ -303,9 +556,14 @@ namespace TKPCCC
             string model = ai == 0 ? ModelChon() : ModelChon() + "-" + EffortChon(), effort = EffortChon();
             if (aiPhien != ai) phien = null;
             List<string> co = thuMuc.Where(Directory.Exists).ToList();
-            string themDir = string.Concat(co.Select(d => " --add-dir " + Ngoac(d)));
-            string gui1 = co.Count == 0 ? cau
-                : "Thư mục dự án gắn kèm (đọc khi cần làm ngữ cảnh):\n" + string.Join("\n", co.Select(d => "- " + d)) + "\n\n" + cau;
+            List<string> anhCo = anh.Where(File.Exists).ToList();
+            string themDir = string.Concat(co.Select(d => " --add-dir " + Ngoac(d))) + (anhCo.Count > 0 ? " --add-dir " + Ngoac(THU_MUC_ANH) : "");
+            string vung = MoTaVung(ai == 0);
+            string gui1 = (co.Count == 0 ? "" : "Thư mục dự án gắn kèm (đọc khi cần làm ngữ cảnh):\n" + string.Join("\n", co.Select(d => "- " + d)) + "\n\n")
+                + vung
+                + (anhCo.Count == 0 ? "" : "Ảnh đính kèm (mở xem bằng công cụ Read):\n" + string.Join("\n", anhCo.Select(f => "- " + f)) + "\n\n")
+                + cau;
+            string kem = (vung != "" ? "  [vùng chọn " + vungId.Length + " đối tượng]" : "") + (anhCo.Count > 0 ? "  [" + anhCo.Count + " ảnh]" : "");
 
             bool quaCmd;
             string exe, doiSo;
@@ -338,8 +596,12 @@ namespace TKPCCC
             si.EnvironmentVariables.Remove("CLAUDECODE");
             si.EnvironmentVariables["NO_COLOR"] = "1";
 
-            Ghi("Bạn", cau, GiaoDien.Xanh);
+            Ghi("Bạn", cau + kem, GiaoDien.Xanh);
             nhap.Clear();
+            anh.Clear(); // đính kèm đi theo lời nhắn này; hội thoại tiếp vẫn nhớ (--resume)
+            vungId = null;
+            vungDoc = null;
+            VeDinhKem();
             loi.Length = 0;
             aiPhien = ai;
             Process q = new Process();

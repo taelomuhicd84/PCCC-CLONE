@@ -2,7 +2,7 @@
 // Chromium có sẵn của AutoCAD 2021 (AcCef) là bản 77 đời 2019, YouTube hiện nay không chạy được nên không dùng.
 // Thư viện WebView2 (module/youtube/webview2, Microsoft, giấy phép BSD, gói NuGet Microsoft.Web.WebView2 1.0.2903.40) build.bat chép cạnh TKPCCC.YouTube.dll.
 // Dữ liệu trình duyệt ở %LOCALAPPDATA%\TKPCCC\WebView2 (mặc định nằm cạnh acad.exe trong Program Files: không ghi được). Link cuối lưu `yt_cuoi`.
-// Người dùng 17/11: chọn trình xem `yt_trinh_duyet` = webview2 (trong palette) | brave (Brave không nhúng được: mở cửa sổ app riêng áp mép phải AutoCAD).
+// Người dùng 17/11: chọn trình xem `yt_trinh_duyet` = webview2 (trong palette) | brave (Brave không nhúng được: mở cửa sổ Brave riêng, xem MoBrave).
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -80,7 +80,8 @@ namespace TKPCCC
             if (brave)
             {
                 string exe = HangDoi.TimBrave();
-                Bao("Chế độ Brave: dán link hoặc gõ từ khoá ở ô trên rồi Enter (hoặc bấm Trang chủ), video mở trong cửa sổ Brave riêng áp mép phải AutoCAD.\n\n"
+                Bao("Chế độ Brave: dán link hoặc gõ từ khoá ở ô trên rồi Enter (hoặc bấm Trang chủ): mở thành tab mới trong cửa sổ Brave riêng của TKPCCC "
+                    + "(lướt web, thêm tab như Brave thường; nút toàn màn hình chỉ phủ khung cửa sổ, Esc để thoát). Lần đầu cửa sổ áp mép phải AutoCAD, chỉnh cỡ một lần là Brave nhớ.\n\n"
                     + (exe == null ? "CHƯA thấy Brave trên máy: cài ở https://brave.com/download/ (hoặc Hub TKPCCC, nhóm YouTube)." : "Brave: " + exe)
                     + "\n\nBấm \"Xem trong CAD\" để quay lại xem ngay trong palette (WebView2).");
                 return;
@@ -93,22 +94,27 @@ namespace TKPCCC
         [DllImport("user32.dll")] static extern bool GetWindowRect(IntPtr h, out RECT r);
         [StructLayout(LayoutKind.Sequential)] struct RECT { public int Trai, Tren, Phai, Duoi; }
 
-        /// Cửa sổ app Brave rộng 480 px áp mép phải bên trong cửa sổ AutoCAD (AutoCAD phóng to thì ngoài mép là ngoài màn hình).
-        /// shortcut: Brave đang mở sẵn thì có khi bỏ qua --window-position; cần thì dời bằng SetWindowPos theo cửa sổ mới.
+        /// Người dùng 18/11: Brave lướt web được (cửa sổ thường có tab + thanh địa chỉ, không còn --app chỉ một trang); link mở thêm = tab mới trong cửa sổ đó.
+        /// Hồ sơ riêng %LOCALAPPDATA%\TKPCCC\Brave = tiến trình Brave riêng, nên cờ dòng lệnh luôn có hiệu lực dù Brave chính đang mở:
+        /// nạp extension brave_khung (cạnh DLL) để nút toàn màn hình (YouTube) chỉ phủ khung cửa sổ, không nhảy cả màn hình.
+        /// Lần đầu (chưa có hồ sơ) đặt cửa sổ rộng 480 px áp mép phải AutoCAD; sau đó Brave tự nhớ vị trí, cỡ người dùng chỉnh.
         void MoBrave(string url)
         {
             string exe = HangDoi.TimBrave();
             if (exe == null) { Process.Start("https://brave.com/download/"); return; }
+            string hoSo = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TKPCCC", "Brave");
+            string ext = Path.Combine(Path.GetDirectoryName(typeof(BangYoutube).Assembly.Location), "brave_khung");
+            string co = "--user-data-dir=\"" + hoSo + "\" --no-first-run --no-default-browser-check";
+            if (Directory.Exists(ext)) co += " --load-extension=\"" + ext + "\"";
             IntPtr h = Autodesk.AutoCAD.ApplicationServices.Application.MainWindow.Handle;
             RECT r;
-            string viTri = "";
-            if (GetWindowRect(h, out r))
+            if (!Directory.Exists(hoSo) && GetWindowRect(h, out r))
             {
                 Rectangle man = Screen.FromHandle(h).WorkingArea;
                 int tren = Math.Max(r.Tren, man.Top), duoi = Math.Min(r.Duoi, man.Bottom), phai = Math.Min(r.Phai, man.Right), rong = 480;
-                viTri = " --window-position=" + (phai - rong) + "," + tren + " --window-size=" + rong + "," + (duoi - tren);
+                co += " --window-position=" + (phai - rong) + "," + tren + " --window-size=" + rong + "," + (duoi - tren);
             }
-            Process.Start(exe, "--app=\"" + url + "\"" + viTri);
+            Process.Start(exe, co + " \"" + url + "\"");
             GiaoDien.LuuCaiDat("yt_cuoi", url);
         }
 

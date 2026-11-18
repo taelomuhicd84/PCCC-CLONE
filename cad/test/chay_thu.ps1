@@ -17,7 +17,6 @@ if ($LASTEXITCODE) { throw 'Bien dich loi' }
 & "$FW\csc.exe" /nologo /target:library /platform:x64 /codepage:65001 /out:"$T\TKPCCC.UI.dll" `
   /r:"$ACAD\acdbmgd.dll" /r:"$ACAD\accoremgd.dll" /r:"$ACAD\acmgd.dll" /r:"$ACAD\AdWindows.dll" `
   /r:"$FW\WPF\PresentationCore.dll" /r:"$FW\WPF\WindowsBase.dll" /r:"$FW\System.Xaml.dll" `
-  /r:"$GOC\cad\module\ui\webview2\Microsoft.Web.WebView2.Core.dll" /r:"$GOC\cad\module\ui\webview2\Microsoft.Web.WebView2.WinForms.dll" `
   /r:System.Core.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll /r:"$T\TKPCCC.Cad.dll" "$GOC\cad\module\ui\*.cs"
 if ($LASTEXITCODE) { throw 'Bien dich TKPCCC.UI.dll loi' }
 # DLL chi cho test: chen block dong tu ban ve mau Autodesk (cai cung AutoCAD) va dat trang thai Visibility (accoreconsole khong co setpropertyvalue).
@@ -303,6 +302,10 @@ $XIEN = @(@(1100, 36000), @(13900, 40300), @(52500, 25100), @(16000, 0), @(0, 20
 # Ma van sprinkler moi trong vat_tu.json (Buoc 5): dat 2 OS&Y + 1 XK, dem theo MA_VT ("mat bang" cho phep kiem chong dem trung cua so_do).
 '{"goc":[1100000,0],"ops":[{"op":"dat","ma":"SPR_VAN_OSY_DN100","p":[[0,0],[0,1000]],"goc":90},{"op":"dat","ma":"SPR_VAN_XK","p":[[1000,0]]},{"op":"dem"}]}' |
   Set-Content -Encoding ascii "$T\van.json"
+# Bot chat sua vung quet chon (18/11): sua theo l / hop (doi + l_moi + mau, doi chu), doc gi dt, h sai thi sua bao loi, xoa h sai khong xoa gi.
+('{"goc":[5300000,0],"ops":[{"op":"net","l":"SUA_THU","p":[[0,0],[1000,0]]},{"op":"chu","l":"SUA_THU","p":[0,500],"t":"CU","cao":100},' +
+ '{"op":"sua","l":"SUA_THU","doi":[500,200],"l_moi":"SUA_MOI","mau":1},{"op":"sua","l":"SUA_MOI","hop":[-1000,-1000,3000,3000],"t":"MOI"},' +
+ '{"op":"doc","gi":"dt","l":"SUA_MOI"},{"op":"sua","h":["ZZZ0"],"doi":[1,1]},{"op":"xoa","h":["ZZZ0"]}]}') | Set-Content -Encoding ascii "$T\sua.json"
 # Bang tren mat bang (hoc ban ve mau 14/11): quy dinh lap dat + ky hieu cac van trong vung van.json
 '{"ops":[{"op":"bang","loai":"quy_dinh","p":[5200000,0]},{"op":"bang","loai":"ky_hieu","p":[5200000,-8000],"hop":[1099000,-1000,1102000,2000]}]}' |
   Set-Content -Encoding ascii "$T\bang_mb.json"
@@ -321,7 +324,7 @@ $bamTv = (Get-FileHash "$T\PCCC_Blocks.dwg").Hash
   'PCCC_SPEC', "$T\khoa_sai.json", 'PCCC_SPEC', "$T\khoa_dung.json", 'PCCC_SPEC', "$T\anh.json", 'PCCC_SPEC', "$T\pdf_sai.json", 'PCCC_SPEC', "$T\pdf.json",
   'PCCC_SPEC', "$T\pdf2.json", 'PCCC_SPEC', "$T\xoa2.json", 'PCCC_SPEC', "$T\rai_loi.json", 'PCCC_SPEC', "$T\tuyen_thu.json", 'PCCC_SPEC', "$T\nhan.json",
   'PCCC_SPEC', "$T\rai_moi.json", 'PCCC_SPEC', "$T\pdf_mk.json", 'PCCC_SPEC', "$T\rv_tuyen.json", 'PCCC_SPEC', "$T\hoa.json", 'PCCC_SPEC', "$T\hoa_doc.json",
-  'PCCC_SPEC', "$T\rv_hang.json", 'PCCC_SPEC', "$T\rv2.json", 'PCCC_SPEC', "$T\van.json", 'PCCC_SPEC', "$T\bang_mb.json", 'PCCC_SPEC', "$T\so_do.json", 'PCCC_SPEC', "$T\so_do_loi.json", 'PCCC_SPEC', "$T\so_do_bc.json", 'PCCC_SPEC', "$T\so_do_bc_loi.json", 'PCCC_SPEC', "$T\so_do_bc_ng.json",
+  'PCCC_SPEC', "$T\rv_hang.json", 'PCCC_SPEC', "$T\rv2.json", 'PCCC_SPEC', "$T\van.json", 'PCCC_SPEC', "$T\sua.json", 'PCCC_SPEC', "$T\bang_mb.json", 'PCCC_SPEC', "$T\so_do.json", 'PCCC_SPEC', "$T\so_do_loi.json", 'PCCC_SPEC', "$T\so_do_bc.json", 'PCCC_SPEC', "$T\so_do_bc_loi.json", 'PCCC_SPEC', "$T\so_do_bc_ng.json",
   'PCCC_SPEC', "$T\so_do_loc.json", 'PCCC_SPEC', "$T\so_do_bc2.json", 'INSUNITS', '6', 'PCCC_SPEC', "$T\so_do_m.json", 'INSUNITS', '1', 'PCCC_SPEC', "$T\rai_inch.json", 'INSUNITS', '0', 'PCCC_SPEC', "$T\rai_unitless.json", 'INSUNITS', '4', 'PCCC_SPEC', "$T\rai_xien.json",
   'RECTANG', '3000000,0', '3030600,20400', 'PCCC_RAI', 'BC_KHOI', '', '', 'L', '', '', '',
   'RECTANG', '3200000,0', '3230600,20400', 'PCCC_RAI', 'BC_KHOI', 'HeSo', '50', '', '', 'L', '', '', '',
@@ -643,6 +646,12 @@ Kiem ($ld.Count -eq 1 -and $ld[0].p[0] -gt 1703900 -and $ld[0].p[1] -gt 43800 -a
 $ksm = DocKq 'so_do_m'
 Kiem ($ksm -and $ksm.ok -eq $true -and $ksm.hop -and ($ksm.hop[2] - $ksm.hop[0]) -lt 50 -and ($ksm.hop[3] - $ksm.hop[1]) -lt 30) `
   "so_do ban ve don vi m: co chu nhan k, hop vai chuc m (thay $($ksm.hop -join ', '))"
+$ksu = DocKq 'sua'
+$dl = if ($ksu) { @($ksu.doc[0].ds) } else { @() }
+$dLn = $dl | Where-Object { $_.loai -eq 'LWPOLYLINE' }; $dCh = $dl | Where-Object { $_.loai -eq 'MTEXT' }
+Kiem ($ksu -and $ksu.sua -eq 4 -and $ksu.xoa -eq 0 -and @($ksu.loi).Count -eq 1 -and $ksu.loi[0].i -eq 5 -and $ksu.doc[0].n -eq 2 -and
+  $dLn.mau -eq 1 -and $dLn.l -eq 'SUA_MOI' -and ($dLn.p[0] -join ',') -eq '5300500,200' -and ($dLn.p[1] -join ',') -eq '5301500,200' -and $dCh.t -eq 'MOI' -and $dLn.h -match '^[0-9A-F]+$') `
+  "sua (Bot chat): doi 500,200 + l_moi + mau 1, doi chu MOI, doc gi dt tra handle; h sai bao loi ($($ksu | ConvertTo-Json -Compress -Depth 5))"
 $kv = DocKq 'van'
 Kiem ($kv -and $kv.ok -eq $true -and $kv.ve -eq 3 -and $kv.dem.SPR_VAN_OSY_DN100 -eq 2 -and $kv.dem.SPR_VAN_XK -eq 1) `
   "dat ma van moi: 2 SPR_VAN_OSY_DN100 + 1 SPR_VAN_XK, dem theo MA_VT (thay ve $($kv.ve), dem $($kv.dem | ConvertTo-Json -Compress))"

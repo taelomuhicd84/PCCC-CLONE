@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "TKPCCC - Toàn màn hình trong khung",
+  "version": "1.0",
+  "description": "Nút toàn màn hình (YouTube, mọi trang) chỉ phủ khung cửa sổ Brave của TKPCCC, không chiếm cả màn hình.",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["khung.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    }
+  ]
+}

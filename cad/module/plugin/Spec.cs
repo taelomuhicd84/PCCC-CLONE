@@ -29,7 +29,7 @@ namespace TKPCCC
             public BlockTableRecord Ms;
             public FileDanhMuc Dm;
             public double Gx, Gy;
-            public int Ve, Xoa;
+            public int Ve, Xoa, Sua;
             public Extents3d? Hop;
             public List<object> Loi = new List<object>();
             public List<object> KqDoc = new List<object>();
@@ -215,6 +215,7 @@ namespace TKPCCC
             kq["ok"] = g.Loi.Count == 0;
             kq["ve"] = g.Ve;
             kq["xoa"] = g.Xoa;
+            if (g.Sua > 0) kq["sua"] = g.Sua;
             if (g.Hop.HasValue)
             {
                 Extents3d h = g.Hop.Value;
@@ -353,6 +354,7 @@ namespace TKPCCC
                 case "luoi_truc": OpLuoiTruc(g, o); break;
                 case "xoa": OpXoa(g, o); break;
                 case "doc": OpDoc(g, o); break;
+                case "sua": OpSua(g, o); break;
                 case "dem": OpDem(g); break;
                 case "rai": OpRai(g, o); break;     // cad/module/plugin/Rai.cs
                 case "tuyen": OpTuyen(g, o); break; // cad/module/plugin/Rai.cs
@@ -628,11 +630,21 @@ namespace TKPCCC
             return x.MinPoint.X >= h[0] && x.MinPoint.Y >= h[1] && x.MaxPoint.X <= h[2] && x.MaxPoint.Y <= h[3];
         }
 
-        static List<Entity> Loc(GoiSpec g, string l, double[] hop)
+        /// "h": [handle, ...] của thao tác (Bot chat gửi handle vùng người dùng quét chọn), null nếu không có.
+        static HashSet<string> HandleOp(Dictionary<string, object> o)
+        {
+            object v = Lay(o, "h");
+            if (v == null) return null;
+            if (v is string) return new HashSet<string> { ((string)v).Trim().ToUpperInvariant() };
+            return new HashSet<string>(DS(v, "h").Cast<object>().Select(x => Convert.ToString(x, CultureInfo.InvariantCulture).Trim().ToUpperInvariant()));
+        }
+
+        static List<Entity> Loc(GoiSpec g, string l, double[] hop, HashSet<string> h = null)
         {
             List<Entity> kq = new List<Entity>();
             foreach (ObjectId id in g.Ms)
             {
+                if (h != null && !h.Contains(id.Handle.ToString())) continue;
                 Entity e = g.Tr.GetObject(id, OpenMode.ForRead) as Entity;
                 if (e == null || (l != null && !KhopTen(e.Layer, l)) || !TrongHop(e, hop)) continue;
                 kq.Add(e);
@@ -644,9 +656,10 @@ namespace TKPCCC
         {
             string l = LayChu(o, "l", null);
             double[] hop = HopOp(g, o);
-            if (l == null && hop == null && !LayCo(o, "tat_ca", false))
-                throw new System.Exception("xoa cần \"l\" (layer, cho phép đuôi *) hoặc \"hop\" [x1,y1,x2,y2]; xoá hết thì thêm \"tat_ca\":true");
-            foreach (Entity e in Loc(g, l, hop))
+            HashSet<string> h = HandleOp(o);
+            if (l == null && hop == null && h == null && !LayCo(o, "tat_ca", false))
+                throw new System.Exception("xoa cần \"l\" (layer, cho phép đuôi *), \"hop\" [x1,y1,x2,y2] hoặc \"h\" [handle]; xoá hết thì thêm \"tat_ca\":true");
+            foreach (Entity e in Loc(g, l, hop, h))
             {
                 e.UpgradeOpen();
                 e.Erase();
@@ -654,17 +667,107 @@ namespace TKPCCC
             }
         }
 
+        /// Sửa đối tượng có sẵn (Bot chat: sửa vùng người dùng quét chọn). Chọn như xoa: "h", "l", "hop".
+        /// Đổi: "tl" (tỉ lệ) rồi "xoay" (độ) quanh "tam" (mặc định tâm hộp bao các đối tượng), rồi dời "doi" [dx,dy]; "l_moi", "mau" (0–256), "t" (chữ).
+        static void OpSua(GoiSpec g, Dictionary<string, object> o)
+        {
+            string l = LayChu(o, "l", null);
+            double[] hop = HopOp(g, o);
+            HashSet<string> h = HandleOp(o);
+            if (l == null && hop == null && h == null) throw new System.Exception("sua cần \"h\" [handle], \"l\" hoặc \"hop\" để chọn đối tượng");
+            List<Entity> ds = Loc(g, l, hop, h);
+            if (ds.Count == 0) throw new System.Exception("sua: không có đối tượng nào khớp (handle sai, đã xoá, hoặc không ở không gian đang vẽ)");
+            double tl = LaySo(o, "tl", 1), xoay = LaySo(o, "xoay", 0);
+            if (tl <= 0) throw new System.Exception("sua: \"tl\" phải > 0");
+            IList doi = Lay(o, "doi") as IList;
+            if (doi != null && doi.Count < 2) throw new System.Exception("sua: \"doi\" phải là [dx,dy]");
+            string lMoi = LayChu(o, "l_moi", null), t = LayChu(o, "t", null);
+            object mau = Lay(o, "mau");
+            if (tl == 1 && xoay == 0 && doi == null && lMoi == null && mau == null && t == null)
+                throw new System.Exception("sua cần ít nhất một thay đổi: doi, xoay, tl, l_moi, mau, t");
+            Point3d tam;
+            if (Lay(o, "tam") != null) tam = P(g, o["tam"], "tam");
+            else
+            {
+                Extents3d? x = null;
+                foreach (Entity e in ds)
+                {
+                    try { Extents3d k = e.GeometricExtents; if (x.HasValue) { Extents3d c = x.Value; c.AddExtents(k); x = c; } else x = k; }
+                    catch (System.Exception) { }
+                }
+                tam = x.HasValue ? x.Value.MinPoint + (x.Value.MaxPoint - x.Value.MinPoint) / 2 : Point3d.Origin;
+            }
+            Matrix3d m = Matrix3d.Scaling(tl, tam);
+            m = Matrix3d.Rotation(xoay * Math.PI / 180, Vector3d.ZAxis, tam) * m;
+            if (doi != null) m = Matrix3d.Displacement(new Vector3d(D(doi[0]), D(doi[1]), 0)) * m;
+            bool bienDoi = tl != 1 || xoay != 0 || doi != null;
+            ObjectId lid = lMoi == null ? ObjectId.Null : DamBaoLayer(g.Db, g.Tr, lMoi, 7);
+            foreach (Entity e in ds)
+            {
+                e.UpgradeOpen();
+                if (bienDoi) e.TransformBy(m);
+                if (lMoi != null) e.LayerId = lid;
+                if (mau != null) e.ColorIndex = (int)D(mau);
+                if (t != null)
+                {
+                    if (e is DBText) ((DBText)e).TextString = t;
+                    else if (e is MText) ((MText)e).Contents = t.Replace("\\", "\\\\").Replace("{", "\\{").Replace("}", "\\}").Replace("\n", "\\P");
+                }
+                g.Sua++;
+                try { MoHop(g, e.GeometricExtents); } catch (System.Exception) { }
+            }
+        }
+
+        static double[] XY(Point3d p) { return new double[] { Lt(p.X), Lt(p.Y) }; }
+
+        /// Một đối tượng cho doc gi:"dt": handle, loại DXF, layer, màu (khi khác ByLayer), hộp, rồi hình riêng (điểm, tâm + bán kính, chữ, tên block).
+        static Dictionary<string, object> MoTaDt(GoiSpec g, Entity e)
+        {
+            Dictionary<string, object> d = new Dictionary<string, object> { { "h", e.Handle.ToString() }, { "loai", e.GetRXClass().DxfName }, { "l", e.Layer } };
+            if (e.ColorIndex != 256) d["mau"] = e.ColorIndex;
+            try { Extents3d x = e.GeometricExtents; d["hop"] = new double[] { Lt(x.MinPoint.X), Lt(x.MinPoint.Y), Lt(x.MaxPoint.X), Lt(x.MaxPoint.Y) }; }
+            catch (System.Exception) { }
+            Line ln = e as Line;
+            Polyline pl = e as Polyline;
+            Circle c = e as Circle;
+            Arc a = e as Arc;
+            DBText t = e as DBText;
+            MText mt = e as MText;
+            BlockReference br = e as BlockReference;
+            if (ln != null) d["p"] = new object[] { XY(ln.StartPoint), XY(ln.EndPoint) };
+            else if (pl != null)
+            {
+                List<object> p = new List<object>();
+                for (int i = 0; i < pl.NumberOfVertices && i < 12; i++) p.Add(XY(pl.GetPoint3dAt(i)));
+                d["p"] = p;
+                if (pl.NumberOfVertices > 12) d["dinh"] = pl.NumberOfVertices;
+                if (pl.Closed) d["kin"] = true;
+            }
+            else if (c != null) { d["c"] = XY(c.Center); d["r"] = Lt(c.Radius); }
+            else if (a != null) { d["c"] = XY(a.Center); d["r"] = Lt(a.Radius); d["goc"] = new double[] { Lt(a.StartAngle * 180 / Math.PI), Lt(a.EndAngle * 180 / Math.PI) }; }
+            else if (t != null) { d["t"] = t.TextString; d["p"] = XY(t.Position); }
+            else if (mt != null) { d["t"] = mt.Text; d["p"] = XY(mt.Location); }
+            else if (br != null && !(br is Table)) { d["ten"] = TenBlock(br, g.Tr); d["p"] = XY(br.Position); d["goc"] = Lt(br.Rotation * 180 / Math.PI); }
+            return d;
+        }
+
         static void OpDoc(GoiSpec g, Dictionary<string, object> o)
         {
             string gi = LayChu(o, "gi", "layer");
             string l = LayChu(o, "l", null);
             double[] hop = HopOp(g, o);
+            HashSet<string> h = HandleOp(o);
             List<object> ds = new List<object>();
             int n = 0;
-            if (gi == "layer")
+            if (gi == "dt")
+            {
+                foreach (Entity e in Loc(g, l, hop, h))
+                    if (++n <= DOC_TOI_DA) ds.Add(MoTaDt(g, e));
+            }
+            else if (gi == "layer")
             {
                 Dictionary<string, int> dem = new Dictionary<string, int>();
-                foreach (Entity e in Loc(g, l, hop)) { int c; dem.TryGetValue(e.Layer, out c); dem[e.Layer] = c + 1; }
+                foreach (Entity e in Loc(g, l, hop, h)) { int c; dem.TryGetValue(e.Layer, out c); dem[e.Layer] = c + 1; }
                 n = dem.Count;
                 foreach (KeyValuePair<string, int> p in dem.OrderByDescending(x => x.Value).Take(DOC_TOI_DA))
                     ds.Add(new Dictionary<string, object> { { "l", p.Key }, { "n", p.Value } });
@@ -673,7 +776,7 @@ namespace TKPCCC
             {
                 // Vùng = polyline kín, mặc định trên layer PCCC_VUNG: diện tích m2, hộp bao, đỉnh (tối đa 12).
                 double m = HeSoMet(g.Db);
-                foreach (Entity e in Loc(g, l ?? "PCCC_VUNG", hop))
+                foreach (Entity e in Loc(g, l ?? "PCCC_VUNG", hop, h))
                 {
                     Polyline pl = e as Polyline;
                     if (!KinPl(pl)) continue;
@@ -687,7 +790,7 @@ namespace TKPCCC
             }
             else if (gi == "chu")
             {
-                foreach (Entity e in Loc(g, l, hop))
+                foreach (Entity e in Loc(g, l, hop, h))
                 {
                     DBText t = e as DBText;
                     MText mt = e as MText;
@@ -697,7 +800,7 @@ namespace TKPCCC
                     ds.Add(new Dictionary<string, object> { { "t", t != null ? t.TextString : mt.Text }, { "p", new double[] { Lt(q.X), Lt(q.Y) } }, { "l", e.Layer } });
                 }
             }
-            else throw new System.Exception("doc: \"gi\" phải là layer, vung hoặc chu");
+            else throw new System.Exception("doc: \"gi\" phải là layer, vung, chu hoặc dt");
             Dictionary<string, object> kq = new Dictionary<string, object> { { "gi", gi }, { "n", n }, { "ds", ds } };
             if (n > ds.Count) kq["con"] = n - ds.Count;
             g.KqDoc.Add(kq);

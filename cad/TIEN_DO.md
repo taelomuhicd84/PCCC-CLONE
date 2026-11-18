@@ -3,6 +3,23 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## VIỆC 18/11 — BOT CHAT NHƯ VS CODE (ẢNH + VÙNG CHỌN CAD) · BRAVE CÓ TAB, TOÀN MÀN HÌNH TRONG KHUNG: XONG MÃ + TEST, CHỜ NGƯỜI DÙNG THỬ TRONG AUTOCAD
+Người dùng: "điều chỉnh bot chat giống như VS code và claude code, có thể paste ảnh vào, quét chọn vùng trên cad và ra lệnh cho bot chat sửa ... YouTube vừa lướt web
+bằng brave vừa xem youtube, thêm tab mới trong trình duyệt brave"; giữa chừng: "ấn fullscreen trên youtube bằng brave thì nhảy full màn, chỉ muốn full viền (cửa sổ) đã fix cứng".
+- Bot chat (`module/botchat/`): Enter gửi, Shift+Enter xuống dòng; Ctrl+V / menu Dán (`ONhap` bắt WM_PASTE) / kéo thả / "+ Ảnh" đính kèm ảnh (chép vào
+  `%LOCALAPPDATA%\TKPCCC\botchat\anh`, dọn > 7 ngày; lời nhắn ghi đường dẫn, `--add-dir` thư mục đó, AI xem bằng Read). Thẻ vùng chọn: đối tượng đang chọn
+  (pickfirst, `ImpliedSelectionChanged`) hoặc nút "⬚ Quét vùng CAD" = lệnh mới `TKBOTCHON` (giữ cả khi bỏ chọn). Gửi kèm: tên bản vẽ, số đối tượng, hộp bao,
+  thành phần (loại DXF + tên block + layer, 15 nhóm), ≤ 200 handle + cách sửa. Ảnh, vùng đi theo một lời nhắn, gửi xong thì bỏ.
+- Spec (`module/plugin/Spec.cs`, `skills/TU_VUNG.md`): lọc `h` [handle] cho `xoa`, `doc`; `doc gi:"dt"` (từng đối tượng: h, loai, l, mau, hop, p/c/r/t/ten);
+  thao tác mới `sua` (chọn h | l | hop; tl, xoay quanh tam, doi, l_moi, mau, t), kết quả `sua`. Test: mục "sua (Bot chat)" trong `chay_thu.ps1`.
+- Brave (`module/youtube/BangYoutube.cs` `MoBrave`): hồ sơ riêng `%LOCALAPPDATA%\TKPCCC\Brave` (tiến trình riêng nên cờ luôn có hiệu lực), cửa sổ THƯỜNG có tab +
+  thanh địa chỉ (bỏ `--app`), link sau mở thành tab mới; lần đầu áp mép phải AutoCAD rộng 480, sau đó Brave nhớ vị trí người dùng chỉnh.
+  Toàn màn hình: extension `module/youtube/brave_khung/` (MV3, content script world MAIN thay requestFullscreen / fullscreenElement: phần tử phủ khung trang,
+  Esc thoát), build.bat chép cạnh DLL, nạp bằng `--load-extension`. ĐÃ THỬ Brave 1.99 (Chromium 157) headless: YouTube bấm nút toàn màn hình → player phủ đúng 500 x 675 khung trang.
+- Sửa test: `chay_thu.ps1` còn tham chiếu `module\ui\webview2` (đã dời sang `module\youtube\webview2` lúc tách plugin) nên dừng ngay ở bước biên dịch UI.
+CHƯA: thử trong AutoCAD có giao diện (AutoCAD người dùng đang mở: tắt hẳn, mở lại để nạp bản mới; `thu_gui.ps1` chưa chạy); chưa gửi câu Bot chat thật (tốn hạn mức);
+Ctrl+V trong palette có thể bị AutoCAD giữ làm PASTECLIP (khi đó dùng chuột phải → Paste hoặc "+ Ảnh"); WebView2 trong CAD chưa có tab (người dùng hỏi tab ở Brave).
+
 ## VIỆC 17/11 (8) — TÁCH 3 PLUGIN (PCCC · YOUTUBE · BOT CHAT), BOT CHAT CHỌN EFFORT, YOUTUBE CỬA SỔ CO GIÃN: XONG, ĐÃ THỬ TRONG AUTOCAD
 Người dùng: "tách riêng plugin youtube, plugin TKPCCC-PCCC và plugin bot chat ra riêng làm 3 plugin ... bot chat cho chọn model và effort ... Youtube thu nhỏ lại,
 kéo giãn lên xuống trái phải được ... tự động chạy không cần hỏi quyền".

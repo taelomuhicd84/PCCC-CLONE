@@ -10,6 +10,7 @@
     <ComponentEntry AppName="TKPCCC_BotChat" ModuleName="./Contents/TKPCCC.BotChat.dll" LoadOnAutoCADStartup="True">
       <Commands GroupName="TKPCCC_BOTCHAT">
         <Command Local="TKBOTCHAT" Global="TKBOTCHAT" />
+        <Command Local="TKBOTCHON" Global="TKBOTCHON" />
       </Commands>
     </ComponentEntry>
   </Components>

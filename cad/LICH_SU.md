@@ -623,3 +623,10 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
 - File "test vùng báo cháy.dwg" (bản chép): block mặt bằng dầm chép đè khớp trục → 1 vùng 270,82 m², 2 khoang theo dầm sâu, dầm 400X250 (d 0,28) bỏ. Sửa: dầm trong block dầm chép đè nhận theo layer, mọi màu.
 - Tách plugin YouTube (`TKYOUTUBE`, cửa sổ co giãn, thu nhỏ) và Bot chat (`TKBOTCHAT`, thêm chọn effort) ra bundle riêng; Hub cài / gỡ từng plugin. Thử trong AutoCAD thật đạt.
 
+## 2026-11-18 — Bot chat như VS Code (dán ảnh, vùng chọn CAD) + Brave có tab, toàn màn hình trong khung
+- Bot chat: Enter gửi / Shift+Enter xuống dòng; dán ảnh (Ctrl+V, menu Dán, kéo thả, "+ Ảnh") thành thẻ, AI xem bằng Read; thẻ vùng chọn từ đối tượng đang chọn
+  hoặc lệnh mới TKBOTCHON (nút "Quét vùng CAD"): gửi kèm handle, thành phần, hộp bao.
+- Spec: lọc h (handle) cho xoa, doc; doc gi dt; thao tác mới sua (tl, xoay, doi, l_moi, mau, t). TU_VUNG.md cập nhật.
+- Brave: hồ sơ riêng, cửa sổ thường có tab (link sau = tab mới), lần đầu áp mép phải AutoCAD rồi Brave nhớ cỡ người dùng chỉnh;
+  extension brave_khung (--load-extension) cho toàn màn hình chỉ phủ khung cửa sổ: thử Brave 1.99 headless trên YouTube đạt.
+- Sửa chay_thu.ps1 (tham chiếu module/ui/webview2 cũ). chay_thu 171/171, thu_mcp TAT CA DAT. Chưa thử trong AutoCAD có giao diện.
