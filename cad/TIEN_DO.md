@@ -21,6 +21,14 @@ LƯỢT 2 (người dùng: "browser brave phải mở trong cad, khi đó tôi t
 CHỦ (owner, SetWindowLongPtr GWLP_HWNDPARENT) cho mọi cửa sổ trình duyệt của Brave hồ sơ riêng (timer 0,8 s tới khi Brave tắt; brave.exe chỉ chuyển link thì dò Brave
 chính bằng WMI); AutoCAD BeginQuit thì trả về độc lập. Không nhúng bằng SetParent (khung tab tự vẽ của Chromium hỏng). Rủi ro: Brave treo thì AutoCAD đứng theo
 (hàng đợi nhập nối khi chủ khác tiến trình). Test mới `test/thu_brave.ps1` (+ `ThuBrave.cs`, hồ sơ Brave tạm, cửa sổ nhỏ hiện vài giây): TAT CA DAT.
+LƯỢT 3 (người dùng gửi ảnh khung chat mẫu: "link với vs code hoặc claude code hoặc anti, cho phép chọn vị trí chứa skill hay folder dự án"):
+- `module/botchat/PhienAi.cs` (`KhoPhien`): phiên Claude Code ở `~/.claude/projects/*/*.jsonl` (cwd, entrypoint -> VS Code / Claude Code / Desktop / Bot chat, tên custom-title > ai-title > câu đầu);
+  hội thoại Antigravity đọc thô SQLite `~/.gemini/antigravity/conversation_summaries.db` + `-wal` (header bản ghi, cột id/title/preview/giờ/thư mục; khớp Python sqlite3).
+- Bot chat: ô "Dự án" = thư mục làm việc CLI (`chat_du_an`, gần đây `chat_du_an_ds`), khác cad\ thì `--add-dir` cad\; MCP cấu hình tuyệt đối `%LOCALAPPDATA%\TKPCCC\botchat\mcp.json`;
+  bỏ `--disable-slash-commands`, thêm công cụ `Skill`. "+ Skill" (`chat_skill`): `.claude\skills` -> `--add-dir`, `skills\` -> `--plugin-dir`, thư mục skill trần -> lớp bọc junction
+  `%LOCALAPPDATA%\TKPCCC\botchat\skill\<tên>\skills` + `--plugin-dir` (dò 18/11 bằng dòng init của claude 2.1.326 với model giả: không tốn hạn mức). Menu "/ Skill".
+  "Lịch sử / Link": Claude `--resume <id> --fork-session` lần đầu (phiên gốc giữ nguyên), Antigravity `--conversation <id>`. Bong bóng tin (RichTextBox canh phải/trái + nền),
+  dòng trạng thái "✻ Claude đang … m:ss · effort". Ảnh chụp giao diện ngoài AutoCAD (Form thường, DLL AutoCAD nạp từ thư mục cài): đạt. Test mới `test/thu_bot.ps1`: TAT CA DAT.
 CHƯA: thử trong AutoCAD có giao diện (AutoCAD người dùng đang mở: tắt hẳn, mở lại để nạp bản mới; `thu_gui.ps1` chưa chạy); chưa gửi câu Bot chat thật (tốn hạn mức);
 Ctrl+V trong palette có thể bị AutoCAD giữ làm PASTECLIP (khi đó dùng chuột phải → Paste hoặc "+ Ảnh"); WebView2 trong CAD chưa có tab (người dùng hỏi tab ở Brave).
 

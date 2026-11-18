@@ -74,6 +74,17 @@ namespace TKPCCC
         bool vungGiu;         // chọn bằng TKBOTCHON: giữ cả khi người dùng bỏ chọn trên bản vẽ
         readonly ToolTip goiY = new ToolTip();
         readonly List<string> thuMuc;
+        // Người dùng 18/11 (ảnh khung chat mẫu): chọn thư mục dự án = thư mục làm việc của AI (skill .claude\skills, CLAUDE.md của dự án đó),
+        // thư mục chứa skill, nối phiên VS Code / Claude Code / Antigravity (PhienAi.cs).
+        readonly ComboBox chonDuAn = new ComboBox();
+        readonly List<string> duAnDs;  // thư mục dự án gần đây (chat_du_an_ds); ô chọn: 0 = TKPCCC CAD, 1.. = danh sách này, cuối = "Chọn thư mục…"
+        readonly List<string> skill;   // thư mục chứa skill (chat_skill)
+        bool napDuAn;                  // đang nạp lại ô dự án: bỏ qua sự kiện đổi
+        string linkTen;                // phiên đang nối từ nơi khác; null = hội thoại của Bot chat
+        bool tach;                     // lần gửi kế thêm --fork-session: chạy tiếp ngữ cảnh phiên Claude nơi khác mà không ghi vào phiên gốc
+        readonly Timer dongHo = new Timer();
+        DateTime batDau;
+        string viec = "";
         Process p;
         string phien; // session_id (claude) hoặc conversation_id (agy) để nói tiếp
         int aiPhien = -1; // máy AI của `phien`: đổi máy thì mở hội thoại mới
@@ -84,6 +95,10 @@ namespace TKPCCC
             Font = GiaoDien.Chu;
             BackColor = GiaoDien.Nen;
             thuMuc = GiaoDien.DocCaiDat("chat_thu_muc", "").Split('|').Where(d => d != "").ToList();
+            duAnDs = GiaoDien.DocCaiDat("chat_du_an_ds", "").Split('|').Where(d => d != "").ToList();
+            skill = GiaoDien.DocCaiDat("chat_skill", "").Split('|').Where(d => d != "").ToList();
+            dongHo.Interval = 1000;
+            dongHo.Tick += delegate { CapNhat(); };
 
             hoi.Dock = DockStyle.Fill;
             hoi.ReadOnly = true;
@@ -91,7 +106,12 @@ namespace TKPCCC
             hoi.BackColor = GiaoDien.The;
             hoi.ForeColor = GiaoDien.ChuDam;
             hoi.Font = GiaoDien.Chu;
-            Controls.Add(hoi);
+            Panel khungHoi = new Panel(); // lề quanh khung hội thoại: bong bóng không dính mép
+            khungHoi.Dock = DockStyle.Fill;
+            khungHoi.Padding = new Padding(8, 8, 4, 6);
+            khungHoi.BackColor = GiaoDien.The;
+            khungHoi.Controls.Add(hoi);
+            Controls.Add(khungHoi);
 
             // Đầu khung: chọn máy AI + model.
             FlowLayoutPanel dau = new FlowLayoutPanel();
@@ -119,7 +139,14 @@ namespace TKPCCC
                 LuuModel();
             };
             chonEffort.SelectedIndexChanged += delegate { if (chonEffort.SelectedIndex >= 0) LuuModel(); };
-            dau.Controls.AddRange(new Control[] { chonAi, chonModel, chonEffort });
+            KieuHop(chonDuAn, 170);
+            NapDuAn();
+            chonDuAn.SelectedIndexChanged += delegate { if (!napDuAn) BeginInvoke((Action)delegate { GiaoDien.An(DoiDuAn); }); };
+            Label lichSu = Mau("Lịch sử / Link", MoLichSu);
+            goiY.SetToolTip(lichSu, "Nối tiếp một phiên Claude Code (VS Code, CLI, Desktop, Bot chat) hoặc hội thoại Antigravity");
+            Label moi = Mau("＋ Mới", HoiThoaiMoi);
+            goiY.SetToolTip(moi, "Hội thoại mới");
+            dau.Controls.AddRange(new Control[] { chonDuAn, lichSu, moi, chonAi, chonModel, chonEffort });
             Controls.Add(dau);
 
             Panel duoi = new Panel();
@@ -162,15 +189,6 @@ namespace TKPCCC
             nut.Padding = new Padding(0, 4, 0, 0);
             gui.Size = new Size(70, 28);
             gui.Click += delegate { Gui(); };
-            NutBo moi = new NutBo("Hội thoại mới", GiaoDien.XanhDam);
-            moi.Size = new Size(110, 28);
-            moi.Click += delegate
-            {
-                if (p != null) return;
-                phien = null;
-                hoi.Clear();
-                trangThai.Text = "Hội thoại mới.";
-            };
             Label mau1 = Mau("Mẫu: 6 bước từ PDF...", delegate
             {
                 using (OpenFileDialog d = new OpenFileDialog())
@@ -181,11 +199,12 @@ namespace TKPCCC
                 }
             });
             Label mau2 = Mau("Mẫu: sơ đồ nguyên lý BC", delegate { DatCau(MAU_SO_DO); });
-            nut.Controls.AddRange(new Control[] { gui, moi, mau1, mau2 });
+            nut.Controls.AddRange(new Control[] { gui, mau1, mau2 });
             trangThai.Dock = DockStyle.Bottom;
             trangThai.Height = 20;
             trangThai.Font = GiaoDien.Nho;
             trangThai.ForeColor = GiaoDien.ChuMo;
+            trangThai.AutoEllipsis = true;
             duoi.Controls.Add(nhap);
             duoi.Controls.Add(dinhKem); // thêm trước "the" nên neo dưới hàng thẻ thư mục, sát ô nhập
             duoi.Controls.Add(the);
@@ -214,7 +233,7 @@ namespace TKPCCC
             if (i == 1) luu = MODEL[1].FirstOrDefault(g => luu.StartsWith(g + "-")) ?? MODEL[1][0]; // "gemini-4-argon-high" -> gốc
             chonModel.SelectedIndex = Math.Max(0, Array.IndexOf(MODEL[i], luu));
             NapEffort();
-            trangThai.Text = (i == 1 ? "Gemini: chỉ đọc + trả lời, chưa vẽ CAD." : "Claude: đọc + vẽ, sửa CAD qua MCP.") + " Enter gửi, Shift+Enter xuống dòng, Ctrl+V dán ảnh.";
+            trangThai.Text = (i == 1 ? "Gemini: chỉ đọc." : "Claude: vẽ, sửa CAD.") + " Enter gửi · Shift+Enter xuống dòng · Ctrl+V dán ảnh";
         }
 
         string ModelChon() { return MODEL[chonAi.SelectedIndex][Math.Max(0, chonModel.SelectedIndex)]; }
@@ -262,13 +281,179 @@ namespace TKPCCC
                 goiY.SetToolTip(t, dd + "\nBấm để bỏ thẻ");
                 the.Controls.Add(t);
             }
+            Label them = Mau("+ Skill", delegate
+            {
+                using (FolderBrowserDialog d = new FolderBrowserDialog())
+                {
+                    d.Description = "Chọn thư mục chứa skill: thư mục skills (vd C:\\Users\\<tên>\\.claude\\skills), plugin có thư mục skills, hoặc dự án có .claude\\skills";
+                    if (d.ShowDialog() != DialogResult.OK || skill.Contains(d.SelectedPath, StringComparer.OrdinalIgnoreCase)) return;
+                    skill.Add(d.SelectedPath);
+                    LuuThe();
+                }
+            });
+            goiY.SetToolTip(them, "Thêm chỗ chứa skill cho Claude (gõ / để chọn skill)");
+            the.Controls.Add(them);
+            foreach (string d in skill)
+            {
+                string dd = d;
+                Label t = Mau("skill: " + Path.GetFileName(dd.TrimEnd('\\')) + "  ✕", delegate { skill.Remove(dd); LuuThe(); });
+                t.ForeColor = GiaoDien.ChuDam;
+                goiY.SetToolTip(t, "Skill: " + dd + "\nBấm để bỏ");
+                the.Controls.Add(t);
+            }
             the.ResumeLayout();
         }
 
         void LuuThe()
         {
             GiaoDien.LuuCaiDat("chat_thu_muc", string.Join("|", thuMuc));
+            GiaoDien.LuuCaiDat("chat_skill", string.Join("|", skill));
             VeThe();
+        }
+
+        // ---------- Thư mục dự án, lịch sử / link phiên, skill ----------
+
+        void NapDuAn()
+        {
+            napDuAn = true;
+            chonDuAn.Items.Clear();
+            chonDuAn.Items.Add("TKPCCC CAD (mặc định)");
+            foreach (string d in duAnDs) chonDuAn.Items.Add("Dự án: " + Path.GetFileName(d.TrimEnd('\\')));
+            chonDuAn.Items.Add("Chọn thư mục dự án…");
+            string dang = GiaoDien.DocCaiDat("chat_du_an", "");
+            chonDuAn.SelectedIndex = duAnDs.FindIndex(d => string.Equals(d, dang, StringComparison.OrdinalIgnoreCase)) + 1;
+            goiY.SetToolTip(chonDuAn, "Thư mục dự án: " + (DuAn() ?? ThuMucCad() ?? "?") + "\nAI làm việc trong thư mục này: đọc CLAUDE.md, dùng skill trong .claude\\skills");
+            napDuAn = false;
+        }
+
+        /// Thư mục dự án đang chọn; null = mặc định (<repo>\cad).
+        string DuAn()
+        {
+            int i = chonDuAn.SelectedIndex - 1;
+            return i >= 0 && i < duAnDs.Count ? duAnDs[i] : null;
+        }
+
+        /// Thư mục làm việc của CLI: dự án đang chọn (còn tồn tại), không thì <repo>\cad.
+        string ThuMucLam()
+        {
+            string d = DuAn();
+            return d != null && Directory.Exists(d) ? d : ThuMucCad();
+        }
+
+        void DatDuAn(string d)
+        {
+            if (d != null)
+            {
+                duAnDs.RemoveAll(x => string.Equals(x, d, StringComparison.OrdinalIgnoreCase));
+                duAnDs.Insert(0, d);
+                if (duAnDs.Count > 8) duAnDs.RemoveRange(8, duAnDs.Count - 8);
+                GiaoDien.LuuCaiDat("chat_du_an_ds", string.Join("|", duAnDs));
+            }
+            GiaoDien.LuuCaiDat("chat_du_an", d ?? "");
+            NapDuAn();
+        }
+
+        void DoiDuAn()
+        {
+            if (chonDuAn.SelectedIndex == chonDuAn.Items.Count - 1)
+                using (FolderBrowserDialog d = new FolderBrowserDialog())
+                {
+                    d.Description = "Chọn thư mục dự án: AI làm việc trong thư mục này (CLAUDE.md, skill trong .claude\\skills)";
+                    if (d.ShowDialog() == DialogResult.OK) DatDuAn(d.SelectedPath);
+                    else { NapDuAn(); return; }
+                }
+            else DatDuAn(DuAn());
+            HoiThoaiMoi();
+            trangThai.Text = "Thư mục dự án: " + (ThuMucLam() ?? "?");
+        }
+
+        void HoiThoaiMoi()
+        {
+            if (p != null) return;
+            phien = null;
+            aiPhien = -1;
+            linkTen = null;
+            tach = false;
+            hoi.Clear();
+            VeDinhKem();
+            trangThai.Text = "Hội thoại mới.";
+        }
+
+        /// Menu phiên gần đây: Claude Code (VS Code, CLI, Desktop, Bot chat) và Antigravity. Chọn = nối tiếp phiên đó.
+        void MoLichSu()
+        {
+            if (p != null) { trangThai.Text = "Đang chạy: đợi xong (hoặc Dừng) rồi mới đổi phiên."; return; }
+            ContextMenuStrip m = new ContextMenuStrip();
+            m.Font = GiaoDien.Chu;
+            Action<string> nhom = delegate(string ten) { ToolStripLabel l = new ToolStripLabel(ten); l.ForeColor = Color.Gray; m.Items.Add(l); };
+            Action<List<PhienAi>> them = delegate(List<PhienAi> ds)
+            {
+                if (ds.Count == 0) { m.Items.Add("(không có)").Enabled = false; return; }
+                foreach (PhienAi x in ds)
+                {
+                    PhienAi xx = x;
+                    ToolStripItem i = m.Items.Add(x.ToString(), null, delegate { GiaoDien.An(delegate { Link(xx); }); });
+                    i.ToolTipText = (x.Cwd ?? "") + "\n" + x.Id;
+                }
+            };
+            nhom("Claude Code: VS Code · CLI · Desktop · Bot chat");
+            them(KhoPhien.Claude(15));
+            m.Items.Add(new ToolStripSeparator());
+            nhom("Antigravity: IDE · agy");
+            them(KhoPhien.Antigravity(10));
+            m.Show(Cursor.Position);
+        }
+
+        /// Nối phiên x: chọn đúng máy AI, đổi thư mục dự án theo phiên (Claude tìm phiên theo thư mục làm việc), hiện vài tin cuối.
+        void Link(PhienAi x)
+        {
+            if (p != null) return;
+            chonAi.SelectedIndex = x.Ai;
+            if (x.Cwd != null && Directory.Exists(x.Cwd) && !string.Equals(x.Cwd.TrimEnd('\\'), (ThuMucLam() ?? "").TrimEnd('\\'), StringComparison.OrdinalIgnoreCase))
+                DatDuAn(x.Cwd);
+            hoi.Clear();
+            phien = x.Id;
+            aiPhien = x.Ai;
+            tach = x.Ai == 0;
+            string ten = x.Ten.Replace("\n", " ");
+            linkTen = x.Nguon + ": " + (ten.Length > 30 ? ten.Substring(0, 29) + "…" : ten);
+            foreach (KeyValuePair<bool, string> t in KhoPhien.TinCuoi(x, 6))
+                Ghi(t.Key ? "Bạn" : TEN_AI[x.Ai], t.Value.Length > 700 ? t.Value.Substring(0, 700) + "…" : t.Value, t.Key ? GiaoDien.Xanh : GiaoDien.ChuDam);
+            Ghi(null, "— Đã nối " + x + (x.Ai == 0
+                ? ". Lời nhắn kế chạy tiếp ngữ cảnh phiên này ở một nhánh mới (phiên gốc trong VS Code / Claude Code giữ nguyên)."
+                : ". Lời nhắn kế ghi tiếp vào hội thoại Antigravity này."), GiaoDien.ChuMo);
+            VeDinhKem();
+        }
+
+        /// Menu "/": skill của thư mục dự án, của <repo>\cad (luôn gắn), thẻ thư mục, chỗ chứa skill. Chọn = chèn "/tên " đầu ô nhập.
+        void MenuSkill()
+        {
+            List<string> ten = new List<string>();
+            string lam = ThuMucLam(), cad = ThuMucCad();
+            foreach (string d in new[] { lam, cad }.Concat(thuMuc).Where(d => d != null && Directory.Exists(d)))
+                ten.AddRange(KhoPhien.TenSkill(Path.Combine(d, ".claude", "skills"), null));
+            foreach (string d in skill.Where(Directory.Exists))
+            {
+                string tienTo, ms;
+                KhoPhien.CoSkill(d, out tienTo, out ms);
+                ten.AddRange(KhoPhien.TenSkill(ms, tienTo));
+            }
+            ContextMenuStrip m = new ContextMenuStrip();
+            m.Font = GiaoDien.Chu;
+            foreach (string t in ten.Distinct().OrderBy(t => t))
+            {
+                string tt = t;
+                m.Items.Add("/" + t, null, delegate { DatCau("/" + tt + " " + nhap.Text.TrimStart()); });
+            }
+            if (m.Items.Count == 0) m.Items.Add("(chưa có skill: bấm + Skill, hoặc chọn dự án có .claude\\skills)").Enabled = false;
+            m.Show(Cursor.Position);
+        }
+
+        void CapNhat()
+        {
+            if (p == null) return;
+            int s = (int)(DateTime.Now - batDau).TotalSeconds;
+            trangThai.Text = "✻ " + TEN_AI[Math.Max(0, aiPhien)] + " " + viec + "…  " + s / 60 + ":" + (s % 60).ToString("00") + " · " + EffortChon();
         }
 
         // ---------- Đính kèm: ảnh + vùng chọn trên CAD ----------
@@ -365,6 +550,16 @@ namespace TKPCCC
             List<Control> cu = dinhKem.Controls.Cast<Control>().ToList();
             dinhKem.Controls.Clear();
             foreach (Control c in cu) { if (c.BackgroundImage != null) c.BackgroundImage.Dispose(); c.Dispose(); }
+            if (linkTen != null)
+            {
+                Label lk = Mau("Link · " + linkTen + "  ✕", HoiThoaiMoi);
+                lk.ForeColor = GiaoDien.ChuDam;
+                goiY.SetToolTip(lk, "Đang nối phiên này. Bấm để bỏ nối (hội thoại mới)");
+                dinhKem.Controls.Add(lk);
+            }
+            Label sk = Mau("/ Skill", MenuSkill);
+            goiY.SetToolTip(sk, "Chọn skill của dự án / chỗ chứa skill để chèn vào lời nhắn");
+            dinhKem.Controls.Add(sk);
             Label q = Mau("⬚ Quét vùng CAD", QuetVung);
             goiY.SetToolTip(q, "Quét chọn đối tượng trên bản vẽ để AI đọc và sửa đúng phần đó (lệnh TKBOTCHON).\nChọn sẵn trên bản vẽ rồi gõ yêu cầu cũng được.");
             dinhKem.Controls.Add(q);
@@ -503,11 +698,21 @@ namespace TKPCCC
             nhap.SelectionStart = nhap.TextLength;
         }
 
+        /// Một tin trong khung hội thoại, kiểu bong bóng như khung chat mẫu: người dùng nền xanh lệch phải, AI nền nhạt lệch trái, dòng công cụ / hệ thống chữ mờ.
         void Ghi(string ai, string chu, Color mau)
         {
-            hoi.SelectionStart = hoi.TextLength;
-            hoi.SelectionColor = mau;
-            hoi.AppendText((hoi.TextLength > 0 ? "\n" : "") + (ai != null ? ai + ": " : "") + chu);
+            bool ban = ai == "Bạn";
+            if (hoi.TextLength > 0) { hoi.Select(hoi.TextLength, 0); hoi.SelectionBackColor = hoi.BackColor; hoi.AppendText(ai != null ? "\n\n" : "\n"); }
+            int dau = hoi.TextLength;
+            hoi.AppendText(ai != null ? " " + chu.Replace("\n", " \n ") + " " : chu);
+            hoi.Select(dau, hoi.TextLength - dau);
+            hoi.SelectionAlignment = ban ? HorizontalAlignment.Right : HorizontalAlignment.Left;
+            hoi.SelectionIndent = ban ? 48 : 4;
+            hoi.SelectionRightIndent = ban ? 4 : 32;
+            hoi.SelectionBackColor = ban ? GiaoDien.XanhDam : ai != null ? GiaoDien.Nen : hoi.BackColor;
+            hoi.SelectionColor = ban ? Color.White : mau;
+            hoi.SelectionFont = ai != null ? GiaoDien.Chu : GiaoDien.Nho;
+            hoi.Select(hoi.TextLength, 0);
             hoi.ScrollToCaret();
         }
 
@@ -539,11 +744,7 @@ namespace TKPCCC
             return null;
         }
 
-        /// Bọc một đối số dòng lệnh Windows (luật CommandLineToArgvW): \ đứng trước " hoặc cuối chuỗi nhân đôi, " thành \".
-        internal static string Ngoac(string s)
-        {
-            return "\"" + Regex.Replace(s, "(\\\\*)(\"|\\z)", m => m.Groups[1].Value + m.Groups[1].Value + (m.Groups[2].Value == "\"" ? "\\\"" : "")) + "\"";
-        }
+        internal static string Ngoac(string s) { return KhoPhien.Ngoac(s); }
 
         void Gui()
         {
@@ -554,10 +755,20 @@ namespace TKPCCC
             if (cad == null) { trangThai.Text = "Không thấy thư mục repo (cad\\.mcp.json): chạy cad\\build.bat từ repo TKPCCC."; return; }
             int ai = chonAi.SelectedIndex;
             string model = ai == 0 ? ModelChon() : ModelChon() + "-" + EffortChon(), effort = EffortChon();
-            if (aiPhien != ai) phien = null;
+            if (aiPhien != ai) { phien = null; linkTen = null; tach = false; }
+            string lam = ThuMucLam() ?? cad;
+            bool laCad = string.Equals(lam.TrimEnd('\\'), cad.TrimEnd('\\'), StringComparison.OrdinalIgnoreCase);
             List<string> co = thuMuc.Where(Directory.Exists).ToList();
             List<string> anhCo = anh.Where(File.Exists).ToList();
-            string themDir = string.Concat(co.Select(d => " --add-dir " + Ngoac(d))) + (anhCo.Count > 0 ? " --add-dir " + Ngoac(THU_MUC_ANH) : "");
+            // Dự án khác cad\: vẫn gắn cad\ (skill vẽ CAD tkpccc-ve-cad, luật) bằng --add-dir.
+            string themDir = string.Concat(co.Select(d => " --add-dir " + Ngoac(d))) + (anhCo.Count > 0 ? " --add-dir " + Ngoac(THU_MUC_ANH) : "")
+                + (laCad ? "" : " --add-dir " + Ngoac(cad));
+            string coSkill = "";
+            foreach (string d in skill.Where(Directory.Exists))
+            {
+                string tienTo, ms;
+                coSkill += ai == 0 ? KhoPhien.CoSkill(d, out tienTo, out ms) : " --add-dir " + Ngoac(d);
+            }
             string vung = MoTaVung(ai == 0);
             string gui1 = (co.Count == 0 ? "" : "Thư mục dự án gắn kèm (đọc khi cần làm ngữ cảnh):\n" + string.Join("\n", co.Select(d => "- " + d)) + "\n\n")
                 + vung
@@ -571,12 +782,13 @@ namespace TKPCCC
             {
                 exe = Tim(new[] { "claude.exe", "claude.cmd" }, new[] { Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".local", "bin") }, out quaCmd);
                 if (exe == null) { Ghi(null, CAI_CLAUDE, GiaoDien.Do); return; }
-                // Như runner/src/engines/claude.ts: không API key, không nạp cài đặt cá nhân; thêm MCP cad và chỉ cho công cụ đọc + 3 công cụ cad.
-                // --add-dir trước --tools: các cờ này nhận nhiều giá trị, cờ kế tiếp mới cắt.
+                // Như runner/src/engines/claude.ts: không API key, không nạp cài đặt cá nhân (chỉ project, local của thư mục dự án); thêm MCP cad (đường dẫn
+                // tuyệt đối: thư mục làm việc có thể khác cad\); công cụ đọc + Skill + 3 công cụ cad. Nối phiên nơi khác: --resume <id> --fork-session.
+                // --add-dir / --plugin-dir trước --tools: các cờ này nhận nhiều giá trị, cờ kế tiếp mới cắt.
                 doiSo = "-p --output-format stream-json --verbose --model " + model + " --effort " + effort
-                    + " --mcp-config .mcp.json --strict-mcp-config --setting-sources project,local --disable-slash-commands"
-                    + (phien != null ? " --resume " + phien : "") + themDir
-                    + " --tools Read Grep Glob --allowedTools Read Grep Glob mcp__cad__cad_tt mcp__cad__cad_chay mcp__cad__cad_anh";
+                    + " --mcp-config " + Ngoac(KhoPhien.FileMcp(cad)) + " --strict-mcp-config --setting-sources project,local"
+                    + (phien != null ? " --resume " + phien + (tach ? " --fork-session" : "") : "") + themDir + coSkill
+                    + " --tools Read Grep Glob Skill --allowedTools Read Grep Glob Skill mcp__cad__cad_tt mcp__cad__cad_chay mcp__cad__cad_anh";
             }
             else
             {
@@ -584,12 +796,12 @@ namespace TKPCCC
                 if (exe == null) { Ghi(null, CAI_AGY, GiaoDien.Do); return; }
                 // agy nhận lời nhắn qua -p (exe Go đọc dòng lệnh UTF-16 nên chữ Việt giữ nguyên); --mode plan = chỉ đọc.
                 doiSo = "-p " + Ngoac(gui1) + " --output-format stream-json --mode plan --model " + model
-                    + (phien != null ? " --conversation " + phien : "") + themDir;
+                    + (phien != null ? " --conversation " + phien : "") + themDir + coSkill;
             }
             ProcessStartInfo si = quaCmd ? new ProcessStartInfo("cmd.exe", "/d /s /c \"\"" + exe + "\" " + doiSo + "\"") : new ProcessStartInfo(exe, doiSo);
             si.UseShellExecute = false;
             si.CreateNoWindow = true;
-            si.WorkingDirectory = cad;
+            si.WorkingDirectory = lam;
             si.RedirectStandardInput = si.RedirectStandardOutput = si.RedirectStandardError = true;
             si.StandardOutputEncoding = si.StandardErrorEncoding = new UTF8Encoding(false);
             si.EnvironmentVariables.Remove("ANTHROPIC_API_KEY");
@@ -617,7 +829,10 @@ namespace TKPCCC
             p = q;
             gui.Text = "Dừng";
             gui.Invalidate();
-            trangThai.Text = TEN_AI[ai] + " đang chạy (" + model + ")...";
+            batDau = DateTime.Now;
+            viec = "đang nghĩ";
+            CapNhat();
+            dongHo.Start();
             q.BeginOutputReadLine();
             q.BeginErrorReadLine();
             try
@@ -646,7 +861,11 @@ namespace TKPCCC
             catch (System.Exception) { j = null; }
             if (j == null) { if (!dong.TrimStart().StartsWith("{")) Ghi(null, dong, GiaoDien.ChuMo); return; }
             object v;
-            if (j.TryGetValue("session_id", out v) && v is string) phien = (string)v;
+            if (j.TryGetValue("session_id", out v) && v is string)
+            {
+                if ((string)v != phien) tach = false; // đã tách nhánh: từ giờ nói tiếp nhánh mới
+                phien = (string)v;
+            }
             if (j.TryGetValue("conversation_id", out v) && v is string) phien = (string)v;
             string loai = j.TryGetValue("type", out v) ? v as string : null;
             string suKien = j.TryGetValue("event", out v) ? v as string : null;
@@ -658,7 +877,7 @@ namespace TKPCCC
                 {
                     object t;
                     string kieu = k.TryGetValue("type", out t) ? t as string : null;
-                    if (kieu == "text" && k.TryGetValue("text", out t)) Ghi("Claude", Convert.ToString(t).Trim(), GiaoDien.ChuDam);
+                    if (kieu == "text" && k.TryGetValue("text", out t)) { Ghi("Claude", Convert.ToString(t).Trim(), GiaoDien.ChuDam); viec = "đang viết"; }
                     else if (kieu == "tool_use" && k.TryGetValue("name", out t)) CongCu(Convert.ToString(t).Replace("mcp__cad__", ""));
                 }
             }
@@ -684,7 +903,8 @@ namespace TKPCCC
         void CongCu(string ten)
         {
             Ghi(null, "  · " + ten, GiaoDien.ChuMo);
-            trangThai.Text = TEN_AI[Math.Max(0, aiPhien)] + " đang chạy: " + ten + "...";
+            viec = "đang chạy " + ten;
+            CapNhat();
         }
 
         static string LoiDangNhap(string m)
@@ -701,7 +921,9 @@ namespace TKPCCC
             string e;
             lock (loi) e = loi.ToString().Trim();
             if (ma != 0 && e != "") Ghi(null, TEN_AI[Math.Max(0, aiPhien)] + " thoát mã " + ma + ": " + (e.Length > 600 ? e.Substring(0, 600) : e) + LoiDangNhap(e), GiaoDien.Do);
-            trangThai.Text = ma == 0 ? "Xong." : "Dừng (mã " + ma + ").";
+            dongHo.Stop();
+            int s = (int)(DateTime.Now - batDau).TotalSeconds;
+            trangThai.Text = (ma == 0 ? "Xong" : "Dừng (mã " + ma + ")") + " · " + s / 60 + ":" + (s % 60).ToString("00");
             q.Dispose();
             p = null;
             gui.Text = "Gửi";
