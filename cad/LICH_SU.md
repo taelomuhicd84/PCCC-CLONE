@@ -633,3 +633,5 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
 - Lượt 2: cửa sổ Brave nhận AutoCAD làm chủ (GanBrave.cs) nên luôn hiện trên CAD khi thao tác bản vẽ; test mới thu_brave.ps1 TAT CA DAT.
 - Lượt 3 (ảnh khung chat mẫu): Bot chat có ô Dự án (thư mục làm việc, skill .claude\skills), + Skill (add-dir / plugin-dir / lớp bọc junction), menu / Skill,
   Lịch sử / Link phiên Claude Code (VS Code, CLI, Desktop; --fork-session) và Antigravity (đọc thô SQLite), bong bóng tin, đồng hồ trạng thái. thu_bot.ps1 TAT CA DAT.
+- Lượt 4: hộp chọn thư mục kiểu Explorer (dán đường dẫn, mở theo clipboard), thả thư mục vào nút dự án; giao diện Bot chat viết lại theo khung chat mẫu
+  (thanh đầu, bong bóng, khung soạn chip + / model / gửi), menu model đủ đời Claude + Antigravity (agy models).

@@ -29,6 +29,13 @@ LƯỢT 3 (người dùng gửi ảnh khung chat mẫu: "link với vs code ho�
   `%LOCALAPPDATA%\TKPCCC\botchat\skill\<tên>\skills` + `--plugin-dir` (dò 18/11 bằng dòng init của claude 2.1.326 với model giả: không tốn hạn mức). Menu "/ Skill".
   "Lịch sử / Link": Claude `--resume <id> --fork-session` lần đầu (phiên gốc giữ nguyên), Antigravity `--conversation <id>`. Bong bóng tin (RichTextBox canh phải/trái + nền),
   dòng trạng thái "✻ Claude đang … m:ss · effort". Ảnh chụp giao diện ngoài AutoCAD (Form thường, DLL AutoCAD nạp từ thư mục cài): đạt. Test mới `test/thu_bot.ps1`: TAT CA DAT.
+LƯỢT 4 (người dùng: hộp "Browse For Folder" chậm, "thả link folder để nhảy tới nhanh nhất"; "copy luôn kiểu cách khung chat mẫu, model có nhiều đời Opus 5.5 / 5 / 4.8, Gemini flash 3.8, argon, carbon"):
+- `ChonThuMuc.cs`: hộp chọn thư mục kiểu Explorer (IFileOpenDialog + FOS_PICKFOLDERS, dán đường dẫn Ctrl+L); clipboard có đường dẫn thư mục thì mở sẵn tới đó;
+  lỗi COM thì về FolderBrowserDialog. Nút dự án: thả thư mục từ Explorer, mục "Dùng đường dẫn đã copy".
+- Giao diện viết lại theo ảnh mẫu (`BotChat.cs` + `GiaoDienChat.cs`): thanh đầu (dự án giữa, mới / lịch sử / cài đặt, biểu tượng font Segoe MDL2 Assets), bong bóng tự vẽ
+  (chuột phải Sao chép), dòng trạng thái trên khung soạn, khung soạn bo góc: chip, ô nhập, + / model / gửi tròn. Model: Claude theo bảng Anthropic (Opus 5.5, 5, 4.8, 4.7, 4.6;
+  Sonnet 5.5, 5, 4.6; không Haiku / Fable), Antigravity đọc `agy models` nền (lưu `agy_models`, gom gốc-mức). Khoá cũ model "opus"/"sonnet" đổi sang claude-opus-5-5 / claude-sonnet-5-5.
+  Ảnh chụp ngoài AutoCAD (Form ngoài màn hình + PrintWindow): khớp bố cục mẫu.
 CHƯA: thử trong AutoCAD có giao diện (AutoCAD người dùng đang mở: tắt hẳn, mở lại để nạp bản mới; `thu_gui.ps1` chưa chạy); chưa gửi câu Bot chat thật (tốn hạn mức);
 Ctrl+V trong palette có thể bị AutoCAD giữ làm PASTECLIP (khi đó dùng chuột phải → Paste hoặc "+ Ảnh"); WebView2 trong CAD chưa có tab (người dùng hỏi tab ở Brave).
 
