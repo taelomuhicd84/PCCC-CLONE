@@ -81,7 +81,7 @@ namespace TKPCCC
             {
                 string exe = HangDoi.TimBrave();
                 Bao("Chế độ Brave: dán link hoặc gõ từ khoá ở ô trên rồi Enter (hoặc bấm Trang chủ): mở thành tab mới trong cửa sổ Brave riêng của TKPCCC "
-                    + "(lướt web, thêm tab như Brave thường; nút toàn màn hình chỉ phủ khung cửa sổ, Esc để thoát). Lần đầu cửa sổ áp mép phải AutoCAD, chỉnh cỡ một lần là Brave nhớ.\n\n"
+                    + "(lướt web, thêm tab như Brave thường; luôn hiện trên AutoCAD khi thao tác bản vẽ; nút toàn màn hình chỉ phủ khung cửa sổ, Esc để thoát). Lần đầu cửa sổ áp mép phải AutoCAD, chỉnh cỡ một lần là Brave nhớ.\n\n"
                     + (exe == null ? "CHƯA thấy Brave trên máy: cài ở https://brave.com/download/ (hoặc Hub TKPCCC, nhóm YouTube)." : "Brave: " + exe)
                     + "\n\nBấm \"Xem trong CAD\" để quay lại xem ngay trong palette (WebView2).");
                 return;
@@ -114,8 +114,15 @@ namespace TKPCCC
                 int tren = Math.Max(r.Tren, man.Top), duoi = Math.Min(r.Duoi, man.Bottom), phai = Math.Min(r.Phai, man.Right), rong = 480;
                 co += " --window-position=" + (phai - rong) + "," + tren + " --window-size=" + rong + "," + (duoi - tren);
             }
-            Process.Start(exe, co + " \"" + url + "\"");
+            Process p = Process.Start(exe, co + " \"" + url + "\"");
             GiaoDien.LuuCaiDat("yt_cuoi", url);
+            // Người dùng 18/11: Brave "trong CAD": AutoCAD làm chủ cửa sổ Brave (GanBrave.cs) nên thao tác trên bản vẽ Brave vẫn hiện bên trên.
+            if (GanBrave.Chu == null)
+            {
+                GanBrave.Chu = delegate { return h; };
+                Autodesk.AutoCAD.ApplicationServices.Application.BeginQuit += delegate { GanBrave.Tha(); };
+            }
+            if (p != null) GanBrave.Theo(hoSo, p.Id);
         }
 
         /// DLL WebView2 nằm cạnh TKPCCC.UI.dll nhưng AutoCAD dò thư viện ở thư mục acad.exe: chỉ đường trước khi JIT chạm kiểu WebView2 (TaoWeb).

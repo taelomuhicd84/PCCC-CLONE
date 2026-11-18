@@ -17,6 +17,10 @@ bằng brave vừa xem youtube, thêm tab mới trong trình duyệt brave"; gi�
   Toàn màn hình: extension `module/youtube/brave_khung/` (MV3, content script world MAIN thay requestFullscreen / fullscreenElement: phần tử phủ khung trang,
   Esc thoát), build.bat chép cạnh DLL, nạp bằng `--load-extension`. ĐÃ THỬ Brave 1.99 (Chromium 157) headless: YouTube bấm nút toàn màn hình → player phủ đúng 500 x 675 khung trang.
 - Sửa test: `chay_thu.ps1` còn tham chiếu `module\ui\webview2` (đã dời sang `module\youtube\webview2` lúc tách plugin) nên dừng ngay ở bước biên dịch UI.
+LƯỢT 2 (người dùng: "browser brave phải mở trong cad, khi đó tôi thao tác trong cad vẫn hiển thị ở bên cad"): `module/youtube/GanBrave.cs` gán cửa sổ AutoCAD làm
+CHỦ (owner, SetWindowLongPtr GWLP_HWNDPARENT) cho mọi cửa sổ trình duyệt của Brave hồ sơ riêng (timer 0,8 s tới khi Brave tắt; brave.exe chỉ chuyển link thì dò Brave
+chính bằng WMI); AutoCAD BeginQuit thì trả về độc lập. Không nhúng bằng SetParent (khung tab tự vẽ của Chromium hỏng). Rủi ro: Brave treo thì AutoCAD đứng theo
+(hàng đợi nhập nối khi chủ khác tiến trình). Test mới `test/thu_brave.ps1` (+ `ThuBrave.cs`, hồ sơ Brave tạm, cửa sổ nhỏ hiện vài giây): TAT CA DAT.
 CHƯA: thử trong AutoCAD có giao diện (AutoCAD người dùng đang mở: tắt hẳn, mở lại để nạp bản mới; `thu_gui.ps1` chưa chạy); chưa gửi câu Bot chat thật (tốn hạn mức);
 Ctrl+V trong palette có thể bị AutoCAD giữ làm PASTECLIP (khi đó dùng chuột phải → Paste hoặc "+ Ảnh"); WebView2 trong CAD chưa có tab (người dùng hỏi tab ở Brave).
 

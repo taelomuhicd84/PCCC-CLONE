@@ -630,3 +630,4 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
 - Brave: hồ sơ riêng, cửa sổ thường có tab (link sau = tab mới), lần đầu áp mép phải AutoCAD rồi Brave nhớ cỡ người dùng chỉnh;
   extension brave_khung (--load-extension) cho toàn màn hình chỉ phủ khung cửa sổ: thử Brave 1.99 headless trên YouTube đạt.
 - Sửa chay_thu.ps1 (tham chiếu module/ui/webview2 cũ). chay_thu 171/171, thu_mcp TAT CA DAT. Chưa thử trong AutoCAD có giao diện.
+- Lượt 2: cửa sổ Brave nhận AutoCAD làm chủ (GanBrave.cs) nên luôn hiện trên CAD khi thao tác bản vẽ; test mới thu_brave.ps1 TAT CA DAT.

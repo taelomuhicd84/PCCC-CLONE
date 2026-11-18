@@ -69,7 +69,7 @@ if exist "%OUTYT%\TKPCCC.YouTube.dll" move /y "%OUTYT%\TKPCCC.YouTube.dll" "%OUT
 "%FW%\csc.exe" /nologo /target:library /platform:x64 /codepage:65001 /optimize+ /out:"%OUTYT%\TKPCCC.YouTube.dll" ^
   /r:"%ACAD%\acdbmgd.dll" /r:"%ACAD%\accoremgd.dll" /r:"%ACAD%\acmgd.dll" /r:"%ACAD%\AdWindows.dll" ^
   /r:"%FW%\WPF\PresentationCore.dll" /r:"%FW%\WPF\WindowsBase.dll" /r:"%FW%\System.Xaml.dll" ^
-  /r:"%FW%\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll ^
+  /r:"%FW%\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll /r:System.Management.dll ^
   /r:"%~dp0module\youtube\webview2\Microsoft.Web.WebView2.Core.dll" /r:"%~dp0module\youtube\webview2\Microsoft.Web.WebView2.WinForms.dll" ^
   "%~dp0module\youtube\*.cs" "%~dp0module\nho\GiaoDienNho.cs" "%~dp0module\chung\HangDoi.cs" || exit /b 1
 rem WebView2: 3 DLL cua Microsoft canh TKPCCC.YouTube.dll. Chi chep khi thieu: AutoCAD dang mo giu khoa file.
