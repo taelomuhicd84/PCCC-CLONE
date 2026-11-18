@@ -1,0 +1,31 @@
+{
+  "name": "claude-usage-meter",
+  "displayName": "Claude Usage Meter",
+  "description": "Do token Claude Code da dung (tu ~/.claude/projects) va quan ly phien. Khong goi mang, khong doc token dang nhap.",
+  "version": "0.1.0",
+  "publisher": "tkpccc",
+  "engines": { "vscode": "^1.80.0" },
+  "main": "./extension.js",
+  "activationEvents": ["onStartupFinished"],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [{ "id": "claudeUsage", "title": "Claude Usage", "icon": "icon.svg" }]
+    },
+    "views": {
+      "claudeUsage": [
+        { "id": "claudeUsage.account", "name": "Account & Usage", "type": "webview" },
+        { "id": "claudeUsage.sessions", "name": "Session Manager" }
+      ]
+    },
+    "commands": [
+      { "command": "claudeUsage.refresh", "title": "Claude Usage: Lam moi" },
+      { "command": "claudeUsage.setLimits", "title": "Claude Usage: Nhap % han muc (5 gio, tuan)" },
+      { "command": "claudeUsage.resume", "title": "Claude Usage: Mo phien trong terminal" }
+    ],
+    "menus": {
+      "view/title": [
+        { "command": "claudeUsage.refresh", "when": "view == claudeUsage.sessions", "group": "navigation" }
+      ]
+    }
+  }
+}

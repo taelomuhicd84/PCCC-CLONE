@@ -41,3 +41,6 @@ file_cad_test/
 # Plugin YouTube, Bot chat (bundle rieng tu 17/11): DLL build
 cad/TKPCCC_YouTube.bundle/Contents/
 cad/TKPCCC_BotChat.bundle/Contents/
+
+# Extension VS Code do tay (build lai bang vsce)
+*.vsix

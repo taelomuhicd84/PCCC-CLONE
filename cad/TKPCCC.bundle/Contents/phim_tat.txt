@@ -1,0 +1,2 @@
+﻿# Phim tat lenh PCCC (PCCC_HELP sua va ghi file nay). Moi dong: PHIMTAT=LENH
+BC1=PCCC_BOTRI
