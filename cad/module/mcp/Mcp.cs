@@ -167,6 +167,15 @@ namespace TKPCCC
             if (!ConSong())
                 return "AutoCAD chưa mở hoặc chưa nạp plugin TKPCCC. Mở AutoCAD (bundle TKPCCC tự nạp) hoặc gõ NETLOAD chọn TKPCCC.Cad.dll, rồi gọi lại.";
             HangDoi.TaoThuMuc();
+            // Bot chat gắn bản vẽ của lời nhắn (đường dẫn đầy đủ lúc gửi) vào env của máy chủ: mọi việc của lượt đó chạy trên bản vẽ ấy,
+            // kể cả khi người dùng đã sang tab khác; ghi đè "ban_ve" AI tự ghi (có thể là tên cũ trong hội thoại).
+            string banVe = Environment.GetEnvironmentVariable("TKPCCC_CAD_BAN_VE");
+            if (!string.IsNullOrEmpty(banVe))
+            {
+                Dictionary<string, object> goi = null;
+                try { goi = Js.DeserializeObject(json) as Dictionary<string, object>; } catch (Exception) { } // file spec hỏng: để plugin báo lỗi cú pháp như cũ
+                if (goi != null) { goi["ban_ve"] = banVe; json = Js.Serialize(goi); }
+            }
             string ten = DateTime.Now.ToString("yyyyMMdd_HHmmss_fff") + "_" + Guid.NewGuid().ToString("N").Substring(0, 6) + ".json";
             string fVao = Path.Combine(HangDoi.Vao, ten), fRa = Path.Combine(HangDoi.Ra, ten);
             HangDoi.GhiAnToan(fVao, json);

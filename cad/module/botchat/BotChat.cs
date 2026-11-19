@@ -58,6 +58,7 @@ namespace TKPCCC
         List<KeyValuePair<bool, string>> tinCu; // tin cũ của phiên vừa link chưa hiện ("Hiện tin cũ hơn")
         Process p;
         string phien;           // session_id (claude) hoặc conversation_id (agy) để nói tiếp
+        string banVeTruoc;      // bản vẽ của lời nhắn trước (Document.Name): đổi thì báo AI
         int aiPhien = -1;       // máy AI của `phien`: đổi máy thì mở hội thoại mới
         DateTime batDau;
         string viec = "";
@@ -962,7 +963,13 @@ namespace TKPCCC
                 coSkill += ai == 0 ? KhoPhien.CoSkill(d, out tienTo, out ms) : " --add-dir " + Ngoac(d);
             }
             string vung = MoTaVung(ai == 0);
-            string gui1 = (co.Count == 0 ? "" : "Thư mục dự án gắn kèm (đọc khi cần làm ngữ cảnh):\n" + string.Join("\n", co.Select(d => "- " + d)) + "\n\n")
+            // Người dùng 19/11: lời nhắn gắn bản vẽ đang hiện lúc gửi (máy chủ MCP nhận qua env, xem KhoPhien.FileMcp): việc của lượt này chạy trên bản vẽ đó
+            // dù người dùng sang tab khác. Báo AI khi hội thoại mới / đổi bản vẽ để nó không nhận nhầm tên file cũ trong hội thoại.
+            AcAp.Document dv = AcAp.Core.Application.DocumentManager.MdiActiveDocument;
+            string banVe = dv == null || ai != 0 ? null : dv.Name;
+            string bvMoi = banVe != null && (phien == null || !string.Equals(banVe, banVeTruoc, StringComparison.OrdinalIgnoreCase))
+                ? "Bản vẽ của lời nhắn này: \"" + Path.GetFileName(banVe) + "\" (" + banVe + "). Công cụ cad tự chạy trên bản vẽ này kể cả khi tôi sang tab khác, không cần ghi ban_ve.\n\n" : "";
+            string gui1 = bvMoi + (co.Count == 0 ? "" : "Thư mục dự án gắn kèm (đọc khi cần làm ngữ cảnh):\n" + string.Join("\n", co.Select(d => "- " + d)) + "\n\n")
                 + vung
                 + (anhCo.Count == 0 ? "" : "Ảnh đính kèm (mở xem bằng công cụ Read):\n" + string.Join("\n", anhCo.Select(f => "- " + f)) + "\n\n")
                 + cau;
@@ -980,7 +987,7 @@ namespace TKPCCC
                 // Không mở Bash: chạy lệnh máy không có bước người dùng duyệt. Nối phiên nơi khác: --resume <id> --fork-session.
                 // --add-dir / --plugin-dir trước --tools: các cờ này nhận nhiều giá trị, cờ kế tiếp mới cắt.
                 doiSo = "-p --output-format stream-json --verbose --model " + model + " --effort " + effort
-                    + " --mcp-config " + Ngoac(KhoPhien.FileMcp(cad)) + " --strict-mcp-config --setting-sources project,local --permission-mode acceptEdits"
+                    + " --mcp-config " + Ngoac(KhoPhien.FileMcp(cad, banVe)) + " --strict-mcp-config --setting-sources project,local --permission-mode acceptEdits"
                     + (phien != null ? " --resume " + phien + (tach ? " --fork-session" : "") : "") + themDir + coSkill
                     + " --tools Read Grep Glob Skill Edit Write --allowedTools Read Grep Glob Skill Edit Write mcp__cad__cad_tt mcp__cad__cad_chay mcp__cad__cad_anh";
             }
@@ -1020,6 +1027,7 @@ namespace TKPCCC
             try { q.Start(); }
             catch (System.Exception ex) { Ghi(null, (ai == 0 ? CAI_CLAUDE : CAI_AGY) + " (" + ex.Message + ")", GiaoDien.Do); return true; } // lời nhắn đã hiện trong khung
             p = q;
+            banVeTruoc = banVe;
             nutGui.Glyph = Ve.DUNG;
             nutGui.Nen = GiaoDien.Do;
             goiY.SetToolTip(nutGui, "Dừng (Enter lúc này = xếp hàng lời nhắn kế)");

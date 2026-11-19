@@ -213,6 +213,26 @@ public static class WinU {
   $r = GoiCongCu 5 'cad_chay' @{ ops = @(@{ op = 'dem' }) }
   $k3 = if ($r.isError) { $null } else { $r.content[0].text | ConvertFrom-Json }
   Kiem ($k3 -and $k3.dem.BC_KHOI -eq 6) "nut Chon nhan BC_KHOI (dong dau sau loc), PCCC_DAT dat 2 diem: BC_KHOI = $(if ($k3) { $k3.dem.BC_KHOI }) (can 4 rai MCP + 2)"
+
+  # Nguoi dung 19/11: "dung bot chat o tab nay, qua tab file khac van lam duoc, khong nhan dien sai file". Mo ban ve thu hai (COM, tu thanh ban dang hien),
+  # goi viec khoa ban_ve = ban ve dau: phai ve vao ban ve dau (chay nen), "anh" trong goi bi tu choi; cad_tt khong khoa thi la ban ve dang hien.
+  $dau = if ($tt) { [string]$tt.ban_ve } else { 'Drawing1.dwg' }
+  $app = $null; $moi = $null
+  for ($i = 0; $i -lt 40 -and -not $moi; $i++) {
+    try { if (-not $app) { $app = [Runtime.InteropServices.Marshal]::GetActiveObject('AutoCAD.Application') }; $moi = $app.Documents.Add() } catch { Start-Sleep -Milliseconds 500 }
+  }
+  Kiem $moi 'COM mo ban ve thu hai'
+  Start-Sleep -Seconds 3
+  $r = GoiCongCu 6 'cad_chay' @{ ban_ve = $dau; ops = @(@{ op = 'tron'; l = 'NEN_BOT'; c = @(0, 0); r = 100 }, @{ op = 'anh'; rong = 640 }) }
+  $k4 = if ($r.isError) { $null } else { $r.content[0].text | ConvertFrom-Json }
+  Kiem ($k4 -and $k4.ban_ve -eq $dau -and $k4.ve -eq 1 -and @($k4.loi).Count -eq 1 -and $k4.loi[0].op -eq 'anh') "viec khoa '$dau' chay nen khi ban ve khac dang hien (ve 1, anh tu choi): $($r.content[0].text)"
+  $r = GoiCongCu 7 'cad_tt' @{}
+  $tt2 = if ($r.isError) { $null } else { $r.content[0].text | ConvertFrom-Json }
+  Kiem ($tt2 -and $tt2.ban_ve -ne $dau -and $r.content[0].text -notmatch 'NEN_BOT') "cad_tt khong khoa = ban ve dang hien '$(if ($tt2) { $tt2.ban_ve })', khong co layer NEN_BOT"
+  $r = GoiCongCu 8 'cad_chay' @{ ban_ve = $dau; ops = @(@{ op = 'doc'; gi = 'dt'; l = 'NEN_BOT' }) }
+  Kiem (-not $r.isError -and $r.content[0].text -match 'NEN_BOT') "ban ve dau co vong tron layer NEN_BOT (ve nen dung file): $($r.content[0].text)"
+  $r = GoiCongCu 9 'cad_chay' @{ ban_ve = 'khong_mo.dwg'; ops = @(@{ op = 'dem' }) }
+  Kiem ($r.content[0].text -match 'kh.ng c.n m') "ban ve khong con mo: tu choi ca goi"
 }
 finally {
   if ($mcp) { try { $mcp.StandardInput.Close() } catch { }; if (-not $mcp.WaitForExit(5000)) { $mcp.Kill() } }

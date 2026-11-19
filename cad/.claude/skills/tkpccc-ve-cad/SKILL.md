@@ -16,7 +16,7 @@ AI không vẽ từng nét. AI viết một gói spec ngắn, plugin C# sinh hì
 2. Số liệu dự án lấy từ `du_an.json` trong thư mục dự án (mặc định `ket_qua/<dự án>/cad/`) nếu có. Không đọc lại PDF để lấy số đã có.
 3. Soạn MỘT gói cho cả việc rồi gọi `cad_chay` một lần. Gói dài hoặc sẽ chạy lại: lưu `ket_qua/<dự án>/cad/skills/<tên>.json` rồi truyền `file` (chạy lại không tốn token viết).
 4. Đọc kết quả: `loi` rỗng là xong, không gọi lại để kiểm. Có `loi` thì chỉ sửa đúng thao tác hỏng (theo `i`) và gửi lại riêng thao tác đó.
-   Vẽ nhiều lượt vào cùng một bản vẽ: từ lượt hai ghi `"ban_ve":"<tên>"` (lấy ở kết quả lượt trước) để người dùng đổi tab giữa chừng thì gói bị từ chối, không vẽ nhầm bản khác.
+   Vẽ nhiều lượt vào cùng một bản vẽ: từ lượt hai ghi `"ban_ve":"<tên>"` (lấy ở kết quả lượt trước) để người dùng đổi tab giữa chừng thì gói vẫn vẽ vào đúng bản đó (chạy nền), không vẽ nhầm bản đang hiện. Bot chat tự gắn bản vẽ của lời nhắn.
    Cần nhìn hình (so với PDF mẫu, kiểm chữ đè, tuyến cắt nhau): thêm `{"op":"anh","hop":[...],"rong":800}` vào cuối gói rồi đọc file PNG ở `anh`; chỉ chụp khi số đếm chưa đủ để kết luận.
 5. Báo người dùng: số đối tượng đã vẽ, giả định đã dùng (cao độ, tỉ lệ, cỡ chữ), điểm cần họ xem.
 

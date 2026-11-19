@@ -267,11 +267,13 @@ namespace TKPCCC
         }
 
         /// Cấu hình MCP với đường dẫn tuyệt đối (.mcp.json của repo ghi đường tương đối, chỉ đúng khi thư mục làm việc là cad\).
-        public static string FileMcp(string cad)
+        /// banVe = bản vẽ của lời nhắn (Document.Name lúc gửi): vào env TKPCCC_CAD_BAN_VE của máy chủ MCP (Claude Code gộp env này với env hệ thống, dò 19/11).
+        public static string FileMcp(string cad, string banVe)
         {
             string f = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TKPCCC", "botchat", "mcp.json");
             Directory.CreateDirectory(Path.GetDirectoryName(f));
             Dictionary<string, object> may = new Dictionary<string, object> { { "command", Path.Combine(cad, "bin", "TKPCCC.Mcp.exe") }, { "args", new object[0] } };
+            if (banVe != null) may["env"] = new Dictionary<string, object> { { "TKPCCC_CAD_BAN_VE", banVe } };
             System.IO.File.WriteAllText(f, js.Serialize(new Dictionary<string, object> { { "mcpServers", new Dictionary<string, object> { { "cad", may } } } }), new UTF8Encoding(false));
             return f;
         }

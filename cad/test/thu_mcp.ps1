@@ -86,6 +86,21 @@ try {
     $r = Nhan 15000
     Kiem ($r.result.isError -eq $false -and $r.result.content[0].text -match '"anh"') 'cad_anh tra ket qua cua plugin'
   }
+
+  # Bot chat gan ban ve cua loi nhan vao env TKPCCC_CAD_BAN_VE (19/11): Mcp.exe ghi "ban_ve" vao goi, de ten AI tu ghi (ten cu trong hoi thoai).
+  '{"luc":"' + (Get-Date).ToUniversalTime().ToString('o') + '","ban_ve":"thu.dwg"}' | Set-Content -Encoding ascii "$T\hd\song.json"
+  $psi.EnvironmentVariables['TKPCCC_CAD_BAN_VE'] = 'D:\thu muc\Ban ve A.dwg'
+  $mcp2 = [Diagnostics.Process]::Start($psi)
+  try {
+    $b = [Text.Encoding]::UTF8.GetBytes((@{ jsonrpc = '2.0'; id = 6; method = 'tools/call'; params = @{ name = 'cad_chay'; arguments = @{ ban_ve = 'cu.dwg'; ops = @(@{ op = 'dem' }) } } } | ConvertTo-Json -Depth 20 -Compress) + "`n")
+    $mcp2.StandardInput.BaseStream.Write($b, 0, $b.Length); $mcp2.StandardInput.BaseStream.Flush()
+    $viec = $null
+    for ($i = 0; $i -lt 100 -and -not $viec; $i++) { Start-Sleep -Milliseconds 100; $viec = Get-ChildItem "$T\hd\vao\*.json" | Select-Object -First 1 }
+    $g = if ($viec) { Get-Content -Raw -Encoding UTF8 $viec.FullName | ConvertFrom-Json }
+    Kiem ($g -and $g.ban_ve -eq 'D:\thu muc\Ban ve A.dwg' -and $g.ops[0].op -eq 'dem') "env TKPCCC_CAD_BAN_VE ghi de ban_ve cua goi: $(if ($g) { $g.ban_ve })"
+    if ($viec) { Move-Item $viec.FullName "$T\hd\ra\"; [void]$mcp2.StandardOutput.ReadLineAsync().Wait(15000) }
+  }
+  finally { $mcp2.StandardInput.Close(); if (-not $mcp2.WaitForExit(5000)) { $mcp2.Kill() } }
 }
 finally { $mcp.StandardInput.Close(); if (-not $mcp.WaitForExit(5000)) { $mcp.Kill() } }
 "Thu muc thu: $T"

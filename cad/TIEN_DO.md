@@ -59,6 +59,14 @@ LƯỢT 5 (19/11, ảnh: bot trả lời "phiên này tắt mọi công cụ s�
 LƯỢT 6 (19/11, ảnh: gõ "chiếu" bằng Unikey ra "chiẤu"; "làm giống ảnh 2" = khung chat mẫu gõ đúng chữ Việt): `ChuyenPhim` gọi `DispatchMessage` khai báo thiếu
   CharSet nên P/Invoke lấy bản ANSI (DispatchMessageA) -> WM_CHAR Unicode bị đổi sang mã ANSI (ế 1EBF thành 00BF). Sửa: `CharSet.Unicode` (DispatchMessageW).
   Tái hiện ngoài AutoCAD bằng TextBox + WM_CHAR: bản cũ ra 00BF, bản mới 1EBF.
+LƯỢT 7 (19/11, người dùng: "dùng bot chat ở tab vẽ này, qua tab file khác vẫn làm được, không nhận diện sai file"): trước đây cầu nối luôn chạy trên tab đang hiện,
+  spec có `ban_ve` mà người dùng đã đổi tab thì cả gói bị từ chối. Nay: Bot chat gắn bản vẽ đang hiện lúc GỬI (Document.Name) vào env `TKPCCC_CAD_BAN_VE` của máy chủ MCP
+  (mcp.json, `KhoPhien.FileMcp`; dò 19/11: Claude Code gộp env này với env hệ thống) + báo AI một dòng "Bản vẽ của lời nhắn này" khi hội thoại mới / đổi bản vẽ.
+  `Mcp.cs` ghi đè `ban_ve` của gói bằng env. `Cau.cs`: gói có `ban_ve` thì tìm bản vẽ đang mở khớp (`Lenh.TimBanVe`: đường dẫn, rồi tên file); đang hiện thì PCCC_SPEC
+  như cũ, không hiện thì `Lenh.ChayNen` (LockDocument có tên lệnh = 1 bước Undo của bản đó, WorkingDatabase tạm trỏ bản đó), không còn mở thì trả lỗi.
+  `pdf`, `anh` cần bản vẽ đang hiện (báo lỗi rõ). TU_VUNG.md + skill tkpccc-ve-cad sửa nghĩa `ban_ve`. Test: thu_mcp (env ghi đè ban_ve), thu_gui (COM mở bản vẽ 2,
+  việc khoá bản 1 vẽ nền đúng file, anh bị từ chối, cad_tt = bản đang hiện, bản không mở bị từ chối). chay_thu 172 DAT, thu_mcp, thu_bot TAT CA DAT.
+  CHƯA chạy thu_gui (AutoCAD người dùng đang mở) nên phần chạy nền chưa kiểm trên AutoCAD thật.
 CHƯA: thử trong AutoCAD có giao diện (AutoCAD người dùng đang mở: tắt hẳn, mở lại để nạp bản mới; `thu_gui.ps1` chưa chạy); chưa gửi câu Bot chat thật (tốn hạn mức);
 Ctrl+V trong palette có thể bị AutoCAD giữ làm PASTECLIP (khi đó dùng chuột phải → Paste hoặc "+ Ảnh"); WebView2 trong CAD chưa có tab (người dùng hỏi tab ở Brave).
 

@@ -545,6 +545,7 @@ namespace TKPCCC
             Editor ed = doc.Editor;
             bool moi = !File.Exists(FileThuVien);
             int them = DamBaoThuVien(dm);
+            if (!DangHien(doc)) { NapBlock(doc.Database, dm, capNhat); return; } // bản vẽ nền (Bot chat, người dùng đã đổi tab): không dùng Editor của nó
             if (moi) ed.WriteMessage("\nĐã tạo thư viện block mặc định: " + FileThuVien + "\nMở file này sửa hình block (BEDIT), lưu lại rồi chạy PCCC_LIB để cập nhật.");
             else if (them > 0) ed.WriteMessage("\nĐã thêm " + them + " block mặc định cho mã mới vào " + FileThuVien);
             int n = NapBlock(doc.Database, dm, capNhat);

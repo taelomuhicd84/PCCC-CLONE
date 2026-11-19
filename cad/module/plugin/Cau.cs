@@ -45,11 +45,39 @@ namespace TKPCCC
                     File.Delete(f);
                     return;
                 }
+                // Việc khoá "ban_ve" (Bot chat gắn bản vẽ lúc gửi lời nhắn): chạy trên đúng bản vẽ đó dù người dùng đã sang tab khác.
+                Document dich = doc;
+                string banVe = BanVeCuaViec(f);
+                if (banVe != null)
+                {
+                    dich = Lenh.TimBanVe(banVe);
+                    if (dich == null)
+                    {
+                        HangDoi.GhiAnToan(Path.Combine(HangDoi.Ra, Path.GetFileName(f)), new JavaScriptSerializer().Serialize(new Dictionary<string, object> {
+                            { "ok", false }, { "ve", 0 }, { "xoa", 0 }, { "loi", new object[] { new Dictionary<string, object> { { "i", -1 }, { "op", "spec" },
+                            { "ly_do", "bản vẽ \"" + banVe + "\" không còn mở (đã đóng hoặc lưu tên khác): không vẽ gì. Bản vẽ đang hiện: \"" + Path.GetFileName(doc.Name) + "\"" } } } } }));
+                        File.Delete(f);
+                        return;
+                    }
+                }
                 string dang = Path.Combine(HangDoi.Dang, Path.GetFileName(f));
                 File.Move(f, dang); // chuyển trước khi chạy để một việc không chạy hai lần
-                doc.SendStringToExecute("PCCC_SPEC\n" + dang + "\n", true, false, false);
+                if (dich.UnmanagedObject == doc.UnmanagedObject) doc.SendStringToExecute("PCCC_SPEC\n" + dang + "\n", true, false, false);
+                else doc.Editor.WriteMessage(Lenh.ChayNen(dich, dang) + "\n");
             }
             catch (System.Exception) { } // nhịp sau thử lại; lỗi nền không được làm phiền người đang vẽ
+        }
+
+        /// "ban_ve" của gói việc; null = không khoá hoặc file hỏng (PCCC_SPEC tự báo lỗi cú pháp).
+        static string BanVeCuaViec(string f)
+        {
+            try
+            {
+                Dictionary<string, object> d = new JavaScriptSerializer { MaxJsonLength = int.MaxValue }.DeserializeObject(File.ReadAllText(f)) as Dictionary<string, object>;
+                object v;
+                return d != null && d.TryGetValue("ban_ve", out v) && v is string && (string)v != "" ? (string)v : null;
+            }
+            catch (System.Exception) { return null; }
         }
     }
 }

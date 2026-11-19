@@ -109,26 +109,84 @@ namespace TKPCCC
             po.AllowSpaces = true;
             PromptResult pr = ed.GetString(po);
             if (pr.Status != PromptStatus.OK) return;
-            string f = Path.GetFullPath(pr.StringResult.Trim().Trim('"'));
-            // Việc từ hàng đợi (máy chủ MCP) trả kết quả vào thư mục "ra"; file thường thì ghi <tên>.kq.json cạnh nó.
+            bool zoom;
+            ed.WriteMessage(ChayFileSpec(doc, Path.GetFullPath(pr.StringResult.Trim().Trim('"')), out zoom));
+            // Chỉ khi spec xin "zoom": thêm một bước Undo cho lệnh ZOOM, nên mặc định không làm.
+            if (zoom) doc.SendStringToExecute("_.ZOOM _E ", true, false, false);
+        }
+
+        /// Chạy file spec f trên doc rồi ghi kết quả: việc hàng đợi (máy chủ MCP) vào thư mục "ra", file thường thì <tên>.kq.json cạnh nó.
+        /// Trả dòng tóm tắt cho dòng lệnh; zoom = spec xin zoom và là việc hàng đợi.
+        static string ChayFileSpec(Document doc, string f, out bool zoom)
+        {
             bool tuHangDoi = string.Equals(Path.GetDirectoryName(f), HangDoi.Dang, StringComparison.OrdinalIgnoreCase);
             string fKq = tuHangDoi ? Path.Combine(HangDoi.Ra, Path.GetFileName(f)) : Path.ChangeExtension(f, ".kq.json");
             Dictionary<string, object> kq;
-            bool zoom = false;
+            zoom = false;
             try { kq = ThucHienSpec(doc, File.ReadAllText(f, Encoding.UTF8), out zoom); }
-            catch (System.Exception ex)
-            {
-                kq = new Dictionary<string, object> { { "ok", false }, { "ve", 0 }, { "xoa", 0 },
-                    { "loi", new object[] { new Dictionary<string, object> { { "i", -1 }, { "op", "spec" }, { "ly_do", ex.Message } } } } };
-            }
+            catch (System.Exception ex) { kq = KqLoi(ex.Message); }
             JavaScriptSerializer js = new JavaScriptSerializer();
             js.MaxJsonLength = int.MaxValue;
             HangDoi.GhiAnToan(fKq, js.Serialize(kq));
             if (tuHangDoi) { try { File.Delete(f); } catch (System.Exception) { } }
+            zoom = zoom && tuHangDoi;
             IList loi = Lay(kq, "loi") as IList;
-            ed.WriteMessage("\n[TKPCCC] SPEC ve=" + kq["ve"] + " xoa=" + kq["xoa"] + " loi=" + (loi == null ? 0 : loi.Count) + " -> " + fKq);
-            // Chỉ khi spec xin "zoom": thêm một bước Undo cho lệnh ZOOM, nên mặc định không làm.
-            if (zoom && tuHangDoi) doc.SendStringToExecute("_.ZOOM _E ", true, false, false);
+            return "\n[TKPCCC] SPEC ve=" + kq["ve"] + " xoa=" + kq["xoa"] + " loi=" + (loi == null ? 0 : loi.Count) + " -> " + fKq;
+        }
+
+        static Dictionary<string, object> KqLoi(string lyDo)
+        {
+            return new Dictionary<string, object> { { "ok", false }, { "ve", 0 }, { "xoa", 0 },
+                { "loi", new object[] { new Dictionary<string, object> { { "i", -1 }, { "op", "spec" }, { "ly_do", lyDo } } } } };
+        }
+
+        static bool DangHien(Document doc)
+        {
+            Document a = AcApp.DocumentManager.MdiActiveDocument;
+            return a != null && a.UnmanagedObject == doc.UnmanagedObject;
+        }
+
+        /// Bản vẽ đang mở khớp "ban_ve" (đường dẫn đầy đủ, hoặc chỉ tên file: ưu tiên bản đang hiện). null = không còn mở.
+        internal static Document TimBanVe(string banVe)
+        {
+            List<Document> ds = AcApp.DocumentManager.Cast<Document>().ToList();
+            Document d = ds.FirstOrDefault(x => string.Equals(x.Name, banVe, StringComparison.OrdinalIgnoreCase));
+            if (d != null) return d;
+            string ten = Path.GetFileName(banVe);
+            List<Document> cungTen = ds.Where(x => string.Equals(Path.GetFileName(x.Name), ten, StringComparison.OrdinalIgnoreCase)).ToList();
+            return cungTen.FirstOrDefault(DangHien) ?? cungTen.FirstOrDefault();
+        }
+
+        /// Người dùng 19/11: "dùng bot chat ở tab này, qua tab file khác vẫn làm được, không nhận diện sai file". Việc hàng đợi khoá bản vẽ không đang hiện:
+        /// chạy ngay trên bản vẽ đó (khoá tài liệu, ngữ cảnh ứng dụng), không đổi tab, không đụng bản vẽ người dùng đang làm. Khoá có tên lệnh = một bước Undo
+        /// của bản vẽ đó. WorkingDatabase tạm trỏ bản vẽ đích: đối tượng mới lấy mặc định (kiểu chữ, kích thước) từ đó, không thì eWrongDatabase.
+        internal static string ChayNen(Document doc, string f)
+        {
+            Database cu = HostApplicationServices.WorkingDatabase;
+            try
+            {
+                using (doc.LockDocument(DocumentLockMode.Write, "PCCC_SPEC", "PCCC_SPEC", false))
+                {
+                    HostApplicationServices.WorkingDatabase = doc.Database;
+                    bool zoom;
+                    return ChayFileSpec(doc, f, out zoom) + " (bản vẽ nền \"" + Path.GetFileName(doc.Name) + "\")";
+                }
+            }
+            catch (System.Exception ex)
+            {
+                // Không khoá được (bản vẽ đang bận): vẫn trả kết quả để máy chủ MCP không chờ tới hết giờ.
+                HangDoi.GhiAnToan(Path.Combine(HangDoi.Ra, Path.GetFileName(f)), new JavaScriptSerializer().Serialize(KqLoi("không chạy được trên bản vẽ \"" + Path.GetFileName(doc.Name) + "\": " + ex.Message)));
+                try { File.Delete(f); } catch (System.Exception) { }
+                return "\n[TKPCCC] SPEC bản vẽ nền lỗi: " + ex.Message;
+            }
+            finally { HostApplicationServices.WorkingDatabase = cu; }
+        }
+
+        /// pdf (lệnh -PDFIMPORT), anh (khung nhìn hiện hành) cần bản vẽ đang hiện.
+        static void CanDangHien(GoiSpec g, string op)
+        {
+            if (!DangHien(g.Doc))
+                throw new System.Exception(op + " chỉ chạy trên bản vẽ đang hiện: người dùng đang ở tab khác, chuyển về \"" + Path.GetFileName(g.Doc.Name) + "\" rồi gọi lại");
         }
 
         static Dictionary<string, object> ThucHienSpec(Document doc, string json, out bool zoom)
@@ -245,6 +303,7 @@ namespace TKPCCC
         /// nên nhân 25,4 × tl (tl = mẫu số tỉ lệ của trang) để nét vào bản vẽ đúng kích thước thật.
         static void NhapPdf(GoiSpec g, Dictionary<string, object> o)
         {
+            CanDangHien(g, "pdf");
             string f = LayChu(o, "file", "");
             if (f == "" || !File.Exists(f)) throw new System.Exception("pdf: không thấy file \"" + f + "\" (cần đường dẫn tuyệt đối)");
             double tl = LaySo(o, "tl", 0);
@@ -325,6 +384,7 @@ namespace TKPCCC
         /// shortcut: luôn khổ ngang, vùng cao hơn rộng thì ảnh có lề trắng hai bên; cần thì thêm khổ đứng.
         static string InAnh(GoiSpec g, Dictionary<string, object> o)
         {
+            CanDangHien(g, "anh");
             double[] h = HopOp(g, o);
             PlotSettingsValidator v = PlotSettingsValidator.Current;
             if (!v.GetPlotDeviceList().Cast<string>().Contains(MAY_IN_ANH, StringComparer.OrdinalIgnoreCase))

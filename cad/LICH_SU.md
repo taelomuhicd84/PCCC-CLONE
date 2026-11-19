@@ -650,3 +650,8 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
 - Ảnh người dùng: gõ "chiếu" ra "chiẤu". Nguyên nhân: `ChuyenPhim` (BotChat.cs) khai báo `DispatchMessage` không có CharSet nên gọi DispatchMessageA,
   WM_CHAR Unicode bị đổi sang mã ANSI. Sửa: `CharSet.Unicode`. Tái hiện bằng TextBox + WM_CHAR: cũ ra 00BF, mới ra 1EBF (ế).
 - chay_thu, thu_mcp, thu_gui TAT CA DAT. Chưa gõ thử bằng tay trong AutoCAD thật.
+
+## 2026-11-19 — Bot chat: đổi tab bản vẽ vẫn làm được, không nhầm file
+- Lời nhắn Bot chat gắn bản vẽ đang hiện lúc gửi (env TKPCCC_CAD_BAN_VE của máy chủ MCP, ghi đè `ban_ve` của gói); AI được báo khi đổi bản vẽ.
+- Cầu nối chạy gói trên đúng bản vẽ khoá: không đang hiện thì chạy nền (LockDocument, một bước Undo), không đổi tab người dùng; pdf / anh cần bản đang hiện.
+- chay_thu 172 DAT, thu_mcp, thu_bot TAT CA DAT; test mới trong thu_gui chưa chạy (AutoCAD người dùng đang mở).
