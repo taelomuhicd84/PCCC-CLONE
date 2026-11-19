@@ -266,6 +266,17 @@ $XIEN = @(@(1100, 36000), @(13900, 40300), @(52500, 25100), @(16000, 0), @(0, 20
 ('{"goc":[2500000,0],"ops":[{"op":"rai","ma":"BC_KHOI","vung":' + (ConvertTo-Json -Compress $XIEN) + ',"s":10500,"kt":true},' +
   '{"op":"rai","ma":"BC_KHOI","hop":[0,60000,30600,80400],"kt":true},{"op":"rai","ma":"BC_KHOI","hop":[0,90000,10000,100000],"h":16}]}') |
   Set-Content -Encoding ascii "$T\rai_xien.json"
+# Nguoi dung 19/11 (2 anh): dau bao lech ra ngoai / nam tren net vung. (1) dai hep canh phai xien, hep dan len tren (anh V5 XUONG): cot luoi theo
+# hop bao nam sat canh xien (truoc sua: (1250, 19150) cach canh 1 mm); (2) hanh lang chu L nhanh doc rong 1500 (anh V3e HL): dau bao them de phu kin nam
+# tren net trai; (3) nhu (2) co theo_hang. Moi dau bao phai trong vung, cach moi canh >= 500 (tuong_min BC_KHOI) va van phu kin (lech <= 5100 theo X, Y).
+$HEP = @(@(@(0, 0), @(2500, 0), @(1000, 23000), @(0, 23000)),
+  @(@(0, 30000), @(9000, 30000), @(9000, 34000), @(1500, 34000), @(1500, 42000), @(0, 42000)),
+  @(@(0, 50000), @(9000, 50000), @(9000, 54000), @(1500, 54000), @(1500, 62000), @(0, 62000)))
+('{"goc":[6000000,0],"ops":[{"op":"rai","ma":"BC_KHOI","vung":' + (ConvertTo-Json -Compress $HEP[0]) + '},' +
+  '{"op":"rai","ma":"BC_KHOI","vung":' + (ConvertTo-Json -Compress $HEP[1]) + '},' +
+  '{"op":"rai","ma":"BC_KHOI","vung":' + (ConvertTo-Json -Compress $HEP[2]) + ',"theo_hang":true},' +
+  '{"op":"doc","gi":"dt","hop":[-3000,-3000,5000,26000]},{"op":"doc","gi":"dt","hop":[-3000,27000,12000,45000]},{"op":"doc","gi":"dt","hop":[-3000,47000,12000,65000]}]}') |
+  Set-Content -Encoding ascii "$T\rai_hep.json"
 '{"ops":[{"op":"doc","gi":"layer","l":"0"},{"op":"dem"}]}' | Set-Content -Encoding ascii "$T\dem_lon.json"
 ('{"goc":[9500000,200000],"ops":[{"op":"rai","ma":"SPR_DAU_DOWN","vung":' + (ConvertTo-Json -Compress @($XIEN | ForEach-Object { , @(($_[0] * 3), ($_[1] * 3)) })) + ',"s":3000}]}') |
   Set-Content -Encoding ascii "$T\rai_lon.json"
@@ -325,7 +336,7 @@ $bamTv = (Get-FileHash "$T\PCCC_Blocks.dwg").Hash
   'PCCC_SPEC', "$T\pdf2.json", 'PCCC_SPEC', "$T\xoa2.json", 'PCCC_SPEC', "$T\rai_loi.json", 'PCCC_SPEC', "$T\tuyen_thu.json", 'PCCC_SPEC', "$T\nhan.json",
   'PCCC_SPEC', "$T\rai_moi.json", 'PCCC_SPEC', "$T\pdf_mk.json", 'PCCC_SPEC', "$T\rv_tuyen.json", 'PCCC_SPEC', "$T\hoa.json", 'PCCC_SPEC', "$T\hoa_doc.json",
   'PCCC_SPEC', "$T\rv_hang.json", 'PCCC_SPEC', "$T\rv2.json", 'PCCC_SPEC', "$T\van.json", 'PCCC_SPEC', "$T\sua.json", 'PCCC_SPEC', "$T\bang_mb.json", 'PCCC_SPEC', "$T\so_do.json", 'PCCC_SPEC', "$T\so_do_loi.json", 'PCCC_SPEC', "$T\so_do_bc.json", 'PCCC_SPEC', "$T\so_do_bc_loi.json", 'PCCC_SPEC', "$T\so_do_bc_ng.json",
-  'PCCC_SPEC', "$T\so_do_loc.json", 'PCCC_SPEC', "$T\so_do_bc2.json", 'INSUNITS', '6', 'PCCC_SPEC', "$T\so_do_m.json", 'INSUNITS', '1', 'PCCC_SPEC', "$T\rai_inch.json", 'INSUNITS', '0', 'PCCC_SPEC', "$T\rai_unitless.json", 'INSUNITS', '4', 'PCCC_SPEC', "$T\rai_xien.json",
+  'PCCC_SPEC', "$T\so_do_loc.json", 'PCCC_SPEC', "$T\so_do_bc2.json", 'INSUNITS', '6', 'PCCC_SPEC', "$T\so_do_m.json", 'INSUNITS', '1', 'PCCC_SPEC', "$T\rai_inch.json", 'INSUNITS', '0', 'PCCC_SPEC', "$T\rai_unitless.json", 'INSUNITS', '4', 'PCCC_SPEC', "$T\rai_xien.json", 'PCCC_SPEC', "$T\rai_hep.json",
   'RECTANG', '3000000,0', '3030600,20400', 'PCCC_RAI', 'BC_KHOI', '', '', 'L', '', '', '',
   'RECTANG', '3200000,0', '3230600,20400', 'PCCC_RAI', 'BC_KHOI', 'HeSo', '50', '', '', 'L', '', '', '',
   'RECTANG', '3300000,0', '3330000,20000', 'PCCC_RAI', 'BC_BEAM', '', '', 'L', '', '', '',
@@ -535,6 +546,20 @@ Kiem ($kr2 -and $r2t[0].doan -eq 6 -and $r2t[0].m -eq 12.77 -and $r2t[1].doan -e
 Kiem ($kr2 -and $r2t[2].doan -eq 5 -and $r2t[2].m -eq 8) "tuyen cot truc bac 0,5 mm: gop doan noi 5 doan 8 m, khong ve chong (thay $($r2t[2].doan)/$($r2t[2].m))"
 Kiem ($kr2 -and $kr2.rai[1].n -eq 4 -and $kr2.rai[1].m2 -eq 9) "rai theo_hang hang rong bang vung: dung luoi chung 4 dau, m2 9 (thay $($kr2.rai[1].n) / $($kr2.rai[1].m2))"
 # Viec 1: phu kin da giac canh xien. Kiem doc lap voi plugin: diem mau cach 250 mm trong vung + 100 mm doc canh (ca dinh).
+function TrongDg($dg, $x, $y) {
+  $tr = $false; $n = $dg.Count
+  for ($i = 0; $i -lt $n; $i++) { $a = $dg[$i]; $b = $dg[($i + $n - 1) % $n]
+    if ((($a[1] -gt $y) -ne ($b[1] -gt $y)) -and ($x -lt ($b[0] - $a[0]) * ($y - $a[1]) / ($b[1] - $a[1]) + $a[0])) { $tr = -not $tr } }
+  $tr
+}
+# Khoang cach tu (x, y) toi duong bao da giac.
+function CachCanh($dg, $x, $y) {
+  $kq = [double]::MaxValue; $n = $dg.Count
+  for ($i = 0; $i -lt $n; $i++) { $a = $dg[$i]; $b = $dg[($i + 1) % $n]; $dx = $b[0] - $a[0]; $dy = $b[1] - $a[1]
+    $t = [math]::Max(0.0, [math]::Min(1.0, (($x - $a[0]) * $dx + ($y - $a[1]) * $dy) / ($dx * $dx + $dy * $dy)))
+    $kq = [math]::Min($kq, [math]::Sqrt([math]::Pow($x - $a[0] - $t * $dx, 2) + [math]::Pow($y - $a[1] - $t * $dy, 2))) }
+  $kq
+}
 $kxi = DocKq 'rai_xien'
 $db = if (Test-Path "$T\xien.txt") { @(Get-Content "$T\xien.txt" | ForEach-Object { $v = $_ -split ','; , @(([double]$v[0] - 2500000), [double]$v[1]) }) } else { @() }
 function TrongXien($x, $y) {
@@ -550,8 +575,29 @@ for ($i = 0; $i -lt $XIEN.Count; $i++) { $a = $XIEN[$i]; $b = $XIEN[($i + 1) % $
   for ($j = 0; $j -lt $k; $j++) { $mauX.Add(@(($a[0] + ($b[0] - $a[0]) * $j / $k), ($a[1] + ($b[1] - $a[1]) * $j / $k))) } }
 $hoX = @($mauX | Where-Object { $m = $_; -not ($db | Where-Object { [math]::Abs($_[0] - $m[0]) -le 5251 -and [math]::Abs($_[1] - $m[1]) -le 5251 } | Select-Object -First 1) })
 $ngoaiX = @($db | Where-Object { -not (TrongXien $_[0] $_[1]) })
-Kiem ($kxi -and $db.Count -ge 13 -and $db.Count -eq $kxi.rai[0].n -and $hoX.Count -eq 0 -and $ngoaiX.Count -eq 0 -and $kxi.rai[0].ho -eq 0) `
-  "rai da giac canh xien (anh 1_rai_6771): $($db.Count) dau bao, moi diem vung lech <= 5250 theo X va Y ($($mauX.Count) diem mau, hoX $($hoX.Count), ngoai vung $($ngoaiX.Count), vd hoX $($hoX | Select-Object -First 3 | ForEach-Object { $_ -join '/' }))"
+$satX = @($db | Where-Object { (CachCanh $XIEN $_[0] $_[1]) -lt 499.9 })
+Kiem ($kxi -and $db.Count -ge 13 -and $db.Count -eq $kxi.rai[0].n -and $hoX.Count -eq 0 -and $ngoaiX.Count -eq 0 -and $satX.Count -eq 0 -and $kxi.rai[0].ho -eq 0) `
+  "rai da giac canh xien (anh 1_rai_6771): $($db.Count) dau bao, moi diem vung lech <= 5250 theo X va Y ($($mauX.Count) diem mau, hoX $($hoX.Count), ngoai vung $($ngoaiX.Count), cach canh < 500 $($satX.Count), vd hoX $($hoX | Select-Object -First 3 | ForEach-Object { $_ -join '/' }))"
+# Viec 19/11: rai_hep. Kiem doc lap: trong vung, khoang cach toi moi canh, phu kin (diem mau 250 mm trong vung + 100 mm doc canh).
+$khp = DocKq 'rai_hep'
+$hepMoTa = @(); $hepDat = [bool]$khp -and $khp.ok -eq $true
+for ($v = 0; $v -lt 3; $v++) {
+  $dg = $HEP[$v]
+  $ds = if ($khp) { @($khp.doc[$v].ds | Where-Object { $_.ten -eq 'BC_KHOI' } | ForEach-Object { , @(([double]$_.p[0] - 6000000), [double]$_.p[1]) }) } else { @() }
+  $xx = $dg | ForEach-Object { $_[0] } | Measure-Object -Minimum -Maximum; $yy = $dg | ForEach-Object { $_[1] } | Measure-Object -Minimum -Maximum
+  $mau = New-Object Collections.Generic.List[object]
+  for ($y = $yy.Minimum + 125; $y -lt $yy.Maximum; $y += 250) { for ($x = $xx.Minimum + 125; $x -lt $xx.Maximum; $x += 250) { if (TrongDg $dg $x $y) { $mau.Add(@($x, $y)) } } }
+  for ($i = 0; $i -lt $dg.Count; $i++) { $a = $dg[$i]; $b = $dg[($i + 1) % $dg.Count]
+    $k = [math]::Ceiling([math]::Sqrt([math]::Pow($b[0] - $a[0], 2) + [math]::Pow($b[1] - $a[1], 2)) / 100)
+    for ($j = 0; $j -lt $k; $j++) { $mau.Add(@(($a[0] + ($b[0] - $a[0]) * $j / $k), ($a[1] + ($b[1] - $a[1]) * $j / $k))) } }
+  $ho = @($mau | Where-Object { $m = $_; -not ($ds | Where-Object { [math]::Abs($_[0] - $m[0]) -le 5101 -and [math]::Abs($_[1] - $m[1]) -le 5101 } | Select-Object -First 1) })
+  $ngoai = @($ds | Where-Object { -not (TrongDg $dg $_[0] $_[1]) })
+  $cach = if ($ds.Count) { ($ds | ForEach-Object { CachCanh $dg $_[0] $_[1] } | Measure-Object -Minimum).Minimum } else { 0 }
+  $n = if ($khp) { $khp.rai[$v].n } else { -1 }
+  if (-not ($ds.Count -gt 0 -and $ds.Count -eq $n -and $ngoai.Count -eq 0 -and $cach -ge 499.9 -and $ho.Count -eq 0 -and $khp.rai[$v].ho -eq 0)) { $hepDat = $false }
+  $hepMoTa += "vung $($v + 1): $($ds.Count)/$n dau, ngoai $($ngoai.Count), cach canh min $([math]::Round($cach, 1)), ho $($ho.Count)/$($mau.Count) [$(($ds | ForEach-Object { $_ -join '/' }) -join ' ')]"
+}
+Kiem $hepDat "rai vung hep (nguoi dung 19/11): dai canh xien + hanh lang chu L (+ theo_hang): moi dau bao trong vung, cach canh >= 500, phu kin ($($hepMoTa -join '; '))"
 $rx1 = if ($kxi) { $kxi.rai[1] }
 Kiem ($kxi -and $rx1.n -eq 6 -and $rx1.bx -eq 10200 -and $rx1.by -eq 10200 -and $rx1.tuong[0] -eq 5100 -and $rx1.tuong[1] -eq 5100 -and $rx1.cheo -eq 7212.5) `
   "rai BC_KHOI khong s: TCVN 7568-14 tu khoang_cach_rai.json, 3 x 2 buoc 10200 cach tuong 5100, cheo goc 7212,5 ($($rx1 | ConvertTo-Json -Compress))"

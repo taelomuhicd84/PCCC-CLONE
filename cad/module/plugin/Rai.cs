@@ -401,6 +401,108 @@ namespace TKPCCC
             return kq;
         }
 
+        /// Cách tường tối thiểu khi mã thiết bị chưa có "tuong_min" trong data/khoang_cach_rai.json (vd đầu phun): không phải trị số quy chuẩn,
+        /// chỉ để thiết bị không nằm trên / sát nét vùng (người dùng 19/11). Có trị số quy chuẩn thì thêm "tuong_min" vào json.
+        const double CACH_TUONG_MIN_M = 0.1;
+
+        /// Cách tường tối thiểu (đơn vị bản vẽ) của dòng tiêu chuẩn tc: "tuong_min", không có thì CACH_TUONG_MIN_M.
+        static double CachMinRai(Dictionary<string, object> tc, double m)
+        {
+            double c = tc == null ? 0 : LaySo(tc, "tuong_min", 0);
+            return (c > 0 ? c : CACH_TUONG_MIN_M) / m;
+        }
+
+        /// p trong vùng q và cách mọi cạnh ít nhất c.
+        static bool DatCach(List<Point2d> q, Point2d p, double c)
+        {
+            return TrongDaGiac(q, p) && KhoangBien(q, p) >= c * (1 - 1e-6);
+        }
+
+        /// Kẹp p vào dây cung ngang (doc = false) hoặc dọc (doc = true) của q đi qua p: cách hai cạnh ở hai đầu dây cung ít nhất c,
+        /// cạnh xiên lùi c / sin góc giữa cạnh và dây cung. Dây cung hẹp hơn tổng hai khoảng lùi thì đặt giữa dây cung.
+        static Point2d KepDay(List<Point2d> q, Point2d p, double c, bool doc)
+        {
+            Func<Point2d, double> u = v => doc ? v.Y : v.X, w = v => doc ? v.X : v.Y; // u dọc dây cung, w toạ độ của dây cung
+            double wp = w(p), up = u(p);
+            List<double[]> cat = new List<double[]>(); // [u giao, khoảng lùi]
+            for (int i = 0, j = q.Count - 1; i < q.Count; j = i++)
+                if ((w(q[i]) > wp) != (w(q[j]) > wp))
+                {
+                    double du = u(q[i]) - u(q[j]), dw = w(q[i]) - w(q[j]);
+                    cat.Add(new[] { u(q[j]) + (wp - w(q[j])) * du / dw, c * (1 + 1e-6) * Math.Sqrt(du * du + dw * dw) / Math.Abs(dw) });
+                }
+            cat.Sort((x, y) => x[0].CompareTo(y[0]));
+            int tot = -1;
+            double lech = double.MaxValue;
+            for (int i = 0; i + 1 < cat.Count; i += 2)
+            {
+                double l = up < cat[i][0] ? cat[i][0] - up : up > cat[i + 1][0] ? up - cat[i + 1][0] : 0;
+                if (l < lech) { lech = l; tot = i; }
+            }
+            if (tot < 0) return p;
+            double a = cat[tot][0] + cat[tot][1], b = cat[tot + 1][0] - cat[tot + 1][1];
+            double kq = a > b ? (cat[tot][0] + cat[tot + 1][0]) / 2 : Math.Max(a, Math.Min(b, up));
+            return doc ? new Point2d(wp, kq) : new Point2d(kq, wp);
+        }
+
+        /// Dời p vào trong vùng q, cách mọi cạnh ít nhất c (người dùng 19/11: đầu báo rải theo hàng cột đều lệch ra ngoài / nằm trên nét vùng
+        /// ở cạnh xiên và hành lang hẹp; được lệch hàng, cột). Mỗi bước kẹp theo hàng hoặc theo cột, lấy bước dời ít hơn (hoà thì theo hàng,
+        /// giữ thẳng hàng cho dim gom hàng); góc lõm (kẹp hai phương không đủ) thì đẩy ra xa điểm gần nhất của đường bao.
+        /// Khe hẹp hơn 2c thì không có chỗ đạt: trả vị trí đã thử xa đường bao nhất (giữa khe).
+        static Point2d DoiVao(List<Point2d> q, Point2d p, double c)
+        {
+            if (DatCach(q, p, c)) return p;
+            Point2d r = p, tot = p;
+            double cachTot = TrongDaGiac(q, p) ? KhoangBien(q, p) : -1, e = 1e-9 * c;
+            Func<Point2d, bool> thu = v =>
+            {
+                if (!TrongDaGiac(q, v)) return false;
+                double k = KhoangBien(q, v);
+                if (k > cachTot) { cachTot = k; tot = v; }
+                return k >= c * (1 - 1e-6);
+            };
+            for (int lan = 0; lan < 4; lan++)
+            {
+                Point2d h = KepDay(q, r, c, false), v = KepDay(q, r, c, true);
+                double dh = h.GetDistanceTo(r), dv = v.GetDistanceTo(r);
+                if (dh <= e && dv <= e) break;
+                r = dh > e && (dv <= e || dh <= dv + e) ? h : v;
+                if (thu(r)) return r;
+            }
+            for (int lan = 0; lan < 4; lan++)
+            {
+                // Điểm gần nhất trên đường bao, đẩy r ra xa nó đúng c (r nằm trên nét thì theo pháp tuyến cạnh, phía trong vùng).
+                Point2d b = r;
+                double gan = double.MaxValue;
+                Vector2d phap = new Vector2d(0, 0);
+                for (int i = 0, j = q.Count - 1; i < q.Count; j = i++)
+                {
+                    Vector2d ab = q[i] - q[j];
+                    double t = ab.LengthSqrd < 1e-12 ? 0 : Math.Max(0, Math.Min(1, (r - q[j]).DotProduct(ab) / ab.LengthSqrd));
+                    Point2d x = q[j] + ab * t;
+                    if (r.GetDistanceTo(x) < gan) { gan = r.GetDistanceTo(x); b = x; phap = ab.Length < 1e-12 ? phap : new Vector2d(-ab.Y, ab.X) / ab.Length; }
+                }
+                Vector2d huong = gan > e ? (r - b) / gan : TrongDaGiac(q, b + phap * c) ? phap : -phap;
+                Point2d moi = b + huong * (c * (1 + 1e-6));
+                if (moi.GetDistanceTo(r) <= e) break;
+                r = moi;
+                if (thu(r)) return r;
+            }
+            return tot;
+        }
+
+        /// Dời mọi điểm của luoi vào trong vùng (DoiVao); trả số điểm đã dời.
+        static int DoiVaoVung(List<Point2d> q, List<Point2d> luoi, double c)
+        {
+            int n = 0;
+            for (int i = 0; i < luoi.Count; i++)
+            {
+                Point2d moi = DoiVao(q, luoi[i], c);
+                if (moi.GetDistanceTo(luoi[i]) > 1e-9 * c) { luoi[i] = moi; n++; }
+            }
+            return n;
+        }
+
         /// Phủ kín vùng q: điểm mẫu (lưới trong vùng + dọc từng cạnh, kể cả đỉnh) phải có một thiết bị cách nó không quá hx theo X và hy theo Y
         /// (đầu báo cách tường xiên 6771 mm theo phương đứng khi tối đa 5250 là lỗi người dùng gặp 13/11). Còn điểm hở thì thêm thiết bị:
         /// lấy điểm hở thấp nhất (rồi trái nhất), thử các vị trí quanh nó (cột / hàng lưới đang có trước, rồi lưới 9 x 9 trong ô phủ),
@@ -482,12 +584,17 @@ namespace TKPCCC
                     for (int i = 0; i <= 8; i++)
                         for (int j = 0; j <= 8; j++) luoiThu.Add(new Point2d(P.X - hx + hx * i / 4, P.Y - hy + hy * j / 4));
                     thu.AddRange(luoiThu.OrderBy(c => c.GetDistanceTo(P))); // hoà điểm thì gần điểm hở hơn (ô phủ dư ra hai phía)
-                    Point2d tot = P; // không vị trí nào trong vùng: đặt ngay điểm hở (luôn thuộc vùng)
+                    // Không vị trí nào trong vùng: đặt ở điểm hở dời vào trong (DoiVao), dời rồi không còn phủ điểm hở thì đặt ngay điểm hở (luôn thuộc vùng).
+                    Point2d tot = cachMin > 0 ? DoiVao(q, P, cachMin) : P;
+                    if (!phu(P, tot)) tot = P;
                     int diemTot = 0;
-                    for (int lan = 0; lan < 2 && diemTot == 0; lan++) // lần 2 bỏ điều kiện cách tường (góc quá nhọn)
-                        foreach (Point2d c in thu)
+                    for (int lan = 0; lan < 2 && diemTot == 0; lan++) // lần 2 nhận cả vị trí dời rồi vẫn sát tường (khe hẹp hơn 2 lần cách tường tối thiểu)
+                        foreach (Point2d c0 in thu)
                         {
-                            if (!TrongDaGiac(q, c) || (lan == 0 && cachMin > 0 && KhoangBien(q, c) < cachMin)) continue;
+                            if (!TrongDaGiac(q, c0)) continue;
+                            // Người dùng 19/11: vị trí thử sát tường thì dời vào (DoiVao) chứ không bỏ, không thì khe hẹp chỉ còn vị trí trên nét vùng.
+                            Point2d c = cachMin > 0 && KhoangBien(q, c0) < cachMin ? DoiVao(q, c0, cachMin) : c0;
+                            if (lan == 0 && cachMin > 0 && !DatCach(q, c, cachMin)) continue;
                             int diem = 0; // vị trí lưới đứng trước nên hoà thì giữ thẳng hàng
                             moiMauPhu(c, s => { if (dem[s] == 0) diem++; });
                             if (diem > diemTot) { diemTot = diem; tot = c; }
@@ -634,7 +741,8 @@ namespace TKPCCC
         /// (giao đường ngang của hàng với đa giác, phòng chữ L có WC): số thiết bị như lưới chung (hàng rộng bằng vùng ra đúng lưới chung),
         /// thêm thiết bị khi ô của hàng vượt dt; với "buoc" ô của hàng có thể vượt dt: k.O = ô lớn nhất của các hàng để nơi gọi báo lỗi.
         /// Sau lưới, PhuKin thêm thiết bị cho tới khi MỌI điểm của vùng (góc nhọn, cạnh xiên, phần lõm) nằm trong ô phủ của một thiết bị.
-        /// tuongMax > 0: cách tường tối đa theo tiêu chuẩn; cachMin > 0: thiết bị thêm cách tường ít nhất bấy nhiêu (đơn vị bản vẽ).
+        /// tuongMax > 0: cách tường tối đa theo tiêu chuẩn; cachMin > 0: mọi thiết bị trong vùng, cách mọi cạnh ít nhất bấy nhiêu (đơn vị bản vẽ;
+        /// DoiVao, trừ khe hẹp hơn 2 cachMin: đặt giữa khe).
         static LuoiRai LuoiVung(List<Point2d> vung, double sx, double sy, double bx, double by, double lex, double ley, double chan, double dt, double gocDo, bool theoHang,
             double tuongMax, double cachMin)
         {
@@ -709,6 +817,9 @@ namespace TKPCCC
             double hx = sx > 0 && bx <= 0 ? sx / 2 : Math.Max(k.Bx / 2, k.Tx), hy = sy > 0 && by <= 0 ? sy / 2 : Math.Max(k.By / 2, k.Ty);
             if (tuongMax > 0) { hx = Math.Min(hx, tuongMax); hy = Math.Min(hy, tuongMax); }
             if (oHang > 0) k.O = oHang;
+            // Người dùng 19/11: lưới chia theo hộp bao (hoặc theo hàng) có thể nằm sát / ngoài cạnh xiên, khe hẹp: dời vào trong vùng
+            // cách mọi cạnh >= cachMin (lệch hàng, cột cũng được) rồi mới phủ kín, chỗ hở do dời thì PhuKin thêm thiết bị.
+            if (cachMin > 0) DoiVaoVung(q, luoi, cachMin);
             k.Ho = PhuKin(q, luoi, hx, hy, cachMin);
             foreach (Point2d p in luoi) k.Diem.Add(new Point3d(p.X * c - p.Y * s, p.X * s + p.Y * c, 0));
             return k;
@@ -994,7 +1105,7 @@ namespace TKPCCC
             double m = HeSoMet(g.Db), k = 0.001 / m, goc = LaySo(o, "goc", 0), dt = LaySo(o, "dt", 0) / (m * m);
             // Không có "s", "buoc": lấy bước tối đa theo tiêu chuẩn của mã thiết bị (và chiều cao trần "h"); "s" người gọi đưa vào thì dùng số đó.
             Dictionary<string, object> tc = TieuChuanRai(ma, LaySo(o, "h", 0));
-            double tuongMax = 0, cachMin = tc == null ? 0 : LaySo(tc, "tuong_min", 0) / m;
+            double tuongMax = 0, cachMin = CachMinRai(tc, m);
             // shortcut: thao tác spec chỉ rải điểm; tia chiếu (vẽ tia nối hai tường) mới có ở lệnh PCCC_RAI, khi AI cần thì chuyển TiaVung sang đây.
             if (sx <= 0 && bx <= 0 && tc != null && LayChu(tc, "kieu", "") == "tia")
                 throw new System.Exception("mã " + ma + " là đầu báo tia chiếu: rải bằng lệnh PCCC_RAI (vẽ tia nối hai tường); thao tác rai chỉ rải điểm");
@@ -1327,7 +1438,7 @@ namespace TKPCCC
             FileDanhMuc dm = DocDanhMuc();
             VatTu v = HoiMa(ed, dm, "block", "Mã thiết bị cần rải");
             if (v == null) return;
-            double m = HeSoMet(db), s, k = 0.001 / m, dt = 0, le = -1, tuongMax = 0, cachMin = 0;
+            double m = HeSoMet(db), s, k = 0.001 / m, dt = 0, le = -1, tuongMax = 0, cachMin = CachMinRai(null, m);
             bool xem = false, tia = false, khoangDam = false;
             // Người dùng chốt tối 16/11: độ sâu dầm d = h dầm TRỪ chiều dày sàn (phần nhô dưới sàn). Từ khoá DaySan ở dấu nhắc trần / bước S.
             double daySan = 0;
@@ -1389,7 +1500,7 @@ namespace TKPCCC
                 if (hcr.Status == PromptStatus.OK) tc = TieuChuanRai(v.ma, hcr.Value);
                 s = D(Lay(tc, "s")) * heSo / 100.0 / m;
                 tuongMax = LaySo(tc, "tuong", 0) * heSo / 100.0 / m;
-                cachMin = LaySo(tc, "tuong_min", 0) / m;
+                cachMin = CachMinRai(tc, m);
                 tia = LayChu(tc, "kieu", "") == "tia";
                 ed.WriteMessage("\n[TKPCCC] " + v.ma + " theo " + LayChu(tc, "can_cu", "") + ": " + (tia ? "khoảng cách giữa các tia " : "bước tối đa ")
                     + Lt(s * m).ToString(CultureInfo.InvariantCulture) + " m, cách tường tối đa " + Lt(tuongMax * m).ToString(CultureInfo.InvariantCulture) + " m"

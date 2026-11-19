@@ -635,3 +635,8 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
   Lịch sử / Link phiên Claude Code (VS Code, CLI, Desktop; --fork-session) và Antigravity (đọc thô SQLite), bong bóng tin, đồng hồ trạng thái. thu_bot.ps1 TAT CA DAT.
 - Lượt 4: hộp chọn thư mục kiểu Explorer (dán đường dẫn, mở theo clipboard), thả thư mục vào nút dự án; giao diện Bot chat viết lại theo khung chat mẫu
   (thanh đầu, bong bóng, khung soạn chip + / model / gửi), menu model đủ đời Claude + Antigravity (agy models).
+
+## 2026-11-19 — Rải không để thiết bị ngoài / sát nét vùng
+- Người dùng gửi 2 ảnh đầu báo khói lệch ra ngoài / nằm trên nét vùng (dải cạnh xiên, hành lang chữ L). Nguyên nhân: lưới theo hộp bao + phủ kín lượt 2 bỏ cách tường.
+- `Rai.cs`: `DoiVao` / `KepDay` dời thiết bị vào trong vùng cách cạnh ≥ `tuong_min` (theo hàng hoặc cột, được lệch hàng cột), `PhuKin` dời vị trí thử thay vì bỏ;
+  mặc định `CACH_TUONG_MIN_M` 0,1 m khi mã chưa có `tuong_min`. Test `rai_hep` mới, `rai_xien` kiểm thêm cách cạnh. chay_thu 171 DAT / 0 LOI (1 BO: bản vẽ thật không có trong worktree), thu_mcp TAT CA DAT.
