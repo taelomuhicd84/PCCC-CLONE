@@ -221,7 +221,8 @@ namespace TKPCCC
         static bool daMoc;
 
         [System.Runtime.InteropServices.DllImport("user32.dll")] static extern bool TranslateMessage(ref System.Windows.Interop.MSG m);
-        [System.Runtime.InteropServices.DllImport("user32.dll")] static extern IntPtr DispatchMessage(ref System.Windows.Interop.MSG m);
+        // Bắt buộc bản W: mặc định DllImport là Ansi => DispatchMessageA đổi WM_CHAR Unicode sang mã ANSI, chữ Việt (Unikey) thành "¿"/"Ấ" (lỗi 19/11).
+        [System.Runtime.InteropServices.DllImport("user32.dll", CharSet = System.Runtime.InteropServices.CharSet.Unicode)] static extern IntPtr DispatchMessage(ref System.Windows.Interop.MSG m);
 
         static void ChuyenPhim(object s, AcAp.PreTranslateMessageEventArgs e)
         {

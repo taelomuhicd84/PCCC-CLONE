@@ -56,6 +56,9 @@ LƯỢT 5 (19/11, ảnh: bot trả lời "phiên này tắt mọi công cụ s�
   khổ theo tên chuẩn, cửa sổ WCS -> DCS bằng acedTrans, đang có việc in khác thì báo lỗi ngay. chay_thu ca anh đạt, ảnh test đúng vùng.
 - Việc rải đầu báo lệch ra ngoài polyline vùng (vùng cạnh xiên V5, hành lang chữ L V3e): phiên nhánh `cad-rai-trong-vung` sửa (mục VIỆC 19/11 RẢI bên trên),
   đã gộp vào main 19/11.
+LƯỢT 6 (19/11, ảnh: gõ "chiếu" bằng Unikey ra "chiẤu"; "làm giống ảnh 2" = khung chat mẫu gõ đúng chữ Việt): `ChuyenPhim` gọi `DispatchMessage` khai báo thiếu
+  CharSet nên P/Invoke lấy bản ANSI (DispatchMessageA) -> WM_CHAR Unicode bị đổi sang mã ANSI (ế 1EBF thành 00BF). Sửa: `CharSet.Unicode` (DispatchMessageW).
+  Tái hiện ngoài AutoCAD bằng TextBox + WM_CHAR: bản cũ ra 00BF, bản mới 1EBF.
 CHƯA: thử trong AutoCAD có giao diện (AutoCAD người dùng đang mở: tắt hẳn, mở lại để nạp bản mới; `thu_gui.ps1` chưa chạy); chưa gửi câu Bot chat thật (tốn hạn mức);
 Ctrl+V trong palette có thể bị AutoCAD giữ làm PASTECLIP (khi đó dùng chuột phải → Paste hoặc "+ Ảnh"); WebView2 trong CAD chưa có tab (người dùng hỏi tab ở Brave).
 

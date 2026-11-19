@@ -645,3 +645,8 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
 - Người dùng gửi 2 ảnh đầu báo khói lệch ra ngoài / nằm trên nét vùng (dải cạnh xiên, hành lang chữ L). Nguyên nhân: lưới theo hộp bao + phủ kín lượt 2 bỏ cách tường.
 - `Rai.cs`: `DoiVao` / `KepDay` dời thiết bị vào trong vùng cách cạnh ≥ `tuong_min` (theo hàng hoặc cột, được lệch hàng cột), `PhuKin` dời vị trí thử thay vì bỏ;
   mặc định `CACH_TUONG_MIN_M` 0,1 m khi mã chưa có `tuong_min`. Test `rai_hep` mới, `rai_xien` kiểm thêm cách cạnh. chay_thu 171 DAT / 0 LOI (1 BO: bản vẽ thật không có trong worktree), thu_mcp TAT CA DAT.
+
+## 2026-11-19 — Bot chat: gõ tiếng Việt (Unikey) ra sai chữ
+- Ảnh người dùng: gõ "chiếu" ra "chiẤu". Nguyên nhân: `ChuyenPhim` (BotChat.cs) khai báo `DispatchMessage` không có CharSet nên gọi DispatchMessageA,
+  WM_CHAR Unicode bị đổi sang mã ANSI. Sửa: `CharSet.Unicode`. Tái hiện bằng TextBox + WM_CHAR: cũ ra 00BF, mới ra 1EBF (ế).
+- chay_thu, thu_mcp, thu_gui TAT CA DAT. Chưa gõ thử bằng tay trong AutoCAD thật.
