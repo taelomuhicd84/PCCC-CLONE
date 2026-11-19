@@ -66,7 +66,7 @@ LƯỢT 7 (19/11, người dùng: "dùng bot chat ở tab vẽ này, qua tab fil
   như cũ, không hiện thì `Lenh.ChayNen` (LockDocument có tên lệnh = 1 bước Undo của bản đó, WorkingDatabase tạm trỏ bản đó), không còn mở thì trả lỗi.
   `pdf`, `anh` cần bản vẽ đang hiện (báo lỗi rõ). TU_VUNG.md + skill tkpccc-ve-cad sửa nghĩa `ban_ve`. Test: thu_mcp (env ghi đè ban_ve), thu_gui (COM mở bản vẽ 2,
   việc khoá bản 1 vẽ nền đúng file, anh bị từ chối, cad_tt = bản đang hiện, bản không mở bị từ chối). chay_thu 172 DAT, thu_mcp, thu_bot TAT CA DAT.
-  CHƯA chạy thu_gui (AutoCAD người dùng đang mở) nên phần chạy nền chưa kiểm trên AutoCAD thật.
+  thu_gui TAT CA DAT trên AutoCAD 2021 thật (Drawing1 vẽ nền khi Drawing2 đang hiện, anh bị từ chối, bản không mở bị từ chối).
 CHƯA: thử trong AutoCAD có giao diện (AutoCAD người dùng đang mở: tắt hẳn, mở lại để nạp bản mới; `thu_gui.ps1` chưa chạy); chưa gửi câu Bot chat thật (tốn hạn mức);
 Ctrl+V trong palette có thể bị AutoCAD giữ làm PASTECLIP (khi đó dùng chuột phải → Paste hoặc "+ Ảnh"); WebView2 trong CAD chưa có tab (người dùng hỏi tab ở Brave).
 
