@@ -67,6 +67,21 @@ LƯỢT 7 (19/11, người dùng: "dùng bot chat ở tab vẽ này, qua tab fil
   `pdf`, `anh` cần bản vẽ đang hiện (báo lỗi rõ). TU_VUNG.md + skill tkpccc-ve-cad sửa nghĩa `ban_ve`. Test: thu_mcp (env ghi đè ban_ve), thu_gui (COM mở bản vẽ 2,
   việc khoá bản 1 vẽ nền đúng file, anh bị từ chối, cad_tt = bản đang hiện, bản không mở bị từ chối). chay_thu 172 DAT, thu_mcp, thu_bot TAT CA DAT.
   thu_gui TAT CA DAT trên AutoCAD 2021 thật (Drawing1 vẽ nền khi Drawing2 đang hiện, anh bị từ chối, bản không mở bị từ chối).
+LƯỢT 8 (19/11, người dùng: "bot chat như cửa sổ Claude Code và VS Code, tuỳ chọn trong setting link với VS Code hay Claude Code"; "đang chạy prompt 1, Ctrl+X gửi liền
+  prompt 2 để tích hợp chung prompt 1, không nhấn thì để hàng chờ"; hỏi lại: "link" = NỐI PHIÊN CHUNG):
+- Gửi gấp Ctrl+X (`GuiGap`): Claude chạy `--input-format stream-json`, stdin mở suốt lượt; Ctrl+X ghi thêm lời nhắn vào stdin, Claude nhận ở chỗ nghỉ kế tiếp
+  giữa hai bước công cụ và làm tiếp gộp với yêu cầu trước (dò 19/11 trên claude 2.1.326 bằng Haiku: đọc f1, nhận "bỏ f4–f6", ra một lượt một result).
+  Có dòng result thì đóng stdin (`DongVao`) cho claude thoát; lời nhắn gấp tới sát lúc đó claude đã đọc thì chạy thêm một lượt. Ctrl+X khi có bôi đen = Cắt như thường;
+  bot không chạy = gửi như Enter; Antigravity / lượt đang kết thúc = xếp hàng. Lời nhắn gấp gửi lúc đang xem bản vẽ khác: báo AI cad vẫn làm trên bản của lượt.
+  Enter khi đang chạy vẫn xếp hàng như cũ. Đã dò: lệnh `/skill` vẫn chạy khi gửi qua stream-json. Luôn `--add-dir` thư mục ảnh (ảnh của lời nhắn gấp đọc được).
+- Cài đặt "Nối phiên chung" (`chat_noi`: "" / "vscode" / "claude"): chọn VS Code hoặc Claude Code thì phiên chọn ở Lịch sử ghi thẳng vào phiên gốc (không --fork-session),
+  trừ phiên vừa ghi trong 2 phút (có thể đang chạy nơi khác: vẫn tách nhánh). Lịch sử xếp phiên của bên đó lên trước. "Mở hội thoại này trong …" (menu cài đặt, hoặc bấm
+  chip link): VS Code = `code <thư mục phiên>` rồi 3 s sau `vscode://anthropic.claude-code/open?session=<id>` (extension 2.1.327); Claude Code = `claude://resume?session=<id>`
+  (app nhập phiên CLI, dò trong app.asar 6.6395). Dựng dòng stream-json chung: `KhoPhien.DongNguoiDung` (PhienAi.cs).
+- Test: thu_bot mục 4 (claude thật, model giả không tốn hạn mức, `--replay-user-messages`: nhận đúng chữ có \, ngoặc kép, xuống dòng, chữ Việt; result rồi đóng stdin thì thoát).
+  chay_thu, thu_mcp, thu_bot TAT CA DAT. thu_gui lần 1 lỗi 2 mục (`cad_anh` ngay sau gói pdf + plot báo "AutoCAD chưa mở": song.json trễ > 6 s lúc AutoCAD bận; đếm
+  BC_KHOI rỗng theo đó), chạy lại TAT CA DAT: chập chờn của test, không do mã sửa.
+  CHƯA thử bằng tay: Ctrl+X trong palette thật với model thật; mở phiên sang VS Code / app Claude Code (cần người dùng bấm thử).
 CHƯA: thử trong AutoCAD có giao diện (AutoCAD người dùng đang mở: tắt hẳn, mở lại để nạp bản mới; `thu_gui.ps1` chưa chạy); chưa gửi câu Bot chat thật (tốn hạn mức);
 Ctrl+V trong palette có thể bị AutoCAD giữ làm PASTECLIP (khi đó dùng chuột phải → Paste hoặc "+ Ảnh"); WebView2 trong CAD chưa có tab (người dùng hỏi tab ở Brave).
 

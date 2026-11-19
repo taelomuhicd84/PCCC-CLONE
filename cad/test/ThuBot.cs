@@ -2,11 +2,16 @@
 // 1. Phiên Claude: kho giả (CLAUDE_CONFIG_DIR) một phiên VS Code: tên lấy custom-title (thắng ai-title), bỏ dòng isMeta / "<...>", tin cuối đúng thứ tự.
 // 2. Chỗ chứa skill: dự án có .claude\skills -> --add-dir; plugin có skills\ -> --plugin-dir; thư mục skill trần -> lớp bọc junction.
 // 3. Antigravity: đọc được danh sách nếu máy có conversation_summaries.db (không có thì bỏ qua).
+// 4. Dòng stream-json của Bot chat (KhoPhien.DongNguoiDung, 19/11) qua claude thật với model giả (không tốn hạn mức): claude nhận đúng chữ, có result
+//    thì đóng stdin là thoát (như BotChat.DongVao). Lời nhắn gấp chen giữa lượt cần model thật: đã dò tay 19/11 (claude 2.1.326, Haiku: một lượt, một result).
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using System.Web.Script.Serialization;
 
 namespace TKPCCC
 {
@@ -31,6 +36,7 @@ namespace TKPCCC
         {
             string tam = a[0];
             Console.OutputEncoding = Encoding.UTF8;
+            string cfgGoc = Environment.GetEnvironmentVariable("CLAUDE_CONFIG_DIR");
 
             // 1. Kho phiên Claude giả.
             string kho = Path.Combine(tam, "claude");
@@ -81,8 +87,64 @@ namespace TKPCCC
             }
             else Console.WriteLine("BO QUA Antigravity: may khong co conversation_summaries.db");
 
+            // 4. claude -p --input-format stream-json (Bot chat giữ stdin mở cả lượt để gửi gấp Ctrl+X).
+            Environment.SetEnvironmentVariable("CLAUDE_CONFIG_DIR", cfgGoc); // bỏ kho phiên giả của mục 1: claude cần đăng nhập thật
+            string claude = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".local", "bin", "claude.exe");
+            if (!File.Exists(claude))
+                claude = (Environment.GetEnvironmentVariable("PATH") ?? "").Split(';').Where(d => d.Trim() != "")
+                    .Select(d => Path.Combine(d.Trim().Trim('"'), "claude.exe")).FirstOrDefault(File.Exists);
+            if (claude == null) Console.WriteLine("BO QUA claude stream-json: may khong co claude.exe");
+            else ThuStream(claude, tam);
+
             Console.WriteLine(loi == 0 ? "TAT CA DAT" : "CO " + loi + " LOI");
             return loi;
+        }
+
+        static void ThuStream(string claude, string tam)
+        {
+            string chu = "Bản vẽ \"D:\\du an\\Tầng 1.dwg\"\nvẽ trục A\\B, 3,5 m";
+            ProcessStartInfo si = new ProcessStartInfo(claude, "-p --input-format stream-json --output-format stream-json --verbose --replay-user-messages"
+                + " --model claude-khong-co-9-9 --setting-sources project,local --tools Read");
+            si.UseShellExecute = false;
+            si.CreateNoWindow = true;
+            si.WorkingDirectory = tam;
+            si.RedirectStandardInput = si.RedirectStandardOutput = si.RedirectStandardError = true;
+            si.StandardOutputEncoding = new UTF8Encoding(false);
+            si.EnvironmentVariables.Remove("ANTHROPIC_API_KEY");
+            si.EnvironmentVariables.Remove("CLAUDECODE");
+            JavaScriptSerializer js = new JavaScriptSerializer { MaxJsonLength = int.MaxValue };
+            using (Process q = Process.Start(si))
+            {
+                q.ErrorDataReceived += delegate { };
+                q.BeginErrorReadLine();
+                byte[] b = new UTF8Encoding(false).GetBytes(KhoPhien.DongNguoiDung(chu) + "\n");
+                q.StandardInput.BaseStream.Write(b, 0, b.Length);
+                q.StandardInput.BaseStream.Flush();
+                string nhan = null, khac = "";
+                bool coKq = false;
+                DateTime het = DateTime.Now.AddSeconds(90);
+                while (DateTime.Now < het)
+                {
+                    Task<string> t = q.StandardOutput.ReadLineAsync();
+                    if (!t.Wait(TimeSpan.FromSeconds(60)) || t.Result == null) break;
+                    Dictionary<string, object> j = null;
+                    try { j = js.DeserializeObject(t.Result) as Dictionary<string, object>; } catch (Exception) { }
+                    if (j == null) { khac += t.Result + " | "; continue; }
+                    object v;
+                    string loai = j.TryGetValue("type", out v) ? v as string : null;
+                    if (loai == "user" && j.TryGetValue("message", out v))
+                    {
+                        object[] nd = ((Dictionary<string, object>)v)["content"] as object[];
+                        Dictionary<string, object> k = nd == null ? null : nd.OfType<Dictionary<string, object>>().FirstOrDefault();
+                        if (k != null && k.TryGetValue("text", out v)) nhan = v as string;
+                    }
+                    if (loai == "result") { coKq = true; q.StandardInput.Close(); }
+                }
+                bool thoat = q.WaitForExit(20000);
+                Kiem(nhan == chu, "stream-json: claude nhan dung chu (duong dan \\, ngoac kep, xuong dong, chu Viet)" + (nhan == chu ? "" : ": " + (nhan ?? khac)));
+                Kiem(coKq && thoat, "stream-json: co dong result, dong stdin thi claude thoat (result " + coKq + ", thoat " + thoat + ")");
+                if (!q.HasExited) q.Kill();
+            }
         }
     }
 }

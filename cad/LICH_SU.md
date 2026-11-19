@@ -655,3 +655,11 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
 - Lời nhắn Bot chat gắn bản vẽ đang hiện lúc gửi (env TKPCCC_CAD_BAN_VE của máy chủ MCP, ghi đè `ban_ve` của gói); AI được báo khi đổi bản vẽ.
 - Cầu nối chạy gói trên đúng bản vẽ khoá: không đang hiện thì chạy nền (LockDocument, một bước Undo), không đổi tab người dùng; pdf / anh cần bản đang hiện.
 - chay_thu 172 DAT, thu_mcp, thu_bot, thu_gui (AutoCAD thật, 2 bản vẽ) TAT CA DAT.
+
+## 2026-11-19 — Bot chat: gửi gấp Ctrl+X, nối phiên chung VS Code / Claude Code
+- Ctrl+X (không bôi đen chữ) khi bot đang chạy: lời nhắn vào ngay lượt đang chạy (claude `--input-format stream-json`, stdin mở suốt lượt, đóng khi có result);
+  Claude gộp với yêu cầu trước ở chỗ nghỉ kế tiếp giữa hai bước công cụ (dò bằng Haiku trên claude 2.1.326). Enter vẫn xếp hàng.
+- Cài đặt "Nối phiên chung" (Không / VS Code / Claude Code): link phiên ở Lịch sử ghi thẳng vào phiên gốc (phiên vừa ghi trong 2 phút thì vẫn tách nhánh);
+  mở hội thoại sang VS Code (`vscode://anthropic.claude-code/open?session=`) hoặc app Claude Code (`claude://resume?session=`).
+- chay_thu, thu_mcp, thu_bot (thêm mục stream-json, model giả) TAT CA DAT; thu_gui lần 1 lỗi 2 mục do song.json trễ sau gói pdf + plot, chạy lại TAT CA DAT.
+  Chưa thử bằng tay trong AutoCAD.

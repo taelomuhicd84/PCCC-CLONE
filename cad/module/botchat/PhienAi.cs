@@ -218,6 +218,13 @@ namespace TKPCCC
             return null;
         }
 
+        /// Một dòng lời nhắn người dùng cho `claude -p --input-format stream-json` (Bot chat ghi vào stdin, kể cả lời nhắn gửi gấp Ctrl+X giữa lượt).
+        public static string DongNguoiDung(string chu)
+        {
+            return js.Serialize(new Dictionary<string, object> { { "type", "user" }, { "message", new Dictionary<string, object> {
+                { "role", "user" }, { "content", new object[] { new Dictionary<string, object> { { "type", "text" }, { "text", chu } } } } } } });
+        }
+
         // ---------- Skill + MCP ----------
 
         /// Bọc một đối số dòng lệnh Windows (luật CommandLineToArgvW): \ đứng trước " hoặc cuối chuỗi nhân đôi, " thành \".
