@@ -142,7 +142,12 @@ namespace TKPCCC
             nhap.BackColor = GiaoDien.The;
             nhap.ForeColor = GiaoDien.ChuDam;
             nhap.Font = new Font("Segoe UI", 9.5f);
-            nhap.KeyDown += delegate(object s, KeyEventArgs e) { if (e.KeyCode == Keys.Enter && !e.Shift) { e.SuppressKeyPress = true; GiaoDien.An(Gui); } };
+            nhap.KeyDown += delegate(object s, KeyEventArgs e) { if (e.KeyCode == Keys.Enter && !e.Shift) { e.SuppressKeyPress = true; GiaoDien.An(GuiNhap); } };
+            // Palette mất focus khi chuột rời khỏi nó (AutoCAD trả phím về dòng lệnh): giữ focus khi đang gõ ở ô nhập (LenhBotChat gán GiuFocus).
+            nhap.GotFocus += delegate { if (GiuFocus != null) GiuFocus(true); };
+            nhap.LostFocus += delegate { if (GiuFocus != null) GiuFocus(false); };
+            dang = this;
+            if (!daMoc) { daMoc = true; AcAp.Application.PreTranslateMessage += ChuyenPhim; }
             nhap.TextChanged += delegate { goiYNhap.Visible = nhap.TextLength == 0; };
             nhap.DanAnh = DanAnh;
             nhap.AllowDrop = true;
@@ -179,7 +184,7 @@ namespace TKPCCC
             goiY.SetToolTip(nutModel, "Model và effort (mức suy nghĩ: cao hơn = kỹ hơn, chậm và tốn hạn mức hơn)");
             nutGui = new NutIcon(Ve.GUI, "Gửi (Enter)", goiY);
             nutGui.Nen = GiaoDien.XanhDam;
-            nutGui.Click += delegate { GiaoDien.An(Gui); };
+            nutGui.Click += delegate { GiaoDien.An(delegate { if (p != null) Dung(); else GuiNhap(); }); };
             thanhDuoi.Controls.AddRange(new Control[] { cong, gach, nutModel, nutGui });
             thanhDuoi.Resize += delegate
             {
@@ -203,11 +208,57 @@ namespace TKPCCC
 
             VeModel();
             VeChip();
-            trangThai.Text = ai == 0 ? "Claude: đọc, vẽ, sửa CAD qua MCP." : "Antigravity: chỉ đọc + trả lời (chưa vẽ CAD).";
+            trangThai.Text = ai == 0 ? "Claude: đọc, ghi file trong dự án, vẽ, sửa CAD." : "Antigravity: chỉ đọc + trả lời (chưa vẽ CAD).";
             DanhMucModel.LamMoiAgy(TimAgy());
         }
 
         static List<string> DocDs(string khoa) { return GiaoDien.DocCaiDat(khoa, "").Split('|').Where(d => d != "").ToList(); }
+
+        // ---------- Phím trong palette (người dùng 19/11: "như VS Code: vừa chat, vừa xuống hàng, vừa gửi ảnh") ----------
+        // AutoCAD dịch phím tắt trước khi tới palette (Ctrl+V = PASTECLIP, Enter vào dòng lệnh): phím gõ ở ô nhập thì tự chuyển thẳng cho ô nhập.
+        public Action<bool> GiuFocus;
+        static BotChat dang;
+        static bool daMoc;
+
+        [System.Runtime.InteropServices.DllImport("user32.dll")] static extern bool TranslateMessage(ref System.Windows.Interop.MSG m);
+        [System.Runtime.InteropServices.DllImport("user32.dll")] static extern IntPtr DispatchMessage(ref System.Windows.Interop.MSG m);
+
+        static void ChuyenPhim(object s, AcAp.PreTranslateMessageEventArgs e)
+        {
+            System.Windows.Interop.MSG m = e.Message;
+            if (m.message < 0x100 || m.message > 0x102) return; // WM_KEYDOWN, WM_KEYUP, WM_CHAR
+            BotChat b = dang;
+            if (b == null || b.IsDisposed || !b.nhap.IsHandleCreated || m.hwnd != b.nhap.Handle) return;
+            TranslateMessage(ref m);
+            DispatchMessage(ref m);
+            e.Handled = true;
+        }
+
+        // ---------- Gửi, xếp hàng, dừng ----------
+        readonly Queue<string> hangCho = new Queue<string>();
+
+        /// Enter / nút gửi: đang chạy thì xếp hàng (gửi khi xong lượt này, như VS Code), không thì gửi ngay.
+        void GuiNhap()
+        {
+            string cau = nhap.Text.Trim();
+            if (cau == "") return;
+            nhap.Clear();
+            if (p != null)
+            {
+                hangCho.Enqueue(cau);
+                Ghi(null, "Xếp hàng (gửi khi xong lượt này): " + cau, GiaoDien.ChuMo);
+                return;
+            }
+            if (!Gui(cau)) nhap.Text = cau; // chưa gửi được (thiếu CLI, repo): trả chữ lại ô nhập
+        }
+
+        void Dung()
+        {
+            int n = hangCho.Count;
+            hangCho.Clear();
+            try { p.Kill(); } catch (System.Exception) { }
+            if (n > 0) Ghi(null, "Đã dừng, bỏ " + n + " lời nhắn đang xếp hàng.", GiaoDien.ChuMo);
+        }
 
         void DoCaoSoan() { khungSoan.Height = chip.Height + 30 + 64 + 14; }
 
@@ -440,7 +491,7 @@ namespace TKPCCC
             }
             GiaoDien.LuuCaiDat("chat_ai", ai == 0 ? "claude" : "gemini");
             VeModel();
-            trangThai.Text = ai == 0 ? "Claude: đọc, vẽ, sửa CAD qua MCP." : "Antigravity: chỉ đọc + trả lời (chưa vẽ CAD).";
+            trangThai.Text = ai == 0 ? "Claude: đọc, ghi file trong dự án, vẽ, sửa CAD." : "Antigravity: chỉ đọc + trả lời (chưa vẽ CAD).";
         }
 
         /// Menu model như khung chat mẫu: nhóm Claude (Opus, Sonnet các đời), nhóm Antigravity (Gemini 4, Gemini 3.8 Flash, ...), rồi các mức effort của model đang chọn.
@@ -460,7 +511,7 @@ namespace TKPCCC
                     m.Items.Add(i);
                 }
             };
-            nhom("Claude  (claude: đọc, vẽ, sửa CAD)", DanhMucModel.Claude);
+            nhom("Claude  (claude: đọc, ghi file, vẽ, sửa CAD)", DanhMucModel.Claude);
             m.Items.Add(new ToolStripSeparator());
             nhom("Antigravity  (agy: chỉ đọc)", DanhMucModel.Antigravity());
             if (dang.Effort != null)
@@ -889,13 +940,11 @@ namespace TKPCCC
 
         internal static string Ngoac(string s) { return KhoPhien.Ngoac(s); }
 
-        void Gui()
+        /// Chạy CLI với lời nhắn cau. false = chưa chạy được (thiếu repo / CLI).
+        bool Gui(string cau)
         {
-            if (p != null) { try { p.Kill(); } catch (System.Exception) { } return; } // đang chạy: nút là "Dừng"
-            string cau = nhap.Text.Trim();
-            if (cau == "") return;
             string cad = ThuMucCad();
-            if (cad == null) { trangThai.Text = "Không thấy thư mục repo (cad\\.mcp.json): chạy cad\\build.bat từ repo TKPCCC."; return; }
+            if (cad == null) { trangThai.Text = "Không thấy thư mục repo (cad\\.mcp.json): chạy cad\\build.bat từ repo TKPCCC."; return false; }
             string model = ModelCli(), effort = EffortDang() ?? "high";
             if (aiPhien != ai) { phien = null; linkTen = null; tach = false; }
             string lam = ThuMucLam() ?? cad;
@@ -923,19 +972,21 @@ namespace TKPCCC
             if (ai == 0)
             {
                 exe = Tim(new[] { "claude.exe", "claude.cmd" }, new[] { Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".local", "bin") }, out quaCmd);
-                if (exe == null) { Ghi(null, CAI_CLAUDE, GiaoDien.Do); return; }
+                if (exe == null) { Ghi(null, CAI_CLAUDE, GiaoDien.Do); return false; }
                 // Như runner/src/engines/claude.ts: không API key, không nạp cài đặt cá nhân (chỉ project, local của thư mục dự án); thêm MCP cad (đường dẫn
-                // tuyệt đối: thư mục làm việc có thể khác cad\); công cụ đọc + Skill + 3 công cụ cad. Nối phiên nơi khác: --resume <id> --fork-session.
+                // tuyệt đối: thư mục làm việc có thể khác cad\). Người dùng 19/11 ("như VS Code, bot phải ghi được file"): đọc + Edit/Write + Skill + 3 công cụ
+                // cad; --permission-mode acceptEdits tự duyệt sửa file trong thư mục dự án + thư mục --add-dir (ngoài đó Claude Code vẫn từ chối).
+                // Không mở Bash: chạy lệnh máy không có bước người dùng duyệt. Nối phiên nơi khác: --resume <id> --fork-session.
                 // --add-dir / --plugin-dir trước --tools: các cờ này nhận nhiều giá trị, cờ kế tiếp mới cắt.
                 doiSo = "-p --output-format stream-json --verbose --model " + model + " --effort " + effort
-                    + " --mcp-config " + Ngoac(KhoPhien.FileMcp(cad)) + " --strict-mcp-config --setting-sources project,local"
+                    + " --mcp-config " + Ngoac(KhoPhien.FileMcp(cad)) + " --strict-mcp-config --setting-sources project,local --permission-mode acceptEdits"
                     + (phien != null ? " --resume " + phien + (tach ? " --fork-session" : "") : "") + themDir + coSkill
-                    + " --tools Read Grep Glob Skill --allowedTools Read Grep Glob Skill mcp__cad__cad_tt mcp__cad__cad_chay mcp__cad__cad_anh";
+                    + " --tools Read Grep Glob Skill Edit Write --allowedTools Read Grep Glob Skill Edit Write mcp__cad__cad_tt mcp__cad__cad_chay mcp__cad__cad_anh";
             }
             else
             {
                 exe = Tim(new[] { "agy.exe" }, new[] { Path.Combine(Environment.GetEnvironmentVariable("LOCALAPPDATA") ?? "", "agy", "bin") }, out quaCmd);
-                if (exe == null) { Ghi(null, CAI_AGY, GiaoDien.Do); return; }
+                if (exe == null) { Ghi(null, CAI_AGY, GiaoDien.Do); return false; }
                 // agy nhận lời nhắn qua -p (exe Go đọc dòng lệnh UTF-16 nên chữ Việt giữ nguyên); --mode plan = chỉ đọc.
                 doiSo = "-p " + Ngoac(gui1) + " --output-format stream-json --mode plan --model " + model
                     + (phien != null ? " --conversation " + phien : "") + themDir + coSkill;
@@ -951,7 +1002,6 @@ namespace TKPCCC
             si.EnvironmentVariables["NO_COLOR"] = "1";
 
             Ghi("Bạn", cau + kem, GiaoDien.Xanh);
-            nhap.Clear();
             anh.Clear(); // đính kèm đi theo lời nhắn này; hội thoại tiếp vẫn nhớ (--resume)
             vungId = null;
             vungDoc = null;
@@ -967,11 +1017,11 @@ namespace TKPCCC
             };
             q.ErrorDataReceived += delegate(object s, DataReceivedEventArgs e) { if (e.Data != null) lock (loi) loi.AppendLine(e.Data); };
             try { q.Start(); }
-            catch (System.Exception ex) { Ghi(null, (ai == 0 ? CAI_CLAUDE : CAI_AGY) + " (" + ex.Message + ")", GiaoDien.Do); return; }
+            catch (System.Exception ex) { Ghi(null, (ai == 0 ? CAI_CLAUDE : CAI_AGY) + " (" + ex.Message + ")", GiaoDien.Do); return true; } // lời nhắn đã hiện trong khung
             p = q;
             nutGui.Glyph = Ve.DUNG;
             nutGui.Nen = GiaoDien.Do;
-            goiY.SetToolTip(nutGui, "Dừng");
+            goiY.SetToolTip(nutGui, "Dừng (Enter lúc này = xếp hàng lời nhắn kế)");
             nutGui.Invalidate();
             batDau = DateTime.Now;
             viec = ModelDang().Ten + " đang nghĩ";
@@ -989,6 +1039,7 @@ namespace TKPCCC
                 q.StandardInput.Close();
             }
             catch (System.Exception) { } // CLI thoát sớm: lỗi thật đọc ở stderr khi Xong
+            return true;
         }
 
         /// Một dòng stream-json.
@@ -1074,6 +1125,7 @@ namespace TKPCCC
             nutGui.Nen = GiaoDien.XanhDam;
             goiY.SetToolTip(nutGui, "Gửi (Enter)");
             nutGui.Invalidate();
+            if (hangCho.Count > 0) { string cau = hangCho.Dequeue(); BeginInvoke((Action)delegate { GiaoDien.An(delegate { Gui(cau); }); }); }
         }
     }
 }

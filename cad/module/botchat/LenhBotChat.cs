@@ -35,6 +35,7 @@ namespace TKPCCC
                     ps.Visible = true;
                     ps.Size = new Size(380, 640);
                     ps.Dock = DockSides.Right;
+                    bot.GiuFocus = delegate(bool v) { ps.KeepFocus = v; }; // đang gõ ở ô nhập: chuột rời palette không trả phím về dòng lệnh
                     foreach (Document d in AcApp.DocumentManager) Theo(d);
                     AcApp.DocumentManager.DocumentCreated += delegate(object s, DocumentCollectionEventArgs e) { Theo(e.Document); };
                 }

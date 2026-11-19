@@ -635,3 +635,8 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
   Lịch sử / Link phiên Claude Code (VS Code, CLI, Desktop; --fork-session) và Antigravity (đọc thô SQLite), bong bóng tin, đồng hồ trạng thái. thu_bot.ps1 TAT CA DAT.
 - Lượt 4: hộp chọn thư mục kiểu Explorer (dán đường dẫn, mở theo clipboard), thả thư mục vào nút dự án; giao diện Bot chat viết lại theo khung chat mẫu
   (thanh đầu, bong bóng, khung soạn chip + / model / gửi), menu model đủ đời Claude + Antigravity (agy models).
+
+## 2026-11-19 — Bot chat ghi file, phím như VS Code; in ảnh bằng PlotEngine
+- Bot chat Claude được Edit/Write (acceptEdits trong thư mục dự án), Enter khi đang chạy = xếp hàng, phím ô nhập không bị AutoCAD giữ (PreTranslateMessage, KeepFocus).
+- Thao tác `anh` in PNG bằng PlotEngine, không còn hộp "Plot Job Progress" kẹt. chay_thu 171/171, thu_mcp, thu_bot TAT CA DAT.
+- Rải đầu báo trong vùng: phiên nhánh cad-rai-trong-vung.

@@ -12,6 +12,7 @@ using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Geometry;
+using Autodesk.AutoCAD.PlottingServices;
 using AcApp = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
 namespace TKPCCC
@@ -306,14 +307,30 @@ namespace TKPCCC
         static readonly string[] KHO_ANH = { "VGA (640.00 x 480.00 Pixels)", "Super VGA (800.00 x 600.00 Pixels)", "XGA (1024.00 x 768.00 Pixels)",
             "Super XGA (1280.00 x 1024.00 Pixels)", "Sun Hi-Res (1600.00 x 1280.00 Pixels)" };
 
-        /// In Model ra PNG bằng lệnh -PLOT (thứ tự dấu nhắc đã thử trong accoreconsole 2021), trả đường dẫn file.
+        [System.Runtime.InteropServices.DllImport("accore.dll", CallingConvention = System.Runtime.InteropServices.CallingConvention.Cdecl, EntryPoint = "acedTrans")]
+        static extern int acedTrans(double[] diem, IntPtr tu, IntPtr den, int laVecto, double[] kq);
+
+        /// Điểm WCS -> DCS của khung nhìn hiện hành (cửa sổ in Model tính theo DCS; bản vẽ xoay khung nhìn / UCS khác thì WCS khác DCS).
+        static double[] WcsSangDcs(double x, double y)
+        {
+            double[] kq = new double[3];
+            using (ResultBuffer tu = new ResultBuffer(new TypedValue(5003, 0)), den = new ResultBuffer(new TypedValue(5003, 2)))
+                acedTrans(new[] { x, y, 0.0 }, tu.UnmanagedObject, den.UnmanagedObject, 0, kq);
+            return kq;
+        }
+
+        /// In Model ra PNG bằng PlotEngine (API in), trả đường dẫn file.
+        /// Người dùng 19/11: in bằng lệnh -PLOT hiện hộp "Plot Job Progress" kẹt lại không tự tắt khi bot gọi cad_anh; PlotEngine với hộp tiến trình null
+        /// không hiện hộp nào. Đang có việc in khác (ProcessPlotState) thì báo lỗi ngay, không xếp chồng việc in.
         /// shortcut: luôn khổ ngang, vùng cao hơn rộng thì ảnh có lề trắng hai bên; cần thì thêm khổ đứng.
         static string InAnh(GoiSpec g, Dictionary<string, object> o)
         {
             double[] h = HopOp(g, o);
-            // Thiếu thiết bị in thì -PLOT hỏi lại tên thiết bị, lệch hết dấu nhắc sau: kiểm trước.
-            if (!PlotSettingsValidator.Current.GetPlotDeviceList().Cast<string>().Contains(MAY_IN_ANH, StringComparer.OrdinalIgnoreCase))
+            PlotSettingsValidator v = PlotSettingsValidator.Current;
+            if (!v.GetPlotDeviceList().Cast<string>().Contains(MAY_IN_ANH, StringComparer.OrdinalIgnoreCase))
                 throw new System.Exception("anh: máy không có thiết bị in \"" + MAY_IN_ANH + "\" (cài theo AutoCAD, xem PLOTTERMANAGER)");
+            if (PlotFactory.ProcessPlotState != ProcessPlotState.NotPlotting)
+                throw new System.Exception("anh: AutoCAD đang in việc khác, đợi xong rồi gọi lại");
             double rong = LaySo(o, "rong", 1024);
             int k = 0;
             while (k < RONG_ANH.Length - 1 && RONG_ANH[k] < rong) k++;
@@ -321,23 +338,58 @@ namespace TKPCCC
             Directory.CreateDirectory(tm);
             foreach (string cu in Directory.GetFiles(tm, "*.png")) // ảnh chỉ để xem ngay: dọn ảnh quá 1 ngày
                 if (File.GetLastWriteTimeUtc(cu) < DateTime.UtcNow.AddDays(-1)) try { File.Delete(cu); } catch (System.Exception) { }
-            // Tên mới mỗi lần: file đã có thì -PLOT hỏi ghi đè, lệch dấu nhắc.
             string f = Path.Combine(tm, DateTime.Now.ToString("yyyyMMdd_HHmmss_fff") + ".png");
-            List<object> a = new List<object> { "-PLOT", "Y", "Model", MAY_IN_ANH, KHO_ANH[k], "L", "N" };
-            if (h == null) a.Add("E");
-            else
-            {
-                // Dấu * = toạ độ WCS: spec vẽ theo WCS, người dùng có thể đang ở UCS khác.
-                a.Add("W");
-                a.Add(string.Format(CultureInfo.InvariantCulture, "*{0},{1}", h[0], h[1]));
-                a.Add(string.Format(CultureInfo.InvariantCulture, "*{0},{1}", h[2], h[3]));
-            }
-            a.AddRange(new object[] { "F", "C", "Y", ".", "Y", "", f, "N", "Y" });
             object nen = AcApp.GetSystemVariable("BACKGROUNDPLOT");
-            AcApp.SetSystemVariable("BACKGROUNDPLOT", (short)0); // in nền thì lệnh trả về khi file chưa có
-            try { g.Doc.Editor.Command(a.ToArray()); }
+            AcApp.SetSystemVariable("BACKGROUNDPLOT", (short)0); // in nền thì hàm trả về khi file chưa có
+            try
+            {
+                using (Transaction tr = g.Db.TransactionManager.StartTransaction())
+                {
+                    BlockTableRecord ms = (BlockTableRecord)tr.GetObject(SymbolUtilityServices.GetBlockModelSpaceId(g.Db), OpenMode.ForRead);
+                    Layout lo = (Layout)tr.GetObject(ms.LayoutId, OpenMode.ForRead);
+                    PlotSettings ps = new PlotSettings(true);
+                    ps.CopyFrom(lo);
+                    v.SetPlotConfigurationName(ps, MAY_IN_ANH, null);
+                    v.RefreshLists(ps);
+                    // Khổ giấy đặt bằng tên chuẩn (canonical); KHO_ANH là tên hiển thị.
+                    string kho = v.GetCanonicalMediaNameList(ps).Cast<string>().FirstOrDefault(c => v.GetLocaleMediaName(ps, c) == KHO_ANH[k]);
+                    if (kho == null) throw new System.Exception("anh: thiết bị \"" + MAY_IN_ANH + "\" không có khổ " + KHO_ANH[k]);
+                    v.SetPlotConfigurationName(ps, MAY_IN_ANH, kho);
+                    if (h == null) v.SetPlotType(ps, Autodesk.AutoCAD.DatabaseServices.PlotType.Extents);
+                    else
+                    {
+                        // Hộp WCS -> DCS: lấy hộp bao 4 góc (khung nhìn xoay thì hộp WCS thành hình xoay trong DCS).
+                        double[][] goc = { WcsSangDcs(h[0], h[1]), WcsSangDcs(h[2], h[1]), WcsSangDcs(h[2], h[3]), WcsSangDcs(h[0], h[3]) };
+                        v.SetPlotWindowArea(ps, new Extents2d(goc.Min(q => q[0]), goc.Min(q => q[1]), goc.Max(q => q[0]), goc.Max(q => q[1])));
+                        v.SetPlotType(ps, Autodesk.AutoCAD.DatabaseServices.PlotType.Window);
+                    }
+                    v.SetUseStandardScale(ps, true);
+                    v.SetStdScaleType(ps, StdScaleType.ScaleToFit);
+                    v.SetPlotCentered(ps, true);
+                    v.SetPlotRotation(ps, PlotRotation.Degrees000);
+                    ps.PrintLineweights = true;
+                    PlotInfo pi = new PlotInfo();
+                    pi.Layout = ms.LayoutId;
+                    pi.OverrideSettings = ps;
+                    PlotInfoValidator piv = new PlotInfoValidator();
+                    piv.MediaMatchingPolicy = MatchingPolicy.MatchEnabled;
+                    piv.Validate(pi);
+                    using (PlotEngine pe = PlotFactory.CreatePublishEngine())
+                    {
+                        pe.BeginPlot(null, null);
+                        pe.BeginDocument(pi, g.Doc.Name, null, 1, true, f);
+                        pe.BeginPage(new PlotPageInfo(), pi, true, null);
+                        pe.BeginGenerateGraphics(null);
+                        pe.EndGenerateGraphics(null);
+                        pe.EndPage(null);
+                        pe.EndDocument(null);
+                        pe.EndPlot(null);
+                    }
+                    tr.Commit();
+                }
+            }
             finally { AcApp.SetSystemVariable("BACKGROUNDPLOT", nen); }
-            if (!File.Exists(f)) throw new System.Exception("không in được ảnh (bản vẽ trống, vùng \"hop\" rỗng hoặc thiếu thiết bị in \"PublishToWeb PNG.pc3\"); xem dòng lệnh AutoCAD");
+            if (!File.Exists(f)) throw new System.Exception("không in được ảnh (bản vẽ trống, vùng \"hop\" rỗng hoặc thiếu thiết bị in \"PublishToWeb PNG.pc3\")");
             return f;
         }
 

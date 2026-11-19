@@ -36,6 +36,14 @@ LƯỢT 4 (người dùng: hộp "Browse For Folder" chậm, "thả link folder 
   (chuột phải Sao chép), dòng trạng thái trên khung soạn, khung soạn bo góc: chip, ô nhập, + / model / gửi tròn. Model: Claude theo bảng Anthropic (Opus 5.5, 5, 4.8, 4.7, 4.6;
   Sonnet 5.5, 5, 4.6; không Haiku / Fable), Antigravity đọc `agy models` nền (lưu `agy_models`, gom gốc-mức). Khoá cũ model "opus"/"sonnet" đổi sang claude-opus-5-5 / claude-sonnet-5-5.
   Ảnh chụp ngoài AutoCAD (Form ngoài màn hình + PrintWindow): khớp bố cục mẫu.
+LƯỢT 5 (19/11, ảnh: bot trả lời "phiên này tắt mọi công cụ sửa file"; hộp "Plot Job Progress" kẹt không tự tắt; "như VS Code: vừa chat, vừa xuống hàng, vừa gửi ảnh"):
+- Bot chat Claude: thêm Edit/Write + `--permission-mode acceptEdits` (tự duyệt trong thư mục dự án + --add-dir; không mở Bash). Kiểm bằng dòng init (model giả).
+- Enter khi bot đang chạy = xếp hàng (gửi khi xong lượt), nút đỏ mới dừng (dừng thì bỏ hàng chờ). Phím gõ ở ô nhập: `Application.PreTranslateMessage`
+  chuyển thẳng WM_KEYDOWN/KEYUP/CHAR cho ô nhập (AutoCAD không giữ Ctrl+V = PASTECLIP, Enter); `PaletteSet.KeepFocus` bật khi ô nhập có focus.
+- `InAnh` (`module/plugin/Spec.cs`, thao tác `anh` / `cad_anh`): bỏ lệnh -PLOT, in bằng PlotEngine (hộp tiến trình null: không hiện "Plot Job Progress"),
+  khổ theo tên chuẩn, cửa sổ WCS -> DCS bằng acedTrans, đang có việc in khác thì báo lỗi ngay. chay_thu ca anh đạt, ảnh test đúng vùng.
+- Việc rải đầu báo lệch ra ngoài polyline vùng (vùng cạnh xiên V5, hành lang chữ L V3e): giao phiên nhánh `cad-rai-trong-vung` (worktree riêng, nhánh riêng,
+  chưa gộp vào main).
 CHƯA: thử trong AutoCAD có giao diện (AutoCAD người dùng đang mở: tắt hẳn, mở lại để nạp bản mới; `thu_gui.ps1` chưa chạy); chưa gửi câu Bot chat thật (tốn hạn mức);
 Ctrl+V trong palette có thể bị AutoCAD giữ làm PASTECLIP (khi đó dùng chuột phải → Paste hoặc "+ Ảnh"); WebView2 trong CAD chưa có tab (người dùng hỏi tab ở Brave).
 
