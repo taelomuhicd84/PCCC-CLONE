@@ -3,6 +3,18 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## VIỆC 19/11 — RẢI KHÔNG ĐỂ THIẾT BỊ NGOÀI / SÁT NÉT VÙNG: XONG MÃ + TEST (nhánh `claude/cad-rai-trong-vung-18cb55`, đã gộp vào main 19/11)
+Người dùng (2 ảnh): "có 1 số đầu báo khói rải lệch ra ngoài polyline vùng, chắc do rải theo hàng cột đều nhau ... rải chuẩn (dù cho không cùng hàng, cột)".
+- Nguyên nhân: (1) lưới chia theo hộp bao, chỉ lọc điểm ngoài đa giác: dải hẹp cạnh xiên (V5 XUONG) giữ cột ở giữa hộp bao, điểm trên cùng cách cạnh xiên 1 mm;
+  (2) `PhuKin` lượt 2 bỏ điều kiện cách tường: hành lang nhánh hẹp (V3e HL, rộng 1500) chỉ còn vị trí thử trên nét vùng.
+- Sửa ở `LuoiVung` (dùng chung `rai` spec + `PCCC_RAI`): `DoiVao` dời điểm cách cạnh < `tuong_min` vào trong (kẹp theo hàng hoặc cột, lấy bước dời ít hơn,
+  hoà thì theo hàng; góc lõm đẩy ra xa đường bao; khe hẹp hơn 2 lần thì đặt giữa khe) TRƯỚC khi phủ kín; `PhuKin` dời vị trí thử sát tường vào chứ không bỏ.
+  Mã chưa có `tuong_min` (đầu phun) dùng `CACH_TUONG_MIN_M` = 0,1 m (không phải trị số quy chuẩn). Phòng chữ nhật không đổi. Không đụng luồng khoang dầm (đầu báo trên dầm).
+- Test mới `rai_hep` (dải xiên, chữ L nhánh 1500, chữ L theo_hang) + `rai_xien` kiểm thêm cách cạnh ≥ 500; sửa hàm kiểm khoảng cách PowerShell (`[math]::Min(1, x)` chọn overload int).
+  chay_thu 171 DAT / 0 LOI (1 BO: bản vẽ thật không có trong worktree), thu_mcp TAT CA DAT. Ảnh: thư mục ghi chú phiên `rai_vung_hep_19_11.png`.
+CÒN: chưa thử trên bản vẽ thật của người dùng (AutoCAD đang mở, chưa chạy thu_gui); hành lang hẹp đặt sát mức tối thiểu (0,5 m tới một tường) chứ không canh giữa;
+dịch ra ngoài ống gió (`DichRaNgoai`) chưa kiểm cách tường.
+
 ## VIỆC 18/11 — BOT CHAT NHƯ VS CODE (ẢNH + VÙNG CHỌN CAD) · BRAVE CÓ TAB, TOÀN MÀN HÌNH TRONG KHUNG: XONG MÃ + TEST, CHỜ NGƯỜI DÙNG THỬ TRONG AUTOCAD
 Người dùng: "điều chỉnh bot chat giống như VS code và claude code, có thể paste ảnh vào, quét chọn vùng trên cad và ra lệnh cho bot chat sửa ... YouTube vừa lướt web
 bằng brave vừa xem youtube, thêm tab mới trong trình duyệt brave"; giữa chừng: "ấn fullscreen trên youtube bằng brave thì nhảy full màn, chỉ muốn full viền (cửa sổ) đã fix cứng".
@@ -42,8 +54,8 @@ LƯỢT 5 (19/11, ảnh: bot trả lời "phiên này tắt mọi công cụ s�
   chuyển thẳng WM_KEYDOWN/KEYUP/CHAR cho ô nhập (AutoCAD không giữ Ctrl+V = PASTECLIP, Enter); `PaletteSet.KeepFocus` bật khi ô nhập có focus.
 - `InAnh` (`module/plugin/Spec.cs`, thao tác `anh` / `cad_anh`): bỏ lệnh -PLOT, in bằng PlotEngine (hộp tiến trình null: không hiện "Plot Job Progress"),
   khổ theo tên chuẩn, cửa sổ WCS -> DCS bằng acedTrans, đang có việc in khác thì báo lỗi ngay. chay_thu ca anh đạt, ảnh test đúng vùng.
-- Việc rải đầu báo lệch ra ngoài polyline vùng (vùng cạnh xiên V5, hành lang chữ L V3e): giao phiên nhánh `cad-rai-trong-vung` (worktree riêng, nhánh riêng,
-  chưa gộp vào main).
+- Việc rải đầu báo lệch ra ngoài polyline vùng (vùng cạnh xiên V5, hành lang chữ L V3e): phiên nhánh `cad-rai-trong-vung` sửa (mục VIỆC 19/11 RẢI bên trên),
+  đã gộp vào main 19/11.
 CHƯA: thử trong AutoCAD có giao diện (AutoCAD người dùng đang mở: tắt hẳn, mở lại để nạp bản mới; `thu_gui.ps1` chưa chạy); chưa gửi câu Bot chat thật (tốn hạn mức);
 Ctrl+V trong palette có thể bị AutoCAD giữ làm PASTECLIP (khi đó dùng chuột phải → Paste hoặc "+ Ảnh"); WebView2 trong CAD chưa có tab (người dùng hỏi tab ở Brave).
 
