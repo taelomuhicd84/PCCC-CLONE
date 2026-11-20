@@ -694,3 +694,7 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
 - `Rai.cs`: dải hẹp (rộng TB 2A/P ≤ 3 m, ≤ 200 m²) có ≥ 2 cột ở trong / sát viền mà cột không sát phòng khác = hiên, bỏ (`bo_hien=`).
 - Chạy mọi chế độ thì `test báo cháy.dwg` (506 cột) mất phòng duy nhất còn lại: giới hạn L6 vào MaiKeo. chay_thu, thu_mcp TAT CA DAT.
 - Bản chép Quyết Thắng: 68 → 62 đầu báo (đáp án 55); nhà văn phòng 2 khớp 4 phòng. Còn mái che tây nam 63,55 m², dải xiên xưởng 1, L7.
+
+## 2026-11-20 — Test tổng hợp mái kèo + hiên
+- `chay_thu.ps1` ca 14: xưởng có cột hai tường dọc, dải mái che có chữ, phần lồi đầu hồi, nhà văn phòng có hiên cột trong 6 m quanh xưởng; kiểm 8 khoang, bỏ khoang mái che,
+  bỏ hiên. Ca 13 cắt phần ca 14. TAT CA DAT.

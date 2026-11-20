@@ -953,6 +953,19 @@ Kiem ($out4 -match 'bo_cum=1 phong=1 ' -and $out4 -match 'theo_vung_co_san=1 ' -
   '_.TEXT', '1203000,7000', '150', '0', 'D1 (300x700)', '_.TEXT', '1209000,7000', '150', '0', 'D1 (300x700)', '_.TEXT', '1209000,1000', '150', '0', 'D1 (300x700)',
   '-LAYER', 'S', '0', '',
   'PCCC_RAI', 'BC_KHOI', 'LoaiTran', 'KhongTran', 'DaySan', '120', '3.5', '', 'W', '1199500,-500', '1213100,8900', '', '', '1202050,1000', '', '',
+  # 14 (20/11, xuong Quyet Thang, LoaiTran MaiKeo): xuong 20 x 48 m, cot 400 x 400 hai tuong doc buoc 6 m; dai mai che 3,4 m phia nam co chu, khong tuong ngan;
+  #    phan loi dau hoi 8 x 2 m phia bac; nha van phong 8 x 6 m cach xuong 4 m, hien 2,4 m co 3 cot 300 x 300 o mep ngoai (y = 7,8 m, trong 6 m quanh xuong).
+  #    Truoc sua: cot hien thanh hang vi keo thua, dai loi va dai mai che thanh khoang rieng, hien rai dau bao. Nay: 8 khoang, bo khoang mai che, bo hien.
+  '-LAYER', 'M', 'TUONG', '', '_.ZOOM', 'W', '1286000,-6000', '1322000,52000',
+  '_.PLINE', '1300000,-3400', '1320000,-3400', '1320000,48000', '1316000,48000', '1316000,50000', '1308000,50000', '1308000,48000', '1300000,48000', 'C',
+  '_.RECTANG', '1288000,10000', '1296000,16000', '_.PLINE', '1288000,10000', '1288000,7600', '1296000,7600', '1296000,10000', '',
+  '_.TEXT', '1306000,-2000', '500', '0', 'KHU VUC MAI CHE', '_.TEXT', '1289000,13000', '400', '0', 'PHONG LAM VIEC', '-LAYER', 'M', 'COT', '',
+  '_.RECTANG', '1300000,-200', '1300400,200', '_.RECTANG', '1319600,-200', '1320000,200', '_.RECTANG', '1300000,5800', '1300400,6200', '_.RECTANG', '1319600,5800', '1320000,6200', '_.RECTANG', '1300000,11800', '1300400,12200',
+  '_.RECTANG', '1319600,11800', '1320000,12200', '_.RECTANG', '1300000,17800', '1300400,18200', '_.RECTANG', '1319600,17800', '1320000,18200', '_.RECTANG', '1300000,23800', '1300400,24200', '_.RECTANG', '1319600,23800', '1320000,24200',
+  '_.RECTANG', '1300000,29800', '1300400,30200', '_.RECTANG', '1319600,29800', '1320000,30200', '_.RECTANG', '1300000,35800', '1300400,36200', '_.RECTANG', '1319600,35800', '1320000,36200', '_.RECTANG', '1300000,41800', '1300400,42200',
+  '_.RECTANG', '1319600,41800', '1320000,42200', '_.RECTANG', '1300000,47800', '1300400,48200', '_.RECTANG', '1319600,47800', '1320000,48200', '_.RECTANG', '1288050,7650', '1288350,7950', '_.RECTANG', '1291850,7650', '1292150,7950',
+  '_.RECTANG', '1295650,7650', '1295950,7950',
+  '-LAYER', 'S', '0', '', 'PCCC_RAI', 'BC_KHOI', 'LoaiTran', 'MaiKeo', '9', 'Khong', 'C', '1286500,-5500', '1321500,51500', '', '', '',
   '_.QSAVE') -join "`r`n") | Set-Content -Encoding ascii "$T\kb6.scr"
 $p6 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb6.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb6.out.txt"
 if (-not $p6.WaitForExit(180000)) { Stop-Process -Id $p6.Id -Force; throw "accoreconsole qua 3 phut (sua 6 loi): $T\kb6.out.txt" }
@@ -988,9 +1001,14 @@ if ($c12.IndexOf('[CoTran/KhongTran/HonHop/MaiKeo]') -gt 0) { $c12 = $c12.Substr
 Kiem ($c12 -match '^khung_truc x=1100000\.\.1120000 y=0\.\.10000[\s\S]{0,300}bo_net_truc=\d+[\s\S]{0,600}bo_ngoai_truc=1 ' -and $c12 -match 'V\S+ng t\S+ d\S+ng m2=194\.04 ' `
   -and ([regex]::Matches($c12, 'V\S+ng t\S+ d\S+ng m2=')).Count -eq 1) `
   'Truc net lien co ky hieu truc: khong cat phong (1 vung 194,04 m2), phong ngoai truc ngoai cung khong phan vung (bo_ngoai_truc=1)'
-$c13 = $out6.Substring([Math]::Max(0, $out6.LastIndexOf('[CoTran/KhongTran/HonHop/MaiKeo]')))
+$i14 = $out6.LastIndexOf('[CoTran/KhongTran/HonHop/MaiKeo]')
+$i13 = [Math]::Max(0, $out6.LastIndexOf('[CoTran/KhongTran/HonHop/MaiKeo]', [Math]::Max(0, $i14 - 1)))
+$c13 = $out6.Substring($i13, [Math]::Max(0, $i14 - $i13)) # ca 13, bo phan ca 14
+$c14 = $out6.Substring([Math]::Max(0, $i14))
 Kiem ($c13 -match 'tim_dam=8[\s\S]{0,600}chia_khoang=24 [\s\S]{0,400}nho=24 [\s\S]{0,400}khoang_nho_chung n=2 len_dam=2 ') `
   'LoaiTran KhongTran, o 1,8 x 1,8 m < 4 m2: chia 24 khoang (o hep < 1 m van la khoang), 2 dau bao dat tren tim dam (mat duoi dam, 5.9.1.1.6 c)'
+Kiem ($c14 -match 'bo_hien=1 ' -and $c14 -match 'mai_keo bo_khoang_khu_ten=1 ' -and $c14 -match 'mai_keo cot=21 phong_chia=1 khoang=8 ') `
+  'LoaiTran MaiKeo: 8 khoang theo hang cot (cot hien nha ben khong thanh hang, phan loi dau hoi gop khoang dau), khoang mai che co chu bo, hien co cot bo'
 
 # Thoi gian dung phong tren ban ve that cua nguoi dung (gitignore, chi chay khi co): truoc sua 78 s (23 trieu diem cat), nay < 10 s.
 $bvThat = Get-ChildItem "$GOC\file_cad_test" -Filter 'test b*o ch*y.dwg' -ErrorAction SilentlyContinue | Select-Object -First 1

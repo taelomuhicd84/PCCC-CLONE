@@ -10,7 +10,10 @@ hẹp 12,7 m² sát cột bị bỏ nốt, ca kiểm "rải được" hỏng (ph
 Bản chép (`kb4.scr` → `qt_maikeo_4.dwg`, ảnh `anh/so_dap_an_1.png`): `bo_hien=3 m2=35.3,34.3,23.2`, **28 vùng/khoang, 62 ĐB** (đáp án 25 / 55); nhà văn phòng 2 còn đúng 4 phòng / 4 ĐB.
 CÒN: vùng 63,55 m² mái che tây nam cạnh trạm điện (3 ĐB, không có chữ khu bên trong, không có cột); khoang 2 xưởng 1 ra 4 ĐB (bước 7,7 m), dải xiên sát tường phải chưa tách
 như đáp án; L7 thang bộ; test tổng hợp mái kèo + hiên trong `chay_thu.ps1`; hiên không vẽ cột chưa nhận.
-BƯỚC TIẾP: test tổng hợp → dải xiên → L7 → `cad-review` → push từ tab Terminal người dùng.
+LƯỢT 6 (người dùng "Viết test"): `chay_thu.ps1` ca 14 (kịch bản kb6): xưởng 20 x 48 m cột 400 x 400 hai tường dọc bước 6 m, dải mái che 3,4 m có chữ không tường ngăn,
+phần lồi đầu hồi 8 x 2 m, nhà văn phòng cách xưởng 4 m có hiên 2,4 m + 3 cột mép ngoài; kiểm `mai_keo cot=21 phong_chia=1 khoang=8`, `bo_khoang_khu_ten=1`, `bo_hien=1`.
+Ca 13 nay cắt tới trước lời nhắc LoaiTran của ca 14. TAT CA DAT.
+BƯỚC TIẾP: dải xiên → L7 → `cad-review` → push từ tab Terminal người dùng.
 LƯỢT 4 (Claude Code, người dùng "Sửa tiếp"): đã sửa lỗi 1–3 của lượt 3. `DuongViKeo`: hàng vì kèo cần ≥ 2 cột nằm trong bề ngang chính phòng (± 0,6 m),
 không có hàng nào mới mượn cột gần 6 m; hàng cách biên hộp bao < nửa bước vì kèo (trung vị) bỏ, dải đó gộp vào khoang kề. `Rai.cs` khối MaiKeo: sau chia, khoang ≤ 500 m²
 chứa tâm chữ khu (L5) bỏ (`mai_keo bo_khoang_khu_ten=`). build + `chay_thu` + `thu_mcp` TAT CA DAT. Chạy lại bản chép (`kb3.scr` → `qt_maikeo_3.dwg`, ảnh `anh/so_dap_an_1.png`):
