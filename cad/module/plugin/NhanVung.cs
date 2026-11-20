@@ -489,16 +489,27 @@ namespace TKPCCC
             List<Point2d[]> kq = new List<Point2d[]>();
             double x0 = z.Min(p => p.X), y0 = z.Min(p => p.Y), x1 = z.Max(p => p.X), y1 = z.Max(p => p.Y);
             if (cot.Count < 2 || Math.Abs(DienTichDaGiac(z)) * m * m < VI_KEO_M2_MIN || (x1 - x0) * m < VI_KEO_CANH_MIN_M || (y1 - y0) * m < VI_KEO_CANH_MIN_M) return kq;
-            double gan = VI_KEO_GAN_M / m, sai = 0.15 / m, le = 1 / m;
+            double gan = VI_KEO_GAN_M / m, sai = 0.15 / m, le = 1 / m, vao = 0.6 / m;
             List<Point2d> c = cot.Where(p => p.X >= x0 - gan && p.X <= x1 + gan && p.Y >= y0 - gan && p.Y <= y1 + gan).ToList();
-            Func<Func<Point2d, double>, double, double, List<double>> hang = (toaDo, a, b) =>
+            // Thử 20/11 (Quyết Thắng): cột hiên nhà văn phòng cách xưởng < 6 m thành 2 hàng thừa (3 khoang mỏng). Hàng phải có ≥ 2 cột nằm trong bề ngang
+            // của chính phòng (± 0,6 m); chỉ khi phòng không có hàng nào như vậy mới mượn hàng của cột gần (xưởng kề bên không vẽ cột).
+            Func<Func<Point2d, double>, Func<Point2d, double>, double, double, double, double, double, List<double>> hang = (toaDo, khac, a, b, ka, kb, nam) =>
             {
                 List<double> h = new List<double>();
                 foreach (double v in c.Select(toaDo).OrderBy(t => t))
-                    if ((h.Count == 0 || v - h[h.Count - 1] > sai) && v > a + le && v < b - le && cot.Count(q => Math.Abs(toaDo(q) - v) <= sai) >= 2) h.Add(v);
+                    if ((h.Count == 0 || v - h[h.Count - 1] > sai) && v > a + le && v < b - le
+                        && cot.Count(q => Math.Abs(toaDo(q) - v) <= sai && khac(q) >= ka - nam && khac(q) <= kb + nam) >= 2) h.Add(v);
+                // Dải sát biên hẹp hơn nửa bước vì kèo (phần lồi tường đầu hồi, 2 m) không thành khoang riêng: bỏ hàng đó, dải gộp vào khoang kề.
+                if (h.Count >= 2)
+                {
+                    List<double> buoc = h.Zip(h.Skip(1), (p, q) => q - p).OrderBy(t => t).ToList();
+                    double nua = buoc[buoc.Count / 2] / 2;
+                    h = h.Where(v => v - a >= nua && b - v >= nua).ToList();
+                }
                 return h;
             };
-            List<double> ys = hang(p => p.Y, y0, y1), xs = hang(p => p.X, x0, x1);
+            List<double> ys = hang(p => p.Y, p => p.X, y0, y1, x0, x1, vao), xs = hang(p => p.X, p => p.Y, x0, x1, y0, y1, vao);
+            if (ys.Count == 0 && xs.Count == 0) { ys = hang(p => p.Y, p => p.X, y0, y1, x0, x1, double.MaxValue / 4); xs = hang(p => p.X, p => p.Y, x0, x1, y0, y1, double.MaxValue / 4); }
             if (ys.Count == 0 && xs.Count == 0) return kq;
             if (ys.Count >= xs.Count) foreach (double y in ys) kq.Add(new[] { new Point2d(x0 - le, y), new Point2d(x1 + le, y) });
             else foreach (double x in xs) kq.Add(new[] { new Point2d(x, y0 - le), new Point2d(x, y1 + le) });

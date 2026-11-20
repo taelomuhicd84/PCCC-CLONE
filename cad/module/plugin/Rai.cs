@@ -1913,6 +1913,17 @@ namespace TKPCCC
                 {
                     List<Point2d[]> vk = DuongViKeo(zMk, nhanThem.Cot, m);
                     List<List<Point2d>> kcMk = vk.Count == 0 ? new List<List<Point2d>> { zMk } : ChiaKhoang(zMk, vk, 0.002 / m, m);
+                    if (kcMk.Count >= 2)
+                    {
+                        // Thử 20/11: dải "KHU VỰC MÁI CHE" không có tường ngăn nằm trong phòng xưởng; sau khi chia, khoang ≤ 500 m² chứa tâm chữ khu (L5) thì bỏ.
+                        List<List<Point2d>> boMk = kcMk.Where(x => DienTichDaGiac(x) * m * m <= 500 && nhanThem.KhuTen.Any(kv => TrongDaGiac(x, kv.Key))).ToList();
+                        if (boMk.Count > 0)
+                        {
+                            kcMk = kcMk.Where(x => !boMk.Contains(x)).ToList();
+                            ed.WriteMessage("\n[TKPCCC] mai_keo bo_khoang_khu_ten=" + boMk.Count + " m2="
+                                + string.Join(",", boMk.Select(x => Math.Round(DienTichDaGiac(x) * m * m, 1).ToString(CultureInfo.InvariantCulture))));
+                        }
+                    }
                     moiMk.AddRange(kcMk);
                     if (kcMk.Count < 2) continue;
                     List<Point2d> chaMk;

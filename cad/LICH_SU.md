@@ -683,3 +683,9 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
   80 đầu báo; đáp án AI 25 vùng / 55. Cột chữ I, phòng bơm, mái che 187 m², 2 phòng góc phải đã đúng. Còn sai: hàng vì kèo mượn cột nhà kề (3 khoang mỏng xưởng 2),
   dải mỏng đầu hồi xưởng 1 chưa gộp, xưởng 2 nuốt dải mái che phía nam, hiên (L6). Chi tiết + thứ tự sửa: `TIEN_DO.md` mục VIỆC 20/11 lượt 3.
 - Bẫy kịch bản: `(command "_.ERASE" (ssget ...) "")` khi ssget trả nil làm lệch dấu nhắc, console lặp SAVEAS tới hết giờ: bọc `(if (setq ss (ssget ...)) ...)`.
+
+## 2026-11-20 — Sửa khoang vì kèo sau khi thử bản vẽ thật
+- `NhanVung.cs` `DuongViKeo`: hàng vì kèo chỉ từ cột nằm trong bề ngang chính phòng (± 0,6 m), không có thì mới mượn cột gần 6 m (trước: cột hiên nhà văn phòng
+  thành 2 hàng thừa); hàng cách biên < nửa bước vì kèo bỏ (phần lồi đầu hồi gộp vào khoang đầu).
+- `Rai.cs` MaiKeo: khoang ≤ 500 m² chứa chữ khu (mái che, sân, hiện hữu, phòng bơm) bỏ sau khi chia.
+- Bản chép Quyết Thắng: 80 → 68 đầu báo (đáp án 55); xưởng 2 khớp đáp án 8 khoang / 16. Còn hiên (L6), mái che tây nam, dải xiên xưởng 1. Test TAT CA DAT.

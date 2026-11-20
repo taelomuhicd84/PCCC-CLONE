@@ -3,7 +3,14 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
-## VIỆC 20/11 — DẠY PLUGIN PHÂN VÙNG NHƯ AI (xưởng mái kèo): MÃ L1, L2, L5, L8 ĐÃ BUILD + TEST ĐẠT + COMMIT (chưa push); THỬ BẢN VẼ THẬT CHƯA KHỚP ĐÁP ÁN
+## VIỆC 20/11 — DẠY PLUGIN PHÂN VÙNG NHƯ AI (xưởng mái kèo): MÃ L1, L2, L5, L8 + 3 SỬA SAU THỬ: BUILD + TEST ĐẠT + COMMIT (chưa push); HAI XƯỞNG KHỚP ĐÁP ÁN, CÒN HIÊN (L6)
+LƯỢT 4 (Claude Code, người dùng "Sửa tiếp"): đã sửa lỗi 1–3 của lượt 3. `DuongViKeo`: hàng vì kèo cần ≥ 2 cột nằm trong bề ngang chính phòng (± 0,6 m),
+không có hàng nào mới mượn cột gần 6 m; hàng cách biên hộp bao < nửa bước vì kèo (trung vị) bỏ, dải đó gộp vào khoang kề. `Rai.cs` khối MaiKeo: sau chia, khoang ≤ 500 m²
+chứa tâm chữ khu (L5) bỏ (`mai_keo bo_khoang_khu_ten=`). build + `chay_thu` + `thu_mcp` TAT CA DAT. Chạy lại bản chép (`kb3.scr` → `qt_maikeo_3.dwg`, ảnh `anh/so_dap_an_1.png`):
+**32 vùng/khoang, 68 ĐB** (đáp án 25 / 55). Xưởng 2: 8 khoang / 16 ĐB = đáp án; dải mái che nam 75,9 m² bỏ; xưởng 1 + khu nam + phòng 5: 32 ĐB (đáp án 33), khoang đầu gộp phần lồi.
+CÒN: hiên quanh nhà văn phòng 2 (L6, phần lớn số thừa); vùng 63,55 m² mái che tây nam cạnh trạm điện (3 ĐB, không có chữ khu bên trong); khoang 2 xưởng 1 ra 4 ĐB
+(bước 7,7 m) vì dải xiên sát tường phải chưa tách thành vùng riêng như đáp án; L7 thang bộ; chưa có test tổng hợp cho luật mái kèo trong `chay_thu.ps1`.
+BƯỚC TIẾP: L6 → dải xiên → L7 → test tổng hợp → `cad-review` → push từ tab Terminal người dùng.
 LƯỢT 3 (Claude Code, 20/11 chiều): `build.bat` đạt (không lỗi C# 5), `chay_thu.ps1` TAT CA DAT, `thu_mcp.ps1` TAT CA DAT. Bundle đã build lại: AutoCAD đang mở phải tắt hẳn, mở lại mới nạp bản mới.
 Thử trên bản chép (`ket_qua/QUYET_THANG/cad/thu_maikeo/qt_maikeo_2.dwg`, không commit; kịch bản `kb2.scr`, log `kb2.out.utf8.txt`, ảnh so đáp án đỏ `anh/so_dap_an_1.png`):
 `PCCC_RAI BC_KHOI LoaiTran MaiKeo 9 Khong`, quét C 1305000,-1655000 → 1397000,-1575000, Enter mọi phòng: 68 s, `cot=100 mai_keo phong_chia=2 khoang=21`,
