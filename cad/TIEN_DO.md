@@ -3,6 +3,36 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## VIỆC 20/11 — DẠY PLUGIN PHÂN VÙNG NHƯ AI (xưởng mái kèo): MÃ L1, L2, L5, L8 ĐÃ BUILD + TEST ĐẠT + COMMIT (chưa push); THỬ BẢN VẼ THẬT CHƯA KHỚP ĐÁP ÁN
+LƯỢT 3 (Claude Code, 20/11 chiều): `build.bat` đạt (không lỗi C# 5), `chay_thu.ps1` TAT CA DAT, `thu_mcp.ps1` TAT CA DAT. Bundle đã build lại: AutoCAD đang mở phải tắt hẳn, mở lại mới nạp bản mới.
+Thử trên bản chép (`ket_qua/QUYET_THANG/cad/thu_maikeo/qt_maikeo_2.dwg`, không commit; kịch bản `kb2.scr`, log `kb2.out.utf8.txt`, ảnh so đáp án đỏ `anh/so_dap_an_1.png`):
+`PCCC_RAI BC_KHOI LoaiTran MaiKeo 9 Khong`, quét C 1305000,-1655000 → 1397000,-1575000, Enter mọi phòng: 68 s, `cot=100 mai_keo phong_chia=2 khoang=21`,
+**36 vùng/khoang, 80 ĐB** (đáp án 25 vùng / 55 ĐB). ĐÚNG: cột chữ I không còn thành tường ảo (hết ô giả dọc cột); phòng bơm 11,4 m² + mái che 187,2 m² bỏ (L5);
+2 phòng văn phòng góc phải có vùng (L8); ô X, hiện hữu bỏ; khoang 6 m giữa hàng vì kèo đúng ở thân hai xưởng. CÒN SAI (sửa theo thứ tự):
+1. Xưởng 2 thừa 3 khoang mỏng đầu bắc (16; 18,5; 25,5 m²): `DuongViKeo` (`NhanVung.cs` khoảng dòng 482–492, `VI_KEO_GAN_M = 6`) mượn cột nhà văn phòng 2 / hiên
+   cách hộp bao ≤ 6 m làm hàng vì kèo. Sửa: hàng phải có ≥ 2 cột nằm trong khoảng ngang (dọc) của chính phòng (± 1 m), cột nhà khác không tạo hàng.
+2. Xưởng 1 thừa dải mỏng 23 m² (4 ĐB) giữa phần lồi tường đầu hồi phía bắc và hàng cột đầu: dải < nửa bước vì kèo (≈ 3 m) phải gộp vào khoang kề.
+3. Xưởng 2 nuốt dải "KHU VỰC MÁI CHE" phía nam (không có tường ngăn, phòng 1029,6 m² chỉ báo `chu_khu_trong_phong_lon`) → khoang cuối 4 ĐB thay vì 2.
+4. Hiên quanh nhà văn phòng 2 vẫn thành nhiều vùng (L6 chưa làm); khu mái che tây nam cạnh trạm điện còn vùng 63,55 m² (3 ĐB).
+BƯỚC TIẾP: sửa 1 → 2 → 3, L6, L7; thêm test tổng hợp (mục Thử trong file kiến thức); chạy lại `kb2.scr` (đổi tên DWG ra) so ảnh với đáp án; `cad-review`; push từ tab Terminal người dùng.
+LƯỢT 2 (phiên Bot chat thứ hai, không có Bash/PowerShell; người dùng: "điều chỉnh tư duy vùng rải đầu báo của plugin giống với AI"): sửa `module/plugin/NhanVung.cs`,
+`module/plugin/Rai.cs`, `module/ui/BangBoTri.cs` (mục "Mái kèo"), `test/chay_thu.ps1` (chuỗi dò LoaiTran), `HUONG_DAN_SU_DUNG.md`. Chi tiết + rủi ro:
+`knowledge/hoc/phan-vung-xuong-mai-keo.md` mục "Đã viết mã 20/11".
+BƯỚC TIẾP (Claude Code có shell, tắt AutoCAD): (1) `build.bat`, sửa lỗi biên dịch C# 5 nếu có; (2) `chay_thu.ps1`, `thu_mcp.ps1` TAT CA DAT; (3) thêm test tổng hợp (mục Thử
+trong file kiến thức) vào `chay_thu.ps1`; (4) thử trên bản chép "BEAM QUYẾT THẮNG.dwg" mặt bằng dưới: `PCCC_RAI BC_KHOI LoaiTran MaiKeo 9`, so với đáp án 25 vùng / 55 ĐB;
+(5) L6 hiên, L7 thang bộ; (6) `cad-review` một lần cuối; (7) commit + push.
+LƯỢT 1:
+Người dùng (Bot chat, ảnh): "Vẽ báo cháy ở mặt bằng vùng trên, rồi đối chiếu mặt bằng vùng trên và vùng dưới (phân vùng bằng plugin và rải đầu báo bằng plugin).
+Từ đó train cho plugin phân vùng và rải được như AI, train vào plugin dự án. Để không có AI mà tôi vẫn dùng được bằng plugin".
+- XONG (phiên Bot chat, không có Bash): mặt bằng trên vẽ 25 vùng theo bộ đã duyệt 19/11 + rải 55 BC_KHOI (vùng còn giữ để người dùng so); plugin (mặt bằng dưới) 35 vùng / 69 ĐB.
+  Bảng đối chiếu: `ket_qua/QUYET_THANG/cad/so_sanh/so_sanh_ai_plugin.md`; đáp án vùng `ai_vung_tren.json` (không commit).
+  Luật + chỗ sửa + test: `knowledge/hoc/phan-vung-xuong-mai-keo.md` (L1–L8).
+- Nguyên nhân chính: cột thép chữ I (layer tên ống `$.2.9DN25`) bị coi là tường 2 nét rồi bắc cầu sang cột kế bên thành tường ảo; chưa có luật khoang vì kèo,
+  từ khoá MÁI CHE / PHÒNG BƠM / SÂN, hiên; 2 phòng văn phòng góc ngoài bị bỏ sót.
+- BƯỚC TIẾP (cần Claude Code có Bash, AutoCAD tắt khi build): agent `cad-lap-trinh` (Opus high) sửa `module/plugin/NhanVung.cs` theo L1 → L8 (thứ tự: L1 cột, L8 sót phòng,
+  L5 từ khoá, L6 hiên, L7 thang, L2 khoang vì kèo + lựa chọn kết cấu MaiKeo ở `PCCC_RAI` / palette Khoang dầm), thêm test tổng hợp vào `test/chay_thu.ps1`,
+  thử cục bộ trên bản chép của bản vẽ thật so với đáp án; `cad-review` (Opus max) một lần cuối; sửa `HUONG_DAN_SU_DUNG.md`, `README.md` nếu thêm từ khoá / lựa chọn.
+
 ## VIỆC 19/11 — RẢI KHÔNG ĐỂ THIẾT BỊ NGOÀI / SÁT NÉT VÙNG: XONG MÃ + TEST (nhánh `claude/cad-rai-trong-vung-18cb55`, đã gộp vào main 19/11)
 Người dùng (2 ảnh): "có 1 số đầu báo khói rải lệch ra ngoài polyline vùng, chắc do rải theo hàng cột đều nhau ... rải chuẩn (dù cho không cùng hàng, cột)".
 - Nguyên nhân: (1) lưới chia theo hộp bao, chỉ lọc điểm ngoài đa giác: dải hẹp cạnh xiên (V5 XUONG) giữ cột ở giữa hộp bao, điểm trên cùng cách cạnh xiên 1 mm;

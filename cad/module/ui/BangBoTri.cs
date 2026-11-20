@@ -279,8 +279,9 @@ namespace TKPCCC
             loaiTran.Items.Add("Có trần: rải như trần phẳng");
             loaiTran.Items.Add("Không trần: đọc mặt bằng dầm, chia khoang");
             loaiTran.Items.Add("Vừa có vừa không: vùng + dầm vẽ tay");
+            loaiTran.Items.Add("Mái kèo: khoang giữa hai hàng vì kèo (hàng cột)");
             int lt;
-            loaiTran.SelectedIndex = int.TryParse(GiaoDien.DocCaiDat("kd_loai_tran", "1"), out lt) && lt >= 0 && lt <= 2 ? lt : 1;
+            loaiTran.SelectedIndex = int.TryParse(GiaoDien.DocCaiDat("kd_loai_tran", "1"), out lt) && lt >= 0 && lt <= 3 ? lt : 1;
             loaiTran.SelectedIndexChanged += delegate { GiaoDien.LuuCaiDat("kd_loai_tran", loaiTran.SelectedIndex.ToString(CultureInfo.InvariantCulture)); };
             f.Controls.Add(loaiTran);
             f.Controls.Add(Chu("Không trần: khối mặt bằng dầm chép đè lên mặt bằng tầng; mép dầm là tường của khoang. Vừa có vừa không: vẽ polyline kín "
@@ -340,7 +341,7 @@ namespace TKPCCC
             if (!ds.Any(t => t.Ma == "BC_KHOI")) throw new System.Exception("Không có BC_KHOI trong khoang_cach_rai.json: chạy lại cad\\build.bat.");
             GiaoDien.LuuCaiDat("kd_h", tranKd.Text.Trim());
             // Thứ tự dấu nhắc PCCC_RAI (Rai.cs RaiTay): mã → Dam → trần → theo hàng.
-            string[] loai = { "CoTran", "KhongTran", "HonHop" }; // mã -> LoaiTran -> loại trần -> trần -> theo hàng
+            string[] loai = { "CoTran", "KhongTran", "HonHop", "MaiKeo" }; // mã -> LoaiTran -> loại trần -> trần -> theo hàng
             GiaoDien.GuiLenh("PCCC_RAI\nBC_KHOI\nLoaiTran\n" + loai[Math.Max(0, loaiTran.SelectedIndex)] + "\n" + (h > 0 ? Ct(h) : "") + "\nKhong\n", "PCCC_RAI", delegate
             {
                 ketQua.Text = Lenh.KetQuaRaiCuoi;

@@ -663,3 +663,23 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
   mở hội thoại sang VS Code (`vscode://anthropic.claude-code/open?session=`) hoặc app Claude Code (`claude://resume?session=`).
 - chay_thu, thu_mcp, thu_bot (thêm mục stream-json, model giả) TAT CA DAT; thu_gui lần 1 lỗi 2 mục do song.json trễ sau gói pdf + plot, chạy lại TAT CA DAT.
   Chưa thử bằng tay trong AutoCAD.
+
+## 2026-11-20 — Đối chiếu phân vùng AI và plugin trên cùng một mặt bằng xưởng
+- Bot chat (không có Bash): mặt bằng trên vẽ lại bộ 25 vùng đã duyệt 19/11 (đọc lại từ nhật ký phiên và `b4_vung.json`, dời theo `goc`) + rải 55 BC_KHOI;
+  mặt bằng dưới là kết quả plugin người dùng chạy: 35 vùng, 69 đầu báo. `rai` nhận `vung` là toạ độ đỉnh, không phải handle (lỗi "Input string" nếu đưa handle).
+- Plugin sai vì cột chữ I trên layer tên ống bị coi là tường 2 nét rồi bắc cầu thành tường ảo; thiếu luật khoang vì kèo, khu mái che / phòng bơm / hiên; bỏ sót 2 phòng văn phòng.
+  Luật dạy plugin L1–L8 + test: `knowledge/hoc/phan-vung-xuong-mai-keo.md`. Chưa sửa mã (việc kế ở `TIEN_DO.md`).
+
+## 2026-11-20 — Viết mã phân vùng như AI: cột theo hình, khoang vì kèo, khu không rải theo chữ (chưa build)
+- Bot chat lượt 2 (không có shell): đọc lại cột trên "BEAM QUYẾT THẮNG.dwg": chữ I 507 x 830 mm, layer `$.2.9DN25`, 4 hàng dọc x 9 hàng ngang cách 6 m.
+- `NhanVung.cs`: L1 `GhiCotUng` / `TachCot`, `CacMat` tham số `khongNoi` (nét cột không khép khe); L2 `DuongViKeo`; L5 `GomChuKhu` / `LoaiKhuTen`; L8 `CumChinh(..., giu)`.
+- `Rai.cs`: `LoaiTran` thêm `MaiKeo` (không hỏi dầm, chia khoang theo hàng cột), bỏ khu theo chữ (`bo_khu_ten=`), giữ phòng có chữ "PHÒNG" ngoài trục / cụm nhỏ.
+  Palette tab Khoang dầm thêm mục "Mái kèo". `chay_thu.ps1` đổi chuỗi dò thành `[CoTran/KhongTran/HonHop/MaiKeo]`.
+- Chưa build, chưa chạy test, chưa commit (phiên không có shell). L6 hiên, L7 thang bộ chưa làm.
+
+## 2026-11-20 — Build + test mã mái kèo, thử trên bản chép xưởng Quyết Thắng
+- Claude Code: `build.bat` đạt (không lỗi C# 5), `chay_thu.ps1` và `thu_mcp.ps1` TAT CA DAT. Commit cùng mã Bot chat (chưa push).
+- Thử `PCCC_RAI BC_KHOI LoaiTran MaiKeo 9` trong accoreconsole trên bản chép (Drive → `ket_qua/QUYET_THANG/cad/thu_maikeo/`, không commit): 68 s, 36 vùng/khoang,
+  80 đầu báo; đáp án AI 25 vùng / 55. Cột chữ I, phòng bơm, mái che 187 m², 2 phòng góc phải đã đúng. Còn sai: hàng vì kèo mượn cột nhà kề (3 khoang mỏng xưởng 2),
+  dải mỏng đầu hồi xưởng 1 chưa gộp, xưởng 2 nuốt dải mái che phía nam, hiên (L6). Chi tiết + thứ tự sửa: `TIEN_DO.md` mục VIỆC 20/11 lượt 3.
+- Bẫy kịch bản: `(command "_.ERASE" (ssget ...) "")` khi ssget trả nil làm lệch dấu nhắc, console lặp SAVEAS tới hết giờ: bọc `(if (setq ss (ssget ...)) ...)`.

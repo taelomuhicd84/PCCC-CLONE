@@ -1452,7 +1452,7 @@ namespace TKPCCC
                 return true;
             };
             double hTran = 0;
-            int loaiTran = 0; // LOAI_TRAN: 0 có trần (trần phẳng), 1 không trần (mặt bằng dầm, chia khoang), 2 vừa có vừa không (vùng + dầm vẽ tay)
+            int loaiTran = 0; // LOAI_TRAN: 0 có trần (trần phẳng), 1 không trần (mặt bằng dầm, chia khoang), 2 vừa có vừa không (vùng + dầm vẽ tay), 3 mái kèo (khoang theo hàng cột)
             Dictionary<string, object> tc = TieuChuanRai(v.ma, 0);
             if (tc != null)
             {
@@ -1463,7 +1463,7 @@ namespace TKPCCC
                 PromptDoubleResult hcr;
                 while (true)
                 {
-                    string them = (heSo < 100 ? ", k = " + heSo + " %" : "") + (loaiTran == 1 ? ", không trần" : loaiTran == 2 ? ", vừa có vừa không trần" : "")
+                    string them = (heSo < 100 ? ", k = " + heSo + " %" : "") + (loaiTran == 1 ? ", không trần" : loaiTran == 2 ? ", vừa có vừa không trần" : loaiTran == 3 ? ", mái kèo" : "")
                         + (daySan > 0 ? ", sàn " + Math.Round(daySan * 1000) + " mm" : "") + (xem ? ", xem trước" : "");
                     PromptDoubleOptions hc = new PromptDoubleOptions("\nChiều cao trần (m), Enter = không xét" + (them != "" ? " (" + them.Substring(2) + ")" : ""));
                     hc.Keywords.Add("HeSo"); // AutoCAD tự nối " [HeSo/LoaiTran/DaySan/XemTruoc]: "
@@ -1479,8 +1479,8 @@ namespace TKPCCC
                     {
                         // Người dùng 17/11: chọn 1 trong 3 trường hợp trần trước khi rải.
                         PromptKeywordOptions lt = new PromptKeywordOptions("\nLoại trần: CoTran = rải như trần phẳng; KhongTran = đọc mặt bằng dầm, chia khoang (5.9.1.1.6);"
-                            + " HonHop = vừa có vừa không trần (vùng PCCC_VUNG và line dầm vẽ tay)");
-                        lt.Keywords.Add("CoTran"); lt.Keywords.Add("KhongTran"); lt.Keywords.Add("HonHop");
+                            + " HonHop = vừa có vừa không trần (vùng PCCC_VUNG và line dầm vẽ tay); MaiKeo = xưởng mái kèo, khoang giữa hai hàng vì kèo (tim hàng cột)");
+                        lt.Keywords.Add("CoTran"); lt.Keywords.Add("KhongTran"); lt.Keywords.Add("HonHop"); lt.Keywords.Add("MaiKeo");
                         lt.Keywords.Default = LOAI_TRAN[loaiTran];
                         lt.AllowNone = true;
                         PromptResult lr = ed.GetKeywords(lt);
@@ -1513,6 +1513,14 @@ namespace TKPCCC
                         s *= LaySo(dam, "he_so", 1);
                         ed.WriteMessage("\n[TKPCCC] Trần có dầm sâu > 0,3 m, theo " + LayChu(dam, "can_cu", "") + ": bước tối đa còn "
                             + Lt(s * m).ToString(CultureInfo.InvariantCulture) + " m.");
+                    }
+                    else if (loaiTran == 3)
+                    {
+                        // L2 (người dùng duyệt 20/11, xưởng Quyết Thắng): mái kèo, xà gồ không chia khoang; khoang = giữa hai hàng vì kèo (DuongViKeo).
+                        ed.WriteMessage("\n[TKPCCC] Mái kèo: khoang = giữa hai hàng vì kèo (tim hàng cột nhận theo hình), chạy hết bề rộng xưởng tới tường; không chia theo xà gồ."
+                            + " Chỉ chia phòng ≥ " + VI_KEO_M2_MIN.ToString(CultureInfo.InvariantCulture) + " m²; phòng nhỏ, văn phòng giữ nguyên.");
+                        khoangDam = true;
+                        hTran = hcr.Status == PromptStatus.OK ? hcr.Value : 0;
                     }
                     else
                     {
@@ -1603,7 +1611,8 @@ namespace TKPCCC
             {
                 damMau = new HashSet<string>();
                 // HonHop (người dùng 17/11): vùng có trần / không trần và dầm đều vẽ tay; không đọc mặt bằng dầm, chọn thẳng line dầm (TungDam).
-                while (loaiTran != 2)
+                // MaiKeo (20/11): không hỏi dầm, khoang theo hàng vì kèo.
+                while (loaiTran < 2)
                 {
                     PromptNestedEntityOptions no = new PromptNestedEntityOptions(damMau.Count == 0
                         ? "\nBấm một nét DẦM mẫu (layer + màu của dầm), Enter = không có: " : "\nBấm nét dầm màu khác, Enter = xong; nhãn dầm ghi sai cỡ thì SuaDam");
@@ -1644,12 +1653,12 @@ namespace TKPCCC
                     mau.Remove(kh); // nét dầm không dựng làm tường
                     if (damMau.Add(kh)) ed.WriteMessage("\n[TKPCCC] Nét dầm mẫu: layer " + kh.Replace("|", ", màu ") + ".");
                 }
-                List<KeyValuePair<Point2d, Vector2d>> nhan = loaiTran == 2 ? new List<KeyValuePair<Point2d, Vector2d>>() : NhanDam(qr.Value.GetObjectIds());
+                List<KeyValuePair<Point2d, Vector2d>> nhan = loaiTran >= 2 ? new List<KeyValuePair<Point2d, Vector2d>>() : NhanDam(qr.Value.GetObjectIds());
                 double sauChung = -1;
                 if (damMau.Count == 0 || nhan.Count == 0)
                 {
-                    string tl = "TungDam";
-                    if (loaiTran != 2)
+                    string tl = loaiTran == 3 ? "" : "TungDam";
+                    if (loaiTran < 2)
                     {
                         PromptStringOptions so = new PromptStringOptions(damMau.Count > 0
                             ? "\nKhông thấy ký hiệu dầm b x h (vd B1 (400x600)) trên mặt bằng. Nhập b x h (mm) cho cả mặt bằng, hoặc TungDam = chọn line dọc dầm rồi nhập từng cỡ: "
@@ -1747,7 +1756,9 @@ namespace TKPCCC
             if (hopChon != null && (hopChon[2] - hopChon[0] < 1e-9 || hopChon[3] - hopChon[1] < 1e-9)) hopChon = null;
             double[] khungTruc;
             int boTruc;
-            MatChon(db, conLai, mau.Count > 0 ? mau : null, damMau, giuDam, damThem, hopChon, khoiDam, out vung, out mat, out oX, out gach, out demDam, out khoangChia, out khuKhong, out damSau, out khungTruc, out boTruc);
+            NhanThem nhanThem; // cột, chữ khu không rải, chữ tên phòng (người dùng 20/11: phân vùng như AI)
+            MatChon(db, conLai, mau.Count > 0 ? mau : null, damMau, giuDam, damThem, hopChon, khoiDam, out vung, out mat, out oX, out gach, out demDam, out khoangChia, out khuKhong, out damSau, out khungTruc, out boTruc, out nhanThem);
+            if (nhanThem.Cot.Count > 0) ed.WriteMessage("\n[TKPCCC] cot=" + nhanThem.Cot.Count + " (polyline kín nhỏ cùng cỡ lặp thẳng hàng = cột: không khép khe tường từ nét cột).");
             if (khungTruc != null) ed.WriteMessage("\n[TKPCCC] khung_truc x=" + string.Join("..", new[] { khungTruc[0], khungTruc[2] }.Select(t => double.IsNaN(t) ? "?" : Math.Round(t).ToString(CultureInfo.InvariantCulture)))
                 + " y=" + string.Join("..", new[] { khungTruc[1], khungTruc[3] }.Select(t => double.IsNaN(t) ? "?" : Math.Round(t).ToString(CultureInfo.InvariantCulture))));
             if (boTruc > 0) ed.WriteMessage("\n[TKPCCC] bo_net_truc=" + boTruc + " (nét liền trùng đường trục: không coi là tường).");
@@ -1800,7 +1811,8 @@ namespace TKPCCC
                             Func<Point2d, bool> trongTruc = c => (double.IsNaN(khungTruc[0]) || (c.X >= khungTruc[0] - nt && c.X <= khungTruc[2] + nt))
                                 && (double.IsNaN(khungTruc[1]) || (c.Y >= khungTruc[1] - nt && c.Y <= khungTruc[3] + nt));
                             int truoc = vung.Count;
-                            vung = vung.Where(f0 => trongTruc(DiemTrongMat(f0))).ToList();
+                            // L8 (người dùng duyệt 20/11): phòng có chữ tên phòng ("VĂN PHÒNG"...) nằm ngoài trục vẫn giữ (2 văn phòng ở góc ngoài khối xưởng bị bỏ sót).
+                            vung = vung.Where(f0 => trongTruc(DiemTrongMat(f0)) || nhanThem.TenPhong.Any(p => TrongDaGiac(f0, p))).ToList();
                             if (vung.Count < truoc) ed.WriteMessage("\n[TKPCCC] bo_ngoai_truc=" + (truoc - vung.Count) + " (phòng ngoài đường trục ngoài cùng: không phân vùng; cần rải thì bấm điểm trong phòng đó).");
                         }
                         // Người dùng dặn 16/11: đầu báo không đặt trong lõi thang máy, buồng thang, WC (phòng ≤ 60 m² chứa dấu hiệu GomKhu).
@@ -1820,9 +1832,29 @@ namespace TKPCCC
                             if (sanh.Count > 0) ed.WriteMessage("\n[TKPCCC] bo_sanh_thang=" + sanh.Count + " m2="
                                 + string.Join(",", sanh.Select(f0 => Math.Round(DienTichDaGiac(f0) * m * m, 1).ToString(CultureInfo.InvariantCulture)))
                                 + " (phòng nhỏ sát giếng thang máy = sảnh thang: không đặt đầu báo; cần rải thì bấm điểm trong phòng đó).");
+                            // L5 (người dùng duyệt 19/11, xưởng Quyết Thắng): khu có chữ MÁI CHE, KHÔNG CÓ CÔNG NĂNG, SÂN, HIỆN HỮU, PHÒNG BƠM không đặt đầu báo.
+                            // shortcut: chỉ bỏ phòng ≤ 500 m² chứa tâm chữ; phòng lớn hơn (chữ rơi vào xưởng vì mái che không có tường ngăn) chỉ báo, người dùng vẽ PCCC_VUNG tách ra.
+                            List<List<Point2d>> boKhuTen = new List<List<Point2d>>();
+                            List<string> ghiKhuTen = new List<string>();
+                            foreach (List<Point2d> fk in vung)
+                            {
+                                string[] loaiKhu = nhanThem.KhuTen.Where(kv => TrongDaGiac(fk, kv.Key)).Select(kv => kv.Value).Distinct().ToArray();
+                                if (loaiKhu.Length == 0) continue;
+                                double dtKhu = DienTichDaGiac(fk) * m * m;
+                                if (dtKhu <= 500)
+                                {
+                                    boKhuTen.Add(fk);
+                                    ghiKhuTen.Add(string.Join("+", loaiKhu) + " " + Math.Round(dtKhu, 1).ToString(CultureInfo.InvariantCulture) + " m2");
+                                }
+                                else ed.WriteMessage("\n[TKPCCC] chu_khu_trong_phong_lon m2=" + Math.Round(dtKhu, 1).ToString(CultureInfo.InvariantCulture) + " (" + string.Join(", ", loaiKhu)
+                                    + "): vẫn rải phòng này; khu đó không rải thì vẽ polyline kín " + LAYER_VUNG + " tách ra rồi chọn lại.");
+                            }
+                            vung = vung.Where(f0 => !boKhuTen.Contains(f0)).ToList();
+                            if (boKhuTen.Count > 0) ed.WriteMessage("\n[TKPCCC] bo_khu_ten=" + boKhuTen.Count + " (" + string.Join("; ", ghiKhuTen)
+                                + ": mái che, sân, hiện hữu, phòng bơm không đặt đầu báo; cần rải thì bấm điểm trong phòng đó).");
                         }
                         int boPhong, boCum;
-                        vung = CumChinh(vung, 2 / m, out boPhong, out boCum);
+                        vung = CumChinh(vung, 2 / m, out boPhong, out boCum, f0 => nhanThem.TenPhong.Any(p => TrongDaGiac(f0, p)));
                         if (boPhong > 0) ed.WriteMessage("\n[TKPCCC] bo_cum=" + boCum + " phong=" + boPhong + " (cụm phòng nhỏ tách xa mặt bằng chính: hình chi tiết, mặt cắt; cần rải thì bấm điểm trong phòng).");
                         break;
                     }
@@ -1871,6 +1903,27 @@ namespace TKPCCC
                     vung = moi;
                     if (khoangChia.Count > 0) ed.WriteMessage("\n[TKPCCC] chia_khoang=" + khoangChia.Count + " (phòng tự dựng chia theo dầm sâu; nét khoang vẽ trên layer " + LAYER_KHOANG + ")");
                 }
+            }
+            // L2 (người dùng duyệt 20/11, xưởng mái kèo): phòng lớn chia khoang giữa hai hàng vì kèo (tim hàng cột), như vùng AI đã vẽ; cả vùng tự dựng lẫn vùng vẽ sẵn.
+            if (loaiTran == 3)
+            {
+                int soPhongMk = 0, soKhoangMk = 0;
+                List<List<Point2d>> moiMk = new List<List<Point2d>>();
+                foreach (List<Point2d> zMk in vung)
+                {
+                    List<Point2d[]> vk = DuongViKeo(zMk, nhanThem.Cot, m);
+                    List<List<Point2d>> kcMk = vk.Count == 0 ? new List<List<Point2d>> { zMk } : ChiaKhoang(zMk, vk, 0.002 / m, m);
+                    moiMk.AddRange(kcMk);
+                    if (kcMk.Count < 2) continue;
+                    List<Point2d> chaMk;
+                    if (khoangChia.TryGetValue(zMk, out chaMk)) khoangChia.Remove(zMk); else chaMk = zMk; // khoang dầm chia tiếp: không vẽ nét khoang cũ
+                    foreach (List<Point2d> xMk in kcMk) khoangChia[xMk] = chaMk;
+                    soPhongMk++;
+                    soKhoangMk += kcMk.Count;
+                }
+                vung = moiMk;
+                ed.WriteMessage("\n[TKPCCC] mai_keo cot=" + nhanThem.Cot.Count + " phong_chia=" + soPhongMk + " khoang=" + soKhoangMk
+                    + (nhanThem.Cot.Count < 2 ? " (không nhận được cột: chọn cả cột khi quét, hoặc vẽ polyline kín " + LAYER_VUNG + " từng khoang)" : " (nét khoang vẽ trên layer " + LAYER_KHOANG + ")"));
             }
 
             // Khoang dầm (TCVN 7568-14:2025 5.9.1.1.6 c–f; bộ bản vẽ mẫu ghi "khoang < 9 m² => không bố trí theo khoang dầm"): khoang nhỏ hơn ngưỡng
@@ -2057,7 +2110,7 @@ namespace TKPCCC
                 + (soHo > 0 ? " · " + soHo + " phòng chưa phủ hết (HO, xem dòng lệnh)" : tia ? "" : soBo > 0 ? "" : " · phủ kín");
         }
 
-        static readonly string[] LOAI_TRAN = { "CoTran", "KhongTran", "HonHop" };
+        static readonly string[] LOAI_TRAN = { "CoTran", "KhongTran", "HonHop", "MaiKeo" };
         const string LAYER_KHOANG = "PCCC_KHOANG_M2"; // chữ m² từng khoang dầm + dấu X khoang nhỏ; in được, xoá cả layer nếu không cần
 
         /// Ghi diện tích giữa từng khoang (dưới tâm, không đè đầu báo ở tâm); khoang dưới ngưỡng 5.9.1.1.6 (c, e) thêm dấu X hồng ở tâm.

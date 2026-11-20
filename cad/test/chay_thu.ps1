@@ -984,11 +984,11 @@ Kiem ($c10.Success -and $c10b -match '^[\s\S]{0,3000}?m2=100 ' -and $c10b -match
 Kiem ($out6 -match 'chia_khoang=3 \(ph\S+ng t\S+ d\S+ng[\s\S]{0,600}V\S+ng t\S+ d\S+ng m2=72 ' -and ([regex]::Matches($out6, 'V\S+ng t\S+ d\S+ng m2=24 ')).Count -eq 0) `
   'Dam + tu dung phong: vung la phong 72 m2 (mot vung), dam sau chia 3 khoang 24 m2 ve tren PCCC_KHOANG_M2'
 $c12 = $out6.Substring([Math]::Max(0, $out6.LastIndexOf('khung_truc')))
-if ($c12.IndexOf('[CoTran/KhongTran/HonHop]') -gt 0) { $c12 = $c12.Substring(0, $c12.IndexOf('[CoTran/KhongTran/HonHop]')) } # bo phan ca 13
+if ($c12.IndexOf('[CoTran/KhongTran/HonHop/MaiKeo]') -gt 0) { $c12 = $c12.Substring(0, $c12.IndexOf('[CoTran/KhongTran/HonHop/MaiKeo]')) } # bo phan ca 13
 Kiem ($c12 -match '^khung_truc x=1100000\.\.1120000 y=0\.\.10000[\s\S]{0,300}bo_net_truc=\d+[\s\S]{0,600}bo_ngoai_truc=1 ' -and $c12 -match 'V\S+ng t\S+ d\S+ng m2=194\.04 ' `
   -and ([regex]::Matches($c12, 'V\S+ng t\S+ d\S+ng m2=')).Count -eq 1) `
   'Truc net lien co ky hieu truc: khong cat phong (1 vung 194,04 m2), phong ngoai truc ngoai cung khong phan vung (bo_ngoai_truc=1)'
-$c13 = $out6.Substring([Math]::Max(0, $out6.LastIndexOf('[CoTran/KhongTran/HonHop]')))
+$c13 = $out6.Substring([Math]::Max(0, $out6.LastIndexOf('[CoTran/KhongTran/HonHop/MaiKeo]')))
 Kiem ($c13 -match 'tim_dam=8[\s\S]{0,600}chia_khoang=24 [\s\S]{0,400}nho=24 [\s\S]{0,400}khoang_nho_chung n=2 len_dam=2 ') `
   'LoaiTran KhongTran, o 1,8 x 1,8 m < 4 m2: chia 24 khoang (o hep < 1 m van la khoang), 2 dau bao dat tren tim dam (mat duoi dam, 5.9.1.1.6 c)'
 
