@@ -689,3 +689,8 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
   thành 2 hàng thừa); hàng cách biên < nửa bước vì kèo bỏ (phần lồi đầu hồi gộp vào khoang đầu).
 - `Rai.cs` MaiKeo: khoang ≤ 500 m² chứa chữ khu (mái che, sân, hiện hữu, phòng bơm) bỏ sau khi chia.
 - Bản chép Quyết Thắng: 80 → 68 đầu báo (đáp án 55); xưởng 2 khớp đáp án 8 khoang / 16. Còn hiên (L6), mái che tây nam, dải xiên xưởng 1. Test TAT CA DAT.
+
+## 2026-11-20 — L6 hiên (chỉ khi LoaiTran MaiKeo)
+- `Rai.cs`: dải hẹp (rộng TB 2A/P ≤ 3 m, ≤ 200 m²) có ≥ 2 cột ở trong / sát viền mà cột không sát phòng khác = hiên, bỏ (`bo_hien=`).
+- Chạy mọi chế độ thì `test báo cháy.dwg` (506 cột) mất phòng duy nhất còn lại: giới hạn L6 vào MaiKeo. chay_thu, thu_mcp TAT CA DAT.
+- Bản chép Quyết Thắng: 68 → 62 đầu báo (đáp án 55); nhà văn phòng 2 khớp 4 phòng. Còn mái che tây nam 63,55 m², dải xiên xưởng 1, L7.

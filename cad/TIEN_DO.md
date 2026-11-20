@@ -3,7 +3,14 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
-## VIỆC 20/11 — DẠY PLUGIN PHÂN VÙNG NHƯ AI (xưởng mái kèo): MÃ L1, L2, L5, L8 + 3 SỬA SAU THỬ: BUILD + TEST ĐẠT + COMMIT (chưa push); HAI XƯỞNG KHỚP ĐÁP ÁN, CÒN HIÊN (L6)
+## VIỆC 20/11 — DẠY PLUGIN PHÂN VÙNG NHƯ AI (xưởng mái kèo): MÃ L1, L2, L5, L6, L8: BUILD + TEST ĐẠT + COMMIT (chưa push); XƯỞNG 2 + NHÀ VĂN PHÒNG 2 KHỚP ĐÁP ÁN, 62 / 55 ĐB
+LƯỢT 5 (người dùng "Làm L6"): `Rai.cs` khối Enter mọi phòng, sau L5: hiên = dải hẹp (rộng TB 2A/P ≤ 3 m, ≤ 200 m²) có ≥ 2 cột (`nhanThem.Cot`) nằm trong / cách viền
+≤ 0,6 m mà cột đó không sát phòng khác còn lại → bỏ (`bo_hien=`). CHỈ chạy với `LoaiTran MaiKeo`: chạy mọi chế độ thì `test báo cháy.dwg` (CoTran, 506 cột) còn đúng 1 phòng
+hẹp 12,7 m² sát cột bị bỏ nốt, ca kiểm "rải được" hỏng (phòng kề đã bị bỏ ngoài trục nên không loại được cột). build + `chay_thu` + `thu_mcp` TAT CA DAT.
+Bản chép (`kb4.scr` → `qt_maikeo_4.dwg`, ảnh `anh/so_dap_an_1.png`): `bo_hien=3 m2=35.3,34.3,23.2`, **28 vùng/khoang, 62 ĐB** (đáp án 25 / 55); nhà văn phòng 2 còn đúng 4 phòng / 4 ĐB.
+CÒN: vùng 63,55 m² mái che tây nam cạnh trạm điện (3 ĐB, không có chữ khu bên trong, không có cột); khoang 2 xưởng 1 ra 4 ĐB (bước 7,7 m), dải xiên sát tường phải chưa tách
+như đáp án; L7 thang bộ; test tổng hợp mái kèo + hiên trong `chay_thu.ps1`; hiên không vẽ cột chưa nhận.
+BƯỚC TIẾP: test tổng hợp → dải xiên → L7 → `cad-review` → push từ tab Terminal người dùng.
 LƯỢT 4 (Claude Code, người dùng "Sửa tiếp"): đã sửa lỗi 1–3 của lượt 3. `DuongViKeo`: hàng vì kèo cần ≥ 2 cột nằm trong bề ngang chính phòng (± 0,6 m),
 không có hàng nào mới mượn cột gần 6 m; hàng cách biên hộp bao < nửa bước vì kèo (trung vị) bỏ, dải đó gộp vào khoang kề. `Rai.cs` khối MaiKeo: sau chia, khoang ≤ 500 m²
 chứa tâm chữ khu (L5) bỏ (`mai_keo bo_khoang_khu_ten=`). build + `chay_thu` + `thu_mcp` TAT CA DAT. Chạy lại bản chép (`kb3.scr` → `qt_maikeo_3.dwg`, ảnh `anh/so_dap_an_1.png`):

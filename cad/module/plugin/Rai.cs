@@ -1852,6 +1852,27 @@ namespace TKPCCC
                             vung = vung.Where(f0 => !boKhuTen.Contains(f0)).ToList();
                             if (boKhuTen.Count > 0) ed.WriteMessage("\n[TKPCCC] bo_khu_ten=" + boKhuTen.Count + " (" + string.Join("; ", ghiKhuTen)
                                 + ": mái che, sân, hiện hữu, phòng bơm không đặt đầu báo; cần rải thì bấm điểm trong phòng đó).");
+                            // L6 (người dùng duyệt 19/11, xưởng Quyết Thắng): hiên = dải hẹp (rộng TB 2A/P ≤ 3 m, ≤ 200 m²) có ≥ 2 cột nằm trong hoặc cách viền ≤ 0,6 m
+                            // mà cột đó không thuộc phòng khác (cột trong tường xưởng sát dải xiên có vách thì không tính) -> không đặt đầu báo.
+                            // shortcut: chỉ nhận hiên có vẽ cột; hiên chỉ có nét viền mái thì người dùng vẽ PCCC_VUNG tách ra. Chỉ chạy với LoaiTran MaiKeo:
+                            // "phòng khác" chỉ là phòng còn lại sau các lượt bỏ, nhà máy nhiều cột (test báo cháy.dwg) có phòng hẹp sát cột mà phòng kề đã bị bỏ.
+                            double ganCot = 0.6 / m;
+                            Func<List<Point2d>, bool> hep = f0 =>
+                            {
+                                double a0 = Math.Abs(DienTichDaGiac(f0)) * m * m, p0 = 0;
+                                for (int i = 0; i < f0.Count; i++) p0 += f0[i].GetDistanceTo(f0[(i + 1) % f0.Count]) * m;
+                                return a0 <= 200 && p0 > 0 && 2 * a0 / p0 <= 3;
+                            };
+                            List<List<Point2d>> hepDs = loaiTran == 3 ? vung.Where(hep).ToList() : new List<List<Point2d>>();
+                            List<List<Point2d>> phongKhac = vung.Where(f0 => !hepDs.Contains(f0)).ToList();
+                            Func<List<Point2d>, Point2d, bool> sat = (f0, c0) => TrongDaGiac(f0, c0) || CachVien(f0, c0) <= ganCot;
+                            List<List<Point2d>> hien = hepDs.Where(f0 => nhanThem.Cot.Count(c0 => sat(f0, c0) && !phongKhac.Any(g0 => sat(g0, c0))) >= 2).ToList();
+                            if (hien.Count > 0)
+                            {
+                                vung = vung.Where(f0 => !hien.Contains(f0)).ToList();
+                                ed.WriteMessage("\n[TKPCCC] bo_hien=" + hien.Count + " m2=" + string.Join(",", hien.Select(f0 => Math.Round(Math.Abs(DienTichDaGiac(f0)) * m * m, 1).ToString(CultureInfo.InvariantCulture)))
+                                    + " (dải hẹp mép ngoài chỉ có cột = hiên: không đặt đầu báo; cần rải thì bấm điểm trong dải đó).");
+                            }
                         }
                         int boPhong, boCum;
                         vung = CumChinh(vung, 2 / m, out boPhong, out boCum, f0 => nhanThem.TenPhong.Any(p => TrongDaGiac(f0, p)));
