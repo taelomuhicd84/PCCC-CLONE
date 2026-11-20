@@ -966,6 +966,12 @@ Kiem ($out4 -match 'bo_cum=1 phong=1 ' -and $out4 -match 'theo_vung_co_san=1 ' -
   '_.RECTANG', '1300000,29800', '1300400,30200', '_.RECTANG', '1319600,29800', '1320000,30200', '_.RECTANG', '1300000,35800', '1300400,36200', '_.RECTANG', '1319600,35800', '1320000,36200', '_.RECTANG', '1300000,41800', '1300400,42200',
   '_.RECTANG', '1319600,41800', '1320000,42200', '_.RECTANG', '1300000,47800', '1300400,48200', '_.RECTANG', '1319600,47800', '1320000,48200', '_.RECTANG', '1288050,7650', '1288350,7950', '_.RECTANG', '1291850,7650', '1292150,7950',
   '_.RECTANG', '1295650,7650', '1295950,7950',
+  # L7: thang bo trong phong lam viec, block ten vo nghia "XQZ" (9 bac 1 m cach 250, 2 limon), cach tuong phai 0,1 m -> khoet 1,1 x 2 m = 2,2 m2
+  '-LAYER', 'S', '0', '', '_.LINE', '1294900,12000', '1294900,14000', '', '_.LINE', '1295900,12000', '1295900,14000', '',
+  '_.LINE', '1294900,12000', '1295900,12000', '', '_.LINE', '1294900,12250', '1295900,12250', '', '_.LINE', '1294900,12500', '1295900,12500', '',
+  '_.LINE', '1294900,12750', '1295900,12750', '', '_.LINE', '1294900,13000', '1295900,13000', '', '_.LINE', '1294900,13250', '1295900,13250', '',
+  '_.LINE', '1294900,13500', '1295900,13500', '', '_.LINE', '1294900,13750', '1295900,13750', '', '_.LINE', '1294900,14000', '1295900,14000', '',
+  '-BLOCK', 'XQZ', '1294900,12000', 'W', '1294850,11950', '1295950,14050', '', '-INSERT', 'XQZ', '1294900,12000', '1', '', '0',
   '-LAYER', 'S', '0', '', 'PCCC_RAI', 'BC_KHOI', 'LoaiTran', 'MaiKeo', '9', 'Khong', 'C', '1286500,-7500', '1321500,51500', '', '', '',
   '_.QSAVE') -join "`r`n") | Set-Content -Encoding ascii "$T\kb6.scr"
 $p6 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb6.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb6.out.txt"
@@ -1010,6 +1016,8 @@ Kiem ($c13 -match 'tim_dam=8[\s\S]{0,600}chia_khoang=24 [\s\S]{0,400}nho=24 [\s\
   'LoaiTran KhongTran, o 1,8 x 1,8 m < 4 m2: chia 24 khoang (o hep < 1 m van la khoang), 2 dau bao dat tren tim dam (mat duoi dam, 5.9.1.1.6 c)'
 Kiem ($c14 -match 'bo_hien=1 ' -and $c14 -match 'mai_keo bo_khoang_khu_ten=1 ' -and $c14 -match 'mai_keo bo_ke_mai_che=1 m2=11.6' -and $c14 -match 'mai_keo cot=21 phong_chia=1 khoang=8 ') `
   'LoaiTran MaiKeo: 8 khoang theo hang cot (cot hien nha ben khong thanh hang, phan loi dau hoi gop khoang dau), khoang mai che co chu bo, kho sat mai che bo, hien co cot bo'
+Kiem ($c14 -match 'khoet_thang=1 m2=2.2 ' -and $c14 -match 'V\S+ng t\S+ d\S+ng m2=45.8 ') `
+  'L7: thang bo block ten vo nghia (hinh 9 bac) trong phong lam viec 48 m2: khoet hop 1,1 x 2 m (nan sat tuong 0,1 m), vung con 45,8 m2'
 
 # Thoi gian dung phong tren ban ve that cua nguoi dung (gitignore, chi chay khi co): truoc sua 78 s (23 trieu diem cat), nay < 10 s.
 $bvThat = Get-ChildItem "$GOC\file_cad_test" -Filter 'test b*o ch*y.dwg' -ErrorAction SilentlyContinue | Select-Object -First 1

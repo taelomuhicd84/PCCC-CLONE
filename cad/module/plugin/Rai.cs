@@ -1905,6 +1905,32 @@ namespace TKPCCC
                 }
                 // Người dùng 16/11: vùng vẽ ra là đa giác gọn (bỏ khấc cột, cung cửa, gờ < 1 m), không bám từng nét tường.
                 vung = vung.Select(d => LamGon(d, LAM_GON_M / m, 0.002 / m)).ToList();
+                // L7 (người dùng duyệt 19/11, nhà văn phòng 2 Quyết Thắng): thang bộ trong phòng khoét ra như lỗ thông tầng, cạnh vuông theo hộp ký hiệu thang,
+                // cạnh hộp cách tường ≤ 0,3 m nắn ra sát tường. Thang chiếm ≥ 50 % phòng = buồng thang (người dùng 16/11: không đặt đầu báo): bỏ cả phòng.
+                if (v.he == "BC" && nhanThem.ThangBo.Count > 0)
+                {
+                    List<string> khoet = new List<string>(), buong = new List<string>();
+                    List<List<Point2d>> conT = new List<List<Point2d>>();
+                    foreach (List<Point2d> z in vung)
+                    {
+                        List<Point2d> kq = z;
+                        bool bo = false;
+                        foreach (Point2d[] h in nhanThem.ThangBo)
+                        {
+                            if (!TrongDaGiac(kq, new Point2d((h[0].X + h[1].X) / 2, (h[0].Y + h[1].Y) / 2))) continue;
+                            double dtZ = Math.Abs(DienTichDaGiac(kq)) * m * m, dtH = (h[1].X - h[0].X) * (h[1].Y - h[0].Y) * m * m;
+                            if (dtH >= 0.5 * dtZ) { bo = true; buong.Add(Math.Round(dtZ, 1).ToString(CultureInfo.InvariantCulture)); break; }
+                            List<Point2d> t = KhoetHop(kq, NanHop(kq, h, 0.3 / m, 0.01 / m), 0.002 / m);
+                            if (t == null) continue;
+                            khoet.Add(Math.Round(dtZ - Math.Abs(DienTichDaGiac(t)) * m * m, 1).ToString(CultureInfo.InvariantCulture));
+                            kq = t;
+                        }
+                        if (!bo) conT.Add(kq);
+                    }
+                    vung = conT;
+                    if (khoet.Count > 0) ed.WriteMessage("\n[TKPCCC] khoet_thang=" + khoet.Count + " m2=" + string.Join(",", khoet) + " (thang bộ trong phòng khoét ra như lỗ thông tầng: không đặt đầu báo trên thang).");
+                    if (buong.Count > 0) ed.WriteMessage("\n[TKPCCC] bo_buong_thang=" + buong.Count + " m2=" + string.Join(",", buong) + " (thang bộ chiếm ≥ 50 % phòng = buồng thang: không đặt đầu báo; cần rải thì vẽ polyline kín " + LAYER_VUNG + " quanh phòng rồi chọn lại).");
+                }
                 List<List<Point2d>> coSan = VungCoSan(db);
                 if (coSan.Count > 0)
                 {

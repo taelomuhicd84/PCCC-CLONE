@@ -107,6 +107,8 @@ namespace TKPCCC
             public List<CotUng> CotUng = new List<CotUng>();                             // polyline kín nhỏ (GhiCotUng), TachCot chọn cột thật
             public List<KeyValuePair<Point2d, string>> KhuTen = new List<KeyValuePair<Point2d, string>>(); // L5: tâm chữ khu không rải -> loại
             public List<Point2d> TenPhong = new List<Point2d>();                         // L8: tâm chữ có "PHÒNG" (tên phòng)
+            public List<Point2d[]> ThangBo = new List<Point2d[]>();                      // L7: hộp bao [min, max] ký hiệu thang bộ (GomKhu)
+            public Dictionary<string, bool> Bac = new Dictionary<string, bool>();         // L7: định nghĩa block + tỉ lệ + góc -> có hình bậc (HinhBac)
         }
 
         /// Ứng viên cột (L1): tâm, hai cạnh hộp bao (m), các đoạn của nó trong danh sách đoạn (cùng mảng, so theo tham chiếu).
@@ -123,6 +125,7 @@ namespace TKPCCC
             public List<Point2d> Cot = new List<Point2d>();
             public List<KeyValuePair<Point2d, string>> KhuTen = new List<KeyValuePair<Point2d, string>>();
             public List<Point2d> TenPhong = new List<Point2d>();
+            public List<Point2d[]> ThangBo = new List<Point2d[]>(); // L7: hộp bao ký hiệu thang bộ, khoét khỏi vùng
         }
 
         /// Màu thật của nét: ByLayer theo layer thật, ByBlock theo màu block chứa nó (chaMau; ngoài block coi như 7). "A3" = ACI 3, "R0,255,0" = màu thật.
@@ -385,8 +388,24 @@ namespace TKPCCC
                     if (br.IsDynamicBlock) ten += " " + ((BlockTableRecord)n.Tr.GetObject(br.DynamicBlockTableRecord, OpenMode.ForRead)).Name;
                     LayerTableRecord l = n.Tr.GetObject(lop, OpenMode.ForRead) as LayerTableRecord;
                     string t = ChuanTen(ten + " " + (l == null ? "" : l.Name));
-                    if (!KHU_KHONG_BAO.Any(k => t.Contains(k))) return;
+                    bool khu = KHU_KHONG_BAO.Any(k => t.Contains(k)), thang;
+                    // L7: thang bộ (tên THANG BỘ / STAIR, hoặc hình bậc khi tên vô nghĩa như "fsdff" ở Quyết Thắng) -> hộp bao khoét khỏi vùng (Rai.cs).
+                    // Hình bậc nhớ theo định nghĩa block + tỉ lệ + góc: bản vẽ nhà máy 506 cột cùng một block không nổ lại từng cái.
+                    if (khu) thang = t.Contains("THANGBO") || t.Contains("STAIR");
+                    else
+                    {
+                        Scale3d sc = br.ScaleFactors;
+                        string kb = br.BlockTableRecord.Handle + "|" + Math.Round(sc.X, 3) + "|" + Math.Round(sc.Y, 3) + "|" + Math.Round(br.Rotation, 2);
+                        if (!n.Bac.TryGetValue(kb, out thang)) n.Bac[kb] = thang = HinhBac(n, br, br.GeometricExtents);
+                    }
+                    if (!khu && !thang) return;
                     Extents3d x = br.GeometricExtents;
+                    if (thang)
+                    {
+                        Point2d a = new Point2d(x.MinPoint.X, x.MinPoint.Y), b = new Point2d(x.MaxPoint.X, x.MaxPoint.Y);
+                        if (!n.ThangBo.Any(h => h[0].GetDistanceTo(a) <= n.Tol * 50 && h[1].GetDistanceTo(b) <= n.Tol * 50)) n.ThangBo.Add(new[] { a, b });
+                    }
+                    if (!khu) return;
                     n.KhuKhong.Add(new Point2d((x.MinPoint.X + x.MaxPoint.X) / 2, (x.MinPoint.Y + x.MaxPoint.Y) / 2));
                     // KOCHAM 17/11: giếng thang là block "BUONG THANG MAY" trong block lõi, không có nét X trên layer tường. Hộp ≤ 20 m² (một giếng, không phải cả lõi).
                     double rong = x.MaxPoint.X - x.MinPoint.X, cao = x.MaxPoint.Y - x.MinPoint.Y, m2 = rong * cao * Math.Pow(0.002 / n.Tol, 2);
@@ -404,6 +423,58 @@ namespace TKPCCC
                 }
             }
             catch (System.Exception) { } // block hỏng, không có hộp bao: bỏ
+        }
+
+        /// L7: block hình bậc thang = ≥ 6 đoạn song song dài bằng nhau 0,6–2,5 m, giữa thẳng hàng, cách đều 0,2–0,4 m (bậc), hộp 0,8–8 m, ≤ 50 m².
+        /// shortcut: chỉ xét nét con trực tiếp của block (line, polyline); bậc nằm sâu trong block lồng nữa thì không nhận, gặp thì đệ quy một tầng.
+        static bool HinhBac(NenVung n, BlockReference br, Extents3d x)
+        {
+            double k = 0.002 / n.Tol, r = (x.MaxPoint.X - x.MinPoint.X) * k, c = (x.MaxPoint.Y - x.MinPoint.Y) * k;
+            if (r < 0.8 || c < 0.8 || r > 8 || c > 8 || r * c > 50) return false;
+            List<Point2d[]> s = new List<Point2d[]>();
+            DBObjectCollection con = new DBObjectCollection();
+            try { br.Explode(con); } catch (System.Exception) { }
+            foreach (DBObject o in con)
+            {
+                Line ln = o as Line;
+                Polyline pl = o as Polyline;
+                if (ln != null) s.Add(new[] { new Point2d(ln.StartPoint.X, ln.StartPoint.Y), new Point2d(ln.EndPoint.X, ln.EndPoint.Y) });
+                else if (pl != null)
+                    for (int i = 0; i < (pl.Closed ? pl.NumberOfVertices : pl.NumberOfVertices - 1); i++)
+                        if (pl.GetSegmentType(i) == SegmentType.Line) { LineSegment2d g = pl.GetLineSegment2dAt(i); s.Add(new[] { g.StartPoint, g.EndPoint }); }
+                o.Dispose();
+            }
+            s = s.Where(q => { double L = q[0].GetDistanceTo(q[1]) * k; return L >= 0.6 && L <= 2.5; }).ToList();
+            if (s.Count < 6 || s.Count > 2000) return false;
+            foreach (Point2d[] a in s)
+            {
+                double La = a[0].GetDistanceTo(a[1]);
+                Vector2d u = (a[1] - a[0]) / La;
+                Point2d ma = a[0] + (a[1] - a[0]) * 0.5;
+                List<double> lech = new List<double>(); // khoảng cách vuông góc (m) từ bậc a tới các bậc cùng hàng
+                foreach (Point2d[] b in s)
+                {
+                    Vector2d v = b[1] - b[0];
+                    if (Math.Abs(u.X * v.Y - u.Y * v.X) > 0.02 * v.Length || Math.Abs(v.Length - La) * k > 0.05) continue;
+                    Vector2d w = b[0] + v * 0.5 - ma;
+                    if (Math.Abs(u.DotProduct(w)) * k > 0.1) continue;
+                    lech.Add((u.X * w.Y - u.Y * w.X) * k);
+                }
+                if (lech.Count < 6) continue;
+                lech.Sort();
+                int chuoi = 1;
+                double buoc = 0;
+                for (int i = 1; i < lech.Count; i++)
+                {
+                    double g = lech[i] - lech[i - 1];
+                    if (g < 0.01) continue; // nét trùng
+                    bool deu = g >= 0.2 && g <= 0.4;
+                    if (deu && chuoi > 1 && Math.Abs(g - buoc) <= 0.03) chuoi++;
+                    else { chuoi = deu ? 2 : 1; buoc = g; }
+                    if (chuoi >= 6) return true;
+                }
+            }
+            return false;
         }
 
         // L5 (người dùng duyệt 19/11, xưởng Quyết Thắng): khu có chữ này không rải đầu báo (mái che không công năng, công trình hiện hữu không gạch chéo,
@@ -693,6 +764,77 @@ namespace TKPCCC
         {
             Point2d c = DiemTrongMat(f);
             return oX.Concat(gach).Any(q => TrongDaGiac(q, c));
+        }
+
+        /// L7: cạnh hộp thang h [min, max] cách cạnh dọc / ngang của vùng z ≤ d (cạnh đó chồng bề ngang hộp) thì nắn ra đúng cạnh vùng,
+        /// không để dải mỏng giữa thang và tường. e: sai số coi cạnh vùng là dọc / ngang.
+        static Point2d[] NanHop(List<Point2d> z, Point2d[] h, double d, double e)
+        {
+            double x0 = h[0].X, y0 = h[0].Y, x1 = h[1].X, y1 = h[1].Y;
+            double[] goc = { x0, y0, x1, y1 }, moi = { x0, y0, x1, y1 }, tot = { d, d, d, d };
+            for (int i = 0; i < z.Count; i++)
+            {
+                Point2d a = z[i], b = z[(i + 1) % z.Count];
+                bool doc = Math.Abs(a.X - b.X) <= e && Math.Min(a.Y, b.Y) < y1 && Math.Max(a.Y, b.Y) > y0;
+                bool ngang = Math.Abs(a.Y - b.Y) <= e && Math.Min(a.X, b.X) < x1 && Math.Max(a.X, b.X) > x0;
+                if (!doc && !ngang) continue;
+                double c = doc ? (a.X + b.X) / 2 : (a.Y + b.Y) / 2;
+                for (int k = doc ? 0 : 1; k < 4; k += 2)
+                    if (Math.Abs(c - goc[k]) < tot[k]) { tot[k] = Math.Abs(c - goc[k]); moi[k] = c; }
+            }
+            return new[] { new Point2d(moi[0], moi[1]), new Point2d(moi[2], moi[3]) };
+        }
+
+        /// L7: vùng z trừ hộp h (Region của AutoCAD), ngược chiều kim đồng hồ. null = sau khi trừ không còn đúng một vòng kín.
+        /// shortcut: thang giữa phòng (thành lỗ) hoặc cắt đôi phòng thì không khoét; gặp thật thì nối lỗ ra tường gần nhất.
+        static List<Point2d> KhoetHop(List<Point2d> z, Point2d[] h, double tol)
+        {
+            DBObjectCollection ca = null, cb = null, con = new DBObjectCollection();
+            try
+            {
+                using (Polyline pa = new Polyline())
+                using (Polyline pb = new Polyline())
+                {
+                    for (int i = 0; i < z.Count; i++) pa.AddVertexAt(i, z[i], 0, 0, 0);
+                    pa.Closed = true;
+                    Point2d[] g = { h[0], new Point2d(h[1].X, h[0].Y), h[1], new Point2d(h[0].X, h[1].Y) };
+                    for (int i = 0; i < 4; i++) pb.AddVertexAt(i, g[i], 0, 0, 0);
+                    pb.Closed = true;
+                    ca = Region.CreateFromCurves(new DBObjectCollection { pa });
+                    cb = Region.CreateFromCurves(new DBObjectCollection { pb });
+                }
+                Region ra = (Region)ca[0];
+                ra.BooleanOperation(BooleanOperationType.BoolSubtract, (Region)cb[0]);
+                ra.Explode(con);
+                List<Point2d[]> s = new List<Point2d[]>();
+                foreach (DBObject o in con)
+                {
+                    Line ln = o as Line;
+                    if (ln == null) return null; // nhiều mảnh (Region con) hoặc cạnh cong
+                    s.Add(new[] { new Point2d(ln.StartPoint.X, ln.StartPoint.Y), new Point2d(ln.EndPoint.X, ln.EndPoint.Y) });
+                }
+                if (s.Count < 3) return null;
+                List<Point2d> kq = new List<Point2d> { s[0][0], s[0][1] };
+                s.RemoveAt(0);
+                while (s.Count > 0)
+                {
+                    Point2d cuoi = kq[kq.Count - 1];
+                    int j = s.FindIndex(q => q[0].GetDistanceTo(cuoi) <= tol || q[1].GetDistanceTo(cuoi) <= tol);
+                    if (j < 0) return null; // còn vòng thứ hai (lỗ)
+                    kq.Add(s[j][0].GetDistanceTo(cuoi) <= tol ? s[j][1] : s[j][0]);
+                    s.RemoveAt(j);
+                }
+                if (kq[0].GetDistanceTo(kq[kq.Count - 1]) > tol) return null;
+                kq.RemoveAt(kq.Count - 1);
+                if (DienTichDaGiac(kq) < 0) kq.Reverse();
+                return BoThangHang(kq, tol);
+            }
+            catch (System.Exception) { return null; } // modeler không trừ được: giữ vùng cũ
+            finally
+            {
+                foreach (DBObjectCollection dc in new[] { ca, cb, con })
+                    if (dc != null) foreach (DBObject o in dc) o.Dispose();
+            }
         }
 
         /// Đọc một lần mọi đối tượng có thể là tường trong không gian hiện hành, kèm hộp bao.
@@ -1271,7 +1413,7 @@ namespace TKPCCC
                     if (co.Count > 0 || mat.Count > 0 || (chiTuong && !coTuong)) continue;
                     n.ChiTuong = chiTuong;
                     n.Cua.Clear(); n.GachCheo.Clear(); n.KhuKhong.Clear(); n.GiengThang.Clear(); n.MocTruc.Clear(); n.Tron.Clear(); n.ChuNgan.Clear();
-                    n.CotUng.Clear(); n.KhuTen.Clear(); n.TenPhong.Clear();
+                    n.CotUng.Clear(); n.KhuTen.Clear(); n.TenPhong.Clear(); n.ThangBo.Clear();
                     List<Point2d[]> doan = new List<Point2d[]>();
                     n.BoMau = coDam ? damMau : null;
                     n.GomCot = true;
@@ -1320,6 +1462,7 @@ namespace TKPCCC
                     }
                     oX = TachOX(doan, n.Tol);
                     oX.AddRange(n.GiengThang); // giếng thang máy: không rải trong giếng, như ô X
+                    them.ThangBo = new List<Point2d[]>(n.ThangBo);
                     gach = new List<List<Point2d>>(n.GachCheo);
                     if (doan.Count >= 3)
                         mat = CacMat(doan, n.Tol, HO_CUA_M / HeSoMet(db), n.Cua, HO_CUA_MAX_M / HeSoMet(db), netCot).Select(v => BoThangHang(v, n.Tol)).ToList();

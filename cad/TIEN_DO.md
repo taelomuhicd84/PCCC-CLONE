@@ -16,7 +16,14 @@ Ngữ cảnh phiên > 40–45 % thì làm xong task đang dở rồi chuyển sa
 BƯỚC TIẾP: đọc `cad/.claude/skills/tkpccc-ve-cad/SKILL.md`, `cad/knowledge/hoc/` (vùng, khoang, dây zone), `cad_tt` xem bản vẽ đang mở; file chưa mở trong AutoCAD
 thì nhờ người dùng mở. Ghi kết quả học vào `cad/knowledge/hoc/` (file mới cho bản mẫu này), luật mới thì sửa `module/plugin/` + test như VIỆC 20/11.
 
-## VIỆC 20/11 — DẠY PLUGIN PHÂN VÙNG NHƯ AI (xưởng mái kèo): MÃ L1, L2, L5, L5b, L6, L8: BUILD + TEST ĐẠT + COMMIT (chưa push); BẢN CHÉP 25 VÙNG = ĐÁP ÁN, 57 / 55 ĐB
+## VIỆC 20/11 — DẠY PLUGIN PHÂN VÙNG NHƯ AI (xưởng mái kèo): MÃ L1, L2, L5, L5b, L6, L7, L8: BUILD + TEST ĐẠT + COMMIT (chưa push); BẢN CHÉP 25 VÙNG = ĐÁP ÁN, 57 / 55 ĐB
+LƯỢT 9 (20/11 tối, phiên nhánh tự chạy sau reset): L7. `NhanVung.cs` `GomKhu`: block tên THANG BỘ / STAIR, hoặc `HinhBac` (≥ 6 đoạn song song dài bằng nhau 0,6–2,5 m,
+cách đều 0,2–0,4 m; hộp 0,8–8 m, ≤ 50 m²; nhớ theo định nghĩa block + tỉ lệ + góc) → hộp bao vào `NhanThem.ThangBo`. Thang Quyết Thắng là block tên vô nghĩa `fsdff`
+(bậc 250 mm, layer "3H"). `Rai.cs` sau `LamGon`, chỉ hệ BC: hộp chứa tâm trong vùng, cạnh cách cạnh vùng ≤ 0,3 m nắn ra sát tường (`NanHop`), trừ bằng Region (`KhoetHop`,
+trừ xong không còn đúng 1 vòng thì không khoét) (`khoet_thang=`); hộp ≥ 50 % phòng = buồng thang, bỏ cả phòng (`bo_buong_thang=`). Ca 14 thêm block thang 9 bậc trong phòng
+làm việc (kiểm `khoet_thang=1 m2=2.2`, vùng 45,8 m²). build + `chay_thu` + `thu_mcp` TAT CA DAT (bản vẽ thật dựng phòng 9,5 s, như trước). Bản chép (`kb6.scr` →
+`qt_maikeo_6.dwg`, ảnh `anh/so_dap_an_1.png`): `khoet_thang=1 m2=7.3`, phòng giữa nhà văn phòng 2 còn 45,8 m², 8 đỉnh vuông góc trùng đáp án AI; vẫn 25 vùng, 57 ĐB.
+BƯỚC TIẾP: `cad-review` (Opus max) diff `bc88a99^..HEAD`, sửa mục CHẶN; người dùng push từ tab Terminal. Sau đó VIỆC 20/11 (2).
 LƯỢT 5 (người dùng "Làm L6"): `Rai.cs` khối Enter mọi phòng, sau L5: hiên = dải hẹp (rộng TB 2A/P ≤ 3 m, ≤ 200 m²) có ≥ 2 cột (`nhanThem.Cot`) nằm trong / cách viền
 ≤ 0,6 m mà cột đó không sát phòng khác còn lại → bỏ (`bo_hien=`). CHỈ chạy với `LoaiTran MaiKeo`: chạy mọi chế độ thì `test báo cháy.dwg` (CoTran, 506 cột) còn đúng 1 phòng
 hẹp 12,7 m² sát cột bị bỏ nốt, ca kiểm "rải được" hỏng (phòng kề đã bị bỏ ngoài trục nên không loại được cột). build + `chay_thu` + `thu_mcp` TAT CA DAT.
@@ -33,7 +40,7 @@ LƯỢT 8 (người dùng trả lời "Không rải" khu mái che tây nam cạn
 cách khoang đã bỏ vì chữ mái che / không có công năng (hoặc phòng vừa bỏ theo luật này) ≤ 0,3 m thì bỏ theo (`mai_keo bo_ke_mai_che=`). Ca 14 thêm kho 4 x 2,9 m sát dải mái che.
 build + `chay_thu` + `thu_mcp` TAT CA DAT. Bản chép (`kb5.scr` → `qt_maikeo_5.dwg`): `bo_ke_mai_che=3 m2=63.5,15.9,4.4`, **25 vùng (= đáp án), 57 ĐB** (đáp án 55;
 khoang 2 xưởng 1 cần 4 vì rộng 30,8 m, xem LƯỢT 7; khu nam xưởng 1 6 ĐB chưa so kỹ).
-BƯỚC TIẾP: L7 → `cad-review` → push từ tab Terminal người dùng.
+BƯỚC TIẾP (cũ, xem LƯỢT 9): L7 → `cad-review` → push từ tab Terminal người dùng.
 LƯỢT 4 (Claude Code, người dùng "Sửa tiếp"): đã sửa lỗi 1–3 của lượt 3. `DuongViKeo`: hàng vì kèo cần ≥ 2 cột nằm trong bề ngang chính phòng (± 0,6 m),
 không có hàng nào mới mượn cột gần 6 m; hàng cách biên hộp bao < nửa bước vì kèo (trung vị) bỏ, dải đó gộp vào khoang kề. `Rai.cs` khối MaiKeo: sau chia, khoang ≤ 500 m²
 chứa tâm chữ khu (L5) bỏ (`mai_keo bo_khoang_khu_ten=`). build + `chay_thu` + `thu_mcp` TAT CA DAT. Chạy lại bản chép (`kb3.scr` → `qt_maikeo_3.dwg`, ảnh `anh/so_dap_an_1.png`):

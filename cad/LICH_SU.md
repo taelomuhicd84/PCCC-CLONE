@@ -708,3 +708,8 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
 - Bản chép Quyết Thắng: 62 → 57 đầu báo, 25 vùng bằng đáp án (đáp án 55 đầu báo).
 
 ## 2026-11-20 (tối) — Nhận việc học rải báo cháy theo bản mẫu `file_cad_test` (vùng kẹp tường, rải ĐB/chuông/nút, đối chiếu, rồi dây + điện trở cuối xa tủ). Chưa làm: 5 giờ 99 %, ghi `cad/TIEN_DO.md` VIỆC 20/11 (2), hẹn làm tiếp sau reset.
+
+## 2026-11-20 (tối) — L7: khoét thang bộ khỏi vùng báo cháy
+- Thang nhà văn phòng 2 Quyết Thắng là block tên vô nghĩa (`fsdff`), nên nhận theo hình bậc (`HinhBac`) ngoài tên THANG BỘ / STAIR. Hộp bao nắn sát tường ≤ 0,3 m,
+  trừ khỏi vùng bằng Region; thang ≥ 50 % phòng thì bỏ cả phòng (buồng thang). Ca 14 thêm thang 9 bậc. chay_thu, thu_mcp TAT CA DAT.
+- Bản chép (`qt_maikeo_6.dwg`): phòng giữa 53,1 → 45,8 m², 8 đỉnh vuông góc như đáp án AI; 25 vùng, 57 đầu báo không đổi.
