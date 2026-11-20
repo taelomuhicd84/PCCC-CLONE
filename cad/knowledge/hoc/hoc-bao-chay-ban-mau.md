@@ -48,6 +48,7 @@ Sửa: lượt chỉ-tường không ra phòng thật nào (PhongThat rỗng) th
 | lối 1,6 m giữa 2 phòng phía nam | 1 | 0 | plugin không dựng vùng (hở) |
 Nhận xét: mẫu giữ bước giữa hai đầu báo nhiệt ≈ 4–4,5 m, cách tường ≤ ≈ 2,5 m, phòng 6 x 2,9 m vẫn 2 đầu. Plugin theo TCVN 7568-14:2025
 5.9.2.1.2 / 5.9.2.1.4 (bước 7,2 m, cách tường 3,6 m, `data/khoang_cach_rai.json`). Mẫu khớp kiểu bảng đầu báo nhiệt cũ (≈ 5 m / 2,5 m / 25 m²) nhưng
-văn bản đó (TCVN 5738:2021) CHƯA có nguyên văn trong `knowledge/`: chưa đưa trị số vào plugin, chờ người dùng quyết (xem câu hỏi trong TIEN_DO).
+NGƯỜI DÙNG CHỐT 20/11: GIỮ TCVN 7568-14:2025, không rải theo mật độ 5738; bản mẫu chỉ để học CÁCH rải (vị trí, hàng, lề) và CÁCH chia vùng.
+Vậy khi đối chiếu: lệch SỐ LƯỢNG do mẫu dày hơn 7568 thì không sửa; chỉ sửa khi vùng sai, sót vùng, hoặc 7568 đòi nhiều hơn plugin rải.
 Khác: hành lang bị các nét mảnh (layer `xref`) cắt thành 5 đoạn vùng; mẫu rải đều cả hành lang như một vùng. Chuông: mẫu có chuông ở từng phòng hát
 (22 block chuông, 20 đèn báo phòng ngoài cửa), nút ấn 3 cái ở hành lang, 3 zone, mỗi zone 1 điện trở cuối. Chưa đối chiếu chuông, nút, dây.

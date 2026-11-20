@@ -3,6 +3,32 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## VIỆC 20/11 (3) — GOM TRI THỨC CAD THÀNH MỘT ĐẦU NGUỒN (NHẬN DẠNG / VẼ), PHÂN TẦNG: ĐÃ LẬP CÂY, CHƯA CHUYỂN FILE
+Người dùng 20/11 tối: "đưa các data skill hay knowledge trong folder cad thành 1 đầu nguồn: nhận diện trục, vẽ trục, nhận diện tường cột, vẽ cột, vẽ đầu báo...
+quy cách, kiến thức nhận diện và vẽ lại ... sau này phát triển MCP CAD vẽ PDF thành bản vẽ AutoCAD thì gọi chung skill. Gom folder hợp lí (folder skill nhận dạng,
+folder skill vẽ cad), phân tầng chi tiết từng folder để sau vào thẳng đó sửa cho đỡ tốn token." Làm sau VIỆC 20/11 (2)? KHÔNG: làm việc này TRƯỚC (người dùng giao mới nhất),
+rồi quay lại khung Karaoke.
+Kiểm kê 20/11 (dòng): `cad/knowledge/` 11 file ≈ 1 100 dòng (mau-thuyet-minh-pccc 447, hoc-ban-ve-mau-dwg 239, mau-ban-ve-pccc 81, so-do-nguyen-ly 80,
+tu-duy-di-day-di-ong 53, di-day-bao-chay 39, hoc-video 35, tham-khao-mcp-hub 33, mau-rai-khoang-dam 27, mau-so-do-that 23, quy-uoc-ban-ve 16) + `knowledge/hoc/` 2 file;
+`cad/skills/TU_VUNG.md` 82 + `vi_du/`; `cad/rule/LUAT.md` 26; `cad/layer/` 2; skill Claude `tkpccc-ve-cad` 64, `tkpccc-cad-console` 69; 5 agent; cộng ~25 file memory
+của Claude (luật dây zone, khoang dầm, vùng, xoá vùng...) CHƯA có trong repo -> chép vào nguồn mới (memory chỉ còn 1 dòng trỏ tới).
+Cây đề xuất (`cad/skills/` = đầu nguồn duy nhất, mọi AI, skill Claude, agent, Bot chat, MCP trỏ vào; mỗi thư mục có README.md mục lục 1 dòng / file):
+  cad/skills/README.md            mục lục "việc gì -> mở file nào"
+  cad/skills/TU_VUNG.md           giữ chỗ (build.bat, Mcp.cs, test trỏ tới)
+  cad/skills/nhan_dang/           ĐỌC bản vẽ (DWG hoặc PDF) ra dữ liệu: truc.md · tuong_cot.md (2 nét, hatch, cột chữ I, cột lồi -> kẹp mặt tường) ·
+                                  cua_thang.md (cửa, thang bộ, thang máy, ô X, WC) · phong_vung.md (dựng phòng, khu không rải, hiên, mái che, nội thất) ·
+                                  dam_khoang.md (dầm, khoang, mái kèo) · ky_hieu.md (block thiết bị có sẵn, tên lạ) · pdf.md (tỉ lệ, nhập, kiểm tỉ lệ)
+  cad/skills/ve/                  VẼ: quy_uoc.md (layer, cỡ chữ, màu; gộp quy-uoc-ban-ve + layer/) · truc.md · tuong_cot_cua.md ·
+                                  bao_chay/ (rai_dau_bao.md, khoang_dam.md, day_zone.md, chuong_nut_den.md, so_do.md) · chua_chay/ (sprinkler, ống) · thuyet_minh.md
+  cad/skills/mau/                 BẰNG CHỨNG học từ bản mẫu (hoc-*, mau-*): chỉ ghi quan sát + số liệu, luật rút ra thì chuyển lên nhan_dang/ hoặc ve/
+  cad/skills/vi_du/               giữ
+  cad/rule/LUAT.md, cad/data/     giữ (luật nối quy chuẩn; dữ liệu máy đọc). cad/knowledge/ -> xoá sau khi chuyển hết, sửa mọi chỗ trỏ tới.
+Chỗ phải sửa khi dời file (git grep 20/11): build.bat (mau-thuyet-minh-pccc.md, TU_VUNG.md), test chay_thu.ps1, scripts/kiem_lien_ket.py, .gitignore,
+chú thích trong cad/module/plugin/*.cs (DayBc, BangMb, Lenh, Rai, TienIch, SoDo, Spec, KienTruc), Mcp.cs, data/ky_hieu/ky_hieu.json, agent cad-*, 2 SKILL.md,
+cad/README.md, cad/CLAUDE.md, STRUCTURE.md, KE_HOACH_TONG.md. Kiểm xong: `python scripts/kiem_lien_ket.py`, chay_thu + thu_mcp TAT CA DAT.
+BƯỚC TIẾP: tạo cây + README; tách nội dung từng file cũ vào đúng file mới (không bỏ sót dòng, chép nguyên văn phần quy chuẩn); chép luật từ memory;
+sửa đường dẫn; kiểm; commit (không push). Làm theo lô nhỏ, mỗi lô một commit, để dừng kịp khi hết hạn mức.
+
 ## VIỆC 20/11 (2) — HỌC RẢI BÁO CHÁY THEO BẢN MẪU (file_cad_test/TESTBCHAY_20_11.dwg): KHUNG 5 KARAOKE ĐANG ĐỐI CHIẾU; 1 LỖI ĐÃ SỬA + TEST, CHỜ NGƯỜI DÙNG 1 CÂU
 Người dùng (20/11, chép ý): mỗi khung rectang = 1 công trình mẫu vẽ báo cháy đã thẩm định, là CHUẨN, phải tư duy như nó.
 1. Copy các block mặt bằng mẫu ra chỗ trống (KHÔNG sửa bản gốc), explode, rồi vẽ vùng rải báo cháy.
@@ -16,9 +42,7 @@ Ngữ cảnh phiên > 40–45 % thì làm xong task đang dở rồi chuyển sa
 - Lỗi 1 đã sửa: layer tên tường chỉ chứa block cửa -> "Enter mọi phòng" ra 0 vùng (`NhanVung.cs` MatChon lùi về mọi nét); test `chay_thu.ps1` ca 15.
   Bundle chưa build lại (AutoCAD đang mở bản chép; `build.bat` đổi tên DLL cũ được, AutoCAD mở lại mới nạp).
 - Khung 5 sau sửa: 30 vùng, 50 đầu báo nhiệt; mẫu 62. 21 / 30 vùng khớp số; mẫu dày hơn ở phòng hẹp (bước ≈ 4–4,5 m, cách tường ≤ ≈ 2,5 m).
-CÂU HỎI CHO NGƯỜI DÙNG (chưa hỏi được, người dùng vắng): đầu báo NHIỆT mẫu dày hơn TCVN 7568-14:2025 (plugin: bước 7,2 m, cách tường 3,6 m).
-  Mẫu khớp bảng cũ kiểu TCVN 5738 (≈ 5 m / 2,5 m / 25 m²) nhưng `knowledge/` chưa có nguyên văn TCVN 5738:2021. Theo mẫu thì cần người dùng gửi
-  bảng trị số đầu báo nhiệt (văn bản + điều) để chép vào `knowledge/`, hay giữ TCVN 7568-14:2025?
+NGƯỜI DÙNG CHỐT 20/11 tối: giữ TCVN 7568-14:2025; bản mẫu chỉ là chuẩn tham khảo cách rải + cách chia vùng (không rải dày theo 5738).
 BƯỚC TIẾP: (1) build bundle (tắt AutoCAD, `build.bat`), mở lại `ket_qua/HOC_BAO_CHAY/cad/hoc_bao_chay.dwg` (bản chép đã có mặt bằng khung 5 explode ở y −50 m);
 (2) khung 5: hành lang bị nét mảnh layer `xref` cắt 5 vùng (mẫu coi là 1), lối 1,6 m phía nam không dựng vùng; đối chiếu chuông (mẫu: mỗi phòng hát 1 chuông),
 nút ấn (3), đèn báo phòng; (3) lần lượt khung 3, 4, 6, 7, 8 (khung 2 đã học); kiểm luật kẹp tường bỏ cột lồi + nội thất trên khung có cột (trường học, nhà ở XH);

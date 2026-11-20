@@ -720,3 +720,5 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
 ## 2026-11-20 (tối) — Review mốc L1–L8 (Opus max): 4 CHẶN, dừng vì tuần 95 %
 - chay_thu 174 phép, thu_mcp 11 phép TAT CA DAT. CHẶN: L1 khe cạnh nét cột không khép (cửa cuốn để trống mất phòng, mọi loại trần); L6 bỏ phòng hẹp có cột trong tường ngoài;
   L5 MaiKeo bỏ cả khoang xưởng vì chữ mái che; MaiKeo bật `khoangDam` gom phòng nhỏ. Chi tiết + ca thử ở `cad/TIEN_DO.md` LƯỢT 10. Chưa sửa: hạn mức tuần 95 %, hẹn 21/11 05:00.
+- 20/11 tối: người dùng chốt giữ TCVN 7568-14:2025 (mẫu chỉ tham khảo cách rải, cách chia vùng); giao việc gom tri thức CAD thành một nguồn `cad/skills/`
+  (nhan_dang/, ve/, mau/): đã kiểm kê + lập cây trong TIEN_DO VIỆC 20/11 (3), chưa dời file (hạn mức tuần 93 %).
