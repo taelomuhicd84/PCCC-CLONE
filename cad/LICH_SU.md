@@ -706,3 +706,5 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
 - Người dùng xác nhận khu mái che tây nam cạnh trạm điện không rải. `Rai.cs` MaiKeo: phòng ≤ 100 m² không tên PHÒNG, không phải khoang xưởng, cách khoang đã bỏ vì chữ
   mái che ≤ 0,3 m thì bỏ, lan dần (`bo_ke_mai_che=`). Ca 14 thêm kho sát dải mái che. chay_thu, thu_mcp TAT CA DAT.
 - Bản chép Quyết Thắng: 62 → 57 đầu báo, 25 vùng bằng đáp án (đáp án 55 đầu báo).
+
+## 2026-11-20 (tối) — Nhận việc học rải báo cháy theo bản mẫu `file_cad_test` (vùng kẹp tường, rải ĐB/chuông/nút, đối chiếu, rồi dây + điện trở cuối xa tủ). Chưa làm: 5 giờ 99 %, ghi `cad/TIEN_DO.md` VIỆC 20/11 (2), hẹn làm tiếp sau reset.

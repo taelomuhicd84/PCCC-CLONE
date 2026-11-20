@@ -3,6 +3,19 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## VIỆC 20/11 (2) — HỌC RẢI BÁO CHÁY THEO BẢN MẪU (file_cad_test): CHƯA BẮT ĐẦU (dừng vì 5 giờ 99 %, hẹn tự làm tiếp sau reset 20/11 tối)
+Người dùng (20/11, chép ý): mở bản "testbaochay" trong `file_cad_test/` (kiểm `TESTBCHAY_20_11.dwg` trước: bản có các khung rectang; không phải thì `test báo cháy.dwg`).
+Mỗi khung rectang = 1 công trình mẫu vẽ báo cháy, đã thẩm định: là CHUẨN, phải tư duy như nó.
+1. Copy các block mặt bằng mẫu ra chỗ trống (KHÔNG sửa bản gốc), explode, rồi vẽ vùng rải báo cháy.
+2. Vùng kẹp sát mặt tường: tường 200 có cột 300 lồi ra 100 thì vùng chạy thẳng theo mặt tường 200, không bao phần cột lồi.
+   Nội thất trong phòng: không bao (hoặc bao rồi nhận ra nội thất thì xoá), chỉ bao tường phòng.
+3. Rải thử đầu báo, chuông, nút nhấn; đối chiếu bản mẫu (bản gốc có sẵn thiết bị). Không khớp: ghi lý do, rút logic, sửa logic vùng / rải cho đúng.
+4. Xong mục 3 mới sang dây báo cháy: vẽ thử, đối chiếu mẫu, học logic. Điện trở cuối đặt xa tủ TTBC (tiết kiệm dây).
+Luật riêng việc này: 5 giờ tới 95 % thì ghi file này + `cad/LICH_SU.md`, commit, KHÔNG push, tự làm tiếp sau reset không hỏi.
+Ngữ cảnh phiên > 40–45 % thì làm xong task đang dở rồi chuyển sang phiên nhánh ngữ cảnh sạch. Có gì không hiểu thì hỏi người dùng.
+BƯỚC TIẾP: đọc `cad/.claude/skills/tkpccc-ve-cad/SKILL.md`, `cad/knowledge/hoc/` (vùng, khoang, dây zone), `cad_tt` xem bản vẽ đang mở; file chưa mở trong AutoCAD
+thì nhờ người dùng mở. Ghi kết quả học vào `cad/knowledge/hoc/` (file mới cho bản mẫu này), luật mới thì sửa `module/plugin/` + test như VIỆC 20/11.
+
 ## VIỆC 20/11 — DẠY PLUGIN PHÂN VÙNG NHƯ AI (xưởng mái kèo): MÃ L1, L2, L5, L5b, L6, L8: BUILD + TEST ĐẠT + COMMIT (chưa push); BẢN CHÉP 25 VÙNG = ĐÁP ÁN, 57 / 55 ĐB
 LƯỢT 5 (người dùng "Làm L6"): `Rai.cs` khối Enter mọi phòng, sau L5: hiên = dải hẹp (rộng TB 2A/P ≤ 3 m, ≤ 200 m²) có ≥ 2 cột (`nhanThem.Cot`) nằm trong / cách viền
 ≤ 0,6 m mà cột đó không sát phòng khác còn lại → bỏ (`bo_hien=`). CHỈ chạy với `LoaiTran MaiKeo`: chạy mọi chế độ thì `test báo cháy.dwg` (CoTran, 506 cột) còn đúng 1 phòng
