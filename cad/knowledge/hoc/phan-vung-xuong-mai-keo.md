@@ -28,6 +28,7 @@ và phòng bơm, thiếu 2 phòng văn phòng.
 - L5: `GomChuKhu` + `LoaiKhuTen` (`KHU_TEN`); Rai.cs khối BC: bỏ phòng ≤ 500 m² chứa tâm chữ (`bo_khu_ten=`), lớn hơn chỉ báo `chu_khu_trong_phong_lon`.
 - L8: chữ có "PHONG" (không phải phòng bơm) → `TenPhong`; giữ phòng đó ở `bo_ngoai_truc` và `CumChinh(..., giu)`.
 - L6 (làm 20/11 chiều, Claude Code, chỉ khi `LoaiTran MaiKeo`): `Rai.cs` sau L5, dải hẹp rộng TB ≤ 3 m có ≥ 2 cột không thuộc phòng khác = hiên, bỏ (`bo_hien=`).
+- L5b (20/11, người dùng "Không rải" khu mái che tây nam): chỉ khi MaiKeo, phòng ≤ 100 m² không tên PHÒNG, không phải khoang xưởng, sát (≤ 0,3 m) khoang đã bỏ vì chữ mái che thì bỏ theo, lan dần.
 - CHƯA làm: L7 (khoét thang bộ); test tổng hợp (mục Thử bên dưới). `chay_thu.ps1` đã đổi chuỗi dò `[CoTran/KhongTran/HonHop/MaiKeo]` (ca 12, 13).
 - Rủi ro cần soát khi test: ca 12 (`bo_ngoai_truc=1`) đổi nếu phòng ngoài trục có chữ "PHÒNG"; cửa sổ / thiết bị kín nhỏ lặp thẳng hàng bị coi là cột (chỉ mất quyền khép khe,
   khe tường hai bên vẫn khép); chữ MÁI CHE nằm trong xưởng khi mái che không có tường ngăn (khi đó chỉ báo, không bỏ).

@@ -701,3 +701,8 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
 
 ## 2026-11-20 — Soát dải xiên xưởng 1: không phải lỗi
 - Dải xiên đã là vùng riêng 37,41 m². Khoang 2 xưởng 1 rộng ≈ 30,8 m > 3 x 10,2 m nên 4 đầu báo là đúng (cách tường ≤ 5,1 m). Sửa ghi chú tiến độ, không sửa mã.
+
+## 2026-11-20 — L5b: khu mái che không rải lan sang phòng nhỏ sát nó
+- Người dùng xác nhận khu mái che tây nam cạnh trạm điện không rải. `Rai.cs` MaiKeo: phòng ≤ 100 m² không tên PHÒNG, không phải khoang xưởng, cách khoang đã bỏ vì chữ
+  mái che ≤ 0,3 m thì bỏ, lan dần (`bo_ke_mai_che=`). Ca 14 thêm kho sát dải mái che. chay_thu, thu_mcp TAT CA DAT.
+- Bản chép Quyết Thắng: 62 → 57 đầu báo, 25 vùng bằng đáp án (đáp án 55 đầu báo).

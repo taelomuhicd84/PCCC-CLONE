@@ -1930,6 +1930,7 @@ namespace TKPCCC
             {
                 int soPhongMk = 0, soKhoangMk = 0;
                 List<List<Point2d>> moiMk = new List<List<Point2d>>();
+                List<List<Point2d>> maiCheMk = new List<List<Point2d>>(); // khoang bỏ vì chữ mái che / không có công năng: L5b lan sang phòng nhỏ sát nó
                 foreach (List<Point2d> zMk in vung)
                 {
                     List<Point2d[]> vk = DuongViKeo(zMk, nhanThem.Cot, m);
@@ -1941,6 +1942,7 @@ namespace TKPCCC
                         if (boMk.Count > 0)
                         {
                             kcMk = kcMk.Where(x => !boMk.Contains(x)).ToList();
+                            maiCheMk.AddRange(boMk.Where(x => nhanThem.KhuTen.Any(kv => TrongDaGiac(x, kv.Key) && (kv.Value == "mái che" || kv.Value == "không có công năng"))));
                             ed.WriteMessage("\n[TKPCCC] mai_keo bo_khoang_khu_ten=" + boMk.Count + " m2="
                                 + string.Join(",", boMk.Select(x => Math.Round(DienTichDaGiac(x) * m * m, 1).ToString(CultureInfo.InvariantCulture))));
                         }
@@ -1952,6 +1954,24 @@ namespace TKPCCC
                     foreach (List<Point2d> xMk in kcMk) khoangChia[xMk] = chaMk;
                     soPhongMk++;
                     soKhoangMk += kcMk.Count;
+                }
+                // L5b (người dùng 20/11 "Không rải", xưởng Quyết Thắng): "KHU VỰC MÁI CHE" phía nam bị nét chia thành nhiều mặt, chữ chỉ nằm trong một khoang.
+                // Phòng ≤ 100 m² không có chữ "PHÒNG", không phải khoang xưởng, cách khoang mái che đã bỏ (hoặc phòng vừa bỏ theo luật này) ≤ 0,3 m thì bỏ theo.
+                // shortcut: lan theo khoảng cách đỉnh – cạnh; kho nhỏ có tường dưới mái che mà không ghi chữ PHÒNG cũng bị bỏ (dòng lệnh báo m², bấm điểm để rải lại).
+                double keMc = 0.3 / m;
+                Func<List<Point2d>, List<Point2d>, bool> keNhau = (a0, b0) => a0.Any(p0 => CachVien(b0, p0) <= keMc) || b0.Any(p0 => CachVien(a0, p0) <= keMc);
+                List<List<Point2d>> boKe = new List<List<Point2d>>();
+                for (List<List<Point2d>> nguon = maiCheMk; nguon.Count > 0; )
+                {
+                    nguon = moiMk.Where(x => !boKe.Contains(x) && !khoangChia.ContainsKey(x) && Math.Abs(DienTichDaGiac(x)) * m * m <= 100
+                        && !nhanThem.TenPhong.Any(t0 => TrongDaGiac(x, t0)) && nguon.Any(y0 => keNhau(x, y0))).ToList();
+                    boKe.AddRange(nguon);
+                }
+                if (boKe.Count > 0)
+                {
+                    moiMk = moiMk.Where(x => !boKe.Contains(x)).ToList();
+                    ed.WriteMessage("\n[TKPCCC] mai_keo bo_ke_mai_che=" + boKe.Count + " m2=" + string.Join(",", boKe.Select(x => Math.Round(Math.Abs(DienTichDaGiac(x)) * m * m, 1).ToString(CultureInfo.InvariantCulture)))
+                        + " (phòng nhỏ sát khu mái che không công năng: không đặt đầu báo; cần rải thì bấm điểm trong phòng đó).");
                 }
                 vung = moiMk;
                 ed.WriteMessage("\n[TKPCCC] mai_keo cot=" + nhanThem.Cot.Count + " phong_chia=" + soPhongMk + " khoang=" + soKhoangMk
