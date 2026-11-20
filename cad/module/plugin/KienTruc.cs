@@ -1,6 +1,6 @@
 // Mặt bằng kiến trúc (việc 14/11, gói A): thao tác spec "tuong" (tường, vách theo đường tim, góc gấp nối miter), "cua" (khe cửa trên tường
 // hai nét + má cửa + cánh + cung mở), "kt_chuoi" (chuỗi kích thước, lõi chung với PCCC_ADIM ở Dim.cs) và lệnh gõ tay PCCC_TRUC, PCCC_TUONG, PCCC_CUA.
-// Layer, độ dày, rộng cửa mặc định: nhóm "kien_truc" của cad/data/ky_hieu/ky_hieu.json (chuẩn ở cad/layer/kien_truc.md).
+// Layer, độ dày, rộng cửa mặc định: nhóm "kien_truc" của cad/data/ky_hieu/ky_hieu.json (chuẩn ở cad/skills/ve/quy_uoc.md).
 // Tường vẽ ra để "vung_tu_dong" (NhanVung.cs) dựng được phòng: layer có chữ TUONG / VACH (LOP_TUONG), cửa trên layer có chữ CUA (LOP_BO, bị bỏ qua),
 // khe cửa là khe thẳng hàng của mặt tường, nối được khi rộng ≤ HO_CUA_M.
 using System;

@@ -36,7 +36,7 @@ $env:TKPCCC_THU_DONG = "$T\thu_dong.txt"
 Copy-Item "$GOC\data\vat_tu.json" $T
 Copy-Item "$GOC\data\khoang_cach_rai.json" $T  # tri so rai theo tieu chuan (rai / PCCC_RAI khong co s)
 Copy-Item "$GOC\data\ong_nhanh_dn.json" $T  # bang DN theo so dau phun (PCCC_TUYEN TuDong)
-Copy-Item "$GOC\cad\knowledge\mau-thuyet-minh-pccc.md" $T  # van thuyet minh mau (PCCC_THUYETMINH)
+Copy-Item "$GOC\cad\skills\ve\mau-thuyet-minh-pccc.md" $T  # van thuyet minh mau (PCCC_THUYETMINH)
 Copy-Item "$GOC\cad\data\ky_hieu\hinh_bc.json" $T  # hinh block mac dinh (lay tu PDF trang 11): PCCC_LIB tao thu vien moi theo hinh nay
 # File danh muc "goc" cua repo: tro toi ban chep tam (nhu build.bat ghi nguon_vat_tu.txt) de PCCC_THEMBLOCK ghi ca hai file ma khong dung repo.
 New-Item -ItemType Directory "$T\goc" | Out-Null

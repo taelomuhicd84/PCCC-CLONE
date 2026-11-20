@@ -1,6 +1,6 @@
 // Rải thiết bị theo lưới trong vùng (thao tác "rai", lệnh PCCC_RAI) và đi tuyến ống/dây qua các điểm (thao tác "tuyen").
 // Không chứa trị số quy chuẩn: bước rải do người gọi đưa vào, hoặc đọc theo mã thiết bị từ data/khoang_cach_rai.json (cad/rule/LUAT.md chỉ nơi tra).
-// Cách vẽ theo bản mẫu của người dùng: cad/knowledge/mau-ban-ve-pccc.md.
+// Cách vẽ theo bản mẫu của người dùng: cad/skills/mau/mau-ban-ve-pccc.md.
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -1398,7 +1398,7 @@ namespace TKPCCC
             else if (kieu == "cot") foreach (List<Point3d> ps in nhom) doan.AddRange(TuyenCot(ps, truc, saiSo));
             else if (kieu == "tia")
             {
-                // Đèn báo phòng: phòng có bao nhiêu đầu báo thì bấy nhiêu nét thẳng từ đầu báo ra đèn (cad/knowledge/tu-duy-di-day-di-ong.md).
+                // Đèn báo phòng: phòng có bao nhiêu đầu báo thì bấy nhiêu nét thẳng từ đầu báo ra đèn (cad/skills/ve/tu-duy-di-day-di-ong.md).
                 if (!den.HasValue) throw new System.Exception("tuyen kiểu \"tia\" cần \"den\" [x,y] (vd vị trí đèn báo phòng)");
                 foreach (List<Point3d> ps in nhom)
                     foreach (Point3d p in ps)
@@ -2014,7 +2014,8 @@ namespace TKPCCC
             {
                 // Không nhập trần: ngưỡng 4 m² của trần 2–4 m (an toàn hơn 9 m²: khoang 4–9 m² vẫn có đầu báo riêng, 5.9.1.1.6 d).
                 double nguong = hTran > 0 && hTran < 2 ? double.MaxValue : hTran >= 4 ? 9 : 4;
-                nho = vung.Where(d => DienTichDaGiac(d) * m * m < nguong).ToList();
+                // Review 20/11 (CHẶN 4): mái kèo không có dầm, chỉ khoang vì kèo (khoangChia) mới gom; phòng nhỏ sát nhau rải riêng như CoTran.
+                nho = vung.Where(d => DienTichDaGiac(d) * m * m < nguong && (loaiTran != 3 || khoangChia.ContainsKey(d))).ToList();
                 vungRai = vung.Where(d => !nho.Contains(d)).ToList();
                 // Cụm = khoang nhỏ kề nhau (hộp bao cách nhau ≤ 0,6 m, tức qua một dầm); mỗi cụm một lưới như trần phẳng.
                 double ke = 0.6 / m;
@@ -2361,7 +2362,7 @@ namespace TKPCCC
 
         const string LAYER_TIA_KT = "PCCC_BC_TIA_KT";
 
-        /// Chuỗi kích thước bước tia như bộ bản vẽ mẫu (cad/knowledge/hoc-ban-ve-mau-dwg.md mục 2): tường – tia – … – tia – tường, đo vuông góc tia,
+        /// Chuỗi kích thước bước tia như bộ bản vẽ mẫu (cad/skills/mau/hoc-ban-ve-mau-dwg.md mục 2): tường – tia – … – tia – tường, đo vuông góc tia,
         /// đặt ngang giữa tia dài nhất, trong khoảng của phòng chứa nhiều tia nhất. Trả số dim.
         static int KtTia(Database db, Transaction tr, BlockTableRecord ms, List<Point2d> d, List<Point2d[]> ts, ObjectId lop)
         {

@@ -36,8 +36,8 @@ rem Bang DN ong nhanh theo so dau phun (PCCC_TUYEN TuDong): nguon duy nhat data\
 copy /y "%~dp0..\data\ong_nhanh_dn.json" "%OUT%\ong_nhanh_dn.json" >nul
 rem Bang chon loai dau bao theo cong nang (trang Bao chay doc bang "Loai theo khu vuc"): nguon duy nhat knowledge\chon-loai-dau-bao.md.
 copy /y "%~dp0..\knowledge\chon-loai-dau-bao.md" "%OUT%\chon-loai-dau-bao.md" >nul
-rem Van thuyet minh mau (PCCC_THUYETMINH): nguon duy nhat cad\knowledge\mau-thuyet-minh-pccc.md.
-copy /y "%~dp0knowledge\mau-thuyet-minh-pccc.md" "%OUT%\mau-thuyet-minh-pccc.md" >nul
+rem Van thuyet minh mau (PCCC_THUYETMINH): nguon duy nhat cad\skills\ve\mau-thuyet-minh-pccc.md.
+copy /y "%~dp0skills\ve\mau-thuyet-minh-pccc.md" "%OUT%\mau-thuyet-minh-pccc.md" >nul
 rem Bang khoang dam 5.9.1.1.6 (nut Tra cuu TCVN, tab Khoang dam trang Bao chay): nguon duy nhat skills\MOD_dau_bao_khoi_khoang_dam.md goc repo.
 copy /y "%~dp0..\skills\MOD_dau_bao_khoi_khoang_dam.md" "%OUT%\MOD_dau_bao_khoi_khoang_dam.md" >nul
 rem PCCC_THEMBLOCK ghi ma moi vao ca file goc cua repo (nguon duy nhat cua danh muc): de lai duong dan cho plugin.

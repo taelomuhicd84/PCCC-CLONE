@@ -38,7 +38,7 @@ Người dùng (20/11, chép ý): mỗi khung rectang = 1 công trình mẫu v�
 4. Xong mục 3 mới sang dây báo cháy: vẽ thử, đối chiếu mẫu, học logic. Điện trở cuối đặt xa tủ TTBC (tiết kiệm dây).
 Luật riêng việc này: 5 giờ tới 95 % thì ghi file này + `cad/LICH_SU.md`, commit, KHÔNG push, tự làm tiếp sau reset không hỏi.
 Ngữ cảnh phiên > 40–45 % thì làm xong task đang dở rồi chuyển sang phiên nhánh ngữ cảnh sạch. Có gì không hiểu thì hỏi người dùng.
-ĐÃ LÀM (20/11 tối): bản đồ 8 khung, cách chép / explode / chạy PCCC_RAI qua COM, kết quả khung 5: `cad/knowledge/hoc/hoc-bao-chay-ban-mau.md` (ĐỌC TRƯỚC).
+ĐÃ LÀM (20/11 tối): bản đồ 8 khung, cách chép / explode / chạy PCCC_RAI qua COM, kết quả khung 5: `cad/skills/mau/hoc-bao-chay-ban-mau.md` (ĐỌC TRƯỚC).
 - Lỗi 1 đã sửa: layer tên tường chỉ chứa block cửa -> "Enter mọi phòng" ra 0 vùng (`NhanVung.cs` MatChon lùi về mọi nét); test `chay_thu.ps1` ca 15.
   Bundle chưa build lại (AutoCAD đang mở bản chép; `build.bat` đổi tên DLL cũ được, AutoCAD mở lại mới nạp).
 - Khung 5 sau sửa: 30 vùng, 50 đầu báo nhiệt; mẫu 62. 21 / 30 vùng khớp số; mẫu dày hơn ở phòng hẹp (bước ≈ 4–4,5 m, cách tường ≤ ≈ 2,5 m).
@@ -114,7 +114,7 @@ Thử trên bản chép (`ket_qua/QUYET_THANG/cad/thu_maikeo/qt_maikeo_2.dwg`, k
 BƯỚC TIẾP: sửa 1 → 2 → 3, L6, L7; thêm test tổng hợp (mục Thử trong file kiến thức); chạy lại `kb2.scr` (đổi tên DWG ra) so ảnh với đáp án; `cad-review`; push từ tab Terminal người dùng.
 LƯỢT 2 (phiên Bot chat thứ hai, không có Bash/PowerShell; người dùng: "điều chỉnh tư duy vùng rải đầu báo của plugin giống với AI"): sửa `module/plugin/NhanVung.cs`,
 `module/plugin/Rai.cs`, `module/ui/BangBoTri.cs` (mục "Mái kèo"), `test/chay_thu.ps1` (chuỗi dò LoaiTran), `HUONG_DAN_SU_DUNG.md`. Chi tiết + rủi ro:
-`knowledge/hoc/phan-vung-xuong-mai-keo.md` mục "Đã viết mã 20/11".
+`skills/mau/phan-vung-xuong-mai-keo.md` mục "Đã viết mã 20/11".
 BƯỚC TIẾP (Claude Code có shell, tắt AutoCAD): (1) `build.bat`, sửa lỗi biên dịch C# 5 nếu có; (2) `chay_thu.ps1`, `thu_mcp.ps1` TAT CA DAT; (3) thêm test tổng hợp (mục Thử
 trong file kiến thức) vào `chay_thu.ps1`; (4) thử trên bản chép "BEAM QUYẾT THẮNG.dwg" mặt bằng dưới: `PCCC_RAI BC_KHOI LoaiTran MaiKeo 9`, so với đáp án 25 vùng / 55 ĐB;
 (5) L6 hiên, L7 thang bộ; (6) `cad-review` một lần cuối; (7) commit + push.
@@ -123,7 +123,7 @@ Người dùng (Bot chat, ảnh): "Vẽ báo cháy ở mặt bằng vùng trên,
 Từ đó train cho plugin phân vùng và rải được như AI, train vào plugin dự án. Để không có AI mà tôi vẫn dùng được bằng plugin".
 - XONG (phiên Bot chat, không có Bash): mặt bằng trên vẽ 25 vùng theo bộ đã duyệt 19/11 + rải 55 BC_KHOI (vùng còn giữ để người dùng so); plugin (mặt bằng dưới) 35 vùng / 69 ĐB.
   Bảng đối chiếu: `ket_qua/QUYET_THANG/cad/so_sanh/so_sanh_ai_plugin.md`; đáp án vùng `ai_vung_tren.json` (không commit).
-  Luật + chỗ sửa + test: `knowledge/hoc/phan-vung-xuong-mai-keo.md` (L1–L8).
+  Luật + chỗ sửa + test: `skills/mau/phan-vung-xuong-mai-keo.md` (L1–L8).
 - Nguyên nhân chính: cột thép chữ I (layer tên ống `$.2.9DN25`) bị coi là tường 2 nét rồi bắc cầu sang cột kế bên thành tường ảo; chưa có luật khoang vì kèo,
   từ khoá MÁI CHE / PHÒNG BƠM / SÂN, hiên; 2 phòng văn phòng góc ngoài bị bỏ sót.
 - BƯỚC TIẾP (cần Claude Code có Bash, AutoCAD tắt khi build): agent `cad-lap-trinh` (Opus high) sửa `module/plugin/NhanVung.cs` theo L1 → L8 (thứ tự: L1 cột, L8 sót phòng,
@@ -410,7 +410,7 @@ Test mới trong `chay_thu.ps1` (phòng 4 x 4 đầu: 20 đoạn, DN25 = 8, DN32
 CHƯA: in ảnh xem chữ DN, chữ m² đặt có đẹp không (dừng ở 81 % hạn mức 5 giờ); thu_gui.ps1; spec MCP `tuyen` chưa có TuDong.
 
 ## VIỆC 16/11 TỐI — GIAO DIỆN MỚI THEO 3 VIDEO PLUGIN (VPTTOOL, HTS_DESIGN): XONG MÃ + TEST, CHƯA XEM TRONG AUTOCAD
-Người dùng gửi 3 video TikTok, dặn: lấy tư duy hay, nhanh, tự động, không phụ thuộc AI, giao diện đẹp như mẫu. Phân tích + việc chưa làm: `cad/knowledge/hoc-video-plugin-16-11.md`.
+Người dùng gửi 3 video TikTok, dặn: lấy tư duy hay, nhanh, tự động, không phụ thuộc AI, giao diện đẹp như mẫu. Phân tích + việc chưa làm: `cad/skills/mau/hoc-video-plugin-16-11.md`.
 Đã làm (chỉ `module/ui/` + 1 hàm đọc ở `DayBc.cs`): thanh dọc thành ô biểu tượng màu; widget `NutIcon`, `ThanhTab`, `TieuDeNhom`, `KhungTrangThai` (`GiaoDien.cs`);
 trang Báo cháy 4 tab RẢI ĐẦU BÁO · KHOANG DẦM (ranh giới, Tra cứu TCVN, h trần, rải `PCCC_RAI BC_KHOI Dam h`) · KIỂM TRA · ĐI DÂY, khung TRẠNG THÁI cuối mỗi tab
 (`Lenh.DemVung` đếm PCCC_VUNG / PCCC_LOAITRU); lưới Tiện ích / Chữa cháy / Thống kê: tab viên thuốc + vòng tròn màu ghi mã tắt, palette hẹp thì 1 cột;
@@ -428,7 +428,7 @@ Chạy lại trên bản chép file mẫu: rải đúng 2 vùng xanh, mỗi vùn
 `chay_thu.ps1` 147/147, `thu_mcp.ps1` đạt, bundle build lại. CHƯA: người dùng tắt hẳn AutoCAD mở lại để nạp, thử lại trên máy.
 
 ## VIỆC 16/11 — 5 YÊU CẦU BÁO CHÁY (người dùng gửi `file_cad_test\test báo cháy.dwg`: trái hệ địa chỉ, phải hệ thường): XONG MÃ + TEST
-Bản chép, dump, ảnh ở `ket_qua/cad_test/2026-11-16/` (gitignore). Kiến thức đọc từ mẫu: `cad/knowledge/di-day-bao-chay.md`.
+Bản chép, dump, ảnh ở `ket_qua/cad_test/2026-11-16/` (gitignore). Kiến thức đọc từ mẫu: `cad/skills/ve/bao_chay/day_zone.md`.
 1. Phân vùng: vùng tự dựng bám khấc cột, cung cửa (44–53 đỉnh) → `LamGon` (`NhanVung.cs`, ngưỡng 1 m): bỏ khấc nhỏ ra đường ngoài, giữ khấc lớn (lõi thang);
    đa giác của mẫu ra 8 đỉnh, 1 029 m² (vùng anh vẽ tay 1 041 m²). Áp cho `PCCC_RAI` và `vung_tu_dong`.
 2. Dim: `PCCC_RAI` tự dim sau khi rải (`KtLuoi`, `KtSauRai` trong `Rai.cs`): mọi cột một chuỗi X, mọi hàng một chuỗi Y, hai đầu tới mép vùng; spec `rai` `kt` dùng chung.
@@ -453,14 +453,14 @@ Test `chay_thu.ps1`: 3 phòng có ký hiệu (sâu / nông / lưới nhỏ), 1 p
 4 `PCCC_DAY` hỏi tên zone (nhãn "VỀ TỦ TTBC - ZONE n" + diện tích vùng PCCC_VUNG), điện trở cuối dây ở mút mạch hở dây báo cháy;
 5 `PCCC_RAI` từ khoá Dam với đầu khói: khoang ≥ 9 m² (trần ≥ 4 m) / 4 m² (2–4 m) rải từng khoang, khoang nhỏ gom rải như trần phẳng (5.9.1.1.6 c–f);
 6 `PCCC_THOATNAN` (hatch ANSI31 layer PCCC_THOAT_NAN; luật gạch chéo hiện hữu bỏ qua layer PCCC_*), `PCCC_VUNGBV` mã hệ HVT: vòng nét đứt in được;
-7 `PCCC_THUYETMINH` (văn mẫu `cad/knowledge/mau-thuyet-minh-pccc.md`, build.bat chép cạnh DLL). `chay_thu.ps1`, `thu_mcp.ps1` TAT CA DAT.
+7 `PCCC_THUYETMINH` (văn mẫu `cad/skills/ve/mau-thuyet-minh-pccc.md`, build.bat chép cạnh DLL). `chay_thu.ps1`, `thu_mcp.ps1` TAT CA DAT.
 CHƯA: thu_gui (không đổi giao diện), nút trên palette cho 4 lệnh mới (đang chỉ có ở trang Lệnh); xem tận mắt trong AutoCAD. VIỆC KẾ: chờ người dùng.
 
 ## VIỆC 14/11 KHUYA — HỌC BỘ BẢN VẼ PCCC MẪU (DWG): XONG
 Người dùng đưa `file_cad_test/` (đã thêm vào `.gitignore`) + thư mục hồ sơ một xưởng trên Drive; dặn KHÔNG đụng file gốc, cần thì save as riêng.
 Đã chép sang `ket_qua/cad_test/hoc_mau/` (gitignore), dump bằng `dump2.lsp` (MTEXT đủ đoạn mã 3), in PNG vài tờ. Kết quả:
-`cad/knowledge/hoc-ban-ve-mau-dwg.md` (bộ tờ, quy ước, beam, zone, sprinkler; mục 6 = 7 việc plugin còn thiếu so với mẫu) và
-`cad/knowledge/mau-thuyet-minh-pccc.md` (27 đoạn thuyết minh chép nguyên văn, đã bỏ tên khách, địa chỉ, số GCN). VIỆC KẾ: chờ người dùng chọn làm việc nào ở mục 6.
+`cad/skills/mau/hoc-ban-ve-mau-dwg.md` (bộ tờ, quy ước, beam, zone, sprinkler; mục 6 = 7 việc plugin còn thiếu so với mẫu) và
+`cad/skills/ve/mau-thuyet-minh-pccc.md` (27 đoạn thuyết minh chép nguyên văn, đã bỏ tên khách, địa chỉ, số GCN). VIỆC KẾ: chờ người dùng chọn làm việc nào ở mục 6.
 
 ## VIỆC 14/11 ĐÊM — RẢI THỬ BẢN VẼ THẬT "BEAM QUYẾT THẮNG.dwg" + THUYẾT MINH: XONG 19h40, ĐANG CHỜ NGƯỜI DÙNG DUYỆT (không làm thêm)
 KẾT QUẢ (ket_qua/cad_test/2026-11-14/quyet_thang/, gitignore): `BEAM_QUYET_THANG_rai.dwg`, `thuyet_minh.md`, `rai_ket_qua.png` đã gửi người dùng.
@@ -584,7 +584,7 @@ phép kiểm `vung_tu_dong` dời sang gốc x 2600000). Sau gộp: build đạt
   Review Opus max (`ket_qua/cad_review/review_2026-11-12d.md`) 0 CHẶN; 4 NÊN SỬA đã sửa (commit `24b876f`), `chay_thu.ps1` 70/70, `thu_mcp.ps1` 9/9. 6 GHI CHÚ của review 12/11d chưa sửa.
   Lưu ý agent sửa báo: `bc` tự tăng `h` khi nhỏ mà không báo; `MaSoDo` vẫn nạp block thừa vì `DAY_BC`.
 - HỒ SƠ THẬT người dùng gửi 12/11 (PDF 63 trang, có sơ đồ nguyên lý): `ket_qua/cad_mau/drive_goc/cong_trinh.pdf` (không commit). Mục lục tên bản vẽ từng trang: `ket_qua/cad_mau/drive_goc/muc_luc.txt`
-  (người dùng dặn: quét tên bản vẽ trước, cần gì thì chỉ đọc đúng trang đó). Đã đọc trang 11 (nguyên lý báo cháy) và 22 (không gian sprinkler), ghi ở `cad/knowledge/mau-so-do-that.md`.
+  (người dùng dặn: quét tên bản vẽ trước, cần gì thì chỉ đọc đúng trang đó). Đã đọc trang 11 (nguyên lý báo cháy) và 22 (không gian sprinkler), ghi ở `cad/skills/mau/mau-so-do-that.md`.
 - VIỆC KẾ (ngày 13/11), theo thứ tự:
   1. XONG tối 12/11 (19:30): `so_do` `bc` theo trang 11 (bỏ vạch tầng, zone xếp trên tủ, bó dây trái, số dưới ký hiệu, `kv` + `dt` diện tích bảo vệ, zone giám sát van,
      `du_phong`, `lien_dong`); ảnh `ket_qua/cad_mau/cad/so_do/anh/so_do_bc_2.png`, chưa review. CÒN: bảng ký hiệu, bảng tính ắc quy, nguồn/tiếp địa/điện thoại,
@@ -740,7 +740,7 @@ Skill `tkpccc-ve-cad` giữ sonnet/low (vẽ theo spec có sẵn).
 - Đo số token một lần vẽ (`claude -p --output-format json`), ghi vào `cad/LICH_SU.md`.
 - Sau đó theo `KE_HOACH.md`: G5 `so_do`, G6 chat trong CAD (bảng `PCCC_BLOCK` là tab đầu của G6).
 
-### Bước 6. Việc ưu tiên 2 và 3 từ `knowledge/tham-khao-mcp-hub.md` (chi tiết từng việc ở file đó)
+### Bước 6. Việc ưu tiên 2 và 3 từ `skills/mau/tham-khao-mcp-hub.md` (chi tiết từng việc ở file đó)
 - Ưu tiên 2: bảng layer `data/ky_hieu/layer.json` cho `DamBaoLayer` (màu, kiểu đường, độ dày; dây báo cháy ra nét đứt);
   thao tác `dan` (mũi tên + chữ); thao tác `in_pdf`, `luu` (chung đường `-PLOT` với `cad_anh`).
 - Ưu tiên 3, sau Bước 2–4: `doc` thêm `gi`:"block"; `cung`, `hatch` khi vẽ lại nền cần tới; `TKPCCC.Mcp.exe` tự `NETLOAD` qua COM + thời gian chờ bằng biến môi trường;
@@ -752,7 +752,7 @@ Chuẩn layer, block động thiết bị, catalog ống + phụ kiện, catalog
 Không cần nhắc đầu phiên nữa. Việc của Claude: làm các lệnh nạp đó (block đã có `PCCC_THEMBLOCK`, cần kiểm với block động thật; còn thiếu lệnh nạp chuẩn layer, catalog ống + phụ kiện, catalog bơm),
 xếp sau Bước 5 hoặc gộp vào G6 (bảng trong CAD). Trong lúc chưa có, plugin vẫn dùng layer và block mặc định.
 
-## NGƯỜI DÙNG ĐÃ TRẢ LỜI 2026-11-11 (đầy đủ: `cad/knowledge/tu-duy-di-day-di-ong.md`)
+## NGƯỜI DÙNG ĐÃ TRẢ LỜI 2026-11-11 (đầy đủ: `cad/skills/ve/tu-duy-di-day-di-ong.md`)
 1. Dây báo cháy hệ thường: nét thẳng, rắn bò, phòng nối tiếp phòng trong cùng zone, không rẽ chữ T, cuối zone có điện trở cuối dây. Có đèn báo phòng thì mỗi đầu báo trong phòng một nét kéo ra đèn.
 2. Chia zone: theo giới hạn m² của TCVN VÀ không quá 25 đầu báo một zone (hệ thường), chạm giới hạn nào trước thì dừng. Zone là khu vực: không lấn sang khu vực khác, không để một khu vực thành hai zone lẻ tẻ. Hệ địa chỉ: ZM, CM, RM và mạch vòng, xem knowledge.
 3. Ống góp sprinkler: người dùng tự bấm chọn vị trí trong CAD (lệnh của plugin).

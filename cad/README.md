@@ -50,11 +50,11 @@ AI chỉ viết một gói thao tác ngắn (spec JSON), plugin sinh hình. Mộ
 |---|---|
 | Đổi cỡ chữ, bóng trục, tên và màu layer trục, khoảng cách kích thước mặc định | `data/ky_hieu/ky_hieu.json`, rồi chạy `build.bat` |
 | Thêm hoặc đổi một thao tác vẽ (`luoi_truc`, `dat`, `ong`...) | `module/plugin/Spec.cs` (hàm `Op...` + 1 dòng trong `MotOp`) và `skills/TU_VUNG.md` |
-| Đổi cách rải thiết bị, cách đi dây, đi ống (`rai`, `tuyen`, `PCCC_RAI`) | `module/plugin/Rai.cs`; cách vẽ gốc ở `knowledge/mau-ban-ve-pccc.md`. Dời thiết bị vào trong vùng cách cạnh ≥ `tuong_min` (cạnh xiên, khe hẹp): `DoiVao`, `KepDay`, mặc định `CACH_TUONG_MIN_M` |
+| Đổi cách rải thiết bị, cách đi dây, đi ống (`rai`, `tuyen`, `PCCC_RAI`) | `module/plugin/Rai.cs`; cách vẽ gốc ở `skills/mau/mau-ban-ve-pccc.md`. Dời thiết bị vào trong vùng cách cạnh ≥ `tuong_min` (cạnh xiên, khe hẹp): `DoiVao`, `KepDay`, mặc định `CACH_TUONG_MIN_M` |
 | Đổi cách tự nhận diện tường / trục, dựng vùng phòng khi bấm điểm (`vung_tu_dong`, `PCCC_RAI` bấm điểm) | `module/plugin/NhanVung.cs` (từ khoá layer `LOP_BO`, `LOP_TUONG`, khe cửa `HO_CUA_M`; khe có cửa / tường 2 nét tới `HO_CUA_MAX_M`, `GomCua`, `SongDoi`; ô X `TachOX`; gạch chéo hiện hữu `LaGachCheo`) |
 | Đổi câu hướng dẫn AI nhận lúc kết nối | phần đầu `skills/TU_VUNG.md`, trước dòng `---` (giữ dưới 1900 ký tự) |
 | Đổi tên, mô tả công cụ MCP | `module/mcp/Mcp.cs`, hàm `CongCu` |
-| Đổi cách vẽ sơ đồ nguyên lý (`so_do`) | `module/plugin/SoDo.cs`; cách vẽ, nguồn ở `knowledge/so-do-nguyen-ly.md` |
+| Đổi cách vẽ sơ đồ nguyên lý (`so_do`) | `module/plugin/SoDo.cs`; cách vẽ, nguồn ở `skills/ve/so-do-nguyen-ly.md` |
 | Đổi cách in ảnh (`anh`, `cad_anh`): khổ, thiết bị in, chỗ lưu PNG | `module/plugin/Spec.cs`, hàm `InAnh` |
 | Đổi cách nhập PDF làm nền (`pdf`) | `module/plugin/Spec.cs`, hàm `NhapPdf` |
 | Đổi cách tính tỉ lệ trang PDF từ chuỗi kích thước | `.claude/skills/tkpccc-ve-cad/scripts/pdf_ti_le.py` (kiểm bằng `test/chay_thu.ps1`) |
@@ -64,7 +64,7 @@ AI chỉ viết một gói thao tác ngắn (spec JSON), plugin sinh hình. Mộ
 | Hub: thêm thành phần / nhóm mới (mục, cách kiểm, cách cài, trang tải), câu hỏi xác nhận, cửa sổ | `module/hub/Hub.cs` (`DanhSach`, `SuaJson`, `ChayCli`, `CuaSoHub`); test `test/thu_hub.ps1` |
 | Đổi chỗ đặt hàng đợi | `module/chung/HangDoi.cs` hoặc biến môi trường `TKPCCC_CAD_HANG_DOI` |
 | Lệnh gõ tay `PCCC_*` | `module/plugin/Lenh.cs` (xem skill `tkpccc-cad-console`) |
-| Tường, vách, cửa (`tuong`, `cua`, `kt_chuoi`; lệnh `PCCC_TRUC`, `PCCC_TUONG`, `PCCC_CUA`) | `module/plugin/KienTruc.cs`; layer, dày, rộng cửa mặc định ở nhóm `kien_truc` của `data/ky_hieu/ky_hieu.json`, chuẩn `layer/kien_truc.md` |
+| Tường, vách, cửa (`tuong`, `cua`, `kt_chuoi`; lệnh `PCCC_TRUC`, `PCCC_TUONG`, `PCCC_CUA`) | `module/plugin/KienTruc.cs`; layer, dày, rộng cửa mặc định ở nhóm `kien_truc` của `data/ky_hieu/ky_hieu.json`, chuẩn `skills/ve/quy_uoc.md` |
 | Dim tự động (`PCCC_ADIM`, `PCCC_CDIM`, lõi chuỗi dim của `kt_chuoi`) | `module/plugin/Dim.cs` |
 | Thêm vật tư, thiết bị | `data/vat_tu.json` ở GỐC repo (dùng chung với báo giá), rồi `build.bat`, `PCCC_LIB` |
 | Đưa block của mình (kể cả block động) vào thư viện dưới một mã mới | trong AutoCAD: `PCCC_THEMBLOCK` hoặc nút "Thêm từ bản vẽ" của bảng `PCCC_BLOCK`; mã nguồn `module/plugin/Block.cs` |
@@ -89,13 +89,13 @@ AI chỉ viết một gói thao tác ngắn (spec JSON), plugin sinh hình. Mộ
 | Thêm một luật vẽ, nối tới quy chuẩn | 1 dòng trong `rule/LUAT.md` |
 | Ghi bài học khi vẽ | `knowledge/hoc/` |
 | Bảng KÝ HIỆU mặt bằng `PCCC_KYHIEU`, bảng quy định lắp đặt đầu báo `PCCC_QUYDINH`, thao tác spec `bang` | `module/plugin/BangMb.cs` (trị số từ `data/khoang_cach_rai.json`) |
-| Thuyết minh theo hệ có trên bản vẽ `PCCC_THUYETMINH` (mục chọn ở `MUC_THEO_HE`) | `module/plugin/BangMb.cs`; văn mẫu `knowledge/mau-thuyet-minh-pccc.md` (build.bat chép cạnh DLL) |
+| Thuyết minh theo hệ có trên bản vẽ `PCCC_THUYETMINH` (mục chọn ở `MUC_THEO_HE`) | `module/plugin/BangMb.cs`; văn mẫu `skills/ve/mau-thuyet-minh-pccc.md` (build.bat chép cạnh DLL) |
 | Dim bước tia beam (`PCCC_RAI` BC_BEAM, layer `PCCC_BC_TIA_KT`); nhãn zone + diện tích, điện trở cuối dây (`PCCC_DAY`) | `module/plugin/Rai.cs` (`KtTia`, `DayTay`) |
 | Rải theo khoang dầm (`PCCC_RAI` từ khoá Dam, đầu khói): bấm nét DẦM mẫu, độ sâu d từ ký hiệu b x h (không có thì hỏi cỡ chung / TungDam), d ≤ 0,3 m bỏ dầm; khoang ≥ 9 m² (trần ≥ 4 m) / 4 m² (2–4 m) rải từng khoang, khoang nhỏ gom rải như trần phẳng | `module/plugin/Rai.cs` (`khoangDam`, `hopNho`); nguyên văn 5.9.1.1.6 ở `knowledge/tcvn7568-14-2025.md` |
 | Hatch đường thoát nạn `PCCC_THOATNAN`; vòng bán kính tủ vách tường in được (`PCCC_VUNGBV` mã hệ HVT) | `module/plugin/TienIch.cs`, `module/plugin/Lenh.cs` (`VungBaoVe`) |
 | Làm gọn vùng tự dựng: bỏ khấc cột, cung cửa, gờ nhỏ hơn 1 m, ra đa giác vuông góc (`PCCC_RAI`, `vung_tu_dong`) | `module/plugin/NhanVung.cs` (`LamGon`, ngưỡng `LAM_GON_M`) |
 | Dim tự động sau `PCCC_RAI`: một chuỗi X, một chuỗi Y, trùng hàng / cột chỉ dim một lần; kiểu dim, cách dim, layer dim | `module/plugin/Rai.cs` (`KtLuoi`, `KtSauRai`); cài đặt ở `module/plugin/CaiDat.cs` + trang Cài đặt `module/ui/BangChinh.cs` (`CaiDim`) |
-| Đi dây báo cháy `PCCC_DAYBC` (hệ thường: một đường, điện trở cuối ở thiết bị xa tủ nhất; hệ địa chỉ: mạch vòng module, đầu báo thường về ZM, chuông về CM / R2ML) | `module/plugin/DayBc.cs`; cách vẽ gốc ở `knowledge/di-day-bao-chay.md` |
+| Đi dây báo cháy `PCCC_DAYBC` (hệ thường: một đường, điện trở cuối ở thiết bị xa tủ nhất; hệ địa chỉ: mạch vòng module, đầu báo thường về ZM, chuông về CM / R2ML) | `module/plugin/DayBc.cs`; cách vẽ gốc ở `skills/ve/bao_chay/day_zone.md` |
 | Bảng layer dây báo cháy, ống chữa cháy (thêm, xoá, lấy từ bản vẽ); chọn dây cho từng loại thiết bị | `module/plugin/CaiDat.cs` (`LOP_MAC_DINH`, `VAI_TRO`); trang Cài đặt `module/ui/BangChinh.cs` (`BangLopDay`); trang Báo cháy mục 6 `module/ui/BangBoTri.cs` (`TaoDiDay`) |
 
 ## Build và kiểm thử

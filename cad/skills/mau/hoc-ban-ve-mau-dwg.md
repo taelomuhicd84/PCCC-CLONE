@@ -10,7 +10,7 @@ Gồm 5 bản PCCC (kho, xưởng sản xuất, nhà xưởng bao bì) + 1 bản
 - `chu_dai.py`: gom các đoạn ghi chú dài.
 - `to_chon.py` + `chay_scr.ps1`: in PNG từng tờ bằng accoreconsole.
 
-Văn mẫu thuyết minh chép nguyên văn ở `cad/knowledge/mau-thuyet-minh-pccc.md`.
+Văn mẫu thuyết minh chép nguyên văn ở `cad/skills/ve/mau-thuyet-minh-pccc.md`.
 Trị số phải đối chiếu `knowledge/` (TCVN 7568-14:2025, QCVN 10:2025, TCVN 13456:2022, TCVN 7336:2021) trước khi dùng.
 
 ## 1. Bộ tờ của một hồ sơ (thứ tự hay gặp)

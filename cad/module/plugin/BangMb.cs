@@ -1,4 +1,4 @@
-// Bảng trên mặt bằng như bộ bản vẽ mẫu của người dùng (cad/knowledge/hoc-ban-ve-mau-dwg.md mục 2, học 14/11):
+// Bảng trên mặt bằng như bộ bản vẽ mẫu của người dùng (cad/skills/mau/hoc-ban-ve-mau-dwg.md mục 2, học 14/11):
 // bảng KÝ HIỆU | TÊN THIẾT BỊ (chỉ thiết bị, tuyến có trong vùng chọn, đếm như PCCC_BOC) và bảng QUY ĐỊNH LẮP ĐẶT ĐẦU BÁO CHÁY
 // THEO TCVN 7568-14:2025 (trị số đọc data/khoang_cach_rai.json, không chép số vào mã). Lệnh PCCC_KYHIEU, PCCC_QUYDINH; thao tác spec "bang".
 using System;

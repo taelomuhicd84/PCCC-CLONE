@@ -1,7 +1,7 @@
 # Lấy hình ký hiệu thiết bị báo cháy từ nét vector một trang PDF (bảng ký hiệu của hồ sơ thật) ra cad/data/ky_hieu/hinh_bc.json.
 # Plugin (Lenh.TaoBlockMacDinh) vẽ block mặc định của mã có trong file này theo đúng hình đó thay cho vòng tròn + chữ.
 # Chạy: python -I hinh_tu_pdf.py <file.pdf> <số trang, đếm từ 1> <ra.json>
-# Hộp từng ký hiệu (toạ độ trang, pt) đo trên trang 11 của hồ sơ mẫu (cad/knowledge/mau-so-do-that.md); PDF khác thì đo lại hộp.
+# Hộp từng ký hiệu (toạ độ trang, pt) đo trên trang 11 của hồ sơ mẫu (cad/skills/mau/mau-so-do-that.md); PDF khác thì đo lại hộp.
 import json
 import sys
 

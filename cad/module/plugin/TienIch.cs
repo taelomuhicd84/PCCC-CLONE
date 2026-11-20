@@ -548,7 +548,7 @@ namespace TKPCCC
         const string LAYER_THOAT_NAN = "PCCC_THOAT_NAN";
 
         /// PCCC_THOATNAN: hatch gạch chéo ANSI31 (vạch cách 0,6 m) trong các polyline kín đã chọn = ĐƯỜNG THOÁT NẠN, như mặt bằng chữa cháy của bộ bản vẽ mẫu
-        /// (cad/knowledge/hoc-ban-ve-mau-dwg.md mục 4). Layer PCCC_*: NhanVung không coi hatch này là công trình hiện hữu.
+        /// (cad/skills/mau/hoc-ban-ve-mau-dwg.md mục 4). Layer PCCC_*: NhanVung không coi hatch này là công trình hiện hữu.
         static void ThoatNan()
         {
             Document doc = AcApp.DocumentManager.MdiActiveDocument;

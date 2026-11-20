@@ -208,7 +208,7 @@ def phep8_9():
             bao('CANH_BAO', 'lenh-cad', 'cad/TKPCCC.bundle/PackageContents.xml', f'lệnh {l} có CommandMethod nhưng chưa khai báo')
         for l in sorted(kb - lenh):
             bao('LOI', 'lenh-cad', 'cad/TKPCCC.bundle/PackageContents.xml', f'khai báo {l} nhưng không có CommandMethod')
-    for f in mo_ta() + ['data/huong_dan.json'] + tep('cad/knowledge/*.md', 'cad/layer/*.md'):
+    for f in mo_ta() + ['data/huong_dan.json'] + tep('cad/skills/*/*.md', 'cad/skills/*/*/*.md'):
         for ln, line in enumerate(doc(f).splitlines(), 1):
             for m in re.findall(r'(?<![A-Za-z0-9_])(PCCC_[A-Z0-9_]+)', line):
                 if m not in lenh and m not in layer and not m.endswith('_'):
@@ -261,7 +261,7 @@ def phep10():
 # ---------- 11. ban chep bundle ----------
 def phep11():
     cap = [('data/vat_tu.json', 'vat_tu.json'), ('data/khoang_cach_rai.json', 'khoang_cach_rai.json'), ('knowledge/chon-loai-dau-bao.md', 'chon-loai-dau-bao.md'),
-           ('cad/data/ky_hieu/ky_hieu.json', 'ky_hieu.json'), ('cad/data/ky_hieu/hinh_bc.json', 'hinh_bc.json'), ('cad/knowledge/mau-thuyet-minh-pccc.md', 'mau-thuyet-minh-pccc.md')]
+           ('cad/data/ky_hieu/ky_hieu.json', 'ky_hieu.json'), ('cad/data/ky_hieu/hinh_bc.json', 'hinh_bc.json'), ('cad/skills/ve/mau-thuyet-minh-pccc.md', 'mau-thuyet-minh-pccc.md')]
     for nguon, ban in cap:
         b = ROOT / 'cad/TKPCCC.bundle/Contents' / ban
         if b.exists() and (ROOT / nguon).exists() and b.read_bytes() != (ROOT / nguon).read_bytes():

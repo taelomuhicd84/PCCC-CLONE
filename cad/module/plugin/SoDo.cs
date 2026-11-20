@@ -1,5 +1,5 @@
 // Thao tác spec "so_do": sơ đồ nguyên lý theo tầng, hệ sprinkler ("spr") và báo cháy hệ thường ("bc").
-// Thiết kế, nguồn từng chi tiết (lấy từ bản mẫu hay tự đặt): cad/knowledge/so-do-nguyen-ly.md. Từ vựng: cad/skills/TU_VUNG.md.
+// Thiết kế, nguồn từng chi tiết (lấy từ bản mẫu hay tự đặt): cad/skills/ve/so-do-nguyen-ly.md. Từ vựng: cad/skills/TU_VUNG.md.
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -291,7 +291,7 @@ namespace TKPCCC
         static string Sb(double x) { return SoVN(x, "0.###"); }
         static string SoVN(double x, string f) { return x.ToString(f, CultureInfo.InvariantCulture); } // dấu chấm thập phân như trang 11
 
-        /// Sơ đồ nguyên lý báo cháy hệ thường, bố cục chép theo trang 11 hồ sơ thật (cad/knowledge/mau-so-do-that.md, so-do-nguyen-ly.md):
+        /// Sơ đồ nguyên lý báo cháy hệ thường, bố cục chép theo trang 11 hồ sơ thật (cad/skills/mau/mau-so-do-that.md, so-do-nguyen-ly.md):
         /// bảng ký hiệu + ghi chú + bảng tính nguồn (phụ lục C TCVN 7568-14:2025, hệ số từ spec) bên trái; tủ trung tâm dưới giữa;
         /// bó dây đứng (elip + chú thích) rẽ vào từng zone (zone 1 dưới cùng); cột còi đèn bên phải; liên động đi ngang từ cạnh tủ; tiêu đề dưới phải.
         /// Toạ độ viết theo pt của trang 11 (A3), đổi ra bản vẽ bằng S = 33 mm/pt (bảng ký hiệu: vòng H 12,12 pt = 400 mm như block thư viện).

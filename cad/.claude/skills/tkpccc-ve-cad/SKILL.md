@@ -41,11 +41,11 @@ Nền trước (mục trên). Rồi mỗi bước MỘT spec `ket_qua/<dự án>
 | 3 Mặt bằng chi tiết (`b3_chi_tiet`) | vách, cửa (vị trí, rộng, chiều mở), thang, tên phòng | `tuong` `vach`:true, `cua`, `chu`, `kt_chuoi` | `vung_tu_dong` một điểm mỗi phòng ra đủ vùng, m² khớp PDF (±5 %) |
 | 4 Thiết bị PCCC (`b4_thiet_bi`) | công năng, chiều cao trần từng phòng; zone | `rai` theo vùng (luật ở mục dưới), `dat` thiết bị lẻ (nút ấn, chuông, họng) | `rai` `ho` = 0, `dem` khớp số dự kiến, zone không vượt `rule/LUAT.md` BC-04 |
 | 5 Dây, ống (`b5_tuyen`) | tuyến dây theo zone, trục ống chính | `tuyen` (`noi_tiep` mỗi zone; ống `xuong_ca` / `cot` theo `truc`) | `dem` có m dây, ống; ảnh không tuyến cắt ngang phòng khác |
-| 6 Sơ đồ nguyên lý (`b6_so_do`) | (lấy số từ bước 4, 5) | `so_do` từ `dem` theo zone / tầng | `loi` rỗng, ảnh đúng quy cách `cad/knowledge/so-do-nguyen-ly.md` |
+| 6 Sơ đồ nguyên lý (`b6_so_do`) | (lấy số từ bước 4, 5) | `so_do` từ `dem` theo zone / tầng | `loi` rỗng, ảnh đúng quy cách `cad/skills/ve/so-do-nguyen-ly.md` |
 
 Tường vẽ bằng `tuong` nên `vung_tu_dong` chỉ dò layer tường, không lẫn nét PDF nền; cửa rộng hơn 3 m (cửa cuốn) thì truyền `ho`.
 
-## Rải thiết bị và đi tuyến (người dùng dạy 2026-11-11, đầy đủ ở `cad/knowledge/tu-duy-di-day-di-ong.md`)
+## Rải thiết bị và đi tuyến (người dùng dạy 2026-11-11, đầy đủ ở `cad/skills/ve/tu-duy-di-day-di-ong.md`)
 1. Phân khu vực TRƯỚC khi rải: vẽ hộp hoặc polyline kín từng khu vực (theo tường, dầm sàn, vì kèo) lên layer `PCCC_VUNG` bằng `net` với `kin`:true, kèm `{"op":"anh"}` rồi dừng để người dùng kiểm và sửa trong CAD.
 2. Người dùng báo xong: `doc` với `gi`:"vung" đọc lại vùng, rồi `rai` theo `l`. Đầu báo khói, nhiệt (`BC_KHOI`, `BC_KHOI_TRAN`, `BC_NHIET`): KHÔNG hỏi người dùng khoảng cách hay m², bỏ `s` để plugin lấy TCVN 7568-14 từ `data/khoang_cach_rai.json`, có chiều cao trần thì truyền `h` (m). Mã khác (sprinkler): `s` (bước tối đa) và `dt` (m² tối đa một thiết bị) tra theo `cad/rule/LUAT.md` (BC-02, SP-02), ghi rõ căn cứ khi báo.
    Plugin tự phủ kín vùng lồi lõm, cạnh xiên (thêm thiết bị chỗ hở). Kết quả `rai` có `m2`, `ho`, `cheo`: `ho` > 0 hoặc `m2` sát `dt` thì nêu cho người dùng. `kt`:true vẽ kích thước bước, cách tường và chéo góc như TCVN 7568-14 Hình 2.
@@ -60,5 +60,5 @@ Tường vẽ bằng `tuong` nên `vung_tu_dong` chỉ dò layer tường, khôn
 - `cad_chay` báo "đang bận": người dùng đang dở một lệnh trong AutoCAD, nhờ họ kết thúc lệnh rồi gọi lại.
 - Thiếu thao tác cho một hình lặp lại nhiều lần: thêm thao tác tham số vào `cad/module/plugin/Spec.cs` theo skill `tkpccc-cad-console`, đừng liệt kê hàng trăm nét.
 - Người dùng muốn hoàn tác: một lần `cad_chay` là một bước Undo (gõ `U` trong AutoCAD).
-- Sơ đồ nguyên lý sprinkler: thao tác `so_do` (truyền số đếm `dem` của từng tầng + cao độ `cot`; cách vẽ ở `cad/knowledge/so-do-nguyen-ly.md`).
+- Sơ đồ nguyên lý sprinkler: thao tác `so_do` (truyền số đếm `dem` của từng tầng + cao độ `cot`; cách vẽ ở `cad/skills/ve/so-do-nguyen-ly.md`).
 - Chưa có (để lại, xem `cad/KE_HOACH.md`): sơ đồ nguyên lý báo cháy, khung chat trong CAD.
