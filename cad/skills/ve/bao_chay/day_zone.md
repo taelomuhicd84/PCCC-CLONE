@@ -37,3 +37,18 @@ nửa trái vẽ hệ địa chỉ, nửa phải vẽ hệ thường. Lệnh v�
 - Dây chuông: cây xương cá. Mỗi chuông nối vào điểm gần nhất của cây bằng nhánh vuông góc.
 - Chỗ chưa làm: các đường khác layer có thể chồng lên nhau trên cùng một đoạn (chưa dời song song).
   Mạch vòng đi theo đường ngắn, không bám chu vi phòng như mẫu.
+
+## Luật người dùng chỉnh trên bản vẽ (19/11 Quyết Thắng, 20/11)
+- Dây báo cháy chỉ đi thẳng theo X và Y, không xiên. Riêng dây đầu báo -> đèn báo phòng được xiên (`tuyen` `tia`).
+  Dây zone: tự lập đường rắn bò rồi vẽ bằng `ong` `ma`:"DAY_BC" với điểm gấp khúc vuông góc (thêm điểm góc khi hai thiết bị lệch cả x lẫn y; lệch vài chục mm thì một đoạn ngắn).
+  Thứ tự hàng sao cho dây không đi lại trên chính nó, không cắt nhau. `tuyen` `noi_tiep` nối thẳng điểm–điểm nên còn đoạn chéo (chưa có tuỳ chọn vuông góc).
+- Dây đi KẸP SÁT TƯỜNG (hoặc sát kết cấu), cách mặt tường ~300 mm, trong phạm vi công trình; không vòng ra ngoài nhà.
+- Đầu báo và nút ấn cùng trên dây tín hiệu; điện trở cuối dây `BC_DTCD` ở cuối mỗi zone, sau thiết bị cuối.
+- Không kéo dây về tủ TTBC trên mặt bằng: đầu zone chỉ kéo một đoạn ngắn (~2 m) ra khỏi công trình rồi ghi "VỀ ZONE n TỦ TTBC". Chỉ khi bóc khối lượng mới kéo đủ về tủ
+  (vẫn kẹp tường, X/Y, không chim bay).
+- Đầu ra zone (mũi tên "ZONE n") đặt ở mép zone hướng về tủ / về trục dây chung: chọn điểm của zone gần tủ nhất (cửa, tường phía tủ). Đầu ra xa tủ thì dây về tủ dài gấp đôi (19/11).
+- Vị trí điện trở cuối: người dùng 16/11 và 20/11 "điện trở cuối đặt ở vị trí XA tủ TTBC để tiết kiệm dây". Bản mẫu "TK PCCC XƯỞNG TIÊU LIÊN THÀNH FINAL.dwg" (19/11) lại đi
+  tuyến chữ U (ra qua nửa thiết bị, quay về qua nửa còn lại) và đặt điện trở cuối ngay cạnh đầu ra. Hai cách này đang được đối chiếu trên các khung mẫu
+  `TESTBCHAY_20_11` (VIỆC 20/11 (2) mục 4); chưa chốt thì theo lời mới nhất (20/11): đầu ra gần tủ, điện trở cuối ở thiết bị xa tủ nhất.
+- Lời nhắn Bot chat gắn với bản vẽ mẫu thì chỉ đọc; không gửi gói vẽ của dự án khác vào bản mẫu (19/11 đã lỡ vẽ 12 nét vào bản mẫu).
+

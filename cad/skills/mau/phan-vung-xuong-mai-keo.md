@@ -1,7 +1,7 @@
 # Dạy plugin phân vùng như AI: xưởng mái kèo, phòng nhỏ, khu không rải (20/11/2026)
 
 Nguồn: người dùng cho AI và plugin cùng phân vùng, rải đầu báo trên hai bản chép của một mặt bằng xưởng thật (hồ sơ khách, bảng đối chiếu ở
-`ket_qua/QUYET_THANG/cad/so_sanh/`, không commit). Bộ vùng của AI là bộ người dùng đã duyệt 19/11 (luật ở bộ nhớ `phan-vung-xuong-va-phong-nho`).
+`ket_qua/QUYET_THANG/cad/so_sanh/`, không commit). Bộ vùng của AI là bộ người dùng đã duyệt 19/11 (luật ở `cad/skills/nhan_dang/phong_vung.md`, `dam_khoang.md`, `cua_thang_khu.md`).
 Người dùng: "train cho plugin phân vùng và rải được như AI ... để không có AI mà tôi vẫn dùng được bằng plugin".
 
 Kết quả: AI ra 25 vùng, 55 đầu báo. Plugin (tự dựng mọi phòng) ra 35 vùng, 69 đầu báo: chia xưởng sai khoang, thừa khoảng 19 đầu báo ở mái che, hiên
