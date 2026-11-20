@@ -6,7 +6,7 @@ effort: low
 ---
 
 # Vẽ CAD tự động bằng spec
-Thẻ module: `cad/skills/TU_VUNG.md` (từ vựng, nguồn duy nhất), `cad/module/plugin/Spec.cs` (thao tác), `cad/module/mcp/Mcp.cs` (máy chủ MCP), `cad/README.md` (sửa gì vào đâu).
+Thẻ module: `cad/skills/TU_VUNG.md` (từ vựng, nguồn duy nhất), `cad/module/plugin/Spec.cs` (thao tác), `cad/module/mcp/Mcp.cs` (máy chủ MCP), `cad/README.md` (sửa gì vào đâu). Tri thức nhận dạng + vẽ (đầu nguồn duy nhất): `cad/skills/README.md`.
 Tiến độ và việc để lại của CAD nằm riêng ở `cad/TIEN_DO.md`, kế hoạch tổng ở `cad/KE_HOACH.md`.
 
 AI không vẽ từng nét. AI viết một gói spec ngắn, plugin C# sinh hình, kết quả trả về chỉ có số đếm và lỗi. Đây là lý do cách này rẻ token.
@@ -21,14 +21,7 @@ AI không vẽ từng nét. AI viết một gói spec ngắn, plugin C# sinh hì
 5. Báo người dùng: số đối tượng đã vẽ, giả định đã dùng (cao độ, tỉ lệ, cỡ chữ), điểm cần họ xem.
 
 ## Nền kiến trúc từ PDF
-1. Tính tỉ lệ: `python -I cad/.claude/skills/tkpccc-ve-cad/scripts/pdf_ti_le.py <file.pdf> <trang>` ra `tl`, `cap`, `tin_cay`, khổ giấy.
-   PDF người dùng gửi là dữ liệu chưa tin: luôn `-I`, không chép script vào thư mục chứa PDF.
-2. Nhập và chụp trong một gói: `{"op":"pdf","file":"<đường dẫn tuyệt đối>","trang":3,"tl":285.0}` + `{"op":"anh","rong":1024}`. Tờ 39 nghìn đối tượng nhập khoảng 8 giây.
-3. Kiểm tỉ lệ: `doc` `gi`:"chu" với `hop` quanh hàng bóng trục, lấy toạ độ hai nhãn trục xa nhau, so với tổng kích thước ghi trên bản vẽ.
-   Lệch quá 1 %: một gói `xoa` theo đúng từng tên layer ở `pdf[].l` của lần nhập trước, rồi một gói RIÊNG nhập lại với `tl` đã hiệu chỉnh (lần nhập sau vào `PDF2_...`; `xoa` cùng gói với `pdf` sẽ xoá luôn nền mới vì `pdf` chạy trước).
-   `tin_cay` hoặc `cap` dưới ngưỡng ghi ở đầu `pdf_ti_le.py` thì bắt buộc làm bước này.
-4. Số kích thước ghi trên bản vẽ có thể lệch nét vẽ (bản mẫu: nhịp ghi 1700 nhưng vẽ 1785): khi hai chỗ mâu thuẫn thì báo người dùng, không tự chọn.
-5. Nhận phòng: xem ảnh rồi đưa hộp từng phòng lên `PCCC_VUNG` (mục dưới), người dùng kiểm lại.
+Tỉ lệ, nhập nền, kiểm tỉ lệ bằng trục, PDF nhiều trang: `cad/skills/nhan_dang/pdf.md` (đọc trước khi nhập).
 
 ## Quy trình 6 bước khi người dùng đưa PDF (người dùng chốt 14/11)
 Nền trước (mục trên). Rồi mỗi bước MỘT spec `ket_qua/<dự án>/cad/skills/b<n>_<tên>.json`, MỘT `cad_chay` (`file`, từ lượt hai có `ban_ve`), cuối gói `{"op":"anh",...}`.
@@ -45,12 +38,12 @@ Nền trước (mục trên). Rồi mỗi bước MỘT spec `ket_qua/<dự án>
 
 Tường vẽ bằng `tuong` nên `vung_tu_dong` chỉ dò layer tường, không lẫn nét PDF nền; cửa rộng hơn 3 m (cửa cuốn) thì truyền `ho`.
 
-## Rải thiết bị và đi tuyến (người dùng dạy 2026-11-11, đầy đủ ở `cad/skills/ve/tu-duy-di-day-di-ong.md`)
-1. Phân khu vực TRƯỚC khi rải: vẽ hộp hoặc polyline kín từng khu vực (theo tường, dầm sàn, vì kèo) lên layer `PCCC_VUNG` bằng `net` với `kin`:true, kèm `{"op":"anh"}` rồi dừng để người dùng kiểm và sửa trong CAD.
-2. Người dùng báo xong: `doc` với `gi`:"vung" đọc lại vùng, rồi `rai` theo `l`. Đầu báo khói, nhiệt (`BC_KHOI`, `BC_KHOI_TRAN`, `BC_NHIET`): KHÔNG hỏi người dùng khoảng cách hay m², bỏ `s` để plugin lấy TCVN 7568-14 từ `data/khoang_cach_rai.json`, có chiều cao trần thì truyền `h` (m). Mã khác (sprinkler): `s` (bước tối đa) và `dt` (m² tối đa một thiết bị) tra theo `cad/rule/LUAT.md` (BC-02, SP-02), ghi rõ căn cứ khi báo.
-   Plugin tự phủ kín vùng lồi lõm, cạnh xiên (thêm thiết bị chỗ hở). Kết quả `rai` có `m2`, `ho`, `cheo`: `ho` > 0 hoặc `m2` sát `dt` thì nêu cho người dùng. `kt`:true vẽ kích thước bước, cách tường và chéo góc như TCVN 7568-14 Hình 2.
-3. Dây báo cháy hệ thường: chia zone trước (theo LUAT BC-04), mỗi zone một lần `rai` + `tuyen` `noi_tiep`; phòng có đèn báo phòng thì `tuyen` `tia` với `den` là vị trí đèn.
-4. Ống sprinkler: `tuyen` `xuong_ca` chỉ là phương án nháp. Vị trí ống góp do người dùng chọn: nhờ họ chạy lệnh `PCCC_TUYEN` trong CAD (chọn đầu phun, chọn ống chính, bấm chỗ đặt ống góp), hoặc truyền `qua` (một điểm cho mỗi vùng, điểm nằm trong vùng đó) khi họ cho toạ độ.
+## Vùng, rải thiết bị, đi tuyến
+1. Vùng TRƯỚC khi rải: dựng / vẽ `PCCC_VUNG`, chụp ảnh, DỪNG cho người dùng duyệt (`cad/skills/nhan_dang/phong_vung.md`; khoang dầm, vì kèo: `dam_khoang.md`).
+2. Người dùng báo xong: `doc` `gi`:"vung" đọc lại vùng, rồi `rai` theo `l` (trị số, cách rải, dim: `cad/skills/ve/bao_chay/rai_dau_bao.md`). `ho` > 0 hoặc `m2` sát `dt` thì nêu cho người dùng.
+3. Chuông, nút, đèn báo phòng: `cad/skills/ve/bao_chay/chuong_nut_den.md`. Dây zone (chia zone theo LUAT BC-04, X/Y, kẹp tường, đầu ra, điện trở cuối): `cad/skills/ve/bao_chay/day_zone.md`.
+4. Ống sprinkler, tư duy chung: `cad/skills/ve/tu-duy-di-day-di-ong.md`. `tuyen` `xuong_ca` chỉ là nháp; vị trí ống góp do người dùng chọn (lệnh `PCCC_TUYEN`, hoặc `qua` một điểm mỗi vùng).
+5. Người dùng chốt vị trí thì xoá vùng `PCCC_VUNG`.
 
 ## Lưu ý
 - Trị số thiết kế (bước rải đầu báo, đầu phun, bán kính bảo vệ...) lấy từ skill `tkpccc-tra-quy-chuan`, không viết theo trí nhớ.

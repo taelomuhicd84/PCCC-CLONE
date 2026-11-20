@@ -60,9 +60,9 @@ TKPCCC/
 ├─ cad/                 DỰ ÁN CON AUTOCAD 2021–2024 (C# .NET Framework 4.8, cú pháp C# 5): bản đồ đầy đủ ở cad/README.md, luật riêng cad/CLAUDE.md
 │  ├─ .claude/             skill riêng (tkpccc-ve-cad + scripts/pdf_ti_le.py, tkpccc-cad-console + scripts/in_png.ps1) và agent riêng của CAD
 │  ├─ module/              mã chạy: plugin/ (Lenh.cs, Spec.cs, Rai.cs, Block.cs, Cau.cs) · ui/ (BangBlock.cs, bảng PCCC_BLOCK) · mcp/ (Mcp.cs) · chung/ (HangDoi.cs) · lisp/
-│  ├─ skills/              TU_VUNG.md (từ vựng spec cho mọi AI, nguồn duy nhất) + vi_du/
+│  ├─ skills/              ĐẦU NGUỒN tri thức vẽ CAD: TU_VUNG.md (từ vựng spec) · vi_du/ · nhan_dang/ (đọc bản vẽ) · ve/ (vẽ, quy ước layer) · mau/ (học từ bản mẫu)
 │  ├─ data/                dữ liệu vẽ: ky_hieu/ (mặc định trục, kích thước, chữ) · block/ · ong/ · bom/ · mau/
-│  ├─ rule/ · knowledge/   LUAT.md (việc CAD ↔ file quy chuẩn ↔ skill, agent) · quy ước bản vẽ, bài học vẽ
+│  ├─ rule/                LUAT.md (việc CAD ↔ file quy chuẩn ↔ skill, agent)
 │  ├─ test/                chay_thu.ps1 (accoreconsole) · thu_mcp.ps1 (máy chủ MCP), không cần mở AutoCAD · thu_gui.ps1 (tự mở AutoCAD thật, không bắt buộc)
 │  ├─ build.bat · bin/     build DLL + TKPCCC.Mcp.exe (bin/ không commit)
 │  ├─ KE_HOACH.md · TIEN_DO.md · LICH_SU.md   kế hoạch, tiến độ, nhật ký riêng của CAD

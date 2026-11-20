@@ -11,10 +11,8 @@ cad/
 ├─ .claude/
 │  ├─ agents/              cad-thiet-ke (lập spec) · cad-ve (chạy spec) · cad-kiem (soát bản vẽ) · cad-lap-trinh (sửa plugin) · cad-review (review mỗi mốc, Write chỉ để ghi báo cáo); bảng việc ở CLAUDE.md
 │  └─ skills/              tkpccc-ve-cad (vẽ qua MCP; scripts/pdf_ti_le.py tính tỉ lệ trang PDF, scripts/chay_spec.ps1 chạy spec không cần mở AutoCAD) · tkpccc-cad-console (build, kiểm thử, in PNG; scripts/hinh_tu_pdf.py lấy hình ký hiệu từ nét vector PDF)
-├─ skills/                 hướng dẫn dùng cho MỌI AI (Claude, Gemini, Codex): TU_VUNG.md (từ vựng spec, nguồn duy nhất) · vi_du/
-├─ knowledge/              kiến thức vẽ CAD: di-day-bao-chay.md (đi dây hệ thường / địa chỉ theo bản vẽ mẫu người dùng) · quy-uoc-ban-ve.md · mau-ban-ve-pccc.md (cách rải, đi dây, đi ống của bản mẫu) · tham-khao-mcp-hub.md (ý lấy từ MCP bên khác) · so-do-nguyen-ly.md (cách vẽ sơ đồ nguyên lý `so_do`, chi tiết nào lấy từ mẫu, chi tiết nào tự đặt) · hoc-ban-ve-mau-dwg.md (học 5 bộ DWG mẫu: bộ tờ, khung tên, bảng ký hiệu, bảng quy định lắp đặt, beam, zone, sprinkler, việc plugin còn thiếu) · mau-thuyet-minh-pccc.md (văn thuyết minh mẫu chép nguyên văn từ bản vẽ, theo hệ) · hoc-video-plugin-16-11.md (học giao diện + ý hay của 2 plugin PCCC qua 3 video, việc chưa làm) · mau-rai-khoang-dam.md (mẫu người dùng rải đầu báo theo khoang dầm: lưới chung, lề 2 m tới dầm, 2 x 2 mỗi khoang 10 m) · hoc/ (phan-vung-xuong-mai-keo.md: đối chiếu AI / plugin, luật L1–L8 dạy plugin phân vùng xưởng mái kèo, test; hoc-bao-chay-ban-mau.md: 8 khung mẫu TESTBCHAY_20_11, cách chép + rải qua COM, đối chiếu từng khung)
+├─ skills/                 ĐẦU NGUỒN tri thức vẽ CAD cho MỌI AI (mục lục skills/README.md): TU_VUNG.md (từ vựng spec) · vi_du/ · nhan_dang/ (đọc bản vẽ DWG / PDF: trục, tường cột, cửa thang khu, phòng vùng, dầm khoang, ký hiệu, pdf) · ve/ (vẽ: quy ước + layer, trục tường cửa, bao_chay/ rải đầu báo, chuông nút đèn, dây zone; tư duy đi dây đi ống; sơ đồ nguyên lý; thuyết minh mẫu) · mau/ (bằng chứng học từ bản mẫu: số đo, đối chiếu AI / plugin)
 ├─ rule/                   LUAT.md: việc trên CAD ↔ file quy chuẩn nguyên văn ↔ skill, agent liên quan
-├─ layer/                  file .md chuẩn layer (tên, màu, loại đường) để tạo layer đúng chuẩn · kien_truc.md (TUONG, VACH, CUA, DIM)
 ├─ data/                   dữ liệu vẽ (xem data/README.md)
 │  ├─ ban_quyen/           cau_hinh_ban_quyen.json (URL web app, Google Form) · khoa_cong_khai.xml (KeyGen tạo; khoá riêng KHÔNG ở repo)
 │  ├─ ky_hieu/             ky_hieu.json: mặc định ký hiệu trục, kích thước, chữ (plugin đọc) · hinh_bc.json: hình block mặc định báo cháy lấy từ nét PDF hồ sơ thật (sinh bằng tkpccc-cad-console/scripts/hinh_tu_pdf.py)
@@ -87,7 +85,7 @@ AI chỉ viết một gói thao tác ngắn (spec JSON), plugin sinh hình. Mộ
 | Sửa hình block thiết bị | `TKPCCC.bundle/Contents/PCCC_Blocks.dwg` bằng BEDIT, rồi `PCCC_LIB` |
 | Bản quyền: key, mã máy, chặn lệnh, cấp key qua Google Sheet | `module/plugin/BanQuyen.cs`, `module/banquyen/` (đọc `HUONG_DAN.md`); build khoá lệnh: `build.bat phat_hanh` |
 | Thêm một luật vẽ, nối tới quy chuẩn | 1 dòng trong `rule/LUAT.md` |
-| Ghi bài học khi vẽ | `knowledge/hoc/` |
+| Ghi bài học khi vẽ | luật -> đúng file `skills/nhan_dang/` hoặc `skills/ve/`; số đo bản mẫu -> `skills/mau/` (mục lục `skills/README.md`) |
 | Bảng KÝ HIỆU mặt bằng `PCCC_KYHIEU`, bảng quy định lắp đặt đầu báo `PCCC_QUYDINH`, thao tác spec `bang` | `module/plugin/BangMb.cs` (trị số từ `data/khoang_cach_rai.json`) |
 | Thuyết minh theo hệ có trên bản vẽ `PCCC_THUYETMINH` (mục chọn ở `MUC_THEO_HE`) | `module/plugin/BangMb.cs`; văn mẫu `skills/ve/mau-thuyet-minh-pccc.md` (build.bat chép cạnh DLL) |
 | Dim bước tia beam (`PCCC_RAI` BC_BEAM, layer `PCCC_BC_TIA_KT`); nhãn zone + diện tích, điện trở cuối dây (`PCCC_DAY`) | `module/plugin/Rai.cs` (`KtTia`, `DayTay`) |

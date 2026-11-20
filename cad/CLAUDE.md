@@ -18,7 +18,8 @@ Mở Claude Code tại gốc repo hay ngay tại `cad/` đều làm việc đư�
   | `cad-lap-trinh` | sửa plugin C#, thêm thao tác spec và lệnh, chạy bộ test | sửa `cad/module`, `cad/test`, tài liệu CAD |
   | `cad-review` | review diff của một mốc + chạy lại test, báo CHẶN / NÊN SỬA / GHI CHÚ | chỉ đọc và chạy test, không sửa file |
 - Cây thư mục cố định, thêm gì thì đặt đúng chỗ và ghi 1 dòng vào `cad/README.md`:
-  `module/` mã chạy · `data/` dữ liệu vẽ · `layer/` chuẩn layer (đọc trước khi tạo layer) · `rule/` luật nối tới quy chuẩn · `knowledge/` kiến thức vẽ · `skills/` hướng dẫn cho mọi AI · `test/` kiểm thử.
+  `module/` mã chạy · `data/` dữ liệu vẽ · `rule/` luật nối tới quy chuẩn · `skills/` ĐẦU NGUỒN tri thức vẽ cho mọi AI (`nhan_dang/` đọc bản vẽ, `ve/` vẽ + quy ước layer, `mau/` bằng chứng học từ bản mẫu; mục lục `skills/README.md`) · `test/` kiểm thử.
+  Người dùng chốt 21/11: luật nhận dạng / vẽ chỉ ghi ở `cad/skills/`; skill, agent, memory chỉ giữ quy trình và trỏ tới đó.
 - Trị số quy chuẩn không chép vào `cad/`: `rule/LUAT.md` chỉ trỏ tới file nguyên văn trong `knowledge/`, `skills/` gốc.
 - Plugin chỉ C# 5, tham chiếu `acdbmgd` + `accoremgd` (cộng `System.Windows.Forms`, `System.Drawing` của .NET). Máy chủ MCP không chạy LISP hay lệnh tự do.
   Riêng `module/ui/` (`TKPCCC.UI.dll`) được tham chiếu `acmgd`: chỉ chứa giao diện, mọi xử lý bản vẽ để ở `module/plugin/` cho thử được trong accoreconsole.

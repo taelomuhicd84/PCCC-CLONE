@@ -722,3 +722,7 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
   L5 MaiKeo bỏ cả khoang xưởng vì chữ mái che; MaiKeo bật `khoangDam` gom phòng nhỏ. Chi tiết + ca thử ở `cad/TIEN_DO.md` LƯỢT 10. Chưa sửa: hạn mức tuần 95 %, hẹn 21/11 05:00.
 - 20/11 tối: người dùng chốt giữ TCVN 7568-14:2025 (mẫu chỉ tham khảo cách rải, cách chia vùng); giao việc gom tri thức CAD thành một nguồn `cad/skills/`
   (nhan_dang/, ve/, mau/): đã kiểm kê + lập cây trong TIEN_DO VIỆC 20/11 (3), chưa dời file (hạn mức tuần 93 %).
+- 21/11 sáng (sau reset tuần): VIỆC 20/11 (3) xong. Gom `cad/knowledge/` + `cad/layer/` + luật CAD trong memory vào một nguồn `cad/skills/`
+  (`nhan_dang/` truc, tuong_cot, cua_thang_khu, phong_vung, dam_khoang, ky_hieu, pdf; `ve/` quy_uoc, truc_tuong_cua, bao_chay/ rai_dau_bao, chuong_nut_den, day_zone,
+  tư duy đi dây đi ống, sơ đồ nguyên lý, thuyết minh mẫu; `mau/` 8 file), README mục lục từng thư mục, sửa mọi đường dẫn, skill `tkpccc-ve-cad` trỏ về nguồn.
+  Commit 55af0a0, f12e24b + lô 4.

@@ -3,7 +3,14 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
-## VIỆC 20/11 (3) — GOM TRI THỨC CAD THÀNH MỘT ĐẦU NGUỒN (NHẬN DẠNG / VẼ), PHÂN TẦNG: ĐÃ LẬP CÂY, CHƯA CHUYỂN FILE
+## VIỆC 20/11 (3) — GOM TRI THỨC CAD THÀNH MỘT ĐẦU NGUỒN `cad/skills/` (NHẬN DẠNG / VẼ / MẪU): XONG 21/11 (4 lô commit, chưa push)
+KẾT QUẢ 21/11: `cad/knowledge/`, `cad/layer/` đã dời hết vào `cad/skills/` (mục lục `cad/skills/README.md`; `nhan_dang/` 7 file luật viết mới từ memory + hành vi mã;
+`ve/` quy ước + layer, trục tường cửa, `bao_chay/` rải đầu báo, chuông nút đèn, dây zone; `mau/` 8 file bằng chứng). Mọi đường dẫn cũ đã sửa (build.bat, test,
+kiem_lien_ket.py, chú thích .cs, ky_hieu.json, agent, SKILL, README, CLAUDE.md, STRUCTURE.md). Skill `tkpccc-ve-cad` chỉ còn quy trình + trỏ tới nguồn.
+14 memory luật CAD còn một dòng trỏ tới file mới (xoá memory bị chặn); memory mới `luat-cad-o-cad-skills`. Luật mới từ nay ghi vào `cad/skills/`, không tạo memory.
+Chưa có mã: vùng kẹp mặt tường bỏ cột lồi, bỏ nội thất lớn (ghi ở `cad/skills/nhan_dang/tuong_cot.md`). Vị trí điện trở cuối (xa tủ hay cạnh đầu ra) còn hai nguồn mâu thuẫn:
+`cad/skills/ve/bao_chay/day_zone.md`, chốt khi làm VIỆC 20/11 (2) mục 4.
+(Kế hoạch gốc 20/11, để tham khảo:)
 Người dùng 20/11 tối: "đưa các data skill hay knowledge trong folder cad thành 1 đầu nguồn: nhận diện trục, vẽ trục, nhận diện tường cột, vẽ cột, vẽ đầu báo...
 quy cách, kiến thức nhận diện và vẽ lại ... sau này phát triển MCP CAD vẽ PDF thành bản vẽ AutoCAD thì gọi chung skill. Gom folder hợp lí (folder skill nhận dạng,
 folder skill vẽ cad), phân tầng chi tiết từng folder để sau vào thẳng đó sửa cho đỡ tốn token." Làm sau VIỆC 20/11 (2)? KHÔNG: làm việc này TRƯỚC (người dùng giao mới nhất),
@@ -29,7 +36,7 @@ cad/README.md, cad/CLAUDE.md, STRUCTURE.md, KE_HOACH_TONG.md. Kiểm xong: `pyth
 BƯỚC TIẾP: tạo cây + README; tách nội dung từng file cũ vào đúng file mới (không bỏ sót dòng, chép nguyên văn phần quy chuẩn); chép luật từ memory;
 sửa đường dẫn; kiểm; commit (không push). Làm theo lô nhỏ, mỗi lô một commit, để dừng kịp khi hết hạn mức.
 
-## VIỆC 20/11 (2) — HỌC RẢI BÁO CHÁY THEO BẢN MẪU (file_cad_test/TESTBCHAY_20_11.dwg): KHUNG 5 KARAOKE ĐANG ĐỐI CHIẾU; 1 LỖI ĐÃ SỬA + TEST, CHỜ NGƯỜI DÙNG 1 CÂU
+## VIỆC 20/11 (2) — HỌC RẢI BÁO CHÁY THEO BẢN MẪU (file_cad_test/TESTBCHAY_20_11.dwg): KHUNG 5 KARAOKE ĐANG ĐỐI CHIẾU; 1 LỖI ĐÃ SỬA + TEST; LÀM TIẾP SAU VIỆC (3)
 Người dùng (20/11, chép ý): mỗi khung rectang = 1 công trình mẫu vẽ báo cháy đã thẩm định, là CHUẨN, phải tư duy như nó.
 1. Copy các block mặt bằng mẫu ra chỗ trống (KHÔNG sửa bản gốc), explode, rồi vẽ vùng rải báo cháy.
 2. Vùng kẹp sát mặt tường: tường 200 có cột 300 lồi ra 100 thì vùng chạy thẳng theo mặt tường 200, không bao phần cột lồi.
