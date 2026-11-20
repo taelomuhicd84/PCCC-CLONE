@@ -698,3 +698,6 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
 ## 2026-11-20 — Test tổng hợp mái kèo + hiên
 - `chay_thu.ps1` ca 14: xưởng có cột hai tường dọc, dải mái che có chữ, phần lồi đầu hồi, nhà văn phòng có hiên cột trong 6 m quanh xưởng; kiểm 8 khoang, bỏ khoang mái che,
   bỏ hiên. Ca 13 cắt phần ca 14. TAT CA DAT.
+
+## 2026-11-20 — Soát dải xiên xưởng 1: không phải lỗi
+- Dải xiên đã là vùng riêng 37,41 m². Khoang 2 xưởng 1 rộng ≈ 30,8 m > 3 x 10,2 m nên 4 đầu báo là đúng (cách tường ≤ 5,1 m). Sửa ghi chú tiến độ, không sửa mã.

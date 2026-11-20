@@ -8,12 +8,15 @@ LƯỢT 5 (người dùng "Làm L6"): `Rai.cs` khối Enter mọi phòng, sau L5
 ≤ 0,6 m mà cột đó không sát phòng khác còn lại → bỏ (`bo_hien=`). CHỈ chạy với `LoaiTran MaiKeo`: chạy mọi chế độ thì `test báo cháy.dwg` (CoTran, 506 cột) còn đúng 1 phòng
 hẹp 12,7 m² sát cột bị bỏ nốt, ca kiểm "rải được" hỏng (phòng kề đã bị bỏ ngoài trục nên không loại được cột). build + `chay_thu` + `thu_mcp` TAT CA DAT.
 Bản chép (`kb4.scr` → `qt_maikeo_4.dwg`, ảnh `anh/so_dap_an_1.png`): `bo_hien=3 m2=35.3,34.3,23.2`, **28 vùng/khoang, 62 ĐB** (đáp án 25 / 55); nhà văn phòng 2 còn đúng 4 phòng / 4 ĐB.
-CÒN: vùng 63,55 m² mái che tây nam cạnh trạm điện (3 ĐB, không có chữ khu bên trong, không có cột); khoang 2 xưởng 1 ra 4 ĐB (bước 7,7 m), dải xiên sát tường phải chưa tách
-như đáp án; L7 thang bộ; test tổng hợp mái kèo + hiên trong `chay_thu.ps1`; hiên không vẽ cột chưa nhận.
+CÒN: vùng 63,55 m² mái che tây nam cạnh trạm điện (3 ĐB, không có chữ khu bên trong, không có cột); L7 thang bộ; test tổng hợp mái kèo + hiên trong `chay_thu.ps1`; hiên không vẽ cột chưa nhận.
 LƯỢT 6 (người dùng "Viết test"): `chay_thu.ps1` ca 14 (kịch bản kb6): xưởng 20 x 48 m cột 400 x 400 hai tường dọc bước 6 m, dải mái che 3,4 m có chữ không tường ngăn,
 phần lồi đầu hồi 8 x 2 m, nhà văn phòng cách xưởng 4 m có hiên 2,4 m + 3 cột mép ngoài; kiểm `mai_keo cot=21 phong_chia=1 khoang=8`, `bo_khoang_khu_ten=1`, `bo_hien=1`.
 Ca 13 nay cắt tới trước lời nhắc LoaiTran của ca 14. TAT CA DAT.
-BƯỚC TIẾP: dải xiên → L7 → `cad-review` → push từ tab Terminal người dùng.
+LƯỢT 7 (người dùng "Làm dải xiên"): soát lại, KHÔNG phải lỗi, không sửa mã. Dải xiên sát tường phải xưởng 1 đã là vùng riêng 37,41 m² (đáp án 35,2 m²).
+Khoang 2 xưởng 1 (giữa tường đầu hồi và hàng cột thứ hai, kéo tới tường xiên vì chỗ đó không có vách, như đáp án) rộng ≈ 30,8 m (lưới 4 x 7,7 m) > 3 x 10,2 = 30,6 m:
+3 đầu báo thì đầu ngoài cùng cách tường > 5,1 m, nên 4 là đúng TCVN 7568-14; khoang đáp án cùng chỗ rộng 30,9 m cũng vượt. Chênh 62 / 55 còn lại: khu nam xưởng 1
+(6 ĐB, khoang 514 m²/ĐB tính theo lưới 3 x 2), vùng mái che tây nam 63,55 m² + 2 phòng nhỏ cạnh trạm điện (5 ĐB) — cần người dùng xác nhận khu đó có rải hay không.
+BƯỚC TIẾP: L7 → `cad-review` → push từ tab Terminal người dùng.
 LƯỢT 4 (Claude Code, người dùng "Sửa tiếp"): đã sửa lỗi 1–3 của lượt 3. `DuongViKeo`: hàng vì kèo cần ≥ 2 cột nằm trong bề ngang chính phòng (± 0,6 m),
 không có hàng nào mới mượn cột gần 6 m; hàng cách biên hộp bao < nửa bước vì kèo (trung vị) bỏ, dải đó gộp vào khoang kề. `Rai.cs` khối MaiKeo: sau chia, khoang ≤ 500 m²
 chứa tâm chữ khu (L5) bỏ (`mai_keo bo_khoang_khu_ten=`). build + `chay_thu` + `thu_mcp` TAT CA DAT. Chạy lại bản chép (`kb3.scr` → `qt_maikeo_3.dwg`, ảnh `anh/so_dap_an_1.png`):
