@@ -32,6 +32,27 @@ trừ xong không còn đúng 1 vòng thì không khoét) (`khoet_thang=`); hộ
 làm việc (kiểm `khoet_thang=1 m2=2.2`, vùng 45,8 m²). build + `chay_thu` + `thu_mcp` TAT CA DAT (bản vẽ thật dựng phòng 9,5 s, như trước). Bản chép (`kb6.scr` →
 `qt_maikeo_6.dwg`, ảnh `anh/so_dap_an_1.png`): `khoet_thang=1 m2=7.3`, phòng giữa nhà văn phòng 2 còn 45,8 m², 8 đỉnh vuông góc trùng đáp án AI; vẫn 25 vùng, 57 ĐB.
 BƯỚC TIẾP: `cad-review` (Opus max) diff `bc88a99^..HEAD`, sửa mục CHẶN; người dùng push từ tab Terminal. Sau đó VIỆC 20/11 (2).
+LƯỢT 10 (20/11 tối, cùng phiên nhánh): `cad-review` (Opus max, agent general-purpose đọc `cad/.claude/agents/cad-review.md` vì agent CAD không nạp từ gốc repo) xong:
+chay_thu 174 phép TAT CA DAT, thu_mcp 11 TAT CA DAT; **4 CHẶN, 5 NÊN SỬA, 7 GHI CHÚ** (báo cáo đủ, có hình học từng ca thử: `ket_qua/QUYET_THANG/cad/thu_maikeo/review_L1_L8.md`,
+không commit). DỪNG vì hạn mức TUẦN 95 % (reset 21/11 05:00 giờ máy), chưa sửa CHẶN nào. CHẶN (sửa theo thứ tự, mỗi mục thêm ca thử vào `chay_thu.ps1`):
+1. L1 `NhanVung.cs` CacMat (khoảng dòng 910, 922, 984; `TachCot` 530–549): khe có một đầu là nét cột không còn khép → phòng hở, mất hẳn, MỌI loại trần.
+   E1: xưởng 18 x 24 m, cột 400 x 400 hai tường dọc bước 6 m (mặt ngoài cột = mặt ngoài tường), tường 2 nét 200 giữa cột, khoang cửa cuốn 6 m tường nam để trống,
+   CoTran: trước mốc 424,8 m² / 6 ĐB, nay `vung=0` (có block CUA_CUON trong khe thì vẫn đúng). E8: tường nam 5 trụ polyline kín 1000 x 220, cửa sổ 1,5 m trống,
+   3 tường còn lại polyline hở 2 nét: trước 56,53 m², nay 0. Sửa: chỉ chặn khép khe nét cột khi khe KHÔNG thẳng hàng nét tường thường nào (ô giả giữa lòng xưởng);
+   khe trên đường tường (tường–cột–khe–cột–tường) khép như cũ; ứng viên cột thêm tỉ lệ cạnh (trụ 1000 x 220 không phải cột). Phải giữ E2 CoTran đúng 40 / 42 m².
+2. L6 `Rai.cs` (khoảng 1860–1869): không xét "mép ngoài không có tường" → phòng / hành lang hẹp có cột trong tường ngoài bị bỏ. E2: văn phòng 20 x 8 m tường 1 nét,
+   hành lang 2 m dọc tường nam, 3 phòng 7 x 6, 7 x 6, 6 x 6 m phía bắc, cột 300 x 300 trên tường nam và bắc bước 5 m; MaiKeo h 3,5: `bo_hien=2 m2=35.9,39.8` (CoTran 4 phòng 5 ĐB).
+   Sửa: chỉ bỏ khi mép ngoài giữa các cột không có nét song song cách 0,1–0,4 m (tường) hoặc có chữ HIÊN; còn lại chỉ báo `hien_nghi=`. E2 làm ca âm.
+3. L5 theo khoang `Rai.cs` (khoảng 1967–1974, cùng gốc 1844): bỏ cả khoang chạy hết bề rộng xưởng vì có chữ mái che. E3: xưởng 24 x 48 m, cột x = 0, 20, 24 m bước 6 m,
+   dải mái che x 20–24 m không tường ngăn, chữ "MAI CHE" tại (20,8; 21) m, MaiKeo h 9: `bo_khoang_khu_ten=1 m2=144` (120 m² là xưởng, mất 3 ĐB). Sửa: chỉ bỏ khoang chứa chữ
+   khi là khoang đầu / cuối theo phương chia và hẹp hơn khoang trung vị, còn lại giữ + báo; ngưỡng bỏ cả phòng 500 m² (dòng 1844) thêm điều kiện hình dải hoặc hạ.
+4. `Rai.cs` (khoảng 1522) nhánh MaiKeo đặt `khoangDam = true` → phòng < 9 m² sát nhau gom như khoang dầm nhỏ, rải chung 1 lưới, ĐB nằm trên tường chung, dấu X sai.
+   E5: hai phòng 2,8 x 3 m chung tường 1 nét, MaiKeo h 9: 1 ĐB tại x 2,8 m (CoTran 2 ĐB). Sửa: bỏ `khoangDam = true` ở nhánh MaiKeo (hoặc chỉ gom khoang của `khoangChia`).
+NÊN SỬA (để sau CHẶN): L8 `TenPhong` giữ phòng có chữ PHÒNG trong hình chi tiết (lỗi 16/11 quay lại); `DuongViKeo` mượn hàng cột xưởng bên cắt phòng họp 15 x 15 m;
+L5 bỏ phòng bơm nằm trong nhà (luật chỉ nói phòng bơm đứng riêng); L5b bỏ kho có chữ "KHO" và lan sang kho không sát mái che; L1 `khongNoi` không có phép kiểm nào.
+Chưa kiểm: `HinhBac` nhận nhầm block khác (chỉ suy từ mã). Commit 7cbb70e (phiên khác, MatChon dựng lại bằng mọi nét liền) không thuộc mốc review.
+BƯỚC TIẾP (tự làm sau 21/11 05:00, không hỏi): `get_usage` (tuần < 95 %, 5 giờ < 95 %) → sửa CHẶN 4 → 2 → 3 → 1 (nhẹ tới nặng), mỗi mục build + `chay_thu` + `thu_mcp`
+TAT CA DAT; chạy lại bản chép (`kb6.scr` chép thành `kb7.scr`, DWG ra `qt_maikeo_7.dwg`) phải còn 25 vùng / 57 ĐB; ghi LƯỢT 11, commit, KHÔNG push.
 LƯỢT 5 (người dùng "Làm L6"): `Rai.cs` khối Enter mọi phòng, sau L5: hiên = dải hẹp (rộng TB 2A/P ≤ 3 m, ≤ 200 m²) có ≥ 2 cột (`nhanThem.Cot`) nằm trong / cách viền
 ≤ 0,6 m mà cột đó không sát phòng khác còn lại → bỏ (`bo_hien=`). CHỈ chạy với `LoaiTran MaiKeo`: chạy mọi chế độ thì `test báo cháy.dwg` (CoTran, 506 cột) còn đúng 1 phòng
 hẹp 12,7 m² sát cột bị bỏ nốt, ca kiểm "rải được" hỏng (phòng kề đã bị bỏ ngoài trục nên không loại được cột). build + `chay_thu` + `thu_mcp` TAT CA DAT.

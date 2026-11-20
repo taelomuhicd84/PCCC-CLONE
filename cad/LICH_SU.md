@@ -716,3 +716,7 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
 - 20/11 19:30: mở `TESTBCHAY_20_11.dwg` (bản chép), lập bản đồ 8 khung; khung 5 Karaoke ABC chép + explode, PCCC_RAI "mọi phòng" ra 0 vùng ->
   sửa MatChon (layer `tuong` chỉ có block cửa thì lùi về mọi nét) + test ca 15; sau sửa 30 vùng / 50 đầu báo nhiệt, mẫu 62 (mẫu dày hơn TCVN 7568-14:2025,
   chờ người dùng chọn trị số). Kiến thức: `cad/knowledge/hoc/hoc-bao-chay-ban-mau.md`. Dừng vì hạn mức tuần 92 %.
+
+## 2026-11-20 (tối) — Review mốc L1–L8 (Opus max): 4 CHẶN, dừng vì tuần 95 %
+- chay_thu 174 phép, thu_mcp 11 phép TAT CA DAT. CHẶN: L1 khe cạnh nét cột không khép (cửa cuốn để trống mất phòng, mọi loại trần); L6 bỏ phòng hẹp có cột trong tường ngoài;
+  L5 MaiKeo bỏ cả khoang xưởng vì chữ mái che; MaiKeo bật `khoangDam` gom phòng nhỏ. Chi tiết + ca thử ở `cad/TIEN_DO.md` LƯỢT 10. Chưa sửa: hạn mức tuần 95 %, hẹn 21/11 05:00.
