@@ -16,6 +16,8 @@ Mã: `ThuNet`, `LoaiLop`, `NetLien`, `GhiCotUng`, `TachCot`, `MatChon` trong `ca
 - L1 (người dùng duyệt 19/11): cột nhận theo HÌNH, không theo tên layer: đa giác kín nhỏ (hộp ≤ 1,2 m: chữ I 12–13 đỉnh, chữ nhật, vuông, tròn) cùng cỡ ± 50 mm,
   ≥ 3 cái thẳng hàng (tâm lệch ≤ 0,15 m) là cột (`cot=` ở dòng lệnh). Bản vẽ thật có cột chữ I trên layer tên ống (`$.2.9DN25`).
   Nét cột vẫn dựng mặt nhưng KHÔNG dùng để khép khe tường (trước đây bụng chữ I bị coi là tường 2 nét rồi bắc cầu sang cột kế, ra tường ảo).
+  Review 21/11: nét cột thẳng hàng VÀ chạm (≤ 50 mm) nét tường thường thì khép khe như tường (cột trong tường, cửa cuốn để trống giữa hai cột);
+  khe giữa mặt trong hai cột vẫn làm "khe song đôi" cho khe mặt ngoài. Hộp cạnh dài > 2,5 x cạnh ngắn (trụ tường 1000 x 220 vẽ polyline kín) không phải cột.
 - Cột đứng giữa phòng: mặt cột < 1 m² bị bỏ, phòng vẫn là một vùng.
 - Hàng cột là cơ sở chia khoang vì kèo: `cad/skills/nhan_dang/dam_khoang.md`.
 

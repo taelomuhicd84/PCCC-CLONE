@@ -293,6 +293,38 @@ namespace TKPCCC
             return kq;
         }
 
+        /// L6 (review 20/11, CHẶN 2): dải hẹp là hiên khi mép trong (cạnh sát phòng thật ≤ 0,6 m; phong không gồm dải hẹp khác) là tường thật — có nét
+        /// song song cách 0,08–0,45 m phủ ≥ 50 % chiều dài — còn mép ngoài không phải tường liền (nét song song phủ ≤ 80 %; Quyết Thắng: viền mái 2 nét
+        /// phủ 37–76 %). Bản vẽ tường 1 nét (hành lang có cột trong tường ngoài), mép ngoài là tường liền: không phải hiên.
+        /// shortcut: phân biệt tường / viền mái chỉ theo nét đôi; tường ngoài nhiều ô cửa sổ để trống (phủ < 80 %) vẫn có thể bị coi là hiên.
+        static bool MepHien(List<Point2d> f, List<List<Point2d>> phong, List<Point2d[]> doan, double m)
+        {
+            double[] dai = new double[2], doi = new double[2]; // [0] mép trong, [1] mép ngoài
+            for (int i = 0; i < f.Count; i++)
+            {
+                Point2d a = f[i], b = f[(i + 1) % f.Count];
+                double L = a.GetDistanceTo(b);
+                if (L * m < 0.5) continue;
+                Vector2d u = (b - a) / L;
+                Point2d g = a + u * (L / 2);
+                int k = phong.Any(v => v != f && CachVien(v, g) <= 0.6 / m) ? 0 : 1;
+                double phu = 0;
+                foreach (Point2d[] s in doan)
+                {
+                    Vector2d w = s[1] - s[0];
+                    if (Math.Abs(u.X * w.Y - u.Y * w.X) > 0.02 * w.Length) continue;
+                    double lech = Math.Abs(u.X * (s[0].Y - a.Y) - u.Y * (s[0].X - a.X)) * m;
+                    if (lech < 0.08 || lech > 0.45) continue;
+                    double p0 = u.DotProduct(s[0] - a), p1 = u.DotProduct(s[1] - a);
+                    double ov = Math.Max(0, Math.Min(L, Math.Max(p0, p1)) - Math.Max(0, Math.Min(p0, p1)));
+                    phu += ov;
+                }
+                dai[k] += L;
+                doi[k] += Math.Min(L, phu);
+            }
+            return dai[0] > 0 && doi[0] >= 0.5 * dai[0] && doi[1] <= 0.8 * dai[1];
+        }
+
         static List<Point2d> DinhPl(Polyline pl)
         {
             List<Point2d> d = new List<Point2d>();
@@ -1840,8 +1872,10 @@ namespace TKPCCC
                             {
                                 string[] loaiKhu = nhanThem.KhuTen.Where(kv => TrongDaGiac(fk, kv.Key)).Select(kv => kv.Value).Distinct().ToArray();
                                 if (loaiKhu.Length == 0) continue;
-                                double dtKhu = DienTichDaGiac(fk) * m * m;
-                                if (dtKhu <= 500)
+                                double dtKhu = DienTichDaGiac(fk) * m * m, cvKhu = 0;
+                                for (int i = 0; i < fk.Count; i++) cvKhu += fk[i].GetDistanceTo(fk[(i + 1) % fk.Count]) * m;
+                                // Review 20/11 (CHẶN 3): phòng 100–500 m² chỉ bỏ khi là dải (rộng TB 2A/P ≤ 6 m); xưởng nhỏ 15 x 30 m có góc mái che ghi chữ thì vẫn rải.
+                                if (dtKhu <= 100 || (dtKhu <= 500 && cvKhu > 0 && 2 * dtKhu / cvKhu <= 6))
                                 {
                                     boKhuTen.Add(fk);
                                     ghiKhuTen.Add(string.Join("+", loaiKhu) + " " + Math.Round(dtKhu, 1).ToString(CultureInfo.InvariantCulture) + " m2");
@@ -1867,6 +1901,14 @@ namespace TKPCCC
                             List<List<Point2d>> phongKhac = vung.Where(f0 => !hepDs.Contains(f0)).ToList();
                             Func<List<Point2d>, Point2d, bool> sat = (f0, c0) => TrongDaGiac(f0, c0) || CachVien(f0, c0) <= ganCot;
                             List<List<Point2d>> hien = hepDs.Where(f0 => nhanThem.Cot.Count(c0 => sat(f0, c0) && !phongKhac.Any(g0 => sat(g0, c0))) >= 2).ToList();
+                            // Review 20/11 (CHẶN 2): luật L6 "mép ngoài chỉ có cột, không tường": mép ngoài cũng là tường thì không bỏ, chỉ báo.
+                            List<List<Point2d>> hienNghi = hien.Where(f0 => !MepHien(f0, phongKhac, nhanThem.Doan, m)).ToList();
+                            if (hienNghi.Count > 0)
+                            {
+                                hien = hien.Where(f0 => !hienNghi.Contains(f0)).ToList();
+                                ed.WriteMessage("\n[TKPCCC] hien_nghi=" + hienNghi.Count + " m2=" + string.Join(",", hienNghi.Select(f0 => Math.Round(Math.Abs(DienTichDaGiac(f0)) * m * m, 1).ToString(CultureInfo.InvariantCulture)))
+                                    + " (dải hẹp có cột nhưng mép ngoài cũng là tường / tường 1 nét: vẫn rải; đúng là hiên thì xoá đầu báo trong dải đó).");
+                            }
                             if (hien.Count > 0)
                             {
                                 vung = vung.Where(f0 => !hien.Contains(f0)).ToList();
@@ -1964,7 +2006,24 @@ namespace TKPCCC
                     if (kcMk.Count >= 2)
                     {
                         // Thử 20/11: dải "KHU VỰC MÁI CHE" không có tường ngăn nằm trong phòng xưởng; sau khi chia, khoang ≤ 500 m² chứa tâm chữ khu (L5) thì bỏ.
-                        List<List<Point2d>> boMk = kcMk.Where(x => DienTichDaGiac(x) * m * m <= 500 && nhanThem.KhuTen.Any(kv => TrongDaGiac(x, kv.Key))).ToList();
+                        // Review 20/11 (CHẶN 3): chỉ bỏ khoang ĐẦU / CUỐI theo phương chia, nhỏ hơn 0,9 x diện tích khoang trung vị (dải mái che đầu hồi như Quyết Thắng:
+                        // 75,9 m² hình chữ L dài 10,3 m theo phương chia, khoang thường 120 m²);
+                        // mái che dọc cạnh dài không tường ngăn thì chữ rơi vào khoang giữa chạy hết bề rộng xưởng: giữ, chỉ báo.
+                        Vector2d nMk = (vk[0][1] - vk[0][0]).GetNormal().GetPerpendicularVector();
+                        Func<List<Point2d>, double[]> chieu = x => new[] { x.Min(p => nMk.DotProduct(p.GetAsVector())), x.Max(p => nMk.DotProduct(p.GetAsVector())) };
+                        double[] cPh = chieu(zMk);
+                        List<double> dtMk = kcMk.Select(x => Math.Abs(DienTichDaGiac(x))).OrderBy(bMk => bMk).ToList();
+                        double trungVi = dtMk[dtMk.Count / 2], biMk = 0.3 / m;
+                        Func<List<Point2d>, bool> dauHep = x =>
+                        {
+                            double[] cx = chieu(x);
+                            return (cx[0] <= cPh[0] + biMk || cx[1] >= cPh[1] - biMk) && Math.Abs(DienTichDaGiac(x)) < 0.9 * trungVi;
+                        };
+                        List<List<Point2d>> chuMk = kcMk.Where(x => DienTichDaGiac(x) * m * m <= 500 && nhanThem.KhuTen.Any(kv => TrongDaGiac(x, kv.Key))).ToList();
+                        List<List<Point2d>> boMk = chuMk.Where(dauHep).ToList();
+                        if (chuMk.Count > boMk.Count)
+                            ed.WriteMessage("\n[TKPCCC] mai_keo chu_khu_khoang_giua=" + (chuMk.Count - boMk.Count) + " (chữ mái che / không công năng nằm ở khoang giữa xưởng: vẫn rải;"
+                                + " khu đó không rải thì vẽ polyline kín " + LAYER_VUNG + " tách ra rồi chọn lại).");
                         if (boMk.Count > 0)
                         {
                             kcMk = kcMk.Where(x => !boMk.Contains(x)).ToList();

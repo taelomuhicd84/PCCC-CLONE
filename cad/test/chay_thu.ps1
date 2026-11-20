@@ -959,7 +959,7 @@ Kiem ($out4 -match 'bo_cum=1 phong=1 ' -and $out4 -match 'theo_vung_co_san=1 ' -
   #    Truoc sua: cot hien thanh hang vi keo thua, dai loi va dai mai che thanh khoang rieng, hien rai dau bao. Nay: 8 khoang, bo khoang mai che, bo hien, bo kho sat mai che (L5b).
   '-LAYER', 'M', 'TUONG', '', '_.ZOOM', 'W', '1286000,-8000', '1322000,52000',
   '_.PLINE', '1300000,-3400', '1320000,-3400', '1320000,48000', '1316000,48000', '1316000,50000', '1308000,50000', '1308000,48000', '1300000,48000', 'C',
-  '_.RECTANG', '1288000,10000', '1296000,16000', '_.RECTANG', '1302000,-6400', '1306000,-3500', '_.PLINE', '1288000,10000', '1288000,7600', '1296000,7600', '1296000,10000', '',
+  '_.RECTANG', '1288000,10000', '1296000,16000', '_.RECTANG', '1288200,10200', '1295800,15800', '_.RECTANG', '1302000,-6400', '1306000,-3500', '_.PLINE', '1288000,10000', '1288000,7600', '1296000,7600', '1296000,10000', '',
   '_.TEXT', '1306000,-2000', '500', '0', 'KHU VUC MAI CHE', '_.TEXT', '1289000,13000', '400', '0', 'PHONG LAM VIEC', '-LAYER', 'M', 'COT', '',
   '_.RECTANG', '1300000,-200', '1300400,200', '_.RECTANG', '1319600,-200', '1320000,200', '_.RECTANG', '1300000,5800', '1300400,6200', '_.RECTANG', '1319600,5800', '1320000,6200', '_.RECTANG', '1300000,11800', '1300400,12200',
   '_.RECTANG', '1319600,11800', '1320000,12200', '_.RECTANG', '1300000,17800', '1300400,18200', '_.RECTANG', '1319600,17800', '1320000,18200', '_.RECTANG', '1300000,23800', '1300400,24200', '_.RECTANG', '1319600,23800', '1320000,24200',
@@ -1019,10 +1019,70 @@ Kiem ($c13 -match 'tim_dam=8[\s\S]{0,600}chia_khoang=24 [\s\S]{0,400}nho=24 [\s\
   'LoaiTran KhongTran, o 1,8 x 1,8 m < 4 m2: chia 24 khoang (o hep < 1 m van la khoang), 2 dau bao dat tren tim dam (mat duoi dam, 5.9.1.1.6 c)'
 Kiem ($c14 -match 'bo_hien=1 ' -and $c14 -match 'mai_keo bo_khoang_khu_ten=1 ' -and $c14 -match 'mai_keo bo_ke_mai_che=1 m2=11.6' -and $c14 -match 'mai_keo cot=21 phong_chia=1 khoang=8 ') `
   'LoaiTran MaiKeo: 8 khoang theo hang cot (cot hien nha ben khong thanh hang, phan loi dau hoi gop khoang dau), khoang mai che co chu bo, kho sat mai che bo, hien co cot bo'
-Kiem ($c14 -match 'khoet_thang=1 m2=2.2 ' -and $c14 -match 'V\S+ng t\S+ d\S+ng m2=45.8 ') `
-  'L7: thang bo block ten vo nghia (hinh 9 bac) trong phong lam viec 48 m2: khoet hop 1,1 x 2 m (nan sat tuong 0,1 m), vung con 45,8 m2'
+Kiem ($c14 -match 'khoet_thang=1 m2=1.8 ' -and $c14 -match 'V\S+ng t\S+ d\S+ng m2=40.76 ') `
+  'L7: thang bo block ten vo nghia (hinh 9 bac) trong phong lam viec 7,6 x 5,6 m (tuong 2 net): khoet hop 0,9 x 2 m (nan sat mat tuong 0,1 m), vung con 40,76 m2'
 Kiem ($c14 -match 'V\S+ng t\S+ d\S+ng m2=26 [\s\S]{0,300}PCCC_RAI BC_NHIET n=1 ') `
   'Ca 15: layer "tuong" chi co canh cua (mat vun), tuong tren layer 0: Enter moi phong lui ve moi net lien, ra phong 26 m2 + 1 dau bao nhiet'
+
+# Review 20/11 (moc L1-L8, cad-review Opus max: 4 CHAN). Ban ve rieng kb7, moi ca mot dau moc (princ "==Ex==") de cat dong lenh theo ca.
+function NhaE2($x) { # van phong 20 x 8 m tuong 1 net, hanh lang 2 m phia nam, 3 phong 7 / 7 / 6 x 6 m, cot 300 x 300 tren tuong nam + bac buoc 5 m
+  $r = @('-LAYER', 'M', 'TUONG', '', '_.RECTANG', "$x,0", "$($x + 20000),8000", '_.LINE', "$x,2000", "$($x + 20000),2000", '',
+    '_.LINE', "$($x + 7000),2000", "$($x + 7000),8000", '', '_.LINE', "$($x + 14000),2000", "$($x + 14000),8000", '', '-LAYER', 'M', 'COT', '')
+  foreach ($c in 0..4) { $cx = $x + 5000 * $c; $r += @('_.RECTANG', "$($cx - 150),-150", "$($cx + 150),150", '_.RECTANG', "$($cx - 150),7850", "$($cx + 150),8150") }
+  $r + @('_.ZOOM', 'W', "$($x - 1000),-1000", "$($x + 21000),9000", '-LAYER', 'S', '0', '')
+}
+$e3 = @('-LAYER', 'M', 'TUONG', '', '_.RECTANG', '200000,0', '224000,48000', '-LAYER', 'M', 'COT', '')
+foreach ($y in (0..8 | ForEach-Object { 6000 * $_ })) {
+  $e3 += @('_.RECTANG', "200000,$($y - 200)", "200400,$($y + 200)", '_.RECTANG', "219800,$($y - 200)", "220200,$($y + 200)", '_.RECTANG', "223600,$($y - 200)", "224000,$($y + 200)")
+}
+(@('INSUNITS', '4', 'NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '_.SAVEAS', '2018', "`"$T\rv.dwg`"", 'OSMODE', '0') + @(
+  # E5 (CHAN 4): hai phong 2,8 x 3 m chung tuong 1 net, MaiKeo h 9. Truoc sua: gom nhu khoang dam nho, 1 dau bao tren tuong chung; nay moi phong 1 dau
+  '(princ "\n==E5==")', '-LAYER', 'M', 'TUONG', '', '_.RECTANG', '0,0', '5600,3000', '_.LINE', '2800,0', '2800,3000', '', '_.ZOOM', 'W', '-1000,-1000', '6600,4000',
+  '-LAYER', 'S', '0', '', 'PCCC_RAI', 'BC_KHOI', 'LoaiTran', 'MaiKeo', '9', 'Khong', 'C', '-500,-500', '6100,3500', '', '', '',
+  # E2 (CHAN 2): van phong tuong 1 net co cot tren tuong ngoai, MaiKeo h 3,5. Truoc sua: bo_hien=2 (phong 6 x 6 + hanh lang); nay hien_nghi, du 4 phong
+  '(princ "\n==E2M==")') + (NhaE2 100000) + @('PCCC_RAI', 'BC_KHOI', 'LoaiTran', 'MaiKeo', '3.5', 'Khong', 'C', '99500,-500', '120500,8500', '', '', '',
+  # E2 CoTran (L1 giu dung): cot giua tuong 1 net khong bac cau thanh tuong ao: hanh lang 40 m2, phong 42 m2
+  '(princ "\n==E2C==")') + (NhaE2 500000) + @('PCCC_RAI', 'BC_KHOI', '', '', 'C', '499500,-500', '520500,8500', '', '', '',
+  # E3 (CHAN 3): xuong 24 x 48 m, cot x = 0 / 20 / 24 m buoc 6 m, dai mai che x 20-24 m khong tuong ngan, chu MAI CHE o khoang giua (y 18-24 m).
+  #    Truoc sua: bo_khoang_khu_ten m2=144 (120 m2 la xuong); nay giu khoang, chi bao
+  '(princ "\n==E3==")') + $e3 + @('-LAYER', 'S', '0', '', '_.TEXT', '220800,21000', '500', '0', 'MAI CHE', '_.ZOOM', 'W', '199000,-1000', '225000,49000',
+  'PCCC_RAI', 'BC_KHOI', 'LoaiTran', 'MaiKeo', '9', 'Khong', 'C', '199500,-500', '224500,48500', '', '', '',
+  # E1 (CHAN 1): xuong 24 x 18 m tuong 2 net 200, 3 cot 400 x 400 tuong nam (mat ngoai cot = mat ngoai tuong), cua cuon 5,2 m de trong giua 2 cot.
+  #    Truoc sua: khe canh net cot khong khep, vung=0; nay 1 vung > 400 m2
+  '(princ "\n==E1==")', '-LAYER', 'M', 'TUONG', '', '_.ZOOM', 'W', '299000,-1000', '325000,19000',
+  '_.LINE', '300000,0', '306000,0', '', '_.LINE', '312000,0', '318000,0', '', '_.LINE', '318400,0', '324000,0', '',
+  '_.LINE', '300200,200', '306000,200', '', '_.LINE', '312000,200', '318000,200', '', '_.LINE', '318400,200', '323800,200', '',
+  '_.PLINE', '324000,0', '324000,18000', '300000,18000', '300000,0', '', '_.PLINE', '323800,200', '323800,17800', '300200,17800', '300200,200', '',
+  '-LAYER', 'M', 'COT', '', '_.RECTANG', '306000,0', '306400,400', '_.RECTANG', '311600,0', '312000,400', '_.RECTANG', '318000,0', '318400,400',
+  '-LAYER', 'S', '0', '', 'PCCC_RAI', 'BC_KHOI', '', '', 'C', '299500,-500', '324500,18500', '', '', '',
+  # E8 (CHAN 1): tuong nam la 5 tru polyline kin 1000 x 220 (de hatch), cua so 1,5 m de trong; 3 tuong con lai polyline ho 2 net.
+  #    Truoc sua: tru thanh cot, khe 1,5 m khong khep, vung=0; nay 1 vung
+  '(princ "\n==E8==")', '-LAYER', 'M', 'TUONG', '', '_.ZOOM', 'W', '399000,-1000', '412000,7000',
+  '_.RECTANG', '400000,0', '401000,220', '_.RECTANG', '402500,0', '403500,220', '_.RECTANG', '405000,0', '406000,220', '_.RECTANG', '407500,0', '408500,220',
+  '_.RECTANG', '410000,0', '411000,220', '_.PLINE', '411000,0', '411000,6000', '400000,6000', '400000,0', '',
+  '_.PLINE', '410780,220', '410780,5780', '400220,5780', '400220,220', '', '-LAYER', 'S', '0', '',
+  'PCCC_RAI', 'BC_KHOI', '', '', 'C', '399500,-500', '411500,6500', '', '', '',
+  '(princ "\n==EHET==")', '_.QSAVE')) -join "`r`n" | Set-Content -Encoding ascii "$T\kb7.scr"
+$p7 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb7.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb7.out.txt"
+if (-not $p7.WaitForExit(180000)) { Stop-Process -Id $p7.Id -Force; throw "accoreconsole qua 3 phut (review 20/11): $T\kb7.out.txt" }
+$out7 = [Text.Encoding]::Unicode.GetString([IO.File]::ReadAllBytes("$T\kb7.out.txt")) -replace "`0", ''
+function CaRv($ten) { $i = $out7.LastIndexOf("==$ten=="); if ($i -lt 0) { return '' }; $j = $out7.IndexOf('==E', $i + 6); if ($j -lt 0) { $j = $out7.Length }; $out7.Substring($i, $j - $i) }
+function DtVung($c) { @([regex]::Matches($c, 'V\S+ng t\S+ d\S+ng m2=([\d.]+) ') | ForEach-Object { [double]$_.Groups[1].Value }) }
+$e5 = CaRv 'E5'
+Kiem ($e5 -match 'nho=0 ' -and ([regex]::Matches($e5, 'PCCC_RAI BC_KHOI n=1 ')).Count -eq 2) `
+  'Review CHAN 4: MaiKeo khong gom phong nho nhu khoang dam: 2 phong 2,8 x 3 m chung tuong, moi phong 1 dau bao (truoc: 1 dau tren tuong chung)'
+$e2m = CaRv 'E2M'
+Kiem ($e2m -match 'hien_nghi=' -and $e2m -notmatch 'bo_hien=' -and (DtVung $e2m).Count -eq 4) `
+  "Review CHAN 2: hanh lang / phong hep co cot trong tuong ngoai (tuong 1 net) khong bi coi la hien: hien_nghi, du 4 phong (vung=$((DtVung $e2m) -join ','))"
+$e2c = CaRv 'E2C'
+Kiem ((DtVung $e2c) -contains 40 -and (DtVung $e2c) -contains 42) "L1 giu dung (CoTran): cot giua tuong 1 net khong bac cau thanh tuong ao: hanh lang 40 m2, phong 42 m2 (vung=$((DtVung $e2c) -join ','))"
+$e3c = CaRv 'E3'
+Kiem ($e3c -match 'chu_khu_khoang_giua=1 ' -and $e3c -notmatch 'bo_khoang_khu_ten' -and $e3c -match 'mai_keo cot=27 phong_chia=1 khoang=8 ') `
+  'Review CHAN 3: chu MAI CHE o khoang giua xuong (mai che doc canh dai, khong tuong ngan): giu khoang, chi bao; van 8 khoang'
+$e1 = CaRv 'E1'
+Kiem ((DtVung $e1).Count -eq 1 -and (DtVung $e1)[0] -gt 400) "Review CHAN 1: cua cuon 5,2 m de trong giua 2 cot trong tuong 2 net van khep: 1 vung > 400 m2 (vung=$((DtVung $e1) -join ','))"
+$e8 = CaRv 'E8'
+Kiem ((DtVung $e8).Count -eq 1 -and (DtVung $e8)[0] -gt 50) "Review CHAN 1: tru tuong polyline kin 1000 x 220 khong phai cot, cua so 1,5 m van khep: 1 vung (vung=$((DtVung $e8) -join ','))"
 
 # Thoi gian dung phong tren ban ve that cua nguoi dung (gitignore, chi chay khi co): truoc sua 78 s (23 trieu diem cat), nay < 10 s.
 $bvThat = Get-ChildItem "$GOC\file_cad_test" -Filter 'test b*o ch*y.dwg' -ErrorAction SilentlyContinue | Select-Object -First 1

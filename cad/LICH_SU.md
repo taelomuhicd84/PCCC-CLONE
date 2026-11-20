@@ -726,3 +726,10 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
   (`nhan_dang/` truc, tuong_cot, cua_thang_khu, phong_vung, dam_khoang, ky_hieu, pdf; `ve/` quy_uoc, truc_tuong_cua, bao_chay/ rai_dau_bao, chuong_nut_den, day_zone,
   tư duy đi dây đi ống, sơ đồ nguyên lý, thuyết minh mẫu; `mau/` 8 file), README mục lục từng thư mục, sửa mọi đường dẫn, skill `tkpccc-ve-cad` trỏ về nguồn.
   Commit 55af0a0, f12e24b + lô 4.
+
+## 2026-11-21 (sáng) — Sửa 4 CHẶN review mốc L1–L8
+- MaiKeo không gom phòng nhỏ như khoang dầm; hiên phải có mép trong là tường nét đôi và mép ngoài không phải tường liền (tường 1 nét chỉ báo `hien_nghi`);
+  chữ mái che chỉ bỏ khoang đầu / cuối nhỏ, phòng ≤ 100 m² hoặc dải ≤ 500 m²; nét cột chạm tường thẳng hàng vẫn khép khe, khe mặt trong cột làm khe song đôi, trụ dẹt không phải cột.
+- `chay_thu.ps1` thêm bản vẽ kb7 (6 ca E1, E2 MaiKeo / CoTran, E3, E5, E8), ca 14 nhà văn phòng tường 2 nét. chay_thu, thu_mcp TAT CA DAT.
+- Bản chép Quyết Thắng `qt_maikeo_7.dwg`: 25 vùng, 57 đầu báo, không đổi. Lần thử đầu tra tường thẳng hàng theo toạ độ toàn bản vẽ ra 39 / 70: phải xét chạm.
+

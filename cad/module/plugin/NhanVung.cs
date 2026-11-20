@@ -126,6 +126,7 @@ namespace TKPCCC
             public List<KeyValuePair<Point2d, string>> KhuTen = new List<KeyValuePair<Point2d, string>>();
             public List<Point2d> TenPhong = new List<Point2d>();
             public List<Point2d[]> ThangBo = new List<Point2d[]>(); // L7: hộp bao ký hiệu thang bộ, khoét khỏi vùng
+            public List<Point2d[]> Doan = new List<Point2d[]>();    // L6 (review 20/11): nét đã dựng mặt, xét mép hiên có tường (nét đôi) hay không
         }
 
         /// Màu thật của nét: ByLayer theo layer thật, ByBlock theo màu block chứa nó (chaMau; ngoài block coi như 7). "A3" = ACI 3, "R0,255,0" = màu thật.
@@ -522,6 +523,7 @@ namespace TKPCCC
                 foreach (Point2d p in ra[i]) { x0 = Math.Min(x0, p.X); y0 = Math.Min(y0, p.Y); x1 = Math.Max(x1, p.X); y1 = Math.Max(y1, p.Y); }
             double k = 0.002 / n.Tol, r = (x1 - x0) * k, c = (y1 - y0) * k; // n.Tol = 2 mm theo đơn vị bản vẽ
             if (Math.Max(r, c) > COT_MAX_M || Math.Min(r, c) < COT_MIN_M) return;
+            if (Math.Max(r, c) > 2.5 * Math.Min(r, c)) return; // review 20/11: trụ tường 1000 x 220 vẽ polyline kín để hatch không phải cột
             n.CotUng.Add(new CotUng { Tam = new Point2d((x0 + x1) / 2, (y0 + y1) / 2), R = r, C = c, Doan = ra.GetRange(dau, ra.Count - dau) });
         }
 
@@ -893,6 +895,40 @@ namespace TKPCCC
         {
             List<Point2d[]> doan = new List<Point2d[]>(doan0);
             double tolTh = tol * 5; // lệch khỏi đường thẳng vẫn coi là thẳng hàng (10 mm)
+            // Review 20/11 (CHẶN 1): nét cột thẳng hàng với nét tường thường (cột đứng trong tường; cửa cuốn để trống giữa hai cột) vẫn khép khe như
+            // trước L1: nét tường thẳng hàng phải chạm nét cột (cách ≤ 50 mm). Nét cột không chạm tường thẳng hàng nào (cột giữa lòng xưởng, ô giả
+            // Quyết Thắng; tường thẳng hàng ở xa không tính) mới không khép. shortcut: chỉ xét nét ngang / dọc; nét cột xiên vẫn không khép khe.
+            if (khongNoi != null && khongNoi.Count > 0)
+            {
+                // toạ độ y (x) / tolTh của nét tường ngang (dọc) -> các khoảng [đầu, cuối] theo phương nét
+                Dictionary<long, List<double[]>> ngang = new Dictionary<long, List<double[]>>(), doc = new Dictionary<long, List<double[]>>();
+                Action<Dictionary<long, List<double[]>>, double, double, double> them = (h, v, a0, a1) =>
+                {
+                    long k = (long)Math.Round(v / tolTh);
+                    List<double[]> ds;
+                    if (!h.TryGetValue(k, out ds)) h[k] = ds = new List<double[]>();
+                    ds.Add(new[] { Math.Min(a0, a1), Math.Max(a0, a1) });
+                };
+                Func<Dictionary<long, List<double[]>>, double, double, double, bool> cham = (h, v, a0, a1) =>
+                {
+                    long k = (long)Math.Round(v / tolTh);
+                    double x0 = Math.Min(a0, a1) - tolTh * 5, x1 = Math.Max(a0, a1) + tolTh * 5;
+                    for (long q = k - 1; q <= k + 1; q++)
+                    {
+                        List<double[]> ds;
+                        if (h.TryGetValue(q, out ds) && ds.Any(r => r[0] <= x1 && r[1] >= x0)) return true;
+                    }
+                    return false;
+                };
+                foreach (Point2d[] s in doan)
+                {
+                    if (khongNoi.Contains(s)) continue;
+                    if (Math.Abs(s[0].Y - s[1].Y) <= tol) them(ngang, (s[0].Y + s[1].Y) / 2, s[0].X, s[1].X);
+                    else if (Math.Abs(s[0].X - s[1].X) <= tol) them(doc, (s[0].X + s[1].X) / 2, s[0].Y, s[1].Y);
+                }
+                khongNoi = new HashSet<Point2d[]>(khongNoi.Where(s => !(Math.Abs(s[0].Y - s[1].Y) <= tol && cham(ngang, (s[0].Y + s[1].Y) / 2, s[0].X, s[1].X))
+                    && !(Math.Abs(s[0].X - s[1].X) <= tol && cham(doc, (s[0].X + s[1].X) / 2, s[0].Y, s[1].Y))));
+            }
 
             // 1. Nối khe giữa hai đoạn thẳng hàng (ô cửa giữa hai má tường, cột chỉ có hatch): cầu nối là cạnh như tường. Khe ≤ ho: luôn nối.
             //    Khe ho..hoCua (người dùng chốt 14/11 "cứ có cửa mình khép lại 1 vùng"): chỉ khe GẦN NHẤT ở cả hai đầu đoạn, và khe có ký hiệu cửa (cua)
@@ -903,11 +939,14 @@ namespace TKPCCC
             Dictionary<int, double> ganNhat = new Dictionary<int, double>(); // đầu đoạn (2 x chỉ số, +1 = đầu cuối) -> khe thẳng hàng ngắn nhất từ đầu đó
             List<KeyValuePair<int[], Point2d[]>> xa = new List<KeyValuePair<int[], Point2d[]>>();
             Action<int, double> ghi = (k, g) => { double c0; if (!ganNhat.TryGetValue(k, out c0) || g < c0) ganNhat[k] = g; };
+            // Review 20/11 (CHẶN 1): khe có đầu là nét cột (khongNoi) không khép, chỉ làm "khe song đôi" cho khe tường thường (cửa cuốn để trống:
+            // khe mặt ngoài thẳng hàng tường + khe mặt trong cột).
+            List<Point2d[]> capCot = new List<Point2d[]>();
             for (int ii = 0; ii < tt.Length; ii++)
             {
                 if ((ii & 1023) == 0) KiemEsc();
                 int i = tt[ii];
-                if (khongNoi != null && khongNoi.Contains(doan[i])) continue;
+                bool cotI = khongNoi != null && khongNoi.Contains(doan[i]);
                 Point2d a = doan[i][0], b = doan[i][1];
                 double xMax = Math.Max(a.X, b.X), yMin = Math.Min(a.Y, b.Y), yMax = Math.Max(a.Y, b.Y);
                 Vector2d u = b - a;
@@ -919,7 +958,7 @@ namespace TKPCCC
                     Point2d c = doan[j][0], d = doan[j][1];
                     if (Math.Min(c.X, d.X) > xMax + hoMax) break;
                     if (Math.Min(c.Y, d.Y) > yMax + hoMax || Math.Max(c.Y, d.Y) < yMin - hoMax) continue;
-                    if (khongNoi != null && khongNoi.Contains(doan[j])) continue;
+                    bool laCot = cotI || (khongNoi != null && khongNoi.Contains(doan[j]));
                     Vector2d v = d - c;
                     if (Math.Abs(u.X * v.Y - u.Y * v.X) > 0.01 * v.Length) continue;
                     if (Math.Abs(u.X * (c.Y - a.Y) - u.Y * (c.X - a.X)) > tolTh || Math.Abs(u.X * (d.Y - a.Y) - u.Y * (d.X - a.X)) > tolTh) continue;
@@ -927,6 +966,12 @@ namespace TKPCCC
                     double sMin = Math.Min(sc, sd), sMax = Math.Max(sc, sd);
                     int jMin = 2 * j + (sc < sd ? 0 : 1), jMax = 2 * j + (sc < sd ? 1 : 0); // đầu của j ở phía tham số nhỏ / lớn (theo hướng của i)
                     Point2d qMin = sc < sd ? c : d, qMax = sc < sd ? d : c;
+                    if (laCot)
+                    {
+                        if (sMin - L > tol) capCot.Add(new[] { b, qMin });
+                        else if (-sMax > tol) capCot.Add(new[] { qMax, a });
+                        continue;
+                    }
                     if (sMin > L - tol) // j nằm sau b
                     {
                         double g = sMin - L;
@@ -971,7 +1016,7 @@ namespace TKPCCC
             double soDoiMax = tol * 3000;
             foreach (Point2d[] k in giu)
                 if ((cua != null && cua.Any(h => cuaTrongKhe(k[0], k[1], h)))
-                    || (k[0].GetDistanceTo(k[1]) <= soDoiMax && giu.Any(k2 => k2 != k && SongDoi(k, k2, tol)))) cau.Add(k);
+                    || (k[0].GetDistanceTo(k[1]) <= soDoiMax && (giu.Any(k2 => k2 != k && SongDoi(k, k2, tol)) || capCot.Any(k2 => SongDoi(k, k2, tol))))) cau.Add(k);
             // 1b. Khe chữ T có cửa (cửa giữa đầu tường và tường vuông góc / xiên): đầu tường hở, cách hộp cửa ≤ 0,5 m, chiếu thẳng tới nét gần nhất
             //     trong hoCua; tia cắt hộp cửa thì khép.
             if (cua != null && cua.Count > 0 && hoCua > 0)
@@ -1463,6 +1508,7 @@ namespace TKPCCC
                     oX = TachOX(doan, n.Tol);
                     oX.AddRange(n.GiengThang); // giếng thang máy: không rải trong giếng, như ô X
                     them.ThangBo = new List<Point2d[]>(n.ThangBo);
+                    them.Doan = doan;
                     gach = new List<List<Point2d>>(n.GachCheo);
                     if (doan.Count >= 3)
                         mat = CacMat(doan, n.Tol, HO_CUA_M / HeSoMet(db), n.Cua, HO_CUA_MAX_M / HeSoMet(db), netCot).Select(v => BoThangHang(v, n.Tol)).ToList();
