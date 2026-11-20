@@ -1468,6 +1468,9 @@ namespace TKPCCC
                         mat = CacMat(doan, n.Tol, HO_CUA_M / HeSoMet(db), n.Cua, HO_CUA_MAX_M / HeSoMet(db), netCot).Select(v => BoThangHang(v, n.Tol)).ToList();
                     if (hopChon != null)
                         mat = mat.Where(v => { Point2d c = DiemTrongMat(v); return c.X >= hopChon[0] && c.X <= hopChon[2] && c.Y >= hopChon[1] && c.Y <= hopChon[3]; }).ToList();
+                    // Layer tên tường chỉ chứa block cửa (Karaoke ABC, file_cad_test 20/11): lượt chỉ-tường ra toàn mặt vụn, không phòng thật nào
+                    // -> bỏ, lượt sau dựng bằng mọi nét liền (như VungTaiDiem). Trước đây "mọi phòng" ra 0 vùng.
+                    if (n.ChiTuong && PhongThat(mat, HeSoMet(db)).Count == 0) mat = new List<List<Point2d>>();
                 }
                 // Vùng vẽ sẵn + dầm: chia từng vùng theo dầm sâu (5.9.1.1.6 d) thành khoang.
                 if (co.Count > 0 && (coDam || damThem != null))

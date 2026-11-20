@@ -713,3 +713,6 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
 - Thang nhà văn phòng 2 Quyết Thắng là block tên vô nghĩa (`fsdff`), nên nhận theo hình bậc (`HinhBac`) ngoài tên THANG BỘ / STAIR. Hộp bao nắn sát tường ≤ 0,3 m,
   trừ khỏi vùng bằng Region; thang ≥ 50 % phòng thì bỏ cả phòng (buồng thang). Ca 14 thêm thang 9 bậc. chay_thu, thu_mcp TAT CA DAT.
 - Bản chép (`qt_maikeo_6.dwg`): phòng giữa 53,1 → 45,8 m², 8 đỉnh vuông góc như đáp án AI; 25 vùng, 57 đầu báo không đổi.
+- 20/11 19:30: mở `TESTBCHAY_20_11.dwg` (bản chép), lập bản đồ 8 khung; khung 5 Karaoke ABC chép + explode, PCCC_RAI "mọi phòng" ra 0 vùng ->
+  sửa MatChon (layer `tuong` chỉ có block cửa thì lùi về mọi nét) + test ca 15; sau sửa 30 vùng / 50 đầu báo nhiệt, mẫu 62 (mẫu dày hơn TCVN 7568-14:2025,
+  chờ người dùng chọn trị số). Kiến thức: `cad/knowledge/hoc/hoc-bao-chay-ban-mau.md`. Dừng vì hạn mức tuần 92 %.

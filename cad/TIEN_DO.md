@@ -3,9 +3,8 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
-## VIỆC 20/11 (2) — HỌC RẢI BÁO CHÁY THEO BẢN MẪU (file_cad_test): CHƯA BẮT ĐẦU (dừng vì 5 giờ 99 %, hẹn tự làm tiếp sau reset 20/11 tối)
-Người dùng (20/11, chép ý): mở bản "testbaochay" trong `file_cad_test/` (kiểm `TESTBCHAY_20_11.dwg` trước: bản có các khung rectang; không phải thì `test báo cháy.dwg`).
-Mỗi khung rectang = 1 công trình mẫu vẽ báo cháy, đã thẩm định: là CHUẨN, phải tư duy như nó.
+## VIỆC 20/11 (2) — HỌC RẢI BÁO CHÁY THEO BẢN MẪU (file_cad_test/TESTBCHAY_20_11.dwg): KHUNG 5 KARAOKE ĐANG ĐỐI CHIẾU; 1 LỖI ĐÃ SỬA + TEST, CHỜ NGƯỜI DÙNG 1 CÂU
+Người dùng (20/11, chép ý): mỗi khung rectang = 1 công trình mẫu vẽ báo cháy đã thẩm định, là CHUẨN, phải tư duy như nó.
 1. Copy các block mặt bằng mẫu ra chỗ trống (KHÔNG sửa bản gốc), explode, rồi vẽ vùng rải báo cháy.
 2. Vùng kẹp sát mặt tường: tường 200 có cột 300 lồi ra 100 thì vùng chạy thẳng theo mặt tường 200, không bao phần cột lồi.
    Nội thất trong phòng: không bao (hoặc bao rồi nhận ra nội thất thì xoá), chỉ bao tường phòng.
@@ -13,8 +12,17 @@ Mỗi khung rectang = 1 công trình mẫu vẽ báo cháy, đã thẩm định:
 4. Xong mục 3 mới sang dây báo cháy: vẽ thử, đối chiếu mẫu, học logic. Điện trở cuối đặt xa tủ TTBC (tiết kiệm dây).
 Luật riêng việc này: 5 giờ tới 95 % thì ghi file này + `cad/LICH_SU.md`, commit, KHÔNG push, tự làm tiếp sau reset không hỏi.
 Ngữ cảnh phiên > 40–45 % thì làm xong task đang dở rồi chuyển sang phiên nhánh ngữ cảnh sạch. Có gì không hiểu thì hỏi người dùng.
-BƯỚC TIẾP: đọc `cad/.claude/skills/tkpccc-ve-cad/SKILL.md`, `cad/knowledge/hoc/` (vùng, khoang, dây zone), `cad_tt` xem bản vẽ đang mở; file chưa mở trong AutoCAD
-thì nhờ người dùng mở. Ghi kết quả học vào `cad/knowledge/hoc/` (file mới cho bản mẫu này), luật mới thì sửa `module/plugin/` + test như VIỆC 20/11.
+ĐÃ LÀM (20/11 tối): bản đồ 8 khung, cách chép / explode / chạy PCCC_RAI qua COM, kết quả khung 5: `cad/knowledge/hoc/hoc-bao-chay-ban-mau.md` (ĐỌC TRƯỚC).
+- Lỗi 1 đã sửa: layer tên tường chỉ chứa block cửa -> "Enter mọi phòng" ra 0 vùng (`NhanVung.cs` MatChon lùi về mọi nét); test `chay_thu.ps1` ca 15.
+  Bundle chưa build lại (AutoCAD đang mở bản chép; `build.bat` đổi tên DLL cũ được, AutoCAD mở lại mới nạp).
+- Khung 5 sau sửa: 30 vùng, 50 đầu báo nhiệt; mẫu 62. 21 / 30 vùng khớp số; mẫu dày hơn ở phòng hẹp (bước ≈ 4–4,5 m, cách tường ≤ ≈ 2,5 m).
+CÂU HỎI CHO NGƯỜI DÙNG (chưa hỏi được, người dùng vắng): đầu báo NHIỆT mẫu dày hơn TCVN 7568-14:2025 (plugin: bước 7,2 m, cách tường 3,6 m).
+  Mẫu khớp bảng cũ kiểu TCVN 5738 (≈ 5 m / 2,5 m / 25 m²) nhưng `knowledge/` chưa có nguyên văn TCVN 5738:2021. Theo mẫu thì cần người dùng gửi
+  bảng trị số đầu báo nhiệt (văn bản + điều) để chép vào `knowledge/`, hay giữ TCVN 7568-14:2025?
+BƯỚC TIẾP: (1) build bundle (tắt AutoCAD, `build.bat`), mở lại `ket_qua/HOC_BAO_CHAY/cad/hoc_bao_chay.dwg` (bản chép đã có mặt bằng khung 5 explode ở y −50 m);
+(2) khung 5: hành lang bị nét mảnh layer `xref` cắt 5 vùng (mẫu coi là 1), lối 1,6 m phía nam không dựng vùng; đối chiếu chuông (mẫu: mỗi phòng hát 1 chuông),
+nút ấn (3), đèn báo phòng; (3) lần lượt khung 3, 4, 6, 7, 8 (khung 2 đã học); kiểm luật kẹp tường bỏ cột lồi + nội thất trên khung có cột (trường học, nhà ở XH);
+(4) mục 4 dây + điện trở cuối. Hạn mức TUẦN đã 92 % lúc 19:25 20/11 (reset 05:00 21/11): làm tiếp sau mốc đó.
 
 ## VIỆC 20/11 — DẠY PLUGIN PHÂN VÙNG NHƯ AI (xưởng mái kèo): MÃ L1, L2, L5, L5b, L6, L7, L8: BUILD + TEST ĐẠT + COMMIT (chưa push); BẢN CHÉP 25 VÙNG = ĐÁP ÁN, 57 / 55 ĐB
 LƯỢT 9 (20/11 tối, phiên nhánh tự chạy sau reset): L7. `NhanVung.cs` `GomKhu`: block tên THANG BỘ / STAIR, hoặc `HinhBac` (≥ 6 đoạn song song dài bằng nhau 0,6–2,5 m,

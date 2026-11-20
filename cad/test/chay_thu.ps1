@@ -973,6 +973,9 @@ Kiem ($out4 -match 'bo_cum=1 phong=1 ' -and $out4 -match 'theo_vung_co_san=1 ' -
   '_.LINE', '1294900,13500', '1295900,13500', '', '_.LINE', '1294900,13750', '1295900,13750', '', '_.LINE', '1294900,14000', '1295900,14000', '',
   '-BLOCK', 'XQZ', '1294900,12000', 'W', '1294850,11950', '1295950,14050', '', '-INSERT', 'XQZ', '1294900,12000', '1', '', '0',
   '-LAYER', 'S', '0', '', 'PCCC_RAI', 'BC_KHOI', 'LoaiTran', 'MaiKeo', '9', 'Khong', 'C', '1286500,-7500', '1321500,51500', '', '', '',
+  # Ca 15 (Karaoke ABC 20/11): layer ten tuong chi co canh cua, tuong ve tren layer 0 -> Enter moi phong van dung phong 6,5 x 4 m (truoc sua: 0 vung)
+  '-LAYER', 'M', 'tuong', '', '_.RECTANG', '1600500,-99900', '1601400,-99850', '-LAYER', 'S', '0', '', '_.RECTANG', '1600000,-100000', '1606500,-96000',
+  '_.ZOOM', 'W', '1599000,-101000', '1607500,-95000', 'PCCC_RAI', 'BC_NHIET', '', 'Khong', 'C', '1599500,-100500', '1607000,-95500', '', '', '',
   '_.QSAVE') -join "`r`n") | Set-Content -Encoding ascii "$T\kb6.scr"
 $p6 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb6.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb6.out.txt"
 if (-not $p6.WaitForExit(180000)) { Stop-Process -Id $p6.Id -Force; throw "accoreconsole qua 3 phut (sua 6 loi): $T\kb6.out.txt" }
@@ -1018,6 +1021,8 @@ Kiem ($c14 -match 'bo_hien=1 ' -and $c14 -match 'mai_keo bo_khoang_khu_ten=1 ' -
   'LoaiTran MaiKeo: 8 khoang theo hang cot (cot hien nha ben khong thanh hang, phan loi dau hoi gop khoang dau), khoang mai che co chu bo, kho sat mai che bo, hien co cot bo'
 Kiem ($c14 -match 'khoet_thang=1 m2=2.2 ' -and $c14 -match 'V\S+ng t\S+ d\S+ng m2=45.8 ') `
   'L7: thang bo block ten vo nghia (hinh 9 bac) trong phong lam viec 48 m2: khoet hop 1,1 x 2 m (nan sat tuong 0,1 m), vung con 45,8 m2'
+Kiem ($c14 -match 'V\S+ng t\S+ d\S+ng m2=26 [\s\S]{0,300}PCCC_RAI BC_NHIET n=1 ') `
+  'Ca 15: layer "tuong" chi co canh cua (mat vun), tuong tren layer 0: Enter moi phong lui ve moi net lien, ra phong 26 m2 + 1 dau bao nhiet'
 
 # Thoi gian dung phong tren ban ve that cua nguoi dung (gitignore, chi chay khi co): truoc sua 78 s (23 trieu diem cat), nay < 10 s.
 $bvThat = Get-ChildItem "$GOC\file_cad_test" -Filter 'test b*o ch*y.dwg' -ErrorAction SilentlyContinue | Select-Object -First 1
