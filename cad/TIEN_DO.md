@@ -90,6 +90,11 @@ KHI LÀM TIẾP (người dùng bảo): ca thử cho LỖI 9; khung 7 (nhà ở 
 `A$C1b64d7a5`, `A$C473f3ffb`). Trước khi chép: lấy hộp bao block (COM `GetBoundingBox`), chọn độ dời không đè khung khác. Quy trình: `chep_no.ps1` → lưu →
 `go_khung.ps1 -P1 -P2 -Ten kN -Build` → `xuat.ps1` (đặt `XUAT_X0/X1/Y0/Y1`) + `khop.py file,x0,x1,dy,y0,y1` → `go_khung -Diem` gỡ chỗ thiếu vùng →
 ca thử tái hiện → sửa → `chay_thu` + `thu_mcp`. Bundle CHƯA build lại (AutoCAD đang mở `hoc_bao_chay.dwg`).
+VIỆC DỞ ĐẦU TIÊN (21/11 tối, người dùng tắt máy): người dùng chỉ cách rải tầng 2 Karaoke 123 (luật mục 6 "Soát" trong `cad/skills/nhan_dang/phong_vung.md`):
+(a) gộp mặt nhỏ bị `PhongThat` bỏ (sảnh trước cửa WC, ≤ ~6 m², KHÔNG chứa bồn cầu) vào phòng kề chung cạnh là cầu khép khe / cửa (không phải nét tường thật);
+(b) vùng nhỏ ≤ 4 m² (ô giao hành lang) chung cạnh cầu với vùng lớn: gộp vào vùng lớn nhất. Gộp đa giác: chèn đỉnh lên cạnh của nhau, bỏ cặp cạnh ngược chiều trùng nhau,
+nối lại. Cần kiểm bồn cầu trong buồng xí nhận được không (block xref tên lạ). Ca thử mới rồi chạy lại tầng 2 (bản chép y −50 m, x 334000..379000, y −62500..−41500)
+so ảnh người dùng. Bundle ĐÃ build bản d4ac42e + nạp; `hoc_bao_chay.dwg` đã lưu có 17 vùng tầng 2 (người dùng tự sửa vùng dãy giữa + dưới trên AutoCAD).
 Lỗi chưa sửa (khung 3, ghi ở file mẫu): khe 2,8 m giữa 2 nắp tường ở cột trục 3 (cột = khe hở tường) khép
 ngang P.104; WC block xref tên vô nghĩa không nhận; ô X lỗ thông tầng lẫn dải bồn cây không bỏ.
 

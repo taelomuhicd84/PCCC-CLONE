@@ -29,6 +29,10 @@ trừ khu được bỏ có lý do (WC, lõi / sảnh thang máy, buồng thang,
 4. Phòng có chữ tên mà không có vùng: đọc dòng `bo_...` (chữ khu khớp nhầm, vd "PHÒNG BỘ MÔN" từng khớp "phòng bơm"); đúng là phòng thì bấm điểm trong phòng.
 5. Cả cụm phòng mất (nhà thi đấu, khối tách bởi sân) trong lưới trục: không phải hình chi tiết, phải có vùng.
 Mọi chỗ bổ sung tay ghi lại vào file `cad/skills/mau/` của công trình đó để sửa plugin.
+6. NGƯỜI DÙNG 21/11 tối (tự sửa vùng tầng 2 Karaoke 123, ảnh `images/3.png` của phiên): vùng phải KẸP BO theo tường / vách thật, không kẻ thẳng qua
+   chỗ hở. Phòng có WC riêng: vùng phòng BAO LUÔN khoảng sảnh nhỏ trước cửa WC (khoảng hở giữa cửa phòng / cửa buồng xí), CHỈ CHỪA buồng xí (có bồn cầu);
+   cạnh vùng đi vòng theo vách buồng xí (vùng chữ L, có khấc), không cắt thẳng ở mặt khối WC. Ô giao đầu hành lang (≤ 2 x 2 m) GỘP vào hành lang
+   (không thành vùng riêng). PLUGIN CHƯA LÀM (việc tiếp theo, `cad/TIEN_DO.md`).
 
 ## Plugin dựng phòng thế nào ("Enter mọi phòng" của `PCCC_RAI`)
 1. Gom đoạn nét từ đối tượng quét chọn (`ThuNet`), tách cột, nhận trục, khép khe cửa, dựng mọi mặt kín (`CacMat`), chỉ giữ mặt có tâm trong khung chọn.

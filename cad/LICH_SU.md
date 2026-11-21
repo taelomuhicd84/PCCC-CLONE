@@ -800,3 +800,5 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
 
 - 21/11 tối, người dùng khoanh đỏ 4 chỗ tầng 2 Karaoke 123 (chạy bằng plugin cũ trong AutoCAD): build bundle mới, rải lại: ô giao 3,6 m² và hành lang trên
   buồng thang đã có vùng (17 vùng). Thêm mục "Soát chỗ hay thiếu vùng" (5 chỗ) vào `cad/skills/nhan_dang/phong_vung.md` cho AI vẽ bằng chatbot; skill `tkpccc-ve-cad` trỏ tới.
+
+- 21/11 tối: người dùng gửi ảnh tự rải tầng 2 (vùng kẹp tường, bao sảnh WC, chừa buồng xí, ô giao gộp hành lang); ghi luật + việc dở, chưa sửa plugin (người dùng tắt máy).
