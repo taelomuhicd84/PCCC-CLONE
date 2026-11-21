@@ -28,6 +28,8 @@ Mã: `CacMat` (khép khe cửa), `GomCua`, `GomKhu`, `HinhBac`, `TachOX`, `GomCh
   thang chiếm ≥ 50 % phòng thì bỏ cả phòng (buồng thang). Buồng thang trong sảnh: khoét như lỗ thông tầng.
 - Ô có dấu X (`TachOX`) = lỗ thông tầng, giếng thang máy: không rải (`o_x=`). Block thang máy cũng là giếng.
 - Sảnh thang máy (người dùng 16–17/11): phòng ≤ 30 m² sát giếng thang (cách ≤ 0,6 m) không đặt đầu báo (`bo_sanh_thang=`).
+  NGƯỜI DÙNG 21/11 (căn hộ 441, mẫu có đầu báo ở sảnh trước thang máy): chỉ bỏ khi sảnh nằm trong BUỒNG ĐỆM (≤ 2 ký hiệu cửa có tâm trong phòng hoặc
+  cách biên ≤ 1 m) hoặc trong BUỒNG THANG (phòng chứa tâm hộp thang bộ). Sảnh tiếp tân, thông tầng, hành lang chung nhiều cửa phòng: RẢI theo mẫu (test E16).
 
 ## Khu không đặt đầu báo
 - Lõi thang máy, sảnh thang máy, buồng thang bộ, WC (người dùng 16/11): phòng ≤ 60 m² chứa dấu hiệu (tên block, layer, chữ phòng; block `BON_CAU`...) bị bỏ (`bo_khu_khong_bao=`).

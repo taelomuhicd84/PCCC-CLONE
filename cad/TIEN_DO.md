@@ -70,17 +70,21 @@ Chưa làm: bảng TCVN 7336 nguyên văn chưa có trong `knowledge/` nên đ�
 không có vùng: NGƯỜI DÙNG CHỐT 21/11 không cần vùng đầu phun cho các phòng này (giữ nguyên, không dựng thêm).
 (3) KHUNG 3 CĂN HỘ 441 TẦNG 1 XONG 21/11 chiều (phiên nhánh "Báo cháy (tt)"): LỖI 4 ĐÃ SỬA — block xref gom mọi cửa của tầng (layer `...NA_09. CUA`, hộp cả
 mặt bằng) bị coi là MỘT cửa ⇒ mọi khe 3–12 m "có cửa trong khe", khép giả cắt phòng (8 vùng vụn). `GomCua`: hộp rộng cả hai chiều > 3,5 m không lấy (test E15).
-Nay 12 vùng / 13 đầu báo khói, mẫu 10. Lệch còn lại + quan sát thiết bị: `cad/skills/mau/hoc-bao-chay-ban-mau.md` mục Khung 3. Tầng lửng: 11 / mẫu 9; mẫu CÓ đầu báo ở sảnh thang máy + P.M01, plugin bỏ (`bo_sanh_thang`): CHỜ NGƯỜI DÙNG chốt luật sảnh thang.
+Nay 12 vùng / 13 đầu báo khói, mẫu 10. Lệch còn lại + quan sát thiết bị: `cad/skills/mau/hoc-bao-chay-ban-mau.md` mục Khung 3. Tầng lửng: 11 / mẫu 9; NGƯỜI DÙNG CHỐT 21/11: sảnh thang máy chỉ không rải khi trong buồng đệm / buồng thang, còn lại rải theo mẫu: ĐÃ SỬA `Rai.cs` (≤ 2 cửa hoặc chứa thang bộ),
+test E16. Khung 3 nay tầng 1 13 vùng / 14 ĐB (mẫu 10), tầng lửng 12 / 12 (mẫu 9), thừa do lệch đã ghi. Người dùng 21/11: dừng ở 98 % hạn mức 5 giờ, tự làm tiếp sau reset.
 Chép khung 3: T1 = block `T1` handle 50D0 (48 đối tượng, phải nổ thêm block kiến trúc lồng `A$Ca48bff2d`: `no.ps1`), T2 = 50D1; đã chép ra y −50 m.
 Script mới trong `ket_qua/HOC_BAO_CHAY/cad/`: `go_khung.ps1` (PCCC_RAI 1 khung trong accoreconsole, in log, plot PNG khung; `-Src` thư mục mã tạm có log gỡ lỗi,
 `-Hop` ghi cầu khép khe trong hộp), `rai.ps1` (PCCC_RAI qua COM, có ZOOM trước: không zoom thì chọn cửa sổ ra 0 vùng), `tim_block.ps1`, `no.ps1`, `luu.ps1`.
+VIỆC DỞ ĐẦU TIÊN (21/11 13:40, dừng 94 % hạn mức): test E16 trong `chay_thu.ps1` đang LOI (vung=20,100: sảnh 15 m² có 3 cung cửa thả nổi
+không ra vùng nào, không có bo_sanh_thang). Mã sảnh thang mới đã đúng trên khung 3 thật; nghi ca thử: cung cửa không nằm trên khe tường làm hỏng mặt. Xem log
+`==E16==` trong kb7.out.txt (thư mục tạm của chay_thu), sửa ca thử hoặc mã tới TAT CA DAT, rồi mới làm khung 4.
 KHUNG 4 Karaoke 123 ĐANG DỞ (21/11 chiều, dừng ở 85 % hạn mức 5 giờ): đã chép + nổ `232` (890E, 5602 nét) và `tang 2` (8931) ra y −50 m (tầng 1 x 279000..324000,
 tầng 2 x 334000..379000, y −62500..−41500). Tầng 1 chạy lần đầu: vùng có cạnh chéo cắt phòng, sót phòng (14 vùng / 16 ĐB, mat=6001). Nguyên nhân dính tới
 hatch gạch chéo tường ĐÃ NỔ thành 3409 nét 45° ngắn (layer `02 - TUONG HOAN THIEN`): xoá layer đó trên bản chép tầng 1 (đã làm, đã lưu) thì 14 vùng ĐÚNG, 19 ĐB, WC bỏ.
 Ca tổng hợp (phòng 10 x 6 m, 2 x 68 nét 45° trong dải tường) KHÔNG tái hiện lỗi (đạt cả mã cũ) nên CHƯA sửa mã. BƯỚC TIẾP: tầng 2 còn nguyên nét hatch nổ:
 chạy `go_khung.ps1 -P1 334000,-62500 -P2 379000,-41500 -Ten k4b`, lấy 1 phòng ra cạnh chéo, `-Src` + log `PhongThat`/cầu khe (`-Hop`) tìm bước sinh cạnh chéo,
 dựng ca thử tái hiện ĐÚNG lỗi rồi mới sửa; sau đó đối chiếu mẫu (đếm thiết bị mẫu khung 4: sửa hộp trong `tb_khung.ps1`); rồi khung 6, 7, 8. Lỗi chưa sửa (ghi ở file mẫu): khe 2,8 m giữa 2 nắp tường ở cột trục 3 (cột = khe hở tường) khép
-ngang P.104; WC block xref tên vô nghĩa không nhận; ô X lỗ thông tầng lẫn dải bồn cây không bỏ; hành lang 9 m² sát thang máy bị bỏ như sảnh thang (mẫu CÓ đầu báo).
+ngang P.104; WC block xref tên vô nghĩa không nhận; ô X lỗ thông tầng lẫn dải bồn cây không bỏ.
 
 ## VIỆC 20/11 — DẠY PLUGIN PHÂN VÙNG NHƯ AI (xưởng mái kèo): MÃ L1, L2, L5, L5b, L6, L7, L8: BUILD + TEST ĐẠT + COMMIT (chưa push); BẢN CHÉP 25 VÙNG = ĐÁP ÁN, 57 / 55 ĐB
 LƯỢT 9 (20/11 tối, phiên nhánh tự chạy sau reset): L7. `NhanVung.cs` `GomKhu`: block tên THANG BỘ / STAIR, hoặc `HinhBac` (≥ 6 đoạn song song dài bằng nhau 0,6–2,5 m,

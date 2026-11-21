@@ -772,3 +772,5 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
 - Tầng lửng khung 3: 11 / mẫu 9; mẫu CÓ đầu báo ở sảnh thang máy + P.M01, plugin bỏ (`bo_sanh_thang`): chờ người dùng chốt luật sảnh thang.
 - Khung 4 Karaoke 123 (dở): hatch tường đã nổ (layer `02 - TUONG HOAN THIEN`) làm vùng ra cạnh chéo, sót phòng; xoá layer đó thì 14 vùng đúng. Ca tổng hợp không
   tái hiện nên chưa sửa mã (ghi bước gỡ tiếp ở `cad/TIEN_DO.md`). Dừng ở 85 % hạn mức 5 giờ, ngữ cảnh phiên 38 %.
+- Người dùng chốt 21/11: sảnh thang máy chỉ không rải khi trong buồng đệm hoặc buồng thang; sảnh tiếp tân, thông tầng rải theo mẫu. `Rai.cs` lọc `bo_sanh_thang`
+  thêm điều kiện ≤ 2 ký hiệu cửa quanh phòng hoặc phòng chứa thang bộ (`NhanThem.Cua` mới). Test E16; KOCHAM ca 10 (sảnh kín không cửa) vẫn bỏ. Mức dừng nay 98 %.

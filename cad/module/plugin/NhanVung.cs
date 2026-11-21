@@ -129,6 +129,7 @@ namespace TKPCCC
             public List<Point2d> TenPhong = new List<Point2d>();
             public List<Point2d> TenChu = new List<Point2d>();      // L5b (review 21/11): phòng có chữ tên bất kỳ không bỏ theo mái che
             public List<Point2d[]> ThangBo = new List<Point2d[]>(); // L7: hộp bao ký hiệu thang bộ, khoét khỏi vùng
+            public List<Point2d[]> Cua = new List<Point2d[]>();     // hộp ký hiệu cửa: sảnh thang máy ≤ 2 cửa = buồng đệm (người dùng 21/11)
             public List<Point2d[]> Doan = new List<Point2d[]>();    // L6 (review 20/11): nét đã dựng mặt, xét mép hiên có tường (nét đôi) hay không
         }
 
@@ -1586,6 +1587,7 @@ namespace TKPCCC
                     oX = TachOX(doan, n.Tol);
                     oX.AddRange(n.GiengThang); // giếng thang máy: không rải trong giếng, như ô X
                     them.ThangBo = new List<Point2d[]>(n.ThangBo);
+                    them.Cua = new List<Point2d[]>(n.Cua);
                     them.Doan = doan;
                     gach = new List<List<Point2d>>(n.GachCheo);
                     if (doan.Count >= 3)

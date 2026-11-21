@@ -1134,6 +1134,14 @@ foreach ($y in (0..8 | ForEach-Object { 6000 * $_ })) {
   '-LAYER', 'M', 'CUA', '', '_.ARC', 'C', '1521000,0', '1521900,0', '1521000,900', '_.POINT', '1519900,-100', '_.POINT', '1532100,8100',
   '-BLOCK', 'CUA_TANG', '1520000,0', 'W', '1519800,-200', '1532200,8200', '', '-INSERT', 'CUA_TANG', '1500000,0', '1', '', '0',
   '-LAYER', 'S', '0', '', 'PCCC_RAI', 'BC_KHOI', '', '', 'C', '1499500,-500', '1512500,8500', '', '', '',
+  # E16 (nguoi dung 21/11, can ho 441: sanh thang may chi bo khi la buong dem / trong buong thang): nhu ca 10 (dai trai 5 m: duoi 20 m2, sanh 15 m2,
+  #    gieng THANG_MAY 15 m2) nhung sanh co 3 cung canh cua quanh bien = hanh lang chung: van rai sanh 15 m2 (ca 10 khong cua van bo)
+  '(princ "\n==E16==")', '-LAYER', 'M', 'TUONG', '', '_.ZOOM', 'W', '1599000,-1000', '1616000,11000',
+  '_.RECTANG', '1600000,0', '1615000,10000', '_.LINE', '1605000,0', '1605000,10000', '', '_.LINE', '1600000,4000', '1605000,4000', '', '_.LINE', '1600000,7000', '1605000,7000', '',
+  '_.ARC', 'C', '1605000,5000', '1605900,5000', '1605000,5900', '_.ARC', 'C', '1601000,4000', '1601000,3100', '1601900,4000', '_.ARC', 'C', '1600000,5500', '1599100,5500', '1600000,6400',
+  '-LAYER', 'S', '0', '', '_.RECTANG', '1600300,7300', '1604700,9700', '_.LINE', '1600300,7300', '1604700,9700', '', '-BLOCK', 'THANG_MAY2', '1600000,7000', 'W', '1600200,7200', '1604800,9800', '',
+  '-INSERT', 'THANG_MAY2', '1600000,7000', '1', '', '0', '_.ZOOM', 'W', '1599000,-1000', '1616000,11000',
+  'PCCC_RAI', 'BC_KHOI', '', '', 'C', '1599500,-500', '1615500,10500', '', '', '',
   '(princ "\n==EHET==")', '_.QSAVE')) -join "`r`n" | Set-Content -Encoding ascii "$T\kb7.scr"
 $p7 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb7.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb7.out.txt"
 if (-not $p7.WaitForExit(180000)) { Stop-Process -Id $p7.Id -Force; throw "accoreconsole qua 3 phut (review 20/11): $T\kb7.out.txt" }
@@ -1182,6 +1190,9 @@ Kiem ((DtVung $e14) -contains 12 -and (DtVung $e14) -contains 32) `
 $e15 = CaRv 'E15'
 Kiem ((DtVung $e15) -contains 96 -and (DtVung $e15) -notcontains 48) `
   "Can ho 441 21/11: block gom moi cua cua tang (hop rong ca 2 chieu > 3,5 m) khong phai 1 cua: khe 6 m khong khep, 1 vung 96 m2 (vung=$((DtVung $e15) -join ','))"
+$e16 = CaRv 'E16'
+Kiem ($e16 -notmatch 'bo_sanh_thang' -and (DtVung $e16) -contains 15) `
+  "Nguoi dung 21/11: sanh sat gieng thang co 3 cua quanh bien (hanh lang chung, khong phai buong dem) van rai 15 m2 (vung=$((DtVung $e16) -join ','))"
 
 # Thoi gian dung phong tren ban ve that cua nguoi dung (gitignore, chi chay khi co): truoc sua 78 s (23 trieu diem cat), nay < 10 s.
 $bvThat = Get-ChildItem "$GOC\file_cad_test" -Filter 'test b*o ch*y.dwg' -ErrorAction SilentlyContinue | Select-Object -First 1

@@ -1865,7 +1865,12 @@ namespace TKPCCC
                             // Người dùng 16/11 + 17/11 (vẽ lại vùng tầng 8 KOCHAM): sảnh thang máy không đặt đầu báo. Bản vẽ không ghi chữ "SẢNH": nhận là phòng
                             // ≤ 30 m² sát giếng thang (ô có dấu X, cách ≤ 0,6 m = bề dày vách). shortcut: ô X cũng là lỗ thông tầng, phòng nhỏ sát lỗ thông tầng bị bỏ theo.
                             Func<List<Point2d>, List<Point2d>, bool> keNhau = (a, b) => a.Any(p => CachVien(b, p) <= 0.6 / m) || b.Any(p => CachVien(a, p) <= 0.6 / m);
-                            List<List<Point2d>> sanh = vung.Where(f0 => DienTichDaGiac(f0) * m * m <= 30 && oX.Any(x => keNhau(f0, x))).ToList();
+                            // Người dùng 21/11 (căn hộ 441: mẫu CÓ đầu báo ở sảnh trước thang máy): chỉ bỏ sảnh thang trong BUỒNG ĐỆM (≤ 2 ký hiệu cửa có tâm
+                            // trong phòng hoặc cách biên ≤ 1 m) hoặc trong BUỒNG THANG (phòng chứa tâm hộp thang bộ). Sảnh tiếp tân, hành lang nhiều cửa phòng: rải.
+                            Func<List<Point2d>, int> soCua = f0 => nhanThem.Cua.Count(h => { Point2d c = new Point2d((h[0].X + h[1].X) / 2, (h[0].Y + h[1].Y) / 2);
+                                return TrongDaGiac(f0, c) || CachVien(f0, c) <= 1 / m; });
+                            List<List<Point2d>> sanh = vung.Where(f0 => DienTichDaGiac(f0) * m * m <= 30 && oX.Any(x => keNhau(f0, x))
+                                && (soCua(f0) <= 2 || nhanThem.ThangBo.Any(h => TrongDaGiac(f0, new Point2d((h[0].X + h[1].X) / 2, (h[0].Y + h[1].Y) / 2))))).ToList();
                             vung = vung.Where(f0 => !sanh.Contains(f0)).ToList();
                             if (sanh.Count > 0) ed.WriteMessage("\n[TKPCCC] bo_sanh_thang=" + sanh.Count + " m2="
                                 + string.Join(",", sanh.Select(f0 => Math.Round(DienTichDaGiac(f0) * m * m, 1).ToString(CultureInfo.InvariantCulture)))
