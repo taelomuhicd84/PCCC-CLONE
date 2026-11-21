@@ -795,3 +795,5 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
   phòng trong khung trục nay không xét cụm. LỖI 10: lan can polyline hở chưa được `LanCan` nhận.
 - 110 vùng; mọi đầu báo nhiệt (120) + điện trở cuối (8) của mẫu nằm trong vùng plugin. Đầu phun 1 lần gọi 891 đầu / 1,5 s.
 - Hỏi người dùng: phần y 60–102 m mẫu không có thiết bị, plugin vẫn rải.
+
+- Người dùng trả lời: phần y 60–102 m khung 6 ngoài phạm vi thiết kế; không sửa mã.

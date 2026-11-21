@@ -85,8 +85,7 @@ Tầng 1 15 vùng / 20 ĐB, tầng 2 17 vùng / 20 ĐB (BC_KHOI); mọi đầu b
 (3) KHUNG 6 TRƯỜNG HỌC XONG phần vùng 21/11 tối (chi tiết `hoc-bao-chay-ban-mau.md` mục Khung 6): LỖI 8 chữ PHÒNG BỘ MÔN khớp PHÒNG BƠM (E21),
 LỖI 9 `CumChinh` bỏ nhà thi đấu (cụm trong khung trục nay giữ; CHƯA có ca thử riêng), LỖI 10 lan can polyline hở (`LanCan`). 110 vùng, mọi đầu báo + điện trở
 cuối của mẫu nằm trong vùng; đầu phun 1 lần gọi 891 đầu. Bản chép khung 6 ở y −200 m (KHÔNG dùng −50 m: block kéo xa, đè khung 7–8).
-NGƯỜI DÙNG DẶN 21/11: làm xong trường học thì TẠM DỪNG (không tự sang khung 7, 8). Đang chờ người dùng trả lời: phần y 60–102 m của khung 6 (dãy phòng học
-phía trên, WC học sinh 79 m²) mẫu không đặt thiết bị, plugin vẫn rải: ngoài phạm vi / hiện hữu hay mẫu sót?
+NGƯỜI DÙNG DẶN 21/11: làm xong trường học thì TẠM DỪNG (không tự sang khung 7, 8). Người dùng trả lời: phần y 60–102 m của khung 6 (mẫu không có thiết bị) là NGOÀI PHẠM VI; không sửa mã (quét chọn đúng phạm vi).
 KHI LÀM TIẾP (người dùng bảo): ca thử cho LỖI 9; khung 7 (nhà ở XH: tìm block bằng `tim_block.ps1 -Min 50`, tên `MB TẦNG 1`, `A$Cbe9093c8`), 8 (Karaoke 991:
 `A$C1b64d7a5`, `A$C473f3ffb`). Trước khi chép: lấy hộp bao block (COM `GetBoundingBox`), chọn độ dời không đè khung khác. Quy trình: `chep_no.ps1` → lưu →
 `go_khung.ps1 -P1 -P2 -Ten kN -Build` → `xuat.ps1` (đặt `XUAT_X0/X1/Y0/Y1`) + `khop.py file,x0,x1,dy,y0,y1` → `go_khung -Diem` gỡ chỗ thiếu vùng →

@@ -130,7 +130,8 @@ Bản chép đúng ở y −200 m; chọn rải x 461967..747884, y −218000..�
 - LỖI 10: lan can hành lang thoáng dọc thư viện vẽ polyline hở (layer `N_THAY 1` của xref): `LanCan` chỉ nhận LINE ⇒ thêm polyline hở.
 - Kết quả: 110 vùng; cả 120 đầu báo nhiệt + 8 điện trở cuối (`A$Ccacc4903`, 8 zone) của mẫu nằm trong vùng plugin; 35 đèn báo phòng đều trên tường cạnh cửa.
   Mẫu có 20 `ZONE MONITOR` (layer `PC - THIET BI BAO CHAY`).
-- CHƯA RÕ (hỏi người dùng): mẫu KHÔNG đặt thiết bị nào ở phần y 60–102 m (dãy phòng học loại 2 phía trên, 2 khối WC học sinh 79 m², sảnh...), cả 2 tầng;
+- NGƯỜI DÙNG TRẢ LỜI 21/11: NGOÀI PHẠM VI thiết kế (không sửa mã: plugin rải đúng phần người dùng quét chọn; đối chiếu khung 6 chỉ tính y < 60 m).
+  Mẫu KHÔNG đặt thiết bị nào ở phần y 60–102 m (dãy phòng học loại 2 phía trên, 2 khối WC học sinh 79 m², sảnh...), cả 2 tầng;
   plugin vẫn rải ở đó (~40 vùng). Không thấy chữ phạm vi / hiện hữu; tên xref "mat bang cai tao tret - mai" (cải tạo).
 - WC học sinh 79 m² có chữ "VỆ SINH" nhưng > 60 m² nên không bị `bo_khu_khong_bao` bỏ (luật ≤ 60 m²).
 - Đầu phun 1 lần gọi: 891 đầu / 110 vùng, 1,5 s (kết quả spec chỉ liệt kê 40 vùng đầu, `DOC_TOI_DA`; đếm bằng `dem`).
