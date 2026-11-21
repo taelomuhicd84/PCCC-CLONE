@@ -74,7 +74,12 @@ Nay 12 vùng / 13 đầu báo khói, mẫu 10. Lệch còn lại + quan sát thi
 Chép khung 3: T1 = block `T1` handle 50D0 (48 đối tượng, phải nổ thêm block kiến trúc lồng `A$Ca48bff2d`: `no.ps1`), T2 = 50D1; đã chép ra y −50 m.
 Script mới trong `ket_qua/HOC_BAO_CHAY/cad/`: `go_khung.ps1` (PCCC_RAI 1 khung trong accoreconsole, in log, plot PNG khung; `-Src` thư mục mã tạm có log gỡ lỗi,
 `-Hop` ghi cầu khép khe trong hộp), `rai.ps1` (PCCC_RAI qua COM, có ZOOM trước: không zoom thì chọn cửa sổ ra 0 vùng), `tim_block.ps1`, `no.ps1`, `luu.ps1`.
-BƯỚC TIẾP: khung 4, 6, 7, 8 như trên (khung 4: block `232` handle 890E, `tang 2` 8931, chèn ở toạ độ xa như T1/T2). Lỗi chưa sửa (ghi ở file mẫu): khe 2,8 m giữa 2 nắp tường ở cột trục 3 (cột = khe hở tường) khép
+KHUNG 4 Karaoke 123 ĐANG DỞ (21/11 chiều, dừng ở 85 % hạn mức 5 giờ): đã chép + nổ `232` (890E, 5602 nét) và `tang 2` (8931) ra y −50 m (tầng 1 x 279000..324000,
+tầng 2 x 334000..379000, y −62500..−41500). Tầng 1 chạy lần đầu: vùng có cạnh chéo cắt phòng, sót phòng (14 vùng / 16 ĐB, mat=6001). Nguyên nhân dính tới
+hatch gạch chéo tường ĐÃ NỔ thành 3409 nét 45° ngắn (layer `02 - TUONG HOAN THIEN`): xoá layer đó trên bản chép tầng 1 (đã làm, đã lưu) thì 14 vùng ĐÚNG, 19 ĐB, WC bỏ.
+Ca tổng hợp (phòng 10 x 6 m, 2 x 68 nét 45° trong dải tường) KHÔNG tái hiện lỗi (đạt cả mã cũ) nên CHƯA sửa mã. BƯỚC TIẾP: tầng 2 còn nguyên nét hatch nổ:
+chạy `go_khung.ps1 -P1 334000,-62500 -P2 379000,-41500 -Ten k4b`, lấy 1 phòng ra cạnh chéo, `-Src` + log `PhongThat`/cầu khe (`-Hop`) tìm bước sinh cạnh chéo,
+dựng ca thử tái hiện ĐÚNG lỗi rồi mới sửa; sau đó đối chiếu mẫu (đếm thiết bị mẫu khung 4: sửa hộp trong `tb_khung.ps1`); rồi khung 6, 7, 8. Lỗi chưa sửa (ghi ở file mẫu): khe 2,8 m giữa 2 nắp tường ở cột trục 3 (cột = khe hở tường) khép
 ngang P.104; WC block xref tên vô nghĩa không nhận; ô X lỗ thông tầng lẫn dải bồn cây không bỏ; hành lang 9 m² sát thang máy bị bỏ như sảnh thang (mẫu CÓ đầu báo).
 
 ## VIỆC 20/11 — DẠY PLUGIN PHÂN VÙNG NHƯ AI (xưởng mái kèo): MÃ L1, L2, L5, L5b, L6, L7, L8: BUILD + TEST ĐẠT + COMMIT (chưa push); BẢN CHÉP 25 VÙNG = ĐÁP ÁN, 57 / 55 ĐB

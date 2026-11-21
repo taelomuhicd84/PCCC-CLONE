@@ -100,3 +100,9 @@ Plugin 11 vùng / 11 đầu báo; mẫu 9 (P.M03 1, hành lang trái 1, P.M02 1,
 ngay sảnh thang (cách cửa thang ≈ 1,5 m) và 1 trong P.M01. Thừa: các ô X thông tầng (`TachOX` không nhận) được rải.
 => Hai tầng khung 3 đều mâu thuẫn luật "sảnh thang máy không đặt đầu báo" (người dùng 16–17/11, KOCHAM): cần người dùng chốt (bỏ luật, hay chỉ bỏ sảnh
 thuần không có cửa phòng / không có chữ tên phòng).
+
+## Khung 4 Karaoke 123 (21/11, ĐANG DỞ)
+Block `232` (890E, 5602 nét, tầng 1) và `tang 2` (8931) chèn ở toạ độ xa, hình rơi vào khung; chép + nổ 1 cấp ra y −50 m. Tường 2 nét layer `01 - TUONG`,
+hatch gạch chéo tường ĐÃ NỔ thành nét 45° dài ≈ 0,28 m cách 90 mm (layer `02 - TUONG HOAN THIEN`, 3409 nét tầng 1), cột layer `04 - COT` (cot=60 nhận được).
+Tầng 1 để nguyên nét hatch nổ: vùng có cạnh chéo dài 4–6 m cắt phòng, sót phòng (mat=6001). Xoá layer hatch nổ: 14 vùng đúng từng phòng, 19 đầu báo, WC bỏ.
+Ca tổng hợp 2 x 68 nét 45° trong dải tường phòng 10 x 6 m KHÔNG tái hiện: nguyên nhân thật còn phải tìm trên bản vẽ (tầng 2 còn nguyên để gỡ).
