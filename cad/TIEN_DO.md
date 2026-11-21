@@ -36,7 +36,7 @@ cad/README.md, cad/CLAUDE.md, STRUCTURE.md, KE_HOACH_TONG.md. Kiểm xong: `pyth
 BƯỚC TIẾP: tạo cây + README; tách nội dung từng file cũ vào đúng file mới (không bỏ sót dòng, chép nguyên văn phần quy chuẩn); chép luật từ memory;
 sửa đường dẫn; kiểm; commit (không push). Làm theo lô nhỏ, mỗi lô một commit, để dừng kịp khi hết hạn mức.
 
-## VIỆC 20/11 (2) — HỌC RẢI BÁO CHÁY THEO BẢN MẪU (file_cad_test/TESTBCHAY_20_11.dwg): KHUNG 5 KARAOKE ĐANG ĐỐI CHIẾU; 1 LỖI ĐÃ SỬA + TEST; LÀM TIẾP SAU VIỆC (3)
+## VIỆC 20/11 (2) — HỌC RẢI BÁO CHÁY THEO BẢN MẪU (file_cad_test/TESTBCHAY_20_11.dwg): KHUNG 5 KARAOKE ĐANG ĐỐI CHIẾU; 2 LỖI VÙNG ĐÃ SỬA + TEST (21/11); TIẾP: CHUÔNG, NÚT, ĐÈN
 Người dùng (20/11, chép ý): mỗi khung rectang = 1 công trình mẫu vẽ báo cháy đã thẩm định, là CHUẨN, phải tư duy như nó.
 1. Copy các block mặt bằng mẫu ra chỗ trống (KHÔNG sửa bản gốc), explode, rồi vẽ vùng rải báo cháy.
 2. Vùng kẹp sát mặt tường: tường 200 có cột 300 lồi ra 100 thì vùng chạy thẳng theo mặt tường 200, không bao phần cột lồi.
@@ -50,10 +50,14 @@ Ngữ cảnh phiên > 40–45 % thì làm xong task đang dở rồi chuyển sa
   Bundle chưa build lại (AutoCAD đang mở bản chép; `build.bat` đổi tên DLL cũ được, AutoCAD mở lại mới nạp).
 - Khung 5 sau sửa: 30 vùng, 50 đầu báo nhiệt; mẫu 62. 21 / 30 vùng khớp số; mẫu dày hơn ở phòng hẹp (bước ≈ 4–4,5 m, cách tường ≤ ≈ 2,5 m).
 NGƯỜI DÙNG CHỐT 20/11 tối: giữ TCVN 7568-14:2025; bản mẫu chỉ là chuẩn tham khảo cách rải + cách chia vùng (không rải dày theo 5738).
-BƯỚC TIẾP: (1) build bundle (tắt AutoCAD, `build.bat`), mở lại `ket_qua/HOC_BAO_CHAY/cad/hoc_bao_chay.dwg` (bản chép đã có mặt bằng khung 5 explode ở y −50 m);
-(2) khung 5: hành lang bị nét mảnh layer `xref` cắt 5 vùng (mẫu coi là 1), lối 1,6 m phía nam không dựng vùng; đối chiếu chuông (mẫu: mỗi phòng hát 1 chuông),
-nút ấn (3), đèn báo phòng; (3) lần lượt khung 3, 4, 6, 7, 8 (khung 2 đã học); kiểm luật kẹp tường bỏ cột lồi + nội thất trên khung có cột (trường học, nhà ở XH);
-(4) mục 4 dây + điện trở cuối. Hạn mức TUẦN đã 92 % lúc 19:25 20/11 (reset 05:00 21/11): làm tiếp sau mốc đó.
+ĐÃ LÀM 21/11 sáng: (1) build bundle xong. (2) Lỗi 2 hành lang vỡ vùng ĐÃ SỬA (không phải nét `xref`: khe ngang hành lang giữa tường ngăn thẳng hàng
+hai bên + má cửa phòng; cánh cửa vẽ bằng ELIP chưa nhận là cửa): `CacMat` bỏ "khe xuyên", `GomCua` nhận elip; test E12, E13; luật ở
+`cad/skills/nhan_dang/cua_thang_khu.md`; kết quả + lệch còn lại ở `cad/skills/mau/hoc-bao-chay-ban-mau.md`. Khung 5 nay 26 vùng, 50 đầu báo; hành lang tây
+1 vùng, 2 lối phía nam có vùng. Bản chép đang có vùng + đầu báo plugin của lần chạy cuối (xoá: `xoa l "PCCC_*" hop [386000,-49000,450000,-25000]`).
+Gỡ lỗi bằng accoreconsole trên bản lưu: kịch bản mẫu ghi trong `hoc-bao-chay-ban-mau.md` mục Cách làm.
+BƯỚC TIẾP: (2b) khung 5 đối chiếu chuông (mẫu: mỗi phòng hát 1 chuông), nút ấn (3), đèn báo phòng; (3) lần lượt khung 3, 4, 6, 7, 8 (khung 2 đã học);
+kiểm luật kẹp tường bỏ cột lồi + nội thất trên khung có cột (trường học, nhà ở XH); (4) mục 4 dây + điện trở cuối.
+Ghi chú chưa sửa: tiền sảnh 1 m sau cửa vách ngang hành lang (x 433170..434170) bị tách khỏi vùng hành lang đông ở bước SAU khép khe.
 
 ## VIỆC 20/11 — DẠY PLUGIN PHÂN VÙNG NHƯ AI (xưởng mái kèo): MÃ L1, L2, L5, L5b, L6, L7, L8: BUILD + TEST ĐẠT + COMMIT (chưa push); BẢN CHÉP 25 VÙNG = ĐÁP ÁN, 57 / 55 ĐB
 LƯỢT 9 (20/11 tối, phiên nhánh tự chạy sau reset): L7. `NhanVung.cs` `GomKhu`: block tên THANG BỘ / STAIR, hoặc `HinhBac` (≥ 6 đoạn song song dài bằng nhau 0,6–2,5 m,

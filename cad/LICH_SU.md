@@ -741,3 +741,13 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
 - L5b: phòng có chữ tên bất kỳ (≥ 3 chữ cái) không bỏ theo mái che. Lấy điểm chèn chữ, không tính hộp bao (đo: hộp bao không phải nguyên nhân chậm).
 - Test kb7: E4, E7, E9, E9B, E10, E11. chay_thu 187 phép, thu_mcp TAT CA DAT. Bản vẽ thật dựng phòng 9,7–10,07 s qua 3 lần (HEAD đo xen kẽ 9,9–10,0 s): ngưỡng 10 s sát biên.
 - Bản chép Quyết Thắng `qt_maikeo_8.dwg` (đầu vào `qt_maikeo.dwg`): dòng lệnh y hệt kb7, 25 vùng / 57 đầu báo.
+
+## 2026-11-21 — VIỆC 20/11 (2): khung 5 Karaoke ABC, hành lang vỡ vùng (Lỗi 2)
+- Nguyên nhân thật (không phải nét `xref`): tường ngăn hai bên hành lang thẳng hàng -> khe ngang hành lang 1,7–1,9 m (≤ 3 m) bị khép như ô cửa; má cửa phòng
+  thẳng hàng tường ngăn cũng vậy; cánh cửa trong block `A$Cf159a6b7` vẽ bằng ELLIPSE (tỉ lệ 0,9) nên `GomCua` không nhận là cửa.
+- `NhanVung.cs` `CacMat`: khe 0,7–6 m mà cả hai đầu "xuyên" (nét vuông góc chạy liền hai phía trong ±0,6 m quanh đầu khe, hoặc một phía là ô cửa) và không có
+  cửa trong khe thì không khép (`dauXuyen`, lưới ô 0,5 m riêng, dựng khi cần). `GomCua` nhận cung elip tỉ lệ ≥ 0,8.
+- Test `chay_thu.ps1` E12 (tường ngăn thẳng hàng, tường nam 2 nét), E13 (má cửa cánh elip + trụ lồi 200 x 100); mã cũ trượt E12 (vùng 19,8 x 2).
+  Bản vẽ thật nhà máy: dựng phòng 9,4–9,6 s (mã cũ 9,7 s); 30 564 -> 25 400 mặt, khe bị bỏ đã xem trên ảnh: cầu ảo qua WC, mái che, lưới ngoài nhà.
+- Khung 5 sau sửa: 26 vùng, 50 đầu báo nhiệt; hành lang tây 1 vùng 53,2 m² như mẫu; 2 lối phía nam có vùng. Còn lệch: tiền sảnh 1 m sau cửa vách ngang
+  hành lang đông bị tách ở bước sau khép khe (ghi `cad/skills/mau/hoc-bao-chay-ban-mau.md`).

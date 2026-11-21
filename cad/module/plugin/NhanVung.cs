@@ -346,18 +346,21 @@ namespace TKPCCC
             catch (System.Exception) { } // đối tượng hỏng hình học: bỏ, không làm hỏng cả lần dò
         }
 
-        /// Ký hiệu cửa (người dùng chốt 14/11 "cứ có cửa mình khép lại 1 vùng"): cung cánh cửa 60–120°, bán kính 0,4–3 m (hộp bao tâm + 2 đầu cung);
+        /// Ký hiệu cửa (người dùng chốt 14/11 "cứ có cửa mình khép lại 1 vùng"): cung cánh cửa (ARC hoặc elip tròn) 60–120°, bán kính 0,4–3 m (hộp bao tâm + 2 đầu cung);
         /// block có tên (kể cả tên block động) hoặc layer chứa CUA / DOOR (hộp bao block). Khe tường 3–12 m cắt hộp này thì khép (CacMat).
         static void GomCua(NenVung n, Entity e, ObjectId lop)
         {
             try
             {
                 Arc a = e as Arc;
-                if (a != null)
+                Ellipse el = e as Ellipse; // Karaoke ABC 21/11: cánh cửa vẽ bằng cung elip gần tròn (block A$Cf159a6b7, layer "net mo": tỉ lệ 0,9, 95°)
+                if (a != null || (el != null && el.RadiusRatio >= 0.8))
                 {
-                    double goc = a.TotalAngle * 180 / Math.PI, r = a.Radius * 0.002 / n.Tol; // n.Tol = 2 mm theo đơn vị bản vẽ
+                    double goc = a != null ? a.TotalAngle * 180 / Math.PI : (el.EndAngle - el.StartAngle) * 180 / Math.PI;
+                    if (goc < 0) goc += 360;
+                    double r = (a != null ? a.Radius : el.MajorRadius) * 0.002 / n.Tol; // n.Tol = 2 mm theo đơn vị bản vẽ
                     if (goc < 60 || goc > 120 || r < 0.4 || r > 3) return;
-                    Point3d[] q = { a.Center, a.StartPoint, a.EndPoint };
+                    Point3d[] q = a != null ? new[] { a.Center, a.StartPoint, a.EndPoint } : new[] { el.Center, el.StartPoint, el.EndPoint };
                     n.Cua.Add(new[] { new Point2d(q.Min(p => p.X), q.Min(p => p.Y)), new Point2d(q.Max(p => p.X), q.Max(p => p.Y)) });
                     return;
                 }
@@ -1031,19 +1034,23 @@ namespace TKPCCC
                 Vector2d v = doan[j][1] - doan[j][0];
                 return Math.Abs(w.X * v.Y - w.Y * v.X) <= 0.01 * v.Length && CachDoan(doan[j], q) <= tolTh;
             });
+            // Karaoke ABC: đầu khe là má cửa phòng (mặt hành lang dừng một phía, phía kia là ô cửa) vẫn tính chạy tiếp: điểm trong hộp ký hiệu cửa nới 0,3 m.
+            double nCua = tol * 150;
+            Func<Point2d, bool> trongCua = q => cua != null && cua.Any(h => q.X >= h[0].X - nCua && q.X <= h[1].X + nCua && q.Y >= h[0].Y - nCua && q.Y <= h[1].Y + nCua);
             Func<Point2d, Point2d, bool> dauXuyen = (p, q) =>
             {
-                double g = p.GetDistanceTo(q), tm = Math.Min(tol * 300, g - tolTh);
+                // Xét cả 0,6 m SAU đầu khe: đầu khe ở mặt cột lồi (Karaoke: trụ 200 x 100 nhô ra hành lang), mặt hành lang chạy liền ngay sau đó.
+                double g = p.GetDistanceTo(q), tm = Math.Min(tol * 300, g - tolTh), ts = tol * 300;
                 Vector2d u = (q - p) / g, w = u.GetPerpendicularVector();
-                Point2d e = p + u * tm;
-                foreach (int j in luoiTT().Tim(Math.Min(p.X, e.X) - tolTh, Math.Min(p.Y, e.Y) - tolTh, Math.Max(p.X, e.X) + tolTh, Math.Max(p.Y, e.Y) + tolTh))
+                Point2d e = p + u * tm, s0 = p - u * ts;
+                foreach (int j in luoiTT().Tim(Math.Min(s0.X, e.X) - tolTh, Math.Min(s0.Y, e.Y) - tolTh, Math.Max(s0.X, e.X) + tolTh, Math.Max(s0.Y, e.Y) + tolTh))
                 {
                     Vector2d v = doan[j][1] - doan[j][0];
                     if (Math.Abs(u.DotProduct(v)) > 0.01 * v.Length) continue; // chỉ nét vuông góc với khe
                     double t = u.DotProduct(doan[j][0] - p);
-                    if (t < -tolTh || t > tm) continue;
-                    Point2d c = p + u * Math.Max(t, 0);
-                    if (coNet(c + w * (tol * 40), w) && coNet(c - w * (tol * 40), w)) return true;
+                    if (t < -ts || t > tm) continue;
+                    Point2d c = p + u * t;
+                    if ((coNet(c + w * (tol * 40), w) || trongCua(c + w * (tol * 40))) && (coNet(c - w * (tol * 40), w) || trongCua(c - w * (tol * 40)))) return true;
                 }
                 return false;
             };

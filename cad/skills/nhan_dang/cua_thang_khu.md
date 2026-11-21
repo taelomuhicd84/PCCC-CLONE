@@ -7,7 +7,14 @@ Mã: `CacMat` (khép khe cửa), `GomCua`, `GomKhu`, `HinhBac`, `TachOX`, `GomCh
 - Khe 3 m tới `HO_CUA_MAX_M` (12 m): chỉ khép khi có ký hiệu cửa NẰM TRONG khe (hộp cửa phủ ≥ 25 % chiều dài khe), hoặc tường 2 nét hở đúng chỗ đó (khe ≤ 6 m).
   Người dùng 14/11: "cứ có cửa mình khép lại 1 vùng". Khe 11 m có cung nắp bồn cầu chạm một đầu thì không khép (KOCHAM 17/11).
 - Khe chữ T có cửa (cửa giữa đầu tường và tường vuông góc): đầu tường cách hộp cửa ≤ 0,5 m, chiếu tới nét gần nhất trong 12 m, tia cắt hộp cửa thì khép.
-- `vung_tu_dong` / bấm điểm: cửa rộng hơn 3 m (cửa cuốn) thì truyền `ho`.
+- Khe XUYÊN không gian liền thì KHÔNG khép (Karaoke ABC 21/11, `dauXuyen` trong `CacMat`): tường ngăn hai bên hành lang thẳng hàng (mặt tường cùng
+  toạ độ) làm khe ngang hành lang 1,7 m trông như ô cửa, hành lang vỡ 5 vùng; mẫu đã thẩm định rải đều cả hành lang. Khe 0,7 m tới max(3 m, 6 m)
+  mà ở CẢ HAI đầu có nét vuông góc chạy liền hai phía (mặt hành lang chạy tiếp qua đầu tường, chữ T) trong 0,6 m trước hoặc sau đầu khe
+  (bề dày tường; đầu khe ở mặt trụ lồi) thì bỏ; phía là ô cửa (hộp ký hiệu cửa nới 0,3 m) cũng tính là chạy tiếp (má cửa phòng thẳng hàng tường ngăn).
+  Có ký hiệu cửa NẰM TRONG khe thì vẫn khép (cửa ngang hành lang chia vùng). Miệng lối đi, sảnh (góc chữ L), má cửa thường (nắp đầu tường một phía) vẫn khép.
+  Trên bản vẽ nhà máy thật bỏ thêm ~900 khe ≤ 6 m: đều là cầu ảo vắt qua WC, mái che, lưới ngoài nhà (đã xem ảnh 21/11).
+- Ký hiệu cửa: cung `ARC` hoặc cung `ELLIPSE` gần tròn (tỉ lệ trục ≥ 0,8; block cửa Karaoke `A$Cf159a6b7` vẽ cánh bằng elip tỉ lệ 0,9, 95°), block / layer tên CUA, DOOR.
+- `vung_tu_dong` / bấm điểm: cửa rộng hơn 3 m (cửa cuốn) thì truyền `ho`. Lệnh này không dùng ký hiệu cửa (chỉ `PCCC_RAI` dùng), nên khe xuyên có má cửa vẫn khép.
 
 ## Thang, giếng, lỗ thông tầng
 - Thang bộ (L7, 20/11): block / nét có tên thang (`THANGBO`, `STAIR`...) hoặc HÌNH bậc cách đều (`HinhBac`) -> khoét hộp bao khỏi vùng (nắn sát tường ≤ 0,3 m);

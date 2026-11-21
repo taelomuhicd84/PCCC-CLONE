@@ -1101,6 +1101,17 @@ foreach ($y in (0..8 | ForEach-Object { 6000 * $_ })) {
   '_.RECTANG', '1200000,0', '1209900,3800', '_.RECTANG', '1210100,0', '1220000,3800', '_.RECTANG', '1200000,6000', '1209900,10000', '_.RECTANG', '1210100,6000', '1220000,10000',
   '_.LINE', '1200000,4000', '1220000,4000', '', '_.LINE', '1209900,6000', '1210100,6000', '', '_.LINE', '1200000,4000', '1200000,6000', '', '_.LINE', '1220000,4000', '1220000,6000', '',
   '-LAYER', 'S', '0', '', 'PCCC_RAI', 'BC_KHOI', '', '', 'C', '1199500,-500', '1220500,10500', '', '', '',
+  # E13: nhu E12 phia nam; phia bac 1 phong 20 x 3,8 m, tuong 200 co cua 0,9 m (canh mo vao phong ve bang cung ELIP ti le 0,9 nhu block cua Karaoke)
+  #    ma cua x 9900 thang hang mat tuong ngan nam; tru loi 200 x 100 tren mat hanh lang bac x 15000-15200 thang hang tuong ngan nam thu hai.
+  #    Truoc sua: khe tu nap ma cua / mat tru loi toi goc phong nam khep, hanh lang vo 3 vung; nay 1 vung ~40 m2
+  '(princ "\n==E13==")', '-LAYER', 'M', 'TUONG', '', '_.ZOOM', 'W', '1299000,-1000', '1321000,11000',
+  '_.RECTANG', '1300000,0', '1309900,3800', '_.RECTANG', '1310100,0', '1315000,3800', '_.RECTANG', '1315200,0', '1320000,3800',
+  '_.PLINE', '1315000,6000', '1315000,5900', '1315200,5900', '1315200,6000', '',
+  '_.PLINE', '1309900,6200', '1300000,6200', '1300000,10000', '1320000,10000', '1320000,6200', '1310800,6200', '',
+  '_.LINE', '1300000,4000', '1320000,4000', '', '_.LINE', '1300000,6000', '1309900,6000', '1309900,6200', '', '_.LINE', '1310800,6200', '1310800,6000', '1320000,6000', '',
+  '_.LINE', '1300000,4000', '1300000,6000', '', '_.LINE', '1320000,4000', '1320000,6000', '',
+  '_.ELLIPSE', 'A', 'C', '1309900,6200', '1310800,6200', '810', '0', '90', '_.LINE', '1309900,6200', '1309900,7100', '',
+  '-LAYER', 'S', '0', '', 'PCCC_RAI', 'BC_KHOI', '', '', 'C', '1299500,-500', '1320500,10500', '', '', '',
   '(princ "\n==EHET==")', '_.QSAVE')) -join "`r`n" | Set-Content -Encoding ascii "$T\kb7.scr"
 $p7 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb7.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb7.out.txt"
 if (-not $p7.WaitForExit(180000)) { Stop-Process -Id $p7.Id -Force; throw "accoreconsole qua 3 phut (review 20/11): $T\kb7.out.txt" }
@@ -1140,6 +1151,9 @@ Kiem ($e7 -match 'khoet_thang=1 ' -and $e7 -match 'bo_buong_thang=1 m2=64 ' -and
 $e12 = CaRv 'E12'
 Kiem ((DtVung $e12) -contains 40 -and (DtVung $e12) -notcontains 19.8) `
   "Karaoke ABC 21/11: tuong ngan hai ben hanh lang thang hang (chu T hai dau khe) khong khep khe ngang hanh lang: 1 vung 40 m2 (vung=$((DtVung $e12) -join ','))"
+$e13 = CaRv 'E13'
+Kiem (@(DtVung $e13 | Where-Object { $_ -gt 39.9 -and $_ -lt 40.1 }).Count -eq 1 -and @(DtVung $e13 | Where-Object { $_ -lt 15 }).Count -eq 0) `
+  "Karaoke ABC 21/11: ma cua phong bac (canh elip) va tru loi thang hang tuong ngan nam khong khep khe ngang hanh lang: 1 vung ~40 m2 (vung=$((DtVung $e13) -join ','))"
 
 # Thoi gian dung phong tren ban ve that cua nguoi dung (gitignore, chi chay khi co): truoc sua 78 s (23 trieu diem cat), nay < 10 s.
 $bvThat = Get-ChildItem "$GOC\file_cad_test" -Filter 'test b*o ch*y.dwg' -ErrorAction SilentlyContinue | Select-Object -First 1

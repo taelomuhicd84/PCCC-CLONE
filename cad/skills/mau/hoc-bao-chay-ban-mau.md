@@ -29,6 +29,10 @@ tổ hợp `FDS`; đèn báo phòng = `Đèn báo phòng`; TTBC = `A$C81605030`;
 - `PCCC_RAI` qua COM: ngăn các câu trả lời bằng `\r` (dấu cách bị nuốt vì ô mã thiết bị nhận cả dấu cách). Thứ tự với BC_NHIET:
   mã, Enter (trần), Khong, C, góc 1, góc 2, Enter (hết chọn), Enter (nét mẫu), Enter (mọi phòng).
 - Thử mã mới không cần tắt AutoCAD: build ra thư mục tạm (csc như `build.bat`, chép data từ `TKPCCC.bundle\Contents`), chạy accoreconsole trên bản lưu, DXFOUT, so bằng Python.
+  21/11: dùng luôn thư mục tạm của `chay_thu.ps1` (có DLL + data), kịch bản `NETLOAD <dll>`, `_.ZOOM W 386000,-49000 450000,-25000`,
+  `PCCC_RAI BC_NHIET "" Khong C 388000,-47500 448000,-27000 "" "" ""`, `_.QUIT _Y`; log in "Vùng tự dựng m2=" từng vùng. Xoá vùng PCCC_* cũ trước
+  (PCCC_RAI dùng thẳng polyline PCCC_VUNG có sẵn trong khung chọn, không dựng lại). Chạy PCCC_RAI qua COM thì ngăn trả lời bằng `\r` như trên.
+- Sau mỗi lần build bundle: tắt AutoCAD (COM `Quit`), `build.bat`, mở lại, NETLOAD qua COM; lệnh MCP đầu tiên hay quá giờ, gửi NETLOAD lại khi AutoCAD rảnh.
 
 ## Khung 5 Karaoke ABC
 LỖI 1 (ĐÃ SỬA 20/11, `NhanVung.cs` MatChon, test `chay_thu.ps1` ca 15): bản vẽ có layer `tuong` nhưng layer đó chỉ chứa block cửa, tường vẽ trên layer `0`.
@@ -50,5 +54,12 @@ Nhận xét: mẫu giữ bước giữa hai đầu báo nhiệt ≈ 4–4,5 m, c
 5.9.2.1.2 / 5.9.2.1.4 (bước 7,2 m, cách tường 3,6 m, `data/khoang_cach_rai.json`). Mẫu khớp kiểu bảng đầu báo nhiệt cũ (≈ 5 m / 2,5 m / 25 m²) nhưng
 NGƯỜI DÙNG CHỐT 20/11: GIỮ TCVN 7568-14:2025, không rải theo mật độ 5738; bản mẫu chỉ để học CÁCH rải (vị trí, hàng, lề) và CÁCH chia vùng.
 Vậy khi đối chiếu: lệch SỐ LƯỢNG do mẫu dày hơn 7568 thì không sửa; chỉ sửa khi vùng sai, sót vùng, hoặc 7568 đòi nhiều hơn plugin rải.
-Khác: hành lang bị các nét mảnh (layer `xref`) cắt thành 5 đoạn vùng; mẫu rải đều cả hành lang như một vùng. Chuông: mẫu có chuông ở từng phòng hát
+Khác: hành lang bị cắt thành 5 đoạn vùng; mẫu rải đều cả hành lang như một vùng.
+LỖI 2 (ĐÃ SỬA 21/11, `NhanVung.cs` `CacMat` khe xuyên + `GomCua` elip, test `chay_thu.ps1` E12, E13; luật ở `cad/skills/nhan_dang/cua_thang_khu.md`):
+nguyên nhân KHÔNG phải nét `xref` mà là khe ngang hành lang giữa mặt tường ngăn hai bên thẳng hàng (trục 3, 5), má cửa phòng thẳng hàng tường ngăn
+(x 420972, 428570; cánh cửa vẽ bằng ELIP nên trước đó không nhận là cửa). Sau sửa (PCCC_RAI Enter mọi phòng, 26 vùng, 50 đầu báo):
+hành lang tây 401672..432970 một vùng 53,2 m² (mẫu cũng một chuỗi đầu báo cách 4,5 m suốt đoạn này, dim mẫu chạy liền tới vách cửa 2 cánh x 433070);
+hai lối 1,5–1,6 m phía nam có vùng (10,71 / 12,96 m², 1 / 2 đầu). Vách ngang x 432970–433170 có cửa đi = ranh vùng đúng (mẫu cũng tách).
+Còn lệch: vùng đông plugin 434170..444420 (17,4 m², 2 đầu), mẫu 433070..444520 (3 đầu); tiền sảnh 1 m sau cửa vách ngang (cánh cửa mở vào) thành mặt
+riêng nhỏ bị bỏ ở bước sau khép khe (chưa tìm bước nào cắt; bước khép khe đã bỏ khe x 434170). Không thiếu bảo vệ theo 7568 (đầu gần nhất cách vách 3,55 m). Chuông: mẫu có chuông ở từng phòng hát
 (22 block chuông, 20 đèn báo phòng ngoài cửa), nút ấn 3 cái ở hành lang, 3 zone, mỗi zone 1 điện trở cuối. Chưa đối chiếu chuông, nút, dây.
