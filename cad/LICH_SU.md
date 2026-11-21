@@ -797,3 +797,6 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
 - Hỏi người dùng: phần y 60–102 m mẫu không có thiết bị, plugin vẫn rải.
 
 - Người dùng trả lời: phần y 60–102 m khung 6 ngoài phạm vi thiết kế; không sửa mã.
+
+- 21/11 tối, người dùng khoanh đỏ 4 chỗ tầng 2 Karaoke 123 (chạy bằng plugin cũ trong AutoCAD): build bundle mới, rải lại: ô giao 3,6 m² và hành lang trên
+  buồng thang đã có vùng (17 vùng). Thêm mục "Soát chỗ hay thiếu vùng" (5 chỗ) vào `cad/skills/nhan_dang/phong_vung.md` cho AI vẽ bằng chatbot; skill `tkpccc-ve-cad` trỏ tới.

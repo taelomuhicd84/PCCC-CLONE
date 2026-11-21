@@ -18,6 +18,18 @@ Nét nào là tường: `tuong_cot.md`. Cửa, thang, khu bỏ: `cua_thang_khu.m
 - Trước khi vẽ `PCCC_VUNG`: liệt kê tường kín -> phòng; phần còn lại của xưởng -> khoang vì kèo. Dò mọi nét tường trong khoang trước khi rải.
 - Bản mẫu đã thẩm định chỉ là tham khảo CÁCH chia vùng (người dùng 20/11), số đầu báo vẫn theo TCVN 7568-14:2025.
 
+## Soát chỗ hay thiếu vùng sau khi dựng (người dùng khoanh đỏ 21/11, Karaoke 123 tầng 2; AI vẽ bằng chatbot làm y như plugin)
+Dựng xong (`PCCC_RAI` Enter mọi phòng, hoặc `vung_tu_dong`), chụp ảnh và dò từng chỗ sau. Mọi khoảng sàn đi lại được trong phạm vi đều phải nằm trong một vùng,
+trừ khu được bỏ có lý do (WC, lõi / sảnh thang máy, buồng thang, ô thông tầng).
+1. Ô giao hành lang với lối dọc / ngách nhỏ ≤ 2 x 2 m ở đầu hành lang: dễ bị bỏ như dải tường. Thiếu thì `vung_tu_dong` `p` = điểm giữa ô.
+2. Hành lang chạy ngang qua buồng thang hở / ô thông tầng: mép sàn, lan can 2 nét (layer nét mảnh, không phải layer tường) là CẠNH vùng; vùng hành lang
+   chạy liền qua đó. Thiếu thì vẽ polyline `PCCC_VUNG` theo mặt tường bên kia + mép lan can bên này.
+3. Góc phòng bị cắt chéo, vùng có cạnh xiên vô lý: nét hatch tường đã nổ (nét 45° ngắn dày đặc trong dải tường) bị lấy làm tường. Plugin đã bỏ;
+   tự vẽ thì không bám các nét đó.
+4. Phòng có chữ tên mà không có vùng: đọc dòng `bo_...` (chữ khu khớp nhầm, vd "PHÒNG BỘ MÔN" từng khớp "phòng bơm"); đúng là phòng thì bấm điểm trong phòng.
+5. Cả cụm phòng mất (nhà thi đấu, khối tách bởi sân) trong lưới trục: không phải hình chi tiết, phải có vùng.
+Mọi chỗ bổ sung tay ghi lại vào file `cad/skills/mau/` của công trình đó để sửa plugin.
+
 ## Plugin dựng phòng thế nào ("Enter mọi phòng" của `PCCC_RAI`)
 1. Gom đoạn nét từ đối tượng quét chọn (`ThuNet`), tách cột, nhận trục, khép khe cửa, dựng mọi mặt kín (`CacMat`), chỉ giữ mặt có tâm trong khung chọn.
 2. `PhongThat`: mặt ≥ 1 m², rộng TB (2A/P) ≥ 1 m, không chứa mặt khác bên trong. 2A/P chỉ bằng nửa cạnh ô vuông: ô ≥ 3 m² có diện tích / cạnh dài

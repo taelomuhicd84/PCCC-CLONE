@@ -39,7 +39,7 @@ Nền trước (mục trên). Rồi mỗi bước MỘT spec `ket_qua/<dự án>
 Tường vẽ bằng `tuong` nên `vung_tu_dong` chỉ dò layer tường, không lẫn nét PDF nền; cửa rộng hơn 3 m (cửa cuốn) thì truyền `ho`.
 
 ## Vùng, rải thiết bị, đi tuyến
-1. Vùng TRƯỚC khi rải: dựng / vẽ `PCCC_VUNG`, chụp ảnh, DỪNG cho người dùng duyệt (`cad/skills/nhan_dang/phong_vung.md`; khoang dầm, vì kèo: `dam_khoang.md`).
+1. Vùng TRƯỚC khi rải: dựng / vẽ `PCCC_VUNG`, chụp ảnh, soát 5 chỗ hay thiếu vùng (mục "Soát" trong `cad/skills/nhan_dang/phong_vung.md`), DỪNG cho người dùng duyệt (`phong_vung.md`; khoang dầm, vì kèo: `dam_khoang.md`).
 2. Người dùng báo xong: `doc` `gi`:"vung" đọc lại vùng, rồi `rai` theo `l` (trị số, cách rải, dim: `cad/skills/ve/bao_chay/rai_dau_bao.md`). `ho` > 0 hoặc `m2` sát `dt` thì nêu cho người dùng.
 3. Chuông, nút, đèn báo phòng: `cad/skills/ve/bao_chay/chuong_nut_den.md`. Dây zone (chia zone theo LUAT BC-04, X/Y, kẹp tường, đầu ra, điện trở cuối): `cad/skills/ve/bao_chay/day_zone.md`.
 4. Ống sprinkler, tư duy chung: `cad/skills/ve/tu-duy-di-day-di-ong.md`. `tuyen` `xuong_ca` chỉ là nháp; vị trí ống góp do người dùng chọn (lệnh `PCCC_TUYEN`, hoặc `qua` một điểm mỗi vùng).
