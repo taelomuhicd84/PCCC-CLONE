@@ -75,3 +75,21 @@ lối 1,5 m trục 3 mất dải 1 m cuối (khuôn cửa phòng đông thẳng 
   phòng nam; sảnh trái 2 đèn (x 401583) ngoài cửa 2 phòng tây nam; 1 đèn trong phòng 7,2 x 7,9 (cửa phòng con bên trong).
 - Phòng không chuông, không đèn: WC, kho 2,5 x 2,8 (có điện trở cuối), phòng TTBC 4,0 x 3,0, lối đi.
 - Điện trở cuối: (402407, −44885) phòng 6,0 x 3,9 tây nam; (426005, −29407) phòng hát bắc trục 4–5 sát tường xa hành lang; (437960, −45380) kho 2,5 x 2,8.
+
+## Khung 3 Căn hộ 441, tầng 1 (21/11; bản chép y −50 m, T1 x 176200..207200, y −53700..−45600)
+Mặt bằng: block `T1` (handle 50D0, 48 đối tượng: kiến trúc là block xref lồng `A$Ca48bff2d` 509 nét, phải nổ thêm), tầng lửng block `T2` (50D1).
+Tường 2 nét layer `xref_FRASER_ARC_TUONG$0$NA_01.TUONG`, cột = KHE HỞ tường giữa 2 nắp đầu tường (tô hatch, không có polyline cột), cửa sổ block `S23_plan`.
+Thiết bị mẫu cả khung (2 tầng): khói `ĐẦU BÁO CHÁY KHÓI` 19 (tầng 1: 10), `Đèn báo phòng` 9, điện trở cuối `A$Ccacc4903` 2, `A$C8b7f0307` 1; KHÔNG có chuông, nút ấn.
+LỖI 4 (ĐÃ SỬA, `GomCua`, test E15): block xref gom mọi cửa của tầng (layer `...NA_09. CUA`) có hộp bao cả mặt bằng (176244..203244 x −53733..−45733) bị coi
+là một cửa -> mọi khe 3–12 m "có cửa trong khe": khép 8,2 m ngang P.103 từ đầu cửa sổ, 7,8 m dọc trục 3... ra 8 vùng vụn (P.103, P.104 chỉ còn một mẩu
+vì `PhongThat` bỏ mặt chứa mặt khác). Sau sửa: 12 vùng, 13 đầu báo; mẫu 10.
+Đối chiếu tầng 1 (plugin / mẫu): hành lang trái 2 / 2; P.103 1 / 1; phòng 1,7 x 3,5 m 1 / 1; P.101 1 / 1; phòng phải P.102 1 / 1; P.102 + bếp mở 1 / 1; khu thang phải 1 / 1.
+Lệch (chưa sửa):
+- P.104 bị chẻ 2 vùng (2 / 1): khe 2,8 m giữa nắp tường mặt ngoài và nắp trụ 105 mm phía hành lang ở cột trục 3 (x 182644) thẳng hàng, ≤ 3 m nên luôn khép.
+  Thử luật "khe đi vuông góc ra khỏi nắp đầu tường" (nắp ≤ 0,45 m cùng phương khe + mặt tường dài vuông góc): phía hành lang chỉ có trụ 105 mm nên không bắt;
+  nhìn cục bộ thì nắp đầu tường và trụ nhỏ giữa hai cửa đối xứng nhau, chưa có dấu hiệu phân biệt chắc. Thừa 1 đầu báo, không thiếu bảo vệ.
+- Phòng tắm (bồn cầu, bồn tắm là block xref tên vô nghĩa) không nhận là WC: rải 1 (mẫu 0).
+- Ô X thông tầng phía phải (x ≈ 203200..207200, y ≈ −52900..−50300) dính dải bồn cây thành một mặt, `TachOX` không tách: rải 1 (mẫu 0).
+- Hành lang giữa (sảnh thang máy + đoạn trước cửa P.101, P.102, 9 m²) bị bỏ như sảnh thang (`bo_sanh_thang`); mẫu CÓ 1 đầu báo ở đoạn trước cửa P.101,
+  cách giếng thang ≈ 2,2 m. Luật người dùng 16–17/11 "sảnh thang máy không đặt đầu báo" chưa phân biệt sảnh thang thuần với hành lang chung có cửa phòng: HỎI người dùng.
+Đèn báo phòng tầng 1: ngoài cửa từng phòng ở (P.101–P.104, P.102), trên hành lang sát tường có cửa — khớp quan sát khung 5.

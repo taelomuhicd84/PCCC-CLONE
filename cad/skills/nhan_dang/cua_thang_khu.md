@@ -16,6 +16,9 @@ Mã: `CacMat` (khép khe cửa), `GomCua`, `GomKhu`, `HinhBac`, `TachOX`, `GomCh
 - Block cửa (hộp ≤ 3,5 m, có cung cánh cửa bên trong) KHÔNG góp nét làm tường, kể cả khi đặt trên layer tường (Karaoke ABC 21/11, người dùng khoanh đỏ):
   khuôn / cánh cửa bên này lối thẳng hàng cánh cửa phòng bên kia thành khe ≤ 3 m bị khép ngang lối, lối 1,5 m mất dải 1 m cuối; cánh cửa mở ra hành lang
   cắt tiền sảnh 1 m khỏi vùng hành lang. Chỉ gom ký hiệu cửa (cờ `TrongCua` trong `ThuNet`). Ô cửa vẫn khép nhờ khe giữa hai má tường.
+- Block tên / layer CỬA mà hộp bao rộng CẢ HAI chiều > 3,5 m không phải một cửa (căn hộ 441 21/11: block xref gom mọi cửa của tầng, hộp = cả mặt bằng,
+  làm mọi khe 3–12 m thành "có cửa trong khe", phòng vỡ vụn): không lấy hộp; cung cánh cửa bên trong vẫn được gom khi đọc lồng (`GomCua`, test E15).
+- Chưa giải (căn hộ 441): cột vẽ bằng KHE HỞ tường (2 nắp đầu tường + hatch) ở hai đầu một phòng hẹp ≤ 3 m: hai nắp thẳng hàng, khe ≤ 3 m luôn khép, chẻ phòng.
   Ngoại lệ "có cửa trong khe" của khe xuyên: hộp cửa chỉ nới 50 mm (0,3 m thì cửa vách ngang cách khe 0,2 m bị tính nhầm).
 - Ký hiệu cửa: cung `ARC` hoặc cung `ELLIPSE` gần tròn (tỉ lệ trục ≥ 0,8; block cửa Karaoke `A$Cf159a6b7` vẽ cánh bằng elip tỉ lệ 0,9, 95°), block / layer tên CUA, DOOR.
 - `vung_tu_dong` / bấm điểm: cửa rộng hơn 3 m (cửa cuốn) thì truyền `ho`. Lệnh này không dùng ký hiệu cửa (chỉ `PCCC_RAI` dùng), nên khe xuyên có má cửa vẫn khép.

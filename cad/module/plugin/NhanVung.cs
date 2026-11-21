@@ -394,6 +394,9 @@ namespace TKPCCC
                 string t = ChuanTen(ten + " " + (l == null ? "" : l.Name));
                 if (!t.Contains("CUA") && !t.Contains("DOOR")) return;
                 Extents3d x = br.GeometricExtents;
+                // Căn hộ 441 (21/11): block xref gom MỌI cửa của tầng (layer ...CUA) có hộp bao cả mặt bằng -> mọi khe 3–12 m thành "có cửa trong khe",
+                // khép giả cắt đôi phòng. Một cửa (kể cả cửa cuốn) luôn hẹp một chiều: hộp rộng cả hai chiều > 3,5 m không phải một cửa; cung cánh bên trong vẫn gom khi đọc lồng.
+                if (Math.Min(x.MaxPoint.X - x.MinPoint.X, x.MaxPoint.Y - x.MinPoint.Y) * 0.002 / n.Tol > 3.5) return;
                 n.Cua.Add(new[] { new Point2d(x.MinPoint.X, x.MinPoint.Y), new Point2d(x.MaxPoint.X, x.MaxPoint.Y) });
             }
             catch (System.Exception) { } // block hỏng, không có hộp bao: bỏ
@@ -805,9 +808,7 @@ namespace TKPCCC
         static bool MatKhongRai(List<Point2d> f, List<List<Point2d>> oX, List<List<Point2d>> gach)
         {
             Point2d c = DiemTrongMat(f);
-            // hatch tường gạch chéo: vòng ngoài = viền nhà, vòng trong = mặt phòng -> chẵn lẻ như AutoCAD tô (căn hộ 441, 21/11).
-            // shortcut: chẵn lẻ gộp mọi hatch, hai hatch gạch chéo chồng nhau thì triệt nhau; gặp thì nhóm vòng theo từng hatch.
-            return oX.Any(q => TrongDaGiac(q, c)) || gach.Count(q => TrongDaGiac(q, c)) % 2 == 1;
+            return oX.Concat(gach).Any(q => TrongDaGiac(q, c));
         }
 
         /// L7: cạnh hộp thang h [min, max] cách cạnh dọc / ngang của vùng z ≤ d (cạnh đó chồng bề ngang hộp) thì nắn ra đúng cạnh vùng,

@@ -761,3 +761,11 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
   như `PCCC_RAI` (`KtSauRai`), `kt:"cheo"` ép chéo góc; `cad/skills/vi_du/rai.json` đổi sang `"cheo"` (giữ 57 đối tượng); test kt:true vs cheo (10 / 14).
   `TU_VUNG.md`, `rai_dau_bao.md` cập nhật. Thử khung 5: 1 lệnh `rai SPR_DAU_DOWN l PCCC_VUNG` 82 đầu phun / 26 vùng, 451 ms, dim như báo cháy.
 - chay_thu, thu_mcp TAT CA DAT; bản vẽ thật dựng phòng 9,7 s.
+
+## 2026-11-21 chiều — Học bản mẫu: khung 3 Căn hộ 441 tầng 1 (phiên nhánh "Báo cháy (tt)")
+- Khung 3 không có block mặt bằng lớn trong khung: `T1` (48 đối tượng, kiến trúc là block xref lồng) và `T2` chèn ở toạ độ xa, hình rơi vào khung. Chép +
+  nổ 2 cấp ra y −50 m. Chạy PCCC_RAI qua COM phải ZOOM trước (không thì chọn cửa sổ ra 0 vùng).
+- LỖI 4: block xref gom mọi cửa của tầng (layer `...CUA`, hộp cả mặt bằng) bị coi là một cửa, mọi khe 3–12 m khép giả, 8 vùng vụn. `GomCua` bỏ hộp rộng
+  cả hai chiều > 3,5 m (test E15). Tầng 1: 12 vùng, 13 đầu báo, mẫu 10. Đã thử và bỏ: chẵn lẻ vòng hatch gạch chéo (không đổi kết quả), luật nắp đầu tường
+  (không phân biệt được với trụ nhỏ giữa hai cửa). Lệch còn lại + câu hỏi sảnh thang máy ghi ở `cad/skills/mau/hoc-bao-chay-ban-mau.md`.
+- Script gỡ lỗi mới `ket_qua/HOC_BAO_CHAY/cad/go_khung.ps1` (accoreconsole + plot PNG khung, `-Src` mã tạm có log, `-Hop` log cầu khép khe).
