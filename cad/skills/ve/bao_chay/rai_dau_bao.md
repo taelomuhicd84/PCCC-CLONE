@@ -12,6 +12,8 @@ Mã: `LuoiVung`, `DoiVao`, `PhuKin`, `KtLuoi` (`cad/module/plugin/Rai.cs`); thao
 - Lưới chia đều theo hộp vùng, cách tường ≤ S/2; điểm cách cạnh < `tuong_min` dời vào trong (kẹp theo hàng hoặc cột, khe hẹp thì đặt giữa khe) TRƯỚC khi phủ kín;
   phủ kín vùng lồi lõm, cạnh xiên bằng cách thêm thiết bị chỗ hở (`ho` > 0 thì nêu cho người dùng). `theo_hang` / câu hỏi Co/Khong: mỗi hàng chia lại theo bề rộng trống thật.
 - Kết quả `rai` có `m2`, `ho`, `cheo`; `kt`:true vẽ chuỗi kích thước bước, cách tường như lệnh PCCC_RAI (theo Cài đặt, mọi mã kể cả đầu phun), `kt`:"cheo" thêm chéo góc như TCVN 7568-14 Hình 2. Kiểm phủ kiểu bản mẫu: vòng R7200 ở đầu báo hàng biên.
+- Đầu phun dùng ké vùng báo cháy (người dùng 21/11): một lệnh `rai` `ma` SPR_..., `l` PCCC_VUNG + `hop`, `kt`:true. Phòng bị bỏ khi rải báo cháy
+  (WC, thang, sảnh thang) KHÔNG cần vùng đầu phun (người dùng chốt 21/11): không dựng thêm vùng cho chúng.
 - Xưởng mái kèo: mỗi khoang rải độc lập (khoang 20 x 6 m ra 2 đầu, 30 x 6 m ra 3 đầu, cách tường 5 m, cách vì kèo 3 m với h 9 m).
 
 ## Khoang dầm (trần hở)
