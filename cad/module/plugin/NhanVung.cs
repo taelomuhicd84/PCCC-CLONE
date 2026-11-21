@@ -94,6 +94,7 @@ namespace TKPCCC
             public List<Point2d[]> Cua = new List<Point2d[]>();                           // hộp bao [min, max] ký hiệu cửa (cung cánh, block cửa)
             public List<List<Point2d>> GachCheo = new List<List<Point2d>>();             // biên hatch gạch chéo = công trình hiện hữu (người dùng 14/11)
             public bool ChiCua;                                                           // đang đi trong block layer bị bỏ: chỉ gom ký hiệu cửa
+            public bool TrongCua;                                                         // đang đi trong block cửa (≤ 3,5 m, có cung cánh): chỉ gom ký hiệu cửa, kể cả layer tường
             public HashSet<string> LopKhoiDam;                                            // layer dầm khi đang đọc block mặt bằng dầm chép đè: khớp mọi màu
             public bool DocDam;                                                           // lượt đọc nét dầm (Mau = nét dầm mẫu)
             public HashSet<string> BoMau;                                                 // khoá "LAYER|màu" bỏ ra (nét dầm khi dựng tường)
@@ -270,8 +271,20 @@ namespace TKPCCC
                 if (br is Table || sau > 6) return;
                 DBObjectCollection con = new DBObjectCollection();
                 try { br.Explode(con); } catch (System.Exception) { }
-                bool cu = n.ChiCua;
+                bool cu = n.ChiCua, cuCua = n.TrongCua;
+                // Karaoke ABC 21/11: block cửa (≤ 3,5 m, có cung cánh cửa) đặt trên layer tường: khuôn, cánh cửa không phải tường. Trước đây khuôn cửa bên này lối
+                // thẳng hàng cánh cửa phòng bên kia thành khe ≤ 3 m bị khép ngang lối đi (lối 1,5 m trục 3 mất dải 1 m cuối). Chỉ gom ký hiệu cửa.
+                bool blockCua = false;
+                try
+                {
+                    Extents3d xb = br.GeometricExtents;
+                    double kb = 0.002 / n.Tol; // n.Tol = 2 mm theo đơn vị bản vẽ
+                    blockCua = Math.Max(xb.MaxPoint.X - xb.MinPoint.X, xb.MaxPoint.Y - xb.MinPoint.Y) * kb <= 3.5
+                        && con.Cast<DBObject>().Any(x => x is Entity && CungCua(n, (Entity)x) != null);
+                }
+                catch (System.Exception) { } // không có hộp bao: xử lý như block thường
                 n.ChiCua = chiCua;
+                n.TrongCua = cuCua || blockCua;
                 foreach (DBObject x in con)
                 {
                     Entity c = x as Entity;
@@ -279,9 +292,10 @@ namespace TKPCCC
                     x.Dispose();
                 }
                 n.ChiCua = cu;
+                n.TrongCua = cuCua;
                 return;
             }
-            if (chiCua) return;
+            if (chiCua || n.TrongCua) return;
             Hatch hg = e as Hatch;
             if (hg != null && loai >= 0 && LaGachCheo(hg)) n.GachCheo.AddRange(VongHatch(hg)); // hatch của plugin (PCCC_THOAT_NAN...) không phải công trình hiện hữu
             string kh = n.BoMau != null || n.Mau != null ? KhoaNet(n, lop, mau) : null;
@@ -348,22 +362,30 @@ namespace TKPCCC
 
         /// Ký hiệu cửa (người dùng chốt 14/11 "cứ có cửa mình khép lại 1 vùng"): cung cánh cửa (ARC hoặc elip tròn) 60–120°, bán kính 0,4–3 m (hộp bao tâm + 2 đầu cung);
         /// block có tên (kể cả tên block động) hoặc layer chứa CUA / DOOR (hộp bao block). Khe tường 3–12 m cắt hộp này thì khép (CacMat).
+        /// Cung cánh cửa: ARC hoặc cung elip gần tròn 60–120°, bán kính 0,4–3 m. Trả tâm + 2 đầu cung, không phải thì null.
+        static Point3d[] CungCua(NenVung n, Entity e)
+        {
+            Arc a = e as Arc;
+            Ellipse el = e as Ellipse; // Karaoke ABC 21/11: cánh cửa vẽ bằng cung elip gần tròn (block A$Cf159a6b7, layer "net mo": tỉ lệ 0,9, 95°)
+            if (a == null && (el == null || el.RadiusRatio < 0.8)) return null;
+            double goc = a != null ? a.TotalAngle * 180 / Math.PI : (el.EndAngle - el.StartAngle) * 180 / Math.PI;
+            if (goc < 0) goc += 360;
+            double r = (a != null ? a.Radius : el.MajorRadius) * 0.002 / n.Tol; // n.Tol = 2 mm theo đơn vị bản vẽ
+            if (goc < 60 || goc > 120 || r < 0.4 || r > 3) return null;
+            return a != null ? new[] { a.Center, a.StartPoint, a.EndPoint } : new[] { el.Center, el.StartPoint, el.EndPoint };
+        }
+
         static void GomCua(NenVung n, Entity e, ObjectId lop)
         {
             try
             {
-                Arc a = e as Arc;
-                Ellipse el = e as Ellipse; // Karaoke ABC 21/11: cánh cửa vẽ bằng cung elip gần tròn (block A$Cf159a6b7, layer "net mo": tỉ lệ 0,9, 95°)
-                if (a != null || (el != null && el.RadiusRatio >= 0.8))
+                Point3d[] q = CungCua(n, e);
+                if (q != null)
                 {
-                    double goc = a != null ? a.TotalAngle * 180 / Math.PI : (el.EndAngle - el.StartAngle) * 180 / Math.PI;
-                    if (goc < 0) goc += 360;
-                    double r = (a != null ? a.Radius : el.MajorRadius) * 0.002 / n.Tol; // n.Tol = 2 mm theo đơn vị bản vẽ
-                    if (goc < 60 || goc > 120 || r < 0.4 || r > 3) return;
-                    Point3d[] q = a != null ? new[] { a.Center, a.StartPoint, a.EndPoint } : new[] { el.Center, el.StartPoint, el.EndPoint };
                     n.Cua.Add(new[] { new Point2d(q.Min(p => p.X), q.Min(p => p.Y)), new Point2d(q.Max(p => p.X), q.Max(p => p.Y)) });
                     return;
                 }
+                if (e is Arc || e is Ellipse) return;
                 BlockReference br = e as BlockReference;
                 if (br == null || br is Table) return;
                 string ten = br.Name;
@@ -783,7 +805,9 @@ namespace TKPCCC
         static bool MatKhongRai(List<Point2d> f, List<List<Point2d>> oX, List<List<Point2d>> gach)
         {
             Point2d c = DiemTrongMat(f);
-            return oX.Concat(gach).Any(q => TrongDaGiac(q, c));
+            // hatch tường gạch chéo: vòng ngoài = viền nhà, vòng trong = mặt phòng -> chẵn lẻ như AutoCAD tô (căn hộ 441, 21/11).
+            // shortcut: chẵn lẻ gộp mọi hatch, hai hatch gạch chéo chồng nhau thì triệt nhau; gặp thì nhóm vòng theo từng hatch.
+            return oX.Any(q => TrongDaGiac(q, c)) || gach.Count(q => TrongDaGiac(q, c)) % 2 == 1;
         }
 
         /// L7: cạnh hộp thang h [min, max] cách cạnh dọc / ngang của vùng z ≤ d (cạnh đó chồng bề ngang hộp) thì nắn ra đúng cạnh vùng,
@@ -1014,14 +1038,15 @@ namespace TKPCCC
             }
             // Người dùng 17/11 (file KOCHAM): khe 11 m từ góc lõi ra mặt dựng chạm cung nắp bồn cầu / cửa ở đầu khe bị khép, cắt văn phòng.
             // Hộp cửa phải phủ ≥ 25 % chiều dài khe (cửa nằm TRONG khe), không chỉ chạm một đầu.
-            Func<Point2d, Point2d, Point2d[], bool> cuaTrongKhe = (a, b, h) =>
+            Func<Point2d, Point2d, Point2d[], double, bool> cuaTrong = (a, b, h, noi) =>
             {
                 double L = a.GetDistanceTo(b);
-                if (L < tol || !CatHop(a, b, h, tol * 150)) return false;
+                if (L < tol || !CatHop(a, b, h, noi)) return false;
                 Vector2d u = (b - a) / L;
                 double[] s = { u.DotProduct(h[0] - a), u.DotProduct(new Point2d(h[1].X, h[0].Y) - a), u.DotProduct(h[1] - a), u.DotProduct(new Point2d(h[0].X, h[1].Y) - a) };
                 return Math.Min(s.Max(), L) - Math.Max(s.Min(), 0) >= 0.25 * L;
             };
+            Func<Point2d, Point2d, Point2d[], bool> cuaTrongKhe = (a, b, h) => cuaTrong(a, b, h, tol * 150);
             // Karaoke ABC 21/11: tường ngăn hai bên hành lang thẳng hàng -> mặt tường hai bên cùng toạ độ, khe ngang hành lang 1,7 m bị khép như ô cửa,
             // hành lang vỡ 5 vùng. Ở CẢ HAI đầu khe có nét vuông góc chạy liền hai phía (mặt hành lang chạy tiếp qua đầu tường, chữ T) ngay tại đầu khe
             // hoặc cắt ngang khe trong 0,6 m (bề dày tường: khe đi từ mặt hành lang bên này qua tường tới góc phòng bên kia) = khe xuyên không gian liền,
@@ -1061,7 +1086,7 @@ namespace TKPCCC
                 double g = kv.Value[0].GetDistanceTo(kv.Value[1]);
                 if (ganNhat[kv.Key[0]] < g - tol || ganNhat[kv.Key[1]] < g - tol) continue;
                 // khe < 0,7 m không phải hành lang; khe > max(ho, 6 m) không cửa vốn không khép: khỏi xét (bản vẽ thật dựng phòng phải < 10 s)
-                if (g >= tol * 350 && g <= Math.Max(ho, tol * 3000) && dauXuyen(kv.Value[0], kv.Value[1]) && dauXuyen(kv.Value[1], kv.Value[0]) && !(cua != null && cua.Any(h => cuaTrongKhe(kv.Value[0], kv.Value[1], h)))) continue;
+                if (g >= tol * 350 && g <= Math.Max(ho, tol * 3000) && dauXuyen(kv.Value[0], kv.Value[1]) && dauXuyen(kv.Value[1], kv.Value[0]) && !(cua != null && cua.Any(h => cuaTrong(kv.Value[0], kv.Value[1], h, tol * 25)))) continue; // hộp cửa nới 50 mm: cửa vách ngang cách khe 0,2 m (Karaoke x 434170) không tính
                 if (g <= ho) cau.Add(kv.Value); else giu.Add(kv.Value);
             }
             // Hai khe song song (tường 2 nét có lỗ mở) chỉ khép khi khe ≤ 6 m: KOCHAM mặt cột mặt dựng thẳng hàng mặt vách lõi, khe 11 m giữa văn phòng bị khép.

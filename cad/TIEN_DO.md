@@ -62,7 +62,12 @@ Gỡ lỗi bằng accoreconsole trên bản lưu: kịch bản mẫu ghi trong `
 BƯỚC TIẾP: (3) lần lượt khung 3, 4, 6, 7, 8 (khung 2 đã học): chép + explode block mặt bằng ra y −50 m (`chep_no.ps1`), PCCC_RAI Enter mọi phòng, đối chiếu
 vùng + số đầu báo + chuông / nút / đèn với mẫu; kiểm luật kẹp tường bỏ cột lồi + nội thất trên khung có cột (trường học, nhà ở XH);
 rút luật chung chuông / nút / đèn rồi mới làm lệnh tự đặt; (4) mục 4 dây + điện trở cuối.
-Ghi chú chưa sửa: tiền sảnh 1 m sau cửa vách ngang hành lang (x 433170..434170) bị tách khỏi vùng hành lang đông ở bước SAU khép khe.
+21/11 trưa (người dùng khoanh đỏ 2 chỗ thiếu góc): LỖI 3 ĐÃ SỬA — nét trong block cửa (khuôn, cánh) không làm tường nữa (cờ `TrongCua`, test E14);
+lối trục 3 đủ tới tường đáy, hành lang đông đủ từ vách cửa x 433170. Khung 5 nay 26 vùng, 51 đầu báo (bản chép đã lưu với kết quả này).
+Người dùng 21/11: vùng + cách dim báo cháy để đầu phun DÙNG KÉ, không tốn thêm lần gọi: spec `rai` `kt:true` nay dim theo trang Cài đặt như `PCCC_RAI`
+(một nguồn: mặc định chuỗi, không chéo); `kt:"cheo"` ép chéo góc. Đã thử khung 5: 1 lệnh `rai SPR_DAU_DOWN l PCCC_VUNG hop ... kt:true` ra 82 đầu phun / 26 vùng, 451 ms.
+Chưa làm: bảng TCVN 7336 nguyên văn chưa có trong `knowledge/` nên đầu phun vẫn phải truyền `s`, `dt`; phòng bị bỏ khi rải báo cháy (WC, thang, sảnh thang)
+không có vùng nên đầu phun chưa dùng ké được ở đó (chờ người dùng chốt có cần vùng cho các phòng này không).
 
 ## VIỆC 20/11 — DẠY PLUGIN PHÂN VÙNG NHƯ AI (xưởng mái kèo): MÃ L1, L2, L5, L5b, L6, L7, L8: BUILD + TEST ĐẠT + COMMIT (chưa push); BẢN CHÉP 25 VÙNG = ĐÁP ÁN, 57 / 55 ĐB
 LƯỢT 9 (20/11 tối, phiên nhánh tự chạy sau reset): L7. `NhanVung.cs` `GomKhu`: block tên THANG BỘ / STAIR, hoặc `HinhBac` (≥ 6 đoạn song song dài bằng nhau 0,6–2,5 m,

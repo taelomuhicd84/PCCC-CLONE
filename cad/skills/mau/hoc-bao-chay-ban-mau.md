@@ -60,8 +60,10 @@ nguyên nhân KHÔNG phải nét `xref` mà là khe ngang hành lang giữa mặ
 (x 420972, 428570; cánh cửa vẽ bằng ELIP nên trước đó không nhận là cửa). Sau sửa (PCCC_RAI Enter mọi phòng, 26 vùng, 50 đầu báo):
 hành lang tây 401672..432970 một vùng 53,2 m² (mẫu cũng một chuỗi đầu báo cách 4,5 m suốt đoạn này, dim mẫu chạy liền tới vách cửa 2 cánh x 433070);
 hai lối 1,5–1,6 m phía nam có vùng (10,71 / 12,96 m², 1 / 2 đầu). Vách ngang x 432970–433170 có cửa đi = ranh vùng đúng (mẫu cũng tách).
-Còn lệch: vùng đông plugin 434170..444420 (17,4 m², 2 đầu), mẫu 433070..444520 (3 đầu); tiền sảnh 1 m sau cửa vách ngang (cánh cửa mở vào) thành mặt
-riêng nhỏ bị bỏ ở bước sau khép khe (chưa tìm bước nào cắt; bước khép khe đã bỏ khe x 434170). Không thiếu bảo vệ theo 7568 (đầu gần nhất cách vách 3,55 m). Chuông: mẫu có chuông ở từng phòng hát
+LỖI 3 (ĐÃ SỬA 21/11, người dùng khoanh đỏ 2 chỗ thiếu góc; `ThuNet` cờ `TrongCua`, test E14): nét trong block cửa (khuôn, cánh) làm tường:
+lối 1,5 m trục 3 mất dải 1 m cuối (khuôn cửa phòng đông thẳng hàng cánh cửa phòng tây, khe ≤ 3 m khép ngang lối); hành lang đông mất tiền sảnh 1 m
+(cánh cửa vách ngang mở ra hành lang + hộp cửa nới 0,3 m chạm khe x 434170). Sau sửa: lối trục 3 12,15 m² (đủ 1,5 x 8,1), hành lang đông 19,13 m²
+(433170..444420, như mẫu), mặt dựng 543 -> 234, 26 vùng, 51 đầu báo. Chuông: mẫu có chuông ở từng phòng hát
 (22 block chuông, 20 đèn báo phòng ngoài cửa), nút ấn 3 cái ở hành lang, 3 zone, mỗi zone 1 điện trở cuối. Chưa đối chiếu dây.
 
 ### Chuông, nút, đèn khung 5 (21/11, đối chiếu 26 vùng plugin; toạ độ bản chép y −50 m)

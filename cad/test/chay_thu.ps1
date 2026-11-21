@@ -198,6 +198,9 @@ $tlTrang = (& python -I "$GOC\cad\.claude\skills\tkpccc-ve-cad\scripts\pdf_ti_le
 #     Cung tim + le 600: buoc cuoi min(4000, 8400 / 2) = 4000, cach tuong 1000. Tim kin 8000 x 6000: 4 goc + 4 giua canh = 8.
 '{"goc":[600000,0],"ops":[{"op":"rai","ma":"SPR_DAU_DOWN","hop":[0,0,6300,4500],"s":4000,"dt":12,"le":[650,1100]},{"op":"rai","ma":"SPR_DAU_DOWN","vung":[[0,10000],[6300,10000],[6300,14500],[1100,14500],[1100,12500],[0,12500]],"s":4000,"dt":12,"le":[650,1100],"theo_hang":true},{"op":"tuyen","ma":"ONG_DN25","kieu":"noi_tiep"},{"op":"tuyen","ma":"ONG_DN25","kieu":"cot","p":[[0,21000],[0,24000],[3000,21000],[3000,24000],[3000,18000],[6000,22500]],"truc":[[1000,20000],[8000,20000]]},{"op":"rai","ma":"SPR_DAU_DOWN","tim":[[0,30000],[1500,30000],[11500,30000],[11500,39000]],"s":4000},{"op":"tuyen","ma":"ONG_DN25","kieu":"nhanh","truc":[[-1000,29000],[20000,29000]]},{"op":"rai","ma":"SPR_DAU_DOWN","tim":[[0,50000],[1500,50000],[11500,50000],[11500,59000]],"s":4000,"le":600},{"op":"rai","ma":"SPR_DAU_DOWN","tim":[[0,70000],[8000,70000],[8000,76000],[0,76000],[0,70000]],"s":4000}]}' |
   Set-Content -Encoding ascii "$T\rai_moi.json"
+# Nguoi dung 21/11: dau phun dung ke cach dim bao chay. rai kt:true theo trang Cai dat (mac dinh chuoi, khong cheo) nhu PCCC_RAI; kt:"cheo" them 4 dim cheo goc.
+'{"goc":[9700000,0],"ops":[{"op":"rai","ma":"SPR_DAU_DOWN","hop":[0,0,6500,4500],"buoc":[4000,3000],"kt":true}]}' | Set-Content -Encoding ascii "$T\rai_kt.json"
+'{"goc":[9800000,0],"ops":[{"op":"rai","ma":"SPR_DAU_DOWN","hop":[0,0,6500,4500],"buoc":[4000,3000],"kt":"cheo"}]}' | Set-Content -Encoding ascii "$T\rai_kt_cheo.json"
 # Review 2026-11-12 (dau vao dung nhu review):
 # CHAN: PDF bo doc underlay khong mo duoc (chi khoa sua, co mat khau mo, file hong) thi khong goi -PDFIMPORT (truoc day treo, nuot ca goi sau va QSAVE).
 & python -I "$GOC\cad\test\tao_pdf_mau.py" $T
@@ -334,7 +337,7 @@ $bamTv = (Get-FileHash "$T\PCCC_Blocks.dwg").Hash
   'PCCC_SPEC', "$T\spec.json", 'PCCC_SPEC', "$T\rai.json",
   'PCCC_SPEC', "$T\khoa_sai.json", 'PCCC_SPEC', "$T\khoa_dung.json", 'PCCC_SPEC', "$T\anh.json", 'PCCC_SPEC', "$T\pdf_sai.json", 'PCCC_SPEC', "$T\pdf.json",
   'PCCC_SPEC', "$T\pdf2.json", 'PCCC_SPEC', "$T\xoa2.json", 'PCCC_SPEC', "$T\rai_loi.json", 'PCCC_SPEC', "$T\tuyen_thu.json", 'PCCC_SPEC', "$T\nhan.json",
-  'PCCC_SPEC', "$T\rai_moi.json", 'PCCC_SPEC', "$T\pdf_mk.json", 'PCCC_SPEC', "$T\rv_tuyen.json", 'PCCC_SPEC', "$T\hoa.json", 'PCCC_SPEC', "$T\hoa_doc.json",
+  'PCCC_SPEC', "$T\rai_moi.json", 'PCCC_SPEC', "$T\rai_kt.json", 'PCCC_SPEC', "$T\rai_kt_cheo.json", 'PCCC_SPEC', "$T\pdf_mk.json", 'PCCC_SPEC', "$T\rv_tuyen.json", 'PCCC_SPEC', "$T\hoa.json", 'PCCC_SPEC', "$T\hoa_doc.json",
   'PCCC_SPEC', "$T\rv_hang.json", 'PCCC_SPEC', "$T\rv2.json", 'PCCC_SPEC', "$T\van.json", 'PCCC_SPEC', "$T\sua.json", 'PCCC_SPEC', "$T\bang_mb.json", 'PCCC_SPEC', "$T\so_do.json", 'PCCC_SPEC', "$T\so_do_loi.json", 'PCCC_SPEC', "$T\so_do_bc.json", 'PCCC_SPEC', "$T\so_do_bc_loi.json", 'PCCC_SPEC', "$T\so_do_bc_ng.json",
   'PCCC_SPEC', "$T\so_do_loc.json", 'PCCC_SPEC', "$T\so_do_bc2.json", 'INSUNITS', '6', 'PCCC_SPEC', "$T\so_do_m.json", 'INSUNITS', '1', 'PCCC_SPEC', "$T\rai_inch.json", 'INSUNITS', '0', 'PCCC_SPEC', "$T\rai_unitless.json", 'INSUNITS', '4', 'PCCC_SPEC', "$T\rai_xien.json", 'PCCC_SPEC', "$T\rai_hep.json",
   'RECTANG', '3000000,0', '3030600,20400', 'PCCC_RAI', 'BC_KHOI', '', '', 'L', '', '', '',
@@ -511,6 +514,8 @@ Kiem ($ktt -and $ktt.ok -eq $true -and $ktt.tuyen[0].doan -eq 4 -and $ktt.tuyen[
 Kiem ($ktt -and $ktt.tuyen[2].doan -eq 6 -and $ktt.tuyen[2].m -eq 31) "tuyen xuong_ca: qua theo tung vung, 2 vung 31 m (thay $($ktt.tuyen[2].m))"
 $knh = DocKq 'nhan'
 Kiem ($knh -and $knh.ok -eq $true -and $knh.ve -eq 6) "tuyen nhan: khong ghi chong chu DN25 len chu DN25 da co (ve $($knh.ve), can 6)"
+$kkt = DocKq 'rai_kt'; $kkc = DocKq 'rai_kt_cheo'
+Kiem ($kkt -and $kkc -and $kkt.ok -and $kkc.ok -and ($kkc.ve - $kkt.ve) -eq 4) "rai kt:true dim nhu PCCC_RAI theo Cai dat (khong cheo), kt:cheo them 4 dim cheo goc (ve $($kkt.ve) / $($kkc.ve))"
 $krm = DocKq 'rai_moi'
 $r0 = if ($krm) { $krm.rai[0] }
 Kiem ($krm -and $krm.ok -eq $true -and $r0.n -eq 4 -and $r0.bx -eq 4000 -and $r0.by -eq 2300 -and $r0.tuong[0] -eq 1150 -and $r0.tuong[1] -eq 1100 -and $r0.m2 -eq 9.2) `
@@ -1112,6 +1117,16 @@ foreach ($y in (0..8 | ForEach-Object { 6000 * $_ })) {
   '_.LINE', '1300000,4000', '1300000,6000', '', '_.LINE', '1320000,4000', '1320000,6000', '',
   '_.ELLIPSE', 'A', 'C', '1309900,6200', '1310800,6200', '810', '0', '90', '_.LINE', '1309900,6200', '1309900,7100', '',
   '-LAYER', 'S', '0', '', 'PCCC_RAI', 'BC_KHOI', '', '', 'C', '1299500,-500', '1320500,10500', '', '', '',
+  # E14 (Karaoke ABC 21/11, nguoi dung khoanh do): loi 1,5 x 8 m giua 2 phong 4 x 8 m tuong 1 net; 2 block cua (cung + canh) tren layer TUONG o hai ben loi,
+  #    canh mo vao phong, canh hai cua thang hang y 1000. Truoc sua: khe 1,5 m giua 2 canh cua khep ngang loi, loi mat dai 1 m cuoi; nay loi du 12 m2
+  '(princ "\n==E14==")', '-LAYER', 'M', 'TUONG', '', '_.ZOOM', 'W', '1399000,-1000', '1410500,9000',
+  '_.ARC', 'C', '1404000,1000', '1404000,1900', '1403100,1000', '_.LINE', '1404000,1000', '1403100,1000', '',
+  '-BLOCK', 'CUA_X', '1404000,1000', 'W', '1403050,950', '1404050,1950', '',
+  '-INSERT', 'CUA_X', '1404000,1000', '1', '', '0', '-INSERT', 'CUA_X', '1405500,1000', '-1', '1', '0',
+  '_.PLINE', '1404000,1000', '1404000,0', '1400000,0', '1400000,8000', '1404000,8000', '1404000,1900', '',
+  '_.PLINE', '1405500,1000', '1405500,0', '1409500,0', '1409500,8000', '1405500,8000', '1405500,1900', '',
+  '_.LINE', '1404000,0', '1405500,0', '', '_.LINE', '1404000,8000', '1405500,8000', '',
+  '-LAYER', 'S', '0', '', 'PCCC_RAI', 'BC_KHOI', '', '', 'C', '1399500,-500', '1410000,8500', '', '', '',
   '(princ "\n==EHET==")', '_.QSAVE')) -join "`r`n" | Set-Content -Encoding ascii "$T\kb7.scr"
 $p7 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb7.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb7.out.txt"
 if (-not $p7.WaitForExit(180000)) { Stop-Process -Id $p7.Id -Force; throw "accoreconsole qua 3 phut (review 20/11): $T\kb7.out.txt" }
@@ -1154,6 +1169,9 @@ Kiem ((DtVung $e12) -contains 40 -and (DtVung $e12) -notcontains 19.8) `
 $e13 = CaRv 'E13'
 Kiem (@(DtVung $e13 | Where-Object { $_ -gt 39.9 -and $_ -lt 40.1 }).Count -eq 1 -and @(DtVung $e13 | Where-Object { $_ -lt 15 }).Count -eq 0) `
   "Karaoke ABC 21/11: ma cua phong bac (canh elip) va tru loi thang hang tuong ngan nam khong khep khe ngang hanh lang: 1 vung ~40 m2 (vung=$((DtVung $e13) -join ','))"
+$e14 = CaRv 'E14'
+Kiem ((DtVung $e14) -contains 12 -and (DtVung $e14) -contains 32) `
+  "Karaoke ABC 21/11: net trong block cua (canh, khuon) tren layer tuong khong lam tuong: loi 1,5 x 8 m du 12 m2, phong 32 m2 (vung=$((DtVung $e14) -join ','))"
 
 # Thoi gian dung phong tren ban ve that cua nguoi dung (gitignore, chi chay khi co): truoc sua 78 s (23 trieu diem cat), nay < 10 s.
 $bvThat = Get-ChildItem "$GOC\file_cad_test" -Filter 'test b*o ch*y.dwg' -ErrorAction SilentlyContinue | Select-Object -First 1

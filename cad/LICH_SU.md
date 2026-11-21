@@ -751,3 +751,13 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
   Bản vẽ thật nhà máy: dựng phòng 9,4–9,6 s (mã cũ 9,7 s); 30 564 -> 25 400 mặt, khe bị bỏ đã xem trên ảnh: cầu ảo qua WC, mái che, lưới ngoài nhà.
 - Khung 5 sau sửa: 26 vùng, 50 đầu báo nhiệt; hành lang tây 1 vùng 53,2 m² như mẫu; 2 lối phía nam có vùng. Còn lệch: tiền sảnh 1 m sau cửa vách ngang
   hành lang đông bị tách ở bước sau khép khe (ghi `cad/skills/mau/hoc-bao-chay-ban-mau.md`).
+
+## 2026-11-21 trưa — Khung 5: 2 chỗ thiếu góc người dùng khoanh đỏ (Lỗi 3) + đầu phun dùng ké vùng, cách dim báo cháy
+- Lỗi 3: nét trong block cửa (khuôn, cánh) đặt trên layer tường được coi là tường. Khuôn cửa bên này lối 1,5 m trục 3 thẳng hàng cánh cửa phòng bên kia
+  -> khe ≤ 3 m khép ngang lối, mất dải 1 m cuối; cánh cửa vách ngang mở ra hành lang + hộp cửa nới 0,3 m chạm khe x 434170 -> mất tiền sảnh 1 m.
+  Sửa `NhanVung.cs`: block ≤ 3,5 m có cung cánh cửa (`CungCua`) chỉ gom ký hiệu cửa (cờ `TrongCua`, thắng cả layer tường); ngoại lệ "cửa trong khe" của khe xuyên
+  chỉ nới hộp cửa 50 mm. Test E14. Khung 5: lối trục 3 12,15 m², hành lang đông 19,13 m², mặt dựng 543 -> 234, 51 đầu báo.
+- Người dùng: đầu phun dùng ké nhận diện vùng + cách dim báo cháy, không gọi 2–3 lần. `Rai.cs` `KtRai`: spec `rai kt:true` dim theo trang Cài đặt
+  như `PCCC_RAI` (`KtSauRai`), `kt:"cheo"` ép chéo góc; `cad/skills/vi_du/rai.json` đổi sang `"cheo"` (giữ 57 đối tượng); test kt:true vs cheo (10 / 14).
+  `TU_VUNG.md`, `rai_dau_bao.md` cập nhật. Thử khung 5: 1 lệnh `rai SPR_DAU_DOWN l PCCC_VUNG` 82 đầu phun / 26 vùng, 451 ms, dim như báo cháy.
+- chay_thu, thu_mcp TAT CA DAT; bản vẽ thật dựng phòng 9,7 s.

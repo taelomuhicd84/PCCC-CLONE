@@ -969,14 +969,19 @@ namespace TKPCCC
         }
 
         /// Kích thước như bản mẫu (TCVN 7568-14 Hình 2): chuỗi tường, thiết bị, ..., tường của hàng trên cùng (đặt trên vùng) và cột trái cùng
-        /// (đặt bên trái vùng), tường lấy theo giao của hàng / cột với đa giác; mỗi góc lồi một kích thước chéo từ thiết bị gần nhất tới góc.
-        static void KtRai(GoiSpec g, List<Point2d> vung, LuoiRai r)
+        /// (đặt bên trái vùng), tường lấy theo giao của hàng / cột với đa giác. Người dùng 21/11 (đầu phun dùng ké cách dim của báo cháy, một lần gọi):
+        /// cách dim (có chéo góc hay không), kiểu dim, layer lấy ở trang Cài đặt như PCCC_RAI (KtSauRai); cheo = kt:"cheo" ép thêm dim chéo góc lồi.
+        static void KtRai(GoiSpec g, List<Point2d> vung, LuoiRai r, bool cheo)
         {
+            DimStyleTable dst = (DimStyleTable)g.Tr.GetObject(g.Db.DimStyleTableId, OpenMode.ForRead);
+            string ten = CaiDat.DimKieu();
+            bool coKieu = ten != "" && dst.Has(ten);
+            ObjectId kieu = coKieu ? dst[ten] : DamBaoKieuKt(g);
             double cao = LaySo(NhomKyHieu("kt"), "cao", 250);
-            ObjectId l = DamBaoLayer(g.Db, g.Tr, LAYER_KT_RAI, 8);
-            foreach (Dimension d in KtLuoi(vung, r.Diem, true, DamBaoKieuKt(g), cao, EPS_DIM_M / HeSoMet(g.Db)))
+            ObjectId l = DamBaoLayer(g.Db, g.Tr, CaiDat.DimLop(), 8);
+            foreach (Dimension d in KtLuoi(vung, r.Diem, cheo || CaiDat.DimDang() == CaiDat.DIM_CHUOI_CHEO, kieu, cao, EPS_DIM_M / HeSoMet(g.Db)))
             {
-                d.Dimscale = cao / 2.5;
+                if (!coKieu) d.Dimscale = cao / 2.5; // chưa chọn kiểu: cỡ chữ theo ky_hieu.json
                 d.LayerId = l;
                 Them(g, d);
             }
@@ -1144,7 +1149,8 @@ namespace TKPCCC
             if (sx <= 0 && bx <= 0 && tc != null) { sx = sy = D(Lay(tc, "s")) / m; tuongMax = LaySo(tc, "tuong", 0) / m; }
             if (sx <= 0 && bx <= 0)
                 throw new System.Exception("rai cần \"s\" (bước tối đa) hoặc \"buoc\" (bước đúng) lấy theo quy chuẩn áp dụng: mã " + ma + " chưa có trị số trong data/khoang_cach_rai.json");
-            bool kt = LayCo(o, "kt", false) && goc == 0;
+            bool ktCheo = "cheo".Equals(Lay(o, "kt") as string); // kt:"cheo" = chuỗi + dim chéo góc lồi; kt:true = theo trang Cài đặt
+            bool kt = (ktCheo || (!(Lay(o, "kt") is string) && LayCo(o, "kt", false))) && goc == 0;
             // "le": một số hoặc [x, y], cách tường theo từng phương; không có = mặc định (-1).
             double lex = -1, ley = -1;
             if (Lay(o, "le") != null)
@@ -1203,7 +1209,7 @@ namespace TKPCCC
                 }
                 g.DiemRai.Add(r.Diem);
                 g.VungRai.Add(d);
-                if (kt && r.Diem.Count > 0) KtRai(g, d, r);
+                if (kt && r.Diem.Count > 0) KtRai(g, d, r, ktCheo);
                 if (g.KqRai.Count < DOC_TOI_DA)
                     g.KqRai.Add(new Dictionary<string, object> { { "n", r.Diem.Count }, { "nx", r.Nx }, { "ny", r.Ny }, { "bx", Lt(r.Bx) }, { "by", Lt(r.By) },
                         { "tuong", new double[] { Lt(r.Tx), Lt(r.Ty) } }, { "m2", Math.Round(r.O * m * m, 2) }, { "ho", r.Ho },
