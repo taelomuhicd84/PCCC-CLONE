@@ -308,7 +308,7 @@ namespace TKPCCC
             if (n.Mau != null && (e is Hatch || !(n.Mau.Contains(kh) || (n.DocDam && lopDam)))) return;
             if (n.ChiTuong && loai != 2)
             {
-                if (loai != 1 || n.NetPhu == null || !(e is Line)) return;
+                if (loai != 1 || n.NetPhu == null || !(e is Line || (e is Polyline && !((Polyline)e).Closed))) return; // trường học 21/11: lan can vẽ polyline hở
                 ra = n.NetPhu;
             }
             if (!NetLien(n, net)) return; // trục (CENTER, DASHDOT), nét khuất
@@ -328,7 +328,7 @@ namespace TKPCCC
                         if (st == SegmentType.Line) { LineSegment2d s = pl.GetLineSegment2dAt(i); ThemDoan(n, ra, s.StartPoint, s.EndPoint); }
                         else if (st == SegmentType.Arc) ThemCurve2d(n, ra, pl.GetArcSegment2dAt(i));
                     }
-                    if (n.GomCot) GhiCotUng(n, pl, ra, dau);
+                    if (n.GomCot && ra != n.NetPhu) GhiCotUng(n, pl, ra, dau);
                 }
                 else if (h != null)
                 {
@@ -527,7 +527,8 @@ namespace TKPCCC
         static string LoaiKhuTen(string t)
         {
             if (t == "SAN" || t == "SANTRONG" || t == "SANVUON") return "sân";
-            foreach (string[] k in KHU_TEN) if (t.Contains(k[0])) return k[1];
+            // Trường học khung 6 (21/11): "PHÒNG BỘ MÔN" bỏ dấu, bỏ cách = PHONGBOMON chứa PHONGBOM, 3 phòng học bị bỏ như phòng bơm.
+            foreach (string[] k in KHU_TEN) if (t.Contains(k[0]) && !(k[0].EndsWith("BOM") && t.Contains(k[0] + "ON"))) return k[1];
             return null;
         }
 

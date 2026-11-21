@@ -36,7 +36,7 @@ cad/README.md, cad/CLAUDE.md, STRUCTURE.md, KE_HOACH_TONG.md. Kiểm xong: `pyth
 BƯỚC TIẾP: tạo cây + README; tách nội dung từng file cũ vào đúng file mới (không bỏ sót dòng, chép nguyên văn phần quy chuẩn); chép luật từ memory;
 sửa đường dẫn; kiểm; commit (không push). Làm theo lô nhỏ, mỗi lô một commit, để dừng kịp khi hết hạn mức.
 
-## VIỆC 20/11 (2) — HỌC RẢI BÁO CHÁY THEO BẢN MẪU (file_cad_test/TESTBCHAY_20_11.dwg): KHUNG 5 XONG; KHUNG 3, 4 XONG (LỖI 4–7 SỬA, E15–E20); TIẾP: KHUNG 6, 7, 8
+## VIỆC 20/11 (2) — HỌC RẢI BÁO CHÁY THEO BẢN MẪU (file_cad_test/TESTBCHAY_20_11.dwg): KHUNG 5 XONG; KHUNG 3, 4, 6 XONG (LỖI 4–10, E15–E21); TẠM DỪNG theo lời người dùng; còn KHUNG 7, 8
 Người dùng (20/11, chép ý): mỗi khung rectang = 1 công trình mẫu vẽ báo cháy đã thẩm định, là CHUẨN, phải tư duy như nó.
 1. Copy các block mặt bằng mẫu ra chỗ trống (KHÔNG sửa bản gốc), explode, rồi vẽ vùng rải báo cháy.
 2. Vùng kẹp sát mặt tường: tường 200 có cột 300 lồi ra 100 thì vùng chạy thẳng theo mặt tường 200, không bao phần cột lồi.
@@ -82,9 +82,15 @@ Script mới trong `ket_qua/HOC_BAO_CHAY/cad/`: `go_khung.ps1` (PCCC_RAI 1 khung
 Người dùng nhắc lại 21/11: "sảnh thang máy thì không, sảnh tiếp tân hoặc sảnh thì có" ⇒ phòng có chữ SẢNH (không THANG) / TIẾP TÂN / LỄ TÂN luôn rải (E20).
 Tầng 1 15 vùng / 20 ĐB, tầng 2 17 vùng / 20 ĐB (BC_KHOI); mọi đầu báo + đèn của mẫu nằm trong vùng plugin. Đầu phun 1 lần gọi: 69 + 63 đầu. Bản chép tầng 1 nguyên
 (còn hatch nổ) ở y −100 m. Bundle CHƯA build lại (AutoCAD đang mở `hoc_bao_chay.dwg`, chưa lưu kết quả rải GUI cũ ở y −100 m: xoá `PCCC_*` hộp đó trước khi rải lại).
-BƯỚC TIẾP: khung 6 (trường học, lớn: `A$Cc52e29cf`, `A$C4bb18544`), 7 (nhà ở XH: `MB TẦNG 1`, `A$Cbe9093c8`), 8 (Karaoke 991: `A$C1b64d7a5`, `A$C473f3ffb`):
-`tim_block.ps1` lấy handle → `chep_no.ps1 -H <h> -DY -50000` (lưu AutoCAD) → `go_khung.ps1 -P1 -P2 -Ten kN -Build` → `xuat.ps1` + `khop.py` (sửa hộp) đối chiếu
-→ `go_khung -Diem` gỡ chỗ thiếu vùng → ca thử tái hiện → sửa → `chay_thu` + `thu_mcp`. Mỗi khung báo: số vùng, số ĐB so mẫu, vùng thiếu góc, đầu phun 1 lần gọi.
+(3) KHUNG 6 TRƯỜNG HỌC XONG phần vùng 21/11 tối (chi tiết `hoc-bao-chay-ban-mau.md` mục Khung 6): LỖI 8 chữ PHÒNG BỘ MÔN khớp PHÒNG BƠM (E21),
+LỖI 9 `CumChinh` bỏ nhà thi đấu (cụm trong khung trục nay giữ; CHƯA có ca thử riêng), LỖI 10 lan can polyline hở (`LanCan`). 110 vùng, mọi đầu báo + điện trở
+cuối của mẫu nằm trong vùng; đầu phun 1 lần gọi 891 đầu. Bản chép khung 6 ở y −200 m (KHÔNG dùng −50 m: block kéo xa, đè khung 7–8).
+NGƯỜI DÙNG DẶN 21/11: làm xong trường học thì TẠM DỪNG (không tự sang khung 7, 8). Đang chờ người dùng trả lời: phần y 60–102 m của khung 6 (dãy phòng học
+phía trên, WC học sinh 79 m²) mẫu không đặt thiết bị, plugin vẫn rải: ngoài phạm vi / hiện hữu hay mẫu sót?
+KHI LÀM TIẾP (người dùng bảo): ca thử cho LỖI 9; khung 7 (nhà ở XH: tìm block bằng `tim_block.ps1 -Min 50`, tên `MB TẦNG 1`, `A$Cbe9093c8`), 8 (Karaoke 991:
+`A$C1b64d7a5`, `A$C473f3ffb`). Trước khi chép: lấy hộp bao block (COM `GetBoundingBox`), chọn độ dời không đè khung khác. Quy trình: `chep_no.ps1` → lưu →
+`go_khung.ps1 -P1 -P2 -Ten kN -Build` → `xuat.ps1` (đặt `XUAT_X0/X1/Y0/Y1`) + `khop.py file,x0,x1,dy,y0,y1` → `go_khung -Diem` gỡ chỗ thiếu vùng →
+ca thử tái hiện → sửa → `chay_thu` + `thu_mcp`. Bundle CHƯA build lại (AutoCAD đang mở `hoc_bao_chay.dwg`).
 Lỗi chưa sửa (khung 3, ghi ở file mẫu): khe 2,8 m giữa 2 nắp tường ở cột trục 3 (cột = khe hở tường) khép
 ngang P.104; WC block xref tên vô nghĩa không nhận; ô X lỗ thông tầng lẫn dải bồn cây không bỏ.
 

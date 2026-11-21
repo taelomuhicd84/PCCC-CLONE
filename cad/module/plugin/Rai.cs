@@ -1944,7 +1944,17 @@ namespace TKPCCC
                             }
                         }
                         int boPhong, boCum;
+                        // Trường học khung 6 (21/11): 2 tầng trong một lần chọn, nhà thi đấu tầng 1 cách dãy học một sân > 2 m thành cụm < 20 % cả tầng 2,
+                        // bị bỏ như hình chi tiết (mẫu có 15 đầu báo). Có lưới trục: phòng có tâm trong khung trục là mặt bằng thật, không xét cụm
+                        // (hình chi tiết ngoài trục đã lọc ở bo_ngoai_truc).
+                        List<List<Point2d>> trongKhung = khungTruc == null ? new List<List<Point2d>>() : vung.Where(f0 =>
+                        {
+                            Point2d c = DiemTrongMat(f0);
+                            return (double.IsNaN(khungTruc[0]) || (c.X >= khungTruc[0] && c.X <= khungTruc[2])) && (double.IsNaN(khungTruc[1]) || (c.Y >= khungTruc[1] && c.Y <= khungTruc[3]));
+                        }).ToList();
                         vung = CumChinh(vung, 2 / m, out boPhong, out boCum, f0 => nhanThem.TenPhong.Any(p => TrongDaGiac(f0, p)), TEN_PHONG_GAN_M / m);
+                        List<List<Point2d>> lai = trongKhung.Where(f0 => !vung.Contains(f0)).ToList();
+                        if (lai.Count > 0) { vung.AddRange(lai); boPhong -= lai.Count; boCum = Math.Min(boCum, boPhong); }
                         if (boPhong > 0) ed.WriteMessage("\n[TKPCCC] bo_cum=" + boCum + " phong=" + boPhong + " (cụm phòng nhỏ tách xa mặt bằng chính: hình chi tiết, mặt cắt; cần rải thì bấm điểm trong phòng).");
                         break;
                     }

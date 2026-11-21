@@ -119,3 +119,19 @@ tầng 2 ở y −50 m (x 334000..379000, y −62500..−41500; hatch tầng 2 l
   tầng 2 63 đầu / 17 vùng 314 ms, dim theo Cài đặt.
 - Đối chiếu bằng accoreconsole (không khoá AutoCAD): LISP xuất block mẫu + polyline `PCCC_VUNG` ra txt, Python khớp điểm trong vùng
   (`ket_qua/HOC_BAO_CHAY/cad/xuat.ps1 -Dwg <x.ra.dwg> -Ra <txt>` + `xuat.lsp`; `khop.py` sửa hộp khung / độ dời y trong file). `go_khung.ps1 -Diem 'x,y;x,y'` bấm điểm trong phòng để hỏi vì sao thiếu vùng.
+
+## Khung 6 Trường học (21/11, XONG phần vùng; còn câu hỏi phạm vi)
+Khung y −17533..129887 (cao hơn khung khác). Block `A$Cc52e29cf` (EFC3, 438 đối tượng) + `A$C4bb18544` (EFDC, 2150) chèn y −4351, hộp bao kéo tới
+x 1,42 triệu, y 109 m (nội dung xa ngoài khung): chép −50 m sẽ ĐÈ vùng khung 7–8 (đã làm nhầm, khôi phục `.bak`, bản sai lưu `hoc_bao_chay.k6sai.dwg`).
+Bản chép đúng ở y −200 m; chọn rải x 461967..747884, y −218000..−90000 (2 tầng cạnh nhau, khung trục x 490741..719595).
+- LỖI 8 (E21): chữ "PHÒNG BỘ MÔN" bỏ dấu, bỏ cách = PHONGBOMON chứa PHONGBOM ⇒ 3 phòng học 79–90 m² bị bỏ như phòng bơm.
+- LỖI 9: nhà thi đấu 618 m² + 7 phòng cạnh nó cách dãy học một sân > 2 m ⇒ `CumChinh` coi là cụm hình chi tiết (< 20 % cả tầng 2) và bỏ. Nay phòng có tâm
+  trong khung trục không xét cụm. (Chưa có ca thử riêng; gặp lại thì dựng ca 2 cụm trong 1 lưới trục.)
+- LỖI 10: lan can hành lang thoáng dọc thư viện vẽ polyline hở (layer `N_THAY 1` của xref): `LanCan` chỉ nhận LINE ⇒ thêm polyline hở.
+- Kết quả: 110 vùng; cả 120 đầu báo nhiệt + 8 điện trở cuối (`A$Ccacc4903`, 8 zone) của mẫu nằm trong vùng plugin; 35 đèn báo phòng đều trên tường cạnh cửa.
+  Mẫu có 20 `ZONE MONITOR` (layer `PC - THIET BI BAO CHAY`).
+- CHƯA RÕ (hỏi người dùng): mẫu KHÔNG đặt thiết bị nào ở phần y 60–102 m (dãy phòng học loại 2 phía trên, 2 khối WC học sinh 79 m², sảnh...), cả 2 tầng;
+  plugin vẫn rải ở đó (~40 vùng). Không thấy chữ phạm vi / hiện hữu; tên xref "mat bang cai tao tret - mai" (cải tạo).
+- WC học sinh 79 m² có chữ "VỆ SINH" nhưng > 60 m² nên không bị `bo_khu_khong_bao` bỏ (luật ≤ 60 m²).
+- Đầu phun 1 lần gọi: 891 đầu / 110 vùng, 1,5 s (kết quả spec chỉ liệt kê 40 vùng đầu, `DOC_TOI_DA`; đếm bằng `dem`).
+- `xuat.ps1` nay nhận `XUAT_X0/X1/Y0/Y1` (biến môi trường), `khop.py file,x0,x1,dy,y0,y1`.

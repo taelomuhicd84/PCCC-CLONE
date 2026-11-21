@@ -788,3 +788,10 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
 - Người dùng nhắc lại: "sảnh thang máy thì không, sảnh tiếp tân hoặc sảnh thì có" ⇒ chữ SẢNH (không THANG) / TIẾP TÂN / LỄ TÂN trong phòng: luôn rải (E20).
 - Khung 4 nay: tầng 1 15 vùng, tầng 2 17 vùng; mọi đầu báo nhiệt + đèn báo phòng của mẫu nằm trong vùng plugin (đối chiếu bằng LISP xuất txt + Python,
   không khoá AutoCAD). Đầu phun 1 lần gọi: 69 + 63 đầu. `chay_thu` + `thu_mcp` TAT CA DAT. Bundle chưa build lại.
+
+## 2026-11-21 tối — Học bản mẫu: khung 6 Trường học (tạm dừng sau khung này theo lời người dùng)
+- Khung cao tới y 129887; block mặt bằng kéo tới x 1,42 triệu: chép −50 m đè vùng khung 7–8, đã khôi phục `.bak` và chép lại ra y −200 m.
+- LỖI 8 (E21): "PHÒNG BỘ MÔN" → PHONGBOMON khớp PHONGBOM, 3 phòng học bị bỏ như phòng bơm. LỖI 9: nhà thi đấu bị `CumChinh` bỏ (cụm < 20 % tầng 2);
+  phòng trong khung trục nay không xét cụm. LỖI 10: lan can polyline hở chưa được `LanCan` nhận.
+- 110 vùng; mọi đầu báo nhiệt (120) + điện trở cuối (8) của mẫu nằm trong vùng plugin. Đầu phun 1 lần gọi 891 đầu / 1,5 s.
+- Hỏi người dùng: phần y 60–102 m mẫu không có thiết bị, plugin vẫn rải.

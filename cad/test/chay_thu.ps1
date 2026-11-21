@@ -1172,6 +1172,10 @@ foreach ($y in (0..8 | ForEach-Object { 6000 * $_ })) {
   '_.RECTANG', '2000300,7300', '2004700,9700', '_.LINE', '2000300,7300', '2004700,9700', '', '-BLOCK', 'THANG_MAY3', '2000000,7000', 'W', '2000200,7200', '2004800,9800', '',
   '-INSERT', 'THANG_MAY3', '2000000,7000', '1', '', '0', '_.ZOOM', 'W', '1999000,-1000', '2016000,11000',
   'PCCC_RAI', 'BC_KHOI', '', '', 'C', '1999500,-500', '2015500,10500', '', '', '',
+  # E21 (truong hoc khung 6, 21/11): phong 10 x 8 m co chu "PHONG BO MON" (bo dau, bo cach = PHONGBOMON chua PHONGBOM): truoc sua bo nhu phong bom
+  '(princ "\n==E21==")', '-LAYER', 'M', 'TUONG', '', '_.ZOOM', 'W', '2099000,-1000', '2111000,9000',
+  '_.RECTANG', '2100000,0', '2110000,8000', '-LAYER', 'S', '0', '', '_.TEXT', '2101000,4000', '300', '0', 'PHONG BO MON',
+  'PCCC_RAI', 'BC_KHOI', '', '', 'C', '2099500,-500', '2110500,8500', '', '', '',
   '(princ "\n==EHET==")', '_.QSAVE')) -join "`r`n" | Set-Content -Encoding ascii "$T\kb7.scr"
 $p7 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb7.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb7.out.txt"
 if (-not $p7.WaitForExit(180000)) { Stop-Process -Id $p7.Id -Force; throw "accoreconsole qua 3 phut (review 20/11): $T\kb7.out.txt" }
@@ -1235,6 +1239,9 @@ Kiem ((DtVung $e19) -contains 21.6 -and (DtVung $e19) -contains 16.5) `
 $e20 = CaRv 'E20'
 Kiem ($e20 -notmatch 'bo_sanh_thang' -and (DtVung $e20) -contains 15) `
   "Nguoi dung 21/11: phong sat gieng thang co chu SANH TIEP TAN la sanh chung, khong bo nhu sanh thang may: rai 15 m2 (vung=$((DtVung $e20) -join ','))"
+$e21 = CaRv 'E21'
+Kiem ($e21 -notmatch 'bo_khu_ten' -and (DtVung $e21) -contains 80) `
+  "Truong hoc 21/11: chu PHONG BO MON (PHONGBOMON) khong phai phong bom: rai 80 m2 (vung=$((DtVung $e21) -join ','))"
 
 # Thoi gian dung phong tren ban ve that cua nguoi dung (gitignore, chi chay khi co): truoc sua 78 s (23 trieu diem cat), chay rieng 9,7-9,9 s (21/11), ca bo test may ban 11-13 s: moc 15 s.
 $bvThat = Get-ChildItem "$GOC\file_cad_test" -Filter 'test b*o ch*y.dwg' -ErrorAction SilentlyContinue | Select-Object -First 1

@@ -35,7 +35,7 @@ Mã: `CacMat` (khép khe cửa), `GomCua`, `GomKhu`, `HinhBac`, `TachOX`, `GomCh
 
 ## Khu không đặt đầu báo
 - Lõi thang máy, sảnh thang máy, buồng thang bộ, WC (người dùng 16/11): phòng ≤ 60 m² chứa dấu hiệu (tên block, layer, chữ phòng; block `BON_CAU`...) bị bỏ (`bo_khu_khong_bao=`).
-- Chữ khu (L5, 19/11): "MÁI CHE", "KHÔNG CÓ CÔNG NĂNG", "SÂN", "HIỆN HỮU" (cả khi không gạch chéo), "PHÒNG BƠM": phòng ≤ 100 m², hoặc ≤ 500 m² hình dải
+- Chữ khu (L5, 19/11): "MÁI CHE", "KHÔNG CÓ CÔNG NĂNG", "SÂN", "HIỆN HỮU" (cả khi không gạch chéo), "PHÒNG BƠM" (KHÔNG khớp "PHÒNG BỘ MÔN": bỏ dấu, bỏ cách cũng ra PHONGBOM…, trường học 21/11, test E21): phòng ≤ 100 m², hoặc ≤ 500 m² hình dải
   (rộng TB 2A/P ≤ 6 m, review 21/11) chứa tâm chữ bị bỏ (`bo_khu_ten=`); phòng khác chỉ báo (`chu_khu_trong_phong_lon`): người dùng vẽ `PCCC_VUNG` tách ra.
   MaiKeo: khoang chứa chữ chỉ bỏ khi là khoang đầu / cuối theo phương chia và < 0,9 x diện tích khoang trung vị (`mai_keo bo_khoang_khu_ten=`);
   chữ ở khoang giữa (mái che dọc cạnh dài không tường ngăn) chỉ báo (`mai_keo chu_khu_khoang_giua=`).
