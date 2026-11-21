@@ -62,4 +62,14 @@ hành lang tây 401672..432970 một vùng 53,2 m² (mẫu cũng một chuỗi �
 hai lối 1,5–1,6 m phía nam có vùng (10,71 / 12,96 m², 1 / 2 đầu). Vách ngang x 432970–433170 có cửa đi = ranh vùng đúng (mẫu cũng tách).
 Còn lệch: vùng đông plugin 434170..444420 (17,4 m², 2 đầu), mẫu 433070..444520 (3 đầu); tiền sảnh 1 m sau cửa vách ngang (cánh cửa mở vào) thành mặt
 riêng nhỏ bị bỏ ở bước sau khép khe (chưa tìm bước nào cắt; bước khép khe đã bỏ khe x 434170). Không thiếu bảo vệ theo 7568 (đầu gần nhất cách vách 3,55 m). Chuông: mẫu có chuông ở từng phòng hát
-(22 block chuông, 20 đèn báo phòng ngoài cửa), nút ấn 3 cái ở hành lang, 3 zone, mỗi zone 1 điện trở cuối. Chưa đối chiếu chuông, nút, dây.
+(22 block chuông, 20 đèn báo phòng ngoài cửa), nút ấn 3 cái ở hành lang, 3 zone, mỗi zone 1 điện trở cuối. Chưa đối chiếu dây.
+
+### Chuông, nút, đèn khung 5 (21/11, đối chiếu 26 vùng plugin; toạ độ bản chép y −50 m)
+Đếm: nhiệt `A$Cfb28fa55` 63, chuông `A$Cdca0159f` 22, đèn `Đèn báo phòng` 20, nút `A$C9835e11b` 3, điện trở cuối `A$Ccacc4903` 3, TTBC `A$C81605030` 1.
+- Chuông 19 / 22 nằm trong phòng, mỗi phòng một: 10 phòng hát bắc 3,4–4,0 x 7,6 m (y −36135: sát tường hành lang, cạnh cửa), phòng nam 6,0 x 3,9 và
+  7,6 x 3,8 (x 401935 / 411435 / 421035: cách tường trái ≈ 0,26 m), phòng lớn 4,2 / 3,9 / 7,2 x 7,9 m. 3 chuông còn lại đi cặp nút (cách nút ≈ 0,4 m).
+- Nút + chuông: sảnh trái (398644, −36788) cạnh lối vào; giữa hành lang (420971, −36808); lối ra đông (444474, −37178, ngoài vùng 0,8 m = ô cửa ra).
+- Đèn báo phòng: hành lang y −36655 (sát tường bắc, ngoài cửa phòng bắc) và y −37984 (sát tường nam); lối đi 1,5–1,6 m (x 411083, 420683) ngoài cửa
+  phòng nam; sảnh trái 2 đèn (x 401583) ngoài cửa 2 phòng tây nam; 1 đèn trong phòng 7,2 x 7,9 (cửa phòng con bên trong).
+- Phòng không chuông, không đèn: WC, kho 2,5 x 2,8 (có điện trở cuối), phòng TTBC 4,0 x 3,0, lối đi.
+- Điện trở cuối: (402407, −44885) phòng 6,0 x 3,9 tây nam; (426005, −29407) phòng hát bắc trục 4–5 sát tường xa hành lang; (437960, −45380) kho 2,5 x 2,8.

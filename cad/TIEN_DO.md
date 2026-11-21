@@ -55,8 +55,13 @@ hai bên + má cửa phòng; cánh cửa vẽ bằng ELIP chưa nhận là cửa
 `cad/skills/nhan_dang/cua_thang_khu.md`; kết quả + lệch còn lại ở `cad/skills/mau/hoc-bao-chay-ban-mau.md`. Khung 5 nay 26 vùng, 50 đầu báo; hành lang tây
 1 vùng, 2 lối phía nam có vùng. Bản chép đang có vùng + đầu báo plugin của lần chạy cuối (xoá: `xoa l "PCCC_*" hop [386000,-49000,450000,-25000]`).
 Gỡ lỗi bằng accoreconsole trên bản lưu: kịch bản mẫu ghi trong `hoc-bao-chay-ban-mau.md` mục Cách làm.
-BƯỚC TIẾP: (2b) khung 5 đối chiếu chuông (mẫu: mỗi phòng hát 1 chuông), nút ấn (3), đèn báo phòng; (3) lần lượt khung 3, 4, 6, 7, 8 (khung 2 đã học);
-kiểm luật kẹp tường bỏ cột lồi + nội thất trên khung có cột (trường học, nhà ở XH); (4) mục 4 dây + điện trở cuối.
+(2b) XONG 21/11: khung 5 chuông / nút / đèn / điện trở cuối đã đếm + đối chiếu vùng (quan sát ở `cad/skills/ve/bao_chay/chuong_nut_den.md`, số liệu
+`hoc-bao-chay-ban-mau.md`). Plugin chưa tự đặt chuông, nút, đèn: chờ thêm khung để tách luật chung. Script đếm thiết bị mẫu theo vùng plugin:
+`ket_qua/HOC_BAO_CHAY/cad/tb_khung.ps1` (hộp khung 5 viết cứng trong script, sửa toạ độ khi sang khung khác; cột `cach_mep` tính sai, đừng dùng);
+`go_k5.ps1` = gỡ lỗi PCCC_RAI khung 5 trong accoreconsole.
+BƯỚC TIẾP: (3) lần lượt khung 3, 4, 6, 7, 8 (khung 2 đã học): chép + explode block mặt bằng ra y −50 m (`chep_no.ps1`), PCCC_RAI Enter mọi phòng, đối chiếu
+vùng + số đầu báo + chuông / nút / đèn với mẫu; kiểm luật kẹp tường bỏ cột lồi + nội thất trên khung có cột (trường học, nhà ở XH);
+rút luật chung chuông / nút / đèn rồi mới làm lệnh tự đặt; (4) mục 4 dây + điện trở cuối.
 Ghi chú chưa sửa: tiền sảnh 1 m sau cửa vách ngang hành lang (x 433170..434170) bị tách khỏi vùng hành lang đông ở bước SAU khép khe.
 
 ## VIỆC 20/11 — DẠY PLUGIN PHÂN VÙNG NHƯ AI (xưởng mái kèo): MÃ L1, L2, L5, L5b, L6, L7, L8: BUILD + TEST ĐẠT + COMMIT (chưa push); BẢN CHÉP 25 VÙNG = ĐÁP ÁN, 57 / 55 ĐB
