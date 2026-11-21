@@ -1873,6 +1873,20 @@ namespace TKPCCC
                                 string[] loaiKhu = nhanThem.KhuTen.Where(kv => TrongDaGiac(fk, kv.Key)).Select(kv => kv.Value).Distinct().ToArray();
                                 if (loaiKhu.Length == 0) continue;
                                 double dtKhu = DienTichDaGiac(fk) * m * m, cvKhu = 0;
+                                // Review 21/11: luật L5 chỉ nói phòng bơm PCCC ĐỨNG RIÊNG. Phòng bơm thuộc cụm mặt bằng chính (CumChinh, nằm trong nhà, tầng hầm) xét theo
+                                // hạng mục: vẫn rải, chỉ báo. Nhà bơm tách rời (Quyết Thắng: nhà bơm 11,4 m² sát bể nước, cụm nhỏ) vẫn bỏ. Cụm tính không kể phòng có chữ khu
+                                // khác: mái che 187 m² chưa bỏ nối nhà bơm Quyết Thắng vào xưởng.
+                                if (loaiKhu.All(l => l.EndsWith("bơm")))
+                                {
+                                    int b0, b1;
+                                    List<List<Point2d>> xetBom = vung.Where(g0 => g0 == fk || !nhanThem.KhuTen.Any(kv => TrongDaGiac(g0, kv.Key))).ToList();
+                                    if (CumChinh(xetBom, 2 / m, out b0, out b1).Contains(fk))
+                                    {
+                                        ed.WriteMessage("\n[TKPCCC] phong_bom_trong_nha m2=" + Math.Round(dtKhu, 1).ToString(CultureInfo.InvariantCulture)
+                                            + " (thuộc khối nhà chính: vẫn rải; phòng bơm đứng riêng không thuộc hạng mục thì xoá đầu báo trong phòng đó).");
+                                        continue;
+                                    }
+                                }
                                 for (int i = 0; i < fk.Count; i++) cvKhu += fk[i].GetDistanceTo(fk[(i + 1) % fk.Count]) * m;
                                 // Review 20/11 (CHẶN 3): phòng 100–500 m² chỉ bỏ khi là dải (rộng TB 2A/P ≤ 6 m); xưởng nhỏ 15 x 30 m có góc mái che ghi chữ thì vẫn rải.
                                 if (dtKhu <= 100 || (dtKhu <= 500 && cvKhu > 0 && 2 * dtKhu / cvKhu <= 6))
@@ -1917,7 +1931,7 @@ namespace TKPCCC
                             }
                         }
                         int boPhong, boCum;
-                        vung = CumChinh(vung, 2 / m, out boPhong, out boCum, f0 => nhanThem.TenPhong.Any(p => TrongDaGiac(f0, p)));
+                        vung = CumChinh(vung, 2 / m, out boPhong, out boCum, f0 => nhanThem.TenPhong.Any(p => TrongDaGiac(f0, p)), TEN_PHONG_GAN_M / m);
                         if (boPhong > 0) ed.WriteMessage("\n[TKPCCC] bo_cum=" + boCum + " phong=" + boPhong + " (cụm phòng nhỏ tách xa mặt bằng chính: hình chi tiết, mặt cắt; cần rải thì bấm điểm trong phòng).");
                         break;
                     }
@@ -2001,7 +2015,8 @@ namespace TKPCCC
                 List<List<Point2d>> maiCheMk = new List<List<Point2d>>(); // khoang bỏ vì chữ mái che / không có công năng: L5b lan sang phòng nhỏ sát nó
                 foreach (List<Point2d> zMk in vung)
                 {
-                    List<Point2d[]> vk = DuongViKeo(zMk, nhanThem.Cot, m);
+                    // Review 21/11: phòng có tên phòng (văn phòng, phòng họp) giữ nguyên, không chia theo hàng cột mượn của xưởng bên (L3).
+                    List<Point2d[]> vk = nhanThem.TenPhong.Any(p => TrongDaGiac(zMk, p)) ? new List<Point2d[]>() : DuongViKeo(zMk, nhanThem.Cot, m);
                     List<List<Point2d>> kcMk = vk.Count == 0 ? new List<List<Point2d>> { zMk } : ChiaKhoang(zMk, vk, 0.002 / m, m);
                     if (kcMk.Count >= 2)
                     {
@@ -2041,15 +2056,16 @@ namespace TKPCCC
                     soKhoangMk += kcMk.Count;
                 }
                 // L5b (người dùng 20/11 "Không rải", xưởng Quyết Thắng): "KHU VỰC MÁI CHE" phía nam bị nét chia thành nhiều mặt, chữ chỉ nằm trong một khoang.
-                // Phòng ≤ 100 m² không có chữ "PHÒNG", không phải khoang xưởng, cách khoang mái che đã bỏ (hoặc phòng vừa bỏ theo luật này) ≤ 0,3 m thì bỏ theo.
-                // shortcut: lan theo khoảng cách đỉnh – cạnh; kho nhỏ có tường dưới mái che mà không ghi chữ PHÒNG cũng bị bỏ (dòng lệnh báo m², bấm điểm để rải lại).
+                // Phòng ≤ 100 m² không có chữ tên nào (review 21/11: trước chỉ chữ "PHÒNG" giữ được, KHO 1 / KHO 2 bị bỏ), không phải khoang xưởng,
+                // cách khoang mái che đã bỏ (hoặc phòng vừa bỏ theo luật này) ≤ 0,3 m thì bỏ theo.
+                // shortcut: lan theo khoảng cách đỉnh – cạnh; kho nhỏ có tường dưới mái che mà không ghi chữ nào cũng bị bỏ (dòng lệnh báo m², bấm điểm để rải lại).
                 double keMc = 0.3 / m;
                 Func<List<Point2d>, List<Point2d>, bool> keNhau = (a0, b0) => a0.Any(p0 => CachVien(b0, p0) <= keMc) || b0.Any(p0 => CachVien(a0, p0) <= keMc);
                 List<List<Point2d>> boKe = new List<List<Point2d>>();
                 for (List<List<Point2d>> nguon = maiCheMk; nguon.Count > 0; )
                 {
                     nguon = moiMk.Where(x => !boKe.Contains(x) && !khoangChia.ContainsKey(x) && Math.Abs(DienTichDaGiac(x)) * m * m <= 100
-                        && !nhanThem.TenPhong.Any(t0 => TrongDaGiac(x, t0)) && nguon.Any(y0 => keNhau(x, y0))).ToList();
+                        && !nhanThem.TenChu.Any(t0 => TrongDaGiac(x, t0)) && nguon.Any(y0 => keNhau(x, y0))).ToList();
                     boKe.AddRange(nguon);
                 }
                 if (boKe.Count > 0)

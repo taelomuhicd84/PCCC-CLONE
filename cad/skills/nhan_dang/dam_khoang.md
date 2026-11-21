@@ -14,6 +14,8 @@ Mã: `PCCC_RAI` từ khoá `LoaiTran` [CoTran/KhongTran/HonHop/MaiKeo], `Dam`, `
 ## Loại kết cấu quyết định khoang (người dùng 16/11, 19/11)
 - Nhà xưởng mái kèo: khoang theo VÌ KÈO (trục cột), mỗi khoang chạy hết bề rộng xưởng tới tường; KHÔNG chia theo xà gồ dù xà gồ > 0,3 m.
   Hàng vì kèo = hàng cột cắt ngang nhịp, cần ≥ 2 cột nằm trong bề ngang chính phòng (± 0,6 m); cột nhà khác không tạo hàng; hàng sát biên < nửa bước vì kèo gộp vào khoang kề.
+  Phòng không có hàng nào thì mượn hàng của cột cách ≤ 6 m (xưởng kề bên không vẽ cột), chỉ đếm cột trong bề ngang phòng nới thêm một bề ngang (review 21/11).
+  Phòng có chữ tên phòng (VĂN PHÒNG, PHÒNG HỌP) không chia theo vì kèo (L3).
   Xưởng không thấy cột: giả định theo hàng cột xưởng bên cạnh rồi hỏi. Chỉ chia phòng ≥ 200 m², hai cạnh ≥ 10 m có lưới cột bên trong.
 - Nhà nhiều tầng có sàn deck hoặc sàn BTCT: khoang theo DẦM SÀN (tầng 8 KOCHAM: dầm 400 cách 3,7 m ra 20 khoang).
 

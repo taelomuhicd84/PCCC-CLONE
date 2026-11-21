@@ -95,9 +95,17 @@ TAT CA DAT; bản vẽ thật dựng phòng 9,7 s (ngưỡng 10 s, trước 9,5�
 - CHẶN 1 `NhanVung.cs` `CacMat`: nét cột thẳng hàng VÀ chạm (≤ 50 mm) nét tường thường thì khép khe như tường (lần đầu tra theo toạ độ toàn bản vẽ thì QT
   lại ra ô giả: 39 vùng / 70 ĐB, nên phải xét chạm); khe có đầu là nét cột làm "khe song đôi" (`capCot`) cho khe tường; `GhiCotUng` bỏ hộp cạnh dài > 2,5 x cạnh ngắn.
   Ca E1 (cửa cuốn 5,2 m để trống giữa 2 cột, tường 2 nét): 415,36 m²; E8 (trụ polyline kín 1000 x 220): 58,71 m²; E2 CoTran giữ 40 / 42 m².
-CÒN (NÊN SỬA của review, chưa làm): L8 `TenPhong` giữ phòng có chữ PHÒNG trong hình chi tiết; `DuongViKeo` mượn hàng cột xưởng bên cắt phòng họp 15 x 15 m;
-L5 bỏ phòng bơm nằm trong nhà; L5b bỏ kho có chữ KHO / lan sang kho không sát mái che; `HinhBac` nhận nhầm block khác chưa thử. Luật đã ghi vào
-`cad/skills/nhan_dang/tuong_cot.md` (L1), `cua_thang_khu.md` (L5, L6). BƯỚC TIẾP: người dùng push từ tab Terminal; rồi NÊN SỬA hoặc việc người dùng giao.
+LƯỢT 12 (21/11 trưa, người dùng "Sửa lỗi đi"): SỬA XONG 5 NÊN SỬA review L1–L8 (commit cùng lượt, chưa push).
+- L8 `CumChinh(..., giu, ganTen)`: phòng có tên chỉ giữ khi hộp bao cách cụm lớn ≤ `TEN_PHONG_GAN_M` 10 m (ca 14 văn phòng cách 4 m giữ; E4 chi tiết cách 20 m bỏ);
+  chữ "PHÒNG CHÁY" không là tên phòng.
+- `DuongViKeo`: phòng có `TenPhong` không chia; lượt mượn chỉ đếm cột trong bề ngang phòng nới thêm một bề ngang (E9 không chia; E9B xưởng kề bên vẫn mượn được).
+- L5 phòng bơm: chỉ bỏ khi không thuộc cụm mặt bằng chính (cụm tính không kể phòng có chữ khu khác); trong nhà thì `phong_bom_trong_nha`, vẫn rải (E10).
+- L5b: `NhanThem.TenChu` (chữ ≥ 3 chữ cái, điểm chèn) chặn bỏ theo mái che: KHO 1 / KHO 2 giữ (E11); kho không chữ (ca 14) vẫn bỏ.
+- Test: kb7 thêm E4, E7 (L7: khoét, buồng thang, thang giữa phòng không khoét), E9, E9B, E10, E11. thu_mcp TAT CA DAT.
+  chay_thu 187 phép TAT CA DAT (lần cuối bản vẽ thật 9,7 s; hai lần trước 10,0–10,07 s, bản HEAD đo xen kẽ cũng 9,9–10,0 s: ngưỡng 10 s sát biên, do máy).
+- Bản chép QT (`kb8.scr`, đầu vào `qt_maikeo.dwg` → `qt_maikeo_8.dwg`): dòng lệnh y hệt kb7, 25 vùng / 57 ĐB.
+CÒN: `HinhBac` nhận nhầm block khác chưa thử; ngưỡng 10 s của phép đo bản vẽ thật sát biên (lúc trượt lúc đạt).
+BƯỚC TIẾP: người dùng push từ tab Terminal; rồi việc người dùng giao.
 LƯỢT 5 (người dùng "Làm L6"): `Rai.cs` khối Enter mọi phòng, sau L5: hiên = dải hẹp (rộng TB 2A/P ≤ 3 m, ≤ 200 m²) có ≥ 2 cột (`nhanThem.Cot`) nằm trong / cách viền
 ≤ 0,6 m mà cột đó không sát phòng khác còn lại → bỏ (`bo_hien=`). CHỈ chạy với `LoaiTran MaiKeo`: chạy mọi chế độ thì `test báo cháy.dwg` (CoTran, 506 cột) còn đúng 1 phòng
 hẹp 12,7 m² sát cột bị bỏ nốt, ca kiểm "rải được" hỏng (phòng kề đã bị bỏ ngoài trục nên không loại được cột). build + `chay_thu` + `thu_mcp` TAT CA DAT.

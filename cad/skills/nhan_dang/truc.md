@@ -12,7 +12,8 @@ Mã: `GomTruc`, `KhungTruc` trong `cad/module/plugin/NhanVung.cs`. Vẽ trục: 
 - Đường trục KHÔNG BAO GIỜ là biên vùng.
 - Tự nhận vùng (Enter mọi phòng, `vung_tu_dong`) chỉ lấy phòng nằm TRONG đường trục ngoài cùng (X-1..X-n, Y-1..Y-n).
   Phòng ngoài trục (mái che, phần tờ khác, khoảng giữa trục và ký hiệu trục) KHÔNG phân vùng khi người dùng chưa cho phép; bấm điểm trong phòng = cho phép.
-  Plugin: `bo_ngoai_truc=`. Ngoại lệ L8 (20/11): phòng có chữ tên phòng ("VĂN PHÒNG", có chữ PHÒNG trừ phòng bơm) nằm ngoài trục vẫn giữ.
+  Plugin: `bo_ngoai_truc=`. Ngoại lệ L8 (20/11): phòng có chữ tên phòng ("VĂN PHÒNG", có chữ PHÒNG trừ phòng bơm) nằm ngoài trục vẫn giữ,
+  nhưng cụm phòng nhỏ chứa nó phải cách cụm mặt bằng chính ≤ 10 m (review 21/11: hình chi tiết cách 20 m có "PHÒNG KỸ THUẬT" bị rải). Chữ "PHÒNG CHÁY CHỮA CHÁY" (khung tên) không phải tên phòng.
 
 ## PDF
 Trục cũng là thước kiểm tỉ lệ khi nhập PDF: `cad/skills/nhan_dang/pdf.md`.

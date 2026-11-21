@@ -733,3 +733,11 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
 - `chay_thu.ps1` thêm bản vẽ kb7 (6 ca E1, E2 MaiKeo / CoTran, E3, E5, E8), ca 14 nhà văn phòng tường 2 nét. chay_thu, thu_mcp TAT CA DAT.
 - Bản chép Quyết Thắng `qt_maikeo_7.dwg`: 25 vùng, 57 đầu báo, không đổi. Lần thử đầu tra tường thẳng hàng theo toạ độ toàn bản vẽ ra 39 / 70: phải xét chạm.
 
+## 2026-11-21 (trưa) — Sửa 5 NÊN SỬA review mốc L1–L8
+- L8: phòng có tên trong hình chi tiết xa mặt bằng (> 10 m) bỏ theo cụm; "PHÒNG CHÁY" (khung tên) không là tên phòng.
+- `DuongViKeo`: không chia phòng có tên phòng; lượt mượn hàng cột giới hạn trong bề ngang phòng nới một bề ngang.
+- L5: phòng bơm thuộc cụm mặt bằng chính vẫn rải (`phong_bom_trong_nha`). Lần thử đầu dùng "sát phòng khác ≤ 2 m": nhà bơm QT sát bể nước bị báo nhầm;
+  lần hai dùng `CumChinh` trên mọi phòng: mái che 187 m² chưa bỏ nối nhà bơm vào xưởng. Chốt: cụm không kể phòng có chữ khu khác.
+- L5b: phòng có chữ tên bất kỳ (≥ 3 chữ cái) không bỏ theo mái che. Lấy điểm chèn chữ, không tính hộp bao (đo: hộp bao không phải nguyên nhân chậm).
+- Test kb7: E4, E7, E9, E9B, E10, E11. chay_thu 187 phép, thu_mcp TAT CA DAT. Bản vẽ thật dựng phòng 9,7–10,07 s qua 3 lần (HEAD đo xen kẽ 9,9–10,0 s): ngưỡng 10 s sát biên.
+- Bản chép Quyết Thắng `qt_maikeo_8.dwg` (đầu vào `qt_maikeo.dwg`): dòng lệnh y hệt kb7, 25 vùng / 57 đầu báo.

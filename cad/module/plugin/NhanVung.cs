@@ -107,6 +107,7 @@ namespace TKPCCC
             public List<CotUng> CotUng = new List<CotUng>();                             // polyline kín nhỏ (GhiCotUng), TachCot chọn cột thật
             public List<KeyValuePair<Point2d, string>> KhuTen = new List<KeyValuePair<Point2d, string>>(); // L5: tâm chữ khu không rải -> loại
             public List<Point2d> TenPhong = new List<Point2d>();                         // L8: tâm chữ có "PHÒNG" (tên phòng)
+            public List<Point2d> TenChu = new List<Point2d>();                           // L5b: tâm chữ tên bất kỳ (≥ 3 chữ cái: KHO, BẢO VỆ...), không phải chữ khu
             public List<Point2d[]> ThangBo = new List<Point2d[]>();                      // L7: hộp bao [min, max] ký hiệu thang bộ (GomKhu)
             public Dictionary<string, bool> Bac = new Dictionary<string, bool>();         // L7: định nghĩa block + tỉ lệ + góc -> có hình bậc (HinhBac)
         }
@@ -125,6 +126,7 @@ namespace TKPCCC
             public List<Point2d> Cot = new List<Point2d>();
             public List<KeyValuePair<Point2d, string>> KhuTen = new List<KeyValuePair<Point2d, string>>();
             public List<Point2d> TenPhong = new List<Point2d>();
+            public List<Point2d> TenChu = new List<Point2d>();      // L5b (review 21/11): phòng có chữ tên bất kỳ không bỏ theo mái che
             public List<Point2d[]> ThangBo = new List<Point2d[]>(); // L7: hộp bao ký hiệu thang bộ, khoét khỏi vùng
             public List<Point2d[]> Doan = new List<Point2d[]>();    // L6 (review 20/11): nét đã dựng mặt, xét mép hiên có tường (nét đôi) hay không
         }
@@ -491,17 +493,29 @@ namespace TKPCCC
             return null;
         }
 
-        /// Chữ khu không rải (L5) và chữ tên phòng có "PHÒNG" (L8: phòng có tên thì không bỏ vì nằm ngoài trục / cụm nhỏ). Lưu tâm hộp bao chữ.
+        /// Chữ khu không rải (L5), chữ tên phòng có "PHÒNG" (L8: phòng có tên thì không bỏ vì nằm ngoài trục / cụm nhỏ) và chữ tên bất kỳ ≥ 3 chữ cái
+        /// (L5b: KHO 1, BẢO VỆ không bỏ theo mái che; mã cửa D1, cốt +0.000 không tính). Lưu tâm hộp bao chữ.
         static void GomChuKhu(NenVung n, Entity e, string t)
         {
             try
             {
                 string loai = LoaiKhuTen(t);
-                if (loai == null && (t.Length > 30 || !t.Contains("PHONG"))) return;
+                if (t.Length > 30 && loai == null) return;
+                bool phong = loai == null && t.Contains("PHONG") && !t.Contains("PHONGCHAY"); // review 21/11: "PHÒNG CHÁY CHỮA CHÁY" của khung tên không phải tên phòng
+                if (loai == null && !phong)
+                {
+                    // shortcut: L5b lấy điểm chèn chữ, không tính hộp bao (bản vẽ thật nghìn chữ: GeometricExtents đẩy dựng phòng quá 10 s); chữ căn trái dài vượt tường thì vẫn đúng phòng.
+                    if (t.Count(char.IsLetter) < 3) return;
+                    DBText d = e as DBText;
+                    Point3d q = d == null ? ((MText)e).Location : (d.Justify == AttachmentPoint.BaseLeft ? d.Position : d.AlignmentPoint);
+                    n.TenChu.Add(new Point2d(q.X, q.Y));
+                    return;
+                }
                 Extents3d x = e.GeometricExtents;
                 Point2d c = new Point2d((x.MinPoint.X + x.MaxPoint.X) / 2, (x.MinPoint.Y + x.MaxPoint.Y) / 2);
-                if (loai != null) n.KhuTen.Add(new KeyValuePair<Point2d, string>(c, loai));
-                else n.TenPhong.Add(c);
+                if (loai != null) { n.KhuTen.Add(new KeyValuePair<Point2d, string>(c, loai)); return; }
+                n.TenChu.Add(c);
+                n.TenPhong.Add(c);
             }
             catch (System.Exception) { } // chữ không có hộp bao: bỏ
         }
@@ -582,7 +596,8 @@ namespace TKPCCC
                 return h;
             };
             List<double> ys = hang(p => p.Y, p => p.X, y0, y1, x0, x1, vao), xs = hang(p => p.X, p => p.Y, x0, x1, y0, y1, vao);
-            if (ys.Count == 0 && xs.Count == 0) { ys = hang(p => p.Y, p => p.X, y0, y1, x0, x1, double.MaxValue / 4); xs = hang(p => p.X, p => p.Y, x0, x1, y0, y1, double.MaxValue / 4); }
+            // Review 21/11: lượt mượn chỉ đếm cột trong bề ngang phòng nới thêm một bề ngang (xưởng kề bên cùng cỡ), không đếm cột cùng toạ độ ở bất kỳ đâu trên bản vẽ.
+            if (ys.Count == 0 && xs.Count == 0) { ys = hang(p => p.Y, p => p.X, y0, y1, x0, x1, x1 - x0); xs = hang(p => p.X, p => p.Y, x0, x1, y0, y1, y1 - y0); }
             if (ys.Count == 0 && xs.Count == 0) return kq;
             if (ys.Count >= xs.Count) foreach (double y in ys) kq.Add(new[] { new Point2d(x0 - le, y), new Point2d(x1 + le, y) });
             else foreach (double x in xs) kq.Add(new[] { new Point2d(x, y0 - le), new Point2d(x, y1 + le) });
@@ -1458,7 +1473,7 @@ namespace TKPCCC
                     if (co.Count > 0 || mat.Count > 0 || (chiTuong && !coTuong)) continue;
                     n.ChiTuong = chiTuong;
                     n.Cua.Clear(); n.GachCheo.Clear(); n.KhuKhong.Clear(); n.GiengThang.Clear(); n.MocTruc.Clear(); n.Tron.Clear(); n.ChuNgan.Clear();
-                    n.CotUng.Clear(); n.KhuTen.Clear(); n.TenPhong.Clear(); n.ThangBo.Clear();
+                    n.CotUng.Clear(); n.KhuTen.Clear(); n.TenPhong.Clear(); n.TenChu.Clear(); n.ThangBo.Clear();
                     List<Point2d[]> doan = new List<Point2d[]>();
                     n.BoMau = coDam ? damMau : null;
                     n.GomCot = true;
@@ -1547,7 +1562,7 @@ namespace TKPCCC
                 if (co.Count > 0)
                 {
                     n.Mau = null; n.BoMau = null; n.ChiTuong = false; n.DocDam = false; n.LopKhoiDam = null;
-                    n.CotUng.Clear(); n.KhuTen.Clear(); n.TenPhong.Clear();
+                    n.CotUng.Clear(); n.KhuTen.Clear(); n.TenPhong.Clear(); n.TenChu.Clear();
                     n.GomCot = true;
                     List<Point2d[]> bo = new List<Point2d[]>();
                     foreach (Entity e in ds) ThuNet(n, e, ObjectId.Null, ObjectId.Null, null, 0, bo);
@@ -1557,6 +1572,7 @@ namespace TKPCCC
                 }
                 them.KhuTen = new List<KeyValuePair<Point2d, string>>(n.KhuTen);
                 them.TenPhong = new List<Point2d>(n.TenPhong);
+                them.TenChu = new List<Point2d>(n.TenChu);
                 khuKhong = new List<Point2d>(n.KhuKhong);
                 tr.Commit();
             }
@@ -1622,21 +1638,26 @@ namespace TKPCCC
         // shortcut: ngưỡng cụm cố định (hộp bao cách ≤ cach, cụm < 20 % cụm lớn nhất); nhà nhỏ tách rời (nhà bảo vệ) bị bỏ thì bấm điểm trong phòng đó.
         /// Người dùng 16/11: quét cả block tờ rồi Enter mọi phòng thì nhận cả phòng trong hình chi tiết, mặt cắt ngoài mặt bằng. Gom phòng thành cụm
         /// (hộp bao cách nhau ≤ cach), giữ cụm có tổng diện tích ≥ 20 % cụm lớn nhất.
-        /// giu (L8, người dùng duyệt 20/11): phòng luôn giữ dù cụm nhỏ (phòng có tên "PHÒNG", vd 2 văn phòng ở góc ngoài khối xưởng).
-        static List<List<Point2d>> CumChinh(List<List<Point2d>> ds, double cach, out int boPhong, out int boCum, Func<List<Point2d>, bool> giu = null)
+        /// giu (L8, người dùng duyệt 20/11): phòng giữ dù cụm nhỏ (phòng có tên "PHÒNG", vd văn phòng ở góc ngoài khối xưởng) khi hộp bao cách cụm lớn ≤ ganTen.
+        /// Review 21/11: không giới hạn thì phòng có tên trong hình chi tiết cách mặt bằng 20 m cũng được rải (lỗi 16/11 quay lại).
+        // shortcut: TEN_PHONG_GAN_M cố định 10 m (ca 14: nhà văn phòng cách xưởng 4 m); hình chi tiết đặt gần hơn thì bấm điểm / xoá đầu báo ở đó.
+        const double TEN_PHONG_GAN_M = 10;
+        static List<List<Point2d>> CumChinh(List<List<Point2d>> ds, double cach, out int boPhong, out int boCum, Func<List<Point2d>, bool> giu = null, double ganTen = 0)
         {
             int n = ds.Count;
             double[][] hb = ds.Select(d => new[] { d.Min(p => p.X), d.Min(p => p.Y), d.Max(p => p.X), d.Max(p => p.Y) }).ToArray();
+            Func<int, int, double, bool> gan = (i, j, d) => hb[i][0] <= hb[j][2] + d && hb[j][0] <= hb[i][2] + d && hb[i][1] <= hb[j][3] + d && hb[j][1] <= hb[i][3] + d;
             int[] cha = Enumerable.Range(0, n).ToArray();
             Func<int, int> goc = null;
             goc = i => cha[i] == i ? i : (cha[i] = goc(cha[i]));
             for (int i = 0; i < n; i++)
                 for (int j = i + 1; j < n; j++)
-                    if (hb[i][0] <= hb[j][2] + cach && hb[j][0] <= hb[i][2] + cach && hb[i][1] <= hb[j][3] + cach && hb[j][1] <= hb[i][3] + cach) cha[goc(i)] = goc(j);
+                    if (gan(i, j, cach)) cha[goc(i)] = goc(j);
             Dictionary<int, double> dt = new Dictionary<int, double>();
             for (int i = 0; i < n; i++) { int g = goc(i); double a; dt.TryGetValue(g, out a); dt[g] = a + Math.Abs(DienTichDaGiac(ds[i])); }
             double lon = dt.Count == 0 ? 0 : dt.Values.Max();
-            bool[] con = Enumerable.Range(0, n).Select(i => dt[goc(i)] >= 0.2 * lon || (giu != null && giu(ds[i]))).ToArray();
+            bool[] cumLon = Enumerable.Range(0, n).Select(i => dt[goc(i)] >= 0.2 * lon).ToArray();
+            bool[] con = Enumerable.Range(0, n).Select(i => cumLon[i] || (giu != null && giu(ds[i]) && Enumerable.Range(0, n).Any(j => cumLon[j] && gan(i, j, ganTen)))).ToArray();
             List<List<Point2d>> kq = Enumerable.Range(0, n).Where(i => con[i]).Select(i => ds[i]).ToList();
             boPhong = n - kq.Count;
             boCum = Enumerable.Range(0, n).Where(i => !con[i]).Select(i => goc(i)).Distinct().Count();
