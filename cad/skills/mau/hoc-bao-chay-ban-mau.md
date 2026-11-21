@@ -93,3 +93,10 @@ Lệch (chưa sửa):
 - Hành lang giữa (sảnh thang máy + đoạn trước cửa P.101, P.102, 9 m²) bị bỏ như sảnh thang (`bo_sanh_thang`); mẫu CÓ 1 đầu báo ở đoạn trước cửa P.101,
   cách giếng thang ≈ 2,2 m. Luật người dùng 16–17/11 "sảnh thang máy không đặt đầu báo" chưa phân biệt sảnh thang thuần với hành lang chung có cửa phòng: HỎI người dùng.
 Đèn báo phòng tầng 1: ngoài cửa từng phòng ở (P.101–P.104, P.102), trên hành lang sát tường có cửa — khớp quan sát khung 5.
+
+### Khung 3 tầng lửng (T2, bản chép x 211600..242600; 21/11)
+Plugin 11 vùng / 11 đầu báo; mẫu 9 (P.M03 1, hành lang trái 1, P.M02 1, phòng 1,7 m 1, SẢNH THANG MÁY 1, P.M01 1, P.101 1, khu thang + thông tầng phải 2),
+đèn báo phòng 4, chữ "Về tủ TTBC Zone 3". THIẾU: `bo_sanh_thang=1 m2=21.1` bỏ cả sảnh trước giếng thang + P.M01 (phòng có tên, sát giếng); mẫu đặt 1 đầu báo
+ngay sảnh thang (cách cửa thang ≈ 1,5 m) và 1 trong P.M01. Thừa: các ô X thông tầng (`TachOX` không nhận) được rải.
+=> Hai tầng khung 3 đều mâu thuẫn luật "sảnh thang máy không đặt đầu báo" (người dùng 16–17/11, KOCHAM): cần người dùng chốt (bỏ luật, hay chỉ bỏ sảnh
+thuần không có cửa phòng / không có chữ tên phòng).

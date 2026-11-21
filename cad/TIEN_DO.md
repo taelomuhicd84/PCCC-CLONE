@@ -70,11 +70,11 @@ Chưa làm: bảng TCVN 7336 nguyên văn chưa có trong `knowledge/` nên đ�
 không có vùng: NGƯỜI DÙNG CHỐT 21/11 không cần vùng đầu phun cho các phòng này (giữ nguyên, không dựng thêm).
 (3) KHUNG 3 CĂN HỘ 441 TẦNG 1 XONG 21/11 chiều (phiên nhánh "Báo cháy (tt)"): LỖI 4 ĐÃ SỬA — block xref gom mọi cửa của tầng (layer `...NA_09. CUA`, hộp cả
 mặt bằng) bị coi là MỘT cửa ⇒ mọi khe 3–12 m "có cửa trong khe", khép giả cắt phòng (8 vùng vụn). `GomCua`: hộp rộng cả hai chiều > 3,5 m không lấy (test E15).
-Nay 12 vùng / 13 đầu báo khói, mẫu 10. Lệch còn lại + quan sát thiết bị: `cad/skills/mau/hoc-bao-chay-ban-mau.md` mục Khung 3. CHƯA chạy tầng lửng (T2, x 211600..242600).
+Nay 12 vùng / 13 đầu báo khói, mẫu 10. Lệch còn lại + quan sát thiết bị: `cad/skills/mau/hoc-bao-chay-ban-mau.md` mục Khung 3. Tầng lửng: 11 / mẫu 9; mẫu CÓ đầu báo ở sảnh thang máy + P.M01, plugin bỏ (`bo_sanh_thang`): CHỜ NGƯỜI DÙNG chốt luật sảnh thang.
 Chép khung 3: T1 = block `T1` handle 50D0 (48 đối tượng, phải nổ thêm block kiến trúc lồng `A$Ca48bff2d`: `no.ps1`), T2 = 50D1; đã chép ra y −50 m.
 Script mới trong `ket_qua/HOC_BAO_CHAY/cad/`: `go_khung.ps1` (PCCC_RAI 1 khung trong accoreconsole, in log, plot PNG khung; `-Src` thư mục mã tạm có log gỡ lỗi,
 `-Hop` ghi cầu khép khe trong hộp), `rai.ps1` (PCCC_RAI qua COM, có ZOOM trước: không zoom thì chọn cửa sổ ra 0 vùng), `tim_block.ps1`, `no.ps1`, `luu.ps1`.
-BƯỚC TIẾP: tầng lửng khung 3, rồi khung 4, 6, 7, 8 như trên. Lỗi chưa sửa (ghi ở file mẫu): khe 2,8 m giữa 2 nắp tường ở cột trục 3 (cột = khe hở tường) khép
+BƯỚC TIẾP: khung 4, 6, 7, 8 như trên (khung 4: block `232` handle 890E, `tang 2` 8931, chèn ở toạ độ xa như T1/T2). Lỗi chưa sửa (ghi ở file mẫu): khe 2,8 m giữa 2 nắp tường ở cột trục 3 (cột = khe hở tường) khép
 ngang P.104; WC block xref tên vô nghĩa không nhận; ô X lỗ thông tầng lẫn dải bồn cây không bỏ; hành lang 9 m² sát thang máy bị bỏ như sảnh thang (mẫu CÓ đầu báo).
 
 ## VIỆC 20/11 — DẠY PLUGIN PHÂN VÙNG NHƯ AI (xưởng mái kèo): MÃ L1, L2, L5, L5b, L6, L7, L8: BUILD + TEST ĐẠT + COMMIT (chưa push); BẢN CHÉP 25 VÙNG = ĐÁP ÁN, 57 / 55 ĐB
