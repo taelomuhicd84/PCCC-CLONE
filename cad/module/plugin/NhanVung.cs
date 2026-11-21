@@ -1,4 +1,4 @@
-// Tự nhận diện vùng phòng trên mặt bằng kiến trúc chưa có polyline kín (người dùng test 13/11, việc 2).
+﻿// Tự nhận diện vùng phòng trên mặt bằng kiến trúc chưa có polyline kín (người dùng test 13/11, việc 2).
 // Bỏ trục và nét không phải tường: kiểu nét có gạch (CENTER, DASHDOT, nét khuất), layer trục / kích thước / cửa / nội thất,
 // chữ, kích thước. Lấy nét liền của tường, cột (kể cả nét trong block và biên hatch cột), nối khe THẲNG HÀNG ≤ "ho"
 // (ô cửa giữa hai má tường, cột chỉ có hatch), rồi lấy mặt kín NHỎ NHẤT chứa điểm bấm.
@@ -1009,14 +1009,6 @@ namespace TKPCCC
                     }
                 }
             }
-            // Chỉ nối khe GẦN NHẤT ở cả hai đầu (người dùng 16/11: nối mọi đoạn cùng hàng trong 3 m sinh cầu chồng nhau, 23 triệu điểm cắt, dựng phòng 78 s).
-            List<Point2d[]> giu = new List<Point2d[]>();
-            foreach (KeyValuePair<int[], Point2d[]> kv in xa)
-            {
-                double g = kv.Value[0].GetDistanceTo(kv.Value[1]);
-                if (ganNhat[kv.Key[0]] < g - tol || ganNhat[kv.Key[1]] < g - tol) continue;
-                if (g <= ho) cau.Add(kv.Value); else giu.Add(kv.Value);
-            }
             // Người dùng 17/11 (file KOCHAM): khe 11 m từ góc lõi ra mặt dựng chạm cung nắp bồn cầu / cửa ở đầu khe bị khép, cắt văn phòng.
             // Hộp cửa phải phủ ≥ 25 % chiều dài khe (cửa nằm TRONG khe), không chỉ chạm một đầu.
             Func<Point2d, Point2d, Point2d[], bool> cuaTrongKhe = (a, b, h) =>
@@ -1027,6 +1019,44 @@ namespace TKPCCC
                 double[] s = { u.DotProduct(h[0] - a), u.DotProduct(new Point2d(h[1].X, h[0].Y) - a), u.DotProduct(h[1] - a), u.DotProduct(new Point2d(h[0].X, h[1].Y) - a) };
                 return Math.Min(s.Max(), L) - Math.Max(s.Min(), 0) >= 0.25 * L;
             };
+            // Karaoke ABC 21/11: tường ngăn hai bên hành lang thẳng hàng -> mặt tường hai bên cùng toạ độ, khe ngang hành lang 1,7 m bị khép như ô cửa,
+            // hành lang vỡ 5 vùng. Ở CẢ HAI đầu khe có nét vuông góc chạy liền hai phía (mặt hành lang chạy tiếp qua đầu tường, chữ T) ngay tại đầu khe
+            // hoặc cắt ngang khe trong 0,6 m (bề dày tường: khe đi từ mặt hành lang bên này qua tường tới góc phòng bên kia) = khe xuyên không gian liền,
+            // không phải ô cửa: không khép, trừ khi có ký hiệu cửa trong khe. Miệng lối đi, sảnh (góc chữ L), má cửa (nắp đầu tường một phía) vẫn khép.
+            // Lưới ô 0,5 m dựng khi cần lần đầu (bản vẽ thật: dựng phòng phải < 10 s; ô 3 m trả quá nhiều nét, chậm thêm 0,5 s).
+            LuoiDoan luoiT = null;
+            Func<LuoiDoan> luoiTT = () => luoiT ?? (luoiT = new LuoiDoan(doan, tol * 250));
+            Func<Point2d, Vector2d, bool> coNet = (q, w) => luoiTT().Tim(q.X - tolTh, q.Y - tolTh, q.X + tolTh, q.Y + tolTh).Any(j =>
+            {
+                Vector2d v = doan[j][1] - doan[j][0];
+                return Math.Abs(w.X * v.Y - w.Y * v.X) <= 0.01 * v.Length && CachDoan(doan[j], q) <= tolTh;
+            });
+            Func<Point2d, Point2d, bool> dauXuyen = (p, q) =>
+            {
+                double g = p.GetDistanceTo(q), tm = Math.Min(tol * 300, g - tolTh);
+                Vector2d u = (q - p) / g, w = u.GetPerpendicularVector();
+                Point2d e = p + u * tm;
+                foreach (int j in luoiTT().Tim(Math.Min(p.X, e.X) - tolTh, Math.Min(p.Y, e.Y) - tolTh, Math.Max(p.X, e.X) + tolTh, Math.Max(p.Y, e.Y) + tolTh))
+                {
+                    Vector2d v = doan[j][1] - doan[j][0];
+                    if (Math.Abs(u.DotProduct(v)) > 0.01 * v.Length) continue; // chỉ nét vuông góc với khe
+                    double t = u.DotProduct(doan[j][0] - p);
+                    if (t < -tolTh || t > tm) continue;
+                    Point2d c = p + u * Math.Max(t, 0);
+                    if (coNet(c + w * (tol * 40), w) && coNet(c - w * (tol * 40), w)) return true;
+                }
+                return false;
+            };
+            // Chỉ nối khe GẦN NHẤT ở cả hai đầu (người dùng 16/11: nối mọi đoạn cùng hàng trong 3 m sinh cầu chồng nhau, 23 triệu điểm cắt, dựng phòng 78 s).
+            List<Point2d[]> giu = new List<Point2d[]>();
+            foreach (KeyValuePair<int[], Point2d[]> kv in xa)
+            {
+                double g = kv.Value[0].GetDistanceTo(kv.Value[1]);
+                if (ganNhat[kv.Key[0]] < g - tol || ganNhat[kv.Key[1]] < g - tol) continue;
+                // khe < 0,7 m không phải hành lang; khe > max(ho, 6 m) không cửa vốn không khép: khỏi xét (bản vẽ thật dựng phòng phải < 10 s)
+                if (g >= tol * 350 && g <= Math.Max(ho, tol * 3000) && dauXuyen(kv.Value[0], kv.Value[1]) && dauXuyen(kv.Value[1], kv.Value[0]) && !(cua != null && cua.Any(h => cuaTrongKhe(kv.Value[0], kv.Value[1], h)))) continue;
+                if (g <= ho) cau.Add(kv.Value); else giu.Add(kv.Value);
+            }
             // Hai khe song song (tường 2 nét có lỗ mở) chỉ khép khi khe ≤ 6 m: KOCHAM mặt cột mặt dựng thẳng hàng mặt vách lõi, khe 11 m giữa văn phòng bị khép.
             double soDoiMax = tol * 3000;
             foreach (Point2d[] k in giu)

@@ -1094,6 +1094,13 @@ foreach ($y in (0..8 | ForEach-Object { 6000 * $_ })) {
   '_.RECTANG', '1113000,1000', '1119000,7000', '-BLOCK', 'THANG_BO2', '1113000,1000', 'W', '1112950,950', '1119050,7050', '', '-INSERT', 'THANG_BO2', '1113000,1000', '1', '', '0',
   '_.RECTANG', '1127000,2500', '1129000,5500', '-BLOCK', 'THANG_BO3', '1127000,2500', 'W', '1126950,2450', '1129050,5550', '', '-INSERT', 'THANG_BO3', '1127000,2500', '1', '', '0',
   'PCCC_RAI', 'BC_KHOI', '', '', 'C', '1099500,-500', '1134500,8500', '', '', '',
+  # E12 (Karaoke ABC 21/11): hanh lang 20 x 2 m giua 2 phong bac + 2 phong nam, tuong ngan 200 hai ben thang hang (mat tuong cung x). Bac: nap dau
+  #    tuong sat mat hanh lang (chu T tai dau khe). Nam: tuong 2 net, mat hanh lang y 4000 lien, mat trong phong y 3800 (khe 2,2 m cat ngang mat hanh lang).
+  #    Truoc sua: khe ngang hanh lang khep nhu o cua, hanh lang vo 2 vung 19,8 m2; nay 1 vung 40 m2
+  '(princ "\n==E12==")', '-LAYER', 'M', 'TUONG', '', '_.ZOOM', 'W', '1199000,-1000', '1221000,11000',
+  '_.RECTANG', '1200000,0', '1209900,3800', '_.RECTANG', '1210100,0', '1220000,3800', '_.RECTANG', '1200000,6000', '1209900,10000', '_.RECTANG', '1210100,6000', '1220000,10000',
+  '_.LINE', '1200000,4000', '1220000,4000', '', '_.LINE', '1209900,6000', '1210100,6000', '', '_.LINE', '1200000,4000', '1200000,6000', '', '_.LINE', '1220000,4000', '1220000,6000', '',
+  '-LAYER', 'S', '0', '', 'PCCC_RAI', 'BC_KHOI', '', '', 'C', '1199500,-500', '1220500,10500', '', '', '',
   '(princ "\n==EHET==")', '_.QSAVE')) -join "`r`n" | Set-Content -Encoding ascii "$T\kb7.scr"
 $p7 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb7.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb7.out.txt"
 if (-not $p7.WaitForExit(180000)) { Stop-Process -Id $p7.Id -Force; throw "accoreconsole qua 3 phut (review 20/11): $T\kb7.out.txt" }
@@ -1130,6 +1137,9 @@ Kiem ($e11 -match 'mai_keo bo_khoang_khu_ten=1 ' -and $e11 -notmatch 'bo_ke_mai_
 $e7 = CaRv 'E7'
 Kiem ($e7 -match 'khoet_thang=1 ' -and $e7 -match 'bo_buong_thang=1 m2=64 ' -and (DtVung $e7) -contains 96) `
   "Review NEN SUA 5 (L7): thang sat goc khoet, thang 6 x 6 m trong phong 8 x 8 m = buong thang bo, thang giua phong 12 x 8 m khong khoet (vung=$((DtVung $e7) -join ','))"
+$e12 = CaRv 'E12'
+Kiem ((DtVung $e12) -contains 40 -and (DtVung $e12) -notcontains 19.8) `
+  "Karaoke ABC 21/11: tuong ngan hai ben hanh lang thang hang (chu T hai dau khe) khong khep khe ngang hanh lang: 1 vung 40 m2 (vung=$((DtVung $e12) -join ','))"
 
 # Thoi gian dung phong tren ban ve that cua nguoi dung (gitignore, chi chay khi co): truoc sua 78 s (23 trieu diem cat), nay < 10 s.
 $bvThat = Get-ChildItem "$GOC\file_cad_test" -Filter 'test b*o ch*y.dwg' -ErrorAction SilentlyContinue | Select-Object -First 1
