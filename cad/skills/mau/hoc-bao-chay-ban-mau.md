@@ -101,8 +101,21 @@ ngay sảnh thang (cách cửa thang ≈ 1,5 m) và 1 trong P.M01. Thừa: các 
 => Hai tầng khung 3 đều mâu thuẫn luật "sảnh thang máy không đặt đầu báo" (người dùng 16–17/11, KOCHAM): cần người dùng chốt (bỏ luật, hay chỉ bỏ sảnh
 thuần không có cửa phòng / không có chữ tên phòng).
 
-## Khung 4 Karaoke 123 (21/11, ĐANG DỞ)
-Block `232` (890E, 5602 nét, tầng 1) và `tang 2` (8931) chèn ở toạ độ xa, hình rơi vào khung; chép + nổ 1 cấp ra y −50 m. Tường 2 nét layer `01 - TUONG`,
+## Khung 4 Karaoke 123 (21/11, XONG)
+Block `232` (890E, 5602 nét, tầng 1) và `tang 2` (8931) chèn ở toạ độ xa, hình rơi vào khung; chép + nổ 1 cấp. Tường 2 nét layer `01 - TUONG`,
 hatch gạch chéo tường ĐÃ NỔ thành nét 45° dài ≈ 0,28 m cách 90 mm (layer `02 - TUONG HOAN THIEN`, 3409 nét tầng 1), cột layer `04 - COT` (cot=60 nhận được).
-Tầng 1 để nguyên nét hatch nổ: vùng có cạnh chéo dài 4–6 m cắt phòng, sót phòng (mat=6001). Xoá layer hatch nổ: 14 vùng đúng từng phòng, 19 đầu báo, WC bỏ.
-Ca tổng hợp 2 x 68 nét 45° trong dải tường phòng 10 x 6 m KHÔNG tái hiện: nguyên nhân thật còn phải tìm trên bản vẽ (tầng 2 còn nguyên để gỡ).
+Bản chép: tầng 1 ở y −50 m đã bị xoá layer hatch nổ (phiên trước); bản chép tầng 1 NGUYÊN (còn nét hatch nổ) ở y −100 m (x 279000..324000, y −112500..−91500);
+tầng 2 ở y −50 m (x 334000..379000, y −62500..−41500; hatch tầng 2 là hatch thật, `gach_cheo=73`).
+- LỖI 5 (đã sửa, E17): nét hatch nổ làm tường, mẩu cùng đường gạch ở hai tường kế nhau bị khép ngang góc phòng ⇒ vùng cạnh chéo 4–6 m, mat=6001.
+  Ca tổng hợp cũ (2 dải) không tái hiện vì cần ĐỦ 4 dải tường (đường gạch đi từ tường trái sang tường trên qua góc). `BoHatchNo`: mat 6001 → 512.
+- LỖI 6 (đã sửa, E18): ô giao hành lang trên với lối dọc trái (1,8 x 1,8 m tầng 1; 2,0 x 1,8 m tầng 2) bị `PhongThat` bỏ im lặng (2A/P < 1); mẫu có 1 đầu báo.
+- LỖI 7 (đã sửa, E19): tầng 2 đoạn hành lang 6,3 m trên buồng thang hở: mép sàn 2 nét layer `06 - THAY 1` không phải layer tường ⇒ hành lang thông
+  xuống thang + ô thông tầng ra ngoài nhà, không thành phòng; mẫu có đầu báo + đèn. `LanCan` lấy 2 nét song song nối 2 cột.
+- Kết quả (BC_KHOI để so vùng): tầng 1 15 vùng / 20 đầu báo, tầng 2 17 vùng / 20. Mọi đầu báo nhiệt + đèn báo phòng của mẫu nằm trong vùng plugin;
+  ngoài vùng chỉ còn `A$Ced08533f` (layer `0.10-140`, 1 cái ngoài cửa mỗi phòng, gắn trên mặt tường hành lang: nghi đèn chỉ thị đầu báo trên trần, chưa rõ).
+- Mật độ mẫu: phòng karaoke 20–30 m² đặt 4 đầu báo NHIỆT (`A$C04a8c6c3`, 112 cái 2 tầng), hành lang 1 dãy; dày hơn TCVN 7568-14 (người dùng chốt giữ TCVN).
+  Mỗi phòng 1 chuông (`A$C373f2228`), 1 đèn báo phòng ngoài cửa (`Đèn báo phòng`), 11 phòng / tầng.
+- Đầu phun dùng ké (1 lần gọi `rai SPR_DAU_DOWN l PCCC_VUNG hop ... s 4000 dt 12 kt:true`, s/dt chỉ để thử cơ chế): tầng 1 69 đầu / 15 vùng 320 ms,
+  tầng 2 63 đầu / 17 vùng 314 ms, dim theo Cài đặt.
+- Đối chiếu bằng accoreconsole (không khoá AutoCAD): LISP xuất block mẫu + polyline `PCCC_VUNG` ra txt, Python khớp điểm trong vùng
+  (`ket_qua/HOC_BAO_CHAY/cad/xuat.ps1 -Dwg <x.ra.dwg> -Ra <txt>` + `xuat.lsp`; `khop.py` sửa hộp khung / độ dời y trong file). `go_khung.ps1 -Diem 'x,y;x,y'` bấm điểm trong phòng để hỏi vì sao thiếu vùng.

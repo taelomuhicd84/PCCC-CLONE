@@ -11,6 +11,13 @@ Mã: `ThuNet`, `LoaiLop`, `NetLien`, `GhiCotUng`, `TachCot`, `MatChon` trong `ca
   layer tắt / đóng băng, chữ, kích thước.
 - Hatch gạch chéo (`LaGachCheo`) = công trình hiện hữu: Enter mọi phòng bỏ phòng có tâm nằm trong vùng gạch chéo (`gach_cheo=`). Hatch tường mỏng không làm mất phòng.
 - Hai nét tường cắt chéo nhau (một nét vẽ ngược, người dùng 19/11): chọn nét song song ranh đất / thẳng hàng tường kế.
+- Hatch gạch chéo tường ĐÃ NỔ thành nét (Karaoke 123 khung 4, 21/11: 3409 nét 45°, dài ≈ 0,28 m, cách 90 mm, layer `02 - TUONG HOAN THIEN` là layer tường):
+  KHÔNG làm tường (`BoHatchNo` đầu `CacMat`). Trước đây mẩu cùng một đường gạch ở hai tường kế nhau thẳng hàng, bước khép khe nối ngang góc phòng
+  (≤ 3 m luôn khép, tới 6 m nhờ mẩu kề hở cùng chỗ như tường 2 nét) ra vùng cạnh chéo 4–6 m, sót phòng. Nhận: mẩu ≤ 0,8 m lệch trục tường chính
+  ≥ 10°, có mẩu song song kề CẢ HAI bên (≤ 0,25 m), cùng hướng ≥ 20 mẩu như thế. Nắp đầu tường (theo trục chính), cặp góc vát tường 2 nét (kề một bên) giữ lại. Test E17.
+- Lan can / mép sàn quanh ô cầu thang, lỗ thông tầng (Karaoke 123 tầng 2, 21/11: 2 nét layer `06 - THAY 1` cách 60 mm nối cột này sang cột kia):
+  lượt chỉ-tường vẫn lấy (`LanCan`): LINE layer thường ≥ 2 m có nét song song cách 20–300 mm phủ ≥ 80 %, HAI đầu chạm (≤ 50 mm) tường / cột.
+  Không có thì hành lang trên buồng thang hở thông xuống thang + ô thông tầng ra ngoài nhà, không thành phòng; mẫu có đầu báo ở đó. Test E19.
 
 ## Cột
 - L1 (người dùng duyệt 19/11): cột nhận theo HÌNH, không theo tên layer: đa giác kín nhỏ (hộp ≤ 1,2 m: chữ I 12–13 đỉnh, chữ nhật, vuông, tròn) cùng cỡ ± 50 mm,

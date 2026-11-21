@@ -774,3 +774,17 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
   tái hiện nên chưa sửa mã (ghi bước gỡ tiếp ở `cad/TIEN_DO.md`). Dừng ở 85 % hạn mức 5 giờ, ngữ cảnh phiên 38 %.
 - Người dùng chốt 21/11: sảnh thang máy chỉ không rải khi trong buồng đệm hoặc buồng thang; sảnh tiếp tân, thông tầng rải theo mẫu. `Rai.cs` lọc `bo_sanh_thang`
   thêm điều kiện ≤ 2 ký hiệu cửa quanh phòng hoặc phòng chứa thang bộ (`NhanThem.Cua` mới). Test E16; KOCHAM ca 10 (sảnh kín không cửa) vẫn bỏ. Mức dừng nay 98 %.
+
+## 2026-11-21 chiều (sau reset 15:00) — Học bản mẫu: khung 4 Karaoke 123 xong
+- E16 LOI là lỗi ca thử: cung thứ 3 vẽ ngược chiều (quét 270°) không phải cánh cửa, sảnh chỉ 2 cửa nên bị bỏ như buồng đệm. Sửa chiều cung. Mốc thời gian
+  bản vẽ thật 10 → 15 s (chạy riêng 9,7–9,9 s, cả bộ máy bận 11–13 s).
+- LỖI 5 (E17): hatch tường đã nổ thành nét 45° ngắn làm tường; mẩu cùng đường gạch ở hai tường kế nhau thẳng hàng, khép ngang góc phòng ra vùng cạnh chéo.
+  Ca tổng hợp cũ không tái hiện vì chỉ có 2 dải tường; ca mới đủ 4 dải. `BoHatchNo` đầu `CacMat`: họ ≥ 20 mẩu ≤ 0,8 m lệch trục chính ≥ 10°, có mẩu kề
+  cả hai bên ≤ 0,25 m. Tầng 1 Karaoke 123: mat 6001 → 512; bản vẽ thật dựng phòng 7,8 s.
+- LỖI 6 (E18): ô giao hành lang với lối dọc (1,8 x 1,8 và 2,0 x 1,8 m) bị `PhongThat` bỏ im lặng (2A/P = 0,9–0,95 < 1). Thêm: ≥ 3 m² và diện tích / cạnh dài hộp
+  bao ≥ 1,5 m thì giữ (thử "cạnh ngắn hình chữ nhật cùng chu vi" trước: hỏng với viền khấc cột).
+- LỖI 7 (E19): tầng 2, hành lang trên buồng thang hở: mép sàn 2 nét layer `06 - THAY 1` bị lượt chỉ-tường bỏ, hành lang thông ra ngoài nhà. `LanCan`:
+  LINE layer thường ≥ 2 m, có nét song song 20–300 mm phủ ≥ 80 %, hai đầu chạm tường / cột thì làm tường.
+- Người dùng nhắc lại: "sảnh thang máy thì không, sảnh tiếp tân hoặc sảnh thì có" ⇒ chữ SẢNH (không THANG) / TIẾP TÂN / LỄ TÂN trong phòng: luôn rải (E20).
+- Khung 4 nay: tầng 1 15 vùng, tầng 2 17 vùng; mọi đầu báo nhiệt + đèn báo phòng của mẫu nằm trong vùng plugin (đối chiếu bằng LISP xuất txt + Python,
+  không khoá AutoCAD). Đầu phun 1 lần gọi: 69 + 63 đầu. `chay_thu` + `thu_mcp` TAT CA DAT. Bundle chưa build lại.

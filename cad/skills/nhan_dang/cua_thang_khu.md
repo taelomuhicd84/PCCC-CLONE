@@ -30,6 +30,8 @@ Mã: `CacMat` (khép khe cửa), `GomCua`, `GomKhu`, `HinhBac`, `TachOX`, `GomCh
 - Sảnh thang máy (người dùng 16–17/11): phòng ≤ 30 m² sát giếng thang (cách ≤ 0,6 m) không đặt đầu báo (`bo_sanh_thang=`).
   NGƯỜI DÙNG 21/11 (căn hộ 441, mẫu có đầu báo ở sảnh trước thang máy): chỉ bỏ khi sảnh nằm trong BUỒNG ĐỆM (≤ 2 ký hiệu cửa có tâm trong phòng hoặc
   cách biên ≤ 1 m) hoặc trong BUỒNG THANG (phòng chứa tâm hộp thang bộ). Sảnh tiếp tân, thông tầng, hành lang chung nhiều cửa phòng: RẢI theo mẫu (test E16).
+  Người dùng nhắc lại 21/11: "sảnh thang máy thì không, sảnh tiếp tân hoặc sảnh thì có". Chữ trong phòng thắng phép đoán theo hình: có chữ SẢNH (không kèm
+  THANG), TIẾP TÂN, LỄ TÂN thì luôn rải (`Sanh` trong `GomKhu`, test E20); chữ "SẢNH THANG MÁY" chứa THANG MÁY nên bỏ theo `bo_khu_khong_bao`.
 
 ## Khu không đặt đầu báo
 - Lõi thang máy, sảnh thang máy, buồng thang bộ, WC (người dùng 16/11): phòng ≤ 60 m² chứa dấu hiệu (tên block, layer, chữ phòng; block `BON_CAU`...) bị bỏ (`bo_khu_khong_bao=`).

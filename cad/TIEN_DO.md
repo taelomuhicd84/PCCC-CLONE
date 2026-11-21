@@ -36,7 +36,7 @@ cad/README.md, cad/CLAUDE.md, STRUCTURE.md, KE_HOACH_TONG.md. Kiểm xong: `pyth
 BƯỚC TIẾP: tạo cây + README; tách nội dung từng file cũ vào đúng file mới (không bỏ sót dòng, chép nguyên văn phần quy chuẩn); chép luật từ memory;
 sửa đường dẫn; kiểm; commit (không push). Làm theo lô nhỏ, mỗi lô một commit, để dừng kịp khi hết hạn mức.
 
-## VIỆC 20/11 (2) — HỌC RẢI BÁO CHÁY THEO BẢN MẪU (file_cad_test/TESTBCHAY_20_11.dwg): KHUNG 5 XONG; KHUNG 3 TẦNG 1 XONG (LỖI 4 SỬA, E15); TIẾP: TẦNG LỬNG K3, KHUNG 4, 6, 7, 8
+## VIỆC 20/11 (2) — HỌC RẢI BÁO CHÁY THEO BẢN MẪU (file_cad_test/TESTBCHAY_20_11.dwg): KHUNG 5 XONG; KHUNG 3, 4 XONG (LỖI 4–7 SỬA, E15–E20); TIẾP: KHUNG 6, 7, 8
 Người dùng (20/11, chép ý): mỗi khung rectang = 1 công trình mẫu vẽ báo cháy đã thẩm định, là CHUẨN, phải tư duy như nó.
 1. Copy các block mặt bằng mẫu ra chỗ trống (KHÔNG sửa bản gốc), explode, rồi vẽ vùng rải báo cháy.
 2. Vùng kẹp sát mặt tường: tường 200 có cột 300 lồi ra 100 thì vùng chạy thẳng theo mặt tường 200, không bao phần cột lồi.
@@ -75,15 +75,17 @@ test E16. Khung 3 nay tầng 1 13 vùng / 14 ĐB (mẫu 10), tầng lửng 12 / 
 Chép khung 3: T1 = block `T1` handle 50D0 (48 đối tượng, phải nổ thêm block kiến trúc lồng `A$Ca48bff2d`: `no.ps1`), T2 = 50D1; đã chép ra y −50 m.
 Script mới trong `ket_qua/HOC_BAO_CHAY/cad/`: `go_khung.ps1` (PCCC_RAI 1 khung trong accoreconsole, in log, plot PNG khung; `-Src` thư mục mã tạm có log gỡ lỗi,
 `-Hop` ghi cầu khép khe trong hộp), `rai.ps1` (PCCC_RAI qua COM, có ZOOM trước: không zoom thì chọn cửa sổ ra 0 vùng), `tim_block.ps1`, `no.ps1`, `luu.ps1`.
-VIỆC DỞ ĐẦU TIÊN (21/11 13:40, dừng 94 % hạn mức): test E16 trong `chay_thu.ps1` đang LOI (vung=20,100: sảnh 15 m² có 3 cung cửa thả nổi
-không ra vùng nào, không có bo_sanh_thang). Mã sảnh thang mới đã đúng trên khung 3 thật; nghi ca thử: cung cửa không nằm trên khe tường làm hỏng mặt. Xem log
-`==E16==` trong kb7.out.txt (thư mục tạm của chay_thu), sửa ca thử hoặc mã tới TAT CA DAT, rồi mới làm khung 4.
-KHUNG 4 Karaoke 123 ĐANG DỞ (21/11 chiều, dừng ở 85 % hạn mức 5 giờ): đã chép + nổ `232` (890E, 5602 nét) và `tang 2` (8931) ra y −50 m (tầng 1 x 279000..324000,
-tầng 2 x 334000..379000, y −62500..−41500). Tầng 1 chạy lần đầu: vùng có cạnh chéo cắt phòng, sót phòng (14 vùng / 16 ĐB, mat=6001). Nguyên nhân dính tới
-hatch gạch chéo tường ĐÃ NỔ thành 3409 nét 45° ngắn (layer `02 - TUONG HOAN THIEN`): xoá layer đó trên bản chép tầng 1 (đã làm, đã lưu) thì 14 vùng ĐÚNG, 19 ĐB, WC bỏ.
-Ca tổng hợp (phòng 10 x 6 m, 2 x 68 nét 45° trong dải tường) KHÔNG tái hiện lỗi (đạt cả mã cũ) nên CHƯA sửa mã. BƯỚC TIẾP: tầng 2 còn nguyên nét hatch nổ:
-chạy `go_khung.ps1 -P1 334000,-62500 -P2 379000,-41500 -Ten k4b`, lấy 1 phòng ra cạnh chéo, `-Src` + log `PhongThat`/cầu khe (`-Hop`) tìm bước sinh cạnh chéo,
-dựng ca thử tái hiện ĐÚNG lỗi rồi mới sửa; sau đó đối chiếu mẫu (đếm thiết bị mẫu khung 4: sửa hộp trong `tb_khung.ps1`); rồi khung 6, 7, 8. Lỗi chưa sửa (ghi ở file mẫu): khe 2,8 m giữa 2 nắp tường ở cột trục 3 (cột = khe hở tường) khép
+(3) E16 XONG 21/11 15:10: lỗi ở ca thử (cung thứ 3 quét 270°, không phải cánh cửa ⇒ sảnh chỉ 2 cửa = buồng đệm, bị bỏ). Mốc thời gian bản vẽ thật nâng 15 s
+(chạy riêng 9,7–9,9 s; cả bộ test máy bận 11–13 s; sau `BoHatchNo` còn 7,8 s).
+(3) KHUNG 4 Karaoke 123 XONG 21/11 chiều: 3 lỗi vùng đã sửa (chi tiết `cad/skills/mau/hoc-bao-chay-ban-mau.md` mục Khung 4): LỖI 5 hatch tường đã nổ thành nét 45°
+(`BoHatchNo`, E17), LỖI 6 ô giao hành lang ≤ 2 x 1,8 m bị `PhongThat` bỏ im lặng (E18), LỖI 7 lan can / mép sàn 2 nét layer thường quanh buồng thang hở (`LanCan`, E19).
+Người dùng nhắc lại 21/11: "sảnh thang máy thì không, sảnh tiếp tân hoặc sảnh thì có" ⇒ phòng có chữ SẢNH (không THANG) / TIẾP TÂN / LỄ TÂN luôn rải (E20).
+Tầng 1 15 vùng / 20 ĐB, tầng 2 17 vùng / 20 ĐB (BC_KHOI); mọi đầu báo + đèn của mẫu nằm trong vùng plugin. Đầu phun 1 lần gọi: 69 + 63 đầu. Bản chép tầng 1 nguyên
+(còn hatch nổ) ở y −100 m. Bundle CHƯA build lại (AutoCAD đang mở `hoc_bao_chay.dwg`, chưa lưu kết quả rải GUI cũ ở y −100 m: xoá `PCCC_*` hộp đó trước khi rải lại).
+BƯỚC TIẾP: khung 6 (trường học, lớn: `A$Cc52e29cf`, `A$C4bb18544`), 7 (nhà ở XH: `MB TẦNG 1`, `A$Cbe9093c8`), 8 (Karaoke 991: `A$C1b64d7a5`, `A$C473f3ffb`):
+`tim_block.ps1` lấy handle → `chep_no.ps1 -H <h> -DY -50000` (lưu AutoCAD) → `go_khung.ps1 -P1 -P2 -Ten kN -Build` → `xuat.ps1` + `khop.py` (sửa hộp) đối chiếu
+→ `go_khung -Diem` gỡ chỗ thiếu vùng → ca thử tái hiện → sửa → `chay_thu` + `thu_mcp`. Mỗi khung báo: số vùng, số ĐB so mẫu, vùng thiếu góc, đầu phun 1 lần gọi.
+Lỗi chưa sửa (khung 3, ghi ở file mẫu): khe 2,8 m giữa 2 nắp tường ở cột trục 3 (cột = khe hở tường) khép
 ngang P.104; WC block xref tên vô nghĩa không nhận; ô X lỗ thông tầng lẫn dải bồn cây không bỏ.
 
 ## VIỆC 20/11 — DẠY PLUGIN PHÂN VÙNG NHƯ AI (xưởng mái kèo): MÃ L1, L2, L5, L5b, L6, L7, L8: BUILD + TEST ĐẠT + COMMIT (chưa push); BẢN CHÉP 25 VÙNG = ĐÁP ÁN, 57 / 55 ĐB

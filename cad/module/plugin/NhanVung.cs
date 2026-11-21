@@ -85,6 +85,7 @@ namespace TKPCCC
             public Transaction Tr;
             public double Tol;                                                            // sai số nối điểm (2 mm)
             public bool ChiTuong;                                                         // chỉ lấy layer tường, cột (+ PCCC_VUNG)
+            public List<Point2d[]> NetPhu;                                                // lượt chỉ-tường: LINE layer thường gom riêng, nhận lan can 2 nét (LanCan)
             public List<KeyValuePair<ObjectId, Extents3d>> Ds = new List<KeyValuePair<ObjectId, Extents3d>>();
             public Extents3d? ToanBo;
             public Dictionary<ObjectId, int> Lop = new Dictionary<ObjectId, int>();      // 0 bỏ, 1 thường, 2 tường
@@ -99,6 +100,7 @@ namespace TKPCCC
             public bool DocDam;                                                           // lượt đọc nét dầm (Mau = nét dầm mẫu)
             public HashSet<string> BoMau;                                                 // khoá "LAYER|màu" bỏ ra (nét dầm khi dựng tường)
             public List<Point2d> KhuKhong = new List<Point2d>();                          // dấu hiệu lõi thang, buồng thang, WC (GomKhu)
+            public List<Point2d> Sanh = new List<Point2d>();                              // chữ SẢNH (không THANG), TIẾP TÂN, LỄ TÂN: sảnh chung, vẫn rải (GomKhu)
             public List<List<Point2d>> GiengThang = new List<List<Point2d>>();           // hộp bao block thang máy (GomKhu): như ô X, phòng sát nó ≤ 30 m² = sảnh thang
             public double[] Hop;                                                          // [x0, y0, x1, y1] chỉ đọc đối tượng chạm hộp này (khung chọn nới 5 m); null = đọc hết
             public List<Point2d> MocTruc = new List<Point2d>();                          // tâm ký hiệu trục (GomTruc)
@@ -130,6 +132,7 @@ namespace TKPCCC
             public List<Point2d> TenChu = new List<Point2d>();      // L5b (review 21/11): phòng có chữ tên bất kỳ không bỏ theo mái che
             public List<Point2d[]> ThangBo = new List<Point2d[]>(); // L7: hộp bao ký hiệu thang bộ, khoét khỏi vùng
             public List<Point2d[]> Cua = new List<Point2d[]>();     // hộp ký hiệu cửa: sảnh thang máy ≤ 2 cửa = buồng đệm (người dùng 21/11)
+            public List<Point2d> Sanh = new List<Point2d>();        // chữ sảnh chung / tiếp tân: không bỏ như sảnh thang máy (người dùng 21/11)
             public List<Point2d[]> Doan = new List<Point2d[]>();    // L6 (review 20/11): nét đã dựng mặt, xét mép hiên có tường (nét đôi) hay không
         }
 
@@ -303,7 +306,11 @@ namespace TKPCCC
             bool lopDam = kh != null && n.LopKhoiDam != null && n.LopKhoiDam.Contains(kh.Substring(0, kh.IndexOf('|')));
             if (n.BoMau != null && !(e is Hatch) && (n.BoMau.Contains(kh) || lopDam)) return;
             if (n.Mau != null && (e is Hatch || !(n.Mau.Contains(kh) || (n.DocDam && lopDam)))) return;
-            if (n.ChiTuong && loai != 2) return;
+            if (n.ChiTuong && loai != 2)
+            {
+                if (loai != 1 || n.NetPhu == null || !(e is Line)) return;
+                ra = n.NetPhu;
+            }
             if (!NetLien(n, net)) return; // trục (CENTER, DASHDOT), nét khuất
             try
             {
@@ -449,8 +456,10 @@ namespace TKPCCC
                 {
                     string t = ChuanTen(dt != null ? dt.TextString : mt.Text);
                     GomChuKhu(n, e, t);
-                    if (t.Length > 24 || !(t.StartsWith("WC") || KHU_KHONG_BAO.Any(k => t.Contains(k)))) return;
                     Point3d p = dt != null ? dt.Position : mt.Location;
+                    // Người dùng 21/11: sảnh thang máy không rải; sảnh, sảnh tiếp tân thì rải ("SẢNH THANG MÁY" chứa THANG MAY: bỏ theo KhuKhong bên dưới).
+                    if (t.Length <= 24 && ((t.Contains("SANH") && !t.Contains("THANG")) || t.Contains("TIEPTAN") || t.Contains("LETAN"))) n.Sanh.Add(new Point2d(p.X, p.Y));
+                    if (t.Length > 24 || !(t.StartsWith("WC") || KHU_KHONG_BAO.Any(k => t.Contains(k)))) return;
                     n.KhuKhong.Add(new Point2d(p.X, p.Y));
                 }
             }
@@ -724,6 +733,36 @@ namespace TKPCCC
             return DiemGan(s, q).GetDistanceTo(q);
         }
 
+        /// Lan can / mép sàn quanh ô cầu thang, lỗ thông tầng vẽ 2 nét mảnh trên layer không phải tường, nối từ cột / tường này sang cột / tường kia
+        /// (Karaoke 123 tầng 2, 21/11: hành lang trên buồng thang hở thông xuống thang + ô thông tầng ra ngoài nhà, không thành phòng; mẫu có đầu báo
+        /// ở đoạn hành lang đó). Lượt chỉ-tường lấy thêm LINE ≥ 2 m có nét song song cách 20–300 mm phủ ≥ 80 %, HAI đầu chạm (≤ 50 mm) nét tường / cột.
+        static List<Point2d[]> LanCan(List<Point2d[]> phu, List<Point2d[]> tuong, double tol)
+        {
+            List<Point2d[]> ra = new List<Point2d[]>();
+            double cham = tol * 25;
+            List<Point2d[]> dn = phu.Where(s => s[0].GetDistanceTo(s[1]) >= tol * 1000).ToList();
+            if (dn.Count < 2 || tuong.Count == 0) return ra;
+            LuoiDoan lt = new LuoiDoan(tuong, tol * 250);
+            Func<Point2d, bool> chamTuong = p => lt.Tim(p.X - cham, p.Y - cham, p.X + cham, p.Y + cham).Any(j => CachDoan(tuong[j], p) <= cham);
+            List<Point2d[]> hai = dn.Where(s => chamTuong(s[0]) && chamTuong(s[1])).ToList();
+            foreach (Point2d[] s in hai)
+            {
+                double L = s[0].GetDistanceTo(s[1]);
+                Vector2d u = (s[1] - s[0]) / L;
+                if (hai.Any(t =>
+                {
+                    if (t == s) return false;
+                    double Lt = t[0].GetDistanceTo(t[1]);
+                    Vector2d v = (t[1] - t[0]) / Lt;
+                    double cach = Math.Abs(u.X * (t[0].Y - s[0].Y) - u.Y * (t[0].X - s[0].X));
+                    if (Math.Abs(u.X * v.Y - u.Y * v.X) > 0.02 || cach < tol * 10 || cach > tol * 150) return false;
+                    double a0 = (t[0] - s[0]).DotProduct(u), a1 = (t[1] - s[0]).DotProduct(u);
+                    return Math.Min(L, Math.Max(a0, a1)) - Math.Max(0, Math.Min(a0, a1)) >= 0.8 * Math.Min(L, Lt);
+                })) ra.Add(s);
+            }
+            return ra;
+        }
+
         /// Ô có dấu X (người dùng chốt 14/11: lỗ thông tầng, không bố trí): hai đoạn dài ≥ 1 m, dài gần bằng nhau, cắt nhau tại trung điểm của cả hai,
         /// 4 đầu mút nằm trên nét khác (4 góc ô). Bỏ 2 đường chéo khỏi doan (ô thành một mặt), trả 4 góc từng ô (ngược chiều kim đồng hồ).
         static List<List<Point2d>> TachOX(List<Point2d[]> doan, double tol)
@@ -933,11 +972,79 @@ namespace TKPCCC
             return tot == null ? null : BoThangHang(tot, tol);
         }
 
+        /// Hatch gạch chéo tường ĐÃ NỔ thành nét (Karaoke 123 khung 4, 21/11: 3409 nét 45° dài ≈ 0,28 m cách 90 mm trong dải tường): mẩu của cùng một
+        /// đường gạch ở hai bức tường thẳng hàng nhau, bước khép khe nối ngang góc phòng (≤ 3 m luôn khép; tới 6 m nhờ mẩu kề hở cùng chỗ như tường 2 nét)
+        /// -> vùng có cạnh chéo 4–6 m cắt phòng. Bỏ khỏi lưới nét: mẩu ≤ 0,8 m lệch trục tường chính ≥ 10°, có mẩu song song kề CẢ HAI bên (cách ≤ 0,25 m,
+        /// tâm cách ≤ 0,8 m), cùng hướng ≥ 20 mẩu như thế. Nắp đầu tường (theo trục chính) và cặp góc vát tường 2 nét (kề một bên) giữ lại.
+        static List<Point2d[]> BoHatchNo(List<Point2d[]> doan, double tol)
+        {
+            double ngan = tol * 400, ke = tol * 125; // 0,8 m; 0,25 m (tol = 2 mm)
+            double[] truc = new double[90];
+            foreach (Point2d[] s in doan)
+            {
+                double L = s[0].GetDistanceTo(s[1]);
+                if (L >= tol * 500) truc[((int)Math.Floor(Math.Atan2(s[1].Y - s[0].Y, s[1].X - s[0].X) * 180 / Math.PI) % 90 + 90) % 90] += L;
+            }
+            int tc = Array.IndexOf(truc, truc.Max());
+            Dictionary<int, List<int>> ho = new Dictionary<int, List<int>>(); // hướng (độ, mod 180) -> chỉ số mẩu ngắn lệch trục
+            for (int i = 0; i < doan.Count; i++)
+            {
+                double L = doan[i][0].GetDistanceTo(doan[i][1]);
+                if (L > ngan || L < tol) continue;
+                double g = (Math.Atan2(doan[i][1].Y - doan[i][0].Y, doan[i][1].X - doan[i][0].X) * 180 / Math.PI + 360) % 180;
+                double lech = ((g - tc) % 90 + 90) % 90;
+                if (Math.Min(lech, 90 - lech) < 10) continue;
+                int k = (int)Math.Round(g) % 180;
+                List<int> ds;
+                if (!ho.TryGetValue(k, out ds)) ho[k] = ds = new List<int>();
+                ds.Add(i);
+            }
+            HashSet<int> bo = new HashSet<int>();
+            foreach (List<int> ds in ho.Values)
+            {
+                if (ds.Count < 20) continue;
+                Dictionary<long, List<int>> luoi = new Dictionary<long, List<int>>();
+                Func<Point2d, long> o = p => ((long)Math.Floor(p.X / ngan) << 32) ^ (long)(uint)Math.Floor(p.Y / ngan);
+                Func<int, Point2d> tam = i => new Point2d((doan[i][0].X + doan[i][1].X) / 2, (doan[i][0].Y + doan[i][1].Y) / 2);
+                foreach (int i in ds)
+                {
+                    List<int> c;
+                    long ko = o(tam(i));
+                    if (!luoi.TryGetValue(ko, out c)) luoi[ko] = c = new List<int>();
+                    c.Add(i);
+                }
+                List<int> hai = new List<int>();
+                foreach (int i in ds)
+                {
+                    Point2d m = tam(i);
+                    Vector2d n = (doan[i][1] - doan[i][0]).GetNormal().GetPerpendicularVector();
+                    bool trai = false, phai = false;
+                    for (int dx = -1; dx <= 1 && !(trai && phai); dx++)
+                        for (int dy = -1; dy <= 1 && !(trai && phai); dy++)
+                        {
+                            List<int> c;
+                            if (!luoi.TryGetValue(o(new Point2d(m.X + dx * ngan, m.Y + dy * ngan)), out c)) continue;
+                            foreach (int j in c)
+                            {
+                                if (j == i || tam(j).GetDistanceTo(m) > ngan) continue;
+                                double d = (tam(j) - doan[i][0]).DotProduct(n);
+                                if (d > tol && d <= ke) trai = true;
+                                else if (d < -tol && d >= -ke) phai = true;
+                            }
+                        }
+                    if (trai && phai) hai.Add(i);
+                }
+                if (hai.Count >= 20) bo.UnionWith(hai);
+            }
+            if (bo.Count == 0) return doan;
+            return doan.Where((s, i) => !bo.Contains(i)).ToList();
+        }
+
         /// Mọi mặt kín (ngược chiều kim đồng hồ, diện tích dương, chưa bỏ đỉnh thẳng hàng) dựng từ các đoạn.
         /// khongNoi: đoạn không dùng để khép khe ở bước 1, 1b (nét cột, TachCot); vẫn dựng mặt như nét thường.
         static List<List<Point2d>> CacMat(List<Point2d[]> doan0, double tol, double ho, List<Point2d[]> cua = null, double hoCua = 0, HashSet<Point2d[]> khongNoi = null)
         {
-            List<Point2d[]> doan = new List<Point2d[]>(doan0);
+            List<Point2d[]> doan = new List<Point2d[]>(BoHatchNo(doan0, tol));
             double tolTh = tol * 5; // lệch khỏi đường thẳng vẫn coi là thẳng hàng (10 mm)
             // Review 20/11 (CHẶN 1): nét cột thẳng hàng với nét tường thường (cột đứng trong tường; cửa cuốn để trống giữa hai cột) vẫn khép khe như
             // trước L1: nét tường thẳng hàng phải chạm nét cột (cách ≤ 50 mm). Nét cột không chạm tường thẳng hàng nào (cột giữa lòng xưởng, ô giả
@@ -1536,17 +1643,20 @@ namespace TKPCCC
                 {
                     if (co.Count > 0 || mat.Count > 0 || (chiTuong && !coTuong)) continue;
                     n.ChiTuong = chiTuong;
-                    n.Cua.Clear(); n.GachCheo.Clear(); n.KhuKhong.Clear(); n.GiengThang.Clear(); n.MocTruc.Clear(); n.Tron.Clear(); n.ChuNgan.Clear();
+                    n.Cua.Clear(); n.GachCheo.Clear(); n.KhuKhong.Clear(); n.Sanh.Clear(); n.GiengThang.Clear(); n.MocTruc.Clear(); n.Tron.Clear(); n.ChuNgan.Clear();
                     n.CotUng.Clear(); n.KhuTen.Clear(); n.TenPhong.Clear(); n.TenChu.Clear(); n.ThangBo.Clear();
                     List<Point2d[]> doan = new List<Point2d[]>();
                     n.BoMau = coDam ? damMau : null;
                     n.GomCot = true;
+                    n.NetPhu = chiTuong ? new List<Point2d[]>() : null;
                     foreach (Entity e in ds)
                     {
                         if (doan.Count % 64 == 0) KiemEsc();
                         n.LopKhoiDam = lopDam != null && e.ObjectId == khoiDam ? lopDam : null;
                         ThuNet(n, e, ObjectId.Null, ObjectId.Null, null, 0, doan);
                     }
+                    if (n.NetPhu != null) doan.AddRange(LanCan(n.NetPhu, doan, n.Tol));
+                    n.NetPhu = null;
                     n.GomCot = false;
                     n.LopKhoiDam = null;
                     n.BoMau = null;
@@ -1588,6 +1698,7 @@ namespace TKPCCC
                     oX.AddRange(n.GiengThang); // giếng thang máy: không rải trong giếng, như ô X
                     them.ThangBo = new List<Point2d[]>(n.ThangBo);
                     them.Cua = new List<Point2d[]>(n.Cua);
+                    them.Sanh = new List<Point2d>(n.Sanh);
                     them.Doan = doan;
                     gach = new List<List<Point2d>>(n.GachCheo);
                     if (doan.Count >= 3)
@@ -1737,7 +1848,11 @@ namespace TKPCCC
             {
                 double a = DienTichDaGiac(v) * m * m, p = 0;
                 for (int i = 0; i < v.Count; i++) p += v[i].GetDistanceTo(v[(i + 1) % v.Count]) * m;
-                return a >= aMin && 2 * a / p >= rongMin;
+                // 2a/p ≈ bề rộng dải dài nhưng chỉ bằng nửa cạnh ô vuông: ô giao hành lang 2,0 x 1,8 m ra 0,95 < 1 bị bỏ như dải tường (Karaoke 123, 21/11,
+                // mẫu có đầu báo; ô 1,8 x 1,8 m viền khấc cột còn thấp hơn). Ô ≥ 3 m² có diện tích / cạnh dài hộp bao ≥ 1,5 x ngưỡng thì giữ;
+                // dải tường (dài, kể cả xiên, chữ L), hộp gen nhỏ vẫn bỏ.
+                double dx = (v.Max(z => z.X) - v.Min(z => z.X)) * m, dy = (v.Max(z => z.Y) - v.Min(z => z.Y)) * m;
+                return a >= aMin && (2 * a / p >= rongMin || (a >= 3 && a / Math.Max(dx, dy) >= 1.5 * rongMin));
             }).ToList();
             Func<List<Point2d>, Point2d> diemTrong = g =>
             {

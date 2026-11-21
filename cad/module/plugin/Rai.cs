@@ -1869,7 +1869,9 @@ namespace TKPCCC
                             // trong phòng hoặc cách biên ≤ 1 m) hoặc trong BUỒNG THANG (phòng chứa tâm hộp thang bộ). Sảnh tiếp tân, hành lang nhiều cửa phòng: rải.
                             Func<List<Point2d>, int> soCua = f0 => nhanThem.Cua.Count(h => { Point2d c = new Point2d((h[0].X + h[1].X) / 2, (h[0].Y + h[1].Y) / 2);
                                 return TrongDaGiac(f0, c) || CachVien(f0, c) <= 1 / m; });
+                            // Người dùng 21/11 (nhắc lại): phòng có chữ SẢNH (không kèm THANG), TIẾP TÂN, LỄ TÂN là sảnh chung: luôn rải.
                             List<List<Point2d>> sanh = vung.Where(f0 => DienTichDaGiac(f0) * m * m <= 30 && oX.Any(x => keNhau(f0, x))
+                                && !nhanThem.Sanh.Any(p => TrongDaGiac(f0, p))
                                 && (soCua(f0) <= 2 || nhanThem.ThangBo.Any(h => TrongDaGiac(f0, new Point2d((h[0].X + h[1].X) / 2, (h[0].Y + h[1].Y) / 2))))).ToList();
                             vung = vung.Where(f0 => !sanh.Contains(f0)).ToList();
                             if (sanh.Count > 0) ed.WriteMessage("\n[TKPCCC] bo_sanh_thang=" + sanh.Count + " m2="

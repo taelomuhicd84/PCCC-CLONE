@@ -20,7 +20,9 @@ Nét nào là tường: `tuong_cot.md`. Cửa, thang, khu bỏ: `cua_thang_khu.m
 
 ## Plugin dựng phòng thế nào ("Enter mọi phòng" của `PCCC_RAI`)
 1. Gom đoạn nét từ đối tượng quét chọn (`ThuNet`), tách cột, nhận trục, khép khe cửa, dựng mọi mặt kín (`CacMat`), chỉ giữ mặt có tâm trong khung chọn.
-2. `PhongThat`: mặt ≥ 1 m², rộng TB (2A/P) ≥ 1 m, không chứa mặt khác bên trong.
+2. `PhongThat`: mặt ≥ 1 m², rộng TB (2A/P) ≥ 1 m, không chứa mặt khác bên trong. 2A/P chỉ bằng nửa cạnh ô vuông: ô ≥ 3 m² có cạnh ngắn hình chữ nhật
+   cùng diện tích + chu vi ≥ 1,5 m cũng giữ (Karaoke 123 21/11: ô giao hành lang 1,8 m với lối dọc 2 m = 3,6 m², 2A/P = 0,95, bị bỏ im lặng như dải tường;
+   mẫu có đầu báo ở đó. Test E18). Mặt bị bỏ ở bước này KHÔNG in dòng lệnh; bấm điểm trong ô thì vẫn rải.
 3. Lọc lần lượt, mỗi lọc in một dòng: ô X, gạch chéo (`bo_phong=`), ngoài trục (`bo_ngoai_truc=`), WC / thang (`bo_khu_khong_bao=`), sảnh thang (`bo_sanh_thang=`),
    chữ khu (`bo_khu_ten=`), hiên (`bo_hien=`), cụm phòng nhỏ tách xa mặt bằng chính (hình chi tiết, mặt cắt: `bo_cum=`).
 4. Mặt tự dựng được làm gọn (`LamGon`: bỏ bậc tường, học trần, góc cột) rồi vẽ lên `PCCC_VUNG`.
