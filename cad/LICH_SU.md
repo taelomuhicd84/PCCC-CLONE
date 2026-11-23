@@ -827,3 +827,6 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
   (40 block ống thoát nước có X thành giếng, bỏ nhầm 5 phòng sát; ô X 19 x 32 m mẫu trống bị rải) → nguồn mới chỉ nhận thông tầng + trần 300 m².
   `Rai.cs` `KtLuoi`: hành lang 1 hàng chuỗi dọc trên hàng, chuỗi ngang chọn cột thiết bị / phía không qua cột (truyền `nhanThem.Cot`). Test E24, E25,
   mốc Karaoke T2 16 vùng. `chay_thu`, `thu_mcp` TAT CA DAT; khung 3–6 + QT giữ số; build bundle.
+- 23/11 trưa (người dùng soát trong AutoCAD): hành lang trên lấn tường 140 mm (LamGon gộp mép lan can thang hở về đường ngoài) → giữ bậc khi cạnh ngoài
+  ngắn hơn; ô 12,5 m2 hở 2 dải 0,2 m với hành lang (chỉ cầu khép khe) → `GopMatNho` (c) gộp dải nối 2 phòng vào phòng nhỏ hơn, chạy sau (b) (trước (b)
+  làm khung 6 còn 98 vùng). E23 đổi kỳ vọng, E26 mới; khung 3–6 + QT giữ số; TAT CA DAT; build bundle.

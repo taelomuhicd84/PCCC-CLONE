@@ -1522,6 +1522,11 @@ namespace TKPCCC
                     Vector2d ngoai = new Vector2d(da.Y, -da.X); // lòng đa giác ở bên trái cạnh
                     double lech = (B.P - A.P).DotProduct(ngoai);
                     if (Math.Abs(lech) >= t) continue;
+                    // Karaoke 123 tầng 2 (người dùng 23/11): mép lan can thang hở 6,3 m lệch 140 mm khỏi mặt tường hành lang 26 m, gộp về đường ngoài làm cả
+                    // cạnh hành lang lấn vào tường. Hai cạnh đều dài ≥ 3 t, lệch ≥ 0,1 t mà cạnh NGOÀI ngắn hơn cạnh trong: bậc thật (mặt tường – mép lan can),
+                    // giữ bậc. Cạnh ngoài dài hơn (bước tường 150, hốc trần: người dùng 16/11) vẫn gộp ra đường ngoài.
+                    double la = A.P.GetDistanceTo(A.Q), lb = B.P.GetDistanceTo(B.Q);
+                    if (Math.Min(la, lb) >= 3 * t && Math.Abs(lech) >= 0.1 * t && (lech > 0 ? lb < la : la < lb)) continue;
                     Point2d goc = lech > 0 ? B.P : A.P;
                     A.P = ChieuLen(A.P, goc, da);
                     A.Q = ChieuLen(B.Q, goc, da);
@@ -1949,7 +1954,7 @@ namespace TKPCCC
         /// (rộng TB ≤ 2,5 m, hành lang) kề nhau qua cầu gộp làm một.
         /// Buồng xí nhận theo dấu hiệu WC (GomKhu) hoặc hình kín cỡ bồn cầu / lavabo bên trong (GomVatDung).
         /// shortcut: sảnh có lavabo đặt trong cũng không gộp (người dùng vẽ tay); buồng xí trống không vật dụng kề thẳng phòng qua cầu thì bị gộp: xoá tay.
-        static List<List<Point2d>> GopMatNho(List<List<Point2d>> mat, List<List<Point2d>> pt, List<Point2d[]> doan, List<Point2d> khuKhong, List<Point2d> vatDung, double m, out int gopSanh, out int gopNho)
+        static List<List<Point2d>> GopMatNho(List<List<Point2d>> mat, List<List<Point2d>> pt, List<Point2d[]> doan, List<Point2d> khuKhong, List<Point2d> vatDung, double m, out int gopSanh, out int gopNho, List<Point2d[]> cua = null)
         {
             gopSanh = 0; gopNho = 0;
             if (doan == null || doan.Count == 0) return pt; // không biết nét thật: không phân được cầu với tường 1 nét
@@ -2011,6 +2016,32 @@ namespace TKPCCC
                 kq[bj] = gChon;
                 kq.RemoveAt(bi);
                 gopNho++;
+            }
+            // (c) Karaoke 123 tầng 2 (người dùng 23/11 "rectang còn hở 1 khúc"): dải 0,2 m giữa ô 12,5 m² và hành lang chỉ có 2 cầu khép khe (đầu tường – cột,
+            // không tường) bị bỏ như dải tường -> hở. Dải rộng ≤ 0,35 m chung với phòng chỉ bằng cầu: gộp vào phòng kề NHỎ nhất (vùng tay người dùng 21/11:
+            // ô phủ tới mặt hành lang). Sau (b): dải đã gộp không mở đường gộp phòng (trường học khung 6: làm trước (b) ra 98 vùng thay 112). Cửa trên tường 2 nét cũng ra dải này: phòng nhận khấc nông, LamGon bỏ.
+            foreach (List<Point2d> f0 in mat)
+            {
+                if (giu.Contains(f0)) continue;
+                double a0 = dt(f0);
+                if (a0 < 0.2 || a0 > 6 || rong(f0) > 0.35) continue;
+                // ngưỡng cửa đi (dải trên tường 2 nét, dài ≤ 1,5 m hoặc có ký hiệu cửa) không gộp: trường học khung 6 gộp hàng trăm ngưỡng, kéo hành lang
+                // với phòng thành 98 vùng thay vì 112
+                if (Math.Max(f0.Max(q => q.X) - f0.Min(q => q.X), f0.Max(q => q.Y) - f0.Min(q => q.Y)) * m < 1.5
+                    || (cua != null && cua.Any(h => CatHop(h[0], h[1], new[] { new Point2d(f0.Min(q => q.X), f0.Min(q => q.Y)), new Point2d(f0.Max(q => q.X), f0.Max(q => q.Y)) }, tol * 50)))) continue;
+                List<Point2d> f = ccw(f0);
+                int chon = -1, soKe = 0;
+                List<Point2d> moi = null;
+                for (int i = 0; i < kq.Count; i++)
+                {
+                    if (!hopCham(f, kq[i])) continue;
+                    List<Point2d> g = GopHai(kq[i], f, doan, tol);
+                    if (g == null) continue;
+                    soKe++;
+                    if (chon < 0 || dt(kq[i]) < dt(kq[chon])) { chon = i; moi = g; }
+                }
+                // chỉ dải hở NỐI HAI phòng (ô giáp hành lang); ô cửa sổ tường ngoài chỉ kề một phòng: bỏ qua
+                if (soKe >= 2) { kq[chon] = moi; gopSanh++; }
             }
             return kq;
         }

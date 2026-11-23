@@ -1876,7 +1876,7 @@ namespace TKPCCC
                     {
                         List<List<Point2d>> pt = PhongThat(mat, m);
                         int gopSanh, gopNho;
-                        pt = GopMatNho(mat, pt, nhanThem.Doan, khuKhong, nhanThem.VatDung, m, out gopSanh, out gopNho);
+                        pt = GopMatNho(mat, pt, nhanThem.Doan, khuKhong, nhanThem.VatDung, m, out gopSanh, out gopNho, nhanThem.Cua);
                         if (gopSanh + gopNho > 0) ed.WriteMessage("\n[TKPCCC] gop_sanh=" + gopSanh + " gop_o_nho=" + gopNho
                             + " (sảnh nhỏ trước WC, ô giao, đoạn hành lang chỉ ngăn bằng khe hở: gộp vào phòng / hành lang kề).");
                         vung = pt.Where(f0 => !MatKhongRai(f0, oX, gach)).ToList();

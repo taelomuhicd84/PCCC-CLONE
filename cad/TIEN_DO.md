@@ -13,7 +13,17 @@ Dấu X từ nguồn mới chỉ nhận khi là thông tầng (khung 6 có 40 bl
 `KtLuoi`: vùng 1 hàng ≥ 2 thiết bị rộng ≤ 3 m thì chuỗi dọc đi ngay trên hàng; chuỗi ngang 1 lần ở cột thiết bị mà đường dim không qua cột (`TachCot`).
 (4) Test E24, E25; mốc Karaoke T2 15 → 16 vùng (+ thông tầng). `chay_thu` + `thu_mcp` TAT CA DAT; bundle đã build. Khung 3–6 giữ số vùng như trước
 (k5 26, k3 14 / 13, k4 T1 14, k6 112 / 204 ĐB), QT 25 / 57.
-CÒN: người dùng tắt hẳn AutoCAD, mở lại để nạp bundle, chạy lại tầng 2 xem vùng thông tầng + dim; push từ tab Terminal. Hành lang chữ L / lệch chưa có ca thử.
+SỬA THÊM 23/11 trưa (người dùng xem trong AutoCAD: "nét hành lang chưa fix, xiên xẹo"; "rectang còn hở 1 khúc"):
+- Hành lang trên lấn 140 mm vào tường suốt 33 m: `LamGon` gộp cạnh lan can thang hở 6,3 m về đường ngoài. Nay hai cạnh song song đều ≥ 3 m, lệch ≥ 0,1 m
+  mà cạnh ngoài ngắn hơn cạnh trong thì GIỮ bậc (bám mặt tường, chỉ đoạn thang khấc ra mép lan can); bước tường / hốc trần 16/11 (cạnh ngoài dài hơn) vẫn
+  gộp ra ngoài. E23 đổi kỳ vọng 27,16 → 26,15 m2 (cũ lấn tường).
+- Ô 12,5 m2 hở với hành lang trên / dưới 2 dải 0,2 m (chỉ cầu khép khe đầu tường – cột): `GopMatNho` bước (c), SAU (b): dải ≤ 0,35 m, dài ≥ 1,5 m, không
+  ký hiệu cửa, nối HAI phòng qua cầu → gộp vào phòng kề nhỏ nhất. Ô nay 14,58 m2 (2,7 x 5,4), khớp vùng tay người dùng 21/11 (354015..356615 x −54972..−49572).
+  Làm trước (b) thì trường học khung 6 còn 98 vùng (gộp dây chuyền), nay giữ 112. Test E26 (CÒN NGHI: ô ra 15,6 m2, vách 2 nét 0,2 m bên trái cũng
+  vào ô, có thể có từ trước; chưa gỡ).
+- Khung 3–6 + QT giữ số vùng; chay_thu + thu_mcp TAT CA DAT; bundle build lại. AutoCAD người dùng đang nạp bản build lúc 11:30 (chưa có 2 sửa này):
+  tắt hẳn, mở lại rồi rải lại tầng 2.
+CÒN: push từ tab Terminal. Hành lang chữ L / lệch chưa có ca thử.
 (Kế hoạch gốc, để tham khảo:)
 Ảnh người dùng: `ket_qua/HOC_BAO_CHAY/anh/k4t2_nguoidung_23_11.png` (mặt bằng tầng 2, chạy bằng plugin CŨ trong AutoCAD: ô giao còn vùng riêng — đã sửa
 bằng `GopMatNho` f49f1fd), `k4t2_truc_23_11.png` (tên trục F, E, D, 1, 1'', 1'). Luật đã ghi: `cad/skills/nhan_dang/phong_vung.md` mục 7,

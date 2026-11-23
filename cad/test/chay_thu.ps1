@@ -1217,6 +1217,13 @@ foreach ($y in (0..8 | ForEach-Object { 6000 * $_ })) {
   '_.RECTANG', '2429850,1650', '2430150,1950', '_.RECTANG', '2434450,-150', '2434750,150', '_.RECTANG', '2434450,1650', '2434750,1950', '-LAYER', 'S', '0', '',
   'PCCC_RAI', 'BC_KHOI', '', '', 'C', '2419500,-500', '2440500,2500', '', '', '',
   '(setq ss (ssget "_X" (list (cons 0 "DIMENSION"))) i 0)(while (< i (sslength ss)) (setq d (entget (ssname ss i)) p (cdr (assoc 10 d)) a (cdr (assoc 13 d)) b (cdr (assoc 14 d))) (if (< 2419000 (car a) 2441000) (princ (strcat "\nKTD " (rtos (car p) 2 0) "," (rtos (cadr p) 2 0) " " (rtos (car a) 2 0) "," (rtos (cadr a) 2 0) " " (rtos (car b) 2 0) "," (rtos (cadr b) 2 0)))) (setq i (1+ i)))(princ)',
+  # E26 (nguoi dung 23/11 "rectang con ho 1 khuc"): hanh lang tren y 5,2-7,2 m; phong trai 7 x 5 m, o phai 2,8 x 5 m, vach 2 net x 7,0-7,2 m;
+  #    tuong 2 net y 5,0-5,2 m chi tu x 0 toi 7 m, phia phai chi co cot 0,2 x 0,2 m o x 9,8 m: dai 0,2 m giua o va hanh lang chi la 2 cau khep khe.
+  #    Truoc sua: dai bi bo, o ho voi hanh lang; nay dai gop vao o (phong ke NHO nhat): o 14,56 m2 (thuc te ra 15,6: vach trai 0,2 m vao o, chua ro)
+  '(princ "\n==E26==")', '-LAYER', 'M', 'TUONG', '', '_.ZOOM', 'W', '2449000,-1000', '2461000,8000', '_.RECTANG', '2450000,0', '2460000,7200',
+  '_.PLINE', '2450000,5000', '2457000,5000', '2457000,5200', '2450000,5200', '', '_.LINE', '2457000,0', '2457000,5000', '', '_.LINE', '2457200,0', '2457200,5000', '',
+  '-LAYER', 'M', 'COT', '', '_.RECTANG', '2459800,5000', '2460000,5200', '-LAYER', 'S', '0', '',
+  'PCCC_RAI', 'BC_KHOI', '', '', 'C', '2449500,-500', '2460500,7700', '', '', '',
   '(princ "\n==EHET==")', '_.QSAVE')) -join "`r`n" | Set-Content -Encoding ascii "$T\kb7.scr"
 $p7 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb7.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb7.out.txt"
 if (-not $p7.WaitForExit(180000)) { Stop-Process -Id $p7.Id -Force; throw "accoreconsole qua 3 phut (review 20/11): $T\kb7.out.txt" }
@@ -1290,11 +1297,14 @@ $e22b = CaRv 'E22B'
 Kiem ($e22b -notmatch 'gop_sanh' -and (DtVung $e22b) -contains 24) `
   "Sanh co hinh kin co bon cau / lavabo (no roi) la buong xi: khong gop, phong 24 m2 (vung=$((DtVung $e22b) -join ','))"
 $e23 = CaRv 'E23'
-Kiem ((DtVung $e23).Count -eq 1 -and (DtVung $e23)[0] -ge 26.5 -and (DtVung $e23)[0] -le 27.2) `
-  "Karaoke 123 21/11: hanh lang qua cot + lan can khong vo doan: 1 vung 26,5-27,2 m2 (vung=$((DtVung $e23) -join ','))"
+Kiem ((DtVung $e23).Count -eq 1 -and (DtVung $e23)[0] -ge 26.1 -and (DtVung $e23)[0] -le 26.2) `
+  "Karaoke 123 21/11: hanh lang qua cot + lan can khong vo doan: 1 vung; 23/11 nguoi dung: bam mat tuong, chi doan lan can 6,8 m khac ra 0,14 m (25,2 + 0,95 = 26,15 m2; truoc 27,16 lan tuong) (vung=$((DtVung $e23) -join ','))"
 $e24 = CaRv 'E24'
 Kiem ($e24 -match 'o_x=1 ' -and $e24 -match 'thong_tang=1 ' -and (DtVung $e24).Count -eq 1 -and (DtVung $e24) -contains 77.6) `
   "Nguoi dung 23/11: sanh thong tang (dau X layer truc, tuong ho) thanh vung rieng khac theo mep thang 77,6 m2; gieng 2,5 x 2,5 m van khong rai (vung=$((DtVung $e24) -join ','))"
+$e26 = CaRv 'E26'
+Kiem (((DtVung $e26) -contains 14.56 -or (DtVung $e26) -contains 15.6) -and (DtVung $e26) -contains 20 -and (DtVung $e26) -contains 35) `
+  "Nguoi dung 23/11: dai 0,2 m giua o va hanh lang chi co cau khep khe gop vao o (khong ho): o 14,56 m2 (15,6 neu vach 2 net 0,2 m ben trai bi tinh vao o: CON nghi, xem TIEN_DO) (vung=$((DtVung $e26) -join ','))"
 $e25 = CaRv 'E25'
 $ktd = @([regex]::Matches($e25, 'KTD (-?\d+),(-?\d+) (-?\d+),(-?\d+) (-?\d+),(-?\d+)') | ForEach-Object { , @($_.Groups[1..6] | ForEach-Object { [double]$_.Value }) })
 $ktN = @($ktd | Where-Object { $_[3] -eq $_[5] }); $ktD = @($ktd | Where-Object { $_[2] -eq $_[4] })
