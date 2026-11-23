@@ -3,6 +3,14 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## VIỆC 23/11 (3) — HÀNH LANG BÊN, THANG GỘP PHÒNG, WC > 60 m² KHÔNG RẢI: ĐÃ SỬA TAY BẢN CHÉP + GHI LUẬT; CHƯA SỬA PLUGIN
+- Người dùng soát trường học khung 6 (bản chép `ket_qua/HOC_BAO_CHAY/cad/hoc_bao_chay.dwg`, x 495–590 m): rải nhầm vào hành lang bên quanh sân,
+  dải 1,65 m ngoài dãy văn phòng, buồng thang, WC. Đã xoá 27 vùng + 47 đầu báo + dim, tách P. thiết bị / Kho dưới gầm thang (1 ĐB mỗi phòng);
+  spec `ket_qua/HOC_BAO_CHAY/cad/skills/bo_hl_ben_thang_wc.json`. Luật: `cad/skills/nhan_dang/cua_thang_khu.md` (3 gạch đầu dòng 23/11).
+- BƯỚC TIẾP (agent `cad-lap-trinh`): (1) mở rộng L6 Hiên (`bo_hien`) sang mọi loại trần = hành lang bên: dải ≤ 3 m, mép trong tường có cửa, mép ngoài
+  cột + lan can mở ra sân / ngoài nhà; (2) WC có chữ VỆ SINH / WC bỏ không xét 60 m², mặt con không chữ kề khối WC bỏ theo; (3) thang dính phòng nhỏ có
+  chữ tên: tách phòng, bỏ phần thang. Mỗi luật một ca test trong `chay_thu.ps1`, rồi chạy lại khung 6 so với bản sửa tay.
+
 ## VIỆC 23/11 (2) — VÙNG DỪNG Ở NÉT ĐẦU TIÊN CỦA LAN CAN: XONG MÃ 23/11 chiều (phiên Claude Code, chưa push)
 KẾT QUẢ: `LanCanKin` nhận lan can polyline kín dày 40–90 mm (cạnh ≥ 1,2 m); `GopMatNho` (c) gộp dải mặt cột – nét lan can kề MỘT phòng
 (`NhanThem.LanCan`). Karaoke T2 hành lang dưới 35,53 m² (x tới 356655), 16 vùng / 20 ĐB; test E27 + kiểm 35,53 ở ca bản chép T2. Khung 3–6, QT

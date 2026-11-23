@@ -134,5 +134,8 @@ Bản chép đúng ở y −200 m; chọn rải x 461967..747884, y −218000..�
   Mẫu KHÔNG đặt thiết bị nào ở phần y 60–102 m (dãy phòng học loại 2 phía trên, 2 khối WC học sinh 79 m², sảnh...), cả 2 tầng;
   plugin vẫn rải ở đó (~40 vùng). Không thấy chữ phạm vi / hiện hữu; tên xref "mat bang cai tao tret - mai" (cải tạo).
 - WC học sinh 79 m² có chữ "VỆ SINH" nhưng > 60 m² nên không bị `bo_khu_khong_bao` bỏ (luật ≤ 60 m²).
+- NGƯỜI DÙNG 23/11 soát bản chép (x 495–590 m, y −205..−95 m): bỏ hành lang bên quanh sân chào cờ, dải 1,65 m ngoài dãy văn phòng, 4 buồng thang,
+  6 mặt WC (27 vùng, 47 đầu báo; spec `ket_qua/HOC_BAO_CHAY/cad/skills/bo_hl_ben_thang_wc.json`); P. thiết bị, Kho dưới gầm thang tách vùng riêng,
+  1 đầu báo mỗi phòng. Luật: `nhan_dang/cua_thang_khu.md` mục "Khu không đặt đầu báo" (23/11). Plugin CHƯA sửa (xem `cad/TIEN_DO.md`).
 - Đầu phun 1 lần gọi: 891 đầu / 110 vùng, 1,5 s (kết quả spec chỉ liệt kê 40 vùng đầu, `DOC_TOI_DA`; đếm bằng `dem`).
 - `xuat.ps1` nay nhận `XUAT_X0/X1/Y0/Y1` (biến môi trường), `khop.py file,x0,x1,dy,y0,y1`.

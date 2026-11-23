@@ -59,6 +59,17 @@ Mã: `CacMat` (khép khe cửa), `GomCua`, `GomKhu`, `HinhBac`, `TachOX`, `GomCh
 - Hiên (L6, chỉ `LoaiTran MaiKeo`): dải hẹp rộng TB ≤ 3 m, ≤ 200 m² có ≥ 2 cột không thuộc phòng khác, VÀ mép trong (cạnh sát phòng thật)
   là tường nét đôi (nét song song 0,08–0,45 m phủ ≥ 50 %), mép ngoài không phải tường liền (phủ ≤ 80 %; Quyết Thắng viền mái 2 nét phủ 34–50 %) -> bỏ (`bo_hien=`).
   Bản vẽ tường 1 nét, hành lang có cột trong tường ngoài: chỉ báo (`hien_nghi=`), vẫn rải (review 21/11). Hiên không vẽ cột: người dùng tự vẽ vùng.
+- NGƯỜI DÙNG 23/11 (trường học khung 6, bản chép `hoc_bao_chay.dwg`: "hành lang bên làm gì rải đầu báo"): HÀNH LANG BÊN không đặt đầu báo
+  (QCVN 10:2025 1.5.11, nguyên văn `knowledge/qcvn10-2025-chung.md`), với MỌI loại trần, không chỉ `MaiKeo` như L6 Hiên ở trên. Dấu hiệu: dải rộng ≤ 3 m,
+  dài ≥ 4 lần rộng; một cạnh dài là tường có cửa phòng, cạnh dài kia là hàng cột + lan can / tường lửng / nét mảnh mở ra SÂN TRONG hoặc ra ngoài nhà
+  (bên kia không có phòng). Có chữ "HÀNH LANG", "HÀNH LANG THOÁT NẠN" mà mép ngoài hở thì vẫn bỏ. Phần nở rộng của chính hành lang đó (ô 4,1 m trước
+  lối xuống sân) cũng bỏ. Dải 1,65 m ngoài cửa sổ phòng (lan can mép ngoài, lam che nắng ngoài nữa) là hành lang ngoài / lô gia: bỏ.
+  Ca gốc: hành lang 2,3 m bao 3 phía sân chào cờ + dải 1,65 m ngoài dãy văn phòng; plugin rải 45 đầu báo ở đó, người dùng bắt bỏ hết. Hành lang
+  trong nhà (hai bên đều là phòng) vẫn rải.
+- Cùng ca 23/11: buồng thang hở dính hành lang bên + phòng nhỏ dưới gầm thang (P. THIẾT BỊ, KHO 10,57 m²) thành MỘT vùng 35 m² nên luật thang ≥ 50 %
+  không bắt. Đúng: tách phòng nhỏ (có chữ tên, cửa riêng) thành vùng riêng và rải; phần thang + chiếu nghỉ + hành lang bên thì bỏ.
+  WC có chữ VỆ SINH / WC > 60 m² (79–80 m²) cũng bỏ: chữ thắng ngưỡng diện tích. Các mặt con của khối WC không có chữ (khu rửa tay, khu tiểu
+  8–17 m²) kề mặt có chữ VỆ SINH, không có cửa phòng khác: bỏ theo.
 - L5b (MaiKeo): phòng ≤ 100 m² không có chữ tên nào (≥ 3 chữ cái: KHO 1, BẢO VỆ giữ lại, review 21/11), sát (≤ 0,3 m) khoang đã bỏ vì mái che -> bỏ theo (`mai_keo bo_ke_mai_che=`).
 - Ô không cột, không vì kèo, không nhãn phòng (sân trống): HỎI người dùng, không tự vẽ vùng.
 - Mọi khu bỏ đều in ở dòng lệnh; cần rải thì bấm điểm trong phòng đó.
