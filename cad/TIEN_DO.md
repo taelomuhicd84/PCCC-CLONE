@@ -21,9 +21,11 @@ SỬA THÊM 23/11 trưa (người dùng xem trong AutoCAD: "nét hành lang chư
   ký hiệu cửa, nối HAI phòng qua cầu → gộp vào phòng kề nhỏ nhất. Ô nay 14,58 m2 (2,7 x 5,4), khớp vùng tay người dùng 21/11 (354015..356615 x −54972..−49572).
   Làm trước (b) thì trường học khung 6 còn 98 vùng (gộp dây chuyền), nay giữ 112. Test E26 (CÒN NGHI: ô ra 15,6 m2, vách 2 nét 0,2 m bên trái cũng
   vào ô, có thể có từ trước; chưa gỡ).
-- Khung 3–6 + QT giữ số vùng; chay_thu + thu_mcp TAT CA DAT; bundle build lại. AutoCAD người dùng đang nạp bản build lúc 11:30 (chưa có 2 sửa này):
-  tắt hẳn, mở lại rồi rải lại tầng 2.
-CÒN: push từ tab Terminal. Hành lang chữ L / lệch chưa có ca thử.
+- Khung 3–6 + QT giữ số vùng; chay_thu + thu_mcp TAT CA DAT; bundle build lại. ĐÃ rải lại tầng 2 trong AutoCAD người dùng (bundle mới, 13:20):
+  16 vùng / 20 ĐB / 68 dim, toạ độ vùng khớp bản test.
+- Lỗi cầu nối gặp lúc 13:20: sau `rai.ps1` (COM SendCommand) plugin chuyển việc vào `dang/` nhưng `SendStringToExecute("PCCC_SPEC ...")` không chạy,
+  MCP báo quá giờ; COM `SendCommand("PCCC_SPEC\r<file dang>\r")` vẫn chạy được. Người dùng mở lại AutoCAD thì hết. Chưa tìm gốc (`plugin/Cau.cs` `Nhip`).
+CÒN: push từ tab Terminal. Hành lang chữ L / lệch chưa có ca thử. E26 (trên). Cầu nối kẹt sau SendCommand COM (trên).
 (Kế hoạch gốc, để tham khảo:)
 Ảnh người dùng: `ket_qua/HOC_BAO_CHAY/anh/k4t2_nguoidung_23_11.png` (mặt bằng tầng 2, chạy bằng plugin CŨ trong AutoCAD: ô giao còn vùng riêng — đã sửa
 bằng `GopMatNho` f49f1fd), `k4t2_truc_23_11.png` (tên trục F, E, D, 1, 1'', 1'). Luật đã ghi: `cad/skills/nhan_dang/phong_vung.md` mục 7,

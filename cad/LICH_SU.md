@@ -830,3 +830,6 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
 - 23/11 trưa (người dùng soát trong AutoCAD): hành lang trên lấn tường 140 mm (LamGon gộp mép lan can thang hở về đường ngoài) → giữ bậc khi cạnh ngoài
   ngắn hơn; ô 12,5 m2 hở 2 dải 0,2 m với hành lang (chỉ cầu khép khe) → `GopMatNho` (c) gộp dải nối 2 phòng vào phòng nhỏ hơn, chạy sau (b) (trước (b)
   làm khung 6 còn 98 vùng). E23 đổi kỳ vọng, E26 mới; khung 3–6 + QT giữ số; TAT CA DAT; build bundle.
+
+## 2026-11-23 13:30 — Rai lai tang 2 Karaoke trong AutoCAD
+Bundle sau 55beb61: 16 vung / 20 DB / 68 dim, hanh lang bam tuong, o 14,58 m2 kin. Cau noi MCP ket sau rai.ps1 (SendStringToExecute khong chay), mo lai AutoCAD thi het; ghi o TIEN_DO.
