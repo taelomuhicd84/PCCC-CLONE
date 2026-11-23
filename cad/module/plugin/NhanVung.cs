@@ -1199,7 +1199,7 @@ namespace TKPCCC
             Func<Point2d, Point2d, bool> dauXuyen = (p, q) =>
             {
                 // Xét cả 0,6 m SAU đầu khe: đầu khe ở mặt cột lồi (Karaoke: trụ 200 x 100 nhô ra hành lang), mặt hành lang chạy liền ngay sau đó.
-                double g = p.GetDistanceTo(q), tm = Math.Min(tol * 300, g - tolTh), ts = tol * 300;
+                double g = p.GetDistanceTo(q), tm = Math.Min(tol * 300, g - tolTh), ts = tol * 300, dT = tol * 75;
                 Vector2d u = (q - p) / g, w = u.GetPerpendicularVector();
                 Point2d e = p + u * tm, s0 = p - u * ts;
                 foreach (int j in luoiTT().Tim(Math.Min(s0.X, e.X) - tolTh, Math.Min(s0.Y, e.Y) - tolTh, Math.Max(s0.X, e.X) + tolTh, Math.Max(s0.Y, e.Y) + tolTh))
@@ -1209,7 +1209,9 @@ namespace TKPCCC
                     double t = u.DotProduct(doan[j][0] - p);
                     if (t < -ts || t > tm) continue;
                     Point2d c = p + u * t;
-                    if ((coNet(c + w * (tol * 40), w) || trongCua(c + w * (tol * 40))) && (coNet(c - w * (tol * 40), w) || trongCua(c - w * (tol * 40)))) return true;
+                    // Nét chữ T phải chạy ≥ 0,15 m MỖI phía (Quyết Thắng 23/11: mẩu nét 0,2 m hai đầu ô cửa 5,6 m tường xưởng 2 là chữ T giả -> khe không
+                    // khép, xưởng 2 không thành mặt: 25 vùng / 57 ĐB còn 12 / 20). Mặt tường hành lang thì dài.
+                    if ((coNet(c + w * dT, w) || trongCua(c + w * dT)) && (coNet(c - w * dT, w) || trongCua(c - w * dT))) return true;
                 }
                 return false;
             };

@@ -95,8 +95,13 @@ Tầng 2 Karaoke 123 (accoreconsole, bản chép y −50 m, xoá PCCC_* trước
 28,12 + 27,23, phòng góc phải 32,56 m² khớp vùng người dùng (lệch ≤ 0,1 m²); hành lang trên 1 vùng 64,58 m² (người dùng 59,4: vẽ chữ nhật đơn giản); lối dọc trái
 9,72 + hành lang dưới 35,28 riêng như người dùng. Dãy trên (người dùng chưa sửa tay) nay cũng bao sảnh WC: 27,5 / 28,1 / 27,3 / 25,1 / 27,3 m². Buồng xí phòng góc phải
 (bồn cầu nổ rời, không tên WC) nhận bằng hình kín cỡ bồn cầu, không gộp. Test E22, E22B, E23 mới, E18 đổi kỳ vọng (ô giao gộp vào hành lang: 18 m²);
-`chay_thu` + `thu_mcp` TAT CA DAT; bundle đã build (AutoCAD đang mở: tắt hẳn rồi mở lại để nạp). CHƯA chạy lại khung 3, 5, 6 và bản chép Quyết Thắng (`kb8.scr`)
-để xem số vùng đổi; E23 chưa tái hiện được cầu cắt hành lang giữa 2 mặt cột (chỉ xảy ra khi plugin nhận cột một phía), luật gộp hành lang mới kiểm trên Karaoke thật.
+`chay_thu` + `thu_mcp` TAT CA DAT; bundle đã build (AutoCAD đang mở: tắt hẳn rồi mở lại để nạp). E23 chưa tái hiện được cầu cắt hành lang giữa 2 mặt cột
+(chỉ xảy ra khi plugin nhận cột một phía), luật gộp hành lang kiểm trên Karaoke thật.
+CHẠY LẠI CÁC KHUNG 23/11 (người dùng bảo), bản trước gộp (b650704) → bản mới: khung 5 26 → 26 vùng (gộp 10 sảnh), khung 3 T1 14 → 14, T2 13 → 13,
+Karaoke 123 T1 15 → 14, T2 17 → 15, trường học khung 6 110 → 112 (hành lang nối thành dải dài; đèn mẫu ngoài vùng bớt 4, đầu báo nhiệt ngoài vùng không đổi).
+Quyết Thắng (`kb9.scr` → `qt_maikeo_9.dwg`) phát hiện HỒI QUY CÓ TỪ TRƯỚC: 12 vùng / 20 ĐB thay vì 25 / 57, do commit 1bd93ea (21/11, khe xuyên) tính vạch
+đầu tường 0,2 m là chữ T. ĐÃ SỬA (`dauXuyen`: nét chữ T ≥ 0,15 m mỗi phía), QT lại 25 / 57. `chay_thu.ps1` thêm 2 phép kiểm trên bản chép (chỉ chạy khi máy có
+file trong `ket_qua/`): Quyết Thắng 25 vùng / 57 ĐB, Karaoke 123 tầng 2 15 vùng. Script so khung: scratchpad phiên (`chay_khung.ps1`), không lưu repo.
 VIỆC DỞ ĐẦU TIÊN (21/11 tối, người dùng tắt máy; XONG 23/11, xem trên): người dùng chỉ cách rải tầng 2 Karaoke 123 (luật mục 6 "Soát" trong `cad/skills/nhan_dang/phong_vung.md`):
 (a) gộp mặt nhỏ bị `PhongThat` bỏ (sảnh trước cửa WC, ≤ ~6 m², KHÔNG chứa bồn cầu) vào phòng kề chung cạnh là cầu khép khe / cửa (không phải nét tường thật);
 (b) vùng nhỏ ≤ 4 m² (ô giao hành lang) chung cạnh cầu với vùng lớn: gộp vào vùng lớn nhất. Gộp đa giác: chèn đỉnh lên cạnh của nhau, bỏ cặp cạnh ngược chiều trùng nhau,

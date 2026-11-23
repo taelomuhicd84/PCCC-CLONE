@@ -808,3 +808,9 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
   đoạn hành lang cùng phương, cầu cắt ngang trọn bề rộng, gộp một. Tầng 2: 15 vùng khớp vùng người dùng vẽ (dãy giữa, dưới, phòng góc phải lệch ≤ 0,1 m²).
   Lần đầu gộp lố (2A/P ≤ 2,5 m coi phòng 5,2 x 4,5 m là dải; phòng nhận sảnh dính hành lang qua cầu cửa) → thêm điều kiện cạnh dài ≥ 2,5 lần + cầu ≥ 0,8 bề rộng.
   Test E22, E22B, E23; E18 đổi kỳ vọng. `chay_thu`, `thu_mcp` TAT CA DAT; build bundle. `go_khung.ps1` thêm `-Xoa` (xoá PCCC_* trong khung trước khi rải).
+
+- 23/11 (người dùng "Chạy lại các khung"): so bản trước gộp (b650704) với bản mới trên khung 3, 4, 5, 6 + bản chép Quyết Thắng. Khung 3–6 số vùng giữ hoặc khớp
+  người dùng hơn. Quyết Thắng 12 vùng / 20 ĐB (đáp án 25 / 57): dò từng commit, lỗi từ 1bd93ea (luật khe xuyên 21/11) — vạch đầu tường 0,2 m ở hai đầu
+  ô cửa 5,6 m tường 1 nét bị tính là chữ T, khe không khép, xưởng 2 không thành mặt, cụm phía đông bị `bo_cum`. Sửa `dauXuyen`: nét chữ T ≥ 0,15 m mỗi phía
+  (0,25–0,5 m làm Karaoke 123, trường học vỡ vùng). `chay_thu.ps1` thêm phép kiểm bản chép QT (25 / 57) và Karaoke 123 T2 (15 vùng), chạy khi máy có file.
+  Ca thử tối giản cho lỗi QT (tường 1 nét + vạch đầu tường) không tái hiện được, bỏ.

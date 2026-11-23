@@ -1289,6 +1289,33 @@ if ($bvThat) {
     "Ban ve that test bao chay.dwg: dung phong $($mT.Groups[1].Value) ms (< 15 s; truoc sua 78 s), rai duoc"
 } else { 'BO    ban ve that file_cad_test\test bao chay.dwg khong co: bo ca thoi gian' }
 
+# Ban chep ban ve mau (ket_qua/, khong commit; chi chay khi may co): moc so vung / so dau bao de bat hoi quy.
+# Quyet Thang 23/11: luat khe xuyen (1bd93ea) tinh vach dau tuong 0,2 m la chu T, o cua 5,6 m tuong xuong 2 khong khep -> 25 vung / 57 DB con 12 / 20.
+$qt = "$GOC\ket_qua\QUYET_THANG\cad\thu_maikeo\qt_maikeo.dwg"
+if (Test-Path $qt) {
+  Copy-Item $qt "$T\qt.dwg"
+  (@('NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '(if (setq ss (ssget "_X" (list (cons 8 "PCCC_*")))) (command "_.ERASE" ss "") (princ))',
+    'PCCC_RAI', 'BC_KHOI', 'LoaiTran', 'MaiKeo', '9', 'Khong', 'C', '1305000,-1655000', '1397000,-1575000', '', '', '', '_.QUIT', '_Y') -join "`r`n") | Set-Content -Encoding ascii "$T\kbqt.scr"
+  $pq = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/i `"$T\qt.dwg`" /s `"$T\kbqt.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kbqt.out.txt"
+  if (-not $pq.WaitForExit(300000)) { Stop-Process -Id $pq.Id -Force; throw "accoreconsole qua 5 phut (Quyet Thang): $T\kbqt.out.txt" }
+  $oq = [Text.Encoding]::Unicode.GetString([IO.File]::ReadAllBytes("$T\kbqt.out.txt")) -replace "`0", ''
+  Kiem ($oq -match 'thoi_gian rai=\d+ms vung=25\b' -and $oq -match '\b57 \S+ b\S+o kh\S+i trong') `
+    "Ban chep Quyet Thang (MaiKeo 9 m): 25 vung / 57 dau bao nhu dap an ($([regex]::Match($oq, 'vung=\d+').Value) $([regex]::Match($oq, '\d+ \S+ b\S+o kh').Value))"
+} else { 'BO    ban chep Quyet Thang ket_qua\QUYET_THANG\cad\thu_maikeo\qt_maikeo.dwg khong co' }
+# Karaoke 123 tang 2 (hoc_bao_chay.dwg, ban chep y -50 m): nguoi dung ve tay 15 vung (sanh WC gop vao phong, o giao gop hanh lang; 23/11).
+$hb = "$GOC\ket_qua\HOC_BAO_CHAY\cad\hoc_bao_chay.dwg"
+if (Test-Path $hb) {
+  Copy-Item $hb "$T\hb.dwg"
+  (@('NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '_.ZOOM', 'W', '334000,-62500', '379000,-41500',
+    "(if (setq ss (ssget `"_W`" '(334000 -62500) '(379000 -41500) '((8 . `"PCCC_*`")))) (command `"_.ERASE`" ss `"`") (princ))",
+    'PCCC_RAI', 'BC_KHOI', '', 'Khong', 'C', '334000,-62500', '379000,-41500', '', '', '', '_.QUIT', '_Y') -join "`r`n") | Set-Content -Encoding ascii "$T\kbhb.scr"
+  $ph = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/i `"$T\hb.dwg`" /s `"$T\kbhb.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kbhb.out.txt"
+  if (-not $ph.WaitForExit(300000)) { Stop-Process -Id $ph.Id -Force; throw "accoreconsole qua 5 phut (Karaoke 123): $T\kbhb.out.txt" }
+  $oh = [Text.Encoding]::Unicode.GetString([IO.File]::ReadAllBytes("$T\kbhb.out.txt")) -replace "`0", ''
+  Kiem ($oh -match 'thoi_gian rai=\d+ms vung=15\b' -and $oh -match 'gop_sanh=\d+ gop_o_nho=\d+') `
+    "Ban chep Karaoke 123 tang 2: 15 vung nhu nguoi dung ve tay ($([regex]::Match($oh, 'vung=\d+').Value) $([regex]::Match($oh, 'gop_sanh=\d+ gop_o_nho=\d+').Value))"
+} else { 'BO    ban chep Karaoke 123 ket_qua\HOC_BAO_CHAY\cad\hoc_bao_chay.dwg khong co' }
+
 # chay_spec.ps1: -Dwg tuong doi tinh theo thu muc hien tai cua PowerShell; thu muc co dau (chu a huyen) va dau cach.
 $tmVN = "$T\Nh$([char]0xE0) A"
 New-Item -ItemType Directory $tmVN | Out-Null

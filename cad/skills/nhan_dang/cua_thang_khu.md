@@ -13,6 +13,10 @@ Mã: `CacMat` (khép khe cửa), `GomCua`, `GomKhu`, `HinhBac`, `TachOX`, `GomCh
   (bề dày tường; đầu khe ở mặt trụ lồi) thì bỏ; phía là ô cửa (hộp ký hiệu cửa nới 0,3 m) cũng tính là chạy tiếp (má cửa phòng thẳng hàng tường ngăn).
   Có ký hiệu cửa NẰM TRONG khe thì vẫn khép (cửa ngang hành lang chia vùng). Miệng lối đi, sảnh (góc chữ L), má cửa thường (nắp đầu tường một phía) vẫn khép.
   Trên bản vẽ nhà máy thật bỏ thêm ~900 khe ≤ 6 m: đều là cầu ảo vắt qua WC, mái che, lưới ngoài nhà (đã xem ảnh 21/11).
+  Nét chữ T phải chạy ≥ 0,15 m MỖI phía đầu khe (23/11, Quyết Thắng): vạch đầu tường 0,2 m (±0,1 m) ở hai đầu ô cửa 5,6 m tường 1 nét xưởng 2 bị tính
+  là chữ T, khe không khép, xưởng 2 không thành mặt, cả cụm phía đông bị `bo_cum` bỏ: 25 vùng / 57 ĐB còn 12 / 20 (lỗi từ 1bd93ea, 21/11).
+  Ngưỡng 0,25–0,5 m thì Karaoke 123, trường học vỡ vùng lại (mặt hành lang sau trụ lồi ngắn); 0,15 m giữ nguyên số vùng các khung 3–6.
+  Kiểm: `chay_thu.ps1` phép "Ban chep Quyet Thang" (chạy khi máy có `ket_qua/QUYET_THANG/cad/thu_maikeo/qt_maikeo.dwg`).
 - Block cửa (hộp ≤ 3,5 m, có cung cánh cửa bên trong) KHÔNG góp nét làm tường, kể cả khi đặt trên layer tường (Karaoke ABC 21/11, người dùng khoanh đỏ):
   khuôn / cánh cửa bên này lối thẳng hàng cánh cửa phòng bên kia thành khe ≤ 3 m bị khép ngang lối, lối 1,5 m mất dải 1 m cuối; cánh cửa mở ra hành lang
   cắt tiền sảnh 1 m khỏi vùng hành lang. Chỉ gom ký hiệu cửa (cờ `TrongCua` trong `ThuNet`). Ô cửa vẫn khép nhờ khe giữa hai má tường.
