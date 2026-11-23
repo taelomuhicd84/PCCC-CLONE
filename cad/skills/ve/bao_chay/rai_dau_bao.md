@@ -30,7 +30,12 @@ Mã: `LuoiVung`, `DoiVao`, `PhuKin`, `KtLuoi` (`cad/module/plugin/Rai.cs`); thao
   hành lang hẹp vừa đủ MỘT hàng đầu báo thì đặt hàng đó ĐÚNG GIỮA bề rộng hành lang; dim ngang (tường – đầu báo – tường, vd 900 | 900) CHỈ MỘT LẦN cho
   cả hành lang (✓ ở hành lang trên), không lặp ở từng đầu báo; dọc hành lang giữ một chuỗi. Không để số dim đè lên nhau; không đặt đường dim / số dim
   đè lên tường, cột, vật cản làm khó đọc (bác bỏ: chuỗi 900 dọc ở ô giao, các dim 900 ở hành lang dưới sát tường / cột, dim dọc cắt qua cột).
+  Plugin ĐÃ LÀM 23/11 tối (`KtLuoi`): vùng một hàng ≥ 2 thiết bị, bề rộng ≤ 3 m (hành lang) thì chuỗi dọc hành lang đi NGAY TRÊN hàng (lệch 0, không
+  sát tường, không cắt số chuỗi ngang); tương tự hành lang dọc một cột. Chuỗi ngang (tường – đầu báo – tường) vẫn một lần, đặt ở cột thiết bị cùng tập
+  hàng gần giữa vùng mà đường dim (lệch ±2 x cỡ chữ) không qua cột (tâm cột cách đường < 0,5 m; cột từ `TachCot`); chuỗi chính ngang cũng đổi phía
+  khi phía trên cắt cột. Ô giao đã gộp vào hành lang (`GopMatNho`) nên hết chuỗi 900 riêng ở ô giao. Test E25.
 
 ## Còn tồn (đầu `cad/TIEN_DO.md` có phần CÒN)
 - Mã chưa khai `tuong_min` (vd đầu phun): tạm 0,1 m (`CACH_TUONG_MIN_M`), KHÔNG phải trị số quy chuẩn; có số thật thì khai vào `data/khoang_cach_rai.json`.
-- Hành lang hẹp: đầu báo đặt sát mức 0,5 m tới một tường, chưa canh giữa hành lang.
+- (Đã hết 23/11) Hành lang hẹp đặt sát 0,5 m tới một tường: Karaoke 123 T2 hai hành lang ra đúng giữa (970 | 970, 900 | 900), E25 kiểm hàng y = giữa.
+  Hành lang lồi lõm (chữ L, ô giao lệch) chưa có ca thử riêng.

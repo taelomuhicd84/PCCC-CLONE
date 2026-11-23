@@ -30,12 +30,18 @@ Mã: `CacMat` (khép khe cửa), `GomCua`, `GomKhu`, `HinhBac`, `TachOX`, `GomCh
 ## Thang, giếng, lỗ thông tầng
 - Thang bộ (L7, 20/11): block / nét có tên thang (`THANGBO`, `STAIR`...) hoặc HÌNH bậc cách đều (`HinhBac`) -> khoét hộp bao khỏi vùng (nắn sát tường ≤ 0,3 m);
   thang chiếm ≥ 50 % phòng thì bỏ cả phòng (buồng thang). Buồng thang trong sảnh: khoét như lỗ thông tầng.
-- Ô có dấu X (`TachOX`) = lỗ thông tầng, giếng thang máy: không rải (`o_x=`). Block thang máy cũng là giếng.
+- Ô có dấu X (`TachOX`) = giếng thang máy: không rải (`o_x=`). Block thang máy cũng là giếng. (Lỗ thông tầng: xem dòng 23/11 dưới.)
 - NGƯỜI DÙNG 23/11 (Karaoke 123 tầng 2, ảnh `ket_qua/HOC_BAO_CHAY/anh/k4t2_nguoidung_23_11.png`; THAY dòng trên cho sảnh / lỗ thông tầng, giếng
   thang máy vẫn không rải): sảnh thông tầng / lỗ thông tầng phải TÁCH THÀNH VÙNG RẢI RIÊNG — đầu báo, đầu phun của khu đó lắp trên ĐỈNH sảnh thông tầng;
   khu tiếp giáp (hành lang giáp sảnh, ô cạnh thang hở) vẫn là vùng riêng, rải trên trần tầng đó. Ranh giới hai vùng: đường kẻ thẳng theo mép sàn / mặt
   tường (đường xanh dương người dùng vẽ ở x ≈ 356515, tim trục giữa dãy phòng giữa và ô thang), KHÔNG gộp hành lang vào vùng thông tầng.
   Ô thang hở: đường bao bám mép bậc thang (đường đỏ người dùng: đi theo mép thang, khấc theo vế thang), khép kín, không kẻ thẳng băng ngang thang.
+  Plugin ĐÃ LÀM 23/11 tối (in `thong_tang=N m2=..(dài x rộng)@tâm`): dấu X nhận cả trên layer bỏ (trục: Karaoke vẽ X trên `19- TIM TRUC`) và layer thường
+  ở lượt chỉ-tường (`NetBo`, nét xiên). Ô X KHÔNG rải (`o_x=`, `OXKhongRai`) khi cỡ giếng thang máy (mọi cạnh ≤ 4 m và ≤ 12 m²) hoặc dải dài hẹp
+  (cạnh dài ≥ 4 lần cạnh ngắn = khe giữa hai khối: Quyết Thắng khe 41,4 x 5 m giữa 2 xưởng, đáp án bỏ) hoặc > 300 m² (trường học khung 6: ô 19 x 32 m,
+  mẫu không có thiết bị = sân / khoảng trống); còn lại là sảnh / lỗ thông tầng: rải như vùng thường. Dấu X từ nguồn mới (layer bỏ, layer thường lượt
+  chỉ-tường) CHỈ nhận khi là thông tầng (trường học có 40 block "ống thoát nước" vẽ dấu X ~1 m: nhận làm giếng thì bỏ nhầm 5 phòng sát nó). Ô thông tầng không thành mặt kín (Karaoke: cạnh trên là thang hở, góc cửa kính hở) thì dựng mặt từ khung X + nét trong ô (mép thang, lan can),
+  lấy mặt lớn nhất (`MatThongTang`): Karaoke T2 61,78 m² khấc theo vế thang. Test E24. shortcut: lỗ thông tầng nhỏ cỡ giếng hay dài hẹp vẫn bỏ (bấm điểm).
 - Sảnh thang máy (người dùng 16–17/11): phòng ≤ 30 m² sát giếng thang (cách ≤ 0,6 m) không đặt đầu báo (`bo_sanh_thang=`).
   NGƯỜI DÙNG 21/11 (căn hộ 441, mẫu có đầu báo ở sảnh trước thang máy): chỉ bỏ khi sảnh nằm trong BUỒNG ĐỆM (≤ 2 ký hiệu cửa có tâm trong phòng hoặc
   cách biên ≤ 1 m) hoặc trong BUỒNG THANG (phòng chứa tâm hộp thang bộ). Sảnh tiếp tân, thông tầng, hành lang chung nhiều cửa phòng: RẢI theo mẫu (test E16).

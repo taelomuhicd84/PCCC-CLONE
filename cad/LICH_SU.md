@@ -819,3 +819,11 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
   vùng rải riêng (đầu báo trên đỉnh sảnh), hành lang giáp vẫn rải ở trần tầng; hành lang 1 hàng đặt giữa, dim ngang một lần, không đè số / không dim vào
   tường, cột. Ghi luật vào `cad/skills/` (phong_vung mục 7, cua_thang_khu, rai_dau_bao), ảnh ở `ket_qua/HOC_BAO_CHAY/anh/`; việc sửa plugin ghi đầu
   `cad/TIEN_DO.md` (VIỆC 23/11), giao phiên nhánh vì ngữ cảnh phiên 44 %.
+
+- 23/11 tối (phiên nhánh, VIỆC 23/11): sảnh thông tầng vùng riêng + dim hành lang hẹp. Gỡ trên bản chép T2: ô thông tầng 6,3 x 10,2 m có dấu X trên
+  layer trục (LOP_BO) nên `TachOX` không thấy, góc cửa kính dưới phải hở (cột lệch tường, nét kính layer thường) nên không thành mặt. Sửa `NhanVung.cs`:
+  gom nét xiên layer bỏ (`NetBo`) + nét thường lượt chỉ-tường vào lượt tìm X thứ hai; `OXKhongRai` (giếng ≤ 4 m / 12 m², khe dài hẹp ≥ 4 lần, > 300 m²);
+  `MatThongTang` dựng mặt từ khung X + mép thang. Lần đầu làm vỡ Quyết Thắng (khe X 41,4 x 5 m giữa 2 xưởng thành vùng: 26 / 62) → luật dài hẹp; khung 6
+  (40 block ống thoát nước có X thành giếng, bỏ nhầm 5 phòng sát; ô X 19 x 32 m mẫu trống bị rải) → nguồn mới chỉ nhận thông tầng + trần 300 m².
+  `Rai.cs` `KtLuoi`: hành lang 1 hàng chuỗi dọc trên hàng, chuỗi ngang chọn cột thiết bị / phía không qua cột (truyền `nhanThem.Cot`). Test E24, E25,
+  mốc Karaoke T2 16 vùng. `chay_thu`, `thu_mcp` TAT CA DAT; khung 3–6 + QT giữ số; build bundle.

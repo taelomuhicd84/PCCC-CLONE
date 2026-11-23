@@ -86,6 +86,7 @@ namespace TKPCCC
             public double Tol;                                                            // sai số nối điểm (2 mm)
             public bool ChiTuong;                                                         // chỉ lấy layer tường, cột (+ PCCC_VUNG)
             public List<Point2d[]> NetPhu;                                                // lượt chỉ-tường: LINE layer thường gom riêng, nhận lan can 2 nét (LanCan)
+            public List<Point2d[]> NetBo;                                                 // LINE xiên trên layer bỏ (trục...): chỉ để nhận dấu X (TachOX), không làm tường
             public List<KeyValuePair<ObjectId, Extents3d>> Ds = new List<KeyValuePair<ObjectId, Extents3d>>();
             public Extents3d? ToanBo;
             public Dictionary<ObjectId, int> Lop = new Dictionary<ObjectId, int>();      // 0 bỏ, 1 thường, 2 tường
@@ -136,6 +137,7 @@ namespace TKPCCC
             public List<Point2d> Sanh = new List<Point2d>();        // chữ sảnh chung / tiếp tân: không bỏ như sảnh thang máy (người dùng 21/11)
             public List<Point2d> VatDung = new List<Point2d>();     // bồn cầu, lavabo vẽ nét rời: buồng xí không gộp như sảnh WC (người dùng 21/11)
             public List<Point2d[]> Doan = new List<Point2d[]>();    // L6 (review 20/11): nét đã dựng mặt, xét mép hiên có tường (nét đôi) hay không
+            public List<List<Point2d>> ThongTang = new List<List<Point2d>>(); // ô X lớn = sảnh / lỗ thông tầng: vùng rải riêng (người dùng 23/11)
         }
 
         /// Màu thật của nét: ByLayer theo layer thật, ByBlock theo màu block chứa nó (chaMau; ngoài block coi như 7). "A3" = ACI 3, "R0,255,0" = màu thật.
@@ -301,6 +303,14 @@ namespace TKPCCC
                 n.ChiCua = cu;
                 n.TrongCua = cuCua;
                 return;
+            }
+            // Karaoke 123 tầng 2 (23/11): dấu X lỗ thông tầng vẽ trên layer trục -> gom nét xiên để nhận ô X, không làm tường.
+            Line lx = e as Line;
+            if (loai == 0 && n.NetBo != null && !n.TrongCua && lx != null)
+            {
+                Vector3d vx = lx.EndPoint - lx.StartPoint;
+                if (Math.Abs(vx.X) > 0.2 * vx.Length && Math.Abs(vx.Y) > 0.2 * vx.Length)
+                    ThemDoan(n, n.NetBo, new Point2d(lx.StartPoint.X, lx.StartPoint.Y), new Point2d(lx.EndPoint.X, lx.EndPoint.Y));
             }
             if (chiCua || n.TrongCua) return;
             Hatch hg = e as Hatch;
@@ -821,6 +831,30 @@ namespace TKPCCC
             }
             foreach (int i in bo.OrderByDescending(x => x)) doan.RemoveAt(i);
             return kq;
+        }
+
+        /// Ô X không rải: cỡ giếng thang máy (mọi cạnh ≤ 4 m, ≤ 12 m²) hoặc dải dài hẹp (cạnh dài ≥ 4 lần cạnh ngắn: khe giữa hai khối, Quyết Thắng
+        /// khe 41,4 x 5 m giữa 2 xưởng, đáp án bỏ). Còn lại là sảnh / lỗ thông tầng: vùng rải riêng (người dùng 23/11, Karaoke 123 ô 6,3 x 10,2 m).
+        /// Ô X > 300 m² (trường học khung 6: ô 19 x 32 m, mẫu không có thiết bị) coi là sân / khoảng trống: không rải.
+        /// shortcut: lỗ thông tầng nhỏ cỡ giếng, dài hẹp hay > 300 m² vẫn bị bỏ; cần rải thì bấm điểm trong ô hoặc vẽ polyline PCCC_VUNG.
+        static bool OXKhongRai(List<Point2d> o, double m)
+        {
+            List<double> c = Enumerable.Range(0, o.Count).Select(i => o[i].GetDistanceTo(o[(i + 1) % o.Count]) * m).ToList();
+            double dt = Math.Abs(DienTichDaGiac(o)) * m * m;
+            return (c.Max() <= 4 && dt <= 12) || c.Max() >= 4 * c.Min() || dt > 300;
+        }
+
+        /// Mặt của ô thông tầng o từ cạnh ô + nét nằm trong ô (mép thang, lan can, tường): mặt lớn nhất (thang hở chiếm góc ô thì khấc theo mép thang).
+        /// Không ra mặt nào ≥ 1/2 ô thì trả chính ô.
+        static List<Point2d> MatThongTang(List<Point2d> o, IEnumerable<Point2d[]> net, double tol, double ho)
+        {
+            double e = tol * 5;
+            Func<Point2d, bool> trong = p => TrongDaGiac(o, p) || CachVien(o, p) <= e;
+            List<Point2d[]> s = new List<Point2d[]>();
+            for (int i = 0; i < o.Count; i++) s.Add(new[] { o[i], o[(i + 1) % o.Count] });
+            s.AddRange(net.Where(q => trong(q[0]) && trong(q[1])));
+            List<Point2d> tot = CacMat(s, tol, ho).Select(v => BoThangHang(v, tol)).OrderByDescending(v => Math.Abs(DienTichDaGiac(v))).FirstOrDefault();
+            return tot != null && Math.Abs(DienTichDaGiac(tot)) >= 0.5 * Math.Abs(DienTichDaGiac(o)) ? tot : o;
         }
 
         /// Đoạn p–q cắt hộp h [min, max] nới thêm e (Liang–Barsky).
@@ -1676,6 +1710,7 @@ namespace TKPCCC
                     n.BoMau = coDam ? damMau : null;
                     n.GomCot = true;
                     n.NetPhu = chiTuong ? new List<Point2d[]>() : null;
+                    n.NetBo = new List<Point2d[]>();
                     foreach (Entity e in ds)
                     {
                         if (doan.Count % 64 == 0) KiemEsc();
@@ -1683,7 +1718,8 @@ namespace TKPCCC
                         ThuNet(n, e, ObjectId.Null, ObjectId.Null, null, 0, doan);
                     }
                     if (n.NetPhu != null) doan.AddRange(LanCan(n.NetPhu, doan, n.Tol));
-                    n.NetPhu = null;
+                    List<Point2d[]> phu = n.NetPhu ?? new List<Point2d[]>(), netBo = n.NetBo;
+                    n.NetPhu = null; n.NetBo = null;
                     n.GomCot = false;
                     n.LopKhoiDam = null;
                     n.BoMau = null;
@@ -1722,6 +1758,15 @@ namespace TKPCCC
                         if (damThem != null) { damSau.AddRange(damThem); demDam[0] += damThem.Count; } // nét chọn tay: người gọi đã bỏ dầm nông
                     }
                     oX = TachOX(doan, n.Tol);
+                    // Karaoke 123 tầng 2 (23/11): dấu X vẽ trên layer trục hoặc layer thường (lượt chỉ-tường) cũng là ô X.
+                    List<Point2d[]> tamX = new List<Point2d[]>(netBo);
+                    tamX.AddRange(phu);
+                    tamX.AddRange(doan);
+                    // Chỉ nhận ô thông tầng từ nguồn này (trường học khung 6: 40 block "ống thoát nước" có dấu X ~1 m thành giếng giả, bỏ nhầm 5 phòng).
+                    List<List<Point2d>> xMoi = TachOX(tamX, n.Tol).Where(o => !OXKhongRai(o, HeSoMet(db))).ToList();
+                    // Người dùng 23/11: sảnh / lỗ thông tầng (ô X lớn) là VÙNG RẢI RIÊNG (đầu báo lắp ở đỉnh sảnh); chỉ giếng thang máy không rải.
+                    them.ThongTang = oX.Where(o => !OXKhongRai(o, HeSoMet(db))).Concat(xMoi).ToList();
+                    oX = oX.Where(o => OXKhongRai(o, HeSoMet(db))).ToList();
                     oX.AddRange(n.GiengThang); // giếng thang máy: không rải trong giếng, như ô X
                     them.ThangBo = new List<Point2d[]>(n.ThangBo);
                     them.Cua = new List<Point2d[]>(n.Cua);
@@ -1731,6 +1776,14 @@ namespace TKPCCC
                     gach = new List<List<Point2d>>(n.GachCheo);
                     if (doan.Count >= 3)
                         mat = CacMat(doan, n.Tol, HO_CUA_M / HeSoMet(db), n.Cua, HO_CUA_MAX_M / HeSoMet(db), netCot).Select(v => BoThangHang(v, n.Tol)).ToList();
+                    // Ô thông tầng không thành mặt kín (Karaoke 123: cạnh trên là thang hở, góc cửa kính hở): dựng mặt từ khung dấu X + nét bên trong
+                    // (mép thang, lan can), lấy mặt lớn nhất = đường bao bám mép thang (người dùng 23/11, đường đỏ).
+                    foreach (List<Point2d> o in them.ThongTang)
+                    {
+                        Point2d tam = new Point2d(o.Average(q => q.X), o.Average(q => q.Y));
+                        if (mat.Any(f => DienTichDaGiac(f) * Math.Pow(HeSoMet(db), 2) >= 1 && TrongDaGiac(f, tam))) continue;
+                        mat.Add(MatThongTang(o, phu.Concat(doan), n.Tol, HO_CUA_M / HeSoMet(db)));
+                    }
                     if (hopChon != null)
                         mat = mat.Where(v => { Point2d c = DiemTrongMat(v); return c.X >= hopChon[0] && c.X <= hopChon[2] && c.Y >= hopChon[1] && c.Y <= hopChon[3]; }).ToList();
                     // Layer tên tường chỉ chứa block cửa (Karaoke ABC, file_cad_test 20/11): lượt chỉ-tường ra toàn mặt vụn, không phòng thật nào

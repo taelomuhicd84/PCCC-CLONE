@@ -3,7 +3,18 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
-## VIỆC 23/11 — KARAOKE 123 T2: SẢNH THÔNG TẦNG VÙNG RIÊNG + DIM HÀNH LANG (người dùng train, CHƯA SỬA PLUGIN; giao phiên nhánh ngữ cảnh sạch)
+## VIỆC 23/11 — KARAOKE 123 T2: SẢNH THÔNG TẦNG VÙNG RIÊNG + DIM HÀNH LANG: XONG 23/11 tối (phiên nhánh, chưa push)
+KẾT QUẢ: (1) đường bao bản HEAD đã bám tường / ôm sảnh WC / chừa buồng xí, soát lại trên bản chép T2 không còn cạnh băng ngang (không sửa mã).
+(2) Ô thông tầng: dấu X vẽ trên layer trục `19- TIM TRUC` (bị bỏ) + góc cửa kính hở nên trước đây không có vùng. Nay nhận dấu X cả trên layer bỏ
+và layer thường lượt chỉ-tường (`NetBo`); `OXKhongRai`: ô X cỡ giếng (cạnh ≤ 4 m, ≤ 12 m²), dài hẹp (≥ 4 lần: khe QT 41,4 x 5 m), > 300 m² (khung 6
+ô 19 x 32 m mẫu trống) vẫn không rải; còn lại = thông tầng, rải như vùng thường, in `thong_tang=N m2=..(dài x rộng)@tâm` + nhắc lắp ở ĐỈNH sảnh.
+Ô không thành mặt kín thì `MatThongTang` dựng từ khung X + nét trong ô, khấc theo mép thang: Karaoke T2 61,78 m², 1 ĐB; tổng 16 vùng / 20 ĐB.
+Dấu X từ nguồn mới chỉ nhận khi là thông tầng (khung 6 có 40 block ống thoát nước có X ~1 m). (3) Hàng hành lang đã đúng giữa (970 | 970, 900 | 900);
+`KtLuoi`: vùng 1 hàng ≥ 2 thiết bị rộng ≤ 3 m thì chuỗi dọc đi ngay trên hàng; chuỗi ngang 1 lần ở cột thiết bị mà đường dim không qua cột (`TachCot`).
+(4) Test E24, E25; mốc Karaoke T2 15 → 16 vùng (+ thông tầng). `chay_thu` + `thu_mcp` TAT CA DAT; bundle đã build. Khung 3–6 giữ số vùng như trước
+(k5 26, k3 14 / 13, k4 T1 14, k6 112 / 204 ĐB), QT 25 / 57.
+CÒN: người dùng tắt hẳn AutoCAD, mở lại để nạp bundle, chạy lại tầng 2 xem vùng thông tầng + dim; push từ tab Terminal. Hành lang chữ L / lệch chưa có ca thử.
+(Kế hoạch gốc, để tham khảo:)
 Ảnh người dùng: `ket_qua/HOC_BAO_CHAY/anh/k4t2_nguoidung_23_11.png` (mặt bằng tầng 2, chạy bằng plugin CŨ trong AutoCAD: ô giao còn vùng riêng — đã sửa
 bằng `GopMatNho` f49f1fd), `k4t2_truc_23_11.png` (tên trục F, E, D, 1, 1'', 1'). Luật đã ghi: `cad/skills/nhan_dang/phong_vung.md` mục 7,
 `cad/skills/nhan_dang/cua_thang_khu.md` mục Thang, giếng, lỗ thông tầng, `cad/skills/ve/bao_chay/rai_dau_bao.md` mục Dim. Việc phải làm, theo thứ tự:

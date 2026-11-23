@@ -992,7 +992,8 @@ namespace TKPCCC
         /// MỘT chuỗi ngang tường – các cột lưới – tường dọc hàng chính, đường dim cách hàng 2 x cao; MỘT chuỗi đứng tường – các hàng lưới – tường dọc cột chính.
         /// Thiết bị lệch lưới: chuỗi riêng tường gần – thiết bị – cột (hàng) lưới gần nhất phía kia, sát thiết bị. cheo: thêm dim chéo tới góc lồi.
         /// Trả các dim chưa thêm vào bản vẽ (nơi gọi đặt layer, cỡ).
-        static List<Dimension> KtLuoi(List<Point2d> vung, List<Point3d> diem, bool cheo, ObjectId kieu, double cao, double eps, List<Point2d[]> canh = null)
+        static List<Dimension> KtLuoi(List<Point2d> vung, List<Point3d> diem, bool cheo, ObjectId kieu, double cao, double eps, List<Point2d[]> canh = null,
+            List<Point2d> vatCan = null)
         {
             List<Dimension> kq = new List<Dimension>();
             if (diem.Count == 0) return kq;
@@ -1006,8 +1007,36 @@ namespace TKPCCC
             List<Point3d> cotChinh = cot.OrderByDescending(c => c.Count).ThenBy(c => Math.Abs(c[0].X - giua)).First();
             List<double> xs = cot.Where(c => c.Count >= 2 || hangChinh.Any(q => Math.Abs(q.X - c[0].X) <= eps)).Select(c => c[0].X).ToList();
             List<double> ys = hang.Where(h => h.Count >= 2 || cotChinh.Any(q => Math.Abs(q.Y - h[0].Y) <= eps)).Select(h => h[0].Y).ToList();
-            kq.AddRange(ChuoiTuong(vung, xs, hangChinh[0].Y, hangChinh[0].X, true, ra, kieu, false, canh));
-            kq.AddRange(ChuoiTuong(chuyen, ys, cotChinh[0].X, cotChinh[0].Y, false, ra, kieu, false, canhT));
+            // Người dùng 23/11 (Karaoke 123 tầng 2): hành lang hẹp một hàng -> chuỗi dọc hành lang đi ngay trên hàng đầu báo (không lệch sát tường, không đè
+            // số chuỗi ngang); chuỗi ngang hành lang một lần, đặt ở đầu báo mà đường dim không cắt qua cột (vatCan = tâm cột). eps = 10 mm.
+            double met = eps / 0.01;
+            List<Point2d> vcT = vatCan == null ? null : vatCan.Select(p => new Point2d(p.Y, p.X)).ToList();
+            Func<List<Point2d>, double, double, double> beRong = (d, duong, t) =>
+            {
+                double[] k = KhoangNgang(d, duong).FirstOrDefault(x => x[0] <= t + 1e-6 && x[1] >= t - 1e-6);
+                return k == null ? double.MaxValue : k[1] - k[0];
+            };
+            // đường dim y = duong (đã đổi X/Y với chuỗi đứng) qua t cắt cột: tâm cột cách đường < 0,5 m, trong khoảng tường – tường nới 0,3 m
+            Func<List<Point2d>, List<Point2d>, double, double, bool> catCot = (d, vc, duong, t) =>
+            {
+                double[] k = KhoangNgang(d, duong).FirstOrDefault(x => x[0] <= t + 1e-6 && x[1] >= t - 1e-6) ?? new[] { t, t };
+                return vc != null && vc.Any(c => Math.Abs(c.Y - duong) < 0.5 * met && c.X > k[0] - 0.3 * met && c.X < k[1] + 0.3 * met);
+            };
+            double raX = hang.Count == 1 && hangChinh.Count >= 2 && beRong(chuyen, hangChinh[0].X, hangChinh[0].Y) <= 3 * met ? 0 : ra;
+            double raY = cot.Count == 1 && cotChinh.Count >= 2 && beRong(vung, cotChinh[0].Y, cotChinh[0].X) <= 3 * met ? 0 : ra;
+            if (raX > 0 && catCot(vung, vatCan, hangChinh[0].Y + raX, hangChinh[0].X) && !catCot(vung, vatCan, hangChinh[0].Y - raX, hangChinh[0].X)) raX = -raX;
+            if (raY > 0)
+            {
+                // cột thiết bị cùng tập hàng với cột chính đo ra cùng một chuỗi: chọn cột + phía (phải / trái) không cắt cột, gần giữa vùng trước
+                foreach (List<Point3d> c in cot.Where(c => c.Count == cotChinh.Count && c.All(p => cotChinh.Any(q => Math.Abs(q.Y - p.Y) <= eps)))
+                    .OrderBy(c => c == cotChinh ? 0 : 1).ThenBy(c => Math.Abs(c[0].X - giua)))
+                {
+                    double s = !catCot(chuyen, vcT, c[0].X + ra, c[0].Y) ? ra : (!catCot(chuyen, vcT, c[0].X - ra, c[0].Y) ? -ra : 0);
+                    if (s != 0) { cotChinh = c; raY = s; break; }
+                }
+            }
+            kq.AddRange(ChuoiTuong(vung, xs, hangChinh[0].Y, hangChinh[0].X, true, raX, kieu, false, canh));
+            kq.AddRange(ChuoiTuong(chuyen, ys, cotChinh[0].X, cotChinh[0].Y, false, raY, kieu, false, canhT));
             // Hàng (cột) có thiết bị lệch lưới: ≥ 2 thiết bị (rải so le) thì một chuỗi cho cả hàng; một thiết bị thì chuỗi riêng tường – thiết bị – lưới.
             foreach (List<Point3d> h in hang)
             {
@@ -1086,7 +1115,7 @@ namespace TKPCCC
         }
 
         /// Dim tự động sau PCCC_RAI theo trang Cài đặt (kiểu dim, cách dim, layer). Trả số dim đã vẽ.
-        static int KtSauRai(Database db, Transaction tr, BlockTableRecord ms, List<Point2d> vung, List<Point3d> diem, List<Point2d[]> canh = null)
+        static int KtSauRai(Database db, Transaction tr, BlockTableRecord ms, List<Point2d> vung, List<Point3d> diem, List<Point2d[]> canh = null, List<Point2d> vatCan = null)
         {
             string dang = CaiDat.DimDang();
             if (dang == CaiDat.DIM_KHONG || diem.Count == 0) return 0;
@@ -1097,7 +1126,7 @@ namespace TKPCCC
             double cao = LaySo(NhomKyHieu("kt"), "cao", 250);
             ObjectId lop = DamBaoLayer(db, tr, CaiDat.DimLop(), 8);
             int n = 0;
-            foreach (Dimension d in KtLuoi(vung, diem, dang == CaiDat.DIM_CHUOI_CHEO, kieu, cao, EPS_DIM_M / HeSoMet(db), canh))
+            foreach (Dimension d in KtLuoi(vung, diem, dang == CaiDat.DIM_CHUOI_CHEO, kieu, cao, EPS_DIM_M / HeSoMet(db), canh, vatCan))
             {
                 d.SetDatabaseDefaults(db);
                 d.DimensionStyle = kieu;
@@ -1815,9 +1844,15 @@ namespace TKPCCC
                 ed.WriteMessage("\n[TKPCCC] dam_sau=" + demDam[0] + " dam_nong=" + demDam[1] + " (dầm nông d ≤ 0,3 m bỏ, rải như trần phẳng: 5.9.1.1.6 a)");
             if (oX.Count > 0)
             {
-                ed.WriteMessage("\n[TKPCCC] o_x=" + oX.Count + " (ô có dấu X = lỗ thông tầng, giếng thang máy: không rải).");
+                ed.WriteMessage("\n[TKPCCC] o_x=" + oX.Count + " (ô có dấu X cỡ giếng thang máy hoặc dải khe dài hẹp, block thang máy: không rải).");
                 loaiTru.AddRange(oX);
             }
+            if (nhanThem.ThongTang.Count > 0)
+                ed.WriteMessage("\n[TKPCCC] thong_tang=" + nhanThem.ThongTang.Count + " m2=" + string.Join(",", nhanThem.ThongTang.Select(o =>
+                    Math.Round(Math.Abs(DienTichDaGiac(o)) * m * m, 1).ToString(CultureInfo.InvariantCulture)
+                    + "(" + Math.Round(o[0].GetDistanceTo(o[1]) * m, 1).ToString(CultureInfo.InvariantCulture) + "x" + Math.Round(o[1].GetDistanceTo(o[2]) * m, 1).ToString(CultureInfo.InvariantCulture) + ")@" + Math.Round(o.Average(q => q.X)).ToString(CultureInfo.InvariantCulture)
+                    + "," + Math.Round(o.Average(q => q.Y)).ToString(CultureInfo.InvariantCulture))) + " (ô dấu X lớn = sảnh / lỗ thông tầng: VÙNG RẢI RIÊNG, đầu báo, đầu phun"
+                    + " của vùng này lắp ở ĐỈNH sảnh thông tầng; hành lang, ô giáp sảnh là vùng riêng, lắp ở trần tầng đó).");
             if (gach.Count > 0) ed.WriteMessage("\n[TKPCCC] gach_cheo=" + gach.Count + " (hatch gạch chéo = công trình hiện hữu: Enter mọi phòng thì bỏ qua).");
             bool veVung = vung.Count == 0;
             HashSet<List<Point2d>> daCo = new HashSet<List<Point2d>>(); // vùng PCCC_VUNG vẽ sẵn dùng thay phòng tự dựng: không vẽ lại
@@ -1966,7 +2001,7 @@ namespace TKPCCC
                     Point3d q = pr.Value.TransformBy(ed.CurrentUserCoordinateSystem);
                     List<Point2d> f = mat.Where(x => TrongDaGiac(x, new Point2d(q.X, q.Y))).OrderBy(x => DienTichDaGiac(x)).FirstOrDefault();
                     if (f == null) ed.WriteMessage("\nĐiểm không nằm trong phòng kín nào của vùng đã chọn.");
-                    else if (MatKhongRai(f, oX, new List<List<Point2d>>())) ed.WriteMessage("\nÔ có dấu X (lỗ thông tầng): không rải.");
+                    else if (MatKhongRai(f, oX, new List<List<Point2d>>())) ed.WriteMessage("\nÔ có dấu X (giếng thang máy, khe giữa hai khối): không rải.");
                     else
                     {
                         // Người dùng 16/11: phòng quanh điểm bấm hở thì mặt nhỏ nhất chứa điểm là mặt bao nhiều phòng (763 079 m², rải treo máy): hỏi trước.
@@ -2253,7 +2288,7 @@ namespace TKPCCC
                             if (!diemCha.TryGetValue(cha, out l)) { l = new List<Point3d>(); diemCha[cha] = l; }
                             l.AddRange(r.Diem);
                         }
-                        else soKtRai = KtSauRai(db, tr, ms, d, r.Diem);
+                        else soKtRai = KtSauRai(db, tr, ms, d, r.Diem, null, nhanThem.Cot);
                     }
                     else foreach (Point3d p in r.Diem)
                     {
