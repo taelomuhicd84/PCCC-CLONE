@@ -33,6 +33,10 @@ Mọi chỗ bổ sung tay ghi lại vào file `cad/skills/mau/` của công trì
    chỗ hở. Phòng có WC riêng: vùng phòng BAO LUÔN khoảng sảnh nhỏ trước cửa WC (khoảng hở giữa cửa phòng / cửa buồng xí), CHỈ CHỪA buồng xí (có bồn cầu);
    cạnh vùng đi vòng theo vách buồng xí (vùng chữ L, có khấc), không cắt thẳng ở mặt khối WC. Ô giao đầu hành lang (≤ 2 x 2 m) GỘP vào hành lang
    (không thành vùng riêng). Plugin ĐÃ LÀM 23/11 (`GopMatNho`, bước 2b dưới); lối dọc vuông góc hành lang vẫn là vùng riêng như người dùng vẽ.
+7. NGƯỜI DÙNG 23/11 (đường đỏ trên ảnh `ket_qua/HOC_BAO_CHAY/anh/k4t2_nguoidung_23_11.png`, phòng thứ 2 từ phải dãy trên): đó là đường bao CHUẨN cho
+   mọi phòng công năng và ô thang hở — khép kín, nối liền, bám mặt tường / vách / mép thang, khấc vào ôm sảnh trước WC, chừa buồng xí; KHÔNG băng ngang
+   vô lý. Hành lang tại trục (1''–1')/(E–D) (ô giao đầu hành lang trên) phải liền 1 vùng với hành lang, trừ khi có dầm chặn (`GopMatNho` đã làm; bản
+   người dùng chụp còn chạy plugin cũ). Sảnh / lỗ thông tầng: vùng riêng (luật ở `cua_thang_khu.md` mục Thang, giếng, lỗ thông tầng).
 
 ## Plugin dựng phòng thế nào ("Enter mọi phòng" của `PCCC_RAI`)
 1. Gom đoạn nét từ đối tượng quét chọn (`ThuNet`), tách cột, nhận trục, khép khe cửa, dựng mọi mặt kín (`CacMat`), chỉ giữ mặt có tâm trong khung chọn.

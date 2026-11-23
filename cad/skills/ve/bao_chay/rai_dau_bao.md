@@ -26,6 +26,10 @@ Mã: `LuoiVung`, `DoiVao`, `PhuKin`, `KtLuoi` (`cad/module/plugin/Rai.cs`); thao
 - Ngang: MỘT chuỗi cho các thiết bị chung tập cột x (tường → TB → … → tường); hàng khác cùng các x đó không dim lại. Dọc: MỘT chuỗi trên một cột.
 - Đường dim đặt gần hàng / cột thiết bị (ngay trên hàng đầu tiên, sát cột), không đẩy ra xa ngoài mép công trình.
 - Chỉ thiết bị lệch lưới mới dim thêm: tới tường gần nhất và tới cột thiết bị gần nhất. Áp cả `kt_chuoi`, `PCCC_ADIM`.
+- NGƯỜI DÙNG 23/11 (Karaoke 123 tầng 2, ảnh `ket_qua/HOC_BAO_CHAY/anh/k4t2_nguoidung_23_11.png`: dấu X xanh lá = bác bỏ, dấu ✓ = đúng):
+  hành lang hẹp vừa đủ MỘT hàng đầu báo thì đặt hàng đó ĐÚNG GIỮA bề rộng hành lang; dim ngang (tường – đầu báo – tường, vd 900 | 900) CHỈ MỘT LẦN cho
+  cả hành lang (✓ ở hành lang trên), không lặp ở từng đầu báo; dọc hành lang giữ một chuỗi. Không để số dim đè lên nhau; không đặt đường dim / số dim
+  đè lên tường, cột, vật cản làm khó đọc (bác bỏ: chuỗi 900 dọc ở ô giao, các dim 900 ở hành lang dưới sát tường / cột, dim dọc cắt qua cột).
 
 ## Còn tồn (đầu `cad/TIEN_DO.md` có phần CÒN)
 - Mã chưa khai `tuong_min` (vd đầu phun): tạm 0,1 m (`CACH_TUONG_MIN_M`), KHÔNG phải trị số quy chuẩn; có số thật thì khai vào `data/khoang_cach_rai.json`.

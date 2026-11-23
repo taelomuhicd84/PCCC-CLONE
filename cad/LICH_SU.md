@@ -814,3 +814,8 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
   ô cửa 5,6 m tường 1 nét bị tính là chữ T, khe không khép, xưởng 2 không thành mặt, cụm phía đông bị `bo_cum`. Sửa `dauXuyen`: nét chữ T ≥ 0,15 m mỗi phía
   (0,25–0,5 m làm Karaoke 123, trường học vỡ vùng). `chay_thu.ps1` thêm phép kiểm bản chép QT (25 / 57) và Karaoke 123 T2 (15 vùng), chạy khi máy có file.
   Ca thử tối giản cho lỗi QT (tường 1 nét + vạch đầu tường) không tái hiện được, bỏ.
+
+- 23/11: người dùng train trên ảnh tầng 2 Karaoke 123 (chạy plugin cũ): đường bao chuẩn bám tường / ôm sảnh WC / bám mép thang hở; sảnh / lỗ thông tầng là
+  vùng rải riêng (đầu báo trên đỉnh sảnh), hành lang giáp vẫn rải ở trần tầng; hành lang 1 hàng đặt giữa, dim ngang một lần, không đè số / không dim vào
+  tường, cột. Ghi luật vào `cad/skills/` (phong_vung mục 7, cua_thang_khu, rai_dau_bao), ảnh ở `ket_qua/HOC_BAO_CHAY/anh/`; việc sửa plugin ghi đầu
+  `cad/TIEN_DO.md` (VIỆC 23/11), giao phiên nhánh vì ngữ cảnh phiên 44 %.

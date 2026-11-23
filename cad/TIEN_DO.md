@@ -3,6 +3,22 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## VIỆC 23/11 — KARAOKE 123 T2: SẢNH THÔNG TẦNG VÙNG RIÊNG + DIM HÀNH LANG (người dùng train, CHƯA SỬA PLUGIN; giao phiên nhánh ngữ cảnh sạch)
+Ảnh người dùng: `ket_qua/HOC_BAO_CHAY/anh/k4t2_nguoidung_23_11.png` (mặt bằng tầng 2, chạy bằng plugin CŨ trong AutoCAD: ô giao còn vùng riêng — đã sửa
+bằng `GopMatNho` f49f1fd), `k4t2_truc_23_11.png` (tên trục F, E, D, 1, 1'', 1'). Luật đã ghi: `cad/skills/nhan_dang/phong_vung.md` mục 7,
+`cad/skills/nhan_dang/cua_thang_khu.md` mục Thang, giếng, lỗ thông tầng, `cad/skills/ve/bao_chay/rai_dau_bao.md` mục Dim. Việc phải làm, theo thứ tự:
+1. Soát lại đường bao phòng theo đường đỏ (bám tường, ôm sảnh WC, chừa buồng xí) trên bản chép tầng 2 (x 334000..379000, y −62500..−41500): bản hiện tại
+   đã ra 15 vùng khớp vùng người dùng vẽ tay 21/11; so ảnh mới, chỗ nào còn kẻ băng ngang thì sửa.
+2. Sảnh thông tầng (ô thang hở + khoảng trống bên phải x > 356515 ≈ trục giữa, y −62500..−49700; trong bản vẽ có dấu X lớn, nhưng log không có `o_x=`
+   và hiện KHÔNG có vùng nào ở đó): dựng thành VÙNG RIÊNG, đường bao bám mép thang hở (đường đỏ khấc theo vế thang) + đường thẳng ranh với hành lang /
+   ô x 354015..356515 (đường xanh dương). Hành lang dưới (35,28 m²) và ô 12,5 m² vẫn là vùng riêng như hiện tại (2 vòng đỏ người dùng = đầu báo ở đó).
+   Ô X / lỗ thông tầng không còn "không rải" (chỉ giếng thang máy giữ không rải): rải như vùng thường + in một dòng nhắc "đầu báo / đầu phun lắp ở đỉnh
+   sảnh thông tầng". Kiểm lại các ca thử ô X cũ trong `chay_thu.ps1` (o_x) và khung 3 (căn hộ 441: mẫu có 2 đầu báo ở khu thang + thông tầng).
+3. Hành lang hẹp một hàng: đặt hàng đầu báo đúng giữa bề rộng (hiện đặt sát mức 0,5 m tới một tường — CÒN TỒN cũ ở `rai_dau_bao.md`); dim ngang
+   tường–đầu báo–tường MỘT lần cho cả hành lang; không dim đè số, không dim vào tường / cột. Mã dim: `KtLuoi` (`Rai.cs`), `kt_gom`.
+4. Ca thử cho 2, 3 trong `chay_thu.ps1`; `chay_thu` + `thu_mcp` TAT CA DAT (phép kiểm bản chép QT 25/57, Karaoke T2 15 vùng phải giữ — số vùng T2
+   đổi vì thêm vùng thông tầng thì sửa mốc); build bundle; ghi file này + `cad/LICH_SU.md`; commit (không push).
+
 ## VIỆC 20/11 (3) — GOM TRI THỨC CAD THÀNH MỘT ĐẦU NGUỒN `cad/skills/` (NHẬN DẠNG / VẼ / MẪU): XONG 21/11 (4 lô commit, chưa push)
 KẾT QUẢ 21/11: `cad/knowledge/`, `cad/layer/` đã dời hết vào `cad/skills/` (mục lục `cad/skills/README.md`; `nhan_dang/` 7 file luật viết mới từ memory + hành vi mã;
 `ve/` quy ước + layer, trục tường cửa, `bao_chay/` rải đầu báo, chuông nút đèn, dây zone; `mau/` 8 file bằng chứng). Mọi đường dẫn cũ đã sửa (build.bat, test,
