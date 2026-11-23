@@ -3,13 +3,17 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
-## VIỆC 23/11 (3) — HÀNH LANG BÊN, THANG GỘP PHÒNG, WC > 60 m² KHÔNG RẢI: ĐÃ SỬA TAY BẢN CHÉP + GHI LUẬT; CHƯA SỬA PLUGIN
+## VIỆC 23/11 (3) — HÀNH LANG BÊN, WC CÓ CHỮ > 60 m², MẶT CON WC, THANG NÉT RỜI: XONG MÃ + TEST (chưa push, chưa review `cad-review`); CÒN BUỒNG THANG HỞ
 - Người dùng soát trường học khung 6 (bản chép `ket_qua/HOC_BAO_CHAY/cad/hoc_bao_chay.dwg`, x 495–590 m): rải nhầm vào hành lang bên quanh sân,
-  dải 1,65 m ngoài dãy văn phòng, buồng thang, WC. Đã xoá 27 vùng + 47 đầu báo + dim, tách P. thiết bị / Kho dưới gầm thang (1 ĐB mỗi phòng);
-  spec `ket_qua/HOC_BAO_CHAY/cad/skills/bo_hl_ben_thang_wc.json`. Luật: `cad/skills/nhan_dang/cua_thang_khu.md` (3 gạch đầu dòng 23/11).
-- BƯỚC TIẾP (agent `cad-lap-trinh`): (1) mở rộng L6 Hiên (`bo_hien`) sang mọi loại trần = hành lang bên: dải ≤ 3 m, mép trong tường có cửa, mép ngoài
-  cột + lan can mở ra sân / ngoài nhà; (2) WC có chữ VỆ SINH / WC bỏ không xét 60 m², mặt con không chữ kề khối WC bỏ theo; (3) thang dính phòng nhỏ có
-  chữ tên: tách phòng, bỏ phần thang. Mỗi luật một ca test trong `chay_thu.ps1`, rồi chạy lại khung 6 so với bản sửa tay.
+  dải 1,65 m ngoài dãy văn phòng, buồng thang, WC. Đã sửa tay bản chép (spec `ket_qua/HOC_BAO_CHAY/cad/skills/bo_hl_ben_thang_wc.json`).
+  Người dùng: "plugin phải nhận diện được việc này". Luật + cách plugin làm: `cad/skills/nhan_dang/cua_thang_khu.md` (các gạch 23/11).
+- MÃ: `Rai.cs` `HanhLangBen` (`bo_hanh_lang_ben=`), `TiLeDai`, mặt con WC (`bo_mat_con_wc=`), WC theo chữ tới 150 m²; `NhanVung.cs` `KhuChu`, `KhuWc`,
+  nhãn "VS..." ngắn = WC, `ThangRoi` (thang nét rời). Test E28, E29, E30; `chay_thu.ps1`, `thu_mcp.ps1` TAT CA DAT; `build.bat` xong.
+- Chạy lại `PCCC_RAI` khung 6 (accoreconsole, `ket_qua/HOC_BAO_CHAY/cad/go_khung.ps1 -P1 490000,-205000 -P2 595000,-90000 -Xoa`): 58 -> 31 đầu báo;
+  bo_hanh_lang_ben=15 (đủ), WC thêm 8,1 + 2 mặt con 6,8 / 16,8. (Dãy trên y > −111 m nằm ngoài khung trục nên lần chạy này không xét.)
+- BƯỚC TIẾP: (1) buồng thang hở (2 chỗ cánh phải, vùng 35 m² = đoạn hành lang + chiếu nghỉ + vế thang + P. THIẾT BỊ / KHO dưới gầm thang;
+  bản vẽ chỉ vẽ vế dưới): mô hình vế + vế đối xứng qua tay vịn + chiếu nghỉ tới tường; cắt dải hành lang bên khỏi mặt gộp theo đường mép trong
+  của chuỗi; tách phòng có chữ tên theo khấc tường gần chữ. Dự kiến test E31. (2) `cad-review` (Opus max) cho mốc này rồi push.
 
 ## VIỆC 23/11 (2) — VÙNG DỪNG Ở NÉT ĐẦU TIÊN CỦA LAN CAN: XONG MÃ 23/11 chiều (phiên Claude Code, chưa push)
 KẾT QUẢ: `LanCanKin` nhận lan can polyline kín dày 40–90 mm (cạnh ≥ 1,2 m); `GopMatNho` (c) gộp dải mặt cột – nét lan can kề MỘT phòng

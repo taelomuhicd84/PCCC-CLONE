@@ -842,3 +842,6 @@ Nguoi dung (Bot chat): hanh lang duoi Karaoke T2 "hoi lo", vung dung o net dau t
 
 ## 2026-11-23 chieu — Dim hanh lang lech khoi hang dau bao
 Nguoi dung: dim hanh lang khong nam ngang bang dau bao / dau phun. KtLuoi: hanh lang 1 hang (<= 3 m) chuoi doc lech 1/4 be rong (toi da 2 co chu). E25 doi ky vong. chay_thu + thu_mcp TAT CA DAT; khung 3-6 giu so; bundle build.
+
+## 2026-11-23 toi — Hanh lang ben, WC co chu > 60 m2, mat con WC, thang net roi
+Nguoi dung (Bot chat) soat truong hoc khung 6: rai nham vao hanh lang ben quanh san, dai 1,65 m ngoai day van phong, thang, WC; "plugin phai nhan dien duoc viec nay". Sua tay ban chep (27 vung, 47 DB), roi lam ma: Rai.cs HanhLangBen (bo_hanh_lang_ben: dai 0,8-3 m, mot mep khong co phong ben kia, lan can hoac cung chuoi mep ngoai), WC theo chu toi 150 m2 + nhan "VS..." ngan, mat con WC <= 20 m2 ke WC (bo_mat_con_wc), NhanVung.cs ThangRoi (thang net roi). Test E28-E30; chay_thu + thu_mcp TAT CA DAT; bundle build. Khung 6 chay lai: 58 -> 31 DB. Con buong thang ho (vung 35 m2 gop hanh lang + chieu nghi + phong gam thang). Chua review, chua push.

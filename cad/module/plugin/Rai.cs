@@ -325,6 +325,105 @@ namespace TKPCCC
             return dai[0] > 0 && doi[0] >= 0.5 * dai[0] && doi[1] <= 0.8 * dai[1];
         }
 
+        /// Một dải ứng viên hành lang bên: phương dọc, đường mép ngoài, khoảng dọc, phủ lan can mép ngoài, số cửa.
+        /// Dài / rộng của đa giác theo phương cạnh dài nhất.
+        static double TiLeDai(List<Point2d> f)
+        {
+            int iDai = 0; double lDai = 0;
+            for (int i = 0; i < f.Count; i++) { double L = f[i].GetDistanceTo(f[(i + 1) % f.Count]); if (L > lDai) { lDai = L; iDai = i; } }
+            if (lDai <= 0) return 1;
+            Vector2d u = (f[(iDai + 1) % f.Count] - f[iDai]).GetNormal(), n = u.GetPerpendicularVector();
+            double du = f.Max(p => u.DotProduct(p.GetAsVector())) - f.Min(p => u.DotProduct(p.GetAsVector()));
+            double dn = f.Max(p => n.DotProduct(p.GetAsVector())) - f.Min(p => n.DotProduct(p.GetAsVector()));
+            return dn <= 0 ? double.MaxValue : du / dn;
+        }
+        class DaiBen { public List<Point2d> F; public Vector2d U; public double MepNgoai, U0, U1, LanCan; public int Cua; public bool Nhan; }
+
+        /// Người dùng 23/11 (trường học khung 6: "hành lang bên làm gì rải đầu báo"; QCVN 10:2025 1.5.11 miễn báo cháy cho hành lang bên), mọi loại trần.
+        /// Ứng viên: dải rộng 0,8–3 m (theo phương cạnh dài nhất), MỘT mép dọc không có phòng nào cách ≤ 0,6 m (mở ra sân trong / ngoài nhà) trên ≥ 60 %
+        /// chiều dài, mép dọc kia giáp phòng ≥ 40 %, không có chữ tên phòng. Nhận khi mép ngoài có lan can (LanCan phủ ≥ 50 %), hoặc thuộc chuỗi dải
+        /// cùng đường mép ngoài (lệch ≤ 0,15 m, hở ≤ 6 m) có dải đã nhận, hoặc chuỗi ≥ 3 dải dài ≥ 12 m mà ≥ 2/3 dải không có cửa (dải 1,65 m ngoài
+        /// cửa sổ dãy văn phòng, mép ngoài lan can mảnh không thành LanCan). Dải ứng viên lẻ không lan can (kho hẹp sát tường ngoài) vẫn rải.
+        /// shortcut: "không có phòng bên kia" tính theo các mặt đã dựng; sân trong không có dấu X (thành một mặt kín) thì không nhận.
+        static List<List<Point2d>> HanhLangBen(List<List<Point2d>> vung, List<List<Point2d>> phong, List<Point2d[]> lanCan, List<Point2d[]> cua,
+            List<Point2d> tenPhong, double m)
+        {
+            List<DaiBen> ds = new List<DaiBen>();
+            double ke = 0.6 / m;
+            foreach (List<Point2d> f in vung)
+            {
+                if (Math.Abs(DienTichDaGiac(f)) * m * m > 250 || tenPhong.Any(p => TrongDaGiac(f, p))) continue;
+                int iDai = -1; double lDai = 0;
+                for (int i = 0; i < f.Count; i++) { double L = f[i].GetDistanceTo(f[(i + 1) % f.Count]); if (L > lDai) { lDai = L; iDai = i; } }
+                if (iDai < 0) continue;
+                Vector2d u = (f[(iDai + 1) % f.Count] - f[iDai]).GetNormal();
+                if (Math.Abs(u.X) >= Math.Abs(u.Y) ? u.X < 0 : u.Y < 0) u = -u; // chiều chuẩn (cạnh gần đứng lệch 1e-7 vẫn cùng chiều): cùng đường mép thì so được
+                Vector2d n = u.GetPerpendicularVector();
+                double u0 = f.Min(p => u.DotProduct(p.GetAsVector())), u1 = f.Max(p => u.DotProduct(p.GetAsVector()));
+                double n0 = f.Min(p => n.DotProduct(p.GetAsVector())), n1 = f.Max(p => n.DotProduct(p.GetAsVector()));
+                double W = (n1 - n0) * m, Lu = u1 - u0;
+                if (W < 0.8 || W > 3 || Lu * m < W) continue;
+                double[] ngoai = new double[2], trong = new double[2], lc = new double[2];
+                for (int i = 0; i < f.Count; i++)
+                {
+                    Point2d a = f[i], b = f[(i + 1) % f.Count];
+                    double L = a.GetDistanceTo(b);
+                    if (L * m < 0.3) continue;
+                    Vector2d w = (b - a) / L;
+                    if (Math.Abs(w.X * u.Y - w.Y * u.X) > 0.05) continue;
+                    double t = n.DotProduct((a + (b - a) * 0.5).GetAsVector());
+                    int s = (t - n0) * m <= 0.5 ? 0 : (n1 - t) * m <= 0.5 ? 1 : -1;
+                    if (s < 0) continue;
+                    // Điểm thử dời ra phía ngoài mép 0,4 m: phòng bên kia (sau tường ≤ 0,65 m) chứa hoặc cách ≤ 0,25 m. Dời theo pháp tuyến để dải kề
+                    // nối đầu (ô dải 1,65 m chia theo dầm) không bị tính là phòng bên kia.
+                    Vector2d ra = (s == 0 ? -n : n) * (0.4 / m);
+                    int k = Math.Max(1, (int)Math.Round(L * m)), co = 0;
+                    for (int j = 0; j < k; j++)
+                    {
+                        Point2d g = a + (b - a) * ((j + 0.5) / k) + ra;
+                        if (phong.Any(v => v != f && (CachVien(v, g) <= 0.25 / m || TrongDaGiac(v, g)))) co++;
+                    }
+                    trong[s] += L * co / k;
+                    ngoai[s] += L * (k - co) / k;
+                    foreach (Point2d[] q in lanCan)
+                    {
+                        Vector2d v = q[1] - q[0];
+                        if (v.Length < 1e-9 || Math.Abs(w.X * v.Y - w.Y * v.X) > 0.02 * v.Length) continue;
+                        if (Math.Abs(w.X * (q[0].Y - a.Y) - w.Y * (q[0].X - a.X)) * m > 0.6) continue;
+                        double p0 = w.DotProduct(q[0] - a), p1 = w.DotProduct(q[1] - a);
+                        lc[s] += Math.Max(0, Math.Min(L, Math.Max(p0, p1)) - Math.Max(0, Math.Min(p0, p1)));
+                    }
+                }
+                for (int s = 0; s < 2; s++)
+                {
+                    if (ngoai[s] < 0.6 * Lu || trong[1 - s] < 0.4 * Lu) continue;
+                    ds.Add(new DaiBen { F = f, U = u, MepNgoai = s == 0 ? n0 : n1, U0 = u0, U1 = u1, LanCan = Math.Min(1, lc[s] / Lu),
+                        Cua = cua.Count(h => { Point2d c = new Point2d((h[0].X + h[1].X) / 2, (h[0].Y + h[1].Y) / 2); return TrongDaGiac(f, c) || CachVien(f, c) <= 0.3 / m; }),
+                        Nhan = lc[s] >= 0.5 * Lu });
+                    break;
+                }
+            }
+            // Chuỗi: cùng phương, cùng đường mép ngoài (lệch ≤ 0,15 m), nối nhau theo phương dọc khi hở ≤ 6 m.
+            List<DaiBen> conLai = new List<DaiBen>(ds);
+            while (conLai.Count > 0)
+            {
+                List<DaiBen> chuoi = new List<DaiBen> { conLai[0] };
+                conLai.RemoveAt(0);
+                for (bool them = true; them; )
+                {
+                    them = false;
+                    foreach (DaiBen d in conLai.ToList())
+                        if (chuoi.Any(c => Math.Abs(c.U.X * d.U.Y - c.U.Y * d.U.X) <= 0.02 && Math.Abs(c.MepNgoai - d.MepNgoai) * m <= 0.15
+                            && Math.Max(c.U0, d.U0) - Math.Min(c.U1, d.U1) <= 6 / m))
+                        { chuoi.Add(d); conLai.Remove(d); them = true; }
+                }
+                double dai = chuoi.Sum(c => c.U1 - c.U0) * m;
+                bool nhan = chuoi.Any(c => c.Nhan) || (chuoi.Count >= 3 && dai >= 12 && chuoi.Count(c => c.Cua == 0) * 3 >= chuoi.Count * 2);
+                if (nhan) foreach (DaiBen c in chuoi) c.Nhan = true;
+            }
+            return ds.Where(d => d.Nhan).Select(d => d.F).Distinct().ToList();
+        }
+
         static List<Point2d> DinhPl(Polyline pl)
         {
             List<Point2d> d = new List<Point2d>();
@@ -1894,11 +1993,16 @@ namespace TKPCCC
                             vung = vung.Where(f0 => trongTruc(DiemTrongMat(f0)) || nhanThem.TenPhong.Any(p => TrongDaGiac(f0, p))).ToList();
                             if (vung.Count < truoc) ed.WriteMessage("\n[TKPCCC] bo_ngoai_truc=" + (truoc - vung.Count) + " (phòng ngoài đường trục ngoài cùng: không phân vùng; cần rải thì bấm điểm trong phòng đó).");
                         }
+                        // Mọi phòng thật (kể cả WC, thang sắp bỏ) để xét "bên kia mép có phòng không" (hành lang bên); mặt ngoài trục (lam, mái đua) không tính.
+                        List<List<Point2d>> phongDu = vung.ToList();
                         // Người dùng dặn 16/11: đầu báo không đặt trong lõi thang máy, buồng thang, WC (phòng ≤ 60 m² chứa dấu hiệu GomKhu).
                         // shortcut: nhận theo tên block, layer, chữ phòng; bản vẽ không có các dấu hiệu đó thì vẫn rải: bấm điểm từng phòng.
                         if (v.he == "BC")
                         {
-                            List<List<Point2d>> boKhu = vung.Where(f0 => DienTichDaGiac(f0) * m * m <= 60 && khuKhong.Any(p => TrongDaGiac(f0, p))).ToList();
+                            // Người dùng 23/11 (trường học khung 6, WC học sinh 79–80 m²): phòng có CHỮ WC / VỆ SINH / TOILET bỏ tới 150 m² (chữ thắng ngưỡng 60 m²).
+                            List<List<Point2d>> boKhu = vung.Where(f0 => (DienTichDaGiac(f0) * m * m <= 60 && khuKhong.Any(p => TrongDaGiac(f0, p)))
+                                || (DienTichDaGiac(f0) * m * m <= 150 && nhanThem.KhuChu.Any(p => TrongDaGiac(f0, p)))).ToList();
+                            List<List<Point2d>> wc = boKhu.Where(f0 => nhanThem.KhuWc.Any(p => TrongDaGiac(f0, p))).ToList();
                             vung = vung.Where(f0 => !boKhu.Contains(f0)).ToList();
                             if (boKhu.Count > 0) ed.WriteMessage("\n[TKPCCC] bo_khu_khong_bao=" + boKhu.Count + " m2="
                                 + string.Join(",", boKhu.Select(f0 => Math.Round(DienTichDaGiac(f0) * m * m, 1).ToString(CultureInfo.InvariantCulture)))
@@ -1982,6 +2086,25 @@ namespace TKPCCC
                                 vung = vung.Where(f0 => !hien.Contains(f0)).ToList();
                                 ed.WriteMessage("\n[TKPCCC] bo_hien=" + hien.Count + " m2=" + string.Join(",", hien.Select(f0 => Math.Round(Math.Abs(DienTichDaGiac(f0)) * m * m, 1).ToString(CultureInfo.InvariantCulture)))
                                     + " (dải hẹp mép ngoài chỉ có cột = hiên: không đặt đầu báo; cần rải thì bấm điểm trong dải đó).");
+                            }
+                            List<List<Point2d>> hlBen = HanhLangBen(vung, phongDu, nhanThem.LanCan, nhanThem.Cua, nhanThem.TenPhong, m);
+                            if (hlBen.Count > 0)
+                            {
+                                vung = vung.Where(f0 => !hlBen.Contains(f0)).ToList();
+                                ed.WriteMessage("\n[TKPCCC] bo_hanh_lang_ben=" + hlBen.Count + " m2=" + string.Join(",", hlBen.Select(f0 => Math.Round(Math.Abs(DienTichDaGiac(f0)) * m * m, 1).ToString(CultureInfo.InvariantCulture)))
+                                    + " (dải hẹp một mép mở ra sân / ngoài nhà, có lan can hoặc cùng chuỗi = hành lang bên, QCVN 10 1.5.11: không đặt đầu báo; cần rải thì bấm điểm trong dải đó).");
+                            }
+                            // Người dùng 23/11 (trường học khung 6): mặt con của khối WC (khu rửa tay, khu tiểu, sảnh 7–17 m² tách bởi vách buồng xí) không có chữ,
+                            // kề phòng WC vừa bỏ: bỏ theo. Chỉ mặt ≤ 20 m², không chữ tên nào (PHÒNG DỤNG CỤ cạnh WC giữ), không phải dải dài (dài ≤ 3 lần rộng:
+                            // hành lang trong nhà sát WC vẫn rải), kề WC (≥ 2 đỉnh cách viền ≤ 0,3 m). Xét sau hành lang bên (dải ngoài cạnh WC đã bỏ ở đó).
+                            Func<List<Point2d>, List<Point2d>, bool> keWc = (a0, b0) => a0.Count(p => CachVien(b0, p) <= 0.3 / m) + b0.Count(p => CachVien(a0, p) <= 0.3 / m) >= 2;
+                            List<List<Point2d>> conWc = vung.Where(f0 => DienTichDaGiac(f0) * m * m <= 20 && TiLeDai(f0) <= 3
+                                && !nhanThem.TenChu.Any(p => TrongDaGiac(f0, p)) && !nhanThem.TenPhong.Any(p => TrongDaGiac(f0, p)) && wc.Any(w0 => keWc(f0, w0))).ToList();
+                            if (conWc.Count > 0)
+                            {
+                                vung = vung.Where(f0 => !conWc.Contains(f0)).ToList();
+                                ed.WriteMessage("\n[TKPCCC] bo_mat_con_wc=" + conWc.Count + " m2=" + string.Join(",", conWc.Select(f0 => Math.Round(DienTichDaGiac(f0) * m * m, 1).ToString(CultureInfo.InvariantCulture)))
+                                    + " (mặt nhỏ không chữ kề phòng WC = khu rửa tay, khu tiểu của khối WC: không đặt đầu báo; cần rải thì bấm điểm trong phòng đó).");
                             }
                         }
                         int boPhong, boCum;

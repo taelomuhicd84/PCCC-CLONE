@@ -1233,6 +1233,30 @@ foreach ($y in (0..8 | ForEach-Object { 6000 * $_ })) {
   '_.RECTANG', '2479800,-200', '2480000,0', '_.RECTANG', '2479800,1800', '2480000,2000',
   '-LAYER', 'M', 'THAY_1', '', '_.PLINE', '2479940,0', '2480000,0', '2480000,1800', '2479940,1800', 'C', '-LAYER', 'S', '0', '',
   'PCCC_RAI', 'BC_KHOI', '', '', 'C', '2469500,-700', '2486500,2500', '', '', '',
+  # E28 (nguoi dung 23/11 truong hoc khung 6 "hanh lang ben lam gi rai dau bao"): day 3 phong 6 x 6 m, hanh lang 2,3 m mo ra san: mep ngoai
+  #    4 cot 0,2 x 0,2 + lan can 2 net (layer THAY_1) giua cac cot, ben kia khong co phong. Hanh lang bo (QCVN 10 1.5.11), 3 phong 36 m2 van rai.
+  '(princ "\n==E28==")', '-LAYER', 'M', 'TUONG', '', '_.ZOOM', 'W', '2499000,-1500', '2520000,9500',
+  '_.LINE', '2500000,-200', '2500000,8300', '2518000,8300', '2518000,-200', '', '_.LINE', '2500000,2300', '2518000,2300', '',
+  '_.LINE', '2506000,2300', '2506000,8300', '', '_.LINE', '2512000,2300', '2512000,8300', '',
+  '-LAYER', 'M', 'COT', '', '_.RECTANG', '2500000,-200', '2500200,0', '_.RECTANG', '2505900,-200', '2506100,0',
+  '_.RECTANG', '2511900,-200', '2512100,0', '_.RECTANG', '2517800,-200', '2518000,0',
+  '-LAYER', 'M', 'THAY_1', '', '_.LINE', '2500200,-50', '2505900,-50', '', '_.LINE', '2500200,-150', '2505900,-150', '',
+  '_.LINE', '2506100,-50', '2511900,-50', '', '_.LINE', '2506100,-150', '2511900,-150', '',
+  '_.LINE', '2512100,-50', '2517800,-50', '', '_.LINE', '2512100,-150', '2517800,-150', '', '-LAYER', 'S', '0', '',
+  'PCCC_RAI', 'BC_KHOI', '', '', 'C', '2499500,-1000', '2518500,9000', '', '', '',
+  # E29 (cung ca): hanh lang TRONG nha 18 x 2,3 m (phong ca hai ben) van rai; phong 12 x 6 m chu "VE SINH NAM" 72 m2 (> 60) bo theo chu.
+  '(princ "\n==E29==")', '-LAYER', 'M', 'TUONG', '', '_.ZOOM', 'W', '2539000,-7000', '2560000,9500',
+  '_.RECTANG', '2540000,-6000', '2558000,8300', '_.LINE', '2540000,0', '2558000,0', '', '_.LINE', '2540000,2300', '2558000,2300', '',
+  '_.LINE', '2546000,2300', '2546000,8300', '', '_.LINE', '2552000,2300', '2552000,8300', '', '_.LINE', '2552000,-6000', '2552000,0', '',
+  '-LAYER', 'S', '0', '', '_.TEXT', '2543000,-3000', '300', '0', 'VE SINH NAM',
+  'PCCC_RAI', 'BC_KHOI', '', '', 'C', '2539500,-6500', '2558500,8800', '', '', '',
+  # E30 (cung ca): thang ve NET ROI (khong block): 8 bac 1,8 m cach 0,3 m (layer 0, sat tuong trai) trong phong 3 x 4 m -> khoet ve thang 3,8 m2.
+  '(princ "\n==E30==")', '-LAYER', 'M', 'TUONG', '', '_.ZOOM', 'W', '2579000,-1000', '2584000,5000',
+  '_.RECTANG', '2580000,0', '2583000,4000', '-LAYER', 'S', '0', '',
+  '_.LINE', '2580000,500', '2581800,500', '', '_.LINE', '2580000,800', '2581800,800', '', '_.LINE', '2580000,1100', '2581800,1100', '',
+  '_.LINE', '2580000,1400', '2581800,1400', '', '_.LINE', '2580000,1700', '2581800,1700', '', '_.LINE', '2580000,2000', '2581800,2000', '',
+  '_.LINE', '2580000,2300', '2581800,2300', '', '_.LINE', '2580000,2600', '2581800,2600', '',
+  'PCCC_RAI', 'BC_KHOI', '', '', 'C', '2579500,-500', '2583500,4500', '', '', '',
   '(princ "\n==EHET==")', '_.QSAVE')) -join "`r`n" | Set-Content -Encoding ascii "$T\kb7.scr"
 $p7 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb7.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb7.out.txt"
 if (-not $p7.WaitForExit(180000)) { Stop-Process -Id $p7.Id -Force; throw "accoreconsole qua 3 phut (review 20/11): $T\kb7.out.txt" }
@@ -1317,6 +1341,14 @@ Kiem ((DtVung $e26) -contains 14.56 -and (DtVung $e26) -contains 20 -and (DtVung
 $e27 = CaRv 'E27'
 Kiem ((DtVung $e27) -contains 17.89 -and (DtVung $e27) -contains 13.2) `
   "Nguoi dung 23/11: lan can polyline kin 60 x 1800 giua 2 cot: vung hanh lang dung o net dau tien cua lan can 17,89 m2 (truoc dinh sanh 31,2), sanh 13,2 m2 (vung=$((DtVung $e27) -join ','))"
+$e28 = CaRv 'E28'
+Kiem ($e28 -match 'bo_hanh_lang_ben=1 ' -and (DtVung $e28).Count -eq 3 -and ((DtVung $e28) | Where-Object { $_ -eq 36 }).Count -eq 3) `
+  "Nguoi dung 23/11: hanh lang 2,3 m mo ra san (cot + lan can, ben kia khong phong) = hanh lang ben, khong rai; 3 phong 36 m2 van rai (vung=$((DtVung $e28) -join ','))"
+$e29 = CaRv 'E29'
+Kiem ($e29 -notmatch 'bo_hanh_lang_ben' -and $e29 -match 'bo_khu_khong_bao=1 m2=72 ' -and (DtVung $e29) -contains 41.4) `
+  "Nguoi dung 23/11: hanh lang trong nha (phong 2 ben) van rai 41,4 m2; phong chu VE SINH 72 m2 (> 60) bo theo chu (vung=$((DtVung $e29) -join ','))"
+$e30 = CaRv 'E30'
+Kiem ($e30 -match 'khoet_thang=1 m2=3.8 ') "Nguoi dung 23/11: thang ve net roi 8 bac 1,8 m cach 0,3 m: nhan ve thang 1,8 x 2,1 m, khoet 3,8 m2 ($([regex]::Match($e30, 'khoet_thang=\S+ m2=\S+').Value))"
 $e25 = CaRv 'E25'
 $ktd = @([regex]::Matches($e25, 'KTD (-?\d+),(-?\d+) (-?\d+),(-?\d+) (-?\d+),(-?\d+)') | ForEach-Object { , @($_.Groups[1..6] | ForEach-Object { [double]$_.Value }) })
 $ktN = @($ktd | Where-Object { $_[3] -eq $_[5] }); $ktD = @($ktd | Where-Object { $_[2] -eq $_[4] })
