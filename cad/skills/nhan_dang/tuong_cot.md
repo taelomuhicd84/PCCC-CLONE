@@ -18,6 +18,10 @@ Mã: `ThuNet`, `LoaiLop`, `NetLien`, `GhiCotUng`, `TachCot`, `MatChon` trong `ca
 - Lan can / mép sàn quanh ô cầu thang, lỗ thông tầng (Karaoke 123 tầng 2, 21/11: 2 nét layer `06 - THAY 1` cách 60 mm nối cột này sang cột kia):
   lượt chỉ-tường vẫn lấy (`LanCan`): LINE / polyline hở (trường học khung 6 vẽ lan can bằng polyline) layer thường ≥ 2 m có nét song song cách 20–300 mm phủ ≥ 80 %, HAI đầu chạm (≤ 50 mm) tường / cột.
   Không có thì hành lang trên buồng thang hở thông xuống thang + ô thông tầng ra ngoài nhà, không thành phòng; mẫu có đầu báo ở đó. Test E19.
+  Lan can vẽ polyline KÍN mỏng giữa 2 cột (Karaoke 123 T2 đầu phải hành lang dưới: handle 25EC1, 60 x 1800, layer `06 - THAY 1`): ĐÃ nhận 23/11
+  (`LanCanKin`: 4 cạnh thẳng, dày 40–90 mm, dài ≥ 1 m; cạnh của nó chỉ cần ≥ 1,2 m, LINE vẫn ≥ 2 m). Dày 20 mm (kính) và 100 mm (vách THAY3) KHÔNG
+  nhận: trường học khung 6 tụt 112 → 98 / 111 vùng. Dải giữa mặt cột và nét lan can kề một phòng vẫn gộp vào phòng (`GopMatNho` c) ⇒ vùng dừng ở nét
+  TRONG lan can (x 356655, hành lang dưới 35,53 m²; luật `phong_vung.md` mục 8). Test E27.
 - Vách 2 nét hở đầu (23/11, test E26): một nét có đầu tự do, nét song song cách 0,05–0,35 m dừng cùng chỗ và chạm nét khác (góc tường) → bịt đầu vách
   (`CacMat` bước 1d). Không bịt thì nét hở bị bỏ như nhánh cụt, thân vách nhập vào phòng kề, vùng trùm lên vách (ô 14,56 m² ra 15,6).
 

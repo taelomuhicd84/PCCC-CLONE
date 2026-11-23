@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -156,9 +157,16 @@ namespace TKPCCC
     class BongBong : Control
     {
         public readonly int Kieu; // 0 người dùng, 1 AI, 2 hệ thống / công cụ
-        const int DEM = 10;
+        const int DEM = 10, NHO_CAO = 60, NHO_CACH = 6;
+        // Người dùng 23/11: ảnh đã gửi hiện thu nhỏ trong bong bóng, bấm mở ảnh gốc (trình xem ảnh của Windows).
+        readonly List<string> anh = new List<string>();
+        readonly List<Image> nho = new List<Image>();
+        readonly List<Rectangle> oNho = new List<Rectangle>();
+        int caoChu;
+        static readonly Regex DONG_ANH = new Regex(@"^- (.+\.(png|jpe?g|bmp|gif))\s*$", RegexOptions.Multiline | RegexOptions.IgnoreCase);
 
-        public BongBong(int kieu, string chu, Color mau)
+        /// anh: ảnh đính kèm; null = tin người dùng nạp từ lịch sử thì lấy đường dẫn ảnh trong lời nhắn ("Ảnh đính kèm ...: - <file>").
+        public BongBong(int kieu, string chu, Color mau, IEnumerable<string> anhKem = null)
         {
             Kieu = kieu;
             Text = chu;
@@ -168,6 +176,15 @@ namespace TKPCCC
             ContextMenuStrip m = new ContextMenuStrip();
             m.Items.Add("Sao chép", null, delegate { try { Clipboard.SetText(Text); } catch (Exception) { } });
             ContextMenuStrip = m;
+            if (kieu != 0) return;
+            foreach (string f in anhKem ?? DONG_ANH.Matches(chu).Cast<Match>().Select(x => x.Groups[1].Value.Trim()))
+            {
+                if (!File.Exists(f)) continue;
+                Image i = BotChat.ThuNho(f);
+                if (i == null) continue;
+                anh.Add(f);
+                nho.Add(i);
+            }
         }
 
         /// Đặt cỡ theo bề rộng khung; trả chiều cao.
@@ -176,7 +193,41 @@ namespace TKPCCC
             int toiDa = Kieu == 2 ? rongKhung - 8 : (int)(rongKhung * 0.85);
             Size c = TextRenderer.MeasureText(Text, Font, new Size(Math.Max(40, toiDa - 2 * DEM), int.MaxValue), TextFormatFlags.WordBreak | TextFormatFlags.TextBoxControl);
             Size = Kieu == 2 ? new Size(toiDa, c.Height + 4) : new Size(Math.Min(toiDa, c.Width + 2 * DEM + 2), c.Height + 2 * DEM - 4);
+            caoChu = c.Height;
+            if (nho.Count == 0) return Height;
+            // ảnh thu nhỏ xếp hàng dưới chữ, hết bề rộng thì xuống hàng
+            oNho.Clear();
+            int x = DEM, y = Height - DEM + 4, rongDung = 0;
+            foreach (Image i in nho)
+            {
+                if (x > DEM && x + i.Width > toiDa - DEM) { x = DEM; y += NHO_CAO + NHO_CACH; }
+                oNho.Add(new Rectangle(x, y + (NHO_CAO - i.Height) / 2, i.Width, i.Height));
+                x += i.Width + NHO_CACH;
+                rongDung = Math.Max(rongDung, x - NHO_CACH + DEM);
+            }
+            Size = new Size(Math.Min(toiDa, Math.Max(Width, rongDung)), y + NHO_CAO + DEM);
             return Height;
+        }
+
+        int NhoTai(Point p) { return oNho.FindIndex(r => r.Contains(p)); }
+
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            base.OnMouseMove(e);
+            Cursor = NhoTai(e.Location) >= 0 ? Cursors.Hand : Cursors.Default;
+        }
+
+        protected override void OnMouseClick(MouseEventArgs e)
+        {
+            base.OnMouseClick(e);
+            int k = e.Button == MouseButtons.Left ? NhoTai(e.Location) : -1;
+            if (k >= 0) try { Process.Start(anh[k]); } catch (Exception) { }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing) foreach (Image i in nho) i.Dispose();
+            base.Dispose(disposing);
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -184,7 +235,7 @@ namespace TKPCCC
             Graphics g = e.Graphics;
             g.Clear(Parent != null ? Parent.BackColor : GiaoDien.Nen);
             g.SmoothingMode = SmoothingMode.AntiAlias;
-            Rectangle chu = new Rectangle(DEM, DEM - 2, Width - 2 * DEM + 2, Height - 2 * DEM + 4);
+            Rectangle chu = new Rectangle(DEM, DEM - 2, Width - 2 * DEM + 2, oNho.Count == 0 ? Height - 2 * DEM + 4 : caoChu + 4);
             if (Kieu != 2)
             {
                 using (GraphicsPath p = GiaoDien.BoGoc(new Rectangle(0, 0, Width - 1, Height - 1), 12))
@@ -193,6 +244,11 @@ namespace TKPCCC
             }
             else chu = new Rectangle(2, 2, Width - 4, Height - 2);
             TextRenderer.DrawText(g, Text, Font, chu, ForeColor, TextFormatFlags.WordBreak | TextFormatFlags.TextBoxControl);
+            for (int i = 0; i < oNho.Count; i++)
+            {
+                g.DrawImage(nho[i], oNho[i]);
+                g.DrawRectangle(Pens.White, oNho[i].X, oNho[i].Y, oNho[i].Width - 1, oNho[i].Height - 1);
+            }
         }
     }
 

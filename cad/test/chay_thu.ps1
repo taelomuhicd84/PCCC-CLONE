@@ -1,4 +1,4 @@
-﻿# Kiem thu plugin khong can mo AutoCAD: build ra thu muc tam, chay kich ban trong accoreconsole, kiem so dem.
+# Kiem thu plugin khong can mo AutoCAD: build ra thu muc tam, chay kich ban trong accoreconsole, kiem so dem.
 # Chay: powershell -ExecutionPolicy Bypass -File cad\test\chay_thu.ps1   (file chi dung chu ASCII cho PowerShell 5.1)
 $ErrorActionPreference = 'Stop'
 $ACAD = if ($env:ACAD_DIR) { $env:ACAD_DIR } else { 'C:\Program Files\Autodesk\AutoCAD 2021' }
@@ -1225,6 +1225,14 @@ foreach ($y in (0..8 | ForEach-Object { 6000 * $_ })) {
   '_.PLINE', '2450000,5000', '2457000,5000', '2457000,5200', '2450000,5200', '', '_.LINE', '2457000,0', '2457000,5000', '', '_.LINE', '2457200,0', '2457200,5000', '',
   '-LAYER', 'M', 'COT', '', '_.RECTANG', '2459800,5000', '2460000,5200', '-LAYER', 'S', '0', '',
   'PCCC_RAI', 'BC_KHOI', '', '', 'C', '2449500,-500', '2460500,7700', '', '', '',
+  # E27 (nguoi dung 23/11 Bot chat "hoi lo, duong line dau tien cua lan can hay tuong chu"): hanh lang 10 x 1,8 m, dau phai 2 cot 0,2 x 0,2 m, giua 2 cot
+  #    lan can polyline KIN 60 x 1800 (layer THAY_1) sang sanh 6 x 2,2 m. Truoc sua: polyline kin bi bo -> hanh lang dinh sanh mot vung 31,2 m2;
+  #    nay vung dung o net trong lan can x 9,94 m: 17,89 m2; sanh 13,2 m2.
+  '(princ "\n==E27==")', '-LAYER', 'M', 'TUONG', '', '_.ZOOM', 'W', '2469000,-1000', '2487000,3000',
+  '_.LINE', '2479800,0', '2470000,0', '2470000,1800', '2479800,1800', '', '_.LINE', '2480000,2000', '2486000,2000', '2486000,-200', '2480000,-200', '',
+  '_.RECTANG', '2479800,-200', '2480000,0', '_.RECTANG', '2479800,1800', '2480000,2000',
+  '-LAYER', 'M', 'THAY_1', '', '_.PLINE', '2479940,0', '2480000,0', '2480000,1800', '2479940,1800', 'C', '-LAYER', 'S', '0', '',
+  'PCCC_RAI', 'BC_KHOI', '', '', 'C', '2469500,-700', '2486500,2500', '', '', '',
   '(princ "\n==EHET==")', '_.QSAVE')) -join "`r`n" | Set-Content -Encoding ascii "$T\kb7.scr"
 $p7 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb7.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb7.out.txt"
 if (-not $p7.WaitForExit(180000)) { Stop-Process -Id $p7.Id -Force; throw "accoreconsole qua 3 phut (review 20/11): $T\kb7.out.txt" }
@@ -1306,6 +1314,9 @@ Kiem ($e24 -match 'o_x=1 ' -and $e24 -match 'thong_tang=1 ' -and (DtVung $e24).C
 $e26 = CaRv 'E26'
 Kiem ((DtVung $e26) -contains 14.56 -and (DtVung $e26) -contains 20 -and (DtVung $e26) -contains 35) `
   "Nguoi dung 23/11: dai 0,2 m giua o va hanh lang chi co cau khep khe gop vao o (khong ho): o 14,56 m2, vach 2 net 0,2 m ho dau ben trai khong vao o (vung=$((DtVung $e26) -join ','))"
+$e27 = CaRv 'E27'
+Kiem ((DtVung $e27) -contains 17.89 -and (DtVung $e27) -contains 13.2) `
+  "Nguoi dung 23/11: lan can polyline kin 60 x 1800 giua 2 cot: vung hanh lang dung o net dau tien cua lan can 17,89 m2 (truoc dinh sanh 31,2), sanh 13,2 m2 (vung=$((DtVung $e27) -join ','))"
 $e25 = CaRv 'E25'
 $ktd = @([regex]::Matches($e25, 'KTD (-?\d+),(-?\d+) (-?\d+),(-?\d+) (-?\d+),(-?\d+)') | ForEach-Object { , @($_.Groups[1..6] | ForEach-Object { [double]$_.Value }) })
 $ktN = @($ktd | Where-Object { $_[3] -eq $_[5] }); $ktD = @($ktd | Where-Object { $_[2] -eq $_[4] })
@@ -1350,8 +1361,8 @@ if (Test-Path $hb) {
   $ph = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/i `"$T\hb.dwg`" /s `"$T\kbhb.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kbhb.out.txt"
   if (-not $ph.WaitForExit(300000)) { Stop-Process -Id $ph.Id -Force; throw "accoreconsole qua 5 phut (Karaoke 123): $T\kbhb.out.txt" }
   $oh = [Text.Encoding]::Unicode.GetString([IO.File]::ReadAllBytes("$T\kbhb.out.txt")) -replace "`0", ''
-  Kiem ($oh -match 'thoi_gian rai=\d+ms vung=16\b' -and $oh -match 'gop_sanh=\d+ gop_o_nho=\d+' -and $oh -match 'thong_tang=1 m2=64\.3') `
-    "Ban chep Karaoke 123 tang 2: 15 vung nhu nguoi dung ve tay + vung sanh thong tang 6,3 x 10,2 m (23/11 toi) ($([regex]::Match($oh, 'vung=\d+').Value) $([regex]::Match($oh, 'gop_sanh=\d+ gop_o_nho=\d+').Value))"
+  Kiem ($oh -match 'thoi_gian rai=\d+ms vung=16\b' -and $oh -match 'gop_sanh=\d+ gop_o_nho=\d+' -and $oh -match 'thong_tang=1 m2=64\.3' -and $oh -match 'm2=35\.53 ') `
+    "Ban chep Karaoke 123 tang 2: 15 vung nhu nguoi dung ve tay + vung sanh thong tang 6,3 x 10,2 m (23/11 toi); hanh lang duoi dung o net trong lan can kin 60 mm: 35,53 m2 (truoc 35,64 toi net ngoai) ($([regex]::Match($oh, 'vung=\d+').Value) $([regex]::Match($oh, 'gop_sanh=\d+ gop_o_nho=\d+').Value))"
 } else { 'BO    ban chep Karaoke 123 ket_qua\HOC_BAO_CHAY\cad\hoc_bao_chay.dwg khong co' }
 
 # chay_spec.ps1: -Dwg tuong doi tinh theo thu muc hien tai cua PowerShell; thu muc co dau (chu a huyen) va dau cach.

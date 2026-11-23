@@ -86,6 +86,7 @@ namespace TKPCCC
             public double Tol;                                                            // sai số nối điểm (2 mm)
             public bool ChiTuong;                                                         // chỉ lấy layer tường, cột (+ PCCC_VUNG)
             public List<Point2d[]> NetPhu;                                                // lượt chỉ-tường: LINE layer thường gom riêng, nhận lan can 2 nét (LanCan)
+            public HashSet<Point2d[]> NetKin;                                             // cạnh polyline kín mỏng trong NetPhu (LanCanKin): ngưỡng dài 1,2 m thay 2 m
             public List<Point2d[]> NetBo;                                                 // LINE xiên trên layer bỏ (trục...): chỉ để nhận dấu X (TachOX), không làm tường
             public List<KeyValuePair<ObjectId, Extents3d>> Ds = new List<KeyValuePair<ObjectId, Extents3d>>();
             public Extents3d? ToanBo;
@@ -138,6 +139,7 @@ namespace TKPCCC
             public List<Point2d> VatDung = new List<Point2d>();     // bồn cầu, lavabo vẽ nét rời: buồng xí không gộp như sảnh WC (người dùng 21/11)
             public List<Point2d[]> Doan = new List<Point2d[]>();    // L6 (review 20/11): nét đã dựng mặt, xét mép hiên có tường (nét đôi) hay không
             public List<List<Point2d>> ThongTang = new List<List<Point2d>>(); // ô X lớn = sảnh / lỗ thông tầng: vùng rải riêng (người dùng 23/11)
+            public List<Point2d[]> LanCan = new List<Point2d[]>();  // nét lan can nhận ở lượt chỉ-tường: dải mặt cột – lan can gộp vào phòng (GopMatNho c)
         }
 
         /// Màu thật của nét: ByLayer theo layer thật, ByBlock theo màu block chứa nó (chaMau; ngoài block coi như 7). "A3" = ACI 3, "R0,255,0" = màu thật.
@@ -321,7 +323,8 @@ namespace TKPCCC
             if (n.Mau != null && (e is Hatch || !(n.Mau.Contains(kh) || (n.DocDam && lopDam)))) return;
             if (n.ChiTuong && loai != 2)
             {
-                if (loai != 1 || n.NetPhu == null || !(e is Line || (e is Polyline && !((Polyline)e).Closed))) return; // trường học 21/11: lan can vẽ polyline hở
+                // trường học 21/11: lan can vẽ polyline hở; Karaoke 123 T2 23/11: polyline KÍN mỏng 60 x 1800 giữa 2 cột (LanCanKin)
+                if (loai != 1 || n.NetPhu == null || !(e is Line || (e is Polyline && (!((Polyline)e).Closed || LanCanKin((Polyline)e, n.Tol))))) return;
                 ra = n.NetPhu;
             }
             if (!NetLien(n, net)) return; // trục (CENTER, DASHDOT), nét khuất
@@ -342,6 +345,7 @@ namespace TKPCCC
                         else if (st == SegmentType.Arc) ThemCurve2d(n, ra, pl.GetArcSegment2dAt(i));
                     }
                     if (n.GomCot && ra != n.NetPhu) GhiCotUng(n, pl, ra, dau);
+                    if (ra == n.NetPhu && pl.Closed && n.NetKin != null) for (int i = dau; i < ra.Count; i++) n.NetKin.Add(ra[i]);
                 }
                 else if (h != null)
                 {
@@ -770,12 +774,29 @@ namespace TKPCCC
 
         /// Lan can / mép sàn quanh ô cầu thang, lỗ thông tầng vẽ 2 nét mảnh trên layer không phải tường, nối từ cột / tường này sang cột / tường kia
         /// (Karaoke 123 tầng 2, 21/11: hành lang trên buồng thang hở thông xuống thang + ô thông tầng ra ngoài nhà, không thành phòng; mẫu có đầu báo
-        /// ở đoạn hành lang đó). Lượt chỉ-tường lấy thêm LINE ≥ 2 m có nét song song cách 20–300 mm phủ ≥ 80 %, HAI đầu chạm (≤ 50 mm) nét tường / cột.
-        static List<Point2d[]> LanCan(List<Point2d[]> phu, List<Point2d[]> tuong, double tol)
+        /// ở đoạn hành lang đó). Lượt chỉ-tường lấy thêm LINE ≥ 2 m (cạnh polyline kín mỏng ≥ 1,2 m) có nét song song cách 20–300 mm phủ ≥ 80 %, HAI đầu chạm (≤ 50 mm) nét tường / cột.
+        /// Lan can vẽ polyline kín 4 cạnh thẳng mỏng (Karaoke 123 T2, handle 25EC1: 60 x 1800 giữa 2 cột): cạnh ngắn 40–90 mm, cạnh dài ≥ 1 m.
+        /// Trường học khung 6 có vách 100 mm (layer THAY3) và kính 20 mm (THAY 1) vẽ polyline kín: nhận cả hai thì 112 vùng còn 98 / 111.
+        static bool LanCanKin(Polyline pl, double tol)
+        {
+            if (pl.NumberOfVertices != 4) return false;
+            double[] c = new double[4];
+            for (int i = 0; i < 4; i++)
+            {
+                if (pl.GetSegmentType(i) != SegmentType.Line) return false;
+                c[i] = pl.GetLineSegment2dAt(i).Length;
+            }
+            double ngan = Math.Min(c[0], c[1]), dai = Math.Max(c[0], c[1]);
+            return Math.Abs(c[0] - c[2]) <= tol && Math.Abs(c[1] - c[3]) <= tol && ngan >= tol * 20 && ngan <= tol * 45 && dai >= tol * 500;
+        }
+
+        static List<Point2d[]> LanCan(List<Point2d[]> phu, List<Point2d[]> tuong, double tol, HashSet<Point2d[]> kin = null)
         {
             List<Point2d[]> ra = new List<Point2d[]>();
             double cham = tol * 25;
-            List<Point2d[]> dn = phu.Where(s => s[0].GetDistanceTo(s[1]) >= tol * 1000).ToList();
+            // ≥ 2 m; cạnh polyline kín mỏng (LanCanKin) ≥ 1,2 m: lan can 1,8 m giữa 2 cột đầu hành lang (Karaoke 123 T2 23/11). Hạ chung 1,2 m thì trường
+            // học khung 6 bắt nhầm nét mảnh: 112 vùng còn 98.
+            List<Point2d[]> dn = phu.Where(s => s[0].GetDistanceTo(s[1]) >= (kin != null && kin.Contains(s) ? tol * 600 : tol * 1000)).ToList();
             if (dn.Count < 2 || tuong.Count == 0) return ra;
             LuoiDoan lt = new LuoiDoan(tuong, tol * 250);
             Func<Point2d, bool> chamTuong = p => lt.Tim(p.X - cham, p.Y - cham, p.X + cham, p.Y + cham).Any(j => CachDoan(tuong[j], p) <= cham);
@@ -1750,6 +1771,7 @@ namespace TKPCCC
                     n.BoMau = coDam ? damMau : null;
                     n.GomCot = true;
                     n.NetPhu = chiTuong ? new List<Point2d[]>() : null;
+                    n.NetKin = chiTuong ? new HashSet<Point2d[]>() : null;
                     n.NetBo = new List<Point2d[]>();
                     foreach (Entity e in ds)
                     {
@@ -1757,7 +1779,7 @@ namespace TKPCCC
                         n.LopKhoiDam = lopDam != null && e.ObjectId == khoiDam ? lopDam : null;
                         ThuNet(n, e, ObjectId.Null, ObjectId.Null, null, 0, doan);
                     }
-                    if (n.NetPhu != null) doan.AddRange(LanCan(n.NetPhu, doan, n.Tol));
+                    if (n.NetPhu != null) { List<Point2d[]> lc = LanCan(n.NetPhu, doan, n.Tol, n.NetKin); doan.AddRange(lc); them.LanCan.AddRange(lc); }
                     List<Point2d[]> phu = n.NetPhu ?? new List<Point2d[]>(), netBo = n.NetBo;
                     n.NetPhu = null; n.NetBo = null;
                     n.GomCot = false;
@@ -1989,7 +2011,7 @@ namespace TKPCCC
         /// (rộng TB ≤ 2,5 m, hành lang) kề nhau qua cầu gộp làm một.
         /// Buồng xí nhận theo dấu hiệu WC (GomKhu) hoặc hình kín cỡ bồn cầu / lavabo bên trong (GomVatDung).
         /// shortcut: sảnh có lavabo đặt trong cũng không gộp (người dùng vẽ tay); buồng xí trống không vật dụng kề thẳng phòng qua cầu thì bị gộp: xoá tay.
-        static List<List<Point2d>> GopMatNho(List<List<Point2d>> mat, List<List<Point2d>> pt, List<Point2d[]> doan, List<Point2d> khuKhong, List<Point2d> vatDung, double m, out int gopSanh, out int gopNho, List<Point2d[]> cua = null)
+        static List<List<Point2d>> GopMatNho(List<List<Point2d>> mat, List<List<Point2d>> pt, List<Point2d[]> doan, List<Point2d> khuKhong, List<Point2d> vatDung, double m, out int gopSanh, out int gopNho, List<Point2d[]> cua = null, List<Point2d[]> lanCan = null)
         {
             gopSanh = 0; gopNho = 0;
             if (doan == null || doan.Count == 0) return pt; // không biết nét thật: không phân được cầu với tường 1 nét
@@ -2075,8 +2097,11 @@ namespace TKPCCC
                     soKe++;
                     if (chon < 0 || dt(kq[i]) < dt(kq[chon])) { chon = i; moi = g; }
                 }
-                // chỉ dải hở NỐI HAI phòng (ô giáp hành lang); ô cửa sổ tường ngoài chỉ kề một phòng: bỏ qua
-                if (soKe >= 2) { kq[chon] = moi; gopSanh++; }
+                // chỉ dải hở NỐI HAI phòng (ô giáp hành lang); ô cửa sổ tường ngoài chỉ kề một phòng: bỏ qua. Dải giữa mặt cột và lan can (người dùng 23/11
+                // "vùng dừng ở nét đầu tiên của lan can", Karaoke 123 T2 hành lang dưới; test E27) kề một phòng cũng gộp: một cạnh dải nằm trên nét lan can.
+                bool keLanCan = soKe == 1 && lanCan != null && f.Select((q, i) => new[] { q, f[(i + 1) % f.Count] })
+                    .Any(c => c[0].GetDistanceTo(c[1]) * m >= 1 && lanCan.Any(l => CachDoan(l, c[0]) <= tol * 5 && CachDoan(l, c[1]) <= tol * 5));
+                if (soKe >= 2 || keLanCan) { kq[chon] = moi; gopSanh++; }
             }
             return kq;
         }

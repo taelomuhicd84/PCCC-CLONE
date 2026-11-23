@@ -272,7 +272,7 @@ namespace TKPCCC
                     + Path.GetFileName(banVeTruoc) + "\", việc cho bản vẽ kia để lượt sau.)\n\n" + gui;
             if (!GhiVao(p, gui)) { vaoMo = false; GuiNhap(); return; }
             nhap.Clear();
-            Ghi("Bạn", "[gửi gấp] " + cau + kem, GiaoDien.Xanh);
+            Ghi("Bạn", "[gửi gấp] " + cau + kem, GiaoDien.Xanh, anh.Where(File.Exists).ToList());
             BoDinhKem();
         }
 
@@ -325,9 +325,9 @@ namespace TKPCCC
         // ---------- Danh sách tin ----------
 
         /// Một tin: "Bạn" = người dùng; null = dòng hệ thống / công cụ; tên khác = AI.
-        void Ghi(string ten, string chu, Color mau)
+        void Ghi(string ten, string chu, Color mau, IEnumerable<string> anhKem = null)
         {
-            dsTin.Controls.Add(new BongBong(ten == "Bạn" ? 0 : ten == null ? 2 : 1, chu, mau));
+            dsTin.Controls.Add(new BongBong(ten == "Bạn" ? 0 : ten == null ? 2 : 1, chu, mau, anhKem));
             XepTin(true);
         }
 
@@ -919,7 +919,7 @@ namespace TKPCCC
         }
 
         /// Ảnh thu nhỏ cho chip (không giữ khoá file). null = không đọc được (vd webp).
-        static Image ThuNho(string f)
+        internal static Image ThuNho(string f)
         {
             try
             {
@@ -1120,13 +1120,14 @@ namespace TKPCCC
                 // Như runner/src/engines/claude.ts: không API key, không nạp cài đặt cá nhân (chỉ project, local của thư mục dự án); thêm MCP cad (đường dẫn
                 // tuyệt đối: thư mục làm việc có thể khác cad\). Người dùng 19/11 ("như VS Code, bot phải ghi được file"): đọc + Edit/Write + Skill + 3 công cụ
                 // cad; --permission-mode acceptEdits tự duyệt sửa file trong thư mục dự án + thư mục --add-dir (ngoài đó Claude Code vẫn từ chối).
-                // Không mở Bash: chạy lệnh máy không có bước người dùng duyệt. Nối phiên nơi khác: --resume <id> --fork-session.
+                // Người dùng 23/11 ("muốn sửa được plugin trong đây, phải có PowerShell"): mở PowerShell (build, chạy test plugin), tự duyệt như Edit;
+                // vẫn không mở Bash. Nối phiên nơi khác: --resume <id> --fork-session.
                 // --add-dir / --plugin-dir trước --tools: các cờ này nhận nhiều giá trị, cờ kế tiếp mới cắt.
                 // --input-format stream-json: stdin mở suốt lượt để Ctrl+X ghi thêm lời nhắn gấp (GuiGap), đóng khi có dòng result (DongVao).
                 doiSo = "-p --input-format stream-json --output-format stream-json --verbose --model " + model + " --effort " + effort
                     + " --mcp-config " + Ngoac(KhoPhien.FileMcp(cad, banVe)) + " --strict-mcp-config --setting-sources project,local --permission-mode acceptEdits"
                     + (phien != null ? " --resume " + phien + (tach ? " --fork-session" : "") : "") + themDir + coSkill
-                    + " --tools Read Grep Glob Skill Edit Write --allowedTools Read Grep Glob Skill Edit Write mcp__cad__cad_tt mcp__cad__cad_chay mcp__cad__cad_anh";
+                    + " --tools Read Grep Glob Skill Edit Write PowerShell --allowedTools Read Grep Glob Skill Edit Write PowerShell mcp__cad__cad_tt mcp__cad__cad_chay mcp__cad__cad_anh";
             }
             else
             {
@@ -1146,7 +1147,7 @@ namespace TKPCCC
             si.EnvironmentVariables.Remove("CLAUDECODE");
             si.EnvironmentVariables["NO_COLOR"] = "1";
 
-            Ghi("Bạn", cau + kem, GiaoDien.Xanh);
+            Ghi("Bạn", cau + kem, GiaoDien.Xanh, anhCo);
             BoDinhKem();
             loi.Length = 0;
             aiPhien = ai;

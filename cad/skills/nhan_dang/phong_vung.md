@@ -38,6 +38,10 @@ Mọi chỗ bổ sung tay ghi lại vào file `cad/skills/mau/` của công trì
    vô lý. Hành lang tại trục (1''–1')/(E–D) (ô giao đầu hành lang trên) phải liền 1 vùng với hành lang, trừ khi có dầm chặn (`GopMatNho` đã làm; bản
    người dùng chụp còn chạy plugin cũ). Sảnh / lỗ thông tầng: vùng riêng (luật ở `cua_thang_khu.md` mục Thang, giếng, lỗ thông tầng; plugin làm 23/11 tối).
    Soát lại 23/11 tối trên bản chép T2: mọi phòng dãy trên, dãy giữa, dãy dưới đã bám tường, ôm sảnh WC, chừa buồng xí; không còn cạnh băng ngang.
+8. NGƯỜI DÙNG 23/11 ("hơi lố, đường line đầu tiên của lan can hay tường chứ"; hành lang dưới Karaoke 123 T2 kéo tới nét NGOÀI lan can 60 mm):
+   cạnh vùng dừng ở nét ĐẦU TIÊN tính từ phía vùng của lan can / tường / vách (mặt phía mình), không lấy nét ngoài, không lấy mặt cột bên cạnh. Bề dày
+   lan can không thuộc vùng nào; vùng bên kia (sảnh thông tầng) dừng ở nét phía nó. Sửa tay 23/11: vùng hành lang x 336915..356655 (19,74 x 1,8 m),
+   rải lại 2 ĐB 4945 | 9850 | 4945. Plugin làm 23/11 (`LanCanKin` + `GopMatNho` c, test E27): xem `tuong_cot.md` mục lan can.
 
 ## Plugin dựng phòng thế nào ("Enter mọi phòng" của `PCCC_RAI`)
 1. Gom đoạn nét từ đối tượng quét chọn (`ThuNet`), tách cột, nhận trục, khép khe cửa, dựng mọi mặt kín (`CacMat`), chỉ giữ mặt có tâm trong khung chọn.

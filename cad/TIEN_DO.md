@@ -3,6 +3,16 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## VIỆC 23/11 (2) — VÙNG DỪNG Ở NÉT ĐẦU TIÊN CỦA LAN CAN: XONG MÃ 23/11 chiều (phiên Claude Code, chưa push)
+KẾT QUẢ: `LanCanKin` nhận lan can polyline kín dày 40–90 mm (cạnh ≥ 1,2 m); `GopMatNho` (c) gộp dải mặt cột – nét lan can kề MỘT phòng
+(`NhanThem.LanCan`). Karaoke T2 hành lang dưới 35,53 m² (x tới 356655), 16 vùng / 20 ĐB; test E27 + kiểm 35,53 ở ca bản chép T2. Khung 3–6, QT
+giữ số (k6 112 / 204; thử dày 20–300 mm thì k6 còn 98). Bot chat: mở PowerShell (`--tools ... PowerShell`), ảnh đã gửi hiện thu nhỏ trong bong
+bóng, bấm mở ảnh gốc (`BongBong`, cả tin nạp từ lịch sử). Chưa chạy `thu_gui.ps1` (AutoCAD đang mở). Ô 14,58 m² (2C3D6) giữ tới 356715: chỗ đó
+chỉ có mặt cột + nét 25E48 x 356715, không có nét ở 356615 (356615 là tâm cột).
+Người dùng 23/11 (Bot chat, `hoc_bao_chay.dwg`): hành lang dưới Karaoke 123 T2 "hơi lố", vùng phải dừng ở nét đầu tiên của lan can / tường.
+ĐÃ LÀM: xoá vùng 2C34D (x tới 356715 = nét ngoài lan can 25EC1) + 2 ĐB + 5 dim, vẽ lại vùng x 336915..356655, `rai BC_KHOI kt:true`: 2 ĐB 4945 | 9850 | 4945.
+Luật: `cad/skills/nhan_dang/phong_vung.md` mục 8; nguyên nhân + cách sửa: `cad/skills/nhan_dang/tuong_cot.md` mục lan can.
+
 ## VIỆC 23/11 — KARAOKE 123 T2: SẢNH THÔNG TẦNG VÙNG RIÊNG + DIM HÀNH LANG: XONG 23/11 tối (phiên nhánh, chưa push)
 KẾT QUẢ: (1) đường bao bản HEAD đã bám tường / ôm sảnh WC / chừa buồng xí, soát lại trên bản chép T2 không còn cạnh băng ngang (không sửa mã).
 (2) Ô thông tầng: dấu X vẽ trên layer trục `19- TIM TRUC` (bị bỏ) + góc cửa kính hở nên trước đây không có vùng. Nay nhận dấu X cả trên layer bỏ
