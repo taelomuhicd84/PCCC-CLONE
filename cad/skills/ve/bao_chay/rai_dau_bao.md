@@ -30,8 +30,9 @@ Mã: `LuoiVung`, `DoiVao`, `PhuKin`, `KtLuoi` (`cad/module/plugin/Rai.cs`); thao
   hành lang hẹp vừa đủ MỘT hàng đầu báo thì đặt hàng đó ĐÚNG GIỮA bề rộng hành lang; dim ngang (tường – đầu báo – tường, vd 900 | 900) CHỈ MỘT LẦN cho
   cả hành lang (✓ ở hành lang trên), không lặp ở từng đầu báo; dọc hành lang giữ một chuỗi. Không để số dim đè lên nhau; không đặt đường dim / số dim
   đè lên tường, cột, vật cản làm khó đọc (bác bỏ: chuỗi 900 dọc ở ô giao, các dim 900 ở hành lang dưới sát tường / cột, dim dọc cắt qua cột).
-  Plugin ĐÃ LÀM 23/11 tối (`KtLuoi`): vùng một hàng ≥ 2 thiết bị, bề rộng ≤ 3 m (hành lang) thì chuỗi dọc hành lang đi NGAY TRÊN hàng (lệch 0, không
-  sát tường, không cắt số chuỗi ngang); tương tự hành lang dọc một cột. Chuỗi ngang (tường – đầu báo – tường) vẫn một lần, đặt ở cột thiết bị cùng tập
+  Plugin ĐÃ LÀM 23/11 (`KtLuoi`): vùng một hàng ≥ 2 thiết bị, bề rộng ≤ 3 m (hành lang) thì chuỗi dọc hành lang lệch khỏi hàng 1/4 bề rộng (tối đa
+  2 x cỡ chữ; hành lang 1,8 m lệch 0,45 m), không sát tường; tương tự hành lang dọc một cột. NGƯỜI DÙNG 23/11 chiều: đường dim hành lang KHÔNG nằm
+  ngang bằng đầu báo / đầu phun, phải trên hoặc dưới một khoảng vừa phải (bản trước đặt chuỗi ngay trên hàng, lệch 0: bác bỏ). Chuỗi ngang (tường – đầu báo – tường) vẫn một lần, đặt ở cột thiết bị cùng tập
   hàng gần giữa vùng mà đường dim (lệch ±2 x cỡ chữ) không qua cột (tâm cột cách đường < 0,5 m; cột từ `TachCot`); chuỗi chính ngang cũng đổi phía
   khi phía trên cắt cột. Ô giao đã gộp vào hành lang (`GopMatNho`) nên hết chuỗi 900 riêng ở ô giao. Test E25.
 

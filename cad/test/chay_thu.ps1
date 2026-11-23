@@ -1211,7 +1211,7 @@ foreach ($y in (0..8 | ForEach-Object { 6000 * $_ })) {
   '_.LINE', '2408000,7700', '2410000,7700', '', '_.LINE', '2408000,7400', '2410000,7400', '', '_.LINE', '2408000,7100', '2410000,7100', '',
   '_.LINE', '2408000,6800', '2410000,6800', '', 'PCCC_RAI', 'BC_KHOI', '', '', 'C', '2399500,-500', '2415000,8500', '', '', '',
   # E25 (nguoi dung 23/11): hanh lang 20 x 1,8 m, cot 300 x 300 tren hai tuong tai x 5,4 / 10 / 14,6 m. 1 hang 2 dau bao (giua be rong y 0,9 m):
-  #    chuoi doc hanh lang di tren hang (y 900), chuoi ngang (tuong - dau bao - tuong) 1 lan, lech sang phia khong cat cot (x 4,5 m, khong phai 5,5 m)
+  #    chuoi doc hanh lang lech khoi hang 1/4 be rong (chieu 23/11; truoc di tren hang y 900), chuoi ngang (tuong - dau bao - tuong) 1 lan, lech sang phia khong cat cot (x 4,5 m, khong phai 5,5 m)
   '(princ "\n==E25==")', '-LAYER', 'M', 'TUONG', '', '_.ZOOM', 'W', '2419000,-1000', '2441000,3000', '_.RECTANG', '2420000,0', '2440000,1800',
   '-LAYER', 'M', 'COT', '', '_.RECTANG', '2425250,-150', '2425550,150', '_.RECTANG', '2425250,1650', '2425550,1950', '_.RECTANG', '2429850,-150', '2430150,150',
   '_.RECTANG', '2429850,1650', '2430150,1950', '_.RECTANG', '2434450,-150', '2434750,150', '_.RECTANG', '2434450,1650', '2434750,1950', '-LAYER', 'S', '0', '',
@@ -1320,8 +1320,8 @@ Kiem ((DtVung $e27) -contains 17.89 -and (DtVung $e27) -contains 13.2) `
 $e25 = CaRv 'E25'
 $ktd = @([regex]::Matches($e25, 'KTD (-?\d+),(-?\d+) (-?\d+),(-?\d+) (-?\d+),(-?\d+)') | ForEach-Object { , @($_.Groups[1..6] | ForEach-Object { [double]$_.Value }) })
 $ktN = @($ktd | Where-Object { $_[3] -eq $_[5] }); $ktD = @($ktd | Where-Object { $_[2] -eq $_[4] })
-Kiem ($ktN.Count -eq 3 -and @($ktN | Where-Object { $_[1] -ne 900 }).Count -eq 0 -and $ktD.Count -eq 2 -and @($ktD | Where-Object { $_[0] -ne 2424500 }).Count -eq 0) `
-  "Nguoi dung 23/11: hanh lang hep 1 hang: chuoi doc di tren hang (y 900), chuoi ngang 1 lan o x 4,5 m khong cat cot ($(($ktd | ForEach-Object { $_ -join ',' }) -join ' | '))"
+Kiem ($ktN.Count -eq 3 -and @($ktN | Where-Object { $_[1] -ne $ktN[0][1] }).Count -eq 0 -and [math]::Abs($ktN[0][1] - 900) -ge 300 -and [math]::Abs($ktN[0][1] - 900) -le 500 -and $ktD.Count -eq 2 -and @($ktD | Where-Object { $_[0] -ne 2424500 }).Count -eq 0) `
+  "Nguoi dung 23/11: hanh lang hep 1 hang: chuoi doc lech khoi hang dau bao (y 900) 1/4 be rong 0,45 m, khong ngang bang dau bao, khong sat tuong; chuoi ngang 1 lan o x 4,5 m khong cat cot ($(($ktd | ForEach-Object { $_ -join ',' }) -join ' | '))"
 
 # Thoi gian dung phong tren ban ve that cua nguoi dung (gitignore, chi chay khi co): truoc sua 78 s (23 trieu diem cat), chay rieng 9,7-9,9 s (21/11), ca bo test may ban 11-13 s: moc 15 s.
 $bvThat = Get-ChildItem "$GOC\file_cad_test" -Filter 'test b*o ch*y.dwg' -ErrorAction SilentlyContinue | Select-Object -First 1

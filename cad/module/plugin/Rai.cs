@@ -1007,8 +1007,9 @@ namespace TKPCCC
             List<Point3d> cotChinh = cot.OrderByDescending(c => c.Count).ThenBy(c => Math.Abs(c[0].X - giua)).First();
             List<double> xs = cot.Where(c => c.Count >= 2 || hangChinh.Any(q => Math.Abs(q.X - c[0].X) <= eps)).Select(c => c[0].X).ToList();
             List<double> ys = hang.Where(h => h.Count >= 2 || cotChinh.Any(q => Math.Abs(q.Y - h[0].Y) <= eps)).Select(h => h[0].Y).ToList();
-            // Người dùng 23/11 (Karaoke 123 tầng 2): hành lang hẹp một hàng -> chuỗi dọc hành lang đi ngay trên hàng đầu báo (không lệch sát tường, không đè
-            // số chuỗi ngang); chuỗi ngang hành lang một lần, đặt ở đầu báo mà đường dim không cắt qua cột (vatCan = tâm cột). eps = 10 mm.
+            // Người dùng 23/11 (Karaoke 123 tầng 2): hành lang hẹp một hàng -> chuỗi dọc hành lang lệch khỏi hàng đầu báo 1/4 bề rộng (giữa hàng và tường,
+            // tối đa 2 cỡ chữ). Chiều 23/11: "không nằm ngang bằng đầu báo / đầu phun, trên hoặc dưới một khoảng vừa phải" (trước đó đi ngay trên hàng);
+            // sáng 23/11: không sát tường, không đè số chuỗi ngang. Chuỗi ngang hành lang một lần, đặt ở đầu báo mà đường dim không cắt qua cột (vatCan = tâm cột). eps = 10 mm.
             double met = eps / 0.01;
             List<Point2d> vcT = vatCan == null ? null : vatCan.Select(p => new Point2d(p.Y, p.X)).ToList();
             Func<List<Point2d>, double, double, double> beRong = (d, duong, t) =>
@@ -1022,8 +1023,9 @@ namespace TKPCCC
                 double[] k = KhoangNgang(d, duong).FirstOrDefault(x => x[0] <= t + 1e-6 && x[1] >= t - 1e-6) ?? new[] { t, t };
                 return vc != null && vc.Any(c => Math.Abs(c.Y - duong) < 0.5 * met && c.X > k[0] - 0.3 * met && c.X < k[1] + 0.3 * met);
             };
-            double raX = hang.Count == 1 && hangChinh.Count >= 2 && beRong(chuyen, hangChinh[0].X, hangChinh[0].Y) <= 3 * met ? 0 : ra;
-            double raY = cot.Count == 1 && cotChinh.Count >= 2 && beRong(vung, cotChinh[0].Y, cotChinh[0].X) <= 3 * met ? 0 : ra;
+            double bx = beRong(chuyen, hangChinh[0].X, hangChinh[0].Y), by = beRong(vung, cotChinh[0].Y, cotChinh[0].X);
+            double raX = hang.Count == 1 && hangChinh.Count >= 2 && bx <= 3 * met ? Math.Min(ra, bx / 4) : ra;
+            double raY = cot.Count == 1 && cotChinh.Count >= 2 && by <= 3 * met ? Math.Min(ra, by / 4) : ra;
             if (raX > 0 && catCot(vung, vatCan, hangChinh[0].Y + raX, hangChinh[0].X) && !catCot(vung, vatCan, hangChinh[0].Y - raX, hangChinh[0].X)) raX = -raX;
             if (raY > 0)
             {
@@ -1031,7 +1033,7 @@ namespace TKPCCC
                 foreach (List<Point3d> c in cot.Where(c => c.Count == cotChinh.Count && c.All(p => cotChinh.Any(q => Math.Abs(q.Y - p.Y) <= eps)))
                     .OrderBy(c => c == cotChinh ? 0 : 1).ThenBy(c => Math.Abs(c[0].X - giua)))
                 {
-                    double s = !catCot(chuyen, vcT, c[0].X + ra, c[0].Y) ? ra : (!catCot(chuyen, vcT, c[0].X - ra, c[0].Y) ? -ra : 0);
+                    double s = !catCot(chuyen, vcT, c[0].X + raY, c[0].Y) ? raY : (!catCot(chuyen, vcT, c[0].X - raY, c[0].Y) ? -raY : 0);
                     if (s != 0) { cotChinh = c; raY = s; break; }
                 }
             }

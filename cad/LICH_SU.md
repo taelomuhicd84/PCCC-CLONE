@@ -839,3 +839,6 @@ Goc: net vach x 7,2 ho dau (cau y 5 khong khep vi dau cot cham net ngoai thanh c
 
 ## 2026-11-23 chieu — Vung dung o net trong lan can + Bot chat PowerShell, xem anh da gui
 Nguoi dung (Bot chat): hanh lang duoi Karaoke T2 "hoi lo", vung dung o net dau tien cua lan can. LanCanKin nhan lan can polyline kin day 40-90 mm (canh >= 1,2 m; day 20-300 mm lam k6 con 98 vung); GopMatNho (c) gop dai mat cot - lan can ke mot phong (NhanThem.LanCan). Hanh lang duoi 35,53 m2; test E27. Bot chat: --tools them PowerShell (thu claude -p dung duoc); BongBong hien anh thu nho, bam mo anh goc (ca tin lich su). chay_thu + thu_mcp TAT CA DAT; khung 3-6, QT giu so; bundle build. Chua chay thu_gui (AutoCAD dang mo).
+
+## 2026-11-23 chieu — Dim hanh lang lech khoi hang dau bao
+Nguoi dung: dim hanh lang khong nam ngang bang dau bao / dau phun. KtLuoi: hanh lang 1 hang (<= 3 m) chuoi doc lech 1/4 be rong (toi da 2 co chu). E25 doi ky vong. chay_thu + thu_mcp TAT CA DAT; khung 3-6 giu so; bundle build.

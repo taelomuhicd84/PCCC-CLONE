@@ -9,6 +9,8 @@ KẾT QUẢ: `LanCanKin` nhận lan can polyline kín dày 40–90 mm (cạnh �
 giữ số (k6 112 / 204; thử dày 20–300 mm thì k6 còn 98). Bot chat: mở PowerShell (`--tools ... PowerShell`), ảnh đã gửi hiện thu nhỏ trong bong
 bóng, bấm mở ảnh gốc (`BongBong`, cả tin nạp từ lịch sử). Chưa chạy `thu_gui.ps1` (AutoCAD đang mở). Ô 14,58 m² (2C3D6) giữ tới 356715: chỗ đó
 chỉ có mặt cột + nét 25E48 x 356715, không có nét ở 356615 (356615 là tâm cột).
+DIM 23/11 chiều (người dùng: "dim hành lang không nằm ngang bằng đầu báo / đầu phun, trên hoặc dưới một khoảng vừa phải"): `KtLuoi` chuỗi dọc
+hành lang 1 hàng lệch 1/4 bề rộng (tối đa 2 cỡ chữ; 1,8 m lệch 0,45 m). E25 đổi kỳ vọng. Luật `cad/skills/ve/bao_chay/rai_dau_bao.md`.
 Người dùng 23/11 (Bot chat, `hoc_bao_chay.dwg`): hành lang dưới Karaoke 123 T2 "hơi lố", vùng phải dừng ở nét đầu tiên của lan can / tường.
 ĐÃ LÀM: xoá vùng 2C34D (x tới 356715 = nét ngoài lan can 25EC1) + 2 ĐB + 5 dim, vẽ lại vùng x 336915..356655, `rai BC_KHOI kt:true`: 2 ĐB 4945 | 9850 | 4945.
 Luật: `cad/skills/nhan_dang/phong_vung.md` mục 8; nguyên nhân + cách sửa: `cad/skills/nhan_dang/tuong_cot.md` mục lan can.
