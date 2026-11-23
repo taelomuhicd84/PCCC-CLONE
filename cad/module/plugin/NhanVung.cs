@@ -1327,6 +1327,41 @@ namespace TKPCCC
                     if (dMin[e] > tol && dMin[e] <= tolTh) doan.Add(new[] { doan[e / 2][e % 2], toi[e] });
             }
 
+            // 1d. Bịt đầu vách 2 nét (test E26, người dùng 23/11): một nét hở đầu, nét song song cách 0,05–0,35 m dừng cùng chỗ và đã nối nét khác (chạm góc tường).
+            //     Không bịt thì nét hở bị bỏ như nhánh cụt (bước 4), thân vách nhập vào phòng kề, vùng trùm lên vách.
+            {
+                LuoiDoan lv = new LuoiDoan(doan, tol * 250);
+                double r0 = tol * 1.5;
+                Func<Point2d, int, bool> cham = (p, i) => lv.Tim(p.X - r0, p.Y - r0, p.X + r0, p.Y + r0).Any(j => j != i && CachDoan(doan[j], p) <= r0);
+                List<Point2d[]> bit = new List<Point2d[]>();
+                for (int i = 0; i < doan.Count; i++)
+                {
+                    if (khongNoi != null && khongNoi.Contains(doan[i])) continue;
+                    Vector2d u = doan[i][1] - doan[i][0];
+                    double L = u.Length;
+                    if (L < tol * 250) continue;
+                    u = u / L;
+                    for (int k = 0; k < 2; k++)
+                    {
+                        Point2d p = doan[i][k];
+                        if (cham(p, i)) continue;
+                        double rv = tol * 175;
+                        foreach (int j in lv.Tim(p.X - rv, p.Y - rv, p.X + rv, p.Y + rv))
+                        {
+                            if (j == i || (khongNoi != null && khongNoi.Contains(doan[j]))) continue;
+                            Vector2d v = doan[j][1] - doan[j][0];
+                            if (Math.Abs(u.X * v.Y - u.Y * v.X) > 0.01 * v.Length) continue;
+                            Point2d q = doan[j][0].GetDistanceTo(p) < doan[j][1].GetDistanceTo(p) ? doan[j][0] : doan[j][1];
+                            double doc = Math.Abs(u.DotProduct(q - p)), ngang = Math.Abs(u.X * (q.Y - p.Y) - u.Y * (q.X - p.X));
+                            if (doc > tolTh || ngang < tol * 25 || ngang > rv || !cham(q, j)) continue;
+                            bit.Add(new[] { p, q });
+                            break;
+                        }
+                    }
+                }
+                doan.AddRange(bit);
+            }
+
             // 2. Cắt mọi đoạn tại giao điểm, chỗ chạm (chữ T hụt ≤ tol) và chỗ chồng nhau thẳng hàng.
             int m = doan.Count;
             List<double>[] tham = new List<double>[m];

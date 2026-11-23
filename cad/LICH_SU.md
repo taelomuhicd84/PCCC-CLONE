@@ -833,3 +833,6 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
 
 ## 2026-11-23 13:30 — Rai lai tang 2 Karaoke trong AutoCAD
 Bundle sau 55beb61: 16 vung / 20 DB / 68 dim, hanh lang bam tuong, o 14,58 m2 kin. Cau noi MCP ket sau rai.ps1 (SendStringToExecute khong chay), mo lai AutoCAD thi het; ghi o TIEN_DO.
+
+## 2026-11-23 chieu — Go E26 (vach 2 net ho dau vao o)
+Goc: net vach x 7,2 ho dau (cau y 5 khong khep vi dau cot cham net ngoai thanh chu T xuyen) bi bo nhu nhanh cut, than vach nhap o -> 15,6 m2. Them CacMat buoc 1d bit dau vach 2 net (net ho + net song song 0,05-0,35 m dung cung cho va cham net khac). E26 ky vong 14,56. chay_thu + thu_mcp TAT CA DAT; k5 26, k3 14/13, k4 14/16, k6 112/204, QT 25/57; bundle build.

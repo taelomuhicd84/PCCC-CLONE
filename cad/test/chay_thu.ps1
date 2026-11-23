@@ -1,4 +1,4 @@
-# Kiem thu plugin khong can mo AutoCAD: build ra thu muc tam, chay kich ban trong accoreconsole, kiem so dem.
+﻿# Kiem thu plugin khong can mo AutoCAD: build ra thu muc tam, chay kich ban trong accoreconsole, kiem so dem.
 # Chay: powershell -ExecutionPolicy Bypass -File cad\test\chay_thu.ps1   (file chi dung chu ASCII cho PowerShell 5.1)
 $ErrorActionPreference = 'Stop'
 $ACAD = if ($env:ACAD_DIR) { $env:ACAD_DIR } else { 'C:\Program Files\Autodesk\AutoCAD 2021' }
@@ -1219,7 +1219,8 @@ foreach ($y in (0..8 | ForEach-Object { 6000 * $_ })) {
   '(setq ss (ssget "_X" (list (cons 0 "DIMENSION"))) i 0)(while (< i (sslength ss)) (setq d (entget (ssname ss i)) p (cdr (assoc 10 d)) a (cdr (assoc 13 d)) b (cdr (assoc 14 d))) (if (< 2419000 (car a) 2441000) (princ (strcat "\nKTD " (rtos (car p) 2 0) "," (rtos (cadr p) 2 0) " " (rtos (car a) 2 0) "," (rtos (cadr a) 2 0) " " (rtos (car b) 2 0) "," (rtos (cadr b) 2 0)))) (setq i (1+ i)))(princ)',
   # E26 (nguoi dung 23/11 "rectang con ho 1 khuc"): hanh lang tren y 5,2-7,2 m; phong trai 7 x 5 m, o phai 2,8 x 5 m, vach 2 net x 7,0-7,2 m;
   #    tuong 2 net y 5,0-5,2 m chi tu x 0 toi 7 m, phia phai chi co cot 0,2 x 0,2 m o x 9,8 m: dai 0,2 m giua o va hanh lang chi la 2 cau khep khe.
-  #    Truoc sua: dai bi bo, o ho voi hanh lang; nay dai gop vao o (phong ke NHO nhat): o 14,56 m2 (thuc te ra 15,6: vach trai 0,2 m vao o, chua ro)
+  #    Truoc sua: dai bi bo, o ho voi hanh lang; nay dai gop vao o (phong ke NHO nhat): o 14,56 m2. Net vach x 7,2 m ho dau o y 5 m (cau y 5 m khong khep
+  #    vi dau cot cham net ngoai x 10 m thanh chu T xuyen): CacMat 1d bit dau vach (truoc: nhanh cut bi bo, o 15,6 m2 trum vach).
   '(princ "\n==E26==")', '-LAYER', 'M', 'TUONG', '', '_.ZOOM', 'W', '2449000,-1000', '2461000,8000', '_.RECTANG', '2450000,0', '2460000,7200',
   '_.PLINE', '2450000,5000', '2457000,5000', '2457000,5200', '2450000,5200', '', '_.LINE', '2457000,0', '2457000,5000', '', '_.LINE', '2457200,0', '2457200,5000', '',
   '-LAYER', 'M', 'COT', '', '_.RECTANG', '2459800,5000', '2460000,5200', '-LAYER', 'S', '0', '',
@@ -1303,8 +1304,8 @@ $e24 = CaRv 'E24'
 Kiem ($e24 -match 'o_x=1 ' -and $e24 -match 'thong_tang=1 ' -and (DtVung $e24).Count -eq 1 -and (DtVung $e24) -contains 77.6) `
   "Nguoi dung 23/11: sanh thong tang (dau X layer truc, tuong ho) thanh vung rieng khac theo mep thang 77,6 m2; gieng 2,5 x 2,5 m van khong rai (vung=$((DtVung $e24) -join ','))"
 $e26 = CaRv 'E26'
-Kiem (((DtVung $e26) -contains 14.56 -or (DtVung $e26) -contains 15.6) -and (DtVung $e26) -contains 20 -and (DtVung $e26) -contains 35) `
-  "Nguoi dung 23/11: dai 0,2 m giua o va hanh lang chi co cau khep khe gop vao o (khong ho): o 14,56 m2 (15,6 neu vach 2 net 0,2 m ben trai bi tinh vao o: CON nghi, xem TIEN_DO) (vung=$((DtVung $e26) -join ','))"
+Kiem ((DtVung $e26) -contains 14.56 -and (DtVung $e26) -contains 20 -and (DtVung $e26) -contains 35) `
+  "Nguoi dung 23/11: dai 0,2 m giua o va hanh lang chi co cau khep khe gop vao o (khong ho): o 14,56 m2, vach 2 net 0,2 m ho dau ben trai khong vao o (vung=$((DtVung $e26) -join ','))"
 $e25 = CaRv 'E25'
 $ktd = @([regex]::Matches($e25, 'KTD (-?\d+),(-?\d+) (-?\d+),(-?\d+) (-?\d+),(-?\d+)') | ForEach-Object { , @($_.Groups[1..6] | ForEach-Object { [double]$_.Value }) })
 $ktN = @($ktd | Where-Object { $_[3] -eq $_[5] }); $ktD = @($ktd | Where-Object { $_[2] -eq $_[4] })
