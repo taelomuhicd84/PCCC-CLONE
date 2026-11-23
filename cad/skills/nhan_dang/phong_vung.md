@@ -32,13 +32,18 @@ Mọi chỗ bổ sung tay ghi lại vào file `cad/skills/mau/` của công trì
 6. NGƯỜI DÙNG 21/11 tối (tự sửa vùng tầng 2 Karaoke 123, ảnh `images/3.png` của phiên): vùng phải KẸP BO theo tường / vách thật, không kẻ thẳng qua
    chỗ hở. Phòng có WC riêng: vùng phòng BAO LUÔN khoảng sảnh nhỏ trước cửa WC (khoảng hở giữa cửa phòng / cửa buồng xí), CHỈ CHỪA buồng xí (có bồn cầu);
    cạnh vùng đi vòng theo vách buồng xí (vùng chữ L, có khấc), không cắt thẳng ở mặt khối WC. Ô giao đầu hành lang (≤ 2 x 2 m) GỘP vào hành lang
-   (không thành vùng riêng). PLUGIN CHƯA LÀM (việc tiếp theo, `cad/TIEN_DO.md`).
+   (không thành vùng riêng). Plugin ĐÃ LÀM 23/11 (`GopMatNho`, bước 2b dưới); lối dọc vuông góc hành lang vẫn là vùng riêng như người dùng vẽ.
 
 ## Plugin dựng phòng thế nào ("Enter mọi phòng" của `PCCC_RAI`)
 1. Gom đoạn nét từ đối tượng quét chọn (`ThuNet`), tách cột, nhận trục, khép khe cửa, dựng mọi mặt kín (`CacMat`), chỉ giữ mặt có tâm trong khung chọn.
 2. `PhongThat`: mặt ≥ 1 m², rộng TB (2A/P) ≥ 1 m, không chứa mặt khác bên trong. 2A/P chỉ bằng nửa cạnh ô vuông: ô ≥ 3 m² có diện tích / cạnh dài
    hộp bao ≥ 1,5 m cũng giữ (Karaoke 123 21/11: ô giao hành lang 2,0 x 1,8 m = 3,6 m², 2A/P = 0,95, và 1,8 x 1,8 m viền khấc cột, bị bỏ im lặng
    như dải tường; mẫu có đầu báo ở đó. Test E18). Mặt bị bỏ ở bước này KHÔNG in dòng lệnh; bấm điểm trong ô thì vẫn rải.
+2b. `GopMatNho` (người dùng 21/11 tối, in `gop_sanh= gop_o_nho=`): hai mặt mà chỗ chung CHỈ là cầu khép khe (không nét thật nào song song cách ≤ 10 mm
+   ở 1/4, 1/2, 3/4 cạnh chung) là cùng không gian. (a) Mặt bị `PhongThat` bỏ, 0,8–6 m², 2A/P ≥ 0,5 m, không chứa dấu hiệu WC (`GomKhu`) hay hình kín cỡ
+   bồn cầu / lavabo (`GomVatDung`: polyline kín, elip, tròn, cạnh 0,25–0,9 m, không thuộc tường / cửa / cột) → gộp vào phòng gốc kề lớn nhất (một lượt:
+   buồng xí chỉ kề sảnh không bị kéo theo). (b) Phòng ≤ 4 m² (ô giao) → phòng kề lớn nhất; hai dải hành lang (2A/P ≤ 2,5 m, cạnh dài ≥ 2,5 lần) CÙNG
+   PHƯƠNG, cầu chung dài ≥ 0,8 bề rộng (cắt ngang trọn hành lang; cầu ô cửa 0,9 m không tính) → một. Test E18 (ô giao vào hành lang 18 m²), E22, E22B, E23.
 3. Lọc lần lượt, mỗi lọc in một dòng: ô X, gạch chéo (`bo_phong=`), ngoài trục (`bo_ngoai_truc=`), WC / thang (`bo_khu_khong_bao=`), sảnh thang (`bo_sanh_thang=`),
    chữ khu (`bo_khu_ten=`), hiên (`bo_hien=`), cụm phòng nhỏ tách xa mặt bằng chính (hình chi tiết, mặt cắt: `bo_cum=`).
    `bo_cum` không xét phòng có tâm trong khung trục (trường học khung 6, 21/11: 2 tầng chọn một lần, nhà thi đấu cách dãy học một sân > 2 m

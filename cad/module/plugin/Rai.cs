@@ -1840,6 +1840,10 @@ namespace TKPCCC
                     if (pr.Status == PromptStatus.Keyword || (pr.Status == PromptStatus.None && vung.Count == 0))
                     {
                         List<List<Point2d>> pt = PhongThat(mat, m);
+                        int gopSanh, gopNho;
+                        pt = GopMatNho(mat, pt, nhanThem.Doan, khuKhong, nhanThem.VatDung, m, out gopSanh, out gopNho);
+                        if (gopSanh + gopNho > 0) ed.WriteMessage("\n[TKPCCC] gop_sanh=" + gopSanh + " gop_o_nho=" + gopNho
+                            + " (sảnh nhỏ trước WC, ô giao, đoạn hành lang chỉ ngăn bằng khe hở: gộp vào phòng / hành lang kề).");
                         vung = pt.Where(f0 => !MatKhongRai(f0, oX, gach)).ToList();
                         if (pt.Count > vung.Count) ed.WriteMessage("\n[TKPCCC] bo_phong=" + (pt.Count - vung.Count) + " (ô X, gạch chéo).");
                         // Người dùng 17/11: ngoài đường trục ngoài cùng thì không phân vùng khi chưa được cho phép (bấm điểm trong phòng = cho phép).

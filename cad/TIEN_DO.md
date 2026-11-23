@@ -90,7 +90,14 @@ KHI LÀM TIẾP (người dùng bảo): ca thử cho LỖI 9; khung 7 (nhà ở 
 `A$C1b64d7a5`, `A$C473f3ffb`). Trước khi chép: lấy hộp bao block (COM `GetBoundingBox`), chọn độ dời không đè khung khác. Quy trình: `chep_no.ps1` → lưu →
 `go_khung.ps1 -P1 -P2 -Ten kN -Build` → `xuat.ps1` (đặt `XUAT_X0/X1/Y0/Y1`) + `khop.py file,x0,x1,dy,y0,y1` → `go_khung -Diem` gỡ chỗ thiếu vùng →
 ca thử tái hiện → sửa → `chay_thu` + `thu_mcp`. Bundle CHƯA build lại (AutoCAD đang mở `hoc_bao_chay.dwg`).
-VIỆC DỞ ĐẦU TIÊN (21/11 tối, người dùng tắt máy): người dùng chỉ cách rải tầng 2 Karaoke 123 (luật mục 6 "Soát" trong `cad/skills/nhan_dang/phong_vung.md`):
+XONG 23/11 (việc dở dưới): `GopMatNho` + `GomVatDung` (`NhanVung.cs`, gọi ở `Rai.cs` sau `PhongThat`; luật bước 2b `cad/skills/nhan_dang/phong_vung.md`).
+Tầng 2 Karaoke 123 (accoreconsole, bản chép y −50 m, xoá PCCC_* trước: `go_khung.ps1 -Xoa`): 15 vùng = số vùng người dùng vẽ; dãy giữa 32,00 + 32,00, dãy dưới
+28,12 + 27,23, phòng góc phải 32,56 m² khớp vùng người dùng (lệch ≤ 0,1 m²); hành lang trên 1 vùng 64,58 m² (người dùng 59,4: vẽ chữ nhật đơn giản); lối dọc trái
+9,72 + hành lang dưới 35,28 riêng như người dùng. Dãy trên (người dùng chưa sửa tay) nay cũng bao sảnh WC: 27,5 / 28,1 / 27,3 / 25,1 / 27,3 m². Buồng xí phòng góc phải
+(bồn cầu nổ rời, không tên WC) nhận bằng hình kín cỡ bồn cầu, không gộp. Test E22, E22B, E23 mới, E18 đổi kỳ vọng (ô giao gộp vào hành lang: 18 m²);
+`chay_thu` + `thu_mcp` TAT CA DAT; bundle đã build (AutoCAD đang mở: tắt hẳn rồi mở lại để nạp). CHƯA chạy lại khung 3, 5, 6 và bản chép Quyết Thắng (`kb8.scr`)
+để xem số vùng đổi; E23 chưa tái hiện được cầu cắt hành lang giữa 2 mặt cột (chỉ xảy ra khi plugin nhận cột một phía), luật gộp hành lang mới kiểm trên Karaoke thật.
+VIỆC DỞ ĐẦU TIÊN (21/11 tối, người dùng tắt máy; XONG 23/11, xem trên): người dùng chỉ cách rải tầng 2 Karaoke 123 (luật mục 6 "Soát" trong `cad/skills/nhan_dang/phong_vung.md`):
 (a) gộp mặt nhỏ bị `PhongThat` bỏ (sảnh trước cửa WC, ≤ ~6 m², KHÔNG chứa bồn cầu) vào phòng kề chung cạnh là cầu khép khe / cửa (không phải nét tường thật);
 (b) vùng nhỏ ≤ 4 m² (ô giao hành lang) chung cạnh cầu với vùng lớn: gộp vào vùng lớn nhất. Gộp đa giác: chèn đỉnh lên cạnh của nhau, bỏ cặp cạnh ngược chiều trùng nhau,
 nối lại. Cần kiểm bồn cầu trong buồng xí nhận được không (block xref tên lạ). Ca thử mới rồi chạy lại tầng 2 (bản chép y −50 m, x 334000..379000, y −62500..−41500)

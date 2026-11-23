@@ -802,3 +802,9 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
   buồng thang đã có vùng (17 vùng). Thêm mục "Soát chỗ hay thiếu vùng" (5 chỗ) vào `cad/skills/nhan_dang/phong_vung.md` cho AI vẽ bằng chatbot; skill `tkpccc-ve-cad` trỏ tới.
 
 - 21/11 tối: người dùng gửi ảnh tự rải tầng 2 (vùng kẹp tường, bao sảnh WC, chừa buồng xí, ô giao gộp hành lang); ghi luật + việc dở, chưa sửa plugin (người dùng tắt máy).
+
+- 23/11: làm việc dở 21/11 tối (tầng 2 Karaoke 123). `NhanVung.cs` `GopMatNho`: mặt chỉ ngăn với phòng bằng cầu khép khe (không nét thật trên chỗ chung) gộp lại:
+  sảnh nhỏ trước WC (0,8–6 m², bị `PhongThat` bỏ, không chứa WC / hình kín cỡ bồn cầu `GomVatDung`) vào phòng kề lớn nhất; ô ≤ 4 m² vào phòng kề lớn nhất;
+  đoạn hành lang cùng phương, cầu cắt ngang trọn bề rộng, gộp một. Tầng 2: 15 vùng khớp vùng người dùng vẽ (dãy giữa, dưới, phòng góc phải lệch ≤ 0,1 m²).
+  Lần đầu gộp lố (2A/P ≤ 2,5 m coi phòng 5,2 x 4,5 m là dải; phòng nhận sảnh dính hành lang qua cầu cửa) → thêm điều kiện cạnh dài ≥ 2,5 lần + cầu ≥ 0,8 bề rộng.
+  Test E22, E22B, E23; E18 đổi kỳ vọng. `chay_thu`, `thu_mcp` TAT CA DAT; build bundle. `go_khung.ps1` thêm `-Xoa` (xoá PCCC_* trong khung trước khi rải).
