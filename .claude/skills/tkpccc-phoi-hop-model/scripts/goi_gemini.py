@@ -30,7 +30,7 @@ def cong_cu() -> tuple[str, str]:
 
 def anh_trang(src: str, trang: str | None, thu_muc: str, dpi: int) -> list[str]:
     """Agy không đọc được PDF nếu không chạy lệnh shell (bị chặn ở chế độ chỉ đọc): đổi từng trang ra PNG cho công cụ view_file."""
-    import pymupdf  # đã có cho thamdinh/
+    import pymupdf  # đã có cho 06_THAM_DINH_PDF/
 
     goc = os.path.splitext(os.path.basename(src))[0]
     ten = []

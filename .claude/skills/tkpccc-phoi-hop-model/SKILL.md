@@ -6,7 +6,7 @@ description: Phối hợp Gemini + Claude để tiết kiệm hạn mức Claude
 # Phối hợp Gemini + Claude (người dùng duyệt 14/11)
 
 Nguyên tắc: model đắt chỉ đọc bản đã rút gọn. Thứ tự ưu tiên khi cần bóc số liệu:
-1. **Script** (0 token, đúng nhất): chữ vector PDF (`thamdinh/`, `ghi_chu_pdf.py tim`), `pdf_ti_le.py`, quét tên bản vẽ trước (memory "PDF lớn").
+1. **Script** (0 token, đúng nhất): chữ vector PDF (`06_THAM_DINH_PDF/`, `ghi_chu_pdf.py tim`), `pdf_ti_le.py`, quét tên bản vẽ trước (memory "PDF lớn").
 2. **Gemini** (`scripts/goi_gemini.py`): phần script không làm được — trang scan, đọc hình (tường, cửa, phòng), tóm hồ sơ dài.
 3. **Claude** đọc ảnh trang: chỉ đúng trang đang cần xét, sau khi 1–2 đã thu hẹp.
 
@@ -22,17 +22,17 @@ Nguyên tắc: model đắt chỉ đọc bản đã rút gọn. Thứ tự ưu t
 ## Gọi Gemini
 ```
 python .claude/skills/tkpccc-phoi-hop-model/scripts/goi_gemini.py --kiem
-python .claude/skills/tkpccc-phoi-hop-model/scripts/goi_gemini.py --file <pdf> --trang 3-5 --json --out ket_qua/<dự án>/gemini_<việc>.json --yeu-cau "<trường cần lấy>"
+python .claude/skills/tkpccc-phoi-hop-model/scripts/goi_gemini.py --file <pdf> --trang 3-5 --json --out 12_KET_QUA/<dự án>/gemini_<việc>.json --yeu-cau "<trường cần lấy>"
 ```
 - Công cụ: **Antigravity CLI** `%LOCALAPPDATA%\agy\bin\agy.exe` (đăng nhập Google AI của người dùng; `agy models` liệt kê model), dự phòng Gemini CLI (cần `GEMINI_API_KEY`).
 - Script đổi các trang PDF cần (`--trang`) ra PNG (`--dpi`, mặc định 200) trong thư mục tạm, chạy `agy -p ... --mode plan` (chỉ đọc) ở đó: không thấy repo.
   Lời nhắn bảo rõ "dùng view_file, KHÔNG dùng run_command" (thiếu câu này agy đòi chạy lệnh shell, bị chặn, trả rỗng). KHÔNG dùng `--dangerously-skip-permissions`.
-- Kết quả ghi vào `ket_qua/<dự án>/` (không commit). Claude đọc file đó, KHÔNG dán PDF vào hội thoại.
+- Kết quả ghi vào `12_KET_QUA/<dự án>/` (không commit). Claude đọc file đó, KHÔNG dán PDF vào hội thoại.
 - Model (người dùng dặn 14/11): KHÔNG dùng Gemini 3.8 Flash; chỉ dòng Gemini 4 từ Argon trở lên. Script mặc định `gemini-4-argon-medium` (bóc đơn giản);
   việc khó: `gemini-4-carbon-high` hoặc `gemini-4-hydrogen-high` (`agy models` liệt kê). Số đo token dưới đây là của Flash, chưa đo lại với Argon.
-- Thử 14/11 trên `cad/test/mau_kt.pdf` (có đáp án, một nhãn cố tình ghi sai): 150 dpi + hỏi "nhịp mm" sai 2/10 (tự "sửa" nhãn); 200 dpi + hỏi "chữ in nguyên văn" đúng 10/10.
+- Thử 14/11 trên `07_CAD/test/mau_kt.pdf` (có đáp án, một nhãn cố tình ghi sai): 150 dpi + hỏi "nhịp mm" sai 2/10 (tự "sửa" nhãn); 200 dpi + hỏi "chữ in nguyên văn" đúng 10/10.
   ⇒ luôn hỏi CHỮ IN NGUYÊN VĂN, không hỏi số đã suy ra.
-- Đo 14/11 trên hồ sơ thật (`cong_trinh.pdf` trang 5, mặt bằng báo cháy, đáp án từ chữ vector, chi tiết `LICH_SU.md`):
+- Đo 14/11 trên hồ sơ thật (`cong_trinh.pdf` trang 5, mặt bằng báo cháy, đáp án từ chữ vector, chi tiết `00_QUAN_LY_DU_AN/LICH_SU.md`):
   Gemini Flash 43 nghìn token Gemini, Claude chỉ đọc JSON 610 ký tự; Claude Sonnet tự đọc ảnh 79 nghìn token Claude. Chữ (12 trục có phụ, 11 + 6 kích thước,
   tên bản vẽ, zone) cả hai đúng hết. ĐẾM KÝ HIỆU: Gemini sai (H 47/59, F 12/9), Claude đúng.
   ⇒ Gemini: đọc chữ (trục, kích thước, tên phòng, ghi chú). KHÔNG giao Gemini đếm ký hiệu: PDF vector thì đếm bằng chữ vector (0 token, đúng), PDF scan thì Claude.
@@ -42,8 +42,8 @@ python .claude/skills/tkpccc-phoi-hop-model/scripts/goi_gemini.py --file <pdf> -
 "Trả JSON {truc_x:[{ten, trang, trich}], nhip_x_mm:[...], truc_y:[...], nhip_y_mm:[...], ti_le_ghi:'1:100'|null}".
 
 ## Luật
-- Số Gemini bóc ra là CHƯA KIỂM: trước khi vào bảng đối chiếu, spec CAD hay kết luận phải đối chiếu bằng script (chữ vector, tỉ lệ) hoặc Claude xem ảnh đúng trang đó. Trị số quy chuẩn vẫn lấy nguyên văn từ `knowledge/`, `skills/`, không lấy từ Gemini.
+- Số Gemini bóc ra là CHƯA KIỂM: trước khi vào bảng đối chiếu, spec CAD hay kết luận phải đối chiếu bằng script (chữ vector, tỉ lệ) hoặc Claude xem ảnh đúng trang đó. Trị số quy chuẩn vẫn lấy nguyên văn từ `01_TRI_THUC/`, `02_DIEU_KHOAN/`, không lấy từ Gemini.
 - Hồ sơ khách: gói miễn phí của Google có thể dùng nội dung để cải thiện sản phẩm. Chỉ gửi trang cần thiết (`--trang`); người dùng chịu trách nhiệm về điều khoản tài khoản.
 - Gemini lỗi đăng nhập / hết hạn mức: quay về bước 3 (Claude đọc đúng trang), không chờ.
 - 14/11: Gemini CLI với đăng nhập Google cá nhân bị từ chối (`IneligibleTierError`, Google bảo chuyển Antigravity) ⇒ dùng `agy`.
-- Đo hiệu quả: ghi token Gemini (script in ra) và token Claude của lượt đó vào `LICH_SU.md` khi thử trên hồ sơ thật.
+- Đo hiệu quả: ghi token Gemini (script in ra) và token Claude của lượt đó vào `00_QUAN_LY_DU_AN/LICH_SU.md` khi thử trên hồ sơ thật.

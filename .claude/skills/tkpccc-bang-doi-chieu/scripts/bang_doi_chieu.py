@@ -5,16 +5,16 @@
   python -X utf8 bang_doi_chieu.py khung KT7.1 [--tu 40] [--den 80]
   python -X utf8 bang_doi_chieu.py dong KT7.1 "#85"        (hoặc theo TT: "6.4")
   python -X utf8 bang_doi_chieu.py tim KT7.1 "hành lang"
-  python -X utf8 bang_doi_chieu.py lamviec KS -o ket_qua/<dự án>/doi_chieu.json [--loai khao_sat|tham_dinh]
-  python -X utf8 bang_doi_chieu.py job ket_qua/<dự án>/doi_chieu.json KT7.1 [--tu 0 --den 70]   (-> jobs/, phan/)
-  python -X utf8 bang_doi_chieu.py gop ket_qua/<dự án>/doi_chieu.json phan1.json [phan2.json …] [--giu-so]
-  python -X utf8 bang_doi_chieu.py kiem ket_qua/<dự án>/doi_chieu.json
-  python -X utf8 bang_doi_chieu.py xlsx ket_qua/<dự án>/doi_chieu.json [-o ra.xlsx]
-  python -X utf8 bang_doi_chieu.py md ket_qua/<dự án>/doi_chieu.json [--ma KS] [--chi-loi] [--cat 300]
-  python -X utf8 bang_doi_chieu.py bcks ket_qua/<dự án>/doi_chieu.json [-o BCKS_<tên>.xlsx] [--mau mẫu_khác.xlsx]
+  python -X utf8 bang_doi_chieu.py lamviec KS -o 12_KET_QUA/<dự án>/doi_chieu.json [--loai khao_sat|tham_dinh]
+  python -X utf8 bang_doi_chieu.py job 12_KET_QUA/<dự án>/doi_chieu.json KT7.1 [--tu 0 --den 70]   (-> jobs/, phan/)
+  python -X utf8 bang_doi_chieu.py gop 12_KET_QUA/<dự án>/doi_chieu.json phan1.json [phan2.json …] [--giu-so]
+  python -X utf8 bang_doi_chieu.py kiem 12_KET_QUA/<dự án>/doi_chieu.json
+  python -X utf8 bang_doi_chieu.py xlsx 12_KET_QUA/<dự án>/doi_chieu.json [-o ra.xlsx]
+  python -X utf8 bang_doi_chieu.py md 12_KET_QUA/<dự án>/doi_chieu.json [--ma KS] [--chi-loi] [--cat 300]
+  python -X utf8 bang_doi_chieu.py bcks 12_KET_QUA/<dự án>/doi_chieu.json [-o BCKS_<tên>.xlsx] [--mau mẫu_khác.xlsx]
 
 Bảng A1–A26 (hệ thống theo công năng), B1–B14 (theo hệ thống), KT (kiến trúc theo công năng + chiều cao) chép từ
-SKILL-PCCC-NEW 24743f9 (data/bang); KS là khung khảo sát – tư vấn của TKPCCC. Cách dùng: SKILL.md thư mục cha.
+SKILL-PCCC-NEW 24743f9 (03_DU_LIEU/bang); KS là khung khảo sát – tư vấn của TKPCCC. Cách dùng: SKILL.md thư mục cha.
 """
 from __future__ import annotations
 
@@ -292,10 +292,10 @@ def gop(ra: Path, phan: list[Path], giu_so: bool) -> dict:
 
 GOC = Path(__file__).resolve().parents[4]          # thư mục dự án TKPCCC
 # Văn bản nêu ở cột Khoản Điều → file tri thức chép nguyên văn (tìm điều trong các file này)
-VAN_BAN = {"QCVN 06": (r"QCVN\s*0?6\b", ["skills/*.md", "knowledge/qcvn06-*.md", "knowledge/dinh-nghia/*.md"]),
-           "QCVN 10": (r"QCVN\s*10\b", ["knowledge/qcvn10-2025-*.md"]),
-           "TCVN 7568-14": (r"7568", ["knowledge/tcvn7568-14-2025.md"]),
-           "NĐ 105/2025": (r"105/2025|347/2026", ["knowledge/nghi-dinh-tham-dinh-dieu-chinh.md"])}
+VAN_BAN = {"QCVN 06": (r"QCVN\s*0?6\b", ["02_DIEU_KHOAN/*.md", "01_TRI_THUC/qcvn06-*.md", "01_TRI_THUC/dinh-nghia/*.md"]),
+           "QCVN 10": (r"QCVN\s*10\b", ["01_TRI_THUC/qcvn10-2025-*.md"]),
+           "TCVN 7568-14": (r"7568", ["01_TRI_THUC/tcvn7568-14-2025.md"]),
+           "NĐ 105/2025": (r"105/2025|347/2026", ["01_TRI_THUC/nghi-dinh-tham-dinh-dieu-chinh.md"])}
 SO = r"((?:[A-Z]\.\d{1,2}|\d{1,2}\.\d{1,2})(?:\.\d{1,2})*[a-z]?)(?![\w.])"    # 3.2.6.1, G.1.2, G.2a; không bắt 1.500, 10.2023
 SO_DIEU = re.compile(r"(?<![0-9A-Za-z_.])" + SO)          # nhận cả "Đ3.2.6.2" (số dính liền chữ Đ)
 # Văn bản KHÔNG có trong VAN_BAN (không có file nguyên văn): số điều của nó không được gán sang văn bản bên cạnh
@@ -353,7 +353,7 @@ def _file_tim(tra_o: str, vb: str | None) -> list:
     for t in re.split(r"[,;+]\s*|\s+\+\s+", str(tra_o or "")):
         t = t.strip().split(" ")[0].removesuffix(".md")
         if re.fullmatch(r"[\w-]{4,}", t):
-            ds += sorted(GOC.glob(f"skills/{t}*.md")) + sorted(GOC.glob(f"knowledge/{t}*.md")) + sorted(GOC.glob(f"knowledge/*/{t}*.md"))
+            ds += sorted(GOC.glob(f"02_DIEU_KHOAN/{t}*.md")) + sorted(GOC.glob(f"01_TRI_THUC/{t}*.md")) + sorted(GOC.glob(f"01_TRI_THUC/*/{t}*.md"))
     ds = [p for p in ds if any(fnmatch.fnmatch(p.relative_to(GOC).as_posix(), g) for g in mau)]
     for g in mau:
         ds += sorted(GOC.glob(g))
@@ -553,7 +553,7 @@ def xlsx(dc: dict, ra: Path) -> dict:
 
 
 # Mẫu báo cáo khảo sát mặc định của người dùng (chốt 2026-11-02): sheet NOTE, cột F:H nội dung, cột I ghi chú + ảnh.
-MAU_BCKS = Path(__file__).resolve().parents[4] / "data" / "mau_bao_cao" / "BCKS_mau.xlsx"
+MAU_BCKS = Path(__file__).resolve().parents[4] / "03_DU_LIEU" / "mau_bao_cao" / "BCKS_mau.xlsx"
 BCKS_NHAN = {"THÔNG TIN": "thong_tin", "PHÁP L": "phap_ly", "KHOẢNG CÁCH": "khoang_cach", "GIAO THÔNG": "giao_thong",
              "THOÁT NẠN": "thoat_nan", "NGĂN CHÁY": "ngan_chay", "HỆ THỐNG": "he_thong", "TƯ VẤN": "tu_van"}
 

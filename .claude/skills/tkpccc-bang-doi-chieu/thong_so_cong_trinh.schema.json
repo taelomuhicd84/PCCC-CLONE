@@ -7,7 +7,7 @@
   "nhom_f": {"don_vi": "", "mo_ta": "nhóm nguy hiểm cháy theo công năng QCVN 06 (F1.1…F5.3); hỗn hợp ghi từng nhóm"},
   "so_tang_noi": {"don_vi": "tầng", "mo_ta": "đếm theo cốt sàn trên mặt cắt / mặt bằng; tum theo quy tắc 30 %"},
   "so_tang_ham": {"don_vi": "tầng", "mo_ta": ""},
-  "chieu_cao_pccc_m": {"don_vi": "m", "mo_ta": "QCVN 06 Đ 1.4.9 (knowledge/dinh-nghia/dinh-nghia.md): mép dưới cửa sổ tầng trên cùng, từ mặt đường xe chữa cháy; ghi phép cộng trong trich"},
+  "chieu_cao_pccc_m": {"don_vi": "m", "mo_ta": "QCVN 06 Đ 1.4.9 (01_TRI_THUC/dinh-nghia/dinh-nghia.md): mép dưới cửa sổ tầng trên cùng, từ mặt đường xe chữa cháy; ghi phép cộng trong trich"},
   "dien_tich_san_m2": {"don_vi": "m2", "mo_ta": "tầng điển hình hoặc lớn nhất; theo tầng ghi trong trich"},
   "khoi_tich_m3": {"don_vi": "m3", "mo_ta": "lấy trên bản vẽ hoặc tự tính (loai uoc_luong, ghi phép tính)"},
   "bac_chiu_lua": {"don_vi": "", "mo_ta": "ghi trên bản vẽ hoặc tra Bảng H.2 (loai tra_bang), không tự đặt"},

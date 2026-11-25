@@ -13,20 +13,20 @@ dùng làm bước sàng lọc). Agent: `pccc-xay-dung` (bảng KT), `pccc-he-th
    thiếu thì ghi `cong_trinh.thieu` VÀ comment cam trên bản vẽ ở chỗ lẽ ra có số liệu.
 2. Bốn kết luận: ĐẠT · CHƯA ĐẠT · CẦN XÁC NHẬN · KHÔNG ÁP DỤNG, lý do có số. Thiếu dữ liệu thì CẦN XÁC NHẬN, nêu cần gì; không đoán.
 3. CHƯA ĐẠT phải có phương án điều chỉnh: ưu tiên ít thay đổi kiến trúc; nêu khả thi hay không trên mặt bằng, ảnh hưởng hệ thống kèm theo
-   (tăng áp, sprinkler…); vẽ phương án lên PDF. Cung vế thang và cánh cửa: kiểm không giao nhau, chỉ note, không vẽ cung trừ khi người dùng bảo (2026-11-06, `knowledge/nhan-dien-thang-thoat-nan.md` bước 3). Thang thoát nạn làm đủ quy trình `knowledge/nhan-dien-thang-thoat-nan.md`.
-4. Chỉ trích điều khoản có trong `knowledge/`, `skills/` hoặc cột Quy định của bảng chính thức; văn bản hết hiệu lực không làm căn cứ.
+   (tăng áp, sprinkler…); vẽ phương án lên PDF. Cung vế thang và cánh cửa: kiểm không giao nhau, chỉ note, không vẽ cung trừ khi người dùng bảo (2026-11-06, `01_TRI_THUC/nhan-dien-thang-thoat-nan.md` bước 3). Thang thoát nạn làm đủ quy trình `01_TRI_THUC/nhan-dien-thang-thoat-nan.md`.
+4. Chỉ trích điều khoản có trong `01_TRI_THUC/`, `02_DIEU_KHOAN/` hoặc cột Quy định của bảng chính thức; văn bản hết hiệu lực không làm căn cứ.
 5. Chỉ báo cáo; không hỏi người dùng chọn phương án. Điểm luật không rõ: "cần người dùng xem xét" kèm căn cứ. Thiếu kiến thức: nhờ người dùng train.
-6. Hồ sơ khách nằm trong `ket_qua/<dự án>/`, không commit.
+6. Hồ sơ khách nằm trong `12_KET_QUA/<dự án>/`, không commit.
 
 ## Ba loại đầu vào
-1. Kiến trúc chỉ có mặt bằng: chiều cao PCCC ước lượng (`knowledge/khao-sat-bao-gia.md`); mọi kết luận phụ thuộc chiều cao nằm hai bên ngưỡng
+1. Kiến trúc chỉ có mặt bằng: chiều cao PCCC ước lượng (`01_TRI_THUC/khao-sat-bao-gia.md`); mọi kết luận phụ thuộc chiều cao nằm hai bên ngưỡng
    (15, 21, 28, 50 m) là CẦN XÁC NHẬN; comment cam "thiếu mặt đứng, mặt cắt".
 2. Có mặt đứng, mặt cắt: đọc cao độ, số tầng, chiều cao PCCC (ghi phép cộng).
 3. Hồ sơ gần đầy đủ (có bản vẽ hệ thống): phần hệ thống xét đủ bảng B theo thiết kế.
    CHƯA CÓ BẢN VẼ HỆ THỐNG = KHÔNG CÓ HỆ THỐNG (người dùng dặn 2026-11-03): dòng đối tượng PHẢI CÓ của bảng A là CHƯA ĐẠT, `ly_do`
    "không có <hệ thống>; phải trang bị (căn cứ có số)", `phuong_an` "thiết kế <hệ thống>" (bước sau: Claude vẽ hệ thống PCCC, skill người
    dùng sẽ train). KHÔNG lập bảng B cho hệ thống không có bản vẽ: bảng B chỉ đối chiếu hệ thống có trên bản vẽ (hoặc do Claude vẽ).
-   Giáp ranh không ghi khoảng cách PCCC: CHƯA ĐẠT (`knowledge/giap-ranh-khoang-cach-pccc.md`, Bài học 30; khảo sát sơ bộ thì chỉ khoanh + hướng dẫn).
+   Giáp ranh không ghi khoảng cách PCCC: CHƯA ĐẠT (`01_TRI_THUC/giap-ranh-khoang-cach-pccc.md`, Bài học 30; khảo sát sơ bộ thì chỉ khoanh + hướng dẫn).
 
 ## Không trùng lắp, không làm thừa (người dùng dặn 2026-11-03)
 - Một số liệu một chỗ: thông tin công trình nằm trong `cong_trinh` của `doi_chieu.json`, lệnh `job` ghi ra `cong_trinh.md` một file, job chỉ
@@ -41,11 +41,11 @@ dùng làm bước sàng lọc). Agent: `pccc-xay-dung` (bảng KT), `pccc-he-th
 B=.claude/skills/tkpccc-bang-doi-chieu/scripts/bang_doi_chieu.py
 G=.claude/skills/tkpccc-ghi-chu-ban-ve/scripts/ghi_chu_pdf.py
 ```
-0. Chuẩn bị `ket_qua/<dự án>/`: `ban_ve.pdf`; `luoi` từng trang (zoom 1.6) vào `anh/luoi_<trang>.png`; phân loại trang (mặt bằng tầng,
+0. Chuẩn bị `12_KET_QUA/<dự án>/`: `ban_ve.pdf`; `luoi` từng trang (zoom 1.6) vào `anh/luoi_<trang>.png`; phân loại trang (mặt bằng tầng,
    mặt đứng, mặt cắt, bảng thống kê cửa/thang, ghi chú chung, bản vẽ hệ thống). Tuỳ chọn: chạy máy kiểm luật (skill `tkpccc-kiem-luat-pdf`)
    lấy `findings.jsonl` làm gợi ý chỗ cần xem.
 1. Thông tin công trình → `cong_trinh` (công năng + nhóm F, số tầng, chiều cao PCCC, diện tích, khối tích, bậc chịu lửa, cờ hệ thống).
-2. `python -X utf8 $B chon --cong-nang "…" --cao … --co …` rồi `lamviec <chuỗi in ra> -o ket_qua/<dự án>/doi_chieu.json`; bỏ bảng B
+2. `python -X utf8 $B chon --cong-nang "…" --cao … --co …` rồi `lamviec <chuỗi in ra> -o 12_KET_QUA/<dự án>/doi_chieu.json`; bỏ bảng B
    của hệ thống không có bản vẽ (mục "Ba loại đầu vào").
 3. Giao việc: `job` cho từng bảng (bảng dài thì chia khoảng idx, ≤ 55 dòng một job) → subagent `pccc-xay-dung` cho KT, `pccc-he-thong`
    cho A, B: "Đọc <jobs/…md>, làm theo, ghi JSON vào <phan/…json>". Phần đã có file phan hợp lệ thì bỏ qua. Trước khi giao, thêm

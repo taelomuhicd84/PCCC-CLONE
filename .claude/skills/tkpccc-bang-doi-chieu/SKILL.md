@@ -7,10 +7,10 @@ Phát triển module này: chỉ sửa trong thư mục này.
 
 | File | Việc |
 |---|---|
-| `data/A*.json`, `data/B*.json`, `data/KT*.json`, `data/index.json` | bảng gốc chép từ SKILL-PCCC-NEW 24743f9 (`data/bang`): A, B theo mẫu chính thức Đồng Nai; KT dựng từ bộ bảng cũ theo công năng + chiều cao |
+| `data/A*.json`, `data/B*.json`, `data/KT*.json`, `data/index.json` | bảng gốc chép từ SKILL-PCCC-NEW 24743f9 (`03_DU_LIEU/bang`): A, B theo mẫu chính thức Đồng Nai; KT dựng từ bộ bảng cũ theo công năng + chiều cao |
 | `data/KS.json` | khung khảo sát – tư vấn của TKPCCC (người dùng chốt 2026-11-02) |
 | `scripts/bang_doi_chieu.py` | CLI: danhmuc, chon, khung, dong, tim, lamviec, job, gop, kiem, xlsx, md, bcks |
-| `data/mau_bao_cao/BCKS_mau.xlsx` (gốc repo) | mẫu báo cáo khảo sát MẶC ĐỊNH (từ BCKS kho hoá chất, chốt 2026-11-03): 4 mục THÔNG TIN, PHÁP LÝ, HỆ THỐNG, TƯ VẤN; `BCKS_mau_7muc.xlsx` mẫu cũ 7 mục |
+| `03_DU_LIEU/mau_bao_cao/BCKS_mau.xlsx` (gốc repo) | mẫu báo cáo khảo sát MẶC ĐỊNH (từ BCKS kho hoá chất, chốt 2026-11-03): 4 mục THÔNG TIN, PHÁP LÝ, HỆ THỐNG, TƯ VẤN; `BCKS_mau_7muc.xlsx` mẫu cũ 7 mục |
 | `test/test_bang_doi_chieu.py` | `python -m pytest .claude/skills/tkpccc-bang-doi-chieu/test -q` |
 
 ## Chọn bảng
@@ -28,17 +28,17 @@ B=.claude/skills/tkpccc-bang-doi-chieu/scripts/bang_doi_chieu.py
 python -X utf8 $B khung KT7.1 --tu 60 --den 90          # danh sách dòng ngắn: #idx, TT, nội dung, khoản điều, tra ở
 python -X utf8 $B dong KT7.1 "#85"                      # toàn văn một dòng (Quy định, gợi ý, tra ở)
 python -X utf8 $B tim KT7.1 "hành lang"
-python -X utf8 $B lamviec KT7.1,A5,B1,B12 -o ket_qua/<da>/doi_chieu.json     # tạo/bổ sung file kết quả
-python -X utf8 $B job ket_qua/<da>/doi_chieu.json KT7.1 --tu 0 --den 70      # -> jobs/KT7.1_0-70.md (toàn văn dòng + điều khoản nguyên văn trích từ knowledge/, skills/) + cong_trinh.md, quy_tac_agent.md chung
-python -X utf8 $B gop ket_qua/<da>/doi_chieu.json ket_qua/<da>/phan/*.json   # số khung đánh lại nối tiếp; KS dùng --giu-so
-python -X utf8 $B kiem ket_qua/<da>/doi_chieu.json      # lỗi (thoát 1) + cảnh báo + đếm theo kết luận
-python -X utf8 $B xlsx ket_qua/<da>/doi_chieu.json      # -> doi_chieu.xlsx: sheet Tóm tắt + mỗi bảng một sheet
-python -X utf8 $B md ket_qua/<da>/doi_chieu.json --ma KS [--chi-loi] [--cat 300]   # bảng markdown ra file, gửi file (không dán vào chat)
-python -X utf8 $B bcks ket_qua/<da>/doi_chieu.json -o ket_qua/<da>/BCKS_<tên>.xlsx [--mau <mẫu khác>.xlsx]   # báo cáo khảo sát theo mẫu
+python -X utf8 $B lamviec KT7.1,A5,B1,B12 -o 12_KET_QUA/<da>/doi_chieu.json     # tạo/bổ sung file kết quả
+python -X utf8 $B job 12_KET_QUA/<da>/doi_chieu.json KT7.1 --tu 0 --den 70      # -> jobs/KT7.1_0-70.md (toàn văn dòng + điều khoản nguyên văn trích từ 01_TRI_THUC/, 02_DIEU_KHOAN/) + cong_trinh.md, quy_tac_agent.md chung
+python -X utf8 $B gop 12_KET_QUA/<da>/doi_chieu.json 12_KET_QUA/<da>/phan/*.json   # số khung đánh lại nối tiếp; KS dùng --giu-so
+python -X utf8 $B kiem 12_KET_QUA/<da>/doi_chieu.json      # lỗi (thoát 1) + cảnh báo + đếm theo kết luận
+python -X utf8 $B xlsx 12_KET_QUA/<da>/doi_chieu.json      # -> doi_chieu.xlsx: sheet Tóm tắt + mỗi bảng một sheet
+python -X utf8 $B md 12_KET_QUA/<da>/doi_chieu.json --ma KS [--chi-loi] [--cat 300]   # bảng markdown ra file, gửi file (không dán vào chat)
+python -X utf8 $B bcks 12_KET_QUA/<da>/doi_chieu.json -o 12_KET_QUA/<da>/BCKS_<tên>.xlsx [--mau <mẫu khác>.xlsx]   # báo cáo khảo sát theo mẫu
 ```
 
 ## Báo cáo khảo sát theo mẫu (`bcks`)
-Mặc định điền `data/mau_bao_cao/BCKS_mau.xlsx`; người dùng gửi mẫu khác thì truyền `--mau`. Hàng của từng mục đọc theo nhãn cột A của mẫu
+Mặc định điền `03_DU_LIEU/mau_bao_cao/BCKS_mau.xlsx`; người dùng gửi mẫu khác thì truyền `--mau`. Hàng của từng mục đọc theo nhãn cột A của mẫu
 (`BCKS_NHAN`); mục có nội dung mà mẫu không có thì lệnh trả về `muc_mau_khong_co` (đưa ý đó vào Tư vấn).
 LOGIC BCKS (người dùng sửa 2026-11-06, thay logic 4 mục 2026-11-03): mẫu MẶC ĐỊNH `BCKS_mau.xlsx` có 8 hạng mục (THÔNG TIN, HỒ SƠ PHÁP LÝ,
 KHOẢNG CÁCH PCCC, GIAO THÔNG, THOÁT NẠN, NGĂN CHÁY, HỆ THỐNG PCCC, TƯ VẤN; mẫu 4 mục cũ: `BCKS_mau_4muc.xlsx`). BCKS là bản TÓM GỌN: mỗi mục 1–3 câu,
@@ -50,7 +50,7 @@ KẾT LUẬN TRƯỚC, không dẫn điều khoản, không giải thích dài; 
 - KHOẢNG CÁCH PCCC: "- Các mặt công trình giáp với ranh đất <3m cần xây tường cao tới mái và không trổ ô cửa sổ".
 - GIAO THÔNG: "-Đảm bảo" (hoặc việc phải làm, ngắn).
 - THOÁT NẠN: "Công trình có N thang. Tuy nhiên <lỗi chính> => Chưa đảm bảo làm thang thoát nạn. Cần cải tạo lại thang (<số tối thiểu>), thang phải được đóng kín bằng tường gạch và cửa chống cháy." Ví dụ lỗi chính: thang rẽ quạt.
-- NGĂN CHÁY (có sảnh thông tầng / thang hở nối tầng nổi: áp `knowledge/hut-khoi-thong-tang.md`, thêm "nếu không đóng kín phải có màn ngăn khói E45 và hút khói đồng thời các tầng thông nhau"): "Công trình có <lỗ giếng trời lấy sáng (lỗ thông tầng)> => Cần đóng kín bằng tường hoặc kính chống cháy hoặc kính cường lực dày 6mm có trang bị đai Sprinkler".
+- NGĂN CHÁY (có sảnh thông tầng / thang hở nối tầng nổi: áp `01_TRI_THUC/hut-khoi-thong-tang.md`, thêm "nếu không đóng kín phải có màn ngăn khói E45 và hút khói đồng thời các tầng thông nhau"): "Công trình có <lỗ giếng trời lấy sáng (lỗ thông tầng)> => Cần đóng kín bằng tường hoặc kính chống cháy hoặc kính cường lực dày 6mm có trang bị đai Sprinkler".
 - HỆ THỐNG PCCC: "Các hệ thống PCCC cần trang bị:" + "- …" chỉ tên hệ thống, không ngoặc, không số căn cứ. Người dùng dặn 2026-11-06 (áp mãi mãi):
   (a) "họng nước chữa cháy" mặc định gọi là "Hệ thống chữa cháy vách tường (+ bơm)"; (b) sprinkler tầng hầm ghi "tầng hầm để xe" khi là hầm xe;
   (c) CÓ chữa cháy vách tường hoặc sprinkler thì BẮT BUỘC thêm dòng bể nước, chữ ĐỎ ĐẬM: `!- Bể nước PCCC: 126m3 (hầm để xe)` hoặc `9m3 (hầm kỹ thuật)`
@@ -58,9 +58,9 @@ KẾT LUẬN TRƯỚC, không dẫn điều khoản, không giải thích dài; 
 - (người dùng dặn 2026-11-09, khách sạn DA-05, áp mãi mãi) CÓ TẦNG HẦM thì phần thoát nạn (bảng KS, ghi chú PDF trang hầm) PHẢI xét hầm: số thang/lối ra, quãng đường từ điểm xa nhất tới cửa thang, phân tán hai lối (3.2.8, ⅓D nếu sprinkler), lối lên tầng 1, ram xe không tính lối thoát người. Nhưng Ở BCKS mục THOÁT NẠN chỉ ghi dòng "!=> Chưa đảm bảo …" ngắn cho phần CHƯA ĐẠT; phần đã đạt (thang thẳng, không rẽ quạt, không bậc chéo, quây kín, khoang đệm) và số đo khoảng cách hai lối KHÔNG ghi vào BCKS (số đo để ở bảng KS và ghi chú PDF).
 - (2026-11-10, người dùng chỉnh tiếp) BCKS THOÁT NẠN: dòng đầu "Công trình có N thang bộ thoát nạn, mỗi tầng có M lối", rồi MỖI nhóm tầng một dòng "+ Tầng …: <lỗi ngắn>" (vd "+ Tầng hầm 1, hầm 2: hai cửa lối ra thang quá gần nhau"), cuối "!=> Chưa đảm bảo …"; KHÔNG ghi chung "tất cả các tầng" (khó hiểu), không số đo. KHOẢNG CÁCH PCCC đạt thì chỉ ghi "- Đảm bảo".
 - (2026-11-10) BCKS BẮT BUỘC có ảnh note ở cột GHI CHÚ (`bcks.ghi_chu.<mục>.anh`), mặt bằng xoay trong trang thì thêm `"quay": 90`; không để `ghi_chu: {}`. Mục TƯ VẤN/kết luận chỉ việc quan trọng (thoát nạn, hệ thống PCCC, bơm bể, đóng kín buồng thang, hút khói), bỏ GHCL, bổ sung bản vẽ, bậc chịu lửa.
-- (2026-11-10) Ảnh note của BCKS phải thấy NÉT LINE trên bản vẽ: phương án (tường, cửa) vẽ như các lần train; chỗ chưa đạt mà không có phương án vẽ được (hai cửa thang gần nhau, hành lang/hầm cần hút khói, vị trí bãi đỗ xe chữa cháy) thì khoanh bằng `net` đỏ khép kín (điểm đầu lặp lại ở cuối) + note; xem mẫu cuối `ket_qua/tkcs_kientruc/dien.py` (hàm `khoanh`, đổi toạ độ trang xoay: x = Y nhìn thấy, y = H − X nhìn thấy).
-- (2026-11-10) Khoanh CỤ THỂ từng đối tượng sai: mỗi thang một nét khoanh riêng (không khoanh chung cả cụm; chỉ khoanh chung khi chính khoang đệm/cụm đó có vấn đề), rồi `leader` mũi tên từ ô note (khung = TT) tới nét khoanh; ô note ghi ngắn dễ hiểu. Mẫu: `ket_qua/tkcs_kientruc/dien.py` hàm `khoanh`.
-- (cùng ngày) GIAO THÔNG khi cao PCCC > 15 m: ghi "Cần bố trí bãi đỗ xe chữa cháy: rộng ≥ 6 m, dài ≥ … m" — riêng nhà cao > 15 m đến 28 m xét trước chú thích 1) Bảng 14 (`knowledge/qcvn06-dieu-6.md`, nguyên văn: "Không yêu cầu có bãi đỗ xe chữa cháy đối với nhà có số người sử dụng trên mỗi tầng, tính theo Bảng G.9 (Phụ lục G), không vượt quá 50 người và khoảng cách từ đường cho xe chữa cháy đến họng tiếp nước vào nhà không được lớn hơn 18 m."): đủ cả hai ⇒ không yêu cầu bãi đỗ; thiếu số người/tầng hoặc khoảng cách tới họng tiếp nước ⇒ CẦN XÁC NHẬN, không tự miễn, không tự bắt buộc (sửa 2026-11-15) (Bảng 14 rộng; Bảng 15 dài theo diện tích sàn tổng và chu vi: 2.000–4.000 m² chưa sprinkler toàn nhà = 1/4 chu vi, có sprinkler = 1/6 chu vi, ≥ 15 m); khoảng lùi đủ chỗ thì không ghi "chưa đảm bảo" chung chung.
+- (2026-11-10) Ảnh note của BCKS phải thấy NÉT LINE trên bản vẽ: phương án (tường, cửa) vẽ như các lần train; chỗ chưa đạt mà không có phương án vẽ được (hai cửa thang gần nhau, hành lang/hầm cần hút khói, vị trí bãi đỗ xe chữa cháy) thì khoanh bằng `net` đỏ khép kín (điểm đầu lặp lại ở cuối) + note; xem mẫu cuối `12_KET_QUA/tkcs_kientruc/dien.py` (hàm `khoanh`, đổi toạ độ trang xoay: x = Y nhìn thấy, y = H − X nhìn thấy).
+- (2026-11-10) Khoanh CỤ THỂ từng đối tượng sai: mỗi thang một nét khoanh riêng (không khoanh chung cả cụm; chỉ khoanh chung khi chính khoang đệm/cụm đó có vấn đề), rồi `leader` mũi tên từ ô note (khung = TT) tới nét khoanh; ô note ghi ngắn dễ hiểu. Mẫu: `12_KET_QUA/tkcs_kientruc/dien.py` hàm `khoanh`.
+- (cùng ngày) GIAO THÔNG khi cao PCCC > 15 m: ghi "Cần bố trí bãi đỗ xe chữa cháy: rộng ≥ 6 m, dài ≥ … m" — riêng nhà cao > 15 m đến 28 m xét trước chú thích 1) Bảng 14 (`01_TRI_THUC/qcvn06-dieu-6.md`, nguyên văn: "Không yêu cầu có bãi đỗ xe chữa cháy đối với nhà có số người sử dụng trên mỗi tầng, tính theo Bảng G.9 (Phụ lục G), không vượt quá 50 người và khoảng cách từ đường cho xe chữa cháy đến họng tiếp nước vào nhà không được lớn hơn 18 m."): đủ cả hai ⇒ không yêu cầu bãi đỗ; thiếu số người/tầng hoặc khoảng cách tới họng tiếp nước ⇒ CẦN XÁC NHẬN, không tự miễn, không tự bắt buộc (sửa 2026-11-15) (Bảng 14 rộng; Bảng 15 dài theo diện tích sàn tổng và chu vi: 2.000–4.000 m² chưa sprinkler toàn nhà = 1/4 chu vi, có sprinkler = 1/6 chu vi, ≥ 15 m); khoảng lùi đủ chỗ thì không ghi "chưa đảm bảo" chung chung.
 - (cùng ngày) KHOẢNG CÁCH PCCC: "khoảng lùi 6 m" là khoảng từ tường nhà tới RANH ĐẤT; công trình lân cận ít nhất sát ranh nên cách tường nhà ≥ khoảng lùi ⇒ so Bảng E.3 (≥ 3 m theo ranh) rồi KẾT LUẬN đạt/không, không ghi "chưa có khoảng cách tới công trình lân cận".
 - (cùng ngày) NGĂN CHÁY: sảnh thông tầng đã ngăn bằng kính cường lực chống cháy (hoặc đóng kín) ⇒ KHÔNG cần hút khói đồng thời các tầng thông nhau; chỉ ghi hút khói cho hành lang > 15 m, hầm.
 - TƯ VẤN: "+ …" 4–6 việc ngắn của CĐT (đóng kín buồng thang, cửa chống cháy các gian phòng tiếp giáp sảnh, số người ≤ 20/tầng nếu 1 thang, lắp hệ thống như đã yêu cầu, tường giáp ranh).
@@ -77,7 +77,7 @@ Nội dung lấy từ khoá `bcks` của `doi_chieu.json`, viết theo văn phon
 - Chiều cao hàng ước theo số dòng chữ; luôn xuất PDF bằng Excel (ExportAsFixedFormat) rồi XEM ảnh trước khi gửi.
 Không mở cả file JSON bảng gốc (tới 160 KB): đọc bằng `khung`, `dong`, `tim`.
 
-## doi_chieu.json (file kết quả, `ket_qua/<dự án>/`, không commit)
+## doi_chieu.json (file kết quả, `12_KET_QUA/<dự án>/`, không commit)
 ```json
 {"loai": "khao_sat|tham_dinh", "ban_ve": "ban_ve.pdf", "zoom": 1.6,
  "cong_trinh": {"ten": "", "cong_nang": "", "nhom_f": "", "so_tang_noi": null, "so_tang_ham": null, "chieu_cao_pccc_m": null,
@@ -107,16 +107,16 @@ Không mở cả file JSON bảng gốc (tới 160 KB): đọc bằng `khung`, `
 ## Cột "Tra ở" → file TKPCCC
 | Ghi trong bảng | Mở |
 |---|---|
-| `MOD_<tên>` (vd MOD_loi_ra_va_cua, MOD_hanh_lang) | `skills/MOD_<tên>*.md` |
-| `SKILL_ngan_chay`, `SKILL_thoat_nan` | `skills/SKILL_ngan_chay_cong_nang.md`, `skills/SKILL_thoat_nan.md` |
+| `MOD_<tên>` (vd MOD_loi_ra_va_cua, MOD_hanh_lang) | `02_DIEU_KHOAN/MOD_<tên>*.md` |
+| `SKILL_ngan_chay`, `SKILL_thoat_nan` | `02_DIEU_KHOAN/SKILL_ngan_chay_cong_nang.md`, `02_DIEU_KHOAN/SKILL_thoat_nan.md` |
 | `chưa nạp: đọc cột quy định của bảng`, `bảng hệ thống B34–B50` | cột Quy định của chính dòng; kết luận theo đó, nguồn ghi "bảng đối chiếu chính thức" |
-| `knowledge/…`, `skills/…` (bảng KS) | đúng file đó; chọn file quy chuẩn theo skill `tkpccc-tra-quy-chuan` |
-Đối tượng trang bị hệ thống (báo cháy, chữa cháy…): TKPCCC đã có QCVN 10:2025 (`knowledge/qcvn10-2025-*.md`), dùng thay tiêu chuẩn trang bị cũ.
+| `01_TRI_THUC/…`, `02_DIEU_KHOAN/…` (bảng KS) | đúng file đó; chọn file quy chuẩn theo skill `tkpccc-tra-quy-chuan` |
+Đối tượng trang bị hệ thống (báo cháy, chữa cháy…): TKPCCC đã có QCVN 10:2025 (`01_TRI_THUC/qcvn10-2025-*.md`), dùng thay tiêu chuẩn trang bị cũ.
 
 ## Lưu ý dữ liệu
 - Bảng KT dựng từ bộ bảng cũ: đầu bảng còn liệt kê NĐ 136/2020, TCVN cũ. Khi trích căn cứ chỉ dùng văn bản hiện hành (skill `tkpccc-tra-quy-chuan`).
 - A5 (thấy khi thẩm định Q.4, 02/11): cột Tra ở lệch nội dung ở dòng idx 15, 21, 38 (ghi MOD_loi_ra_va_cua) và 27 (MOD_vat_lieu); cột Quy định
   còn ngưỡng khối tích cũ (báo cháy 2.500/5.000 m³) khác QCVN 10:2025 Bảng A.1 mục 18 (≥ 3 tầng hoặc ≥ 700 m² sàn): xét theo QCVN 10:2025.
-- Sửa bảng gốc: sửa `data/<mã>.json`, giữ nguyên `idx`, ghi `LICH_SU.md`; muốn đồng bộ về SKILL-PCCC-NEW thì báo người dùng.
-- Mẫu Word chính thức của bảng A, B (`data/mau/*.docx` ở SKILL-PCCC-NEW) chưa chép: xuất Word theo mẫu là việc sau (ROADMAP Pha 5b).
+- Sửa bảng gốc: sửa `data/<mã>.json`, giữ nguyên `idx`, ghi `00_QUAN_LY_DU_AN/LICH_SU.md`; muốn đồng bộ về SKILL-PCCC-NEW thì báo người dùng.
+- Mẫu Word chính thức của bảng A, B (`03_DU_LIEU/mau/*.docx` ở SKILL-PCCC-NEW) chưa chép: xuất Word theo mẫu là việc sau (ROADMAP Pha 5b).
 - Ảnh BCKS (người dùng dặn 2026-11-10): chỉ nét khoanh trọng yếu + mũi tên + note đi kèm mũi tên, KHÔNG có các khung note khác trong ảnh. Bản vẽ ghi chú thì khoanh nhiều, mỗi nét có ô comment. Cách làm: sinh `ban_ve_bcks.pdf` riêng (lọc ghi_chu: chỉ `net`, `leader` và `chu` gắn với leader), ảnh BCKS khai `"pdf":"ban_ve_bcks.pdf"`.

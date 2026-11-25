@@ -1,14 +1,14 @@
 node_modules/
-ket_qua/
+12_KET_QUA/
 __pycache__/
 .pytest_cache/
-data/don_gia.json
+03_DU_LIEU/don_gia.json
 # Ket qua build plugin; giu lai thu vien block va bang gan block do nguoi dung sua
-cad/TKPCCC.bundle/Contents/*.dll
-cad/TKPCCC.bundle/Contents/*.dll.cu*
-cad/TKPCCC.bundle/Contents/PCCC_Blocks_cu_*.dwg
-cad/TKPCCC.bundle/Contents/*.pdb
-cad/TKPCCC.bundle/Contents/vat_tu.json
+07_CAD/TKPCCC.bundle/Contents/*.dll
+07_CAD/TKPCCC.bundle/Contents/*.dll.cu*
+07_CAD/TKPCCC.bundle/Contents/PCCC_Blocks_cu_*.dwg
+07_CAD/TKPCCC.bundle/Contents/*.pdb
+07_CAD/TKPCCC.bundle/Contents/vat_tu.json
 *.bak
 *.dwl
 *.dwl2
@@ -17,30 +17,30 @@ hardcopy.log
 plot.log
 
 # Ket qua build may chu MCP CAD
-cad/bin/
-cad/TKPCCC.bundle/Contents/ky_hieu.json
+07_CAD/bin/
+07_CAD/TKPCCC.bundle/Contents/ky_hieu.json
 # Anh xem truoc block (plugin tu ve) va duong dan file danh muc goc tren may nay (build.bat ghi)
-cad/TKPCCC.bundle/Contents/anh_block/
-cad/TKPCCC.bundle/Contents/nguon_vat_tu.txt
-cad/TKPCCC.bundle/Contents/hinh_bc.json
-cad/TKPCCC.bundle/Contents/khoang_cach_rai.json
-cad/TKPCCC.bundle/Contents/chon-loai-dau-bao.md
-cad/TKPCCC.bundle/Contents/mau-thuyet-minh-pccc.md
-cad/TKPCCC.bundle/Contents/MOD_dau_bao_khoi_khoang_dam.md
-cad/TKPCCC.bundle/Contents/ong_nhanh_dn.json
+07_CAD/TKPCCC.bundle/Contents/anh_block/
+07_CAD/TKPCCC.bundle/Contents/nguon_vat_tu.txt
+07_CAD/TKPCCC.bundle/Contents/hinh_bc.json
+07_CAD/TKPCCC.bundle/Contents/khoang_cach_rai.json
+07_CAD/TKPCCC.bundle/Contents/chon-loai-dau-bao.md
+07_CAD/TKPCCC.bundle/Contents/mau-thuyet-minh-pccc.md
+07_CAD/TKPCCC.bundle/Contents/MOD_dau_bao_khoi_khoang_dam.md
+07_CAD/TKPCCC.bundle/Contents/ong_nhanh_dn.json
 
 # Ban quyen: khoa rieng KHONG BAO GIO vao repo (repo cong khai)
 *.pem
 TKPCCC_KHOA/
 khoa_rieng*
-cad/TKPCCC.bundle/Contents/cau_hinh_ban_quyen.json
+07_CAD/TKPCCC.bundle/Contents/cau_hinh_ban_quyen.json
 
 # Ban ve mau cua khach (nguoi dung de lai de Claude hoc), khong dua len repo cong khai
-file_cad_test/
+07_CAD/file_cad_test/
 
 # Plugin YouTube, Bot chat (bundle rieng tu 17/11): DLL build
-cad/TKPCCC_YouTube.bundle/Contents/
-cad/TKPCCC_BotChat.bundle/Contents/
+07_CAD/TKPCCC_YouTube.bundle/Contents/
+07_CAD/TKPCCC_BotChat.bundle/Contents/
 
 # Extension VS Code do tay (build lai bang vsce)
 *.vsix

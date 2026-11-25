@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "tsx backend/src/server.ts",
+    "start": "tsx 04_BACKEND/src/server.ts",
     "test": "vitest run"
   },
   "dependencies": {

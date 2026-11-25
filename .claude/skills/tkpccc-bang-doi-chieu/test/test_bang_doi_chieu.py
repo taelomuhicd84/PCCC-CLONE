@@ -119,7 +119,7 @@ def test_trich_dieu_nguyen_van():
     assert bdc._dieu_trong("Mục G.1 QCVN 06:2022 / Mục G.2a / QCVN 06:2022") == [("G.1", "QCVN 06"), ("G.2a", "QCVN 06")]
     assert bdc._dieu_trong("Bảng B.1 mục 1.2 / QCVN 10:2025") == [("B.1", "QCVN 10")]   # "mục 1.2" là dòng của bảng, không phải điều
     noi, doan = bdc._trich_dieu("6.2.1.1", bdc._file_tim("", "QCVN 06"))
-    assert noi.startswith("knowledge/qcvn06-dieu-6.md") and doan.startswith("6.2.1.1 ") and "6.2.1.2" not in doan
+    assert noi.startswith("01_TRI_THUC/qcvn06-dieu-6.md") and doan.startswith("6.2.1.1 ") and "6.2.1.2" not in doan
 
 
 def test_bcks_mau_4_muc(tmp_path):
@@ -160,7 +160,7 @@ def test_job_khong_trich_nham_van_ban(ma, idx):
     for so, vb, noi in _trich(ma, idx):
         if noi:
             assert vb in bdc.VAN_BAN and any(Path(noi.split(":")[0]).match(g) for g in bdc.VAN_BAN[vb][1]), (so, vb, noi)
-        assert not (noi or "").startswith("skills/") or vb == "QCVN 06", (so, vb, noi)
+        assert not (noi or "").startswith("02_DIEU_KHOAN/") or vb == "QCVN 06", (so, vb, noi)
 
 
 def test_van_ban_khac_khong_thua_ke():
@@ -173,12 +173,12 @@ def test_van_ban_khac_khong_thua_ke():
 
 @pytest.mark.parametrize("ma", ["A2", "KS"])
 def test_job_trich_dinh_nghia_chieu_cao_pccc(tmp_path, ma):
-    # 1.4.9 (chiều cao PCCC: mép dưới cửa sổ tầng trên cùng, tính từ mặt đường xe chữa cháy) nằm ở knowledge/dinh-nghia
+    # 1.4.9 (chiều cao PCCC: mép dưới cửa sổ tầng trên cùng, tính từ mặt đường xe chữa cháy) nằm ở 01_TRI_THUC/dinh-nghia
     f = tmp_path / "doi_chieu.json"
     bdc.lamviec([ma], f, "khao_sat")
     kq = bdc.job(f, ma, 0, 5, tmp_path / "job.md", tmp_path / "phan.json")
     t = (tmp_path / "job.md").read_text(encoding="utf-8")
-    assert "knowledge/dinh-nghia/dinh-nghia.md" in t and "mép dưới của lỗ cửa (cửa sổ)" in t, kq
+    assert "01_TRI_THUC/dinh-nghia/dinh-nghia.md" in t and "mép dưới của lỗ cửa (cửa sổ)" in t, kq
     if ma == "KS":
         ks = json.loads((Path(__file__).parents[1] / "data" / "KS.json").read_text(encoding="utf-8"))
         assert "mép dưới" in next(r for r in ks["dong"] if r["idx"] == 2)["goi_y"]

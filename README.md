@@ -3,12 +3,12 @@
 Plugin AutoCAD 2021 + web nội bộ (LAN). Đã có: Pha 1 (thư viện block → vẽ → bóc khối lượng → báo giá Excel),
 Pha 2 (hướng dẫn thiết kế B0–B7, báo cáo khảo sát Word, báo giá sơ bộ theo m²), Pha 3 (thẩm định bản vẽ PDF theo QCVN 06)
 và Pha 4a (thủy lực sprinkler TCVN 7336, xuất Excel mẫu).
-Tiến độ: `TIEN_DO.md` · Cấu trúc thư mục: `STRUCTURE.md` · Các pha: `ROADMAP.md` · Nhật ký: `LICH_SU.md`.
+Tiến độ: `00_QUAN_LY_DU_AN/TIEN_DO.md` · Cấu trúc thư mục: `00_QUAN_LY_DU_AN/STRUCTURE.md` · Các pha: `00_QUAN_LY_DU_AN/ROADMAP.md` · Nhật ký: `00_QUAN_LY_DU_AN/LICH_SU.md`.
 
 ## Cài đặt (1 lần)
 ```
 npm install
-cad\build.bat          :: biên dịch plugin bằng csc.exe có sẵn của Windows, không cần cài .NET SDK
+07_CAD\build.bat          :: biên dịch plugin bằng csc.exe có sẵn của Windows, không cần cài .NET SDK
 ```
 Claude (không cần API key — dùng tài khoản Claude đăng nhập trong Claude Code):
 ```
@@ -23,9 +23,9 @@ Bước hoàn thiện Excel thủy lực (ẩn dòng trống, chèn dòng hàng 
 
 ## Sử dụng
 1. Bấm đúp `chay.bat` (bật runner + mở web), hoặc `npm start` → mở http://127.0.0.1:8787
-   (cho máy khác trong LAN: `npm start -- --host 0.0.0.0`). Kết quả từng công trình lưu ở `ket_qua/<dự án>/`.
-2. AutoCAD: `NETLOAD` → `cad\TKPCCC.bundle\Contents\TKPCCC.Cad.dll`
-   (tự nạp mỗi lần mở: chép thư mục `cad\TKPCCC.bundle` vào `%APPDATA%\Autodesk\ApplicationPlugins`).
+   (cho máy khác trong LAN: `npm start -- --host 0.0.0.0`). Kết quả từng công trình lưu ở `12_KET_QUA/<dự án>/`.
+2. AutoCAD: `NETLOAD` → `07_CAD\TKPCCC.bundle\Contents\TKPCCC.Cad.dll`
+   (tự nạp mỗi lần mở: chép thư mục `07_CAD\TKPCCC.bundle` vào `%APPDATA%\Autodesk\ApplicationPlugins`).
    Build lại khi AutoCAD đang mở vẫn được; tắt hẳn AutoCAD rồi mở lại để nạp bản mới.
 3. Lệnh AutoCAD (`PCCC_HELP` để xem):
 
@@ -49,20 +49,20 @@ Bước hoàn thiện Excel thủy lực (ẩn dòng trống, chèn dòng hàng 
      chiều dài từng đoạn trong ô số liệu (JSON) rồi "Tính theo số liệu". "Xuất Excel mẫu" điền vào `MAU_THUY_LUC_7336.xlsx`.
    - **Thẩm định PDF**: chọn PDF bản vẽ (vector, không phải bản scan), điền thông tin công trình nếu bản vẽ không ghi (nhóm F,
      chiều cao PCCC…), "Chạy thẩm định" → bảng Không đạt / Cần xác minh / Đạt kèm trang + điều khoản QCVN 06, "Mở PDF ghi chú"
-     (khung đánh số #n khớp bảng). Dòng "Cần xác minh" có nút "Claude xét" (Claude tra `knowledge/`, `skills/`, xem đúng trang PDF).
+     (khung đánh số #n khớp bảng). Dòng "Cần xác minh" có nút "Claude xét" (Claude tra `01_TRI_THUC/`, `02_DIEU_KHOAN/`, xem đúng trang PDF).
      Đổi thông tin rồi bấm Chạy lại không cần chọn lại file. Không tốn token trừ khi bấm "Claude xét".
 
-Danh mục vật tư: `data/vat_tu.json` (sửa xong chạy lại `cad\build.bat`). Đơn giá đã nhập lưu ở `data/don_gia.json`.
+Danh mục vật tư: `03_DU_LIEU/vat_tu.json` (sửa xong chạy lại `07_CAD\build.bat`). Đơn giá đã nhập lưu ở `03_DU_LIEU/don_gia.json`.
 
 ## Kiểm tra
 ```
 npm test
-python -m pytest thamdinh/test -q
-powershell -ExecutionPolicy Bypass -File cad\test\chay_thu.ps1
+python -m pytest 06_THAM_DINH_PDF/test -q
+powershell -ExecutionPolicy Bypass -File 07_CAD\test\chay_thu.ps1
 ```
 Cái cuối chạy plugin trong `accoreconsole` (AutoCAD không giao diện) với bản vẽ thử, không cần mở AutoCAD.
 
 ## Các pha tiếp theo
-Xem `ROADMAP.md` (Pha 4b: rải đầu phun/đầu báo tự động trong CAD).
+Xem `00_QUAN_LY_DU_AN/ROADMAP.md` (Pha 4b: rải đầu phun/đầu báo tự động trong CAD).
 
 Mã nguồn: https://github.com/taelomuhicd84/PCCC-CLONE

@@ -1,6 +1,6 @@
 ---
 name: pccc-he-thong
-description: Agent thẩm định PCCC phần HỆ THỐNG PCCC (bảng A theo công năng, bảng B theo hệ thống — báo cháy, chữa cháy vách tường, sprinkler, trạm bơm, cấp nước ngoài nhà, chữa cháy khí, đèn sự cố và loa, bình và dụng cụ, điện PCCC). Dùng khi skill tkpccc-tham-dinh giao một job bảng A hoặc B (file ket_qua/<dự án>/jobs/<mã>.md).
+description: Agent thẩm định PCCC phần HỆ THỐNG PCCC (bảng A theo công năng, bảng B theo hệ thống — báo cháy, chữa cháy vách tường, sprinkler, trạm bơm, cấp nước ngoài nhà, chữa cháy khí, đèn sự cố và loa, bình và dụng cụ, điện PCCC). Dùng khi skill tkpccc-tham-dinh giao một job bảng A hoặc B (file 12_KET_QUA/<dự án>/jobs/<mã>.md).
 tools: Read, Grep, Glob, Write, Bash
 model: sonnet
 effort: medium
@@ -10,9 +10,9 @@ Bạn là cán bộ thẩm duyệt thiết kế PCCC, phụ trách phần HỆ T
    quy tắc cần dùng đã trích trong `quy_tac_agent.md`.
 2. Job đã có toàn văn từng dòng và điều khoản nguyên văn trích sẵn (kèm `file:dòng`); chỉ mở tri thức khi job ghi "không tìm thấy" hoặc cần
    đọc tiếp, mở đúng `file:dòng`. "Đối tượng trang bị" (nhà nào phải có hệ thống nào): QCVN 10:2025/BCA đã nạp —
-   `knowledge/qcvn10-2025-bao-chay-chua-chay-tu-dong.md` (Phụ lục A), `knowledge/qcvn10-2025-nuoc-chua-chay.md`, `knowledge/qcvn10-2025-den-loa.md`,
-   `knowledge/qcvn10-2025-binh-dung-cu-co-gioi.md`; chọn loại đầu báo: `knowledge/chon-loai-dau-bao.md`; thủy lực: skill `tkpccc-thuy-luc`;
-   hút khói/chống khói: `skills/MOD_chong_khoi_PL_D.md`, riêng sảnh thông tầng và thang hở nối tầng nổi (hút đồng thời các tầng): `knowledge/hut-khoi-thong-tang.md`.
+   `01_TRI_THUC/qcvn10-2025-bao-chay-chua-chay-tu-dong.md` (Phụ lục A), `01_TRI_THUC/qcvn10-2025-nuoc-chua-chay.md`, `01_TRI_THUC/qcvn10-2025-den-loa.md`,
+   `01_TRI_THUC/qcvn10-2025-binh-dung-cu-co-gioi.md`; chọn loại đầu báo: `01_TRI_THUC/chon-loai-dau-bao.md`; thủy lực: skill `tkpccc-thuy-luc`;
+   hút khói/chống khói: `02_DIEU_KHOAN/MOD_chong_khoi_PL_D.md`, riêng sảnh thông tầng và thang hở nối tầng nổi (hút đồng thời các tầng): `01_TRI_THUC/hut-khoi-thong-tang.md`.
 3. Chưa có bản vẽ hệ thống = không có hệ thống (người dùng dặn 2026-11-03): dòng "đối tượng trang bị" PHẢI CÓ → CHƯA ĐẠT ("không có
    <hệ thống>; phải trang bị (căn cứ có số)", `phuong_an` "thiết kế <hệ thống>"); KHÔNG BẮT BUỘC → KHÔNG ÁP DỤNG kèm căn cứ có số;
    một mục `chu` chung (`khung` là danh sách) đặt trong vùng job giao. Bảng B chỉ giao khi có bản vẽ: kiểm từng dòng, khoanh vị trí thiếu/sai;

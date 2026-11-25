@@ -1,0 +1,12 @@
+{
+ "_ghi_chu": "Cay ho so MOT du an PCCC (lenh tao_cay). Phong theo mau DA-GT-2026-01 (danh so theo vong doi, ten khong dau), bo phan BIM/CDE ISO 19650 (thua voi viec PCCC), them pha tham duyet + nghiem thu. Sua cay thi sua file nay.",
+ "cay": {
+  "00_PHAP_LY_HOP_DONG": ["01_Hop_Dong_Phu_Luc", "02_Cong_Van_Den_Di", "03_Bien_Ban_Hop", "04_Giay_Phep_Xay_Dung"],
+  "01_DAU_VAO_KHAO_SAT": ["01_Ban_Ve_Khach_Gui", "02_Anh_Hien_Trang", "03_Thong_Tin_Cong_Trinh"],
+  "02_THIET_KE_PCCC": ["01_Kien_Truc_Thoat_Nan", "02_Bao_Chay", "03_Chua_Chay_Vach_Tuong", "04_Sprinkler", "05_Den_Su_Co_Exit", "06_Hut_Khoi_Tang_Ap", "07_Dien_PCCC", "08_Binh_Dung_Cu"],
+  "03_THAM_DINH_DOI_CHIEU": ["01_Bang_Doi_Chieu", "02_PDF_Ghi_Chu"],
+  "04_KHOI_LUONG_BAO_GIA": ["01_Khoi_Luong", "02_Bao_Gia", "03_Thuy_Luc"],
+  "05_THUYET_MINH_BAN_VE_PHAT_HANH": ["01_Thuyet_Minh", "02_Ban_Ve_PDF", "03_Ban_Ve_CAD"],
+  "06_THAM_DUYET_NGHIEM_THU": ["01_Ho_So_Tham_Duyet", "02_Van_Ban_Tham_Duyet", "03_Nghiem_Thu"]
+ }
+}
