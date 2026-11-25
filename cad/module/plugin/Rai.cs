@@ -1930,6 +1930,9 @@ namespace TKPCCC
             if (khungTruc != null) ed.WriteMessage("\n[TKPCCC] khung_truc x=" + string.Join("..", new[] { khungTruc[0], khungTruc[2] }.Select(t => double.IsNaN(t) ? "?" : Math.Round(t).ToString(CultureInfo.InvariantCulture)))
                 + " y=" + string.Join("..", new[] { khungTruc[1], khungTruc[3] }.Select(t => double.IsNaN(t) ? "?" : Math.Round(t).ToString(CultureInfo.InvariantCulture))));
             if (boTruc > 0) ed.WriteMessage("\n[TKPCCC] bo_net_truc=" + boTruc + " (nét liền trùng đường trục: không coi là tường).");
+            List<double> soTang = nhanThem.TenTang.Select(t0 => t0.Value).Distinct().OrderBy(t0 => t0).ToList();
+            if (soTang.Count >= 2) ed.WriteMessage("\n[TKPCCC] mat_bang_tang=" + string.Join(",", soTang.Select(t0 => t0.ToString(CultureInfo.InvariantCulture)))
+                + " (quét nhiều tầng: tầng nhận theo tên mặt bằng; khung trục chỉ áp cho mặt bằng có trục; tầng ngay dưới ô X thông tầng lấy vùng như tầng trên).");
             if (loaiTran == 2 && vung.Count == 0)
             {
                 ed.WriteMessage("\nVừa có vừa không trần: vẽ polyline kín layer " + LAYER_VUNG + " quanh từng vùng (vùng có trần không vẽ dầm) rồi chọn cả vùng lẫn line dầm.");
@@ -1958,6 +1961,8 @@ namespace TKPCCC
             bool veVung = vung.Count == 0;
             HashSet<List<Point2d>> daCo = new HashSet<List<Point2d>>(); // vùng PCCC_VUNG vẽ sẵn dùng thay phòng tự dựng: không vẽ lại
             HashSet<List<Point2d>> daVe = new HashSet<List<Point2d>>(); // phòng đã vẽ (nhiều khoang dầm chung một phòng)
+            HashSet<List<Point2d>> coLo = new HashSet<List<Point2d>>(); // vùng có lỗ nối ra viền bằng khe (ChieuThongTang): không làm gọn
+            bool tatCa = false; // Enter = mọi phòng (không bấm điểm từng phòng)
             if (veVung)
             {
                 if (mat.Count == 0)
@@ -1989,8 +1994,18 @@ namespace TKPCCC
                             Func<Point2d, bool> trongTruc = c => (double.IsNaN(khungTruc[0]) || (c.X >= khungTruc[0] - nt && c.X <= khungTruc[2] + nt))
                                 && (double.IsNaN(khungTruc[1]) || (c.Y >= khungTruc[1] - nt && c.Y <= khungTruc[3] + nt));
                             int truoc = vung.Count;
+                            // Người dùng 25/11 (Karaoke 123 tầng 1 + 2 quét một lần: khung trục chỉ nhận ở tầng 1, 16 phòng tầng 2 bị bỏ như ngoài trục): có ≥ 2 tên
+                            // mặt bằng khác số tầng thì cụm phòng (hộp bao cách ≤ 2 m) không có phòng nào trong khung trục là mặt bằng tầng khác: không xét ngoài trục
+                            // (cụm nhỏ = hình chi tiết vẫn qua CumChinh bên dưới).
+                            HashSet<int> cumTruc = null;
+                            int[] cumP = null;
+                            if (nhanThem.TenTang.Select(t0 => t0.Value).Distinct().Count() >= 2)
+                            {
+                                cumP = CumPhong(vung, 2 / m);
+                                cumTruc = new HashSet<int>(Enumerable.Range(0, vung.Count).Where(i => trongTruc(DiemTrongMat(vung[i]))).Select(i => cumP[i]));
+                            }
                             // L8 (người dùng duyệt 20/11): phòng có chữ tên phòng ("VĂN PHÒNG"...) nằm ngoài trục vẫn giữ (2 văn phòng ở góc ngoài khối xưởng bị bỏ sót).
-                            vung = vung.Where(f0 => trongTruc(DiemTrongMat(f0)) || nhanThem.TenPhong.Any(p => TrongDaGiac(f0, p))).ToList();
+                            vung = vung.Where((f0, i) => trongTruc(DiemTrongMat(f0)) || nhanThem.TenPhong.Any(p => TrongDaGiac(f0, p)) || (cumTruc != null && !cumTruc.Contains(cumP[i]))).ToList();
                             if (vung.Count < truoc) ed.WriteMessage("\n[TKPCCC] bo_ngoai_truc=" + (truoc - vung.Count) + " (phòng ngoài đường trục ngoài cùng: không phân vùng; cần rải thì bấm điểm trong phòng đó).");
                         }
                         // Mọi phòng thật (kể cả WC, thang sắp bỏ) để xét "bên kia mép có phòng không" (hành lang bên); mặt ngoài trục (lam, mái đua) không tính.
@@ -2120,6 +2135,7 @@ namespace TKPCCC
                         List<List<Point2d>> lai = trongKhung.Where(f0 => !vung.Contains(f0)).ToList();
                         if (lai.Count > 0) { vung.AddRange(lai); boPhong -= lai.Count; boCum = Math.Min(boCum, boPhong); }
                         if (boPhong > 0) ed.WriteMessage("\n[TKPCCC] bo_cum=" + boCum + " phong=" + boPhong + " (cụm phòng nhỏ tách xa mặt bằng chính: hình chi tiết, mặt cắt; cần rải thì bấm điểm trong phòng).");
+                        tatCa = true;
                         break;
                     }
                     if (pr.Status != PromptStatus.OK) break;
@@ -2148,6 +2164,16 @@ namespace TKPCCC
                 }
                 // Người dùng 16/11: vùng vẽ ra là đa giác gọn (bỏ khấc cột, cung cửa, gờ < 1 m), không bám từng nét tường.
                 vung = vung.Select(d => LamGon(d, LAM_GON_M / m, 0.002 / m)).ToList();
+                // Người dùng 25/11: quét nhiều tầng (Enter mọi phòng), tầng trên có ô X thông tầng mà tầng ngay dưới không có: vùng tầng dưới ở đó lấy như vùng
+                // ô X tầng trên. Sau LamGon: phòng chưa làm gọn có thể tự chạm (khe cửa 100 mm của kho gầm thang Karaoke 123 tầng 1), Region không dựng được.
+                if (tatCa)
+                {
+                    List<string> chieu = new List<string>();
+                    vung = ChieuThongTang(vung, nhanThem, oX, m, coLo, chieu);
+                    if (chieu.Count > 0) ed.WriteMessage("\n[TKPCCC] chieu_thong_tang=" + chieu.Count + " " + string.Join("; ", chieu)
+                        + " (tầng dưới sảnh thông tầng không có dấu X: vùng ở đó lấy đúng như vùng ô X tầng trên, đầu báo / đầu phun lắp ở ĐỈNH sảnh;"
+                        + " phần còn lại của phòng là vùng riêng, lắp ở trần tầng đó; vế thang cạnh sảnh bỏ).");
+                }
                 // L7 (người dùng duyệt 19/11, nhà văn phòng 2 Quyết Thắng): thang bộ trong phòng khoét ra như lỗ thông tầng, cạnh vuông theo hộp ký hiệu thang,
                 // cạnh hộp cách tường ≤ 0,3 m nắn ra sát tường. Thang chiếm ≥ 50 % phòng = buồng thang (người dùng 16/11: không đặt đầu báo): bỏ cả phòng.
                 if (v.he == "BC" && nhanThem.ThangBo.Count > 0)

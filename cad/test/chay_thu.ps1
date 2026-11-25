@@ -1257,6 +1257,17 @@ foreach ($y in (0..8 | ForEach-Object { 6000 * $_ })) {
   '_.LINE', '2580000,1400', '2581800,1400', '', '_.LINE', '2580000,1700', '2581800,1700', '', '_.LINE', '2580000,2000', '2581800,2000', '',
   '_.LINE', '2580000,2300', '2581800,2300', '', '_.LINE', '2580000,2600', '2581800,2600', '',
   'PCCC_RAI', 'BC_KHOI', '', '', 'C', '2579500,-500', '2583500,4500', '', '', '',
+  # E31 (nguoi dung 25/11 Karaoke 123 quet tang 1 + 2 mot lan): 2 mat bang 24 x 10 m dat canh nhau (tang 2 doi 30 m), 3 phong 3 / 4 / 5 x 10 m giong nhau.
+  #    Tang 1: x 12-24 la sanh mo 120 m2. Tang 2: tuong x 18 chia phong 60 m2 + o thong tang 6 x 10 m co dau X (layer TRUC). Ten mat bang: TEXT
+  #    "MAT BANG TANG 1", block thuoc tinh DONG2 "MAT BANG ... TANG 2". Ky vong: tang 1 sanh tach 60 (nhu o X tang 2) + 60.
+  '(princ "\n==E31==")', '-LAYER', 'M', 'TUONG', '', '_.ZOOM', 'W', '2599000,-5000', '2656000,11000',
+  '_.RECTANG', '2600000,0', '2624000,10000', '_.LINE', '2603000,0', '2603000,10000', '', '_.LINE', '2607000,0', '2607000,10000', '', '_.LINE', '2612000,0', '2612000,10000', '',
+  '_.RECTANG', '2630000,0', '2654000,10000', '_.LINE', '2633000,0', '2633000,10000', '', '_.LINE', '2637000,0', '2637000,10000', '', '_.LINE', '2642000,0', '2642000,10000', '',
+  '_.LINE', '2648000,0', '2648000,10000', '', '-LAYER', 'M', 'TRUC', '', '_.LINE', '2648000,0', '2654000,10000', '', '_.LINE', '2648000,10000', '2654000,0', '',
+  '-LAYER', 'S', '0', '', '_.TEXT', '2605000,-3000', '500', '0', 'MAT BANG TANG 1',
+  "(entmake '((0 . `"BLOCK`") (2 . `"TENMB31`") (70 . 2) (10 0.0 0.0 0.0)))(entmake '((0 . `"LINE`") (8 . `"0`") (10 -3000.0 -400.0 0.0) (11 3000.0 -400.0 0.0)))(entmake '((0 . `"ATTDEF`") (8 . `"0`") (10 0.0 0.0 0.0) (40 . 500.0) (1 . `"`") (3 . `"TEN`") (2 . `"DONG2`") (70 . 0)))(entmake '((0 . `"ENDBLK`")))(princ)",
+  "(entmake '((0 . `"INSERT`") (2 . `"TENMB31`") (66 . 1) (10 2638000.0 -3000.0 0.0)))(entmake '((0 . `"ATTRIB`") (8 . `"0`") (10 2638000.0 -3000.0 0.0) (40 . 500.0) (1 . `"MAT BANG BAO CHAY DUOI TRAN TANG 2`") (2 . `"DONG2`") (70 . 0)))(entmake '((0 . `"SEQEND`")))(princ)",
+  'PCCC_RAI', 'BC_KHOI', '', '', 'C', '2599000,-5000', '2656000,11000', '', '', '',
   '(princ "\n==EHET==")', '_.QSAVE')) -join "`r`n" | Set-Content -Encoding ascii "$T\kb7.scr"
 $p7 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb7.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb7.out.txt"
 if (-not $p7.WaitForExit(180000)) { Stop-Process -Id $p7.Id -Force; throw "accoreconsole qua 3 phut (review 20/11): $T\kb7.out.txt" }
@@ -1349,6 +1360,9 @@ Kiem ($e29 -notmatch 'bo_hanh_lang_ben' -and $e29 -match 'bo_khu_khong_bao=1 m2=
   "Nguoi dung 23/11: hanh lang trong nha (phong 2 ben) van rai 41,4 m2; phong chu VE SINH 72 m2 (> 60) bo theo chu (vung=$((DtVung $e29) -join ','))"
 $e30 = CaRv 'E30'
 Kiem ($e30 -match 'khoet_thang=1 m2=3.8 ') "Nguoi dung 23/11: thang ve net roi 8 bac 1,8 m cach 0,3 m: nhan ve thang 1,8 x 2,1 m, khoet 3,8 m2 ($([regex]::Match($e30, 'khoet_thang=\S+ m2=\S+').Value))"
+$e31 = CaRv 'E31'
+Kiem ($e31 -match 'mat_bang_tang=1,2 ' -and $e31 -match 'chieu_thong_tang=1 tang 1 duoi 2 m2=120->60\+60 ' -and (DtVung $e31).Count -eq 10 -and @(DtVung $e31 | Where-Object { $_ -eq 60 }).Count -eq 4) `
+  "Nguoi dung 25/11: quet 2 tang, tang 2 co o X thong tang 6 x 10 m, tang 1 khong co: sanh tang 1 120 m2 tach 60 (nhu o X tang 2) + 60; ten tang tu TEXT + thuoc tinh block ($([regex]::Match($e31, 'chieu_thong_tang=\S+ \S+ \S+ \S+ \S+ \S+').Value); vung=$((DtVung $e31) -join ','))"
 $e25 = CaRv 'E25'
 $ktd = @([regex]::Matches($e25, 'KTD (-?\d+),(-?\d+) (-?\d+),(-?\d+) (-?\d+),(-?\d+)') | ForEach-Object { , @($_.Groups[1..6] | ForEach-Object { [double]$_.Value }) })
 $ktN = @($ktd | Where-Object { $_[3] -eq $_[5] }); $ktD = @($ktd | Where-Object { $_[2] -eq $_[4] })
@@ -1395,6 +1409,21 @@ if (Test-Path $hb) {
   $oh = [Text.Encoding]::Unicode.GetString([IO.File]::ReadAllBytes("$T\kbhb.out.txt")) -replace "`0", ''
   Kiem ($oh -match 'thoi_gian rai=\d+ms vung=16\b' -and $oh -match 'gop_sanh=\d+ gop_o_nho=\d+' -and $oh -match 'thong_tang=1 m2=64\.3' -and $oh -match 'm2=35\.53 ') `
     "Ban chep Karaoke 123 tang 2: 15 vung nhu nguoi dung ve tay + vung sanh thong tang 6,3 x 10,2 m (23/11 toi); hanh lang duoi dung o net trong lan can kin 60 mm: 35,53 m2 (truoc 35,64 toi net ngoai) ($([regex]::Match($oh, 'vung=\d+').Value) $([regex]::Match($oh, 'gop_sanh=\d+ gop_o_nho=\d+').Value))"
+  # Nguoi dung 25/11: quet tang 1 (y -100 m) + tang 2 mot lan. Chep tang 2 (y -50 m) xuong canh tang 1 (dy -49390,8 nhu ban nguoi dung), them ten mat bang.
+  # Truoc sua: khung truc chi nhan o tang 1 -> 16 phong tang 2 bi bo_ngoai_truc; sanh tang 1 duoi o X tang 2 gop chung hanh lang 122,22 m2.
+  # Nay: tang 1 122,22 -> 61,77 (nhu vung o X tang 2) + 50,22 hanh lang, bo ve thang 10,6 m2 (thang net roi khong nhan, duoi lo thang tang 2); 31 vung.
+  Copy-Item $hb "$T\hb12.dwg"
+  (@('NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '_.ZOOM', 'W', '330000,-120000', '380000,-40000',
+    "(setq s0 (ssget `"_W`" '(334000 -62500) '(379000 -41500)))(command `"_.COPY`" s0 `"`" `"0,0`" `"0,-49390.8`")",
+    '_.ZOOM', 'W', '274000,-118000', '378500,-87000', '_.TEXT', '290000,-116500', '500', '0', 'MAT BANG BAO CHAY DUOI TRAN TANG 1',
+    '_.TEXT', '346000,-115500', '500', '0', 'MAT BANG BAO CHAY DUOI TRAN TANG 2',
+    "(setq ss (ssget `"_W`" '(274000 -118000) '(378500 -87000) '((8 . `"PCCC_*`"))))(if ss (command `"_.ERASE`" ss `"`"))",
+    'PCCC_RAI', 'BC_KHOI', '', 'Khong', 'C', '274000,-118000', '378500,-87000', '', '', '', '_.QUIT', '_Y') -join "`r`n") | Set-Content -Encoding ascii "$T\kbhb12.scr"
+  $p12 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/i `"$T\hb12.dwg`" /s `"$T\kbhb12.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kbhb12.out.txt"
+  if (-not $p12.WaitForExit(300000)) { Stop-Process -Id $p12.Id -Force; throw "accoreconsole qua 5 phut (Karaoke 123 tang 1 + 2): $T\kbhb12.out.txt" }
+  $o12 = [Text.Encoding]::Unicode.GetString([IO.File]::ReadAllBytes("$T\kbhb12.out.txt")) -replace "`0", ''
+  Kiem ($o12 -match 'mat_bang_tang=1,2 ' -and $o12 -notmatch 'bo_ngoai_truc' -and $o12 -match 'chieu_thong_tang=1 tang 1 duoi 2 m2=122\.22->61\.77\+50\.22 bo_ve_thang=10\.6 ' -and $o12 -match 'thoi_gian rai=\d+ms vung=31\b') `
+    "Ban chep Karaoke 123 tang 1 + 2 quet mot lan: tang 2 giu (khong bo ngoai truc), sanh tang 1 = vung o X tang 2 61,77 m2 + hanh lang 50,22 ($([regex]::Match($o12, 'chieu_thong_tang=\S+ \S+ \S+ \S+ \S+ \S+ \S+').Value) $([regex]::Match($o12, 'vung=\d+').Value))"
 } else { 'BO    ban chep Karaoke 123 ket_qua\HOC_BAO_CHAY\cad\hoc_bao_chay.dwg khong co' }
 
 # chay_spec.ps1: -Dwg tuong doi tinh theo thu muc hien tai cua PowerShell; thu muc co dau (chu a huyen) va dau cach.

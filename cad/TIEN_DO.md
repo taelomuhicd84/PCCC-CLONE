@@ -3,6 +3,16 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `cad/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `cad/KE_HOACH.md`. Nhật ký: `cad/LICH_SU.md`. Luật riêng: `cad/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`cad/CLAUDE.md`).
 
+## VIỆC 25/11 — QUÉT NHIỀU TẦNG: Ô X THÔNG TẦNG TẦNG TRÊN CHIẾU XUỐNG TẦNG NGAY DƯỚI: XONG MÃ + TEST (chưa push, chưa review `cad-review`)
+- Người dùng (Bot chat, `hoc_bao_chay.dwg`, Karaoke 123 tầng 1 x 274–322 m + tầng 2 x 335–376 m ở y −100 m; tầng 2 là bản chép CHƯA LƯU của tầng 2 y −50 m,
+  dời dy −49 390,8): tầng trên có X lỗ thông tầng, tầng dưới không có X thì vùng tầng dưới ở đó như tầng trên; (A-B)/4 tầng 1 bao sai.
+- MÃ: `NhanVung.cs` `GomTenTang`/`SoTang` (tên mặt bằng, cả thuộc tính block), `CumPhong`, `TangCum`, `DoiTang`, `BoolVung`/`MatRegion`, `ChieuThongTang`;
+  `Rai.cs` in `mat_bang_tang=`, khung trục chỉ áp cho cụm có phòng trong khung khi ≥ 2 tên tầng (trước: bỏ hết 16 phòng tầng 2), chiếu sau `LamGon`.
+  Luật: `cad/skills/nhan_dang/cua_thang_khu.md` (gạch 25/11). Test E31 + phép kiểm bản chép Karaoke tầng 1 + 2 (tự dựng tầng 2 + tên như trên).
+  `chay_thu` 212 phép + `thu_mcp` TAT CA DAT; bundle build (AutoCAD đang mở: tắt hẳn, mở lại mới nạp). Bản vẽ người dùng đã sửa bằng spec.
+- CÒN: thang tầng 1 Karaoke (nét rời, vế cong) chưa nhận là thang bộ; mặt bằng xoay / không tên tầng thì không chiếu (shortcut). Chưa thêm 1 dòng vào
+  skill `tkpccc-ve-cad` (ghi `cad/.claude/` chưa được cấp quyền). BƯỚC TIẾP: `cad-review` (Opus max) mốc 23/11 (3) + 25/11, rồi push từ tab Terminal.
+
 ## VIỆC 23/11 (3) — HÀNH LANG BÊN, WC CÓ CHỮ > 60 m², MẶT CON WC, THANG NÉT RỜI: XONG MÃ + TEST (chưa push, chưa review `cad-review`); CÒN BUỒNG THANG HỞ
 - Người dùng soát trường học khung 6 (bản chép `ket_qua/HOC_BAO_CHAY/cad/hoc_bao_chay.dwg`, x 495–590 m): rải nhầm vào hành lang bên quanh sân,
   dải 1,65 m ngoài dãy văn phòng, buồng thang, WC. Đã sửa tay bản chép (spec `ket_qua/HOC_BAO_CHAY/cad/skills/bo_hl_ben_thang_wc.json`).

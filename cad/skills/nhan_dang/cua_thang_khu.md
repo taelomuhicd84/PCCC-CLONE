@@ -42,6 +42,22 @@ Mã: `CacMat` (khép khe cửa), `GomCua`, `GomKhu`, `HinhBac`, `TachOX`, `GomCh
   mẫu không có thiết bị = sân / khoảng trống); còn lại là sảnh / lỗ thông tầng: rải như vùng thường. Dấu X từ nguồn mới (layer bỏ, layer thường lượt
   chỉ-tường) CHỈ nhận khi là thông tầng (trường học có 40 block "ống thoát nước" vẽ dấu X ~1 m: nhận làm giếng thì bỏ nhầm 5 phòng sát nó). Ô thông tầng không thành mặt kín (Karaoke: cạnh trên là thang hở, góc cửa kính hở) thì dựng mặt từ khung X + nét trong ô (mép thang, lan can),
   lấy mặt lớn nhất (`MatThongTang`): Karaoke T2 61,78 m² khấc theo vế thang. Test E24. shortcut: lỗ thông tầng nhỏ cỡ giếng hay dài hẹp vẫn bỏ (bấm điểm).
+- NGƯỜI DÙNG 25/11 (Karaoke 123, quét tầng 1 + tầng 2 một lần; "tại trục (A-B)/4 tầng 1 chưa bao đúng vùng rải"): các tầng trên có dấu X lỗ thông tầng
+  mà tầng dưới KHÔNG có dấu X ở đó (tầng dưới là sàn đáy sảnh) thì VÙNG RẢI của tầng dưới ở chỗ đó NHƯ CÁC TẦNG TRÊN: tách riêng đúng đường bao vùng
+  ô X tầng trên (đầu báo / đầu phun lắp ở đỉnh sảnh); phần còn lại của phòng tầng dưới là vùng riêng, lắp ở trần tầng đó. Tầng dưới không có tường ngăn
+  sảnh với hành lang nên tự dựng phòng ra một mặt chung (Karaoke tầng 1: hành lang B–C + khoảng trái thang + sảnh = 122,22 m²); chỉ nhìn các tầng
+  trên mới biết ranh. Chỉ tầng NGAY DƯỚI (tầng trên gần nhất khớp được không có X ở đó thì thôi; tầng dưới cũng có X = giữa sảnh nhiều tầng, không
+  chiếu). Phần còn lại nằm dưới lỗ thang tầng trên (≤ 15 m², < 1/2 diện tích có phòng tầng trên phủ) hoặc chứa hộp thang ≥ 1/3 mảnh = vế thang cạnh
+  sảnh: bỏ, như tầng trên không có vùng ở lỗ thang.
+  Plugin ĐÃ LÀM 25/11 (`ChieuThongTang`, in `mat_bang_tang=1,2` và `chieu_thong_tang=N tang a duoi b m2=cũ->sảnh+còn lại bo_ve_thang=..`):
+  tầng nhận theo TÊN MẶT BẰNG "MẶT BẰNG / MB ... TẦNG n" (chữ, MText hoặc thuộc tính block khung tên, vd `NAMECHITIET` DONG2; `GomTenTang`, `SoTang`:
+  TẦNG 2-5 = 2, HẦM 1 = -1, TRỆT = 0,9, LỬNG = 1,5, LẦU 1 = 1,9, MÁI / TUM = 1000); cụm phòng (hộp bao cách ≤ 2 m) nhận tên gần nhất ≤ 15 m;
+  dời giữa hai tầng = dời được nhiều cặp phòng cùng diện tích + cùng cỡ hộp nhất (≥ 3 phòng, ≥ 25 %); tách phòng bằng Region AutoCAD SAU `LamGon`
+  (phòng chưa làm gọn tự chạm qua khe cửa 100 mm kho gầm thang, Region không dựng). Karaoke tầng 1: 122,22 → 61,77 (= ô X tầng 2) + 50,22, bỏ 10,6.
+  Cũng 25/11: quét nhiều tầng (≥ 2 tên tầng) thì khung trục chỉ áp cho cụm phòng có phòng trong khung (trước: trục nhận ở tầng 1, bỏ hết 16 phòng tầng 2
+  `bo_ngoai_truc`). Test E31 + phép kiểm bản chép Karaoke tầng 1 + 2 trong `chay_thu.ps1`.
+  shortcut: không có tên mặt bằng ghi số tầng, mặt bằng đặt xoay / lật, hoặc quét từng tầng riêng thì không chiếu: vẽ polyline `PCCC_VUNG` theo ô X tầng trên.
+  CÒN: thang tầng 1 Karaoke (nét rời, vế cong) chưa nhận là thang bộ (không `khoet_thang`); mảnh vế thang chỉ bỏ nhờ luật "dưới lỗ tầng trên".
 - Sảnh thang máy (người dùng 16–17/11): phòng ≤ 30 m² sát giếng thang (cách ≤ 0,6 m) không đặt đầu báo (`bo_sanh_thang=`).
   NGƯỜI DÙNG 21/11 (căn hộ 441, mẫu có đầu báo ở sảnh trước thang máy): chỉ bỏ khi sảnh nằm trong BUỒNG ĐỆM (≤ 2 ký hiệu cửa có tâm trong phòng hoặc
   cách biên ≤ 1 m) hoặc trong BUỒNG THANG (phòng chứa tâm hộp thang bộ). Sảnh tiếp tân, thông tầng, hành lang chung nhiều cửa phòng: RẢI theo mẫu (test E16).
