@@ -2,6 +2,18 @@
 
 File này cập nhật sau mỗi mốc việc và trước khi hết usage. Phiên mới đọc mục "ĐANG LÀM / VIỆC TIẾP THEO" trước.
 
+## VIỆC MỚI 25/11 (người dùng giao 14:12; CHƯA LÀM vì cửa sổ 5 giờ 100 %, reset 14:30 25/11; CronCreate 14:35 tự làm tiếp)
+Yêu cầu gốc: (1) xem cây thư mục mẫu `DA-GT-2026-01_Tuyen_Duong_Do_Thi_Ket_Noi_Ha_Tang` (00_PHAP_LY_VA_QUAN_LY_DU_AN, 01_BIM_MANAGEMENT_CDE_ISO19650,
+02_KHAO_SAT_VA_DU_LIEU_DAU_VAO, 03_THIET_KE_CHUYEN_NGANH 01–08, 04_KINH_TE_XAY_DUNG_DU_TOAN_DAU_THAU, 05_THUYET_MINH_BAO_CAO_BAN_VE), đánh giá
+tính hợp lý, áp cách chia danh mục công việc cho TKPCCC; (2) làm thêm 1 thư mục cập nhật khi người dùng gửi file lên OneDrive / Google Drive
+(ảnh tham khảo: tool 3 tab "Upload nhanh & Lấy link", "Quản lý Share & Lịch sử", "Quy hoạch & Sắp xếp Drive"; kéo thả, quyền share, copy link);
+(3) cửa sổ 5 giờ chạm 95 % ⇒ ghi `LICH_SU.md` + file này.
+Hướng đã nghĩ (chưa chốt): KHÔNG đổi cây mã nguồn (vỡ đường dẫn skill, test); áp cây đánh số cho HỒ SƠ TỪNG CÔNG TRÌNH (`ket_qua/<dự án>/`,
+mẫu trống ở `data/mau_thu_muc_du_an/` + script tạo): 00_PHAP_LY, 01_DAU_VAO_KHAO_SAT, 02_THIET_KE_PCCC (báo cháy, chữa cháy, thoát nạn...),
+03_THAM_DINH_DOI_CHIEU, 04_KHOI_LUONG_BAO_GIA, 05_THUYET_MINH_BAN_VE, 06_THAM_DUYET_NGHIEM_THU. Nhận xét mẫu: tốt (số thứ tự, không dấu, theo
+vòng đời); dở: tên có dấu + ngoặc ở 00/04, BIM CDE ISO 19650 thừa với việc PCCC nhỏ, thiếu pha thẩm duyệt / nghiệm thu. Thư mục Drive: repo đã nằm
+trong OneDrive (tự đồng bộ); Google Drive cần OAuth của người dùng ⇒ hỏi người dùng muốn chiều nào (Drive → máy hay máy → Drive + lấy link) trước khi viết.
+
 ## ĐANG LÀM / VIỆC TIẾP THEO (cập nhật 2026-11-15)
 ### TỔNG RÀ SOÁT TOÀN DỰ ÁN (người dùng giao 15/11; đầu não TỰ làm tiếp sau mỗi lần reset, không hỏi, không xin quyền)
 Yêu cầu gốc: (1) review toàn dự án bằng Fable 5.2 effort cao + góp ý phát triển; (2) đầu não điều phối agent sửa, mọi mảng (khảo sát, sơ bộ thiết kế,
