@@ -28,6 +28,98 @@ namespace TKPCCC
             public int Nx, Ny;
             public double Bx, By, Tx, Ty, Ho; // bước, cách tường, % vùng hở
             public double O;                  // diện tích bảo vệ của một thiết bị (đơn vị bản vẽ bình phương), xem ORai
+            public List<List<Point2d>> Manh;  // vùng chữ L / T rải theo từng mảnh chữ nhật (TachChuNhat): dim theo mảnh; null = một lưới
+        }
+
+        /// Người dùng 25/11 (Karaoke 123 tầng 1 "dim nhảy tùm lum"): vùng chữ L (hành lang 19,8 x 1,8 m + cánh 2,7 x 5,4 m) rải MỘT lưới theo hộp bao
+        /// 19,8 x 7,2 m thì điểm lưới rơi ra ngoài, bị đẩy lệch hàng, thêm điểm bù, chuỗi dim cắt ngang tường. Vùng đặc < 70 % hộp bao thì cắt thẳng (song
+        /// song trục) qua đỉnh lõm thành các mảnh gần chữ nhật, mỗi mảnh rải + dim như một phòng; vùng PCCC_VUNG vẫn là một. Đường cắt chọn làm các mảnh đặc
+        /// nhất (theo diện tích), hoà thì mảnh dài nhất dài hơn (hành lang liền một dải). Đỉnh lõm có cạnh kề < 0,5 m (bậc mặt tường) không là chỗ cắt;
+        /// mảnh < 1 m² hoặc không đặc hơn ít nhất 5 % thì không cắt; mảnh ≥ 90 % hộp hoặc < 8 m² thì thôi cắt tiếp.
+        /// shortcut: chỉ cắt theo phương X / Y (lưới xoay "goc" không cắt); vùng chữ L xiên vẫn rải một lưới.
+        const double DAC_TACH = 0.7;
+
+        static double DoDac(List<Point2d> f)
+        {
+            double w = f.Max(p => p.X) - f.Min(p => p.X), h = f.Max(p => p.Y) - f.Min(p => p.Y);
+            return w * h > 0 ? Math.Abs(DienTichDaGiac(f)) / (w * h) : 1;
+        }
+
+        static List<List<Point2d>> TachChuNhat(List<Point2d> d, double m)
+        {
+            List<List<Point2d>> kq = new List<List<Point2d>>();
+            if (d.Count < 5 || DoDac(d) >= DAC_TACH) { kq.Add(d); return kq; }
+            double tol = 0.002 / m, e = 1 / m;
+            Func<List<Point2d>, double> dt = f => Math.Abs(DienTichDaGiac(f));
+            Func<List<Point2d>, double> dai = f => Math.Max(f.Max(p => p.X) - f.Min(p => p.X), f.Max(p => p.Y) - f.Min(p => p.Y));
+            Func<double, double, double, double, List<Point2d>> hcn = (a0, b0, a1, b1) => new List<Point2d> { new Point2d(a0, b0), new Point2d(a1, b0), new Point2d(a1, b1), new Point2d(a0, b1) };
+            Queue<List<Point2d>> cho = new Queue<List<Point2d>>();
+            cho.Enqueue(d);
+            int vong = 0;
+            while (cho.Count > 0)
+            {
+                List<Point2d> f = cho.Dequeue();
+                if (DoDac(f) >= 0.9 || dt(f) * m * m < 8 || ++vong > 20) { kq.Add(f); continue; }
+                List<Point2d> g = new List<Point2d>(f);
+                if (DienTichDaGiac(g) < 0) g.Reverse();
+                double x0 = g.Min(p => p.X) - e, y0 = g.Min(p => p.Y) - e, x1 = g.Max(p => p.X) + e, y1 = g.Max(p => p.Y) + e, a = dt(g);
+                List<double>[] daThu = { new List<double>(), new List<double>() }; // đường cắt đã thử: [0] x, [1] y
+                List<List<Point2d>> tot = null;
+                double diem = DoDac(g), dTot = 0;
+                for (int i = 0; i < g.Count; i++)
+                {
+                    Point2d q0 = g[(i - 1 + g.Count) % g.Count], p = g[i], q1 = g[(i + 1) % g.Count];
+                    Vector2d e0 = p - q0, e1 = q1 - p;
+                    if (e0.X * e1.Y - e0.Y * e1.X >= 0 || e0.Length * m < 0.5 || e1.Length * m < 0.5) continue; // lồi, hoặc bậc nhỏ
+                    foreach (bool doc in new[] { true, false })
+                    {
+                        // chỉ đỉnh có cạnh kề song song đường cắt (góc vuông theo trục)
+                        if (!(Math.Abs(doc ? e0.X : e0.Y) <= tol || Math.Abs(doc ? e1.X : e1.Y) <= tol)) continue;
+                        double c = doc ? p.X : p.Y;
+                        if (daThu[doc ? 0 : 1].Any(t => Math.Abs(t - c) <= tol)) continue;
+                        daThu[doc ? 0 : 1].Add(c);
+                        HashSet<List<Point2d>> lo = new HashSet<List<Point2d>>();
+                        List<List<Point2d>> pa = BoolVung(g, doc ? hcn(x0, y0, c, y1) : hcn(x0, y0, x1, c), BooleanOperationType.BoolIntersect, tol, lo);
+                        List<List<Point2d>> pb = BoolVung(g, doc ? hcn(c, y0, x1, y1) : hcn(x0, c, x1, y1), BooleanOperationType.BoolIntersect, tol, lo);
+                        if (pa == null || pb == null || lo.Count > 0) continue;
+                        List<List<Point2d>> mh = pa.Concat(pb).Where(x => dt(x) * m * m >= 0.01).ToList();
+                        if (mh.Count < 2 || mh.Any(x => dt(x) * m * m < 1)) continue;
+                        double s = mh.Sum(x => dt(x) * DoDac(x)) / a, l = mh.Max(dai);
+                        if (s > diem + 0.005 || (tot != null && s > diem - 0.005 && l > dTot)) { tot = mh; diem = s; dTot = l; }
+                    }
+                }
+                if (tot == null || diem < DoDac(g) + 0.05) { kq.Add(f); continue; }
+                foreach (List<Point2d> x in tot) cho.Enqueue(x);
+            }
+            return kq;
+        }
+
+        /// Lưới của vùng d: vùng chữ L / T (TachChuNhat ra ≥ 2 mảnh) thì mỗi mảnh một lưới, gộp điểm, nhớ mảnh để dim theo mảnh.
+        static LuoiRai LuoiTach(List<Point2d> d, double m, Func<List<Point2d>, LuoiRai> luoi)
+        {
+            List<List<Point2d>> manh = TachChuNhat(d, m);
+            if (manh.Count < 2) return luoi(d);
+            List<LuoiRai> ds = manh.Select(luoi).ToList();
+            LuoiRai r = new LuoiRai { Nx = ds.Sum(x => x.Nx), Ny = ds.Max(x => x.Ny), Bx = ds.Max(x => x.Bx), By = ds.Max(x => x.By), Tx = ds.Max(x => x.Tx),
+                Ty = ds.Max(x => x.Ty), Ho = ds.Max(x => x.Ho), O = ds.Max(x => x.O), Manh = manh };
+            foreach (LuoiRai x in ds) r.Diem.AddRange(x.Diem);
+            return r;
+        }
+
+        /// Vùng để dim: một vùng d với mọi điểm, hoặc từng mảnh (LuoiRai.Manh) với điểm nằm trong / gần mảnh đó nhất.
+        static List<KeyValuePair<List<Point2d>, List<Point3d>>> VungDim(List<Point2d> d, LuoiRai r, List<Point3d> diem)
+        {
+            List<KeyValuePair<List<Point2d>, List<Point3d>>> kq = new List<KeyValuePair<List<Point2d>, List<Point3d>>>();
+            if (r.Manh == null) { kq.Add(new KeyValuePair<List<Point2d>, List<Point3d>>(d, diem)); return kq; }
+            foreach (List<Point2d> p in r.Manh) kq.Add(new KeyValuePair<List<Point2d>, List<Point3d>>(p, new List<Point3d>()));
+            foreach (Point3d q in diem)
+            {
+                Point2d c = new Point2d(q.X, q.Y);
+                int i = r.Manh.FindIndex(p => TrongDaGiac(p, c));
+                if (i < 0) i = Enumerable.Range(0, r.Manh.Count).OrderBy(j => CachVien(r.Manh[j], c)).First();
+                kq[i].Value.Add(q);
+            }
+            return kq;
         }
 
         // ---------- Hình học ----------
@@ -1078,12 +1170,16 @@ namespace TKPCCC
             ObjectId kieu = coKieu ? dst[ten] : DamBaoKieuKt(g);
             double cao = LaySo(NhomKyHieu("kt"), "cao", 250);
             ObjectId l = DamBaoLayer(g.Db, g.Tr, CaiDat.DimLop(), 8);
-            foreach (Dimension d in KtLuoi(vung, r.Diem, cheo || CaiDat.DimDang() == CaiDat.DIM_CHUOI_CHEO, kieu, cao, EPS_DIM_M / HeSoMet(g.Db)))
-            {
-                if (!coKieu) d.Dimscale = cao / 2.5; // chưa chọn kiểu: cỡ chữ theo ky_hieu.json
-                d.LayerId = l;
-                Them(g, d);
-            }
+            foreach (KeyValuePair<List<Point2d>, List<Point3d>> kv in VungDim(vung, r, r.Diem))
+                foreach (Dimension d in KtLuoi(kv.Key, kv.Value, cheo || CaiDat.DimDang() == CaiDat.DIM_CHUOI_CHEO, kieu, cao, EPS_DIM_M / HeSoMet(g.Db)))
+                {
+                    // như KtSauRai (người dùng 25/11: dim spec hiện 4 số lẻ): mặc định bản vẽ rồi gán kiểu, kiểu mới áp đủ định dạng số
+                    d.SetDatabaseDefaults(g.Db);
+                    d.DimensionStyle = kieu;
+                    if (!coKieu) d.Dimscale = cao / 2.5; // chưa chọn kiểu: cỡ chữ theo ky_hieu.json
+                    d.LayerId = l;
+                    Them(g, d);
+                }
         }
 
         /// Chuỗi kích thước thiết bị theo bản mẫu người dùng gửi 16/11 (hàng trùng toạ độ chỉ dim một lần, khác lưới mới dim thêm, dim sát thiết bị):
@@ -1319,7 +1415,8 @@ namespace TKPCCC
             List<LuoiRai> luoi = new List<LuoiRai>();
             foreach (List<Point2d> d in vung)
             {
-                LuoiRai r = LuoiVung(d, sx, sy, bx, by, lex, ley, LaySo(o, "chan", 0.05 / m), dt, goc, LayCo(o, "theo_hang", false), tuongMax, cachMin);
+                Func<List<Point2d>, LuoiRai> luoiMot = x => LuoiVung(x, sx, sy, bx, by, lex, ley, LaySo(o, "chan", 0.05 / m), dt, goc, LayCo(o, "theo_hang", false), tuongMax, cachMin);
+                LuoiRai r = goc == 0 ? LuoiTach(d, m, luoiMot) : luoiMot(d); // vùng chữ L / T: từng mảnh chữ nhật (người dùng 25/11)
                 // Chỉ xảy ra khi rải theo "buoc": bước đúng là của người gọi, plugin không tự sửa.
                 if (dt > 0 && r.O > dt * (1 + 1e-9))
                     throw new System.Exception(string.Format(CultureInfo.InvariantCulture,
@@ -1344,6 +1441,7 @@ namespace TKPCCC
                     g.KqRai.Add(new Dictionary<string, object> { { "n", r.Diem.Count }, { "nx", r.Nx }, { "ny", r.Ny }, { "bx", Lt(r.Bx) }, { "by", Lt(r.By) },
                         { "tuong", new double[] { Lt(r.Tx), Lt(r.Ty) } }, { "m2", Math.Round(r.O * m * m, 2) }, { "ho", r.Ho },
                         { "cheo", Lt(CheoGoc(d, r.Diem).Select(c => c[0].GetDistanceTo(c[1])).DefaultIfEmpty(0).Max()) } });
+                if (r.Manh != null && g.KqRai.Count > 0 && g.KqRai.Count <= DOC_TOI_DA) ((Dictionary<string, object>)g.KqRai[g.KqRai.Count - 1])["manh"] = r.Manh.Count;
             }
         }
 
@@ -2376,7 +2474,9 @@ namespace TKPCCC
                     bool laHopNho = nhoCuaHop.TryGetValue(d, out nhoD);
                     LuoiRai r;
                     // Người dùng 16/11: vùng nhận sai (mặt bao cả mặt bằng, 763 079 m²) cho lưới hàng nghìn thiết bị: bỏ riêng vùng đó, không vẽ vùng, rải tiếp vùng khác.
-                    try { r = LuoiVung(d, s, s, 0, 0, le, le, 0.05 / m, dt, 0, theoHang, tuongMax, cachMin); }
+                    Func<List<Point2d>, LuoiRai> luoiMot = x => LuoiVung(x, s, s, 0, 0, le, le, 0.05 / m, dt, 0, theoHang, tuongMax, cachMin);
+                    // vùng chữ L / T (người dùng 25/11): từng mảnh chữ nhật; khoang dầm, hộp khoang nhỏ giữ một lưới
+                    try { r = laHopNho || khoangChia.ContainsKey(d) ? luoiMot(d) : LuoiTach(d, m, luoiMot); }
                     catch (System.Exception ex)
                     {
                         soBo++;
@@ -2439,7 +2539,7 @@ namespace TKPCCC
                             if (!diemCha.TryGetValue(cha, out l)) { l = new List<Point3d>(); diemCha[cha] = l; }
                             l.AddRange(r.Diem);
                         }
-                        else soKtRai = KtSauRai(db, tr, ms, d, r.Diem, null, nhanThem.Cot);
+                        else foreach (KeyValuePair<List<Point2d>, List<Point3d>> kv in VungDim(d, r, r.Diem)) soKtRai += KtSauRai(db, tr, ms, kv.Key, kv.Value, null, nhanThem.Cot);
                     }
                     else foreach (Point3d p in r.Diem)
                     {
@@ -2448,7 +2548,7 @@ namespace TKPCCC
                     }
                     tong += r.Diem.Count;
                     if (r.Ho > 0) soHo++;
-                    ed.WriteMessage("\n[TKPCCC] PCCC_RAI " + v.ma + " n=" + r.Diem.Count + " luoi=" + r.Nx + "x" + r.Ny
+                    ed.WriteMessage("\n[TKPCCC] PCCC_RAI " + v.ma + " n=" + r.Diem.Count + (r.Manh != null ? " manh=" + r.Manh.Count : "") + " luoi=" + r.Nx + "x" + r.Ny
                         + " buoc=" + Lt(r.Bx).ToString(CultureInfo.InvariantCulture) + "x" + Lt(r.By).ToString(CultureInfo.InvariantCulture)
                         + " m2=" + Math.Round(r.O * m * m, 2).ToString(CultureInfo.InvariantCulture)
                         + (r.Ho > 0 ? " HO=" + r.Ho.ToString(CultureInfo.InvariantCulture) + "% (vùng chưa phủ hết, kiểm lại)" : "")

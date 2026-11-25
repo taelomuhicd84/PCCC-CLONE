@@ -53,6 +53,10 @@ Mọi chỗ bổ sung tay ghi lại vào file `cad/skills/mau/` của công trì
    bồn cầu / lavabo (`GomVatDung`: polyline kín, elip, tròn, cạnh 0,25–0,9 m, không thuộc tường / cửa / cột) → gộp vào phòng gốc kề lớn nhất (một lượt:
    buồng xí chỉ kề sảnh không bị kéo theo). (b) Phòng ≤ 4 m² (ô giao) → phòng kề lớn nhất; hai dải hành lang (2A/P ≤ 2,5 m, cạnh dài ≥ 2,5 lần) CÙNG
    PHƯƠNG, cầu chung dài ≥ 0,8 bề rộng (cắt ngang trọn hành lang; cầu ô cửa 0,9 m không tính) → một. Test E18 (ô giao vào hành lang 18 m²), E22, E22B, E23.
+   NGƯỜI DÙNG 25/11 (Karaoke 123 tầng 1, phòng (A-B)/3'-4: "chưa bao quanh tường WC trong phòng"): vùng phòng phải ÔM sảnh trước cửa WC, đường bao đi vòng
+   theo mặt ngoài tường WC (phòng 25,65 → 27,3 m², như các phòng tầng 2). Lỗi: cánh cửa WC vẽ polyline kín 40 x 690 mm trên LAYER TƯỜNG, dựng như tường
+   khoét vào sảnh 1,1 x 1,5 m, chu vi tăng 1,4 m, 2A/P còn 0,49 < 0,5 nên (a) không gộp. Sửa: bề rộng của (a) lấy thêm theo chu vi HỘP BAO (khấc, gai
+   mỏng không tính). Test E33.
 3. Lọc lần lượt, mỗi lọc in một dòng: ô X, gạch chéo (`bo_phong=`), ngoài trục (`bo_ngoai_truc=`), WC / thang (`bo_khu_khong_bao=`), sảnh thang (`bo_sanh_thang=`),
    chữ khu (`bo_khu_ten=`), hiên (`bo_hien=`), cụm phòng nhỏ tách xa mặt bằng chính (hình chi tiết, mặt cắt: `bo_cum=`).
    `bo_cum` không xét phòng có tâm trong khung trục (trường học khung 6, 21/11: 2 tầng chọn một lần, nhà thi đấu cách dãy học một sân > 2 m

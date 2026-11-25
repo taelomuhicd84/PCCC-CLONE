@@ -10,6 +10,10 @@ Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `cad/LICH_SU.m
   `Rai.cs` in `mat_bang_tang=`, khung trục chỉ áp cho cụm có phòng trong khung khi ≥ 2 tên tầng (trước: bỏ hết 16 phòng tầng 2), chiếu sau `LamGon`.
   Luật: `cad/skills/nhan_dang/cua_thang_khu.md` (gạch 25/11). Test E31 + phép kiểm bản chép Karaoke tầng 1 + 2 (tự dựng tầng 2 + tên như trên).
   `chay_thu` 212 phép + `thu_mcp` TAT CA DAT; bundle build (AutoCAD đang mở: tắt hẳn, mở lại mới nạp). Bản vẽ người dùng đã sửa bằng spec.
+- 25/11 trưa (người dùng soát lại, Bot chat): (1) phòng (A-B)/3'-4 tầng 1 phải ôm sảnh trước WC: cánh cửa WC polyline 40 x 690 trên layer tường làm
+  2A/P sảnh 0,49 < 0,5 → `GopMatNho` (a) lấy thêm bề rộng theo hộp bao (E33); (2) hành lang bám sát tường như người dùng sửa (49,88 m²): `ChieuThongTang`
+  không `LamGon` lại mảnh; (3) "dim nhảy tùm lum": vùng chữ L rải một lưới theo hộp bao → `TachChuNhat` / `LuoiTach` / `VungDim` (`Rai.cs`) rải + dim từng
+  mảnh chữ nhật (E32, `manh=`); dim thao tác `rai` gán kiểu như `PCCC_RAI`. Bản vẽ người dùng đã sửa (spec theo mảnh, xoá dim thừa 2F9AF, dim sảnh vẽ lại).
 - CÒN: thang tầng 1 Karaoke (nét rời, vế cong) chưa nhận là thang bộ; mặt bằng xoay / không tên tầng thì không chiếu (shortcut). Chưa thêm 1 dòng vào
   skill `tkpccc-ve-cad` (ghi `cad/.claude/` chưa được cấp quyền). BƯỚC TIẾP: `cad-review` (Opus max) mốc 23/11 (3) + 25/11, rồi push từ tab Terminal.
 

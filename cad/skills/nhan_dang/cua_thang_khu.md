@@ -53,7 +53,10 @@ Mã: `CacMat` (khép khe cửa), `GomCua`, `GomKhu`, `HinhBac`, `TachOX`, `GomCh
   tầng nhận theo TÊN MẶT BẰNG "MẶT BẰNG / MB ... TẦNG n" (chữ, MText hoặc thuộc tính block khung tên, vd `NAMECHITIET` DONG2; `GomTenTang`, `SoTang`:
   TẦNG 2-5 = 2, HẦM 1 = -1, TRỆT = 0,9, LỬNG = 1,5, LẦU 1 = 1,9, MÁI / TUM = 1000); cụm phòng (hộp bao cách ≤ 2 m) nhận tên gần nhất ≤ 15 m;
   dời giữa hai tầng = dời được nhiều cặp phòng cùng diện tích + cùng cỡ hộp nhất (≥ 3 phòng, ≥ 25 %); tách phòng bằng Region AutoCAD SAU `LamGon`
-  (phòng chưa làm gọn tự chạm qua khe cửa 100 mm kho gầm thang, Region không dựng). Karaoke tầng 1: 122,22 → 61,77 (= ô X tầng 2) + 50,22, bỏ 10,6.
+  (phòng chưa làm gọn tự chạm qua khe cửa 100 mm kho gầm thang, Region không dựng). Karaoke tầng 1: 122,22 → 61,77 (= ô X tầng 2) + 49,88, bỏ 10,6.
+  Người dùng sửa tay 25/11 "hành lang phải bao kẹp sát tường": mảnh sau khi tách KHÔNG làm gọn lại (LamGon gộp bậc 0,2 m mặt tường thang ra cạnh cắt
+  sảnh, hành lang lấn vào tường thang 1,7 m: 50,22 m²); nay giữ bậc, 49,88 m² đúng như vùng người dùng sửa. Hành lang chữ L này rải theo mảnh
+  (`cad/skills/ve/bao_chay/rai_dau_bao.md`, gạch 25/11).
   Cũng 25/11: quét nhiều tầng (≥ 2 tên tầng) thì khung trục chỉ áp cho cụm phòng có phòng trong khung (trước: trục nhận ở tầng 1, bỏ hết 16 phòng tầng 2
   `bo_ngoai_truc`). Test E31 + phép kiểm bản chép Karaoke tầng 1 + 2 trong `chay_thu.ps1`.
   shortcut: không có tên mặt bằng ghi số tầng, mặt bằng đặt xoay / lật, hoặc quét từng tầng riêng thì không chiếu: vẽ polyline `PCCC_VUNG` theo ô X tầng trên.

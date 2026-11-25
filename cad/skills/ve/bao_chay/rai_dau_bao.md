@@ -15,6 +15,13 @@ Mã: `LuoiVung`, `DoiVao`, `PhuKin`, `KtLuoi` (`cad/module/plugin/Rai.cs`); thao
 - Đầu phun dùng ké vùng báo cháy (người dùng 21/11): một lệnh `rai` `ma` SPR_..., `l` PCCC_VUNG + `hop`, `kt`:true. Phòng bị bỏ khi rải báo cháy
   (WC, thang, sảnh thang) KHÔNG cần vùng đầu phun (người dùng chốt 21/11): không dựng thêm vùng cho chúng.
 - Xưởng mái kèo: mỗi khoang rải độc lập (khoang 20 x 6 m ra 2 đầu, 30 x 6 m ra 3 đầu, cách tường 5 m, cách vì kèo 3 m với h 9 m).
+- NGƯỜI DÙNG 25/11 (Karaoke 123 tầng 1, "dim nhảy tùm lum"): vùng chữ L / T (hành lang 19,8 x 1,8 m + cánh 2,7 x 5,4 m, đặc 35 % hộp bao) rải MỘT lưới
+  theo hộp bao 19,8 x 7,2 m thì điểm rơi ra ngoài, bị đẩy lệch hàng, thêm điểm bù, chuỗi dim cắt ngang tường / phòng khác (4 đầu báo, 11 dim loạn).
+  Đúng: cắt vùng thành các MẢNH gần chữ nhật, mỗi mảnh rải + dim như một phòng (hành lang 1 hàng đúng giữa 4950 | 9900 | 4950 + 900 | 900 một lần;
+  cánh 1350 | 1350, 2700 | 2700); vùng `PCCC_VUNG` vẫn là một. Plugin ĐÃ LÀM (`TachChuNhat`, `LuoiTach`, `VungDim` trong `Rai.cs`, cả `PCCC_RAI`
+  lẫn thao tác `rai`; in `manh=N`): vùng đặc < 70 % hộp bao thì cắt thẳng theo trục qua đỉnh lõm (cạnh kề ≥ 0,5 m), chọn đường cắt làm mảnh đặc nhất,
+  hoà thì giữ dải dài nhất liền (hành lang chính không bị cắt); mảnh ≥ 90 % hộp hoặc < 8 m² thì thôi. Phòng khấc WC (đặc 80–90 %) vẫn một lưới.
+  Test E32. Cùng ngày: dim của thao tác `rai` `kt`:true gán kiểu như `PCCC_RAI` (mặc định bản vẽ rồi gán kiểu): trước hiện "3150.0000".
 
 ## Khoang dầm (trần hở)
 - Loại trần, cách đọc dầm: `cad/skills/nhan_dang/dam_khoang.md`.
@@ -39,4 +46,4 @@ Mã: `LuoiVung`, `DoiVao`, `PhuKin`, `KtLuoi` (`cad/module/plugin/Rai.cs`); thao
 ## Còn tồn (đầu `cad/TIEN_DO.md` có phần CÒN)
 - Mã chưa khai `tuong_min` (vd đầu phun): tạm 0,1 m (`CACH_TUONG_MIN_M`), KHÔNG phải trị số quy chuẩn; có số thật thì khai vào `data/khoang_cach_rai.json`.
 - (Đã hết 23/11) Hành lang hẹp đặt sát 0,5 m tới một tường: Karaoke 123 T2 hai hành lang ra đúng giữa (970 | 970, 900 | 900), E25 kiểm hàng y = giữa.
-  Hành lang lồi lõm (chữ L, ô giao lệch) chưa có ca thử riêng.
+  Hành lang chữ L: rải theo mảnh từ 25/11 (E32). Hành lang lệch xiên (không theo trục) vẫn một lưới.

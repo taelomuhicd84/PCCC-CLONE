@@ -1209,8 +1209,10 @@ namespace TKPCCC
                             List<List<Point2d>> giao = BoolVung(r, p, BooleanOperationType.BoolIntersect, tol, lo);
                             List<List<Point2d>> con = BoolVung(r, p, BooleanOperationType.BoolSubtract, tol, lo);
                             if (giao == null || con == null) continue;
-                            giao = PhongThat(giao, m).Select(f => lo.Contains(f) ? f : LamGon(f, LAM_GON_M / m, tol)).ToList();
-                            con = PhongThat(con, m).Select(f => lo.Contains(f) ? f : LamGon(f, LAM_GON_M / m, tol)).ToList();
+                            // Không làm gọn lại mảnh (người dùng 25/11 "hành lang phải bao kẹp sát tường"): r, p đã gọn; LamGon mảnh gộp bậc 0,2 m mặt tường
+                            // thang vào cạnh cắt sảnh (cạnh ngoài dài hơn), hành lang lấn 0,2 m vào tường thang suốt 1,7 m.
+                            giao = PhongThat(giao, m);
+                            con = PhongThat(con, m);
                             double aG = giao.Sum(f => Math.Abs(DienTichDaGiac(f))) * m * m, aC = con.Sum(f => Math.Abs(DienTichDaGiac(f))) * m * m;
                             if (aG < 2 || aC < 2) continue; // phòng nằm hẳn trong / ngoài vùng sảnh
                             // Mảnh còn lại là vế thang cạnh sảnh: chứa hộp thang bộ chiếm ≥ 1/3 mảnh, hoặc mảnh ≤ 15 m² mà < 1/2 diện tích có phòng tầng trên phủ
@@ -2417,7 +2419,10 @@ namespace TKPCCC
             {
                 if (giu.Contains(f0)) continue;
                 double a0 = dt(f0);
-                if (a0 < 0.8 || a0 > 6 || rong(f0) < 0.5 || khuKhong.Any(p => TrongDaGiac(f0, p)) || vatDung.Any(p => TrongDaGiac(f0, p))) continue;
+                // Người dùng 25/11 (Karaoke 123 tầng 1, phòng trục (A-B)/3'-4 "chưa bao quanh tường WC"): cánh cửa WC vẽ polyline 40 x 690 mm trên layer tường
+                // khoét vào sảnh 1,1 x 1,5 m một khấc, chu vi tăng 1,4 m, 2A/P còn 0,49 < 0,5: sảnh không gộp. Bề rộng lấy thêm theo chu vi hộp bao (bỏ khấc, gai).
+                double rHop = 2 * a0 / (2 * (f0.Max(q => q.X) - f0.Min(q => q.X) + f0.Max(q => q.Y) - f0.Min(q => q.Y)) * m);
+                if (a0 < 0.8 || a0 > 6 || Math.Max(rong(f0), rHop) < 0.5 || khuKhong.Any(p => TrongDaGiac(f0, p)) || vatDung.Any(p => TrongDaGiac(f0, p))) continue;
                 List<Point2d> f = ccw(f0);
                 int chon = -1;
                 for (int i = 0; i < goc.Count; i++) // xét phòng GỐC (chưa gộp): buồng xí chỉ kề sảnh không kéo theo
