@@ -3,6 +3,13 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `07_CAD/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `07_CAD/00_QUAN_LY_DU_AN/KE_HOACH.md`. Nhật ký: `07_CAD/00_QUAN_LY_DU_AN/LICH_SU.md`. Luật riêng: `07_CAD/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `07_CAD/00_QUAN_LY_DU_AN/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`07_CAD/CLAUDE.md`).
 
+## 26/11 chiều (tiếp): CÁCH NHẬN WC — KHO 6,9 m² CÓ VÙNG, WC CÓ THIẾT BỊ KHÔNG VÙNG — XONG MÃ + TEST E36 (chưa build.bat, chưa push)
+- Người dùng: ô 2,5 x 2,75 m trục 8 (phòng 8–9 dãy dưới) "khá to, có thể là kho nên phải bao vùng"; rồi chốt "phòng rất nhỏ, hoặc ghi chữ WC, hoặc có
+  thiết bị WC thì coi là WC". Bản vẽ: đã chạy `b4a_vung.json` (25 vùng) + vẽ thêm vùng kho [437180,-51889]–[439670,-54639] (đã thêm vào file spec, nay 26 vùng).
+- `Rai.cs`: `bo_wc_trong_phong` ngưỡng 8 → 5 m²; lọc mới `bo_wc_thiet_bi=` (phòng ≤ 8 m², không chữ tên, chứa `VatDung` nét rời). Tri thức `phong_vung.md` mục (5), (6).
+- Test: E36 mới DAT; thu_mcp TAT CA DAT; chay_thu còn 1 LOI cũ (Karaoke 1 + 2, vung=30; HEAD cũng LOI).
+- Tiếp theo: build.bat (AutoCAD tắt), người dùng duyệt vùng rồi rải đầu báo; `cad-review` mốc.
+
 ## 26/11 tối: BOT CHAT — TAB CŨ VẪN CHẠY KHI NGƯỜI DÙNG THAO TÁC TAB KHÁC — XONG, thu_gui TAT CA DAT (28/28), chưa push
 Người dùng: "ra lệnh tại tab đó, qua tab khác thao tác, tab cũ vẫn thực thi lệnh". Gốc: `06_VE_TU_DONG_AI/cad/Cau.cs` `Nhip` thấy tab đang hiện dở lệnh
 (`CMDACTIVE`) là dừng CẢ hàng đợi, nên việc khoá bản vẽ tab cũ (chạy nền từ 19/11) đứng tới khi người dùng xong lệnh; quá 60 s máy chủ MCP báo "đang bận".

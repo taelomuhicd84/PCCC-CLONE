@@ -1470,9 +1470,9 @@ namespace TKPCCC
                                 + string.Join(",", boKhu.Select(f0 => Math.Round(DienTichDaGiac(f0) * m * m, 1).ToString(CultureInfo.InvariantCulture)))
                                 + " (lõi thang máy, buồng thang, WC: không đặt đầu báo; cần rải thì bấm điểm trong phòng đó).");
                             // Người dùng 26/11 (TESTBCHAY_20_11: "vùng wc nhỏ trong phòng này, không được bao phòng này; các phòng có wc nhỏ cũng tương tự"):
-                            // phòng nhỏ ≤ 8 m², không chữ tên, có ký hiệu cửa, mọi cửa của nó chỉ mở sang PHÒNG (không sang dải hành lang) = WC riêng trong phòng:
+                            // phòng nhỏ ≤ 5 m² (26/11 chiều hạ từ 8), không chữ tên, có ký hiệu cửa, mọi cửa của nó chỉ mở sang PHÒNG (không sang dải hành lang) = WC riêng trong phòng:
                             // không vùng, không đầu báo (vùng phòng chủ đã chừa nó ra vì nó có tường / ô cửa có cánh, GopMatNho không gộp).
-                            // shortcut: kho nhỏ ≤ 8 m² không ghi chữ, cửa mở vào phòng cũng bị coi là WC: cần rải thì bấm điểm trong phòng đó.
+                            // shortcut: kho nhỏ ≤ 5 m² không ghi chữ, cửa mở vào phòng cũng bị coi là WC: cần rải thì bấm điểm trong phòng đó.
                             Func<List<Point2d>, bool> laHanhLang = g0 =>
                             {
                                 double a0 = Math.Abs(DienTichDaGiac(g0)) * m * m, p0 = 0;
@@ -1486,7 +1486,9 @@ namespace TKPCCC
                                 return TrongDaGiac(g0, c) || CachVien(g0, c) <= Math.Max(h[1].X - h[0].X, h[1].Y - h[0].Y) / 2 + 0.3 / m; };
                             List<List<Point2d>> wcTrong = vung.Where(f0 =>
                             {
-                                if (Math.Abs(DienTichDaGiac(f0)) * m * m > 8 || nhanThem.TenChu.Any(p => TrongDaGiac(f0, p)) || nhanThem.TenPhong.Any(p => TrongDaGiac(f0, p))) return false;
+                                // Người dùng 26/11 chiều (ô 2,5 x 2,75 m = 6,9 m² trong phòng 8–9 TESTBCHAY: "phòng đó cũng khá to, có thể là kho nên phải bao vùng"):
+                                // WC riêng chỉ tới 5 m² (WC thật ở đó 2,6–3,2 m²); ô lớn hơn coi là kho, vẫn có vùng và đầu báo.
+                                if (Math.Abs(DienTichDaGiac(f0)) * m * m > 5 || nhanThem.TenChu.Any(p => TrongDaGiac(f0, p)) || nhanThem.TenPhong.Any(p => TrongDaGiac(f0, p))) return false;
                                 List<Point2d[]> cuaF = nhanThem.Cua.Where(h => ganCua(f0, h)).ToList();
                                 if (cuaF.Count == 0) return false;
                                 // bên kia cửa = mặt khác GẦN tâm hộp cửa nhất (cửa sát góc: hành lang sau tường vuông góc cách xa hơn phòng chủ)
@@ -1513,6 +1515,17 @@ namespace TKPCCC
                                 vung = vung.Where(f0 => !wcTrong.Contains(f0)).ToList();
                                 ed.WriteMessage("\n[TKPCCC] bo_wc_trong_phong=" + wcTrong.Count + " m2=" + string.Join(",", wcTrong.Select(f0 => Math.Round(Math.Abs(DienTichDaGiac(f0)) * m * m, 1).ToString(CultureInfo.InvariantCulture)))
                                     + " (phòng nhỏ không chữ, cửa chỉ mở vào phòng khác = WC riêng trong phòng: không đặt đầu báo; cần rải thì bấm điểm trong phòng đó).");
+                            }
+                            // Người dùng 26/11 chiều ("phòng rất nhỏ, hoặc ghi chữ WC, hoặc có thiết bị WC trong đó thì coi là WC"): chữ / block thiết bị đã bỏ ở
+                            // bo_khu_khong_bao, rất nhỏ ở bo_wc_trong_phong; còn thiết bị WC vẽ nét nổ rời (bồn cầu, lavabo, tiểu: hình kín 0,25–0,9 m, GomVatDung)
+                            // trong phòng ≤ 8 m², không chữ tên phòng: bỏ. shortcut: phòng nhỏ có đồ vật kín cỡ đó (ghế, tủ nhỏ) cũng bị bỏ: bấm điểm để rải.
+                            List<List<Point2d>> wcTb = vung.Where(f0 => Math.Abs(DienTichDaGiac(f0)) * m * m <= 8 && !nhanThem.TenPhong.Any(p => TrongDaGiac(f0, p))
+                                && nhanThem.VatDung.Any(p => TrongDaGiac(f0, p))).ToList();
+                            if (wcTb.Count > 0)
+                            {
+                                vung = vung.Where(f0 => !wcTb.Contains(f0)).ToList();
+                                ed.WriteMessage("\n[TKPCCC] bo_wc_thiet_bi=" + wcTb.Count + " m2=" + string.Join(",", wcTb.Select(f0 => Math.Round(Math.Abs(DienTichDaGiac(f0)) * m * m, 1).ToString(CultureInfo.InvariantCulture)))
+                                    + " (phòng nhỏ có thiết bị vệ sinh vẽ nét rời = WC: không đặt đầu báo; cần rải thì bấm điểm trong phòng đó).");
                             }
                             // Người dùng 16/11 + 17/11 (vẽ lại vùng tầng 8 KOCHAM): sảnh thang máy không đặt đầu báo. Bản vẽ không ghi chữ "SẢNH": nhận là phòng
                             // ≤ 30 m² sát giếng thang (ô có dấu X, cách ≤ 0,6 m = bề dày vách). shortcut: ô X cũng là lỗ thông tầng, phòng nhỏ sát lỗ thông tầng bị bỏ theo.
