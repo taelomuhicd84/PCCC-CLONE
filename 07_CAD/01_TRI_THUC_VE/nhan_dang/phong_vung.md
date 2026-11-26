@@ -32,6 +32,8 @@ Nét nào là tường: `tuong_cot.md`. Cửa, thang, khu bỏ: `cua_thang_khu.m
   `bo_wc_trong_phong=`); (b) GHI CHỮ WC / VỆ SINH / TOILET (`bo_khu_khong_bao=`, tới 150 m²); (c) CÓ THIẾT BỊ WC bên trong (bồn cầu, lavabo, tiểu
   nam; block thiết bị → `bo_khu_khong_bao=`, nét nổ rời hình kín 0,25–0,9 m trong phòng ≤ 8 m² không chữ tên → `bo_wc_thiet_bi=`, test E36).
   Ô trống không chữ, không thiết bị, lớn hơn 5 m² là KHO: có vùng.
+  (7) NGƯỜI DÙNG 26/11: nét vùng `PCCC_VUNG` mặc định màu HỒNG (ACI 230, `MAU_VUNG` ở `NhanVung.cs`; `vung_tu_dong`, `PCCC_RAI`, op `net` layer này). Chỉ áp
+  khi tạo layer: layer đã có giữ màu; plugin đang chạy chưa build lại thì spec truyền `"mau":230`.
   Chỉ sảnh WC MỞ (không cánh, hoặc cánh chỉ phủ một phần chỗ thông) mới gộp vào phòng như mục 6 dưới.
   Plugin: (1), (2) đã đúng sẵn (`CacMat` khép miệng chữ L; khe có ký hiệu cửa thì khép); (3) `GopMatNho` (`o_nho_qua_cua=`, test E34);
   (4) lọc `bo_wc_trong_phong=` trong `PCCC_RAI` (`Rai.cs`; bên kia cửa = mặt gần tâm hộp cửa nhất; dải hành lang = rộng TB ≤ 2,5 m, dài ≥ 3 lần rộng;

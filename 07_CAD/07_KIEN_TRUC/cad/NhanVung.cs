@@ -21,6 +21,8 @@ namespace TKPCCC
     public partial class Lenh
     {
         const string LAYER_VUNG = "PCCC_VUNG";
+        // Người dùng 26/11: nét vùng báo cháy màu HỒNG cho dễ nhìn (ACI 230 = 255,0,191; trước là 6 tím sẫm / 7 trắng). Chỉ áp khi tạo layer; layer có sẵn giữ màu.
+        const short MAU_VUNG = 230;
         // shortcut: khe thẳng hàng ≤ 3 m coi là ô cửa và nối kín; cửa cuốn, cửa lớn rộng hơn thì truyền "ho" (spec)
         const double HO_CUA_M = 3.0;
         // Người dùng chốt 14/11 "cứ có cửa mình khép lại 1 vùng": khe 3–12 m vẫn khép khi có ký hiệu cửa hoặc là ô cửa trên tường hai nét (CacMat).
@@ -2623,7 +2625,7 @@ namespace TKPCCC
                         + Lt(ps[i].Y - g.Gy).ToString(CultureInfo.InvariantCulture) + "]: " + lyDo);
                 ds.Add(LamGon(d, LAM_GON_M / m, 0.002 / m));
             }
-            ObjectId lop = DamBaoLayer(g.Db, g.Tr, LayChu(o, "l", LAYER_VUNG), (short)LaySo(o, "mau", 6));
+            ObjectId lop = DamBaoLayer(g.Db, g.Tr, LayChu(o, "l", LAYER_VUNG), (short)LaySo(o, "mau", MAU_VUNG));
             foreach (List<Point2d> d in ds)
             {
                 Them(g, PlVung(d, lop));

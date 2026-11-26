@@ -1837,7 +1837,7 @@ namespace TKPCCC
             using (Transaction tr = db.TransactionManager.StartTransaction())
             {
                 BlockTableRecord ms = (BlockTableRecord)tr.GetObject(db.CurrentSpaceId, OpenMode.ForWrite);
-                ObjectId lop = veVung && !xem ? DamBaoLayer(db, tr, LAYER_VUNG, 6) : ObjectId.Null;
+                ObjectId lop = veVung && !xem ? DamBaoLayer(db, tr, LAYER_VUNG, MAU_VUNG) : ObjectId.Null;
                 ObjectId lopTia = tia && !xem ? DamBaoLayer(db, tr, LAYER_TIA, MauHe(v.he)) : ObjectId.Null;
                 string duoi = xem ? " (xem trước, chưa vẽ)" : "";
                 // Xem trước (spec addin mẫu): vẽ tạm điểm + vòng R hiệu dụng trên layer không in; lượt rải thật hay xem lại thì xoá bản tạm cũ.

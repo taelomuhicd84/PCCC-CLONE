@@ -512,7 +512,8 @@ namespace TKPCCC
         static ObjectId LayerOp(GoiSpec g, Dictionary<string, object> o)
         {
             string l = LayChu(o, "l", "0");
-            return l == "0" ? g.Db.LayerZero : DamBaoLayer(g.Db, g.Tr, l, (short)LaySo(o, "mau", 7));
+            // layer PCCC_VUNG mới tạo mặc định màu hồng (MAU_VUNG, NhanVung.cs); layer khác trắng
+            return l == "0" ? g.Db.LayerZero : DamBaoLayer(g.Db, g.Tr, l, (short)LaySo(o, "mau", string.Equals(l, LAYER_VUNG, StringComparison.OrdinalIgnoreCase) ? MAU_VUNG : 7));
         }
 
         static Polyline TaoPline(List<Point3d> ps, bool kin, ObjectId layer)
