@@ -634,7 +634,9 @@ namespace TKPCCC
 
         static void OpNet(GoiSpec g, Dictionary<string, object> o)
         {
-            Them(g, TaoPline(DsP(g, Lay(o, "p"), "p"), LayCo(o, "kin", false), LayerOp(g, o)));
+            Polyline pl = TaoPline(DsP(g, Lay(o, "p"), "p"), LayCo(o, "kin", false), LayerOp(g, o));
+            Them(g, pl);
+            if (string.Equals(LayChu(o, "l", "0"), LAYER_VUNG, StringComparison.OrdinalIgnoreCase)) VungLenTren(g.Tr, g.Ms, pl); // vùng: lớp trên cùng, màu hồng
         }
 
         static void OpTron(GoiSpec g, Dictionary<string, object> o)

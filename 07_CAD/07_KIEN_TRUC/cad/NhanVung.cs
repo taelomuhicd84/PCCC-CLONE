@@ -23,6 +23,20 @@ namespace TKPCCC
         const string LAYER_VUNG = "PCCC_VUNG";
         // Người dùng 26/11: nét vùng báo cháy màu HỒNG cho dễ nhìn (ACI 230 = 255,0,191; trước là 6 tím sẫm / 7 trắng). Chỉ áp khi tạo layer; layer có sẵn giữ màu.
         const short MAU_VUNG = 230;
+
+        /// Người dùng 26/11: nét vùng PCCC_VUNG mặc định nằm LỚP TRÊN CÙNG (thứ tự vẽ, DrawOrderTable.MoveToTop) và layer màu hồng (kể cả layer có sẵn màu trắng).
+        /// Gọi sau mỗi lần thêm polyline vùng vào không gian mô hình. shortcut: nét vẽ SAU đó (đầu báo, dây) vẫn nằm trên vùng; muốn vùng trên hết thì chạy lại sau cùng.
+        static void VungLenTren(Transaction tr, BlockTableRecord ms, Entity e)
+        {
+            try
+            {
+                DrawOrderTable dot = (DrawOrderTable)tr.GetObject(ms.DrawOrderTableId, OpenMode.ForWrite);
+                dot.MoveToTop(new ObjectIdCollection(new ObjectId[] { e.ObjectId }));
+                LayerTableRecord l = (LayerTableRecord)tr.GetObject(e.LayerId, OpenMode.ForRead);
+                if (l.Color.ColorIndex != MAU_VUNG) { l.UpgradeOpen(); l.Color = Color.FromColorIndex(ColorMethod.ByAci, MAU_VUNG); }
+            }
+            catch (System.Exception) { } // không đổi được thứ tự / màu: nét vẫn vẽ, không chặn
+        }
         // shortcut: khe thẳng hàng ≤ 3 m coi là ô cửa và nối kín; cửa cuốn, cửa lớn rộng hơn thì truyền "ho" (spec)
         const double HO_CUA_M = 3.0;
         // Người dùng chốt 14/11 "cứ có cửa mình khép lại 1 vùng": khe 3–12 m vẫn khép khi có ký hiệu cửa hoặc là ô cửa trên tường hai nét (CacMat).
@@ -2628,7 +2642,9 @@ namespace TKPCCC
             ObjectId lop = DamBaoLayer(g.Db, g.Tr, LayChu(o, "l", LAYER_VUNG), (short)LaySo(o, "mau", MAU_VUNG));
             foreach (List<Point2d> d in ds)
             {
-                Them(g, PlVung(d, lop));
+                Polyline plV = PlVung(d, lop);
+                Them(g, plV);
+                VungLenTren(g.Tr, g.Ms, plV);
                 // hop theo gốc của gói, làm tròn RA NGOÀI: dán thẳng vào "hop" của "rai" là lấy đúng polyline này.
                 g.KqVung.Add(new Dictionary<string, object> {
                     { "m2", Math.Round(DienTichDaGiac(d) * m * m, 2) }, { "dinh", d.Count },

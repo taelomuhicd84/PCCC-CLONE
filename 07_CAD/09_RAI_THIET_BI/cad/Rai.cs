@@ -1899,6 +1899,7 @@ namespace TKPCCC
                             Polyline pl = PlVung(dv, lop);
                             ms.AppendEntity(pl);
                             tr.AddNewlyCreatedDBObject(pl, true);
+                            VungLenTren(tr, ms, pl);
                             ed.WriteMessage("\n[TKPCCC] Vùng tự dựng m2=" + Math.Round(DienTichDaGiac(dv) * m * m, 2).ToString(CultureInfo.InvariantCulture)
                                 + " (" + dv.Count + " đỉnh) trên layer " + LAYER_VUNG + ".");
                         }

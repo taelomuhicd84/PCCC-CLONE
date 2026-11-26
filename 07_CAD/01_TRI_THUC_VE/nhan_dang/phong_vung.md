@@ -34,6 +34,8 @@ Nét nào là tường: `tuong_cot.md`. Cửa, thang, khu bỏ: `cua_thang_khu.m
   Ô trống không chữ, không thiết bị, lớn hơn 5 m² là KHO: có vùng.
   (7) NGƯỜI DÙNG 26/11: nét vùng `PCCC_VUNG` mặc định màu HỒNG (ACI 230, `MAU_VUNG` ở `NhanVung.cs`; `vung_tu_dong`, `PCCC_RAI`, op `net` layer này). Chỉ áp
   khi tạo layer: layer đã có giữ màu; plugin đang chạy chưa build lại thì spec truyền `"mau":230`.
+  (8) NGƯỜI DÙNG 26/11: nét vùng luôn nằm LỚP TRÊN CÙNG (thứ tự vẽ): `VungLenTren` (`NhanVung.cs`) gọi sau mỗi polyline vùng (`vung_tu_dong`, `PCCC_RAI`, `net`
+  layer `PCCC_VUNG`), `DrawOrderTable.MoveToTop` + đặt layer `PCCC_VUNG` hồng kể cả khi layer có sẵn màu trắng (thay "chỉ áp khi tạo layer" ở (7)).
   Chỉ sảnh WC MỞ (không cánh, hoặc cánh chỉ phủ một phần chỗ thông) mới gộp vào phòng như mục 6 dưới.
   Plugin: (1), (2) đã đúng sẵn (`CacMat` khép miệng chữ L; khe có ký hiệu cửa thì khép); (3) `GopMatNho` (`o_nho_qua_cua=`, test E34);
   (4) lọc `bo_wc_trong_phong=` trong `PCCC_RAI` (`Rai.cs`; bên kia cửa = mặt gần tâm hộp cửa nhất; dải hành lang = rộng TB ≤ 2,5 m, dài ≥ 3 lần rộng;
