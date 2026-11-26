@@ -271,7 +271,7 @@ def phep11():
 
 # ---------- 12. file nguoi dung sua chua track ----------
 def phep12():
-    for f in ('07_CAD/TKPCCC.bundle/Contents/block_alias.json', '07_CAD/TKPCCC.bundle/Contents/phim_tat.txt'):
+    for f in ('07_CAD/15_THU_VIEN_BLOCK/01_PCCC/block_alias.json', '07_CAD/TKPCCC.bundle/Contents/phim_tat.txt'):
         if (ROOT / f).exists():
             r = subprocess.run(['git', 'ls-files', '--error-unmatch', f], cwd=ROOT, capture_output=True)
             if r.returncode != 0:

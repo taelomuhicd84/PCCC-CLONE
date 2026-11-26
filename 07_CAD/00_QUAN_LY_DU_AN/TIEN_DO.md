@@ -7,8 +7,11 @@ Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `07_CAD/00_QUA
 - Người dùng: mọi thứ liên quan block PCCC vào thư mục PCCC trong thư viện block; sau này thêm kiến trúc, xây dựng (`02_KIEN_TRUC/`, `03_XAY_DUNG/` cùng kiểu).
 - `01_PCCC/`: `cad/ThuVien.cs` (PCCC_LIB), `cad/DatThietBi.cs` (PCCC_DAT, PCCC_ONG), `ui/BangChonVatTu.cs`, `hinh_bc.json` (từ `03_DU_LIEU_VE/ky_hieu/`; build.bat, chay_thu, hinh_tu_pdf.py, kiem_lien_ket đổi theo).
   Phần chung ở gốc `15_THU_VIEN_BLOCK/`: `cad/Block.cs` (PCCC_THEMBLOCK, ảnh xem trước), `ui/BangBlock.cs` (3 tab).
-- CHƯA dời: `PCCC_Blocks.dwg`, `block_alias.json` ở `TKPCCC.bundle/Contents` (plugin đọc + PCCC_THEMBLOCK ghi tại chỗ, người dùng BEDIT ở đó; dời cần sửa mã trỏ về nguồn như `nguon_vat_tu.txt`).
-- Test: build.bat 7/7; thu_mcp TAT CA DAT; chay_thu chỉ 1 LOI cũ (Karaoke 123); kiem_lien_ket 0 lỗi. Đã push.
+- Test: build.bat 7/7; thu_mcp TAT CA DAT; chay_thu chỉ 1 LOI cũ (Karaoke 123); kiem_lien_ket 0 lỗi. Đã push 100bb45.
+- (tiếp 5, người dùng "chuyển luôn") `PCCC_Blocks.dwg`, `block_alias.json` dời từ `TKPCCC.bundle/Contents` sang `15_THU_VIEN_BLOCK/01_PCCC/`.
+  `Lenh.ThuMucBlockPccc` (`05_NEN_TANG/cad/Lenh.cs`) suy `<repo>/07_CAD/15_THU_VIEN_BLOCK/01_PCCC` từ `nguon_vat_tu.txt`; không có thì dùng cạnh DLL (bản phát hành, bộ test).
+  `FileThuVien`, `FileAlias` (`BocKhoiLuong.cs`), bản cất `PCCC_Blocks_cu_*` (`ThuVien.cs`) dùng thư mục đó. build.bat chép 2 file cạnh DLL (gitignore bản chép).
+  Build 7/7; đã kiểm đường dẫn suy ra trên máy này đúng. Test: thu_mcp TAT CA DAT; chay_thu chỉ 1 LOI cũ (Karaoke 123); kiem_lien_ket 0 lỗi. CHƯA thử trong AutoCAD thật: tắt hẳn AutoCAD, mở lại, `PCCC_BLOCK` / `PCCC_LIB` phải thấy đủ block.
 
 ## 26/11 chiều (tiếp 3): THƯ VIỆN BLOCK RA NGOÀI `15_THU_VIEN_BLOCK/` (3 MENU KIẾN TRÚC · XÂY DỰNG · PCCC) + DỌN GỐC 07_CAD — XONG, đã push b06c986
 - Người dùng: thư viện block dùng chung cho 3 lĩnh vực, nay chỉ PCCC có block; bỏ thứ không dùng; bản vẽ test vào hạng mục Test.

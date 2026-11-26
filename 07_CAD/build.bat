@@ -55,6 +55,9 @@ rem Mac dinh ky hieu truc, kich thuoc, chu: nguoi dung sua o 07_CAD\03_DU_LIEU_V
 copy /y "%~dp003_DU_LIEU_VE\ky_hieu\ky_hieu.json" "%OUT%\ky_hieu.json" >nul
 rem Hinh block mac dinh ky hieu bao chay (lay tu net vector PDF, scripts\hinh_tu_pdf.py): PCCC_LIB ve block moi theo hinh nay.
 copy /y "%~dp015_THU_VIEN_BLOCK\01_PCCC\hinh_bc.json" "%OUT%\hinh_bc.json" >nul
+rem Nguoi dung 26/11: PCCC_Blocks.dwg, block_alias.json nam o 15_THU_VIEN_BLOCK\01_PCCC (plugin tim qua nguon_vat_tu.txt, doc + ghi tai do).
+rem Ban chep canh DLL chi cho ban phat hanh khong co repo; AutoCAD dang giu file cu thi bo qua.
+for %%f in (PCCC_Blocks.dwg block_alias.json) do copy /y "%~dp015_THU_VIEN_BLOCK\01_PCCC\%%f" "%OUT%\%%f" >nul 2>&1
 rem Dia chi web app Apps Script cap key, link Google Form (PCCC_BANQUYEN doc canh DLL).
 copy /y "%~dp003_DU_LIEU_VE\ban_quyen\cau_hinh_ban_quyen.json" "%OUT%\cau_hinh_ban_quyen.json" >nul
 echo OK: %OUT%\TKPCCC.Cad.dll

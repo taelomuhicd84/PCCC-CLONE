@@ -107,7 +107,7 @@ TKPCCC/
 | Giao diện | `05_FRONTEND/index.html` | Claude (agent `web-frontend`) | có |
 | Thẩm định PDF (Python) | `06_THAM_DINH_PDF/` (luật: `06_THAM_DINH_PDF/rules/*.yaml`) | Claude, kèm test trong `06_THAM_DINH_PDF/test` | có |
 | AutoCAD | `07_CAD/05_NEN_TANG/cad/Lenh.cs` | Claude, kiểm bằng `07_CAD/04_KIEM_THU/chay_thu.ps1` | có |
-| Thư viện block, gán block | `07_CAD/TKPCCC.bundle/Contents/PCCC_Blocks.dwg`, `block_alias.json` | người dùng (BEDIT, `PCCC_GAN`) | có |
+| Thư viện block, gán block | `07_CAD/15_THU_VIEN_BLOCK/01_PCCC/PCCC_Blocks.dwg`, `block_alias.json` | người dùng (BEDIT, `PCCC_GAN`) | có |
 | Danh mục, quy trình | `03_DU_LIEU/vat_tu.json`, `03_DU_LIEU/huong_dan.json` | người dùng / Claude | có |
 | Tri thức, điều khoản | `01_TRI_THUC/`, `02_DIEU_KHOAN/` | chép nguyên văn bằng script, không viết theo trí nhớ | có |
 | Đơn giá, kết quả công trình | `03_DU_LIEU/don_gia.json`, `12_KET_QUA/` | tự sinh khi dùng | **không** |

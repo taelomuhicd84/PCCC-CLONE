@@ -26,7 +26,7 @@ namespace TKPCCC
 
         // ----- Gán tên block có sẵn (bản vẽ không vẽ bằng plugin) -> MA_VT, lưu block_alias.json cạnh DLL -----
 
-        static string FileAlias { get { return Path.Combine(ThuMuc, "block_alias.json"); } }
+        static string FileAlias { get { return Path.Combine(ThuMucBlockPccc, "block_alias.json"); } }
 
         static Dictionary<string, string> DocAlias()
         {

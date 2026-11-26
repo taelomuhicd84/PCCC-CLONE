@@ -7,7 +7,7 @@ effort: medium
 
 # Kiểm thử plugin AutoCAD bằng accoreconsole
 Đây cũng là thẻ của MODULE CAD: `07_CAD/05_NEN_TANG/cad/Lenh.cs` (mọi lệnh `PCCC_*`), `07_CAD/build.bat`, `07_CAD/04_KIEM_THU/chay_thu.ps1`,
-`07_CAD/TKPCCC.bundle/PackageContents.xml`, `07_CAD/TKPCCC.bundle/Contents/PCCC_Blocks.dwg` + `block_alias.json` (người dùng sửa, có commit).
+`07_CAD/TKPCCC.bundle/PackageContents.xml`, `07_CAD/15_THU_VIEN_BLOCK/01_PCCC/PCCC_Blocks.dwg` + `block_alias.json` (người dùng sửa, có commit).
 
 **MCP CAD (làm 2026-11-10, ROADMAP Pha 6; khi VẼ thì dùng skill `tkpccc-ve-cad`):** AI ↔ `07_CAD/bin/TKPCCC.Mcp.exe` (`07_CAD/06_VE_TU_DONG_AI/mcp/Mcp.cs`, C#, stdio)
 ↔ hàng đợi file `%LOCALAPPDATA%\TKPCCC\cad` (`07_CAD/05_NEN_TANG/chung/HangDoi.cs`) ↔ `07_CAD/06_VE_TU_DONG_AI/cad/Cau.cs` (timer trên luồng chính, chỉ bật trong acad.exe;

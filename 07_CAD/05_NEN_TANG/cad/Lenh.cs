@@ -77,9 +77,28 @@ namespace TKPCCC
         const string TIEN_TO_LAYER = "PCCC_";
         const string KIEU_CHU = "PCCC_ARIAL"; // chữ TrueType để hiện được tiếng Việt (txt.shx không có dấu)
 
-        // vat_tu.json (build.bat chép vào), PCCC_Blocks.dwg và block_alias.json (người dùng sửa) nằm cạnh DLL.
+        // vat_tu.json (build.bat chép vào) nằm cạnh DLL.
         static string ThuMuc { get { return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location); } }
-        static string FileThuVien { get { return Path.Combine(ThuMuc, "PCCC_Blocks.dwg"); } }
+        // Người dùng 26/11: PCCC_Blocks.dwg, block_alias.json (người dùng sửa) ở 07_CAD/15_THU_VIEN_BLOCK/01_PCCC của repo, suy từ
+        // nguon_vat_tu.txt (build.bat ghi <repo>\07_CAD\..\03_DU_LIEU\vat_tu.json). Không có repo (bản phát hành): bản chép cạnh DLL.
+        static string ThuMucBlockPccc
+        {
+            get
+            {
+                try
+                {
+                    string f = Path.Combine(ThuMuc, "nguon_vat_tu.txt");
+                    if (File.Exists(f))
+                    {
+                        string d = Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(File.ReadAllText(f).Trim())), "07_CAD", "15_THU_VIEN_BLOCK", "01_PCCC");
+                        if (Directory.Exists(d)) return d;
+                    }
+                }
+                catch (System.Exception) { } // đường dẫn hỏng: dùng bản cạnh DLL
+                return ThuMuc;
+            }
+        }
+        static string FileThuVien { get { return Path.Combine(ThuMucBlockPccc, "PCCC_Blocks.dwg"); } }
 
         // ---------- Lệnh: bọc bắt lỗi để không hiện hộp "Unhandled exception" của AutoCAD ----------
 

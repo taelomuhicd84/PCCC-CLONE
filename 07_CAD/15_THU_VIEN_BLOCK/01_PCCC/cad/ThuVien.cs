@@ -236,7 +236,7 @@ namespace TKPCCC
             if (kr.StringResult == "Taomoi" && File.Exists(FileThuVien))
             {
                 // Cất bản cũ (có thể đã sửa hình) thay vì xoá.
-                string cu = Path.Combine(ThuMuc, "PCCC_Blocks_cu_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".dwg");
+                string cu = Path.Combine(ThuMucBlockPccc, "PCCC_Blocks_cu_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".dwg");
                 File.Move(FileThuVien, cu);
                 ed.WriteMessage("\nĐã cất thư viện cũ: " + cu);
             }

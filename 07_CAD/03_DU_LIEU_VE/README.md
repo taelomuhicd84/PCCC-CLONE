@@ -13,6 +13,6 @@ Dữ liệu ở đây là thứ plugin và AI ĐỌC để vẽ. Số liệu ph�
 Hai dữ liệu đang dùng nằm NGOÀI thư mục này, cố ý không chép sang để khỏi lệch nhau:
 - Danh mục vật tư: `03_DU_LIEU/vat_tu.json` ở gốc repo (nguồn duy nhất, dùng chung với báo giá).
 - Trị số rải thiết bị theo tiêu chuẩn: `03_DU_LIEU/khoang_cach_rai.json` ở gốc repo (chép nguyên văn từ `01_TRI_THUC/`, `build.bat` chép cạnh DLL; `rai` / `PCCC_RAI` đọc khi không có `s`).
-- Thư viện block thiết bị đang chạy: `07_CAD/TKPCCC.bundle/Contents/PCCC_Blocks.dwg` và `block_alias.json`. Plugin đọc và ghi hai file này cạnh DLL, người dùng sửa trực tiếp ở đó.
+- Thư viện block thiết bị đang chạy: `07_CAD/15_THU_VIEN_BLOCK/01_PCCC/PCCC_Blocks.dwg` và `block_alias.json`. Plugin đọc và ghi hai file này tại chỗ (tìm qua `nguon_vat_tu.txt`), người dùng sửa trực tiếp ở đó; `build.bat` chép cạnh DLL chỉ cho bản phát hành không có repo.
 
 Thêm loại dữ liệu mới: tạo thư mục con, ghi 1 dòng vào bảng trên, thêm lệnh chép trong `07_CAD/build.bat` nếu plugin cần đọc.

@@ -43,7 +43,7 @@ Mọi file `cad/` là phần nối của `partial class Lenh` (bot chat: `partia
 ├─ 14_HUB/               Hub.cs -> bin/TKPCCC.Hub.exe (cài mọi thứ: Nền tảng · MCP cad · Bot chat · YouTube)
 └─ 15_THU_VIEN_BLOCK/    DÙNG CHUNG, menu Kiến trúc · Xây dựng · PCCC. Phần chung: cad/ Block.cs (PCCC_THEMBLOCK, ảnh xem trước) · ui/ BangBlock.cs (PCCC_BLOCK, 3 tab)
    └─ 01_PCCC/           block PCCC: cad/ ThuVien.cs (PCCC_LIB, hình mặc định) · DatThietBi.cs (PCCC_DAT, PCCC_ONG) · ui/ BangChonVatTu.cs (bảng chọn mã) · hinh_bc.json (hình block báo cháy)
-                         (sau này 02_KIEN_TRUC/, 03_XAY_DUNG/ cùng kiểu). Bản vẽ block PCCC_Blocks.dwg + block_alias.json vẫn ở TKPCCC.bundle/Contents (plugin đọc, ghi tại đó)
+                         (sau này 02_KIEN_TRUC/, 03_XAY_DUNG/ cùng kiểu) · PCCC_Blocks.dwg (bản vẽ block, BEDIT ở đây) · block_alias.json (plugin đọc, ghi tại đây; build chép cạnh DLL cho bản phát hành)
 ```
 Hạng mục tính năng ↔ trang palette: Quy trình vẽ = 06–08 + `09_PCCC/01` · Báo cháy = `09_PCCC/01` + `02` · Chữa cháy = `09_PCCC/03` · Thống kê = `09_PCCC/05` · Thư viện = 15 · Tiện ích = 10 · Lệnh, Cài đặt = 05.
 
@@ -92,7 +92,7 @@ AI chỉ viết một gói thao tác ngắn (spec JSON), plugin sinh hình. Mộ
 | Ống nhánh tự chọn DN theo số đầu phun phía sau (`PCCC_TUYEN` TuDong, mức Den05 / Tren05), chữ DN | `09_PCCC/03_CHUA_CHAY/cad/Tuyen.cs` (`TuyenXuongCa` tham số `dem`, `BangDn`, `MaDn`, `ChuDn`); bảng số đầu theo DN ở `03_DU_LIEU/ong_nhanh_dn.json` gốc repo (build.bat chép cạnh DLL); thẻ palette ở `05_NEN_TANG/ui/PhanHe.cs` |
 | Trang Báo cháy 4 tab (Rải đầu báo · Khoang dầm · Kiểm tra · Đi dây), nội dung khung TRẠNG THÁI, nút Tra cứu TCVN | `09_PCCC/02_BAO_CHAY/ui/BangBoTri.cs` (`TaoKhoangDam`, `CapNhatTrangThai`); đếm vùng `Lenh.DemVung` ở `09_PCCC/02_BAO_CHAY/cad/DayBc.cs`; bảng tra `09_PCCC/02_BAO_CHAY/ui/BangTraCuu.cs` đọc `02_DIEU_KHOAN/07_BAO_CHAY/MOD_dau_bao_khoi_khoang_dam.md` gốc repo |
 | Đổi bảng block (cột, ô lọc, nút) | `15_THU_VIEN_BLOCK/ui/BangBlock.cs`; cách vẽ ảnh xem trước ở `15_THU_VIEN_BLOCK/cad/Block.cs`, hàm `VeAnhBlock` |
-| Sửa hình block thiết bị | `TKPCCC.bundle/Contents/PCCC_Blocks.dwg` bằng BEDIT, rồi `PCCC_LIB` |
+| Sửa hình block thiết bị | `15_THU_VIEN_BLOCK/01_PCCC/PCCC_Blocks.dwg` bằng BEDIT, rồi `PCCC_LIB` |
 | Bản quyền: key, mã máy, chặn lệnh, cấp key qua Google Sheet | `11_BAN_QUYEN/cad/BanQuyen.cs`, `11_BAN_QUYEN/` (đọc `HUONG_DAN.md`); build khoá lệnh: `build.bat phat_hanh` |
 | Thêm một luật vẽ, nối tới quy chuẩn | 1 dòng trong `02_LUAT_VE/LUAT.md` |
 | Ghi bài học khi vẽ | luật -> đúng file `01_TRI_THUC_VE/nhan_dang/` hoặc `01_TRI_THUC_VE/ve/`; số đo bản mẫu -> `01_TRI_THUC_VE/mau/` (mục lục `01_TRI_THUC_VE/README.md`) |

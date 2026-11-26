@@ -7,6 +7,10 @@ __pycache__/
 07_CAD/TKPCCC.bundle/Contents/*.dll
 07_CAD/TKPCCC.bundle/Contents/*.dll.cu*
 07_CAD/TKPCCC.bundle/Contents/PCCC_Blocks_cu_*.dwg
+07_CAD/15_THU_VIEN_BLOCK/01_PCCC/PCCC_Blocks_cu_*.dwg
+# Ban chep canh DLL (build.bat chep tu 15_THU_VIEN_BLOCK/01_PCCC, nguon duy nhat)
+07_CAD/TKPCCC.bundle/Contents/PCCC_Blocks.dwg
+07_CAD/TKPCCC.bundle/Contents/block_alias.json
 07_CAD/TKPCCC.bundle/Contents/*.pdb
 07_CAD/TKPCCC.bundle/Contents/vat_tu.json
 *.bak
