@@ -1,7 +1,7 @@
 # 07_CAD/01_TRI_THUC_VE/mau — bằng chứng học từ bản mẫu, video, tài liệu ngoài
 
 Chỉ ghi quan sát + số liệu đo được (có ngày, tên hồ sơ). Luật rút ra thì chuyển lên đúng file của `../nhan_dang/` hoặc `../ve/`, ở đây để lại một dòng trỏ tới.
-Bản vẽ mẫu gốc: `07_CAD/file_cad_test/` gốc repo và Drive công ty (`D:\1.DRIVE CÔNG TY\My Drive\1.PHÒNG THIẾT KẾ\1. HỒ SƠ THẨM DUYỆT\...`), hồ sơ khách: không commit,
+Bản vẽ mẫu gốc: `07_CAD/04_KIEM_THU/file_cad_test/` gốc repo và Drive công ty (`D:\1.DRIVE CÔNG TY\My Drive\1.PHÒNG THIẾT KẾ\1. HỒ SƠ THẨM DUYỆT\...`), hồ sơ khách: không commit,
 KHÔNG sửa file gốc, cần thao tác thì chép ra `12_KET_QUA/<việc>/` (người dùng 14/11).
 
 | File | Học gì |

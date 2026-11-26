@@ -1,4 +1,4 @@
-// PCCC_DAYBC: đi dây báo cháy tự động theo 2 trường phái (người dùng 16/11; bản vẽ mẫu 07_CAD\file_cad_test\test báo cháy.dwg:
+// PCCC_DAYBC: đi dây báo cháy tự động theo 2 trường phái (người dùng 16/11; bản vẽ mẫu 07_CAD\04_KIEM_THU\file_cad_test\test báo cháy.dwg:
 // nửa trái hệ địa chỉ, nửa phải hệ thường; cách đọc mẫu ở 07_CAD/01_TRI_THUC_VE/ve/bao_chay/day_zone.md).
 // - Hệ thường: MỘT đường tín hiệu từ tủ qua mọi đầu báo + nút nhấn, chỉ đi vuông góc (zíc zắc theo hàng, không đi xéo), mạch hở không vòng về tủ;
 //   thiết bị cuối đường là thiết bị XA TỦ NHẤT (tiết kiệm dây) và gắn điện trở cuối dây. Chuông: một đường nguồn riêng, mạch cụt.

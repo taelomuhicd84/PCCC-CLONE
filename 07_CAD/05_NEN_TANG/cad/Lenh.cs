@@ -30,6 +30,7 @@ namespace TKPCCC
         public string ten { get; set; }
         public string dvt { get; set; }
         public string he { get; set; }
+        public string linh_vuc { get; set; } // menu thư viện block: "Kiến trúc" | "Xây dựng" | "PCCC"; trống = PCCC (người dùng 26/11)
         public string loai { get; set; }
         public string ky_hieu { get; set; }
         // Chỉ cho mã dây vẽ trên sơ đồ nguyên lý (SoDo.cs): tên layer, loại đường, màu ACI khi phải tạo layer mới.
@@ -94,7 +95,7 @@ namespace TKPCCC
         [CommandMethod("PCCC_RAI")] public void LenhRai() { Chay(RaiTay); }     // 07_CAD/09_PCCC/01_RAI_THIET_BI/cad/Rai.cs
         [CommandMethod("PCCC_TUYEN")] public void LenhTuyen() { Chay(TuyenTay); } // 07_CAD/09_PCCC/01_RAI_THIET_BI/cad/Rai.cs
         [CommandMethod("PCCC_DAY")] public void LenhDay() { Chay(DayTay); }       // 07_CAD/09_PCCC/01_RAI_THIET_BI/cad/Rai.cs
-        [CommandMethod("PCCC_THEMBLOCK")] public void LenhThemBlock() { Chay(ThemBlock); } // 07_CAD/09_PCCC/06_THU_VIEN_BLOCK/cad/Block.cs
+        [CommandMethod("PCCC_THEMBLOCK")] public void LenhThemBlock() { Chay(ThemBlock); } // 07_CAD/15_THU_VIEN_BLOCK/cad/Block.cs
         /// Esc giữa lệnh dài (review 15/11): ném lỗi để transaction đang mở không commit, bản vẽ không đổi. Gọi thưa (mỗi phòng, mỗi vài trăm vòng).
         static void KiemEsc()
         {

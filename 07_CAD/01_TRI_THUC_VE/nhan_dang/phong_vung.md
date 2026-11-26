@@ -17,7 +17,7 @@ Nét nào là tường: `tuong_cot.md`. Cửa, thang, khu bỏ: `cua_thang_khu.m
 - Dải không có tường ngăn với xưởng thì gộp vào khoang xưởng kề bên (cạnh theo tường xiên thật). Vách ngăn trong xưởng cắt khoang theo vách.
 - Trước khi vẽ `PCCC_VUNG`: liệt kê tường kín -> phòng; phần còn lại của xưởng -> khoang vì kèo. Dò mọi nét tường trong khoang trước khi rải.
 - Bản mẫu đã thẩm định chỉ là tham khảo CÁCH chia vùng (người dùng 20/11), số đầu báo vẫn theo TCVN 7568-14:2025.
-- NGƯỜI DÙNG 26/11 (`07_CAD/file_cad_test/TESTBCHAY_20_11.dwg`, vùng tay ở `12_KET_QUA/TESTBCHAY_20_11/cad/skills/b4a_vung.json`): CỬA chia vùng.
+- NGƯỜI DÙNG 26/11 (`07_CAD/04_KIEM_THU/file_cad_test/TESTBCHAY_20_11.dwg`, vùng tay ở `12_KET_QUA/TESTBCHAY_20_11/cad/skills/b4a_vung.json`): CỬA chia vùng.
   (1) Sảnh vào (trục 1–2) mở thông ra hành lang vẫn là vùng RIÊNG, ranh theo mặt tường hành lang kéo dài (miệng chữ L), không gộp với hành lang.
   (2) Hành lang có cửa đi ngang (tường + ô cửa cắt ngang hành lang, trục 7) thì tách hai vùng ở tường đó.
   (3) Ô nhỏ thông với phòng qua Ô CỬA CÓ CÁNH (tường hai bên, cánh phủ kín ô) KHÔNG gộp vào phòng ("không, phải tách riêng biệt").

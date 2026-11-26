@@ -3,7 +3,17 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `07_CAD/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `07_CAD/00_QUAN_LY_DU_AN/KE_HOACH.md`. Nhật ký: `07_CAD/00_QUAN_LY_DU_AN/LICH_SU.md`. Luật riêng: `07_CAD/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `07_CAD/00_QUAN_LY_DU_AN/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`07_CAD/CLAUDE.md`).
 
-## 26/11 chiều (tiếp 2): GOM HẠNG MỤC PCCC VÀO NHÓM `09_PCCC/` — XONG, build 7/7 (chưa push)
+## 26/11 chiều (tiếp 3): THƯ VIỆN BLOCK RA NGOÀI `15_THU_VIEN_BLOCK/` (3 MENU KIẾN TRÚC · XÂY DỰNG · PCCC) + DỌN GỐC 07_CAD — XONG MÃ, chưa push
+- Người dùng: thư viện block dùng chung cho 3 lĩnh vực, nay chỉ PCCC có block; bỏ thứ không dùng; bản vẽ test vào hạng mục Test.
+- `09_PCCC/06_THU_VIEN_BLOCK` → `15_THU_VIEN_BLOCK` (nhóm PCCC còn 01–05). Lĩnh vực mới: nhóm `16_<LINH_VUC>/NN_*`; tính năng PCCC mới: `09_PCCC/06_...`.
+- Bảng `PCCC_BLOCK` (`15_THU_VIEN_BLOCK/ui/BangBlock.cs`): hàng tab KIẾN TRÚC · XÂY DỰNG · PCCC (mặc định PCCC), lọc theo trường mới `linh_vuc` của `VatTu`
+  (`05_NEN_TANG/cad/Lenh.cs`; trống = PCCC, nên `vat_tu.json` không phải sửa). Tab chưa có block hiện dòng hướng dẫn thêm mã.
+  Chưa làm: `PCCC_THEMBLOCK` / nút "Thêm từ bản vẽ" vẫn ghi mã mới vào PCCC (chưa theo tab đang chọn).
+- Gốc 07_CAD: `file_cad_test/` → `04_KIEM_THU/file_cad_test/` (.gitignore, `chay_thu.ps1`, tài liệu đổi theo); `thamkhao_plugincad/`, `hardcopy.log`, `plot.log` vào Thùng rác;
+  `07_CAD/12_KET_QUA/TESTBCHAY` (kết quả lạc chỗ) → `12_KET_QUA/TESTBCHAY` gốc repo. Giữ ở gốc vì AutoCAD, MCP của các AI, Hub trỏ đúng đường dẫn: `bin/`, 3 `*.bundle/`, `build.bat`, `cai_dat.bat`, `.mcp.json`, `.claude/`, `CLAUDE.md`, `README.md`.
+- Test: build.bat 7/7 OK; thu_mcp TAT CA DAT; chay_thu chỉ 1 LOI cũ (Karaoke 123), ca bản vẽ thật ở `04_KIEM_THU/file_cad_test` DAT. Bảng block 3 tab chưa thử trong AutoCAD thật (thu_gui cần tắt AutoCAD).
+
+## 26/11 chiều (tiếp 2): GOM HẠNG MỤC PCCC VÀO NHÓM `09_PCCC/` — XONG, build 7/7, đã push 36e5d3b
 - Người dùng: tách hạng mục theo lĩnh vực để sau thêm xây dựng, kiến trúc, LISP phụ trợ; mọi thứ PCCC (rải thiết bị, báo cháy, chữa cháy, sơ đồ nguyên lý...) vào một thư mục PCCC có số.
 - Cây mới: `09_PCCC/` = `01_RAI_THIET_BI` · `02_BAO_CHAY` · `03_CHUA_CHAY` · `04_SO_DO_NGUYEN_LY` · `05_THONG_KE` · `06_THU_VIEN_BLOCK` (cũ 09–14);
   đánh số lại `15_TIEN_ICH`→`10_TIEN_ICH`, `16_BAN_QUYEN`→`11`, `17_BOT_CHAT`→`12`, `18_YOUTUBE`→`13`, `19_HUB`→`14`. Giữ chung (không riêng PCCC): `07_KIEN_TRUC`, `08_KICH_THUOC`, `10_TIEN_ICH`.
@@ -33,7 +43,7 @@ Người dùng: "ra lệnh tại tab đó, qua tab khác thao tác, tab cũ vẫ
 - Mã 26/11 của phiên khác chưa commit (`Cau.cs` TatTietKiemDien, `BotChat.cs`, `GiaoDienChat.cs`) để nguyên, không gộp vào commit này.
 
 ## 26/11 chiều: VÙNG BÁO CHÁY TESTBCHAY_20_11 + LUẬT "CỬA CHIA VÙNG" — XONG MÃ + TEST E34 (chưa review `cad-review`, chưa push)
-- Bot chat, `07_CAD/file_cad_test/TESTBCHAY_20_11.dwg` (trục 1–9 / A–F): vẽ tay 31 vùng `PCCC_VUNG` bằng spec `12_KET_QUA/TESTBCHAY_20_11/cad/skills/b4a_vung.json`
+- Bot chat, `07_CAD/04_KIEM_THU/file_cad_test/TESTBCHAY_20_11.dwg` (trục 1–9 / A–F): vẽ tay 31 vùng `PCCC_VUNG` bằng spec `12_KET_QUA/TESTBCHAY_20_11/cad/skills/b4a_vung.json`
   (chạy lại = xoá vùng cũ + vẽ lại). `vung_tu_dong` không dùng được ở bản này (block cửa `A$C…` trên layer `tuong`: cạnh vùng bám cung cánh).
   Hai lần đầu vùng mất giữa các lượt (Undo hoặc bản vẽ mở lại chưa lưu): đã nhắc người dùng Ctrl+S.
 - Người dùng chốt: sảnh vào tách khỏi hành lang; hành lang có cửa ngang thì tách; ô nhỏ thông với phòng qua ô cửa có cánh là vùng riêng. Ghi ở
@@ -60,7 +70,7 @@ Người dùng: "điều chỉnh danh mục theo thứ tự như folder lớn �
 
 ## 25/11 (phiên gốc): CÂY REPO ĐỔI TÊN — `cad/` thành `07_CAD/`
 Repo gốc đổi sang cây đánh số (`00_QUAN_LY_DU_AN/STRUCTURE.md`): `cad` → `07_CAD`, `data` → `03_DU_LIEU`, `knowledge` → `01_TRI_THUC`, `skills` gốc → `02_DIEU_KHOAN`,
-`ket_qua` → `12_KET_QUA`, `file_cad_test` → `07_CAD/file_cad_test`. Cây bên trong `07_CAD/` giữ nguyên. Bản sao D: phải commit việc dở rồi `git pull`.
+`ket_qua` → `12_KET_QUA`, `file_cad_test` → `07_CAD/04_KIEM_THU/file_cad_test`. Cây bên trong `07_CAD/` giữ nguyên. Bản sao D: phải commit việc dở rồi `git pull`.
 `.mcp.json` gốc trỏ `07_CAD/bin/TKPCCC.Mcp.exe` (đã build lại). Ca chay_thu "Karaoke 123 tầng 1 + 2" đang LOI (vung=30, cần 31) trên bản OneDrive.
 
 ## VIỆC 25/11 — QUÉT NHIỀU TẦNG: Ô X THÔNG TẦNG TẦNG TRÊN CHIẾU XUỐNG TẦNG NGAY DƯỚI: XONG MÃ + TEST (chưa push, chưa review `cad-review`)
@@ -173,7 +183,7 @@ chú thích trong 07_CAD/module/plugin/*.cs (DayBc, BangMb, Lenh, Rai, TienIch, 
 BƯỚC TIẾP: tạo cây + README; tách nội dung từng file cũ vào đúng file mới (không bỏ sót dòng, chép nguyên văn phần quy chuẩn); chép luật từ memory;
 sửa đường dẫn; kiểm; commit (không push). Làm theo lô nhỏ, mỗi lô một commit, để dừng kịp khi hết hạn mức.
 
-## VIỆC 20/11 (2) — HỌC RẢI BÁO CHÁY THEO BẢN MẪU (07_CAD/file_cad_test/TESTBCHAY_20_11.dwg): KHUNG 5 XONG; KHUNG 3, 4, 6 XONG (LỖI 4–10, E15–E21); TẠM DỪNG theo lời người dùng; còn KHUNG 7, 8
+## VIỆC 20/11 (2) — HỌC RẢI BÁO CHÁY THEO BẢN MẪU (07_CAD/04_KIEM_THU/file_cad_test/TESTBCHAY_20_11.dwg): KHUNG 5 XONG; KHUNG 3, 4, 6 XONG (LỖI 4–10, E15–E21); TẠM DỪNG theo lời người dùng; còn KHUNG 7, 8
 Người dùng (20/11, chép ý): mỗi khung rectang = 1 công trình mẫu vẽ báo cháy đã thẩm định, là CHUẨN, phải tư duy như nó.
 1. Copy các block mặt bằng mẫu ra chỗ trống (KHÔNG sửa bản gốc), explode, rồi vẽ vùng rải báo cháy.
 2. Vùng kẹp sát mặt tường: tường 200 có cột 300 lồi ra 100 thì vùng chạy thẳng theo mặt tường 200, không bao phần cột lồi.
@@ -462,7 +472,7 @@ vẽ vùng rồi mới rải; mép dầm chính coi như tường để dim (khi
 SỬA thêm: dầm trong block mặt bằng dầm chép đè (block ngoài cùng chứa nét dầm mẫu) nhận theo LAYER, mọi màu (`NenVung.LopKhoiDam`), chỉ khi còn khối/tường khác được chọn.
 Mẹo console: nét dầm mẫu cách trục 100 mm, bấm phải zoom trong suốt (`'_.ZOOM W`) kẻo trúng trục.
 Cũ (đã làm xong):
-1. Chạy thử trên bản chép `07_CAD/file_cad_test/test vùng báo cháy.dwg` (người dùng đang mở, KHÔNG sửa gốc): mặt bằng tầng = block "2333" (trục dọc x 711176 / 715376 / 726551,
+1. Chạy thử trên bản chép `07_CAD/04_KIEM_THU/file_cad_test/test vùng báo cháy.dwg` (người dùng đang mở, KHÔNG sửa gốc): mặt bằng tầng = block "2333" (trục dọc x 711176 / 715376 / 726551,
    trục ngang y 403864 / 411264 / 418564 / 425964); mặt bằng dầm tầng 7 ở x 739000–761000, y 400000–427000 (dầm = hình chữ nhật kín layer AAP-TUONG, nhãn "DS 400X250"
    ghi ngược kiểu KOCHAM, layer AAP-TEXT). Chép đè: block phần mặt bằng dầm, dời (-30858, +750). Rồi `PCCC_RAI BC_KHOI LoaiTran KhongTran DaySan 120 4.5`, khung C phần
    bên phải lõi + lõi, bấm nét dầm mẫu (AAP-TUONG trong block dầm). Lưu ý: layer dầm là AAP-TUONG (tên tường) — xem có bị dựng làm tường không. Vẽ vùng + khoang, gửi ảnh, CHỜ DUYỆT mới rải.
@@ -602,7 +612,7 @@ Gốc: người dùng dán lỗi `PCCC_RAI` (mặt 763 079 m², "bước quá nh
    báo `theo_vung_co_san=`. Mặt bằng phải còn 39 phòng / 91 đầu, không còn đầu rơi ngoài mặt bằng.
 3. Dim (`KtLuoi`, `Rai.cs`) theo mẫu người dùng: MỘT chuỗi ngang dọc hàng đông nhất (trên cùng), MỘT chuỗi đứng dọc cột đông nhất (gần giữa vùng), đường dim
    cách 2 x cao (sát thiết bị, trước đặt ngoài mép vùng); hàng / cột lệch lưới ≥ 2 thiết bị (so le) một chuỗi cho cả hàng; thiết bị lẻ: tường gần – thiết bị – lưới gần nhất.
-Test mới `chay_thu.ps1`: cụm chi tiết + vùng vẽ sẵn (2 phòng x 4 đầu, 6 dim/phòng); thời gian dựng phòng trên `07_CAD\file_cad_test\test báo cháy.dwg` < 10 s (có file mới chạy).
+Test mới `chay_thu.ps1`: cụm chi tiết + vùng vẽ sẵn (2 phòng x 4 đầu, 6 dim/phòng); thời gian dựng phòng trên `07_CAD\04_KIEM_THU\file_cad_test\test báo cháy.dwg` < 10 s (có file mới chạy).
 `chay_thu.ps1`, `thu_mcp.ps1` TAT CA DAT; bundle đã build.
 CHƯA: người dùng tắt hẳn AutoCAD mở lại để nạp bản mới, thử lại mặt bằng phải; chữ dim chuỗi đứng có thể đè chữ chuỗi ngang chỗ hai chuỗi cắt nhau (chưa né chữ);
 ngưỡng cụm 2 m / 20 % cố định (nhà nhỏ tách rời bị bỏ thì bấm điểm trong phòng). Bước nối khe (`noi`) còn ~1,3 s, chưa tối ưu.
@@ -619,7 +629,7 @@ Việc sau (chưa làm):
    là việc của module web (`04_BACKEND/src/server.ts`, xuất báo giá).
 2. Tách theo kích thước (tham số độ dài) như ô "Tách theo kích thước" của LHB: chưa làm, mặc định không tách là đúng với đầu báo tia chiếu.
 3. Ký hiệu trong ô bảng của dòng chủng loại vẫn là block thư viện theo mã (trạng thái mặc định), chưa vẽ đúng hình trạng thái.
-4. Thử `PCCC_GAN` (Rieng/Chung) và `PCCC_BANG` trong AutoCAD thật trên bản chép `07_CAD/file_cad_test/BEAM_Quyetthang.dwg` (BÌNH CHỮA CHÁY 4 trạng thái, ĐÈN EXIT 5 trạng thái).
+4. Thử `PCCC_GAN` (Rieng/Chung) và `PCCC_BANG` trong AutoCAD thật trên bản chép `07_CAD/04_KIEM_THU/file_cad_test/BEAM_Quyetthang.dwg` (BÌNH CHỮA CHÁY 4 trạng thái, ĐÈN EXIT 5 trạng thái).
 
 ## VIỆC 16/11 TỐI (TIẾP) — GHI m² KHOANG + ỐNG NHÁNH TỰ CHỌN DN: XONG MÃ + TEST, CHƯA XEM TRONG AUTOCAD
 1. `PCCC_RAI` khoang dầm (Dam, đầu khói): ghi "x,x m²" dưới tâm mỗi khoang, dấu X hồng ở khoang dưới ngưỡng 4 / 9 m², khoang < 1 m² bỏ ghi; layer `PCCC_KHOANG_M2`;
@@ -648,7 +658,7 @@ Nguyên nhân 2: vùng xanh lá bên phải (PCCC_VUNG) vẽ về đúng điểm
 Chạy lại trên bản chép file mẫu: rải đúng 2 vùng xanh, mỗi vùng 15 đầu, lưới 3 × 5 bước 7,9 × 9,4 m (ảnh `12_KET_QUA/cad_test/2026-11-16/rai_xanh.png`).
 `chay_thu.ps1` 147/147, `thu_mcp.ps1` đạt, bundle build lại. CHƯA: người dùng tắt hẳn AutoCAD mở lại để nạp, thử lại trên máy.
 
-## VIỆC 16/11 — 5 YÊU CẦU BÁO CHÁY (người dùng gửi `07_CAD\file_cad_test\test báo cháy.dwg`: trái hệ địa chỉ, phải hệ thường): XONG MÃ + TEST
+## VIỆC 16/11 — 5 YÊU CẦU BÁO CHÁY (người dùng gửi `07_CAD\04_KIEM_THU\file_cad_test\test báo cháy.dwg`: trái hệ địa chỉ, phải hệ thường): XONG MÃ + TEST
 Bản chép, dump, ảnh ở `12_KET_QUA/cad_test/2026-11-16/` (gitignore). Kiến thức đọc từ mẫu: `07_CAD/01_TRI_THUC_VE/ve/bao_chay/day_zone.md`.
 1. Phân vùng: vùng tự dựng bám khấc cột, cung cửa (44–53 đỉnh) → `LamGon` (`NhanVung.cs`, ngưỡng 1 m): bỏ khấc nhỏ ra đường ngoài, giữ khấc lớn (lõi thang);
    đa giác của mẫu ra 8 đỉnh, 1 029 m² (vùng anh vẽ tay 1 041 m²). Áp cho `PCCC_RAI` và `vung_tu_dong`.
@@ -678,7 +688,7 @@ Test `chay_thu.ps1`: 3 phòng có ký hiệu (sâu / nông / lưới nhỏ), 1 p
 CHƯA: thu_gui (không đổi giao diện), nút trên palette cho 4 lệnh mới (đang chỉ có ở trang Lệnh); xem tận mắt trong AutoCAD. VIỆC KẾ: chờ người dùng.
 
 ## VIỆC 14/11 KHUYA — HỌC BỘ BẢN VẼ PCCC MẪU (DWG): XONG
-Người dùng đưa `07_CAD/file_cad_test/` (đã thêm vào `.gitignore`) + thư mục hồ sơ một xưởng trên Drive; dặn KHÔNG đụng file gốc, cần thì save as riêng.
+Người dùng đưa `07_CAD/04_KIEM_THU/file_cad_test/` (đã thêm vào `.gitignore`) + thư mục hồ sơ một xưởng trên Drive; dặn KHÔNG đụng file gốc, cần thì save as riêng.
 Đã chép sang `12_KET_QUA/cad_test/hoc_mau/` (gitignore), dump bằng `dump2.lsp` (MTEXT đủ đoạn mã 3), in PNG vài tờ. Kết quả:
 `07_CAD/01_TRI_THUC_VE/mau/hoc-ban-ve-mau-dwg.md` (bộ tờ, quy ước, beam, zone, sprinkler; mục 6 = 7 việc plugin còn thiếu so với mẫu) và
 `07_CAD/01_TRI_THUC_VE/ve/mau-thuyet-minh-pccc.md` (27 đoạn thuyết minh chép nguyên văn, đã bỏ tên khách, địa chỉ, số GCN). VIỆC KẾ: chờ người dùng chọn làm việc nào ở mục 6.
@@ -776,7 +786,7 @@ phép kiểm `vung_tu_dong` dời sang gốc x 2600000). Sau gộp: build đạt
    (nét chấm gạch, layer trục), đâu là tường (cặp nét song song, layer tường, cột), tự dựng polyline vùng từng phòng; người dùng CLICK vào một vùng là rải theo mục 1.
 3. GIAO DIỆN PANEL BLOCK (`4_panel_block_hien_tai.png` bị chê xấu, đơn điệu): tham khảo GIAO DIỆN (không chép tính năng) của `3_mau_ux_thong_ke_block.png`:
    bảng có cột ảnh ký hiệu lớn, tên đậm, cột đơn vị, số lượng tô màu, nút thao tác tròn màu ở đầu dòng; khung "Hành động" bên phải với nút xanh đậm bo góc, ô chọn, ảnh xem trước,
-   ô tổng số nổi bật; thanh tìm kiếm trên đầu; tiêu đề nhóm nền xanh. File `07_CAD/09_PCCC/06_THU_VIEN_BLOCK/ui/BangBlock.cs`; sửa xong chạy `thu_gui.ps1` (chỉ khi không có AutoCAD nào mở).
+   ô tổng số nổi bật; thanh tìm kiếm trên đầu; tiêu đề nhóm nền xanh. File `07_CAD/15_THU_VIEN_BLOCK/ui/BangBlock.cs`; sửa xong chạy `thu_gui.ps1` (chỉ khi không có AutoCAD nào mở).
 4. `PCCC_HELP` THÀNH PANEL: bảng danh sách mọi lệnh (tên lệnh, việc làm, cách dùng ngắn), tìm kiếm được, SỬA ĐƯỢC PHÍM TẮT (alias) ngay trong panel, lưu lại cho lần sau
    (gợi ý: ghi alias vào file cạnh DLL hoặc acad.pgp của người dùng, có sao lưu; hỏi người dùng nếu phải sửa file cấu hình AutoCAD). Panel để ở `module/ui/`, cùng kiểu với panel Block mới.
 
@@ -862,7 +872,7 @@ phép kiểm `vung_tu_dong` dời sang gốc x 2600000). Sau gộp: build đạt
 - 22:05: XONG Bước 1b (`cad_anh`), 1c (`rai` + `dt`, `tuyen` `tia`, `PCCC_TUYEN`), 2 (PDF → CAD), 3 (bảng block `PCCC_BLOCK`, `PCCC_THEMBLOCK`) và 4 (agent). VIỆC KẾ: Bước 5.
 - ĐÃ THỬ TRÊN AUTOCAD CÓ GIAO DIỆN bằng `07_CAD\04_KIEM_THU\thu_gui.ps1` (script tự mở AutoCAD thật rồi tự tắt, 7/7 đạt): NETLOAD, cầu nối + máy chủ MCP thật (`cad_tt`, `cad_chay`, `cad_anh`),
   `pdf`, `rai`, `tuyen`, `anh` (`-PLOT` trong AutoCAD thật), bảng `PCCC_BLOCK` hiện 31 dòng + 2 nút. Máy người dùng `SECURELOAD` = 0, nạp plugin bằng NETLOAD tay (bundle không nằm trong ApplicationPlugins).
-- XONG Bước 3: `09_PCCC/06_THU_VIEN_BLOCK/cad/Block.cs` (lệnh `PCCC_THEMBLOCK`, ảnh xem trước 64 px tự vẽ vào `Contents\anh_block`) + `09_PCCC/06_THU_VIEN_BLOCK/ui/BangBlock.cs` → `TKPCCC.UI.dll` (lệnh `PCCC_BLOCK`).
+- XONG Bước 3: `15_THU_VIEN_BLOCK/cad/Block.cs` (lệnh `PCCC_THEMBLOCK`, ảnh xem trước 64 px tự vẽ vào `Contents\anh_block`) + `15_THU_VIEN_BLOCK/ui/BangBlock.cs` → `TKPCCC.UI.dll` (lệnh `PCCC_BLOCK`).
   NETLOAD một file `TKPCCC.Cad.dll` là đủ: nó tự nạp `TKPCCC.UI.dll` khi chạy trong `acad.exe`. `chay_thu.ps1` 33/33, `thu_mcp.ps1` 9/9.
 - XONG Bước 4 (22:15): 4 agent trong `07_CAD/.claude/agents/` (`cad-thiet-ke`, `cad-ve`, `cad-kiem`, `cad-lap-trinh`), bảng việc ở `07_CAD/CLAUDE.md`. CHƯA chạy thử agent nào trên việc thật;
   chưa kiểm Claude Code có nạp agent của thư mục con khi mở ở gốc repo không (README cũ ghi chỉ nạp khi mở tại `07_CAD/`).

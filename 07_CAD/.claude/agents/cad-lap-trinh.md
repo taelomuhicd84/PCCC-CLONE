@@ -1,6 +1,6 @@
 ---
 name: cad-lap-trinh
-description: Agent LẬP TRÌNH plugin AutoCAD của TKPCCC — sửa mã C# trong các hạng mục tính năng 07_CAD/05_NEN_TANG … 14_HUB, thêm thao tác spec hoặc lệnh PCCC_*, sửa máy chủ MCP, viết và chạy bộ test (chay_thu.ps1, thu_mcp.ps1, thu_gui.ps1). Dùng khi cần thêm hoặc sửa một thao tác vẽ, một lệnh, hoặc gặp lỗi plugin.
+description: Agent LẬP TRÌNH plugin AutoCAD của TKPCCC — sửa mã C# trong các hạng mục tính năng 07_CAD/05_NEN_TANG … 15_THU_VIEN_BLOCK, thêm thao tác spec hoặc lệnh PCCC_*, sửa máy chủ MCP, viết và chạy bộ test (chay_thu.ps1, thu_mcp.ps1, thu_gui.ps1). Dùng khi cần thêm hoặc sửa một thao tác vẽ, một lệnh, hoặc gặp lỗi plugin.
 tools: Read, Grep, Glob, Edit, Write, Bash, PowerShell
 model: opus
 effort: high

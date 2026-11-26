@@ -1,4 +1,4 @@
-# Học rải báo cháy theo bản mẫu đã thẩm định (07_CAD/file_cad_test/TESTBCHAY_20_11.dwg)
+# Học rải báo cháy theo bản mẫu đã thẩm định (07_CAD/04_KIEM_THU/file_cad_test/TESTBCHAY_20_11.dwg)
 
 Người dùng 20/11: mỗi khung rectang trong bản vẽ là một công trình mẫu đã thẩm định, là CHUẨN. Việc: chép block mặt bằng, explode, vẽ vùng
 kẹp sát mặt tường (không bao phần cột lồi, không bao nội thất), rải đầu báo / chuông / nút, đối chiếu mẫu, rút logic, sửa plugin; xong mới tới dây

@@ -1,7 +1,7 @@
 ﻿// Bảng block PCCC (lệnh PCCC_BLOCK): PaletteSet liệt kê block của thư viện theo nhóm hệ, kèm ký hiệu, tên, đơn vị, số lượng đang có trong bản vẽ.
 // Bấm đúp một dòng hoặc nút tròn xanh = PCCC_DAT <mã>; nút tròn cam = PCCC_RAI <mã>.
 // DLL riêng (TKPCCC.UI.dll) vì cần acmgd.dll, thứ accoreconsole không nạp được. KHÔNG xử lý bản vẽ ở đây: danh mục, ảnh xem trước,
-// đếm và việc thêm block do TKPCCC.Cad.dll làm (07_CAD/09_PCCC/06_THU_VIEN_BLOCK/cad/Block.cs), nhờ vậy phần đó thử được bằng 07_CAD/04_KIEM_THU/chay_thu.ps1.
+// đếm và việc thêm block do TKPCCC.Cad.dll làm (07_CAD/15_THU_VIEN_BLOCK/cad/Block.cs), nhờ vậy phần đó thử được bằng 07_CAD/04_KIEM_THU/chay_thu.ps1.
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -23,6 +23,9 @@ namespace TKPCCC
         readonly DataGridView ds = GiaoDien.Bang();
         readonly TextBox loc = new TextBox();
         readonly ComboBox chonHe = new ComboBox();
+        // Người dùng 26/11: thư viện dùng chung, 3 menu lớn theo lĩnh vực (trường linh_vuc của vat_tu.json, trống = PCCC).
+        static readonly string[] LINH_VUC = { "Kiến trúc", "Xây dựng", "PCCC" };
+        readonly ThanhTab linhVuc = new ThanhTab(LINH_VUC.Select(x => x.ToUpperInvariant()).ToArray());
         readonly CheckBox chiCo = new CheckBox();
         readonly PictureBox xem = new PictureBox();
         readonly Label tenXem = new Label();
@@ -87,7 +90,10 @@ namespace TKPCCC
             trai.Dock = DockStyle.Fill;
             trai.Controls.Add(ds);
             trai.Controls.Add(GiaoDien.OTim(loc, "Tìm block theo mã, tên hoặc hệ..."));
-            trai.Controls.Add(GiaoDien.TieuDe("Thư viện block PCCC"));
+            linhVuc.ChonTab(LINH_VUC.Length - 1); // mặc định PCCC (chưa gắn DaChon nên không lọc 2 lần)
+            linhVuc.DaChon += delegate { Loc(); };
+            trai.Controls.Add(linhVuc);
+            trai.Controls.Add(GiaoDien.TieuDe("Thư viện block"));
             Controls.Add(trai);
 
             FlowLayoutPanel hd = GiaoDien.KhungHanhDong(this, 190);
@@ -180,7 +186,8 @@ namespace TKPCCC
             int soDong = 0;
             double tongSl = 0;
             int soLoai = 0;
-            foreach (IGrouping<string, VatTu> nhom in tatCa.GroupBy(TenHe))
+            string lv = LINH_VUC[linhVuc.Chon];
+            foreach (IGrouping<string, VatTu> nhom in tatCa.Where(v => Lenh.BoDau(string.IsNullOrEmpty(v.linh_vuc) ? "PCCC" : v.linh_vuc) == Lenh.BoDau(lv)).GroupBy(TenHe))
             {
                 List<VatTu> hien = nhom.Where(v => (heChon == null || nhom.Key == heChon)
                     && (k == "" || Lenh.BoDau(v.ma + " " + v.ten + " " + nhom.Key).Contains(k))
@@ -204,6 +211,8 @@ namespace TKPCCC
                     if (sl > 0) soLoai++;
                 }
             }
+            if (soDong == 0 && k == "" && heChon == null && !chiCo.Checked)
+                ds.Rows[ds.Rows.Add()].Tag = "Chưa có block " + lv + ": thêm mã vào 03_DU_LIEU/vat_tu.json với \"linh_vuc\": \"" + lv + "\"";
             if (Chon() == null) ChonDongDau();
             ds.ResumeLayout();
             ds.Text = "Block: " + soDong; // thu_gui.ps1 đọc số dòng (chữ của cửa sổ) qua UI Automation

@@ -4,9 +4,9 @@ Plugin AutoCAD 2021, bot chat, YouTube và đường vẽ tự động qua MCP. 
 
 ## Cây thư mục (đánh số như gốc repo, người dùng giao 26/11)
 Số đầu = thứ tự đọc. `00`–`04` là quản lý, tri thức, luật, dữ liệu, kiểm thử; từ `05` trở đi **mỗi số là MỘT hạng mục tính năng** (sửa tính năng nào chỉ vào thư mục đó).
-Người dùng 26/11 (chiều): mọi hạng mục RIÊNG của PCCC gom vào nhóm `09_PCCC/` (mục con đánh số `01_`…`06_`), để sau thêm nhóm lĩnh vực khác (xây dựng, kiến trúc, LISP phụ trợ) thành `15_...` cùng kiểu; `07_KIEN_TRUC`, `08_KICH_THUOC`, `10_TIEN_ICH` là phần vẽ chung, không riêng PCCC.
+Người dùng 26/11 (chiều): mọi hạng mục RIÊNG của PCCC gom vào nhóm `09_PCCC/` (mục con đánh số `01_`…`05_`), để sau thêm nhóm lĩnh vực khác (xây dựng, kiến trúc, LISP phụ trợ) thành `16_...` cùng kiểu; thư viện block `15_THU_VIEN_BLOCK` dùng chung cho mọi lĩnh vực (menu Kiến trúc · Xây dựng · PCCC); `07_KIEN_TRUC`, `08_KICH_THUOC`, `10_TIEN_ICH` là phần vẽ chung, không riêng PCCC.
 Trong một hạng mục của plugin PCCC: `cad/` -> `TKPCCC.Cad.dll` (xử lý bản vẽ, thử được trong accoreconsole, chỉ `acdbmgd` + `accoremgd`), `ui/` -> `TKPCCC.UI.dll` (giao diện, chỗ DUY NHẤT được tham chiếu `acmgd`).
-`build.bat` và bộ test tự gom mọi `NN_*\cad\*.cs`, `NN_*\ui\*.cs` và một cấp nhóm `NN_*\NN_*\cad`, `NN_*\NN_*\ui`: thêm tính năng = thêm thư mục số kế tiếp (`15_...`, hoặc `07_...` trong `09_PCCC/`), không chèn giữa, không sửa `build.bat`.
+`build.bat` và bộ test tự gom mọi `NN_*\cad\*.cs`, `NN_*\ui\*.cs` và một cấp nhóm `NN_*\NN_*\cad`, `NN_*\NN_*\ui`: thêm tính năng = thêm thư mục số kế tiếp (`16_...`, hoặc `06_...` trong `09_PCCC/`), không chèn giữa, không sửa `build.bat`.
 Mọi file `cad/` là phần nối của `partial class Lenh` (bot chat: `partial class BotChat`), nên dời hàm giữa các hạng mục không phải sửa mã. Lệnh `[CommandMethod]` và danh sách `DS_LENH` vẫn gom ở `05_NEN_TANG/cad/Lenh.cs`.
 ```
 07_CAD/
@@ -33,17 +33,17 @@ Mọi file `cad/` là phần nối của `partial class Lenh` (bot chat: `partia
 │  ├─ 02_BAO_CHAY/        cad/ DayBc.cs (PCCC_DAYBC hệ thường / địa chỉ) · DayTay.cs (PCCC_DAY) · ui/ BangBoTri.cs (trang Báo cháy 4 tab, PCCC_BOTRI) · BangTraCuu.cs (Tra cứu TCVN khoang dầm)
 │  ├─ 03_CHUA_CHAY/       cad/ Tuyen.cs (tuyen, PCCC_TUYEN, ống nhánh tự chọn DN) · VungBaoVe.cs (PCCC_VUNGBV)
 │  ├─ 04_SO_DO_NGUYEN_LY/ cad/ SoDo.cs (so_do spr / bc)
-│  ├─ 05_THONG_KE/        cad/ BocKhoiLuong.cs (PCCC_GAN, PCCC_BOC, PCCC_BANG) · BangMb.cs (PCCC_KYHIEU, PCCC_QUYDINH, PCCC_THUYETMINH, thao tác bang)
-│  └─ 06_THU_VIEN_BLOCK/  cad/ ThuVien.cs (PCCC_LIB, hình mặc định) · Block.cs (PCCC_THEMBLOCK, ảnh xem trước) · DatThietBi.cs (PCCC_DAT, PCCC_ONG) · ui/ BangBlock.cs (PCCC_BLOCK) · BangChonVatTu.cs
+│  └─ 05_THONG_KE/        cad/ BocKhoiLuong.cs (PCCC_GAN, PCCC_BOC, PCCC_BANG) · BangMb.cs (PCCC_KYHIEU, PCCC_QUYDINH, PCCC_THUYETMINH, thao tác bang)
 ├─ 10_TIEN_ICH/          cad/ TienIch.cs (PCCC_KT, TRUNG, LOPCHUAN, DANHSO, XOAY, TYLE, DOIBLOCK, CANDIM, DOIDN, TACHVUNG, KHUVUC, THOATNAN) · ui/ BangTienIch.cs (PCCC_TIENICH)
 ├─ 11_BAN_QUYEN/         HUONG_DAN.md · cad/ BanQuyen.cs · ui/ BanQuyenUi.cs (PCCC_BANQUYEN) · keygen/ KeyGen.cs -> bin/TKPCCC.KeyGen.exe, keygen.py, apps_script/Code.gs
 ├─ 12_BOT_CHAT/          PLUGIN RIÊNG -> TKPCCC_BotChat.bundle (lệnh TKBOTCHAT, TKBOTCHON); build gom cả cây con:
 │                        01_KHUNG_CHAT/ (LenhBotChat.cs palette + theo dõi chọn; BotChat.cs khung, nhập, bong bóng, menu +, Cài đặt; GiaoDienChat.cs widget) · 02_MAY_AI_MODEL/ (MayAi.cs: Claude / Antigravity, model, effort, gọi CLI, đọc dòng; DanhMucModel.cs)
 │                        03_PHIEN_LICH_SU/ (LichSu.cs hội thoại mới, lịch sử, link phiên; PhienAi.cs đọc phiên, chỗ skill -> cờ CLI, MCP) · 04_DU_AN_SKILL/ (DuAnSkill.cs thư mục dự án, skill; ChonThuMuc.cs) · 05_DINH_KEM/ (DinhKem.cs ảnh, vùng chọn CAD)
 ├─ 13_YOUTUBE/           PLUGIN RIÊNG -> TKPCCC_YouTube.bundle (TKYOUTUBE): BangYoutube.cs · LenhYoutube.cs · GanBrave.cs · webview2/ (3 DLL NuGet 1.0.2903.40) · brave_khung/ (extension Brave)
-└─ 14_HUB/               Hub.cs -> bin/TKPCCC.Hub.exe (cài mọi thứ: Nền tảng · MCP cad · Bot chat · YouTube)
+├─ 14_HUB/               Hub.cs -> bin/TKPCCC.Hub.exe (cài mọi thứ: Nền tảng · MCP cad · Bot chat · YouTube)
+└─ 15_THU_VIEN_BLOCK/    cad/ ThuVien.cs (PCCC_LIB, hình mặc định) · Block.cs (PCCC_THEMBLOCK, ảnh xem trước) · DatThietBi.cs (PCCC_DAT, PCCC_ONG) · ui/ BangBlock.cs (PCCC_BLOCK) · BangChonVatTu.cs  — DÙNG CHUNG: menu Kiến trúc · Xây dựng · PCCC (nay chỉ PCCC có block)
 ```
-Hạng mục tính năng ↔ trang palette: Quy trình vẽ = 06–08 + `09_PCCC/01` · Báo cháy = `09_PCCC/01` + `02` · Chữa cháy = `09_PCCC/03` · Thống kê = `09_PCCC/05` · Thư viện = `09_PCCC/06` · Tiện ích = 10 · Lệnh, Cài đặt = 05.
+Hạng mục tính năng ↔ trang palette: Quy trình vẽ = 06–08 + `09_PCCC/01` · Báo cháy = `09_PCCC/01` + `02` · Chữa cháy = `09_PCCC/03` · Thống kê = `09_PCCC/05` · Thư viện = 15 · Tiện ích = 10 · Lệnh, Cài đặt = 05.
 
 ## Vẽ tự động chạy thế nào
 ```
@@ -73,7 +73,7 @@ AI chỉ viết một gói thao tác ngắn (spec JSON), plugin sinh hình. Mộ
 | Tường, vách, cửa (`tuong`, `cua`, `kt_chuoi`; lệnh `PCCC_TRUC`, `PCCC_TUONG`, `PCCC_CUA`) | `07_KIEN_TRUC/cad/KienTruc.cs`; layer, dày, rộng cửa mặc định ở nhóm `kien_truc` của `03_DU_LIEU_VE/ky_hieu/ky_hieu.json`, chuẩn `01_TRI_THUC_VE/ve/quy_uoc.md` |
 | Dim tự động (`PCCC_ADIM`, `PCCC_CDIM`, lõi chuỗi dim của `kt_chuoi`) | `08_KICH_THUOC/cad/Dim.cs` |
 | Thêm vật tư, thiết bị | `03_DU_LIEU/vat_tu.json` ở GỐC repo (dùng chung với báo giá), rồi `build.bat`, `PCCC_LIB` |
-| Đưa block của mình (kể cả block động) vào thư viện dưới một mã mới | trong AutoCAD: `PCCC_THEMBLOCK` hoặc nút "Thêm từ bản vẽ" của bảng `PCCC_BLOCK`; mã nguồn `09_PCCC/06_THU_VIEN_BLOCK/cad/Block.cs` |
+| Đưa block của mình (kể cả block động) vào thư viện dưới một mã mới | trong AutoCAD: `PCCC_THEMBLOCK` hoặc nút "Thêm từ bản vẽ" của bảng `PCCC_BLOCK`; mã nguồn `15_THU_VIEN_BLOCK/cad/Block.cs` |
 | Tách khu vực `PCCC_TACHVUNG`, đặt tên vùng `PCCC_KHUVUC`, vòng tròn làm vùng (`DaGiacTron`) | `10_TIEN_ICH/cad/TienIch.cs`; vùng tròn đọc ở `NhanVung.cs` `MatChon` |
 | Kiểm vùng mù đầu báo (`PCCC_KT`) và các tiện ích chỉnh sửa, kiểm tra (`PCCC_TRUNG`, `PCCC_LOPCHUAN`, `PCCC_DANHSO`, `PCCC_XOAY`, `PCCC_TYLE`, `PCCC_DOIBLOCK`, `PCCC_CANDIM`, `PCCC_DOIDN`) | `10_TIEN_ICH/cad/TienIch.cs` |
 | Trang con ADIM 5 bước (layer, DimStyle, lọc, phương) | `08_KICH_THUOC/ui/BangAdim.cs`; lệnh `08_KICH_THUOC/cad/Dim.cs` (`AdimPhuong`) |
@@ -89,7 +89,7 @@ AI chỉ viết một gói thao tác ngắn (spec JSON), plugin sinh hình. Mộ
 | Ghi m² từng khoang dầm + dấu X khoang dưới ngưỡng (layer PCCC_KHOANG_M2), công tắc `kd_ghi_m2` | `09_PCCC/01_RAI_THIET_BI/cad/KhoangDam.cs` (`GhiKhoang`); công tắc ở tab Khoang dầm `09_PCCC/02_BAO_CHAY/ui/BangBoTri.cs` |
 | Ống nhánh tự chọn DN theo số đầu phun phía sau (`PCCC_TUYEN` TuDong, mức Den05 / Tren05), chữ DN | `09_PCCC/03_CHUA_CHAY/cad/Tuyen.cs` (`TuyenXuongCa` tham số `dem`, `BangDn`, `MaDn`, `ChuDn`); bảng số đầu theo DN ở `03_DU_LIEU/ong_nhanh_dn.json` gốc repo (build.bat chép cạnh DLL); thẻ palette ở `05_NEN_TANG/ui/PhanHe.cs` |
 | Trang Báo cháy 4 tab (Rải đầu báo · Khoang dầm · Kiểm tra · Đi dây), nội dung khung TRẠNG THÁI, nút Tra cứu TCVN | `09_PCCC/02_BAO_CHAY/ui/BangBoTri.cs` (`TaoKhoangDam`, `CapNhatTrangThai`); đếm vùng `Lenh.DemVung` ở `09_PCCC/02_BAO_CHAY/cad/DayBc.cs`; bảng tra `09_PCCC/02_BAO_CHAY/ui/BangTraCuu.cs` đọc `02_DIEU_KHOAN/07_BAO_CHAY/MOD_dau_bao_khoi_khoang_dam.md` gốc repo |
-| Đổi bảng block (cột, ô lọc, nút) | `09_PCCC/06_THU_VIEN_BLOCK/ui/BangBlock.cs`; cách vẽ ảnh xem trước ở `09_PCCC/06_THU_VIEN_BLOCK/cad/Block.cs`, hàm `VeAnhBlock` |
+| Đổi bảng block (cột, ô lọc, nút) | `15_THU_VIEN_BLOCK/ui/BangBlock.cs`; cách vẽ ảnh xem trước ở `15_THU_VIEN_BLOCK/cad/Block.cs`, hàm `VeAnhBlock` |
 | Sửa hình block thiết bị | `TKPCCC.bundle/Contents/PCCC_Blocks.dwg` bằng BEDIT, rồi `PCCC_LIB` |
 | Bản quyền: key, mã máy, chặn lệnh, cấp key qua Google Sheet | `11_BAN_QUYEN/cad/BanQuyen.cs`, `11_BAN_QUYEN/` (đọc `HUONG_DAN.md`); build khoá lệnh: `build.bat phat_hanh` |
 | Thêm một luật vẽ, nối tới quy chuẩn | 1 dòng trong `02_LUAT_VE/LUAT.md` |

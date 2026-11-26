@@ -1431,7 +1431,7 @@ Kiem ($ktN.Count -eq 3 -and @($ktN | Where-Object { $_[1] -ne $ktN[0][1] }).Coun
   "Nguoi dung 23/11: hanh lang hep 1 hang: chuoi doc lech khoi hang dau bao (y 900) 1/4 be rong 0,45 m, khong ngang bang dau bao, khong sat tuong; chuoi ngang 1 lan o x 4,5 m khong cat cot ($(($ktd | ForEach-Object { $_ -join ',' }) -join ' | '))"
 
 # Thoi gian dung phong tren ban ve that cua nguoi dung (gitignore, chi chay khi co): truoc sua 78 s (23 trieu diem cat), chay rieng 9,7-9,9 s (21/11), ca bo test may ban 11-13 s: moc 15 s.
-$bvThat = Get-ChildItem "$GOC\07_CAD\file_cad_test" -Filter 'test b*o ch*y.dwg' -ErrorAction SilentlyContinue | Select-Object -First 1
+$bvThat = Get-ChildItem "$GOC\07_CAD\04_KIEM_THU\file_cad_test" -Filter 'test b*o ch*y.dwg' -ErrorAction SilentlyContinue | Select-Object -First 1
 if ($bvThat) {
   Copy-Item $bvThat.FullName "$T\that.dwg"
   (@('NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '(setq ss (ssget "X" (list (cons 0 "INSERT") (cons 2 "Factory 1A4- 1st"))))',
@@ -1442,7 +1442,7 @@ if ($bvThat) {
   $mT = [regex]::Match($out5, 'thoi_gian dung_phong=(\d+)ms')
   Kiem ($mT.Success -and [int]$mT.Groups[1].Value -lt 15000 -and $out5 -match 'thoi_gian rai=\d+ms vung=[1-9]') `
     "Ban ve that test bao chay.dwg: dung phong $($mT.Groups[1].Value) ms (< 15 s; truoc sua 78 s), rai duoc"
-} else { 'BO    ban ve that 07_CAD\file_cad_test\test bao chay.dwg khong co: bo ca thoi gian' }
+} else { 'BO    ban ve that 07_CAD\04_KIEM_THU\file_cad_test\test bao chay.dwg khong co: bo ca thoi gian' }
 
 # Ban chep ban ve mau (12_KET_QUA/, khong commit; chi chay khi may co): moc so vung / so dau bao de bat hoi quy.
 # Quyet Thang 23/11: luat khe xuyen (1bd93ea) tinh vach dau tuong 0,2 m la chu T, o cua 5,6 m tuong xuong 2 khong khep -> 25 vung / 57 DB con 12 / 20.

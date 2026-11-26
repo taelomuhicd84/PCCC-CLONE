@@ -26,7 +26,7 @@ Nhờ vậy kiểm thử được plugin mà không đụng AutoCAD người dù
   DLL đang nạp nhưng không cho ghi đè; người dùng tắt hẳn AutoCAD rồi mở lại để nạp bản mới).
 - Thử trên AutoCAD có giao diện (bảng `PCCC_BLOCK`, cầu nối + máy chủ MCP thật, `-PLOT`, `-PDFIMPORT`): `powershell -ExecutionPolicy Bypass -File 07_CAD\04_KIEM_THU\thu_gui.ps1`
   sau `07_CAD\build.bat`. Script tự mở một AutoCAD, tự tắt, dùng thư mục tạm; từ chối chạy khi đang có AutoCAD mở.
-- Mỗi thư mục số `07_CAD/05_NEN_TANG/` … `07_CAD/14_HUB/` là một hạng mục tính năng (bảng ở `07_CAD/README.md`; hạng mục riêng PCCC nằm trong nhóm `07_CAD/09_PCCC/NN_*/`): xử lý bản vẽ ở `NN_*/cad/`, mã giao diện nằm riêng ở `NN_*/ui/` (`TKPCCC.UI.dll`, tham chiếu `acmgd`); phần xử lý bản vẽ của nó ở `07_CAD/09_PCCC/06_THU_VIEN_BLOCK/cad/Block.cs`.
+- Mỗi thư mục số `07_CAD/05_NEN_TANG/` … `07_CAD/15_THU_VIEN_BLOCK/` là một hạng mục tính năng (bảng ở `07_CAD/README.md`; hạng mục riêng PCCC nằm trong nhóm `07_CAD/09_PCCC/NN_*/`): xử lý bản vẽ ở `NN_*/cad/`, mã giao diện nằm riêng ở `NN_*/ui/` (`TKPCCC.UI.dll`, tham chiếu `acmgd`); phần xử lý bản vẽ của nó ở `07_CAD/15_THU_VIEN_BLOCK/cad/Block.cs`.
 - Xem bản vẽ kết quả bằng mắt: `powershell -ExecutionPolicy Bypass -File 07_CAD\.claude\skills\tkpccc-cad-console\scripts\in_png.ps1 <ban_ve.dwg> <ra.png>`
   rồi đọc ảnh PNG (Read). Dùng để kiểm hình block, chữ căn giữa, bảng, màu layer — những thứ đọc dòng lệnh không thấy.
 

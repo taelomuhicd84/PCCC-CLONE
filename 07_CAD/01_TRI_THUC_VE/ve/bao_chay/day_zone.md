@@ -1,6 +1,6 @@
 # Đi dây báo cháy trên mặt bằng: hệ thường và hệ địa chỉ
 
-Nguồn: lời người dùng ngày 16/11/2026 và bản vẽ mẫu `07_CAD\file_cad_test\test báo cháy.dwg` (không commit). Bản vẽ này có hai nửa:
+Nguồn: lời người dùng ngày 16/11/2026 và bản vẽ mẫu `07_CAD\04_KIEM_THU\file_cad_test\test báo cháy.dwg` (không commit). Bản vẽ này có hai nửa:
 nửa trái vẽ hệ địa chỉ, nửa phải vẽ hệ thường. Lệnh vẽ theo cách này là `PCCC_DAYBC`, mã ở `09_PCCC/02_BAO_CHAY/cad/DayBc.cs`.
 
 ## Luật chung

@@ -1,7 +1,7 @@
 # Học từ bộ bản vẽ PCCC mẫu của người dùng (14/11/2026)
 
 Người dùng đưa 2 nơi để học, KHÔNG được sửa file gốc:
-- thư mục `07_CAD/file_cad_test/` trong repo (gitignore);
+- thư mục `07_CAD/04_KIEM_THU/file_cad_test/` trong repo (gitignore);
 - thư mục hồ sơ thẩm duyệt một xưởng trên Drive công ty.
 
 Gồm 5 bản PCCC (kho, xưởng sản xuất, nhà xưởng bao bì) + 1 bản kiến trúc. Bản chép để học ở `12_KET_QUA/cad_test/hoc_mau/` (gitignore). Công cụ dùng:
