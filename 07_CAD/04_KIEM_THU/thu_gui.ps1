@@ -9,6 +9,27 @@ $GOC = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $B = "$GOC\07_CAD\TKPCCC.bundle\Contents"
 if (Get-Process acad -ErrorAction SilentlyContinue) { throw 'Dang co AutoCAD mo: dong lai roi chay (script nay tu mo va tu tat mot AutoCAD rieng).' }
 foreach ($f in "$B\TKPCCC.Cad.dll", "$B\TKPCCC.UI.dll", "$B\vat_tu.json", "$GOC\07_CAD\bin\TKPCCC.Mcp.exe") { if (-not (Test-Path $f)) { throw "Thieu $f - chay 07_CAD\build.bat truoc" } }
+# 26/11: may co lien ket bundle trong ApplicationPlugins (cai_dat.bat, build.bat) thi AutoCAD cua lan thu tu nap ban bundle TRUOC khi kich ban NETLOAD ban chep:
+# DLL chay tu thu muc bundle cua nguoi dung (phim_tat.txt khong co PHX, anh_block ghi vao bundle). Go tam lien ket (chi lien ket, khong dung file), tra lai
+# trong finally; lan truoc bi ngat giua chung thi tra lai ngay dau lan nay (file ghi $GHI_LK).
+$PLG = "$env:APPDATA\Autodesk\ApplicationPlugins"
+$GHI_LK = "$env:TEMP\tkpccc_gui_lien_ket.txt"
+function TraLienKet {
+  if (-not (Test-Path $GHI_LK)) { return }
+  foreach ($d in Get-Content $GHI_LK) {
+    $ten, $dich = $d -split '\|', 2
+    if ($ten -and -not (Test-Path "$PLG\$ten")) { cmd /c mklink /J "$PLG\$ten" "$dich" | Out-Null }
+  }
+  Remove-Item $GHI_LK
+}
+TraLienKet
+$lk = @()
+if (Test-Path $PLG) {
+  foreach ($d in (cmd /c dir /AL "$PLG")) { if ($d -match '<JUNCTION>\s+(TKPCCC\S*\.bundle)\s+\[(.+)\]') { $lk += "$($Matches[1])|$($Matches[2])" } }
+  foreach ($ten in 'TKPCCC.bundle', 'TKPCCC_BotChat.bundle', 'TKPCCC_YouTube.bundle') {
+    if ((Test-Path "$PLG\$ten") -and -not ($lk | Where-Object { $_ -like "$ten|*" })) { throw "$PLG\$ten la thu muc that (khong phai lien ket): AutoCAD cua lan thu se nap ban do. Doi cho tam roi chay lai." }
+  }
+}
 $T = Join-Path $env:TEMP ('tkpccc_gui_' + [guid]::NewGuid().ToString('N').Substring(0, 8))
 New-Item -ItemType Directory "$T\b" | Out-Null
 Copy-Item "$B\TKPCCC.Cad.dll", "$B\TKPCCC.UI.dll", "$B\vat_tu.json", "$B\ky_hieu.json", "$B\khoang_cach_rai.json", "$B\chon-loai-dau-bao.md" "$T\b"
@@ -38,9 +59,13 @@ function DocAnh($f) {
   $kq
 }
 
-$acad = Start-Process "$ACAD\acad.exe" -ArgumentList "/nologo /b `"$T\gui.scr`"" -PassThru
-$mcp = $null
+$mcp = $null   # $acad (tien trinh) gan duoi: PowerShell khong phan biet hoa thuong, gan som thi de mat $ACAD
 try {
+  if ($lk.Count) {
+    $lk | Set-Content -Encoding UTF8 $GHI_LK
+    foreach ($d in $lk) { cmd /c rmdir "$PLG\$(($d -split '\|', 2)[0])" }
+  }
+  $acad = Start-Process "$ACAD\acad.exe" -ArgumentList "/nologo /b `"$T\gui.scr`"" -PassThru
   # Cau noi ghi song.json khi plugin da nap va AutoCAD da co ban ve.
   for ($i = 0; $i -lt 180 -and -not (Test-Path "$T\hd\song.json"); $i++) { Start-Sleep -Seconds 1 }
   Kiem (Test-Path "$T\hd\song.json") "AutoCAD mo, NETLOAD plugin, cau noi chay (sau $i giay)"
@@ -235,19 +260,24 @@ public static class WinU {
   Kiem ($r.content[0].text -match 'kh.ng c.n m') "ban ve khong con mo: tu choi ca goi"
   # Nguoi dung 26/11: "ra lenh o tab do, qua tab khac thao tac, tab cu van thuc thi". Ban ve thu hai dang do lenh LINE (cho diem):
   # viec khoa ban ve dau van chay nen ngay (truoc day ca hang doi dung cho toi khi nguoi dung xong lenh, MCP bao "dang ban" sau 60 s).
-  $dangLenh = $false
-  for ($i = 0; $i -lt 20 -and -not $dangLenh; $i++) { try { $moi.SendCommand('_.LINE '); $dangLenh = $true } catch { Start-Sleep -Milliseconds 500 } }
-  Start-Sleep -Seconds 2
-  $cmd = try { $moi.GetVariable('CMDACTIVE') } catch { '?' }
+  # Gui LINE MOT lan (gui lai khi COM tu choi thi LINE thu hai lot vao dau nhac diem va ket thuc lenh), tu tien trinh rieng: SendCommand ngoai tien trinh
+  # co the cho toi khi lenh xong. Do lenh = AutoCAD het "quiescent".
+  for ($i = 0; $i -lt 40; $i++) { try { if ($app.GetAcadState().IsQuiescent) { break } } catch { }; Start-Sleep -Milliseconds 500 }
+  $guiLine = Start-Process powershell -WindowStyle Hidden -PassThru -ArgumentList '-NoProfile', '-Command', "[Runtime.InteropServices.Marshal]::GetActiveObject('AutoCAD.Application').ActiveDocument.SendCommand('_.LINE ')"
+  $ranh = $true
+  for ($i = 0; $i -lt 20 -and $ranh; $i++) { Start-Sleep -Milliseconds 500; try { $ranh = $app.GetAcadState().IsQuiescent } catch { $ranh = 'tu choi' } }
   $giay = [Diagnostics.Stopwatch]::StartNew()
   $r = GoiCongCu 10 'cad_chay' @{ ban_ve = $dau; ops = @(@{ op = 'tron'; l = 'NEN_BOT'; c = @(500, 0); r = 100 }) }
   $k5 = if ($r.isError) { $null } else { $r.content[0].text | ConvertFrom-Json }
-  Kiem ($dangLenh -and $k5 -and $k5.ban_ve -eq $dau -and $k5.ve -eq 1 -and $giay.Elapsed.TotalSeconds -lt 20) "ban ve dang hien do lenh LINE (CMDACTIVE $cmd): viec khoa '$dau' chay nen ngay ($([int]$giay.Elapsed.TotalSeconds) s): $($r.content[0].text)"
+  Kiem ($ranh -ne $true -and $k5 -and $k5.ban_ve -eq $dau -and $k5.ve -eq 1 -and $giay.Elapsed.TotalSeconds -lt 20) "ban ve dang hien do lenh LINE (quiescent: $ranh): viec khoa '$dau' chay nen ngay ($([int]$giay.Elapsed.TotalSeconds) s): $($r.content[0].text)"
+  if (-not $guiLine.HasExited) { Stop-Process -Id $guiLine.Id -Force }
 }
 finally {
   if ($mcp) { try { $mcp.StandardInput.Close() } catch { }; if (-not $mcp.WaitForExit(5000)) { $mcp.Kill() } }
   # AutoCAD rieng cua lan thu: tat han, khong luu Drawing1.
-  if (-not $acad.HasExited) { Stop-Process -Id $acad.Id -Force }
+  if ($acad -is [Diagnostics.Process] -and -not $acad.HasExited) { Stop-Process -Id $acad.Id -Force }
+  Start-Sleep -Seconds 2   # acad nha thu muc bundle roi moi tao lai lien ket
+  TraLienKet
 }
 "Thu muc thu: $T"
 if ($loi) { exit 1 } else { 'TAT CA DAT' }

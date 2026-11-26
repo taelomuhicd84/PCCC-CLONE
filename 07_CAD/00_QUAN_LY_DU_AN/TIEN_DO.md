@@ -3,14 +3,16 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `07_CAD/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `07_CAD/00_QUAN_LY_DU_AN/KE_HOACH.md`. Nhật ký: `07_CAD/00_QUAN_LY_DU_AN/LICH_SU.md`. Luật riêng: `07_CAD/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `07_CAD/00_QUAN_LY_DU_AN/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`07_CAD/CLAUDE.md`).
 
-## 26/11 tối: BOT CHAT — TAB CŨ VẪN CHẠY KHI NGƯỜI DÙNG THAO TÁC TAB KHÁC — XONG MÃ, CHƯA THỬ TRONG AUTOCAD THẬT
+## 26/11 tối: BOT CHAT — TAB CŨ VẪN CHẠY KHI NGƯỜI DÙNG THAO TÁC TAB KHÁC — XONG, thu_gui TAT CA DAT (28/28), chưa push
 Người dùng: "ra lệnh tại tab đó, qua tab khác thao tác, tab cũ vẫn thực thi lệnh". Gốc: `06_VE_TU_DONG_AI/cad/Cau.cs` `Nhip` thấy tab đang hiện dở lệnh
 (`CMDACTIVE`) là dừng CẢ hàng đợi, nên việc khoá bản vẽ tab cũ (chạy nền từ 19/11) đứng tới khi người dùng xong lệnh; quá 60 s máy chủ MCP báo "đang bận".
 - Sửa `Nhip`: duyệt hàng đợi; việc của tab đang hiện vẫn chờ lệnh người dùng; việc khoá bản vẽ khác chạy nền ngay (`Lenh.ChayNen`), chỉ chờ khi chính bản đó
   `CommandInProgress`. Không chạy lồng: `Lenh.DangSpec` (gói spec đang chạy) hoặc lệnh `PCCC*` đang chạy ở tab hiện thì chờ. Người dùng đang dở lệnh thì không in chữ vào dấu nhắc.
 - `anh` trên bản nền vẫn từ chối (PlotEngine, `acedTrans` cần bản đang hiện); câu lỗi nay bảo AI kiểm bằng `doc` / `dem` rồi làm tiếp (`Spec.cs` `CanDangHien`, `TU_VUNG.md`).
 - Test: `thu_gui.ps1` thêm ca bản vẽ 2 dở lệnh LINE, việc khoá bản 1 phải vẽ trong < 20 s. build.bat 7/7 OK; thu_mcp, thu_bot TAT CA DAT; chay_thu 215 DAT, 1 LOI cũ (Karaoke tầng 1 + 2, vung=30).
-- CHƯA: thu_gui (AutoCAD người dùng đang mở) — tắt hẳn AutoCAD rồi chạy `07_CAD\04_KIEM_THU\thu_gui.ps1`; mở lại AutoCAD để nạp DLL mới.
+- thu_gui TAT CA DAT trên AutoCAD 2021 thật: bản vẽ 2 dở LINE (`IsQuiescent` false), việc khoá Drawing1 chạy nền 0 s. Sửa bộ test: (1) build.bat
+  (`cai_dat /lai`) để lại liên kết bundle trong ApplicationPlugins nên AutoCAD của lần thử tự nạp bundle thật trước bản chép (lỗi PHX + ảnh xem trước 0 file):
+  thu_gui gỡ tạm 3 liên kết, trả lại trong finally (bị ngắt thì đầu lần sau trả, file `%TEMP%\tkpccc_gui_lien_ket.txt`); (2) gửi LINE MỘT lần từ tiến trình riêng.
 - Giới hạn: gói nền chạy trên luồng chính, gói lớn (rải cả tầng) làm tab đang thao tác khựng vài giây trong lúc chạy.
 - Mã 26/11 của phiên khác chưa commit (`Cau.cs` TatTietKiemDien, `BotChat.cs`, `GiaoDienChat.cs`) để nguyên, không gộp vào commit này.
 
