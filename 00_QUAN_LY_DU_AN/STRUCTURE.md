@@ -74,14 +74,16 @@ TKPCCC/
 │  ├─ scripts/make_sample_pdf.py      PDF mẫu có lỗi cài sẵn
 │  └─ test/                  pytest
 ├─ 07_CAD/                 DỰ ÁN CON AUTOCAD 2021–2024 (C# 5, .NET Framework 4.8): bản đồ đủ ở 07_CAD/README.md, luật riêng 07_CAD/CLAUDE.md
-│  ├─ .claude/               skill riêng (tkpccc-ve-cad, tkpccc-cad-console) và agent riêng của CAD
-│  ├─ module/                mã chạy: plugin/ · ui/ · mcp/ · chung/ · hub/ · botchat/ · youtube/ · banquyen/ · lisp/
-│  ├─ skills/ · data/ · rule/   ĐẦU NGUỒN tri thức vẽ (TU_VUNG.md, nhan_dang/, ve/, mau/) · dữ liệu vẽ · LUAT.md
-│  ├─ test/                  chay_thu.ps1 (accoreconsole) · thu_mcp.ps1 · thu_gui.ps1 (AutoCAD thật, không bắt buộc)
-│  ├─ build.bat · bin/       build DLL + TKPCCC.Mcp.exe, Hub, KeyGen (bin/ không commit)
+│  ├─ .claude/ · CLAUDE.md · README.md · .mcp.json   skill riêng (tkpccc-ve-cad, tkpccc-cad-console), agent riêng, luật riêng, bản đồ
+│  ├─ 00_QUAN_LY_DU_AN/      TIEN_DO.md · LICH_SU.md · KE_HOACH.md · HUONG_DAN_SU_DUNG.md · viec/ (tiến độ, nhật ký riêng của CAD)
+│  ├─ 01_TRI_THUC_VE/ · 02_LUAT_VE/ · 03_DU_LIEU_VE/   ĐẦU NGUỒN tri thức vẽ (TU_VUNG.md, nhan_dang/, ve/, mau/) · LUAT.md · dữ liệu vẽ
+│  ├─ 04_KIEM_THU/           chay_thu.ps1 (accoreconsole) · thu_mcp.ps1 · thu_bot.ps1 · thu_hub.ps1 · thu_gui.ps1 (AutoCAD thật, không bắt buộc)
+│  ├─ 05_NEN_TANG/ … 19_HUB/ MỖI SỐ MỘT HẠNG MỤC TÍNH NĂNG (26/11): 05 nền tảng · 06 vẽ tự động AI (spec, MCP) · 07 kiến trúc · 08 kích thước
+│  │                         · 09 rải thiết bị · 10 báo cháy · 11 chữa cháy · 12 sơ đồ · 13 thống kê · 14 thư viện block · 15 tiện ích · 16 bản quyền
+│  │                         · 17 bot chat (5 mục con) · 18 YouTube · 19 Hub; trong mỗi mục cad/ -> TKPCCC.Cad.dll, ui/ -> TKPCCC.UI.dll
+│  ├─ build.bat · cai_dat.bat · bin/   build DLL + TKPCCC.Mcp.exe, Hub, KeyGen (bin/ không commit) · liên kết bundle cho AutoCAD tự nạp
 │  ├─ TKPCCC*.bundle/        gói AutoCAD tự nạp (DLL do build tạo; PCCC_Blocks.dwg, block_alias.json người dùng sửa)
-│  ├─ file_cad_test/         bản vẽ mẫu của khách để học (không commit) · thamkhao_plugincad/ plugin tham khảo (chưa commit)
-│  └─ KE_HOACH.md · TIEN_DO.md · LICH_SU.md   kế hoạch, tiến độ, nhật ký riêng của CAD
+│  └─ file_cad_test/         bản vẽ mẫu của khách để học (không commit) · thamkhao_plugincad/ plugin tham khảo (chưa commit)
 ├─ 08_BANG_TINH/thuy_luc/  EXCEL MẪU THỦY LỰC (chép từ SKILL-PCCC-NEW): MAU_THUY_LUC_7336.xlsx, o_nhap.json (bản đồ ô nhập), vi_du/
 ├─ 09_SCRIPTS/             xuat_thuy_luc_excel.py (sửa F106 theo B.2.10.12) · kiem_lien_ket.py · chen_hang_cuoi.ps1, hoan_thien_excel.ps1 (UTF-8 có BOM)
 ├─ 10_DRIVE/               QUẢN LÝ GOOGLE DRIVE / ONEDRIVE: drive.py (quét, lịch sử, tìm, dựng cây hồ sơ, xếp file, hoàn tác, chia sẻ qua rclone),
@@ -105,7 +107,7 @@ TKPCCC/
 | Server, xuất file, gọi Claude | `04_BACKEND/src` | Claude (agent `web-backend`), kèm test trong `04_BACKEND/test` | có |
 | Giao diện | `05_FRONTEND/index.html` | Claude (agent `web-frontend`) | có |
 | Thẩm định PDF (Python) | `06_THAM_DINH_PDF/` (luật: `06_THAM_DINH_PDF/rules/*.yaml`) | Claude, kèm test trong `06_THAM_DINH_PDF/test` | có |
-| AutoCAD | `07_CAD/module/plugin/Lenh.cs` | Claude, kiểm bằng `07_CAD/test/chay_thu.ps1` | có |
+| AutoCAD | `07_CAD/05_NEN_TANG/cad/Lenh.cs` | Claude, kiểm bằng `07_CAD/04_KIEM_THU/chay_thu.ps1` | có |
 | Thư viện block, gán block | `07_CAD/TKPCCC.bundle/Contents/PCCC_Blocks.dwg`, `block_alias.json` | người dùng (BEDIT, `PCCC_GAN`) | có |
 | Danh mục, quy trình | `03_DU_LIEU/vat_tu.json`, `03_DU_LIEU/huong_dan.json` | người dùng / Claude | có |
 | Tri thức, điều khoản | `01_TRI_THUC/`, `02_DIEU_KHOAN/` | chép nguyên văn bằng script, không viết theo trí nhớ | có |
@@ -130,7 +132,7 @@ Web: tab Thẩm định PDF ─POST /api/tham-dinh─► 12_KET_QUA/<dự án>/t
 - Vật tư / thiết bị mới: 1 dòng trong `03_DU_LIEU/vat_tu.json` → `07_CAD\build.bat` → `PCCC_LIB` (tự thêm block mặc định cho mã mới).
 - Phép tính nghiệp vụ mới (ước khối lượng, thủy lực…): file mới trong `04_BACKEND/shared/src/` + test trong `04_BACKEND/shared/test/`.
 - API mới: route trong `04_BACKEND/src/server.ts`; xuất định dạng mới: `04_BACKEND/src/xuat_<định dạng>.ts`; engine AI mới: `04_BACKEND/src/engines/`.
-- Lệnh AutoCAD mới: `07_CAD/module/plugin/Lenh.cs` (bọc `Chay(...)`), thêm dòng kiểm vào `07_CAD/test/chay_thu.ps1`, khai báo trong `PackageContents.xml`.
+- Lệnh AutoCAD mới: `07_CAD/05_NEN_TANG/cad/Lenh.cs` (bọc `Chay(...)`), thêm dòng kiểm vào `07_CAD/04_KIEM_THU/chay_thu.ps1`, khai báo trong `PackageContents.xml`.
 - Quy chuẩn mới: nguyên văn vào `01_TRI_THUC/` (văn bản, bảng) hoặc `02_DIEU_KHOAN/` (điều khoản theo chuyên đề); nối vào bước trong `03_DU_LIEU/huong_dan.json`.
 - Luật thẩm định PDF mới: thêm vào `06_THAM_DINH_PDF/rules/qcvn06_2022_sd01_2023.yaml` (check có sẵn) hoặc hàm `@register` trong
   `06_THAM_DINH_PDF/pccc_checker/rules/checks.py`; thêm ca kiểm vào `06_THAM_DINH_PDF/test/`.

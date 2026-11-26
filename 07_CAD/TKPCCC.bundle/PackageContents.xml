@@ -8,7 +8,7 @@
   <RuntimeRequirements OS="Win64" Platform="AutoCAD*" SeriesMin="R24.0" SeriesMax="R24.3" />
   <Components>
     <!-- Một DLL: TKPCCC.Cad.dll tự nạp TKPCCC.UI.dll (palette, PCCC_BLOCK...) trong KhoiDong.Initialize (Lenh.cs), nên không khai ComponentEntry riêng cho UI.
-         Danh sách lệnh lấy từ mọi [CommandMethod] trong 07_CAD/module (09_SCRIPTS/kiem_lien_ket.py kiểm lệch). -->
+         Danh sách lệnh lấy từ mọi [CommandMethod] trong 07_CAD/NN_*/cad, NN_*/ui (09_SCRIPTS/kiem_lien_ket.py kiểm lệch). -->
     <ComponentEntry AppName="TKPCCC" ModuleName="./Contents/TKPCCC.Cad.dll" LoadOnAutoCADStartup="True">
       <Commands GroupName="TKPCCC">
         <Command Local="PCCC" Global="PCCC" />

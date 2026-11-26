@@ -30,7 +30,7 @@ python .claude/skills/tkpccc-phoi-hop-model/scripts/goi_gemini.py --file <pdf> -
 - Kết quả ghi vào `12_KET_QUA/<dự án>/` (không commit). Claude đọc file đó, KHÔNG dán PDF vào hội thoại.
 - Model (người dùng dặn 14/11): KHÔNG dùng Gemini 3.8 Flash; chỉ dòng Gemini 4 từ Argon trở lên. Script mặc định `gemini-4-argon-medium` (bóc đơn giản);
   việc khó: `gemini-4-carbon-high` hoặc `gemini-4-hydrogen-high` (`agy models` liệt kê). Số đo token dưới đây là của Flash, chưa đo lại với Argon.
-- Thử 14/11 trên `07_CAD/test/mau_kt.pdf` (có đáp án, một nhãn cố tình ghi sai): 150 dpi + hỏi "nhịp mm" sai 2/10 (tự "sửa" nhãn); 200 dpi + hỏi "chữ in nguyên văn" đúng 10/10.
+- Thử 14/11 trên `07_CAD/04_KIEM_THU/mau_kt.pdf` (có đáp án, một nhãn cố tình ghi sai): 150 dpi + hỏi "nhịp mm" sai 2/10 (tự "sửa" nhãn); 200 dpi + hỏi "chữ in nguyên văn" đúng 10/10.
   ⇒ luôn hỏi CHỮ IN NGUYÊN VĂN, không hỏi số đã suy ra.
 - Đo 14/11 trên hồ sơ thật (`cong_trinh.pdf` trang 5, mặt bằng báo cháy, đáp án từ chữ vector, chi tiết `00_QUAN_LY_DU_AN/LICH_SU.md`):
   Gemini Flash 43 nghìn token Gemini, Claude chỉ đọc JSON 610 ký tự; Claude Sonnet tự đọc ảnh 79 nghìn token Claude. Chữ (12 trục có phụ, 11 + 6 kích thước,

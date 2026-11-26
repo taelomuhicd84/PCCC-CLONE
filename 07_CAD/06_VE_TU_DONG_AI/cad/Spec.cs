@@ -1,0 +1,894 @@
+﻿// PCCC_SPEC: chạy một gói thao tác (spec JSON) trong MỘT lệnh = một bước Undo, trả kết quả gọn (đếm + lỗi).
+// Từ vựng (nguồn duy nhất): 07_CAD/01_TRI_THUC_VE/TU_VUNG.md. Thêm thao tác: viết hàm Op..., thêm 1 dòng vào MotOp, ghi vào TU_VUNG.md.
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Web.Script.Serialization;
+using Autodesk.AutoCAD.ApplicationServices;
+using Autodesk.AutoCAD.DatabaseServices;
+using Autodesk.AutoCAD.EditorInput;
+using Autodesk.AutoCAD.Geometry;
+using Autodesk.AutoCAD.PlottingServices;
+using AcApp = Autodesk.AutoCAD.ApplicationServices.Core.Application;
+
+namespace TKPCCC
+{
+    public partial class Lenh
+    {
+        const int DOC_TOI_DA = 40;        // trần số dòng một thao tác "doc" trả về: kết quả phải gọn để đỡ token
+        const string KIEU_KT = "PCCC_KT"; // kiểu kích thước riêng: số nguyên, chữ Arial, cỡ theo "cao" của từng kích thước
+
+        class GoiSpec
+        {
+            public Document Doc;
+            public Database Db;
+            public Transaction Tr;
+            public BlockTableRecord Ms;
+            public FileDanhMuc Dm;
+            public double Gx, Gy;
+            public int Ve, Xoa, Sua;
+            public Extents3d? Hop;
+            public List<object> Loi = new List<object>();
+            public List<object> KqDoc = new List<object>();
+            public Dictionary<string, object> Dem, DemLoai;
+            public List<object> KqRai = new List<object>(), KqTuyen = new List<object>();   // 07_CAD/09_RAI_THIET_BI/cad/Rai.cs
+            public List<List<Point3d>> DiemRai = new List<List<Point3d>>();                 // điểm của "rai" gần nhất, theo từng vùng, để "tuyen" dùng lại
+            public List<List<Point2d>> VungRai = new List<List<Point2d>>();                 // đa giác của từng vùng đó (cùng chỉ số): "tuyen" nhận "qua" theo vùng
+            public List<object> KqAnh = new List<object>();                                 // đường dẫn PNG của thao tác "anh"
+            public List<object> KqPdf = new List<object>();                                 // số đối tượng + layer của từng thao tác "pdf"
+            public List<object> KqVung = new List<object>();                                 // vùng tự dựng của "vung_tu_dong" (NhanVung.cs)
+            public Dictionary<string, object> KqNguon;                                       // kết quả bảng tính nguồn của "so_do" bc (SoDo.cs)
+        }
+
+        // ---------- Đọc JSON ----------
+
+        static double D(object o) { return Convert.ToDouble(o, CultureInfo.InvariantCulture); }
+        static double Lt(double x) { return Math.Round(x, 1); }
+        static object Lay(Dictionary<string, object> d, string k) { object v; return d.TryGetValue(k, out v) ? v : null; }
+        static double LaySo(Dictionary<string, object> d, string k, double macDinh) { object v = Lay(d, k); return v == null ? macDinh : D(v); }
+        static string LayChu(Dictionary<string, object> d, string k, string macDinh) { object v = Lay(d, k); return v == null ? macDinh : Convert.ToString(v, CultureInfo.InvariantCulture); }
+        static bool LayCo(Dictionary<string, object> d, string k, bool macDinh) { object v = Lay(d, k); return v == null ? macDinh : (v is bool ? (bool)v : D(v) != 0); }
+
+        static IList DS(object o, string ten)
+        {
+            IList l = o as IList;
+            if (l == null) throw new System.Exception("thiếu \"" + ten + "\" (phải là mảng)");
+            return l;
+        }
+
+        static Point3d P(GoiSpec g, object o, string ten)
+        {
+            IList l = DS(o, ten);
+            if (l.Count < 2) throw new System.Exception("\"" + ten + "\" phải là [x,y]");
+            return new Point3d(D(l[0]) + g.Gx, D(l[1]) + g.Gy, 0);
+        }
+
+        /// Nhận [[x,y],...] hoặc một điểm [x,y].
+        static List<Point3d> DsP(GoiSpec g, object o, string ten)
+        {
+            IList l = DS(o, ten);
+            List<Point3d> kq = new List<Point3d>();
+            if (l.Count > 0 && !(l[0] is IList)) { kq.Add(P(g, l, ten)); return kq; }
+            foreach (object x in l) kq.Add(P(g, x, ten));
+            return kq;
+        }
+
+        // ---------- Mặc định ký hiệu (trục, kích thước, chữ) ----------
+        // Đọc ky_hieu.json cạnh DLL (nguồn: 07_CAD/03_DU_LIEU_VE/ky_hieu/ky_hieu.json, build.bat chép sang). Thiếu file hoặc thiếu khoá thì dùng số trong mã.
+
+        static Dictionary<string, object> kyHieu;
+
+        static Dictionary<string, object> NhomKyHieu(string nhom)
+        {
+            if (kyHieu == null)
+            {
+                kyHieu = new Dictionary<string, object>();
+                string f = Path.Combine(ThuMuc, "ky_hieu.json");
+                if (File.Exists(f))
+                {
+                    Dictionary<string, object> d;
+                    try { d = new JavaScriptSerializer().DeserializeObject(File.ReadAllText(f, Encoding.UTF8)) as Dictionary<string, object>; }
+                    catch (System.Exception ex) { kyHieu = null; throw new System.Exception("ky_hieu.json sai cú pháp: " + ex.Message); }
+                    if (d != null) kyHieu = d;
+                }
+            }
+            return Lay(kyHieu, nhom) as Dictionary<string, object> ?? new Dictionary<string, object>();
+        }
+
+        // ---------- Lệnh ----------
+
+        static void ChaySpec()
+        {
+            Document doc = AcApp.DocumentManager.MdiActiveDocument;
+            Editor ed = doc.Editor;
+            PromptStringOptions po = new PromptStringOptions("\nFile spec JSON: ");
+            po.AllowSpaces = true;
+            PromptResult pr = ed.GetString(po);
+            if (pr.Status != PromptStatus.OK) return;
+            bool zoom;
+            ed.WriteMessage(ChayFileSpec(doc, Path.GetFullPath(pr.StringResult.Trim().Trim('"')), out zoom));
+            // Chỉ khi spec xin "zoom": thêm một bước Undo cho lệnh ZOOM, nên mặc định không làm.
+            if (zoom) doc.SendStringToExecute("_.ZOOM _E ", true, false, false);
+        }
+
+        /// Chạy file spec f trên doc rồi ghi kết quả: việc hàng đợi (máy chủ MCP) vào thư mục "ra", file thường thì <tên>.kq.json cạnh nó.
+        /// Trả dòng tóm tắt cho dòng lệnh; zoom = spec xin zoom và là việc hàng đợi.
+        static string ChayFileSpec(Document doc, string f, out bool zoom)
+        {
+            bool tuHangDoi = string.Equals(Path.GetDirectoryName(f), HangDoi.Dang, StringComparison.OrdinalIgnoreCase);
+            string fKq = tuHangDoi ? Path.Combine(HangDoi.Ra, Path.GetFileName(f)) : Path.ChangeExtension(f, ".kq.json");
+            Dictionary<string, object> kq;
+            zoom = false;
+            try { kq = ThucHienSpec(doc, File.ReadAllText(f, Encoding.UTF8), out zoom); }
+            catch (System.Exception ex) { kq = KqLoi(ex.Message); }
+            JavaScriptSerializer js = new JavaScriptSerializer();
+            js.MaxJsonLength = int.MaxValue;
+            HangDoi.GhiAnToan(fKq, js.Serialize(kq));
+            if (tuHangDoi) { try { File.Delete(f); } catch (System.Exception) { } }
+            zoom = zoom && tuHangDoi;
+            IList loi = Lay(kq, "loi") as IList;
+            return "\n[TKPCCC] SPEC ve=" + kq["ve"] + " xoa=" + kq["xoa"] + " loi=" + (loi == null ? 0 : loi.Count) + " -> " + fKq;
+        }
+
+        static Dictionary<string, object> KqLoi(string lyDo)
+        {
+            return new Dictionary<string, object> { { "ok", false }, { "ve", 0 }, { "xoa", 0 },
+                { "loi", new object[] { new Dictionary<string, object> { { "i", -1 }, { "op", "spec" }, { "ly_do", lyDo } } } } };
+        }
+
+        static bool DangHien(Document doc)
+        {
+            Document a = AcApp.DocumentManager.MdiActiveDocument;
+            return a != null && a.UnmanagedObject == doc.UnmanagedObject;
+        }
+
+        /// Bản vẽ đang mở khớp "ban_ve" (đường dẫn đầy đủ, hoặc chỉ tên file: ưu tiên bản đang hiện). null = không còn mở.
+        internal static Document TimBanVe(string banVe)
+        {
+            List<Document> ds = AcApp.DocumentManager.Cast<Document>().ToList();
+            Document d = ds.FirstOrDefault(x => string.Equals(x.Name, banVe, StringComparison.OrdinalIgnoreCase));
+            if (d != null) return d;
+            string ten = Path.GetFileName(banVe);
+            List<Document> cungTen = ds.Where(x => string.Equals(Path.GetFileName(x.Name), ten, StringComparison.OrdinalIgnoreCase)).ToList();
+            return cungTen.FirstOrDefault(DangHien) ?? cungTen.FirstOrDefault();
+        }
+
+        /// Người dùng 19/11: "dùng bot chat ở tab này, qua tab file khác vẫn làm được, không nhận diện sai file". Việc hàng đợi khoá bản vẽ không đang hiện:
+        /// chạy ngay trên bản vẽ đó (khoá tài liệu, ngữ cảnh ứng dụng), không đổi tab, không đụng bản vẽ người dùng đang làm. Khoá có tên lệnh = một bước Undo
+        /// của bản vẽ đó. WorkingDatabase tạm trỏ bản vẽ đích: đối tượng mới lấy mặc định (kiểu chữ, kích thước) từ đó, không thì eWrongDatabase.
+        internal static string ChayNen(Document doc, string f)
+        {
+            Database cu = HostApplicationServices.WorkingDatabase;
+            try
+            {
+                using (doc.LockDocument(DocumentLockMode.Write, "PCCC_SPEC", "PCCC_SPEC", false))
+                {
+                    HostApplicationServices.WorkingDatabase = doc.Database;
+                    bool zoom;
+                    return ChayFileSpec(doc, f, out zoom) + " (bản vẽ nền \"" + Path.GetFileName(doc.Name) + "\")";
+                }
+            }
+            catch (System.Exception ex)
+            {
+                // Không khoá được (bản vẽ đang bận): vẫn trả kết quả để máy chủ MCP không chờ tới hết giờ.
+                HangDoi.GhiAnToan(Path.Combine(HangDoi.Ra, Path.GetFileName(f)), new JavaScriptSerializer().Serialize(KqLoi("không chạy được trên bản vẽ \"" + Path.GetFileName(doc.Name) + "\": " + ex.Message)));
+                try { File.Delete(f); } catch (System.Exception) { }
+                return "\n[TKPCCC] SPEC bản vẽ nền lỗi: " + ex.Message;
+            }
+            finally { HostApplicationServices.WorkingDatabase = cu; }
+        }
+
+        /// pdf (lệnh -PDFIMPORT), anh (khung nhìn hiện hành) cần bản vẽ đang hiện.
+        static void CanDangHien(GoiSpec g, string op)
+        {
+            if (!DangHien(g.Doc))
+                throw new System.Exception(op + " chỉ chạy trên bản vẽ đang hiện: người dùng đang ở tab khác, chuyển về \"" + Path.GetFileName(g.Doc.Name) + "\" rồi gọi lại");
+        }
+
+        static Dictionary<string, object> ThucHienSpec(Document doc, string json, out bool zoom)
+        {
+            hanChot = Environment.TickCount + HAN_SPEC_S * 1000;
+            if (hanChot == 0) hanChot = 1;
+            try { return ThucHienSpec0(doc, json, out zoom); }
+            finally { hanChot = 0; }
+        }
+
+        static Dictionary<string, object> ThucHienSpec0(Document doc, string json, out bool zoom)
+        {
+            System.Diagnostics.Stopwatch dongHo = System.Diagnostics.Stopwatch.StartNew();
+            JavaScriptSerializer js = new JavaScriptSerializer();
+            js.MaxJsonLength = int.MaxValue;
+            Dictionary<string, object> goi = js.DeserializeObject(json) as Dictionary<string, object>;
+            if (goi == null || !(Lay(goi, "ops") is IList)) throw new System.Exception("Spec phải có dạng {\"ops\":[...]}");
+            IList ops = (IList)goi["ops"];
+            zoom = LayCo(goi, "zoom", false);
+            // Khoá bản vẽ: spec ghi "ban_ve" thì chỉ vẽ khi đúng bản đó đang hiện (người dùng đổi tab giữa chừng là vẽ nhầm bản khác).
+            string khoa = LayChu(goi, "ban_ve", null), dangHien = Path.GetFileName(doc.Name);
+            if (khoa != null && !string.Equals(Path.GetFileName(khoa), dangHien, StringComparison.OrdinalIgnoreCase))
+                throw new System.Exception("spec khoá bản vẽ \"" + khoa + "\" nhưng AutoCAD đang hiện \"" + dangHien + "\": không vẽ gì. Chuyển về đúng bản vẽ rồi chạy lại");
+            kyHieu = null; // đọc lại ky_hieu.json mỗi lần chạy: sửa file xong không cần mở lại AutoCAD
+
+            GoiSpec g = new GoiSpec();
+            g.Doc = doc;
+            g.Db = doc.Database;
+            g.Dm = DocDanhMuc();
+            IList goc = Lay(goi, "goc") as IList;
+            if (goc != null && goc.Count >= 2) { g.Gx = D(goc[0]); g.Gy = D(goc[1]); }
+
+            // Block thiết bị phải có trong bản vẽ trước khi mở transaction vẽ (NapVaoBanVe tự mở transaction riêng).
+            List<string> maDat = new List<string>();
+            foreach (object x in ops)
+            {
+                Dictionary<string, object> d = x as Dictionary<string, object>;
+                string op = d == null ? "" : LayChu(d, "op", "");
+                if (op == "dat" || op == "rai") maDat.Add(LayChu(d, "ma", ""));
+                else if (op == "so_do") maDat.AddRange(MaSoDo(d)); // 07_CAD/12_SO_DO_NGUYEN_LY/cad/SoDo.cs
+            }
+            if (maDat.Count > 0)
+            {
+                bool thieu;
+                using (Transaction tr = g.Db.TransactionManager.StartTransaction())
+                {
+                    BlockTable bt = (BlockTable)tr.GetObject(g.Db.BlockTableId, OpenMode.ForRead);
+                    thieu = maDat.Any(m => TimMa(g.Dm, m) != null && !bt.Has(m));
+                    tr.Commit();
+                }
+                if (thieu) NapVaoBanVe(doc, g.Dm);
+            }
+
+            // "pdf" chạy lệnh -PDFIMPORT (lệnh tự mở transaction riêng): làm TRƯỚC mọi thao tác khác của gói, ngoài transaction vẽ.
+            for (int i = 0; i < ops.Count; i++)
+            {
+                Dictionary<string, object> o = ops[i] as Dictionary<string, object>;
+                if (o == null || LayChu(o, "op", "") != "pdf") continue;
+                try { NhapPdf(g, o); }
+                catch (System.Exception ex) { g.Loi.Add(new Dictionary<string, object> { { "i", i }, { "op", "pdf" }, { "ly_do", ex.Message } }); }
+            }
+
+            List<int> anh = new List<int>(); // "anh" chạy lệnh -PLOT: để sau commit thì ảnh mới có đối tượng vừa vẽ
+            using (Transaction tr = g.Db.TransactionManager.StartTransaction())
+            {
+                g.Tr = tr;
+                g.Ms = (BlockTableRecord)tr.GetObject(g.Db.CurrentSpaceId, OpenMode.ForWrite);
+                for (int i = 0; i < ops.Count; i++)
+                {
+                    Dictionary<string, object> o = ops[i] as Dictionary<string, object>;
+                    string ten = o == null ? "?" : LayChu(o, "op", "?");
+                    try
+                    {
+                        if (o == null) throw new System.Exception("thao tác phải là object {\"op\":...}");
+                        if (ten == "anh") { anh.Add(i); continue; }
+                        if (ten == "pdf") continue; // đã chạy ở trên
+                        MotOp(g, ten, o);
+                    }
+                    catch (System.Exception ex)
+                    {
+                        g.Loi.Add(new Dictionary<string, object> { { "i", i }, { "op", ten }, { "ly_do", ex.Message } });
+                    }
+                }
+                tr.Commit();
+            }
+            foreach (int i in anh)
+            {
+                try { g.KqAnh.Add(InAnh(g, (Dictionary<string, object>)ops[i])); }
+                catch (System.Exception ex) { g.Loi.Add(new Dictionary<string, object> { { "i", i }, { "op", "anh" }, { "ly_do", ex.Message } }); }
+            }
+
+            Dictionary<string, object> kq = new Dictionary<string, object>();
+            kq["ok"] = g.Loi.Count == 0;
+            kq["ve"] = g.Ve;
+            kq["xoa"] = g.Xoa;
+            if (g.Sua > 0) kq["sua"] = g.Sua;
+            if (g.Hop.HasValue)
+            {
+                Extents3d h = g.Hop.Value;
+                kq["hop"] = new double[] { Lt(h.MinPoint.X), Lt(h.MinPoint.Y), Lt(h.MaxPoint.X), Lt(h.MaxPoint.Y) };
+            }
+            if (g.Loi.Count > 0) kq["loi"] = g.Loi.OrderBy(x => (int)((Dictionary<string, object>)x)["i"]).ToList(); // pdf chạy trước, anh chạy sau: xếp lại theo thứ tự thao tác
+            if (g.Dem != null) kq["dem"] = g.Dem;
+            if (g.DemLoai != null) kq["dem_loai"] = g.DemLoai;
+            if (g.KqDoc.Count > 0) kq["doc"] = g.KqDoc;
+            if (g.KqRai.Count > 0) kq["rai"] = g.KqRai;
+            if (g.KqTuyen.Count > 0) kq["tuyen"] = g.KqTuyen;
+            if (g.KqAnh.Count > 0) kq["anh"] = g.KqAnh;
+            if (g.KqPdf.Count > 0) kq["pdf"] = g.KqPdf;
+            if (g.KqNguon != null) kq["nguon"] = g.KqNguon;
+            if (g.KqVung.Count > 0) kq["vung_tu_dong"] = g.KqVung;
+            kq["ban_ve"] = Path.GetFileName(doc.Name);
+            kq["don_vi"] = TenDonVi(g.Db);
+            kq["ms"] = dongHo.ElapsedMilliseconds; // thời gian chạy gói (đo lag, review 15/11)
+            return kq;
+        }
+
+        // ---------- PDF -> CAD (thao tác "pdf") ----------
+
+        /// Nhập nét và chữ vector của một trang PDF bằng lệnh -PDFIMPORT. Thứ tự dấu nhắc (đã thử trong accoreconsole 2021):
+        /// F, tên file, số trang, điểm chèn, tỉ lệ, góc xoay. Ở tỉ lệ 1 lệnh cho 1 đơn vị bản vẽ = 1 inch giấy (không theo INSUNITS),
+        /// nên nhân 25,4 × tl (tl = mẫu số tỉ lệ của trang) để nét vào bản vẽ đúng kích thước thật.
+        static void NhapPdf(GoiSpec g, Dictionary<string, object> o)
+        {
+            CanDangHien(g, "pdf");
+            string f = LayChu(o, "file", "");
+            if (f == "" || !File.Exists(f)) throw new System.Exception("pdf: không thấy file \"" + f + "\" (cần đường dẫn tuyệt đối)");
+            double tl = LaySo(o, "tl", 0);
+            if (tl <= 0) throw new System.Exception("pdf cần \"tl\" = mẫu số tỉ lệ của trang (1:100 thì 100); tính bằng 07_CAD/.claude/skills/tkpccc-ve-cad/scripts/pdf_ti_le.py");
+            Point3d p = Lay(o, "p") == null ? new Point3d(g.Gx, g.Gy, 0) : P(g, Lay(o, "p"), "p");
+            // Số trang sai, hoặc file bộ đọc underlay không mở được (PDF có mật khẩu, kể cả chỉ khoá chống sửa; file hỏng), thì -PDFIMPORT
+            // hỏi lại mãi, nuốt hết các lệnh sau (bản vẽ treo): chặn trước khi gọi lệnh.
+            int trang = (int)LaySo(o, "trang", 1), soTrang = SoTrangPdf(f);
+            if (soTrang < 1)
+                throw new System.Exception("pdf: không đọc được PDF \"" + f + "\": có bảo mật/mật khẩu hoặc hỏng; in lại ra PDF không bảo mật rồi nhập");
+            if (trang < 1 || trang > soTrang)
+                throw new System.Exception("pdf: \"trang\" " + trang + " ngoài khoảng 1.." + soTrang.ToString(CultureInfo.InvariantCulture) + " của file");
+            long truoc = g.Db.Handseed.Value; // lệnh không trả danh sách: đối tượng mới là đối tượng có handle từ đây trở lên
+            object hopThoai = AcApp.GetSystemVariable("FILEDIA");
+            AcApp.SetSystemVariable("FILEDIA", (short)0); // không để lệnh mở hộp chọn file
+            try
+            {
+                g.Doc.Editor.Command("-PDFIMPORT", "F", Path.GetFullPath(f), trang.ToString(CultureInfo.InvariantCulture),
+                    string.Format(CultureInfo.InvariantCulture, "*{0},{1}", p.X, p.Y),
+                    (25.4 * tl * 0.001 / HeSoMet(g.Db)).ToString("R", CultureInfo.InvariantCulture),
+                    LaySo(o, "goc", 0).ToString("R", CultureInfo.InvariantCulture));
+            }
+            finally { AcApp.SetSystemVariable("FILEDIA", hopThoai); }
+            int n = 0;
+            List<string> layer = new List<string>();
+            using (Transaction tr = g.Db.TransactionManager.StartTransaction())
+            {
+                foreach (ObjectId id in (BlockTableRecord)tr.GetObject(g.Db.CurrentSpaceId, OpenMode.ForRead))
+                {
+                    if (id.Handle.Value < truoc) continue;
+                    Entity e = tr.GetObject(id, OpenMode.ForRead) as Entity;
+                    if (e == null) continue;
+                    n++;
+                    if (!layer.Contains(e.Layer) && layer.Count < 10) layer.Add(e.Layer);
+                    try { MoHop(g, e.GeometricExtents); } catch (System.Exception) { }
+                }
+                tr.Commit();
+            }
+            if (n == 0) throw new System.Exception("pdf: không nhập được đối tượng nào (trang là ảnh quét không có nét vector, hoặc số trang sai)");
+            g.Ve += n;
+            g.KqPdf.Add(new Dictionary<string, object> { { "n", n }, { "l", layer } });
+        }
+
+        /// Số trang của file PDF theo bộ đọc underlay của AutoCAD; 0 = không đọc được.
+        static int SoTrangPdf(string f)
+        {
+            try
+            {
+                UnderlayHost h = UnderlayHost.PdfHost;
+                UnderlayFile uf = h == null ? null : h.GetFile(Path.GetFullPath(f), "");
+                return uf == null ? 0 : uf.Items.Count;
+            }
+            catch (System.Exception) { return 0; }
+        }
+
+        // ---------- Ảnh (thao tác "anh", công cụ MCP cad_anh) ----------
+        // Khổ ngang có sẵn của "PublishToWeb PNG.pc3" (thiết bị in PNG cài theo AutoCAD); thiết bị này không nhận cỡ tuỳ ý.
+        const string MAY_IN_ANH = "PublishToWeb PNG.pc3";
+        static readonly int[] RONG_ANH = { 640, 800, 1024, 1280, 1600 };
+        static readonly string[] KHO_ANH = { "VGA (640.00 x 480.00 Pixels)", "Super VGA (800.00 x 600.00 Pixels)", "XGA (1024.00 x 768.00 Pixels)",
+            "Super XGA (1280.00 x 1024.00 Pixels)", "Sun Hi-Res (1600.00 x 1280.00 Pixels)" };
+
+        [System.Runtime.InteropServices.DllImport("accore.dll", CallingConvention = System.Runtime.InteropServices.CallingConvention.Cdecl, EntryPoint = "acedTrans")]
+        static extern int acedTrans(double[] diem, IntPtr tu, IntPtr den, int laVecto, double[] kq);
+
+        /// Điểm WCS -> DCS của khung nhìn hiện hành (cửa sổ in Model tính theo DCS; bản vẽ xoay khung nhìn / UCS khác thì WCS khác DCS).
+        static double[] WcsSangDcs(double x, double y)
+        {
+            double[] kq = new double[3];
+            using (ResultBuffer tu = new ResultBuffer(new TypedValue(5003, 0)), den = new ResultBuffer(new TypedValue(5003, 2)))
+                acedTrans(new[] { x, y, 0.0 }, tu.UnmanagedObject, den.UnmanagedObject, 0, kq);
+            return kq;
+        }
+
+        /// In Model ra PNG bằng PlotEngine (API in), trả đường dẫn file.
+        /// Người dùng 19/11: in bằng lệnh -PLOT hiện hộp "Plot Job Progress" kẹt lại không tự tắt khi bot gọi cad_anh; PlotEngine với hộp tiến trình null
+        /// không hiện hộp nào. Đang có việc in khác (ProcessPlotState) thì báo lỗi ngay, không xếp chồng việc in.
+        /// shortcut: luôn khổ ngang, vùng cao hơn rộng thì ảnh có lề trắng hai bên; cần thì thêm khổ đứng.
+        static string InAnh(GoiSpec g, Dictionary<string, object> o)
+        {
+            CanDangHien(g, "anh");
+            double[] h = HopOp(g, o);
+            PlotSettingsValidator v = PlotSettingsValidator.Current;
+            if (!v.GetPlotDeviceList().Cast<string>().Contains(MAY_IN_ANH, StringComparer.OrdinalIgnoreCase))
+                throw new System.Exception("anh: máy không có thiết bị in \"" + MAY_IN_ANH + "\" (cài theo AutoCAD, xem PLOTTERMANAGER)");
+            if (PlotFactory.ProcessPlotState != ProcessPlotState.NotPlotting)
+                throw new System.Exception("anh: AutoCAD đang in việc khác, đợi xong rồi gọi lại");
+            double rong = LaySo(o, "rong", 1024);
+            int k = 0;
+            while (k < RONG_ANH.Length - 1 && RONG_ANH[k] < rong) k++;
+            string tm = Path.Combine(HangDoi.Goc, "anh");
+            Directory.CreateDirectory(tm);
+            foreach (string cu in Directory.GetFiles(tm, "*.png")) // ảnh chỉ để xem ngay: dọn ảnh quá 1 ngày
+                if (File.GetLastWriteTimeUtc(cu) < DateTime.UtcNow.AddDays(-1)) try { File.Delete(cu); } catch (System.Exception) { }
+            string f = Path.Combine(tm, DateTime.Now.ToString("yyyyMMdd_HHmmss_fff") + ".png");
+            object nen = AcApp.GetSystemVariable("BACKGROUNDPLOT");
+            AcApp.SetSystemVariable("BACKGROUNDPLOT", (short)0); // in nền thì hàm trả về khi file chưa có
+            try
+            {
+                using (Transaction tr = g.Db.TransactionManager.StartTransaction())
+                {
+                    BlockTableRecord ms = (BlockTableRecord)tr.GetObject(SymbolUtilityServices.GetBlockModelSpaceId(g.Db), OpenMode.ForRead);
+                    Layout lo = (Layout)tr.GetObject(ms.LayoutId, OpenMode.ForRead);
+                    PlotSettings ps = new PlotSettings(true);
+                    ps.CopyFrom(lo);
+                    v.SetPlotConfigurationName(ps, MAY_IN_ANH, null);
+                    v.RefreshLists(ps);
+                    // Khổ giấy đặt bằng tên chuẩn (canonical); KHO_ANH là tên hiển thị.
+                    string kho = v.GetCanonicalMediaNameList(ps).Cast<string>().FirstOrDefault(c => v.GetLocaleMediaName(ps, c) == KHO_ANH[k]);
+                    if (kho == null) throw new System.Exception("anh: thiết bị \"" + MAY_IN_ANH + "\" không có khổ " + KHO_ANH[k]);
+                    v.SetPlotConfigurationName(ps, MAY_IN_ANH, kho);
+                    if (h == null) v.SetPlotType(ps, Autodesk.AutoCAD.DatabaseServices.PlotType.Extents);
+                    else
+                    {
+                        // Hộp WCS -> DCS: lấy hộp bao 4 góc (khung nhìn xoay thì hộp WCS thành hình xoay trong DCS).
+                        double[][] goc = { WcsSangDcs(h[0], h[1]), WcsSangDcs(h[2], h[1]), WcsSangDcs(h[2], h[3]), WcsSangDcs(h[0], h[3]) };
+                        v.SetPlotWindowArea(ps, new Extents2d(goc.Min(q => q[0]), goc.Min(q => q[1]), goc.Max(q => q[0]), goc.Max(q => q[1])));
+                        v.SetPlotType(ps, Autodesk.AutoCAD.DatabaseServices.PlotType.Window);
+                    }
+                    v.SetUseStandardScale(ps, true);
+                    v.SetStdScaleType(ps, StdScaleType.ScaleToFit);
+                    v.SetPlotCentered(ps, true);
+                    v.SetPlotRotation(ps, PlotRotation.Degrees000);
+                    ps.PrintLineweights = true;
+                    PlotInfo pi = new PlotInfo();
+                    pi.Layout = ms.LayoutId;
+                    pi.OverrideSettings = ps;
+                    PlotInfoValidator piv = new PlotInfoValidator();
+                    piv.MediaMatchingPolicy = MatchingPolicy.MatchEnabled;
+                    piv.Validate(pi);
+                    using (PlotEngine pe = PlotFactory.CreatePublishEngine())
+                    {
+                        pe.BeginPlot(null, null);
+                        pe.BeginDocument(pi, g.Doc.Name, null, 1, true, f);
+                        pe.BeginPage(new PlotPageInfo(), pi, true, null);
+                        pe.BeginGenerateGraphics(null);
+                        pe.EndGenerateGraphics(null);
+                        pe.EndPage(null);
+                        pe.EndDocument(null);
+                        pe.EndPlot(null);
+                    }
+                    tr.Commit();
+                }
+            }
+            finally { AcApp.SetSystemVariable("BACKGROUNDPLOT", nen); }
+            if (!File.Exists(f)) throw new System.Exception("không in được ảnh (bản vẽ trống, vùng \"hop\" rỗng hoặc thiếu thiết bị in \"PublishToWeb PNG.pc3\")");
+            return f;
+        }
+
+        static void MotOp(GoiSpec g, string ten, Dictionary<string, object> o)
+        {
+            switch (ten)
+            {
+                case "dat": OpDat(g, o); break;
+                case "ong": OpOng(g, o); break;
+                case "net": OpNet(g, o); break;
+                case "tron": OpTron(g, o); break;
+                case "chu": OpChu(g, o); break;
+                case "kt": OpKt(g, o); break;
+                case "luoi_truc": OpLuoiTruc(g, o); break;
+                case "xoa": OpXoa(g, o); break;
+                case "doc": OpDoc(g, o); break;
+                case "sua": OpSua(g, o); break;
+                case "dem": OpDem(g); break;
+                case "rai": OpRai(g, o); break;     // 07_CAD/09_RAI_THIET_BI/cad/Rai.cs
+                case "tuyen": OpTuyen(g, o); break; // 07_CAD/09_RAI_THIET_BI/cad/Rai.cs
+                case "so_do": OpSoDo(g, o); break;  // 07_CAD/12_SO_DO_NGUYEN_LY/cad/SoDo.cs
+                case "vung_tu_dong": OpVungTuDong(g, o); break; // 07_CAD/07_KIEN_TRUC/cad/NhanVung.cs
+                case "tuong": OpTuong(g, o); break;         // 07_CAD/07_KIEN_TRUC/cad/KienTruc.cs
+                case "cua": OpCua(g, o); break;             // 07_CAD/07_KIEN_TRUC/cad/KienTruc.cs
+                case "kt_chuoi": OpKtChuoi(g, o); break;    // 07_CAD/07_KIEN_TRUC/cad/KienTruc.cs (lõi Dim.cs)
+                case "bang": OpBang(g, o); break;           // 07_CAD/13_THONG_KE/cad/BangMb.cs (bảng ký hiệu, bảng quy định lắp đặt)
+                // "anh" không ở đây: ThucHienSpec chạy nó sau khi commit (InAnh)
+                default: throw new System.Exception("không có thao tác \"" + ten + "\" (xem 07_CAD/01_TRI_THUC_VE/TU_VUNG.md)");
+            }
+        }
+
+        // ---------- Tiện ích vẽ ----------
+
+        static void MoHop(GoiSpec g, Extents3d x)
+        {
+            if (!g.Hop.HasValue) { g.Hop = x; return; }
+            Extents3d h = g.Hop.Value;
+            h.AddExtents(x);
+            g.Hop = h;
+        }
+
+        static void Them(GoiSpec g, Entity e)
+        {
+            g.Ms.AppendEntity(e);
+            g.Tr.AddNewlyCreatedDBObject(e, true);
+            g.Ve++;
+            try { MoHop(g, e.GeometricExtents); } catch (System.Exception) { }
+        }
+
+        /// Layer theo trường "l" của thao tác (mặc định layer 0); layer chưa có thì tạo với màu "mau" (mặc định 7).
+        static ObjectId LayerOp(GoiSpec g, Dictionary<string, object> o)
+        {
+            string l = LayChu(o, "l", "0");
+            return l == "0" ? g.Db.LayerZero : DamBaoLayer(g.Db, g.Tr, l, (short)LaySo(o, "mau", 7));
+        }
+
+        static Polyline TaoPline(List<Point3d> ps, bool kin, ObjectId layer)
+        {
+            if (ps.Count < 2) throw new System.Exception("\"p\" cần ít nhất 2 điểm");
+            Polyline pl = new Polyline();
+            for (int i = 0; i < ps.Count; i++) pl.AddVertexAt(i, new Point2d(ps[i].X, ps[i].Y), 0, 0, 0);
+            pl.Closed = kin;
+            pl.LayerId = layer;
+            return pl;
+        }
+
+        static MText TaoChu(GoiSpec g, Point3d p, string t, double cao, double gocDo, bool giua, ObjectId layer)
+        {
+            MText m = new MText();
+            m.Contents = t.Replace("\\", "\\\\").Replace("{", "\\{").Replace("}", "\\}").Replace("\n", "\\P");
+            m.Location = p;
+            m.TextHeight = cao;
+            m.Rotation = gocDo * Math.PI / 180;
+            m.Attachment = giua ? AttachmentPoint.MiddleCenter : AttachmentPoint.BottomLeft;
+            m.TextStyleId = DamBaoKieuChu(g.Db, g.Tr);
+            m.LayerId = layer;
+            return m;
+        }
+
+        static ObjectId DamBaoKieuKt(GoiSpec g) { return DamBaoKieuKt(g.Db, g.Tr); }
+
+        static ObjectId DamBaoKieuKt(Database db, Transaction tr)
+        {
+            DimStyleTable t = (DimStyleTable)tr.GetObject(db.DimStyleTableId, OpenMode.ForRead);
+            if (t.Has(KIEU_KT)) return t[KIEU_KT];
+            t.UpgradeOpen();
+            DimStyleTableRecord s = new DimStyleTableRecord();
+            s.Name = KIEU_KT;
+            s.Dimtxt = 2.5; s.Dimasz = 1.5; s.Dimexe = 1.25; s.Dimexo = 1.0; s.Dimgap = 0.8;
+            s.Dimdec = 0; s.Dimtad = 1; s.Dimtih = false; s.Dimtoh = false;
+            s.Dimtxsty = DamBaoKieuChu(db, tr);
+            ObjectId id = t.Add(s);
+            tr.AddNewlyCreatedDBObject(s, true);
+            return id;
+        }
+
+        /// Kích thước song song p1-p2; cach > 0 đặt bên trái hướng p1 -> p2, cach < 0 bên phải. cao = cỡ chữ theo đơn vị bản vẽ.
+        static void VeKt(GoiSpec g, Point3d a, Point3d b, double cach, double cao, ObjectId layer)
+        {
+            Vector3d v = b - a;
+            if (v.Length < 1e-9) throw new System.Exception("p1 trùng p2");
+            Vector3d n = new Vector3d(-v.Y, v.X, 0).GetNormal();
+            Point3d giua = new Point3d((a.X + b.X) / 2, (a.Y + b.Y) / 2, 0) + n * cach;
+            AlignedDimension d = new AlignedDimension(a, b, giua, "", DamBaoKieuKt(g));
+            d.Dimscale = cao / 2.5;
+            d.LayerId = layer;
+            Them(g, d);
+        }
+
+        static ObjectId DamBaoNet(GoiSpec g, string ten)
+        {
+            LinetypeTable t = (LinetypeTable)g.Tr.GetObject(g.Db.LinetypeTableId, OpenMode.ForRead);
+            if (!t.Has(ten))
+                foreach (string f in new string[] { "acadiso.lin", "acad.lin" })
+                {
+                    try { g.Db.LoadLineTypeFile(ten, f); break; }
+                    catch (System.Exception) { }
+                }
+            return t.Has(ten) ? t[ten] : g.Db.ContinuousLinetype;
+        }
+
+        /// Chèn 1 thiết bị (block thư viện + thuộc tính MA_VT) tại điểm WCS. Dùng chung cho PCCC_DAT và thao tác "dat".
+        static ObjectId ChenThietBi(Database db, Transaction tr, VatTu v, Point3d p, double k, double goc)
+        {
+            BlockTable bt = (BlockTable)tr.GetObject(db.BlockTableId, OpenMode.ForRead);
+            if (!bt.Has(v.ma)) throw new System.Exception("Thư viện không có block " + v.ma);
+            ObjectId bid = bt[v.ma];
+            BlockTableRecord ms = (BlockTableRecord)tr.GetObject(db.CurrentSpaceId, OpenMode.ForWrite);
+            BlockReference br = new BlockReference(p, bid);
+            br.ScaleFactors = new Scale3d(k);
+            br.Rotation = goc;
+            br.LayerId = DamBaoLayer(db, tr, TIEN_TO_LAYER + v.he, MauHe(v.he));
+            ObjectId rid = ms.AppendEntity(br);
+            tr.AddNewlyCreatedDBObject(br, true);
+            BlockTableRecord def = (BlockTableRecord)tr.GetObject(bid, OpenMode.ForRead);
+            foreach (ObjectId id in def)
+            {
+                AttributeDefinition ad = tr.GetObject(id, OpenMode.ForRead) as AttributeDefinition;
+                if (ad == null || ad.Constant) continue;
+                AttributeReference ar = new AttributeReference();
+                ar.SetAttributeFromBlock(ad, br.BlockTransform);
+                if (ad.Tag.ToUpperInvariant() == TAG_MA) ar.TextString = v.ma;
+                br.AttributeCollection.AppendAttribute(ar);
+                tr.AddNewlyCreatedDBObject(ar, true);
+            }
+            return rid;
+        }
+
+        // ---------- Thao tác ----------
+
+        static void OpDat(GoiSpec g, Dictionary<string, object> o)
+        {
+            string ma = LayChu(o, "ma", "");
+            VatTu v = TimMa(g.Dm, ma);
+            if (v == null || v.loai != "block") throw new System.Exception("mã thiết bị không có trong danh mục: " + ma);
+            double k = 0.001 / HeSoMet(g.Db), goc = LaySo(o, "goc", 0) * Math.PI / 180;
+            foreach (Point3d p in DsP(g, Lay(o, "p"), "p"))
+            {
+                ChenThietBi(g.Db, g.Tr, v, p, k, goc);
+                g.Ve++;
+                MoHop(g, new Extents3d(p, p));
+            }
+        }
+
+        static void OpOng(GoiSpec g, Dictionary<string, object> o)
+        {
+            string ma = LayChu(o, "ma", "");
+            VatTu v = TimMa(g.Dm, ma);
+            if (v == null || v.loai != "tuyen") throw new System.Exception("mã ống/dây không có trong danh mục: " + ma);
+            Them(g, TaoPline(DsP(g, Lay(o, "p"), "p"), false, DamBaoLayer(g.Db, g.Tr, TIEN_TO_LAYER + v.ma, MauHe(v.he))));
+        }
+
+        static void OpNet(GoiSpec g, Dictionary<string, object> o)
+        {
+            Them(g, TaoPline(DsP(g, Lay(o, "p"), "p"), LayCo(o, "kin", false), LayerOp(g, o)));
+        }
+
+        static void OpTron(GoiSpec g, Dictionary<string, object> o)
+        {
+            double r = LaySo(o, "r", 0);
+            if (r <= 0) throw new System.Exception("\"r\" phải > 0");
+            Circle c = new Circle(P(g, Lay(o, "c"), "c"), Vector3d.ZAxis, r);
+            c.LayerId = LayerOp(g, o);
+            Them(g, c);
+        }
+
+        static void OpChu(GoiSpec g, Dictionary<string, object> o)
+        {
+            Them(g, TaoChu(g, P(g, Lay(o, "p"), "p"), LayChu(o, "t", ""), LaySo(o, "cao", LaySo(NhomKyHieu("chu"), "cao", 250)), LaySo(o, "goc", 0),
+                LayChu(o, "can", "trai") == "giua", LayerOp(g, o)));
+        }
+
+        static void OpKt(GoiSpec g, Dictionary<string, object> o)
+        {
+            Dictionary<string, object> k = NhomKyHieu("kt");
+            VeKt(g, P(g, Lay(o, "p1"), "p1"), P(g, Lay(o, "p2"), "p2"), LaySo(o, "cach", LaySo(k, "cach", 500)), LaySo(o, "cao", LaySo(k, "cao", 250)), LayerOp(g, o));
+        }
+
+        static List<double> CongDon(object o, string ten)
+        {
+            List<double> kq = new List<double> { 0 };
+            foreach (object x in DS(o, ten)) kq.Add(kq[kq.Count - 1] + D(x));
+            if (kq.Count < 2) throw new System.Exception("\"" + ten + "\" cần ít nhất 1 nhịp");
+            return kq;
+        }
+
+        static bool KhopTen(string ten, string mau)
+        {
+            if (mau.EndsWith("*")) return ten.StartsWith(mau.Substring(0, mau.Length - 1), StringComparison.OrdinalIgnoreCase);
+            return string.Equals(ten, mau, StringComparison.OrdinalIgnoreCase);
+        }
+
+        /// Hộp [x1,y1,x2,y2] của thao tác (đã cộng gốc), null nếu không có.
+        static double[] HopOp(GoiSpec g, Dictionary<string, object> o)
+        {
+            IList h = Lay(o, "hop") as IList;
+            if (h == null) return null;
+            if (h.Count < 4) throw new System.Exception("\"hop\" phải là [x1,y1,x2,y2]");
+            double x1 = D(h[0]) + g.Gx, y1 = D(h[1]) + g.Gy, x2 = D(h[2]) + g.Gx, y2 = D(h[3]) + g.Gy;
+            return new double[] { Math.Min(x1, x2), Math.Min(y1, y2), Math.Max(x1, x2), Math.Max(y1, y2) };
+        }
+
+        static bool TrongHop(Entity e, double[] h)
+        {
+            if (h == null) return true;
+            Extents3d x;
+            try { x = e.GeometricExtents; } catch (System.Exception) { return false; }
+            return x.MinPoint.X >= h[0] && x.MinPoint.Y >= h[1] && x.MaxPoint.X <= h[2] && x.MaxPoint.Y <= h[3];
+        }
+
+        /// "h": [handle, ...] của thao tác (Bot chat gửi handle vùng người dùng quét chọn), null nếu không có.
+        static HashSet<string> HandleOp(Dictionary<string, object> o)
+        {
+            object v = Lay(o, "h");
+            if (v == null) return null;
+            if (v is string) return new HashSet<string> { ((string)v).Trim().ToUpperInvariant() };
+            return new HashSet<string>(DS(v, "h").Cast<object>().Select(x => Convert.ToString(x, CultureInfo.InvariantCulture).Trim().ToUpperInvariant()));
+        }
+
+        static List<Entity> Loc(GoiSpec g, string l, double[] hop, HashSet<string> h = null)
+        {
+            List<Entity> kq = new List<Entity>();
+            foreach (ObjectId id in g.Ms)
+            {
+                if (h != null && !h.Contains(id.Handle.ToString())) continue;
+                Entity e = g.Tr.GetObject(id, OpenMode.ForRead) as Entity;
+                if (e == null || (l != null && !KhopTen(e.Layer, l)) || !TrongHop(e, hop)) continue;
+                kq.Add(e);
+            }
+            return kq;
+        }
+
+        static void OpXoa(GoiSpec g, Dictionary<string, object> o)
+        {
+            string l = LayChu(o, "l", null);
+            double[] hop = HopOp(g, o);
+            HashSet<string> h = HandleOp(o);
+            if (l == null && hop == null && h == null && !LayCo(o, "tat_ca", false))
+                throw new System.Exception("xoa cần \"l\" (layer, cho phép đuôi *), \"hop\" [x1,y1,x2,y2] hoặc \"h\" [handle]; xoá hết thì thêm \"tat_ca\":true");
+            foreach (Entity e in Loc(g, l, hop, h))
+            {
+                e.UpgradeOpen();
+                e.Erase();
+                g.Xoa++;
+            }
+        }
+
+        /// Sửa đối tượng có sẵn (Bot chat: sửa vùng người dùng quét chọn). Chọn như xoa: "h", "l", "hop".
+        /// Đổi: "tl" (tỉ lệ) rồi "xoay" (độ) quanh "tam" (mặc định tâm hộp bao các đối tượng), rồi dời "doi" [dx,dy]; "l_moi", "mau" (0–256), "t" (chữ).
+        static void OpSua(GoiSpec g, Dictionary<string, object> o)
+        {
+            string l = LayChu(o, "l", null);
+            double[] hop = HopOp(g, o);
+            HashSet<string> h = HandleOp(o);
+            if (l == null && hop == null && h == null) throw new System.Exception("sua cần \"h\" [handle], \"l\" hoặc \"hop\" để chọn đối tượng");
+            List<Entity> ds = Loc(g, l, hop, h);
+            if (ds.Count == 0) throw new System.Exception("sua: không có đối tượng nào khớp (handle sai, đã xoá, hoặc không ở không gian đang vẽ)");
+            double tl = LaySo(o, "tl", 1), xoay = LaySo(o, "xoay", 0);
+            if (tl <= 0) throw new System.Exception("sua: \"tl\" phải > 0");
+            IList doi = Lay(o, "doi") as IList;
+            if (doi != null && doi.Count < 2) throw new System.Exception("sua: \"doi\" phải là [dx,dy]");
+            string lMoi = LayChu(o, "l_moi", null), t = LayChu(o, "t", null);
+            object mau = Lay(o, "mau");
+            if (tl == 1 && xoay == 0 && doi == null && lMoi == null && mau == null && t == null)
+                throw new System.Exception("sua cần ít nhất một thay đổi: doi, xoay, tl, l_moi, mau, t");
+            Point3d tam;
+            if (Lay(o, "tam") != null) tam = P(g, o["tam"], "tam");
+            else
+            {
+                Extents3d? x = null;
+                foreach (Entity e in ds)
+                {
+                    try { Extents3d k = e.GeometricExtents; if (x.HasValue) { Extents3d c = x.Value; c.AddExtents(k); x = c; } else x = k; }
+                    catch (System.Exception) { }
+                }
+                tam = x.HasValue ? x.Value.MinPoint + (x.Value.MaxPoint - x.Value.MinPoint) / 2 : Point3d.Origin;
+            }
+            Matrix3d m = Matrix3d.Scaling(tl, tam);
+            m = Matrix3d.Rotation(xoay * Math.PI / 180, Vector3d.ZAxis, tam) * m;
+            if (doi != null) m = Matrix3d.Displacement(new Vector3d(D(doi[0]), D(doi[1]), 0)) * m;
+            bool bienDoi = tl != 1 || xoay != 0 || doi != null;
+            ObjectId lid = lMoi == null ? ObjectId.Null : DamBaoLayer(g.Db, g.Tr, lMoi, 7);
+            foreach (Entity e in ds)
+            {
+                e.UpgradeOpen();
+                if (bienDoi) e.TransformBy(m);
+                if (lMoi != null) e.LayerId = lid;
+                if (mau != null) e.ColorIndex = (int)D(mau);
+                if (t != null)
+                {
+                    if (e is DBText) ((DBText)e).TextString = t;
+                    else if (e is MText) ((MText)e).Contents = t.Replace("\\", "\\\\").Replace("{", "\\{").Replace("}", "\\}").Replace("\n", "\\P");
+                }
+                g.Sua++;
+                try { MoHop(g, e.GeometricExtents); } catch (System.Exception) { }
+            }
+        }
+
+        static double[] XY(Point3d p) { return new double[] { Lt(p.X), Lt(p.Y) }; }
+
+        /// Một đối tượng cho doc gi:"dt": handle, loại DXF, layer, màu (khi khác ByLayer), hộp, rồi hình riêng (điểm, tâm + bán kính, chữ, tên block).
+        static Dictionary<string, object> MoTaDt(GoiSpec g, Entity e)
+        {
+            Dictionary<string, object> d = new Dictionary<string, object> { { "h", e.Handle.ToString() }, { "loai", e.GetRXClass().DxfName }, { "l", e.Layer } };
+            if (e.ColorIndex != 256) d["mau"] = e.ColorIndex;
+            try { Extents3d x = e.GeometricExtents; d["hop"] = new double[] { Lt(x.MinPoint.X), Lt(x.MinPoint.Y), Lt(x.MaxPoint.X), Lt(x.MaxPoint.Y) }; }
+            catch (System.Exception) { }
+            Line ln = e as Line;
+            Polyline pl = e as Polyline;
+            Circle c = e as Circle;
+            Arc a = e as Arc;
+            DBText t = e as DBText;
+            MText mt = e as MText;
+            BlockReference br = e as BlockReference;
+            if (ln != null) d["p"] = new object[] { XY(ln.StartPoint), XY(ln.EndPoint) };
+            else if (pl != null)
+            {
+                List<object> p = new List<object>();
+                for (int i = 0; i < pl.NumberOfVertices && i < 12; i++) p.Add(XY(pl.GetPoint3dAt(i)));
+                d["p"] = p;
+                if (pl.NumberOfVertices > 12) d["dinh"] = pl.NumberOfVertices;
+                if (pl.Closed) d["kin"] = true;
+            }
+            else if (c != null) { d["c"] = XY(c.Center); d["r"] = Lt(c.Radius); }
+            else if (a != null) { d["c"] = XY(a.Center); d["r"] = Lt(a.Radius); d["goc"] = new double[] { Lt(a.StartAngle * 180 / Math.PI), Lt(a.EndAngle * 180 / Math.PI) }; }
+            else if (t != null) { d["t"] = t.TextString; d["p"] = XY(t.Position); }
+            else if (mt != null) { d["t"] = mt.Text; d["p"] = XY(mt.Location); }
+            else if (br != null && !(br is Table)) { d["ten"] = TenBlock(br, g.Tr); d["p"] = XY(br.Position); d["goc"] = Lt(br.Rotation * 180 / Math.PI); }
+            return d;
+        }
+
+        static void OpDoc(GoiSpec g, Dictionary<string, object> o)
+        {
+            string gi = LayChu(o, "gi", "layer");
+            string l = LayChu(o, "l", null);
+            double[] hop = HopOp(g, o);
+            HashSet<string> h = HandleOp(o);
+            List<object> ds = new List<object>();
+            int n = 0;
+            if (gi == "dt")
+            {
+                foreach (Entity e in Loc(g, l, hop, h))
+                    if (++n <= DOC_TOI_DA) ds.Add(MoTaDt(g, e));
+            }
+            else if (gi == "layer")
+            {
+                Dictionary<string, int> dem = new Dictionary<string, int>();
+                foreach (Entity e in Loc(g, l, hop, h)) { int c; dem.TryGetValue(e.Layer, out c); dem[e.Layer] = c + 1; }
+                n = dem.Count;
+                foreach (KeyValuePair<string, int> p in dem.OrderByDescending(x => x.Value).Take(DOC_TOI_DA))
+                    ds.Add(new Dictionary<string, object> { { "l", p.Key }, { "n", p.Value } });
+            }
+            else if (gi == "vung")
+            {
+                // Vùng = polyline kín, mặc định trên layer PCCC_VUNG: diện tích m2, hộp bao, đỉnh (tối đa 12).
+                double m = HeSoMet(g.Db);
+                foreach (Entity e in Loc(g, l ?? "PCCC_VUNG", hop, h))
+                {
+                    Polyline pl = e as Polyline;
+                    if (!KinPl(pl)) continue;
+                    if (++n > DOC_TOI_DA) continue;
+                    Extents3d x = pl.GeometricExtents;
+                    List<object> dinh = new List<object>();
+                    for (int i = 0; i < pl.NumberOfVertices && i < 12; i++) { Point2d q = pl.GetPoint2dAt(i); dinh.Add(new double[] { Lt(q.X), Lt(q.Y) }); }
+                    ds.Add(new Dictionary<string, object> { { "h", pl.Handle.ToString() }, { "m2", Math.Round(pl.Area * m * m, 2) },
+                        { "hop", new double[] { Lt(x.MinPoint.X), Lt(x.MinPoint.Y), Lt(x.MaxPoint.X), Lt(x.MaxPoint.Y) } }, { "p", dinh } });
+                }
+            }
+            else if (gi == "chu")
+            {
+                foreach (Entity e in Loc(g, l, hop, h))
+                {
+                    DBText t = e as DBText;
+                    MText mt = e as MText;
+                    if (t == null && mt == null) continue;
+                    if (++n > DOC_TOI_DA) continue;
+                    Point3d q = t != null ? t.Position : mt.Location;
+                    ds.Add(new Dictionary<string, object> { { "t", t != null ? t.TextString : mt.Text }, { "p", new double[] { Lt(q.X), Lt(q.Y) } }, { "l", e.Layer } });
+                }
+            }
+            else throw new System.Exception("doc: \"gi\" phải là layer, vung, chu hoặc dt");
+            Dictionary<string, object> kq = new Dictionary<string, object> { { "gi", gi }, { "n", n }, { "ds", ds } };
+            if (n > ds.Count) kq["con"] = n - ds.Count;
+            g.KqDoc.Add(kq);
+        }
+
+        /// Đếm thiết bị (cái) và ống/dây (m) theo mã vật tư, cùng cách đếm với PCCC_BOC.
+        static void OpDem(GoiSpec g)
+        {
+            BoiCanh bc = new BoiCanh();
+            bc.Tr = g.Tr;
+            bc.Dm = g.Dm;
+            bc.Alias = DocAlias();
+            bc.Khu = new List<Khu>();
+            bc.HeSo = HeSoMet(g.Db);
+            bc.Kq = new KetQua();
+            foreach (ObjectId id in g.Ms)
+            {
+                Entity e = g.Tr.GetObject(id, OpenMode.ForRead) as Entity;
+                if (e != null) Duyet(e, Matrix3d.Identity, 0, 1, bc);
+            }
+            g.Dem = new Dictionary<string, object>();
+            foreach (KeyValuePair<string, double> p in bc.Kq.Tong.OrderBy(x => x.Key)) g.Dem[p.Key] = Math.Round(p.Value, 2);
+            // Block động: số theo chủng loại (Visibility) riêng ở "dem_loai" {mã: {chủng loại: số}}; "dem" giữ {mã: số} cho so_do và các bên đọc cũ.
+            foreach (KeyValuePair<string, double> p in bc.Kq.Dong.Where(x => LoaiCuaDong(x.Key) != "").OrderBy(x => x.Key))
+            {
+                if (g.DemLoai == null) g.DemLoai = new Dictionary<string, object>();
+                string ma = MaCuaDong(p.Key);
+                if (!g.DemLoai.ContainsKey(ma)) g.DemLoai[ma] = new Dictionary<string, object>();
+                ((Dictionary<string, object>)g.DemLoai[ma])[LoaiCuaDong(p.Key)] = Math.Round(p.Value, 2);
+            }
+        }
+    }
+}

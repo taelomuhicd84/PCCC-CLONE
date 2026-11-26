@@ -87,4 +87,4 @@ Chi tiết từng việc: `12_KET_QUA/review_1115/VIEC.md`. Kết quả từng t
 | R3a → thợ CAD lõi | Opus 5.5 high | `PCCC_KT` xuyên tường; khoang dầm theo phòng; INSUNITS; vẽ mượt (Esc, tiến độ, chỉ mục) | đợt 2, sau thợ CAD giao diện (cùng build một DLL) |
 | R5 + R1 | Opus 5.5 high | `thong_so_cong_trinh.json` + phép kiểm đầu vào; `09_SCRIPTS/kiem_lien_ket.py` | đợt 2 |
 
-Đã xong: `07_CAD/module/lisp/TKPCCC.lsp` (nạp DLL thay NETLOAD) + `07_CAD/cai_dat.bat` (liên kết bundle để AutoCAD tự nạp); luật hạn mức mới trong `CLAUDE.md`.
+Đã xong: `07_CAD/05_NEN_TANG/lisp/TKPCCC.lsp` (nạp DLL thay NETLOAD) + `07_CAD/cai_dat.bat` (liên kết bundle để AutoCAD tự nạp); luật hạn mức mới trong `CLAUDE.md`.

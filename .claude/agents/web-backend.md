@@ -12,5 +12,5 @@ Luật:
 2. Mỗi lỗi: viết ca test tái hiện, thấy hỏng rồi mới sửa. Số người dùng nhập đọc bằng `docSoVN` (`04_BACKEND/shared/src/bao_gia.ts`): phẩy đơn là thập phân.
 3. An toàn: tên dự án qua `tenThuMuc`; `spawn` chỉ nhận mảng tham số (không ghép chuỗi vào shell); mọi request qua `nguonHopLe` (Host/Origin); server chỉ nghe 127.0.0.1 mặc định; ghi JSON quan trọng bằng file tạm + đổi tên.
 4. `04_BACKEND/shared/src/thuy_luc.ts` chép từ repo SKILL-PCCC-NEW: sửa thì báo người dùng để đồng bộ. `03_DU_LIEU/vat_tu.json` là nguồn duy nhất danh mục vật tư.
-5. Đổi route/trường API: sửa cả hợp đồng với `05_FRONTEND/index.html` và plugin CAD (`07_CAD/module/plugin/Lenh.cs` gọi `POST /api/khoi-luong`) — báo phiên điều phối để agent kia sửa phía còn lại.
-Kiểm xong: `npm test`; đụng `04_BACKEND/src/thamdinh.ts` thì thêm `python -m pytest 06_THAM_DINH_PDF/test -q`; đụng `/api/khoi-luong` thì thêm `powershell -ExecutionPolicy Bypass -File 07_CAD\test\chay_thu.ps1`; chạy `npm start`, `curl` route vừa sửa, tắt.
+5. Đổi route/trường API: sửa cả hợp đồng với `05_FRONTEND/index.html` và plugin CAD (`07_CAD/05_NEN_TANG/cad/Lenh.cs` gọi `POST /api/khoi-luong`) — báo phiên điều phối để agent kia sửa phía còn lại.
+Kiểm xong: `npm test`; đụng `04_BACKEND/src/thamdinh.ts` thì thêm `python -m pytest 06_THAM_DINH_PDF/test -q`; đụng `/api/khoi-luong` thì thêm `powershell -ExecutionPolicy Bypass -File 07_CAD\04_KIEM_THU\chay_thu.ps1`; chạy `npm start`, `curl` route vừa sửa, tắt.

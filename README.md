@@ -58,7 +58,7 @@ Danh mục vật tư: `03_DU_LIEU/vat_tu.json` (sửa xong chạy lại `07_CAD\
 ```
 npm test
 python -m pytest 06_THAM_DINH_PDF/test -q
-powershell -ExecutionPolicy Bypass -File 07_CAD\test\chay_thu.ps1
+powershell -ExecutionPolicy Bypass -File 07_CAD\04_KIEM_THU\chay_thu.ps1
 ```
 Cái cuối chạy plugin trong `accoreconsole` (AutoCAD không giao diện) với bản vẽ thử, không cần mở AutoCAD.
 

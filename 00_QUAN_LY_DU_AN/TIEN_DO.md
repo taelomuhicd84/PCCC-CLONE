@@ -7,7 +7,7 @@ Người dùng giao 26/11: thư mục con đánh số `01_xxx` (xxx = tên hạn
 - 45 file chuyển vào 12 hạng mục số chung cho `01_TRI_THUC/` và `02_DIEU_KHOAN/` (bảng ở `00_QUAN_LY_DU_AN/STRUCTURE.md`); giữ tên file; ảnh `hinh/` chia theo hạng mục.
 - Sửa đường dẫn 58 file; `bang_doi_chieu.py` tìm đệ quy (`**/`); `build.bat` chép từ `07_BAO_CHAY/`. Kiểm: npm 68, pytest 54, kiem_lien_ket 0 lỗi, build CAD đạt.
 - KHÔNG đổi: `.claude/skills/` (Claude Code chỉ đọc `.claude/skills/<tên>/SKILL.md` một tầng, không lồng thư mục hạng mục được); thư mục mã
-  (`src/`, `test/`, `pccc_checker/`: quy ước công cụ, gói Python không bắt đầu bằng số); `07_CAD/skills/` đã chia theo việc (nhan_dang, ve, mau).
+  (`src/`, `test/`, `pccc_checker/`: quy ước công cụ, gói Python không bắt đầu bằng số); `07_CAD/01_TRI_THUC_VE/` đã chia theo việc (nhan_dang, ve, mau).
 
 ## XONG 25/11: CÂY GỐC ĐÁNH SỐ + MODULE DRIVE (nhánh `doi-cay-thu-muc`, gộp vào `main`; CHƯA push)
 Người dùng giao 25/11: (1) đổi TOÀN BỘ cây mã nguồn theo mẫu danh mục công việc `DA-GT-2026-01` (đánh số, dễ kiểm soát); (2) thư mục quản lý file
@@ -16,7 +16,7 @@ người dùng up lên Google Drive / OneDrive: biết up gì, lịch sử, qu�
   `01_TRI_THUC` (knowledge) · `02_DIEU_KHOAN` (skills gốc) · `03_DU_LIEU` (data) · `04_BACKEND` · `05_FRONTEND` · `06_THAM_DINH_PDF` (thamdinh) · `07_CAD` (cad,
   + file_cad_test, thamkhao_plugincad) · `08_BANG_TINH` · `09_SCRIPTS` · `10_DRIVE` (mới) · `11_TIEN_ICH/vscode-usage` · `12_KET_QUA` (ket_qua, không commit).
   Giữ ở gốc: `CLAUDE.md`, `README.md`, `.claude/`, `.mcp.json`, `package.json`, `vitest.config.ts`, `chay.bat`. Độ sâu mọi mảng giữ nguyên nên `../` trong mã không đổi.
-- Đổi đường dẫn bằng script một lần (169 file tài liệu + mã; tên trùng cục bộ như `data/`, `scripts/` của skill, `07_CAD/skills` giữ nguyên) + sửa tay
+- Đổi đường dẫn bằng script một lần (169 file tài liệu + mã; tên trùng cục bộ như `data/`, `scripts/` của skill, `07_CAD/01_TRI_THUC_VE` giữ nguyên) + sửa tay
   `path.join(GOC, ...)` trong backend, `$GOC\...` trong `.ps1` CAD, `BotChat.cs`, `kiem_lien_ket.py`, test. Kiểm: npm 68 đạt, pytest 54 đạt
   (gồm `10_DRIVE/test`), `kiem_lien_ket.py` 0 lỗi 28 cảnh báo, `07_CAD\build.bat` đạt, `thu_mcp.ps1` TAT CA DAT, `chay_thu.ps1` 213 DAT + 1 LOI
   (ca "Karaoke 123 tầng 1 + 2" viết hôm nay ở bản D:, không do đổi cây: mã plugin chỉ đổi chữ trong thông báo / chú thích).
@@ -61,7 +61,7 @@ thiếu số liệu vẫn ra D / KD thay vì XM; trang xoay làm sập máy ki�
 - **10:20 15/11, đợt 1 (thợ báo, đầu não đã chạy lại test: npm Test Files 8 passed (8); Tests 64 passed (64); pytest 41 passed in 6.74s):** R1 xong việc PCCC 3 (cc2ba3b, 01c035d, 1af5fe9; chờ người dùng chốt: tum, bãi đỗ xe, tên khách, xem `KQ_PCCC_tri_thuc.md`); R5 xong việc PCCC 1–2 (508f0f5, 965910f); R4 xong WEB 1–2 (b777378, b64b45e, f638b82, cd3f95a: tách `05_FRONTEND/` + `04_BACKEND/`, agent web-frontend / web-backend; chưa thử trình duyệt thật, chưa chạy `chay.bat`); R3b đang làm CAD (việc 4, chờ build + test), chưa báo xong. Cửa sổ 5 giờ ≥ 87 % ⇒ dừng; CronCreate 15:05 làm tiếp 7 bước bên dưới.
 - Fable 5.2 vòng 2 xong cho R1 (13 xác minh, 1 sai, đổi mức 6 lỗi) và R5 (lỗi "3 luật YAML đã gạch" hạ xuống VỪA); R2 chưa soát. Ba phiên Fable đốt hết cửa sổ 05:00–10:00
   và đưa hạn mức Fable tuần 12 % → 42 %, tuần chung 66 % ⇒ KHÔNG chạy Fable soát tiếp; thợ sửa tự xác minh trước khi sửa.
-- Xong: `07_CAD/module/lisp/TKPCCC.lsp` + `07_CAD/cai_dat.bat` (liên kết bundle đã tạo, đúng đích; accoreconsole không tự nạp bundle; AutoCAD có giao diện chưa thử);
+- Xong: `07_CAD/05_NEN_TANG/lisp/TKPCCC.lsp` + `07_CAD/cai_dat.bat` (liên kết bundle đã tạo, đúng đích; accoreconsole không tự nạp bundle; AutoCAD có giao diện chưa thử);
   luật 85–95 % + ngữ cảnh 50 % trong `CLAUDE.md`; `agy` (gemini-4-carbon-medium) đã tra mạng: `12_KET_QUA/review_1115/agy_cad_muot.md`, `agy_ui_palette.md`.
 - App không cho mở phiên mới khi người dùng dùng Remote Control ⇒ giao việc sửa cho 4 phiên review sẵn có (SendMessage), hàng việc `12_KET_QUA/review_1115/VIEC.md`:
   R5 (Opus high) việc PCCC 1–2 → `KQ_PCCC_may.md`; R1 (Opus high) việc PCCC 3 → `KQ_PCCC_tri_thuc.md`; R3b (Opus high) việc CAD 2, 4, 5 → `KQ_CAD_ui.md`;
@@ -84,11 +84,11 @@ thiếu số liệu vẫn ra D / KD thay vì XM; trang xoay làm sập máy ki�
    d. CAD đúng: `PCCC_KT` xuyên tường, khoang dầm theo từng phòng + kiểm phủ lại, INSUNITS, ngưỡng dầm đưa vào `03_DU_LIEU/khoang_cach_rai.json`.
    e. CAD mượt: Esc + thanh tiến độ, `PhuKin` / `DiemHo`, `CacMat`, nhớ kết quả explode block, `DemBanVe` khi đổi tab.
    f. CAD giao diện: `agy --model gemini-4-carbon-medium` tra mạng UX palette + đề xuất, Claude sửa ảnh block (màu layer `PCCC_<hệ>`, tô Solid / Hatch, nền theo chủ đề), build, test.
-   g. `07_CAD/module/lisp/TKPCCC.lsp` nạp DLL + file cài bundle; thử bằng accoreconsole.
+   g. `07_CAD/05_NEN_TANG/lisp/TKPCCC.lsp` nạp DLL + file cài bundle; thử bằng accoreconsole.
    h. Bản quyền: mã máy theo seri ổ cứng (giữ nhận key cũ theo MachineGuid), keygen `.exe` + `.py`; vá Apps Script chèn công thức.
    i. `CLAUDE.md` + memory `luu-tien-do-truoc-het-usage`: luật 85–95 % và ngữ cảnh 50 % cho mọi việc; dọn `.claude/worktrees/` cũ (hỏi người dùng trước khi xoá nhánh).
-4. Mỗi đợt xong: `npm test`, pytest, `07_CAD\test\chay_thu.ps1` (khi đụng CAD), cập nhật file này + `00_QUAN_LY_DU_AN/LICH_SU.md`, commit. `git push` vẫn treo ở tab Terminal (chờ người dùng đăng nhập).
-**CAD tự động (MCP CAD, từ 2026-11-10): tiến độ và nhật ký RIÊNG ở `07_CAD/TIEN_DO.md`, `07_CAD/LICH_SU.md`; kế hoạch `07_CAD/KE_HOACH.md`.**
+4. Mỗi đợt xong: `npm test`, pytest, `07_CAD\04_KIEM_THU\chay_thu.ps1` (khi đụng CAD), cập nhật file này + `00_QUAN_LY_DU_AN/LICH_SU.md`, commit. `git push` vẫn treo ở tab Terminal (chờ người dùng đăng nhập).
+**CAD tự động (MCP CAD, từ 2026-11-10): tiến độ và nhật ký RIÊNG ở `07_CAD/00_QUAN_LY_DU_AN/TIEN_DO.md`, `07_CAD/00_QUAN_LY_DU_AN/LICH_SU.md`; kế hoạch `07_CAD/00_QUAN_LY_DU_AN/KE_HOACH.md`.**
 **XONG 06/11 (sáng): BCKS "Văn phòng Q.7 – DA-07 1"** ở `12_KET_QUA/da071/` (BCKS_Van_phong_DA07_1.xlsx/.pdf, ban_ve_ghi_chu.pdf, doi_chieu.xlsx, bang_doi_chieu.md; không commit; `dien.py`, `ghichu.py` dựng lại). 4 tầng nổi + hầm, cao PCCC ≈ 12 m (ước lượng), sàn ≈ 1.170 m², F4.3 theo tên hồ sơ (bản vẽ: trệt văn phòng, tầng trên căn A/B/E). Còn 👤: công năng thật (nhà ở KD thì hầm xe/báo cháy khác), vị trí tường/cửa PA1 (ước lượng từ ảnh), số người, mặt bằng mái. Usage tuần ≈ 97 % lúc làm.
 **XONG 06/11 tối: BCKS "Nhà phố – Căn hộ dịch vụ 8 m" (Q.2)** ở `12_KET_QUA/canho8m/v7/` (BCKS xlsx, ban_ve_ghi_chu.pdf, doi_chieu.xlsx, bang_doi_chieu.md; không commit). Công năng giả định F1.2 theo tên file; 5 tầng nổi + hầm; cao PCCC ≈ 15,0 m.
 Người dùng đã chỉnh nhiều vòng, TẤT CẢ đã chép vào skill/knowledge: `01_TRI_THUC/05_THOAT_NAN/nhan-dien-thang-thoat-nan.md` (checklist vẽ buồng thang cuối file: tầng nổi trên không tường quây; hầm + trệt tường cách bậc đầu ≈ 900 mm theo từng vế,
@@ -206,7 +206,7 @@ Việc tiếp theo:
 Máy đang làm: `F:\1_ToolMMo\2_VibeCode\PCCCVIP` (Python 3.13 + pymupdf 1.28.2 + pyyaml, Node 24, Claude CLI đã đăng nhập, có Excel, KHÔNG có AutoCAD).
 Đã kiểm 2026-11-01: `npm test` 56 test, `python -m pytest 06_THAM_DINH_PDF/test -q` 2 test, trình duyệt (tab Thẩm định PDF, tab Thủy lực: tính sơ bộ,
 tính theo số liệu, xuất Excel qua API có Excel COM hoàn thiện; số Excel tự tính khớp web: Q sprinkler 76,2816 / 76,2801).
-CHƯA chạy `07_CAD\test\chay_thu.ps1` (máy không có AutoCAD; phiên này không sửa `07_CAD/`). Chưa bấm nút tải Excel trong trình duyệt (chỉ gọi API).
+CHƯA chạy `07_CAD\04_KIEM_THU\chay_thu.ps1` (máy không có AutoCAD; phiên này không sửa `07_CAD/`). Chưa bấm nút tải Excel trong trình duyệt (chỉ gọi API).
 
 Pha 4a đã làm:
 - `04_BACKEND/shared/src/thuy_luc.ts` + 2 file test chép nguyên từ SKILL-PCCC-NEW (24743f9): 14 test khớp Excel người dùng. `thuy_luc.py` của PcccVipPro

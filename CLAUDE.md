@@ -13,7 +13,7 @@ Bộ công cụ thiết kế PCCC: plugin AutoCAD 2021 + runner Node + web nội
 - Cửa sổ 5 giờ (hoặc tuần) ≥ 85 % ⇒ **dừng ngay ở việc đang làm**: ghi `00_QUAN_LY_DU_AN/TIEN_DO.md` (dở ở đâu, bước tiếp theo cụ thể, đủ để phiên mới
   làm tiếp không cần hội thoại này) + `00_QUAN_LY_DU_AN/LICH_SU.md`, commit, push (skill `tkpccc-xong-dau-muc`); báo người dùng giờ reset.
 - Dự tính trước: việc sắp làm có thể đẩy usage qua 85 % (vd mở agent ≈ 10–25 % mỗi agent) thì lưu + push TRƯỚC khi làm.
-- Việc CAD (thư mục `07_CAD/`, người dùng dặn 2026-11-10): tiến độ và nhật ký lưu RIÊNG ở `07_CAD/TIEN_DO.md`, `07_CAD/LICH_SU.md`
+- Việc CAD (thư mục `07_CAD/`, người dùng dặn 2026-11-10): tiến độ và nhật ký lưu RIÊNG ở `07_CAD/00_QUAN_LY_DU_AN/TIEN_DO.md`, `07_CAD/00_QUAN_LY_DU_AN/LICH_SU.md`
   (`00_QUAN_LY_DU_AN/TIEN_DO.md` gốc chỉ trỏ tới); tới 95 % (người dùng dặn 2026-11-14, thay mức 90 % ngày 11/11 cho việc CAD) thì dừng, ghi 2 file đó, commit, push, hẹn giờ tới lúc reset rồi TỰ làm tiếp, không hỏi người dùng.
   `07_CAD/` là dự án con (người dùng dặn 2026-11-11): luật riêng `07_CAD/CLAUDE.md`, bản đồ thư mục `07_CAD/README.md`, skill và agent riêng trong `07_CAD/.claude/`.
 - Cập nhật 2026-11-16 (người dùng dặn, thắng mọi mức ở dưới): cửa sổ 5 giờ tới 95–98 % ⇒ dừng ở task gần nhất, ghi tiến độ + lịch sử, commit;
@@ -67,7 +67,7 @@ Làm module nào: đọc `.claude/skills/<skill>/SKILL.md` của module đó và
 - Số người dùng nhập kiểu Việt Nam ("1.200" = 1200, "3,5" = 3.5): đọc bằng `docSoVN` (`04_BACKEND/shared/src/bao_gia.ts`).
 - Plugin AutoCAD: **chỉ C# 5**, chỉ tham chiếu `acdbmgd` + `accoremgd` (chi tiết skill `tkpccc-cad-console`).
 - Kiểm tra trước khi báo xong: `npm test`, `python -m pytest 06_THAM_DINH_PDF/test .claude/skills 10_DRIVE/test -q` và
-  `powershell -ExecutionPolicy Bypass -File 07_CAD\test\chay_thu.ps1` (không cần mở AutoCAD, nhưng máy phải cài AutoCAD 2021).
+  `powershell -ExecutionPolicy Bypass -File 07_CAD\04_KIEM_THU\chay_thu.ps1` (không cần mở AutoCAD, nhưng máy phải cài AutoCAD 2021).
 - Repo tham khảo (công khai từ 2026-11-01): `taelomuhicd84/SKILL-PCCC-NEW` (web thẩm định theo bảng đối chiếu A/B/KT, agent m01–m18,
   thủy lực), `taelomuhicd84/PcccVipPro` (module `pccc`: agent thẩm định, `tools/thuy_luc.py`, `thoat_nan.py`), `taelomuhicd84/PCCC`
   (lõi Python gốc). Clone vào thư mục tạm khi cần, không sửa các repo đó, không chạy code của chúng.

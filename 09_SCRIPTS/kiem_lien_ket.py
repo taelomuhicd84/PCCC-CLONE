@@ -25,7 +25,7 @@ def tep(*mau):
 
 
 def mo_ta():  # tai lieu duoc kiem: CLAUDE, STRUCTURE, README, 07_CAD/*.md goc, LUAT, TU_VUNG, SKILL.md, agent
-    return tep('CLAUDE.md', '00_QUAN_LY_DU_AN/STRUCTURE.md', 'README.md', '07_CAD/CLAUDE.md', '07_CAD/README.md', '07_CAD/rule/LUAT.md', '07_CAD/skills/TU_VUNG.md',
+    return tep('CLAUDE.md', '00_QUAN_LY_DU_AN/STRUCTURE.md', 'README.md', '07_CAD/CLAUDE.md', '07_CAD/README.md', '07_CAD/02_LUAT_VE/LUAT.md', '07_CAD/01_TRI_THUC_VE/TU_VUNG.md',
                '.claude/skills/*/SKILL.md', '07_CAD/.claude/skills/*/SKILL.md', '.claude/agents/*.md', '07_CAD/.claude/agents/*.md')
 
 
@@ -87,7 +87,7 @@ def phep2():
     ngoai_le = {'SPR_VAN_OSY', 'ONG_GIO', 'ONG_THEP', 'ONG_DN', 'SPR_DAU_DWN', 'DAY_NGUON', 'DAY_NGUON_FR', 'DAY_TH', 'DAY_TH_FR', 'DAY_TUONG_MAX_M', 'SPR_VAN_OSY_DN'}
     pre = ('BC_', 'SPR_', 'HVT_', 'NUOC_', 'BINH_', 'DEN_', 'ONG_', 'DAY_', 'CAP_', 'QUAT_', 'DIEN_', 'CHONG_', 'CUA_', 'BE_', 'HS_')
     re_ma = re.compile(r'(?<![A-Za-z0-9_])((?:' + '|'.join(pre) + r')[A-Z0-9_]*[A-Z0-9])(?![A-Za-z0-9_])')
-    for f in tep('04_BACKEND/shared/src/*.ts', '04_BACKEND/src/**/*.ts', '07_CAD/module/**/*.cs', '07_CAD/skills/**/*.md', '07_CAD/data/**/*.json', '05_FRONTEND/index.html'):
+    for f in tep('04_BACKEND/shared/src/*.ts', '04_BACKEND/src/**/*.ts', '07_CAD/??_*/**/*.cs', '07_CAD/01_TRI_THUC_VE/**/*.md', '07_CAD/03_DU_LIEU_VE/**/*.json', '05_FRONTEND/index.html'):
         for ln, line in enumerate(doc(f).splitlines(), 1):
             for m in re_ma.findall(line):
                 if m not in ma and m not in ngoai_le and not any(m.startswith(n) for n in ngoai_le if n.endswith('_')):
@@ -198,7 +198,7 @@ def phep5_6():
 
 # ---------- 8 + 9. lenh CAD, op spec ----------
 def phep8_9():
-    cs = ''.join(doc(f) for f in tep('07_CAD/module/**/*.cs'))
+    cs = ''.join(doc(f) for f in tep('07_CAD/??_*/**/*.cs') if '/04_KIEM_THU/' not in f)
     lenh = set(re.findall(r'CommandMethod\(\s*"([A-Z_0-9]+)"', cs))
     layer = set(re.findall(r'"(PCCC_[A-Z0-9_]+)', cs))
     xml = ROOT / '07_CAD/TKPCCC.bundle/PackageContents.xml'
@@ -209,21 +209,21 @@ def phep8_9():
             bao('CANH_BAO', 'lenh-cad', '07_CAD/TKPCCC.bundle/PackageContents.xml', f'lệnh {l} có CommandMethod nhưng chưa khai báo')
         for l in sorted(kb - lenh):
             bao('LOI', 'lenh-cad', '07_CAD/TKPCCC.bundle/PackageContents.xml', f'khai báo {l} nhưng không có CommandMethod')
-    for f in mo_ta() + ['03_DU_LIEU/huong_dan.json'] + tep('07_CAD/skills/*/*.md', '07_CAD/skills/*/*/*.md'):
+    for f in mo_ta() + ['03_DU_LIEU/huong_dan.json'] + tep('07_CAD/01_TRI_THUC_VE/*/*.md', '07_CAD/01_TRI_THUC_VE/*/*/*.md'):
         for ln, line in enumerate(doc(f).splitlines(), 1):
             for m in re.findall(r'(?<![A-Za-z0-9_])(PCCC_[A-Z0-9_]+)', line):
                 if m not in lenh and m not in layer and not m.endswith('_'):
-                    bao('CANH_BAO', 'lenh-cad', f'{f}:{ln}', f'`{m}` không phải lệnh hay layer có trong 07_CAD/module')
-    sp = ROOT / '07_CAD/module/plugin/Spec.cs'
+                    bao('CANH_BAO', 'lenh-cad', f'{f}:{ln}', f'`{m}` không phải lệnh hay layer có trong 07_CAD/NN_*/')
+    sp = ROOT / '07_CAD/06_VE_TU_DONG_AI/cad/Spec.cs'
     if sp.exists():
         ops = set(re.findall(r'case\s+"([a-z_]+)"\s*:', sp.read_text(encoding='utf-8')))
-        tv = set(re.findall(r'^\|?\s*-?\s*`([a-z_]+)`', doc('07_CAD/skills/TU_VUNG.md'), re.M))
+        tv = set(re.findall(r'^\|?\s*-?\s*`([a-z_]+)`', doc('07_CAD/01_TRI_THUC_VE/TU_VUNG.md'), re.M))
         rieng = {'anh', 'pdf'}   # Spec.cs xử lý ngoài vòng case
         for o in sorted(ops - tv):
-            bao('CANH_BAO', 'op-spec', '07_CAD/skills/TU_VUNG.md', f'op `{o}` có trong Spec.cs nhưng chưa có trong từ vựng')
+            bao('CANH_BAO', 'op-spec', '07_CAD/01_TRI_THUC_VE/TU_VUNG.md', f'op `{o}` có trong Spec.cs nhưng chưa có trong từ vựng')
         for o in sorted(tv - ops - rieng):
             if o in ('luoi_truc', 'tuong', 'cua', 'dat', 'ong', 'net', 'tron', 'chu', 'kt', 'kt_chuoi', 'bang', 'xoa', 'doc', 'dem', 'rai', 'vung_tu_dong', 'tuyen', 'so_do'):
-                bao('LOI', 'op-spec', '07_CAD/skills/TU_VUNG.md', f'op `{o}` trong từ vựng nhưng không có `case` trong Spec.cs')
+                bao('LOI', 'op-spec', '07_CAD/01_TRI_THUC_VE/TU_VUNG.md', f'op `{o}` trong từ vựng nhưng không có `case` trong Spec.cs')
 
 
 # ---------- 10. skill / agent ----------
@@ -245,7 +245,7 @@ def phep10():
         for k in ('model', 'effort'):
             if k not in kh:
                 bao('LOI', 'skill-agent', f, f'`{ten}` thiếu frontmatter {k}')
-    cl = doc('CLAUDE.md') + doc('07_CAD/CLAUDE.md') + doc('07_CAD/rule/LUAT.md')
+    cl = doc('CLAUDE.md') + doc('07_CAD/CLAUDE.md') + doc('07_CAD/02_LUAT_VE/LUAT.md')
     co = {khung(f).get('name') for f in tep('.claude/skills/*/SKILL.md', '07_CAD/.claude/skills/*/SKILL.md', '.claude/agents/*.md', '07_CAD/.claude/agents/*.md')}
     for t in sorted(set(re.findall(r'`((?:tkpccc|pccc|cad|web)-[a-z-]+)`', cl))):
         if t not in co:
@@ -262,7 +262,7 @@ def phep10():
 # ---------- 11. ban chep bundle ----------
 def phep11():
     cap = [('03_DU_LIEU/vat_tu.json', 'vat_tu.json'), ('03_DU_LIEU/khoang_cach_rai.json', 'khoang_cach_rai.json'), ('01_TRI_THUC/07_BAO_CHAY/chon-loai-dau-bao.md', 'chon-loai-dau-bao.md'),
-           ('07_CAD/data/ky_hieu/ky_hieu.json', 'ky_hieu.json'), ('07_CAD/data/ky_hieu/hinh_bc.json', 'hinh_bc.json'), ('07_CAD/skills/ve/mau-thuyet-minh-pccc.md', 'mau-thuyet-minh-pccc.md')]
+           ('07_CAD/03_DU_LIEU_VE/ky_hieu/ky_hieu.json', 'ky_hieu.json'), ('07_CAD/03_DU_LIEU_VE/ky_hieu/hinh_bc.json', 'hinh_bc.json'), ('07_CAD/01_TRI_THUC_VE/ve/mau-thuyet-minh-pccc.md', 'mau-thuyet-minh-pccc.md')]
     for nguon, ban in cap:
         b = ROOT / '07_CAD/TKPCCC.bundle/Contents' / ban
         if b.exists() and (ROOT / nguon).exists() and b.read_bytes() != (ROOT / nguon).read_bytes():
