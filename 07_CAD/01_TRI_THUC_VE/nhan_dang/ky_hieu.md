@@ -1,6 +1,6 @@
 # Nhận dạng ký hiệu thiết bị có sẵn trong bản vẽ
 
-Mã: `dem` / `PCCC_BOC` (`07_CAD/06_VE_TU_DONG_AI/cad/Spec.cs`, `Lenh.cs`), nhận loại thiết bị khi đi dây (`07_CAD/10_BAO_CHAY/cad/DayBc.cs`).
+Mã: `dem` / `PCCC_BOC` (`07_CAD/06_VE_TU_DONG_AI/cad/Spec.cs`, `Lenh.cs`), nhận loại thiết bị khi đi dây (`07_CAD/09_PCCC/02_BAO_CHAY/cad/DayBc.cs`).
 
 - Thiết bị plugin chèn mang thuộc tính `MA_VT` = mã vật tư (`03_DU_LIEU/vat_tu.json` gốc repo, nguồn duy nhất). Đếm theo mã.
 - Block của người dùng không có `MA_VT`: gán bằng `block_alias.json` (`PCCC_GAN`); block động có Visibility / Lookup gán từng trạng thái bằng khoá `"tên block|trạng thái"`.

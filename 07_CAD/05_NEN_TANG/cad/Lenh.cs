@@ -91,10 +91,10 @@ namespace TKPCCC
         [CommandMethod("PCCC_BANG")] public void LenhBang() { Chay(ChenBang); }
         [CommandMethod("PCCC_VUNGBV")] public void LenhVungBV() { Chay(VungBaoVe); }
         [CommandMethod("PCCC_SPEC")] public void LenhSpec() { Chay(ChaySpec); } // 07_CAD/06_VE_TU_DONG_AI/cad/Spec.cs
-        [CommandMethod("PCCC_RAI")] public void LenhRai() { Chay(RaiTay); }     // 07_CAD/09_RAI_THIET_BI/cad/Rai.cs
-        [CommandMethod("PCCC_TUYEN")] public void LenhTuyen() { Chay(TuyenTay); } // 07_CAD/09_RAI_THIET_BI/cad/Rai.cs
-        [CommandMethod("PCCC_DAY")] public void LenhDay() { Chay(DayTay); }       // 07_CAD/09_RAI_THIET_BI/cad/Rai.cs
-        [CommandMethod("PCCC_THEMBLOCK")] public void LenhThemBlock() { Chay(ThemBlock); } // 07_CAD/14_THU_VIEN_BLOCK/cad/Block.cs
+        [CommandMethod("PCCC_RAI")] public void LenhRai() { Chay(RaiTay); }     // 07_CAD/09_PCCC/01_RAI_THIET_BI/cad/Rai.cs
+        [CommandMethod("PCCC_TUYEN")] public void LenhTuyen() { Chay(TuyenTay); } // 07_CAD/09_PCCC/01_RAI_THIET_BI/cad/Rai.cs
+        [CommandMethod("PCCC_DAY")] public void LenhDay() { Chay(DayTay); }       // 07_CAD/09_PCCC/01_RAI_THIET_BI/cad/Rai.cs
+        [CommandMethod("PCCC_THEMBLOCK")] public void LenhThemBlock() { Chay(ThemBlock); } // 07_CAD/09_PCCC/06_THU_VIEN_BLOCK/cad/Block.cs
         /// Esc giữa lệnh dài (review 15/11): ném lỗi để transaction đang mở không commit, bản vẽ không đổi. Gọi thưa (mỗi phòng, mỗi vài trăm vòng).
         static void KiemEsc()
         {

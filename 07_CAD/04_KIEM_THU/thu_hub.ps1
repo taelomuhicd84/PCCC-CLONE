@@ -7,15 +7,15 @@ $GOC = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $T = Join-Path $env:TEMP ('tkpccc_hub_' + [guid]::NewGuid().ToString('N').Substring(0, 8))
 $BIN = "$T\cad\bin"
 # 17/11: 3 plugin rieng (PCCC, YouTube, Bot chat), moi plugin mot bundle
-New-Item -ItemType Directory $BIN, "$T\cad\TKPCCC.bundle\Contents", "$T\cad\TKPCCC_YouTube.bundle\Contents", "$T\cad\TKPCCC_BotChat.bundle\Contents", "$T\cad\18_YOUTUBE\webview2" | Out-Null
+New-Item -ItemType Directory $BIN, "$T\cad\TKPCCC.bundle\Contents", "$T\cad\TKPCCC_YouTube.bundle\Contents", "$T\cad\TKPCCC_BotChat.bundle\Contents", "$T\cad\13_YOUTUBE\webview2" | Out-Null
 'gia' | Set-Content "$T\cad\TKPCCC.bundle\Contents\TKPCCC.Cad.dll"
 'gia' | Set-Content "$T\cad\TKPCCC_YouTube.bundle\Contents\TKPCCC.YouTube.dll"
 'gia' | Set-Content "$T\cad\TKPCCC_BotChat.bundle\Contents\TKPCCC.BotChat.dll"
 $WV2 = 'Microsoft.Web.WebView2.Core.dll', 'Microsoft.Web.WebView2.WinForms.dll', 'WebView2Loader.dll'
-foreach ($f in $WV2) { 'gia' | Set-Content "$T\cad\18_YOUTUBE\webview2\$f" }
+foreach ($f in $WV2) { 'gia' | Set-Content "$T\cad\13_YOUTUBE\webview2\$f" }
 
 & "$FW\csc.exe" /nologo /target:winexe /codepage:65001 /out:"$BIN\TKPCCC.Hub.exe" /r:"$FW\System.Web.Extensions.dll" /r:System.Core.dll `
-  /r:System.Windows.Forms.dll /r:System.Drawing.dll "$GOC\07_CAD\19_HUB\Hub.cs" "$GOC\07_CAD\05_NEN_TANG\chung\HangDoi.cs"
+  /r:System.Windows.Forms.dll /r:System.Drawing.dll "$GOC\07_CAD\14_HUB\Hub.cs" "$GOC\07_CAD\05_NEN_TANG\chung\HangDoi.cs"
 if ($LASTEXITCODE) { throw 'Bien dich Hub loi' }
 & "$FW\csc.exe" /nologo /target:exe /codepage:65001 /out:"$BIN\TKPCCC.Mcp.exe" /r:"$FW\System.Web.Extensions.dll" /r:System.Core.dll `
   "$GOC\07_CAD\06_VE_TU_DONG_AI\mcp\Mcp.cs" "$GOC\07_CAD\05_NEN_TANG\chung\HangDoi.cs"

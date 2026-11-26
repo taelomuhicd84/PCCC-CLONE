@@ -121,7 +121,7 @@ namespace TKPCCC
                     Cai = delegate { return MoTrang(URL_WV2); },
                     HoiCai = "Mở trang tải WebView2 Runtime của Microsoft (chọn Evergreen Bootstrapper): " + URL_WV2 },
                 new Muc { Ma = "wv2_dll", Nhom = YT, Ten = "Thư viện WebView2 cạnh plugin (3 DLL)", Kiem = KiemDllWv2, Cai = CaiDllWv2,
-                    HoiCai = "Chép 3 DLL WebView2 từ " + Path.Combine(Cad, "18_YOUTUBE", "webview2") + " vào " + ContentsYt + "." },
+                    HoiCai = "Chép 3 DLL WebView2 từ " + Path.Combine(Cad, "13_YOUTUBE", "webview2") + " vào " + ContentsYt + "." },
                 new Muc { Ma = "brave", Nhom = YT, Ten = "Brave (tuỳ chọn, xem YouTube cửa sổ riêng)", Kiem = delegate
                     {
                         string b = HangDoi.TimBrave();
@@ -418,7 +418,7 @@ namespace TKPCCC
 
         static string CaiDllWv2()
         {
-            string nguon = Path.Combine(Cad, "18_YOUTUBE", "webview2");
+            string nguon = Path.Combine(Cad, "13_YOUTUBE", "webview2");
             Directory.CreateDirectory(ContentsYt);
             int n = 0;
             foreach (string f in DLL_WV2)

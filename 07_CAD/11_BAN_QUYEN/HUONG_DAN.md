@@ -28,7 +28,7 @@ Làm MỘT lần theo thứ tự dưới đây. Không cần biết lập trình
 
 ## Bước 3. Dán script
 1. Trong Sheet: menu **Tiện ích mở rộng → Apps Script**.
-2. Xoá hết mã mẫu, dán toàn bộ nội dung file `07_CAD/16_BAN_QUYEN/keygen/apps_script/Code.gs`, bấm **Lưu**.
+2. Xoá hết mã mẫu, dán toàn bộ nội dung file `07_CAD/11_BAN_QUYEN/keygen/apps_script/Code.gs`, bấm **Lưu**.
 3. Bánh răng **Cài đặt dự án** (bên trái) → kéo xuống **Thuộc tính tập lệnh** → **Thêm thuộc tính**:
    | Thuộc tính | Giá trị |
    |---|---|
@@ -54,7 +54,7 @@ Làm MỘT lần theo thứ tự dưới đây. Không cần biết lập trình
 - Khách: `PCCC_BANQUYEN` → nhập email → **Đăng ký** → chờ vài phút → **Lấy key tự động** (hoặc dán key bạn gửi, bấm **Kích hoạt**).
 - Bạn: không bật `TU_DONG_CAP` thì gõ `Duyệt` vào cột Trạng thái hàng muốn cấp; muốn chặn gõ `Khoá`. Gõ ngày vào cột Hạn trước khi duyệt nếu muốn hạn khác mặc định.
 - Cấp tay không cần Google: KeyGen phần **2. Ký key tay** (email, mã máy, hạn) → **Ký key** → **Chép key** gửi khách.
-- Dùng Python thay KeyGen: `python 07_CAD\16_BAN_QUYEN\keygen\keygen.py ky <email> <mã máy> <yyyy-MM-dd>` (chỉ thư viện chuẩn;
+- Dùng Python thay KeyGen: `python 07_CAD\11_BAN_QUYEN\keygen\keygen.py ky <email> <mã máy> <yyyy-MM-dd>` (chỉ thư viện chuẩn;
   khoá riêng mặc định `C:\Users\<bạn>\TKPCCC_KHOA\khoa_rieng.pem`, đổi bằng `--khoa <file>`). `python keygen.py may` in mã máy của máy đang chạy.
   Key từ KeyGen.exe, keygen.py và Google Sheet giống nhau từng ký tự.
 - Gia hạn: xoá ô Key của hàng đó, sửa Hạn, (gõ `Duyệt`) → 5 phút sau có key mới; khách bấm **Lấy key tự động**.

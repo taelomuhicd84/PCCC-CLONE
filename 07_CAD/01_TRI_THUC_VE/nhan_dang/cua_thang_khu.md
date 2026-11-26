@@ -1,6 +1,6 @@
 # Nhận dạng cửa, thang, khu không rải
 
-Mã: `CacMat` (khép khe cửa), `GomCua`, `GomKhu`, `HinhBac`, `TachOX`, `GomChuKhu`, `LoaiKhuTen` trong `07_CAD/07_KIEN_TRUC/cad/NhanVung.cs`; các bộ lọc "Enter mọi phòng" ở `07_CAD/09_RAI_THIET_BI/cad/Rai.cs`.
+Mã: `CacMat` (khép khe cửa), `GomCua`, `GomKhu`, `HinhBac`, `TachOX`, `GomChuKhu`, `LoaiKhuTen` trong `07_CAD/07_KIEN_TRUC/cad/NhanVung.cs`; các bộ lọc "Enter mọi phòng" ở `07_CAD/09_PCCC/01_RAI_THIET_BI/cad/Rai.cs`.
 
 ## Cửa (khép ô cửa để phòng kín)
 - Khe giữa hai đoạn tường thẳng hàng ≤ `HO_CUA_M` (3 m): luôn khép (chỉ khe gần nhất ở mỗi đầu đoạn).

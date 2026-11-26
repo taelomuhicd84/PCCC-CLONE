@@ -1,4 +1,4 @@
-// Chỉ cho test/thu_bot.ps1 (người dùng 18/11): thử 17_BOT_CHAT/03_PHIEN_LICH_SU/PhienAi.cs ngoài AutoCAD.
+// Chỉ cho test/thu_bot.ps1 (người dùng 18/11): thử 12_BOT_CHAT/03_PHIEN_LICH_SU/PhienAi.cs ngoài AutoCAD.
 // 1. Phiên Claude: kho giả (CLAUDE_CONFIG_DIR) một phiên VS Code: tên lấy custom-title (thắng ai-title), bỏ dòng isMeta / "<...>", tin cuối đúng thứ tự.
 // 2. Chỗ chứa skill: dự án có .claude\skills -> --add-dir; plugin có skills\ -> --plugin-dir; thư mục skill trần -> lớp bọc junction.
 // 3. Antigravity: đọc được danh sách nếu máy có conversation_summaries.db (không có thì bỏ qua).

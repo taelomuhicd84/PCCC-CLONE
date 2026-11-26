@@ -5,8 +5,8 @@ $ErrorActionPreference = 'Stop'
 $ACAD = if ($env:ACAD_DIR) { $env:ACAD_DIR } else { 'C:\Program Files\Autodesk\AutoCAD 2021' }
 $FW = "$env:WINDIR\Microsoft.NET\Framework64\v4.0.30319"
 $GOC = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
-# Moi thu muc so 07_CAD\NN_TEN la mot hang muc tinh nang (26/11): cad\*.cs -> TKPCCC.Cad.dll, ui\*.cs -> TKPCCC.UI.dll (nhu build.bat).
-$CS_CAD = @(Get-ChildItem "$GOC\07_CAD\??_*\cad\*.cs" | ForEach-Object FullName); $CS_UI = @(Get-ChildItem "$GOC\07_CAD\??_*\ui\*.cs" | ForEach-Object FullName)
+# Moi thu muc so 07_CAD\NN_TEN la mot hang muc tinh nang (26/11): cad\*.cs -> TKPCCC.Cad.dll, ui\*.cs -> TKPCCC.UI.dll (nhu build.bat). Nhom linh vuc (09_PCCC\NN_*) gom ca cap con.
+$CS_CAD = @(Get-ChildItem "$GOC\07_CAD\??_*\cad\*.cs", "$GOC\07_CAD\??_*\??_*\cad\*.cs" | ForEach-Object FullName); $CS_UI = @(Get-ChildItem "$GOC\07_CAD\??_*\ui\*.cs", "$GOC\07_CAD\??_*\??_*\ui\*.cs" | ForEach-Object FullName)
 $T = Join-Path $env:TEMP ('tkpccc_bq_' + [guid]::NewGuid().ToString('N').Substring(0, 8))
 New-Item -ItemType Directory $T | Out-Null
 $loi = $false
@@ -15,7 +15,7 @@ function Kiem($ten, $dat) { if ($dat) { "DAT  $ten" } else { "HONG $ten"; $scrip
 # Ban /target:exe de doc duoc dong lenh (build.bat build ban winexe co cua so).
 & "$FW\csc.exe" /nologo /target:exe /codepage:65001 /out:"$T\kg.exe" `
   /r:"$FW\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Management.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll `
-  "$GOC\07_CAD\16_BAN_QUYEN\keygen\KeyGen.cs" "$GOC\07_CAD\16_BAN_QUYEN\cad\BanQuyen.cs"
+  "$GOC\07_CAD\11_BAN_QUYEN\keygen\KeyGen.cs" "$GOC\07_CAD\11_BAN_QUYEN\cad\BanQuyen.cs"
 if ($LASTEXITCODE) { throw 'Bien dich KeyGen loi' }
 $kg = "$T\kg.exe"
 
@@ -61,7 +61,7 @@ Kiem 'moc sua tay ngay (sai HMAC): bo qua' ($bq::NgayHieuLuc($d0, $luu.Replace($
 Kiem 'moc chep tu may khac: bo qua' ($bq::NgayHieuLuc($d0, $luu, $may) -eq $d0)
 & $kg kiem $cong $k1 $email $may $d40.ToString('yyyy-MM-dd') | Out-Null
 Kiem 'key han +30 ngay, ngay so han +40 (lui dong ho): tu choi' ($LASTEXITCODE -eq 1)
-$py = "$GOC\07_CAD\16_BAN_QUYEN\keygen\keygen.py"
+$py = "$GOC\07_CAD\11_BAN_QUYEN\keygen\keygen.py"
 Kiem 'keygen.py ky (PEM) trung key KeyGen' ((& python $py ky $email $may $han --khoa $pem | Out-String).Trim() -eq $k1)
 Kiem 'keygen.py ky (XML) trung key KeyGen' ((& python $py ky $email $may $han --khoa $rieng | Out-String).Trim() -eq $k1)
 $mayPy = (& python $py may | Out-String).Trim()
@@ -85,12 +85,12 @@ const ok = ctx.chuanHan('', 30, tu) === '2026-01-31' && ctx.chuanHan('5/3/2027',
 console.log((ok ? '' : 'HAM_THUAN_HONG ') + ctx.taoKey(email, may, han, ctx.chuanPem(pemHong), U));
 '@
 Set-Content "$T\gs.js" $js -Encoding ascii
-$k2 = (& node "$T\gs.js" "$GOC\07_CAD\16_BAN_QUYEN\keygen\apps_script\Code.gs" $pem ' Chu.Nha@ViDu.vn' $may $han | Out-String).Trim()
+$k2 = (& node "$T\gs.js" "$GOC\07_CAD\11_BAN_QUYEN\keygen\apps_script\Code.gs" $pem ' Chu.Nha@ViDu.vn' $may $han | Out-String).Trim()
 Kiem 'ham thuan Code.gs (chuanHan, timCot, hopLeEmail chan chen cong thuc, hopLeMay)' (-not $k2.StartsWith('HAM_THUAN_HONG'))
 $k2 = $k2.Replace('HAM_THUAN_HONG ', '')
 Kiem 'key Apps Script (Node) co dau = van nhan' ($k2.Contains('=') -and (Nhan $k2 $email $may))
 Kiem 'key Apps Script trung key KeyGen (PKCS#1 v1.5 tat dinh)' ($k2.Replace('=', '') -eq $k1)
-$k3 = (& node "$T\gs.js" "$GOC\07_CAD\16_BAN_QUYEN\keygen\apps_script\Code.gs" $pem $email $may $cu | Out-String).Trim()
+$k3 = (& node "$T\gs.js" "$GOC\07_CAD\11_BAN_QUYEN\keygen\apps_script\Code.gs" $pem $email $may $cu | Out-String).Trim()
 Kiem 'key Apps Script het han bi tu choi' (-not (Nhan $k3 $email $may))
 
 Remove-Item -Recurse -Force "$T\rieng" # khoa rieng thu khong de lai tren may

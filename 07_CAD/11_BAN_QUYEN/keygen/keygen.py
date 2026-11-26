@@ -1,4 +1,4 @@
-"""Tạo key bản quyền TKPCCC bằng Python (tương đương 07_CAD/bin/TKPCCC.KeyGen.exe, cùng hợp đồng key với 07_CAD/16_BAN_QUYEN/cad/BanQuyen.cs).
+"""Tạo key bản quyền TKPCCC bằng Python (tương đương 07_CAD/bin/TKPCCC.KeyGen.exe, cùng hợp đồng key với 07_CAD/11_BAN_QUYEN/cad/BanQuyen.cs).
 
 Chỉ dùng thư viện chuẩn: chữ ký RSA PKCS#1 v1.5 SHA-256 tính thẳng (tất định, trùng từng byte với KeyGen.exe và Apps Script).
 Khoá riêng đọc từ file NGOÀI repo (mặc định %USERPROFILE%\\TKPCCC_KHOA\\khoa_rieng.pem, KeyGen.exe tạo); không bao giờ commit khoá riêng.

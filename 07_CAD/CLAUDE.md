@@ -15,12 +15,12 @@ Mở Claude Code tại gốc repo hay ngay tại `07_CAD/` đều làm việc đ
   | `cad-thiet-ke` | đọc nền, tra trị số theo `02_LUAT_VE/LUAT.md`, phân vùng, chia zone, lập spec cả tầng | đọc file, ghi spec + báo cáo vào thư mục dự án; không có công cụ vẽ |
   | `cad-ve` | chạy spec có sẵn qua `cad_chay`, sửa lỗi cú pháp nhỏ, báo số đếm | `cad_tt`, `cad_chay`, `cad_anh`, đọc file |
   | `cad-kiem` | soát bản vẽ sau khi vẽ: đếm, vùng hở, zone, đối chiếu luật | chỉ `doc`, `dem`, `anh`; ghi báo cáo kiểm |
-  | `cad-lap-trinh` | sửa plugin C#, thêm thao tác spec và lệnh, chạy bộ test | sửa `07_CAD/05_NEN_TANG` … `19_HUB`, `07_CAD/04_KIEM_THU`, tài liệu CAD |
+  | `cad-lap-trinh` | sửa plugin C#, thêm thao tác spec và lệnh, chạy bộ test | sửa `07_CAD/05_NEN_TANG` … `14_HUB`, `07_CAD/04_KIEM_THU`, tài liệu CAD |
   | `cad-review` | review diff của một mốc + chạy lại test, báo CHẶN / NÊN SỬA / GHI CHÚ | chỉ đọc và chạy test, không sửa file |
 - Cây thư mục ĐÁNH SỐ như gốc repo (người dùng giao 26/11), thêm gì thì đặt đúng chỗ và ghi 1 dòng vào `07_CAD/README.md`:
   `00_QUAN_LY_DU_AN/` tiến độ, nhật ký, kế hoạch · `01_TRI_THUC_VE/` ĐẦU NGUỒN tri thức vẽ cho mọi AI (`nhan_dang/` đọc bản vẽ, `ve/` vẽ + quy ước layer, `mau/` bằng chứng học từ bản mẫu; mục lục `01_TRI_THUC_VE/README.md`) · `02_LUAT_VE/` luật nối tới quy chuẩn · `03_DU_LIEU_VE/` dữ liệu vẽ · `04_KIEM_THU/` kiểm thử.
-  Từ `05_NEN_TANG/` tới `19_HUB/`: MỖI SỐ MỘT HẠNG MỤC TÍNH NĂNG của plugin PCCC, bot chat (`17_BOT_CHAT/` chia 5 mục con), YouTube, Hub. Sửa tính năng nào chỉ đọc, chỉ sửa thư mục đó (bảng ở `07_CAD/README.md`).
-  Tính năng mới lấy số kế tiếp (`20_...`), không chèn giữa; hàm mới của plugin để đúng hạng mục (`partial class Lenh`), không dồn vào `05_NEN_TANG/cad/Lenh.cs` (file đó chỉ giữ khởi động, đăng ký lệnh, `DS_LENH`, hàm dùng chung).
+  Từ `05_NEN_TANG/` tới `14_HUB/`: MỖI SỐ MỘT HẠNG MỤC TÍNH NĂNG; mọi hạng mục riêng của PCCC gom trong nhóm `09_PCCC/` (`01_RAI_THIET_BI` … `06_THU_VIEN_BLOCK`, người dùng giao 26/11 chiều) của plugin PCCC, bot chat (`12_BOT_CHAT/` chia 5 mục con), YouTube, Hub. Sửa tính năng nào chỉ đọc, chỉ sửa thư mục đó (bảng ở `07_CAD/README.md`).
+  Tính năng mới lấy số kế tiếp (`15_...`; tính năng PCCC: `07_...` trong `09_PCCC/`; lĩnh vực mới như xây dựng, kiến trúc, LISP phụ trợ: nhóm `15_<LINH_VUC>/NN_*`), không chèn giữa; hàm mới của plugin để đúng hạng mục (`partial class Lenh`), không dồn vào `05_NEN_TANG/cad/Lenh.cs` (file đó chỉ giữ khởi động, đăng ký lệnh, `DS_LENH`, hàm dùng chung).
   Người dùng chốt 21/11: luật nhận dạng / vẽ chỉ ghi ở `07_CAD/01_TRI_THUC_VE/`; skill, agent, memory chỉ giữ quy trình và trỏ tới đó.
 - Trị số quy chuẩn không chép vào `07_CAD/`: `02_LUAT_VE/LUAT.md` chỉ trỏ tới file nguyên văn trong `01_TRI_THUC/`, `02_DIEU_KHOAN/` gốc.
 - Plugin chỉ C# 5, tham chiếu `acdbmgd` + `accoremgd` (cộng `System.Windows.Forms`, `System.Drawing` của .NET). Máy chủ MCP không chạy LISP hay lệnh tự do.

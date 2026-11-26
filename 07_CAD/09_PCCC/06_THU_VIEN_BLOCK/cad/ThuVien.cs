@@ -241,7 +241,7 @@ namespace TKPCCC
                 ed.WriteMessage("\nĐã cất thư viện cũ: " + cu);
             }
             NapVaoBanVe(doc, dm, true);
-            int anh = CapNhatAnhBlock(dm); // 07_CAD/14_THU_VIEN_BLOCK/cad/Block.cs
+            int anh = CapNhatAnhBlock(dm); // 07_CAD/09_PCCC/06_THU_VIEN_BLOCK/cad/Block.cs
             if (anh > 0) ed.WriteMessage("\nĐã vẽ " + anh + " ảnh xem trước block cho bảng PCCC_BLOCK.");
         }
 

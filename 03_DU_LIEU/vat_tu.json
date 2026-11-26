@@ -1,5 +1,5 @@
 {
-  "_ghi_chu": "Danh mục vật tư PCCC — nguồn duy nhất cho plugin CAD, runner và báo giá. loai=block: đếm block có attribute MA_VT; loai=tuyen: cộng chiều dài đường trên layer PCCC_<ma> (m); loai=khac: không vẽ trong CAD, chỉ dùng cho báo giá sơ bộ. ky_hieu = chữ trong hình block mặc định (chỉ ASCII: font txt.shx không có dấu); mã có hình trong 07_CAD/03_DU_LIEU_VE/ky_hieu/hinh_bc.json thì block mặc định vẽ theo hình đó. layer_so_do, net (loại đường), mau (màu ACI): layer của dây trên sơ đồ nguyên lý (07_CAD/12_SO_DO_NGUYEN_LY/cad/SoDo.cs), chỉ tạo khi bản vẽ chưa có layer đó.",
+  "_ghi_chu": "Danh mục vật tư PCCC — nguồn duy nhất cho plugin CAD, runner và báo giá. loai=block: đếm block có attribute MA_VT; loai=tuyen: cộng chiều dài đường trên layer PCCC_<ma> (m); loai=khac: không vẽ trong CAD, chỉ dùng cho báo giá sơ bộ. ky_hieu = chữ trong hình block mặc định (chỉ ASCII: font txt.shx không có dấu); mã có hình trong 07_CAD/03_DU_LIEU_VE/ky_hieu/hinh_bc.json thì block mặc định vẽ theo hình đó. layer_so_do, net (loại đường), mau (màu ACI): layer của dây trên sơ đồ nguyên lý (07_CAD/09_PCCC/04_SO_DO_NGUYEN_LY/cad/SoDo.cs), chỉ tạo khi bản vẽ chưa có layer đó.",
   "he": {
     "BC": "Báo cháy tự động",
     "SPR": "Chữa cháy sprinkler",

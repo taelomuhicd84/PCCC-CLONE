@@ -3,6 +3,15 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `07_CAD/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `07_CAD/00_QUAN_LY_DU_AN/KE_HOACH.md`. Nhật ký: `07_CAD/00_QUAN_LY_DU_AN/LICH_SU.md`. Luật riêng: `07_CAD/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `07_CAD/00_QUAN_LY_DU_AN/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`07_CAD/CLAUDE.md`).
 
+## 26/11 chiều (tiếp 2): GOM HẠNG MỤC PCCC VÀO NHÓM `09_PCCC/` — XONG, build 7/7 (chưa push)
+- Người dùng: tách hạng mục theo lĩnh vực để sau thêm xây dựng, kiến trúc, LISP phụ trợ; mọi thứ PCCC (rải thiết bị, báo cháy, chữa cháy, sơ đồ nguyên lý...) vào một thư mục PCCC có số.
+- Cây mới: `09_PCCC/` = `01_RAI_THIET_BI` · `02_BAO_CHAY` · `03_CHUA_CHAY` · `04_SO_DO_NGUYEN_LY` · `05_THONG_KE` · `06_THU_VIEN_BLOCK` (cũ 09–14);
+  đánh số lại `15_TIEN_ICH`→`10_TIEN_ICH`, `16_BAN_QUYEN`→`11`, `17_BOT_CHAT`→`12`, `18_YOUTUBE`→`13`, `19_HUB`→`14`. Giữ chung (không riêng PCCC): `07_KIEN_TRUC`, `08_KICH_THUOC`, `10_TIEN_ICH`.
+- `build.bat`, `chay_thu.ps1`, `thu_mcp.ps1`, `thu_ban_quyen.ps1` gom thêm một cấp nhóm (`NN_*\NN_*\cad`, `\ui`); `Hub.cs` đường dẫn `13_YOUTUBE\webview2`; đường dẫn trong tài liệu, skill, agent, chú thích mã đổi theo (trừ LICH_SU).
+- Lĩnh vực mới về sau: nhóm `15_<LINH_VUC>/NN_*` cùng kiểu; tính năng PCCC mới: `09_PCCC/07_...`.
+- Còn để ý: `10_TIEN_ICH/cad/TienIch.cs` còn vài lệnh riêng PCCC (`PCCC_KT` vùng mù đầu báo, `PCCC_THOATNAN`, `PCCC_DOIDN`), chưa tách sang `09_PCCC/`.
+- Test: build.bat 7/7 OK; thu_ban_quyen, thu_hub, thu_bot, thu_brave TAT CA DAT; kiem_lien_ket 0 lỗi; thu_mcp TAT CA DAT; chay_thu chỉ 1 LOI cũ (Karaoke 123 tầng 1 + 2, vung=30, có từ trước).
+
 ## 26/11 chiều (tiếp): CÁCH NHẬN WC — KHO 6,9 m² CÓ VÙNG, WC CÓ THIẾT BỊ KHÔNG VÙNG — XONG MÃ + TEST E36 (chưa build.bat, chưa push)
 - Người dùng: ô 2,5 x 2,75 m trục 8 (phòng 8–9 dãy dưới) "khá to, có thể là kho nên phải bao vùng"; rồi chốt "phòng rất nhỏ, hoặc ghi chữ WC, hoặc có
   thiết bị WC thì coi là WC". Bản vẽ: đã chạy `b4a_vung.json` (25 vùng) + vẽ thêm vùng kho [437180,-51889]–[439670,-54639] (đã thêm vào file spec, nay 26 vùng).
@@ -40,11 +49,11 @@ Người dùng: "ra lệnh tại tab đó, qua tab khác thao tác, tab cũ vẫ
 ## 26/11: CÂY 07_CAD ĐÁNH SỐ THEO HẠNG MỤC TÍNH NĂNG — XONG (build 7/7, test đạt trừ ca cũ bên dưới; chưa push)
 Người dùng: "điều chỉnh danh mục theo thứ tự như folder lớn ở ngoài… kiểm soát từng tính năng trong plugin và bot chat (mỗi mục là 1 hạng mục tính năng)".
 - `00_QUAN_LY_DU_AN/` (file này, LICH_SU, KE_HOACH, HUONG_DAN_SU_DUNG, `viec/` = `tien_do/` cũ) · `01_TRI_THUC_VE/` (= `skills/`) · `02_LUAT_VE/` (= `rule/`) · `03_DU_LIEU_VE/` (= `data/`) · `04_KIEM_THU/` (= `test/`).
-- `module/` bỏ, chia thành 15 hạng mục `05_NEN_TANG` … `19_HUB` (bảng đủ ở `07_CAD/README.md`). Mỗi hạng mục: `cad/` -> TKPCCC.Cad.dll, `ui/` -> TKPCCC.UI.dll; `build.bat` và `chay_thu.ps1`, `thu_mcp.ps1`, `thu_ban_quyen.ps1` tự gom `??_*\cad\*.cs`, `??_*\ui\*.cs`.
+- `module/` bỏ, chia thành 15 hạng mục `05_NEN_TANG` … `14_HUB` (bảng đủ ở `07_CAD/README.md`). Mỗi hạng mục: `cad/` -> TKPCCC.Cad.dll, `ui/` -> TKPCCC.UI.dll; `build.bat` và `chay_thu.ps1`, `thu_mcp.ps1`, `thu_ban_quyen.ps1` tự gom `??_*\cad\*.cs`, `??_*\ui\*.cs`.
 - File nhiều tính năng tách theo ranh giới hàm (không sửa thân hàm): `Rai.cs` -> + `KhoangDam.cs`, `Tia.cs`, `LoaiTru.cs` (09), `DimRai.cs` (08), `Tuyen.cs` (11), `DayTay.cs` (10);
   `Lenh.cs` -> + `ThuVien.cs`, `DatThietBi.cs` (14), `BocKhoiLuong.cs` (13), `VungBaoVe.cs` (11); `Spec.cs` -> + `Truc.cs` (07); `BangBlock.cs` -> + `KhoiDongUi.cs` (05);
-  `BotChat.cs` thành `partial class` -> `17_BOT_CHAT/` 5 mục con: `01_KHUNG_CHAT`, `02_MAY_AI_MODEL` (`MayAi.cs`, `DanhMucModel.cs` tách từ `GiaoDienChat.cs`), `03_PHIEN_LICH_SU` (`LichSu.cs`, `PhienAi.cs`), `04_DU_AN_SKILL` (`DuAnSkill.cs`, `ChonThuMuc.cs`), `05_DINH_KEM` (`DinhKem.cs`).
-- Đường dẫn lúc chạy đã đổi: `Hub.cs` (WebView2 ở `18_YOUTUBE\webview2`), `Mcp.cs` (`..\01_TRI_THUC_VE\TU_VUNG.md`). Bundle, `bin/`, `build.bat`, `cai_dat.bat` giữ ở gốc 07_CAD (liên kết AutoCAD trỏ tới; build đã gọi `cai_dat /lai`).
+  `BotChat.cs` thành `partial class` -> `12_BOT_CHAT/` 5 mục con: `01_KHUNG_CHAT`, `02_MAY_AI_MODEL` (`MayAi.cs`, `DanhMucModel.cs` tách từ `GiaoDienChat.cs`), `03_PHIEN_LICH_SU` (`LichSu.cs`, `PhienAi.cs`), `04_DU_AN_SKILL` (`DuAnSkill.cs`, `ChonThuMuc.cs`), `05_DINH_KEM` (`DinhKem.cs`).
+- Đường dẫn lúc chạy đã đổi: `Hub.cs` (WebView2 ở `13_YOUTUBE\webview2`), `Mcp.cs` (`..\01_TRI_THUC_VE\TU_VUNG.md`). Bundle, `bin/`, `build.bat`, `cai_dat.bat` giữ ở gốc 07_CAD (liên kết AutoCAD trỏ tới; build đã gọi `cai_dat /lai`).
 - Tham chiếu cũ trong tài liệu, skill, agent, `09_SCRIPTS/kiem_lien_ket.py`, `00_QUAN_LY_DU_AN/STRUCTURE.md` gốc đã viết lại; `LICH_SU.md` (gốc + CAD) giữ nguyên đường dẫn cũ vì là nhật ký.
 - Kiểm: build.bat 7/7 OK; chay_thu 1 LOI (ca Karaoke tầng 1 + 2, vung=30 — đã LOI từ trước, ghi ở mục 25/11 dưới); thu_mcp, thu_bot, thu_hub, thu_ban_quyen TAT CA DAT; kiem_lien_ket 0 lỗi; npm test 68/68; pytest 54/54. Chưa chạy thu_gui (AutoCAD thật).
 - Việc dở của phiên "Điều chỉnh bot chat" (Hub.cs, cai_dat.bat, BotChat.cs, GiaoDienChat.cs, Lenh.cs, NhanVung.cs, Spec.cs chưa commit) đi kèm theo file sang chỗ mới.
@@ -325,7 +334,7 @@ Thử trên bản chép (`12_KET_QUA/QUYET_THANG/cad/thu_maikeo/qt_maikeo_2.dwg`
 4. Hiên quanh nhà văn phòng 2 vẫn thành nhiều vùng (L6 chưa làm); khu mái che tây nam cạnh trạm điện còn vùng 63,55 m² (3 ĐB).
 BƯỚC TIẾP: sửa 1 → 2 → 3, L6, L7; thêm test tổng hợp (mục Thử trong file kiến thức); chạy lại `kb2.scr` (đổi tên DWG ra) so ảnh với đáp án; `cad-review`; push từ tab Terminal người dùng.
 LƯỢT 2 (phiên Bot chat thứ hai, không có Bash/PowerShell; người dùng: "điều chỉnh tư duy vùng rải đầu báo của plugin giống với AI"): sửa `07_KIEN_TRUC/cad/NhanVung.cs`,
-`09_RAI_THIET_BI/cad/Rai.cs`, `10_BAO_CHAY/ui/BangBoTri.cs` (mục "Mái kèo"), `04_KIEM_THU/chay_thu.ps1` (chuỗi dò LoaiTran), `HUONG_DAN_SU_DUNG.md`. Chi tiết + rủi ro:
+`09_PCCC/01_RAI_THIET_BI/cad/Rai.cs`, `09_PCCC/02_BAO_CHAY/ui/BangBoTri.cs` (mục "Mái kèo"), `04_KIEM_THU/chay_thu.ps1` (chuỗi dò LoaiTran), `HUONG_DAN_SU_DUNG.md`. Chi tiết + rủi ro:
 `01_TRI_THUC_VE/mau/phan-vung-xuong-mai-keo.md` mục "Đã viết mã 20/11".
 BƯỚC TIẾP (Claude Code có shell, tắt AutoCAD): (1) `build.bat`, sửa lỗi biên dịch C# 5 nếu có; (2) `chay_thu.ps1`, `thu_mcp.ps1` TAT CA DAT; (3) thêm test tổng hợp (mục Thử
 trong file kiến thức) vào `chay_thu.ps1`; (4) thử trên bản chép "BEAM QUYẾT THẮNG.dwg" mặt bằng dưới: `PCCC_RAI BC_KHOI LoaiTran MaiKeo 9`, so với đáp án 25 vùng / 55 ĐB;
@@ -357,23 +366,23 @@ dịch ra ngoài ống gió (`DichRaNgoai`) chưa kiểm cách tường.
 ## VIỆC 18/11 — BOT CHAT NHƯ VS CODE (ẢNH + VÙNG CHỌN CAD) · BRAVE CÓ TAB, TOÀN MÀN HÌNH TRONG KHUNG: XONG MÃ + TEST, CHỜ NGƯỜI DÙNG THỬ TRONG AUTOCAD
 Người dùng: "điều chỉnh bot chat giống như VS code và claude code, có thể paste ảnh vào, quét chọn vùng trên cad và ra lệnh cho bot chat sửa ... YouTube vừa lướt web
 bằng brave vừa xem youtube, thêm tab mới trong trình duyệt brave"; giữa chừng: "ấn fullscreen trên youtube bằng brave thì nhảy full màn, chỉ muốn full viền (cửa sổ) đã fix cứng".
-- Bot chat (`17_BOT_CHAT/`): Enter gửi, Shift+Enter xuống dòng; Ctrl+V / menu Dán (`ONhap` bắt WM_PASTE) / kéo thả / "+ Ảnh" đính kèm ảnh (chép vào
+- Bot chat (`12_BOT_CHAT/`): Enter gửi, Shift+Enter xuống dòng; Ctrl+V / menu Dán (`ONhap` bắt WM_PASTE) / kéo thả / "+ Ảnh" đính kèm ảnh (chép vào
   `%LOCALAPPDATA%\TKPCCC\botchat\anh`, dọn > 7 ngày; lời nhắn ghi đường dẫn, `--add-dir` thư mục đó, AI xem bằng Read). Thẻ vùng chọn: đối tượng đang chọn
   (pickfirst, `ImpliedSelectionChanged`) hoặc nút "⬚ Quét vùng CAD" = lệnh mới `TKBOTCHON` (giữ cả khi bỏ chọn). Gửi kèm: tên bản vẽ, số đối tượng, hộp bao,
   thành phần (loại DXF + tên block + layer, 15 nhóm), ≤ 200 handle + cách sửa. Ảnh, vùng đi theo một lời nhắn, gửi xong thì bỏ.
 - Spec (`06_VE_TU_DONG_AI/cad/Spec.cs`, `01_TRI_THUC_VE/TU_VUNG.md`): lọc `h` [handle] cho `xoa`, `doc`; `doc gi:"dt"` (từng đối tượng: h, loai, l, mau, hop, p/c/r/t/ten);
   thao tác mới `sua` (chọn h | l | hop; tl, xoay quanh tam, doi, l_moi, mau, t), kết quả `sua`. Test: mục "sua (Bot chat)" trong `chay_thu.ps1`.
-- Brave (`18_YOUTUBE/BangYoutube.cs` `MoBrave`): hồ sơ riêng `%LOCALAPPDATA%\TKPCCC\Brave` (tiến trình riêng nên cờ luôn có hiệu lực), cửa sổ THƯỜNG có tab +
+- Brave (`13_YOUTUBE/BangYoutube.cs` `MoBrave`): hồ sơ riêng `%LOCALAPPDATA%\TKPCCC\Brave` (tiến trình riêng nên cờ luôn có hiệu lực), cửa sổ THƯỜNG có tab +
   thanh địa chỉ (bỏ `--app`), link sau mở thành tab mới; lần đầu áp mép phải AutoCAD rộng 480, sau đó Brave nhớ vị trí người dùng chỉnh.
-  Toàn màn hình: extension `18_YOUTUBE/brave_khung/` (MV3, content script world MAIN thay requestFullscreen / fullscreenElement: phần tử phủ khung trang,
+  Toàn màn hình: extension `13_YOUTUBE/brave_khung/` (MV3, content script world MAIN thay requestFullscreen / fullscreenElement: phần tử phủ khung trang,
   Esc thoát), build.bat chép cạnh DLL, nạp bằng `--load-extension`. ĐÃ THỬ Brave 1.99 (Chromium 157) headless: YouTube bấm nút toàn màn hình → player phủ đúng 500 x 675 khung trang.
-- Sửa test: `chay_thu.ps1` còn tham chiếu `module\ui\webview2` (đã dời sang `18_YOUTUBE\webview2` lúc tách plugin) nên dừng ngay ở bước biên dịch UI.
-LƯỢT 2 (người dùng: "browser brave phải mở trong cad, khi đó tôi thao tác trong cad vẫn hiển thị ở bên cad"): `18_YOUTUBE/GanBrave.cs` gán cửa sổ AutoCAD làm
+- Sửa test: `chay_thu.ps1` còn tham chiếu `module\ui\webview2` (đã dời sang `13_YOUTUBE\webview2` lúc tách plugin) nên dừng ngay ở bước biên dịch UI.
+LƯỢT 2 (người dùng: "browser brave phải mở trong cad, khi đó tôi thao tác trong cad vẫn hiển thị ở bên cad"): `13_YOUTUBE/GanBrave.cs` gán cửa sổ AutoCAD làm
 CHỦ (owner, SetWindowLongPtr GWLP_HWNDPARENT) cho mọi cửa sổ trình duyệt của Brave hồ sơ riêng (timer 0,8 s tới khi Brave tắt; brave.exe chỉ chuyển link thì dò Brave
 chính bằng WMI); AutoCAD BeginQuit thì trả về độc lập. Không nhúng bằng SetParent (khung tab tự vẽ của Chromium hỏng). Rủi ro: Brave treo thì AutoCAD đứng theo
 (hàng đợi nhập nối khi chủ khác tiến trình). Test mới `04_KIEM_THU/thu_brave.ps1` (+ `ThuBrave.cs`, hồ sơ Brave tạm, cửa sổ nhỏ hiện vài giây): TAT CA DAT.
 LƯỢT 3 (người dùng gửi ảnh khung chat mẫu: "link với vs code hoặc claude code hoặc anti, cho phép chọn vị trí chứa skill hay folder dự án"):
-- `17_BOT_CHAT/03_PHIEN_LICH_SU/PhienAi.cs` (`KhoPhien`): phiên Claude Code ở `~/.claude/projects/*/*.jsonl` (cwd, entrypoint -> VS Code / Claude Code / Desktop / Bot chat, tên custom-title > ai-title > câu đầu);
+- `12_BOT_CHAT/03_PHIEN_LICH_SU/PhienAi.cs` (`KhoPhien`): phiên Claude Code ở `~/.claude/projects/*/*.jsonl` (cwd, entrypoint -> VS Code / Claude Code / Desktop / Bot chat, tên custom-title > ai-title > câu đầu);
   hội thoại Antigravity đọc thô SQLite `~/.gemini/antigravity/conversation_summaries.db` + `-wal` (header bản ghi, cột id/title/preview/giờ/thư mục; khớp Python sqlite3).
 - Bot chat: ô "Dự án" = thư mục làm việc CLI (`chat_du_an`, gần đây `chat_du_an_ds`), khác 07_CAD\ thì `--add-dir` 07_CAD\; MCP cấu hình tuyệt đối `%LOCALAPPDATA%\TKPCCC\botchat\mcp.json`;
   bỏ `--disable-slash-commands`, thêm công cụ `Skill`. "+ Skill" (`chat_skill`): `.claude\skills` -> `--add-dir`, `skills\` -> `--plugin-dir`, thư mục skill trần -> lớp bọc junction
@@ -428,7 +437,7 @@ Ctrl+V trong palette có thể bị AutoCAD giữ làm PASTECLIP (khi đó dùng
 Người dùng: "tách riêng plugin youtube, plugin TKPCCC-PCCC và plugin bot chat ra riêng làm 3 plugin ... bot chat cho chọn model và effort ... Youtube thu nhỏ lại,
 kéo giãn lên xuống trái phải được ... tự động chạy không cần hỏi quyền".
 - 3 bundle: `TKPCCC.bundle` (PCCC, như cũ) · `TKPCCC_YouTube.bundle` (`TKPCCC.YouTube.dll` + 3 DLL WebView2, lệnh `TKYOUTUBE`) · `TKPCCC_BotChat.bundle`
-  (`TKPCCC.BotChat.dll`, lệnh `TKBOTCHAT`). Mã: `18_YOUTUBE/`, `17_BOT_CHAT/`, giao diện chung tối thiểu `05_NEN_TANG/chung/GiaoDienNho.cs` (cùng `cai_dat.json`,
+  (`TKPCCC.BotChat.dll`, lệnh `TKBOTCHAT`). Mã: `13_YOUTUBE/`, `12_BOT_CHAT/`, giao diện chung tối thiểu `05_NEN_TANG/chung/GiaoDienNho.cs` (cùng `cai_dat.json`,
   cùng kiểu màu) → 2 plugin riêng KHÔNG cần DLL PCCC. Palette PCCC bỏ nút YouTube, Bot chat; thẻ "Sơ đồ nguyên lý" gọi `TKBOTCHAT` (khoá `bot_mau_cho`), chưa cài thì chỉ Hub.
 - YouTube: Form riêng `ShowModelessDialog` (AutoCAD nhớ vị trí, kích thước), thu nhỏ / phóng to / kéo giãn 4 cạnh, đóng thì dừng video.
 - Bot chat: ô effort. Claude `--effort low|medium|high|xhigh|max` (`chat_effort`); Gemini mức nằm trong tên model agy (`gemini-4-argon-high`): model = gốc + "-" + mức.
@@ -475,7 +484,7 @@ Người dùng 17/11 (ảnh palette đang xem YouTube, khoanh đỏ cả thanh b
 2. "Dùng Brave để lướt YouTube thay WebView được không": Brave KHÔNG nhúng vào palette được (không có SDK nhúng). Làm: cài đặt chọn trình xem
    YouTube = WebView2 (trong palette, như hiện tại) | Brave (cửa sổ riêng `brave.exe --app=<url>`, đặt sát cạnh phải cửa sổ AutoCAD). Tab YouTube ở chế độ
    Brave: ô link/từ khoá + nút mở trong Brave. Brave ở `C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe` (tìm cả LOCALAPPDATA).
-   Hub (`19_HUB/Hub.cs`, nhóm YouTube): thêm mục "Brave (tuỳ chọn)": kiểm có/không, Cài = mở https://brave.com/download/.
+   Hub (`14_HUB/Hub.cs`, nhóm YouTube): thêm mục "Brave (tuỳ chọn)": kiểm có/không, Cài = mở https://brave.com/download/.
 3. Người dùng dặn: làm ở lần reset 5 giờ kế, compact (phiên nhánh ngữ cảnh sạch) rồi mới làm.
 
 ## VIỆC 17/11 (6) — HUB BẢN 2: MỌI BỘ CÀI CHIA THEO TÍNH NĂNG: XONG, CHỜ NGƯỜI DÙNG DÙNG THỬ
@@ -488,7 +497,7 @@ Người dùng chọn WebView2 (Chromium có sẵn của AutoCAD 2021 `AcCef` l�
 CHƯA thử trong AutoCAD (đang mở): rủi ro nạp DLL WebView2 từ thư mục bundle (đã gắn AssemblyResolve + SetLoaderDllFolderPath).
 
 ## VIỆC 17/11 (4) — G7 HUB CÀI MCP: XONG BẢN ĐẦU, CHỜ NGƯỜI DÙNG BẤM CÀI
-`19_HUB/Hub.cs` → `bin/TKPCCC.Hub.exe` (build.bat). Mục: AutoCAD 2021–2024 (registry, đang mở, plugin đang nối theo song.json) · Plugin tự nạp (junction như cai_dat.bat; Gỡ chỉ bỏ liên kết, thư mục thật thì từ chối) · MCP cad (bắt tay initialize) · Claude Code (`claude mcp add -s user`) · Claude Desktop (`%APPDATA%\Claude\claude_desktop_config.json`) · Gemini CLI (`~/.gemini/settings.json`) · Antigravity (`agy mcp add`). JSON: sao lưu `.tkpccc_<giờ>.bak`, giữ khoá khác. Test `04_KIEM_THU/thu_hub.ps1` (nhà giả, CLI chỉ ghi lệnh) 14/14 DAT.
+`14_HUB/Hub.cs` → `bin/TKPCCC.Hub.exe` (build.bat). Mục: AutoCAD 2021–2024 (registry, đang mở, plugin đang nối theo song.json) · Plugin tự nạp (junction như cai_dat.bat; Gỡ chỉ bỏ liên kết, thư mục thật thì từ chối) · MCP cad (bắt tay initialize) · Claude Code (`claude mcp add -s user`) · Claude Desktop (`%APPDATA%\Claude\claude_desktop_config.json`) · Gemini CLI (`~/.gemini/settings.json`) · Antigravity (`agy mcp add`). JSON: sao lưu `.tkpccc_<giờ>.bak`, giữ khoá khác. Test `04_KIEM_THU/thu_hub.ps1` (nhà giả, CLI chỉ ghi lệnh) 14/14 DAT.
 Máy người dùng 17/11: AutoCAD 2021 mở + plugin nối, bundle đã liên kết, MCP bắt tay được; 4 AI CHƯA có cad (Claude chưa tự bấm: sửa cấu hình máy là việc người dùng).
 CÒN: VS Code / Codex chưa có mục; bot chat chạy Gemini ở `--mode plan` nên dù agy có cad vẫn chưa vẽ (cần thử quyền gọi MCP ở chế độ in); G8 YouTube chưa làm.
 
@@ -498,7 +507,7 @@ Người dùng gửi ảnh khung chat FP AI: chọn model Claude hay Gemini, g�
 Gemini = `agy -p ... --output-format stream-json --mode plan` (chỉ đọc), nói tiếp bằng `--conversation`. Đã chạy thật ngoài AutoCAD: Gemini đọc đúng file
 trong thư mục gắn thẻ; Claude CLI trên máy báo "OAuth session expired" (người dùng gõ `claude` rồi `/login`). CHƯA xem trong AutoCAD (đang mở nên chưa chạy thu_gui.ps1).
 CÒN: (a) Gemini vẽ CAD cần đăng ký MCP cad cho agy (`agy mcp add cad <repo>\cad\bin\TKPCCC.Mcp.exe`, sửa cấu hình máy: hỏi người dùng; `--settings` không nhận mcpServers)
-và cho phép công cụ MCP ở chế độ in; (b) G7 Hub (`19_HUB/`) CHƯA làm; (c) G8 tab YouTube (WebView2) CHƯA làm.
+và cho phép công cụ MCP ở chế độ in; (b) G7 Hub (`14_HUB/`) CHƯA làm; (c) G8 tab YouTube (WebView2) CHƯA làm.
 
 ## VIỆC 17/11 (2) — TỰ NHẬN VÙNG RẢI KHỚP VÙNG NGƯỜI DÙNG VẼ: XONG MÃ + TEST, CHỜ NGƯỜI DÙNG XEM
 Người dùng gửi 2 ảnh: ảnh 1 = plugin tự nhận vùng (nhiều vùng vụn), ảnh 2 = người dùng vẽ lại (1 vùng văn phòng chữ L, bỏ lõi thang, sảnh, WC).
@@ -661,7 +670,7 @@ d lấy từ ký hiệu "b x h" (vd `B1 (400x600)`, chữ trong block cũng đ�
 Test `chay_thu.ps1`: 3 phòng có ký hiệu (sâu / nông / lưới nhỏ), 1 phòng hỏi cỡ chung, 1 phòng TungDam: TAT CA DAT.
 
 ## VIỆC 15/11 RẠNG SÁNG — 7 VIỆC PLUGIN CÒN THIẾU SO VỚI BẢN VẼ MẪU: XONG (người dùng chọn làm hết; dặn tới 95 % ghi tiến độ, không push, đợi reset 5:00 tự làm tiếp)
-1–2 `PCCC_KYHIEU`, `PCCC_QUYDINH` + spec `bang` (`13_THONG_KE/cad/BangMb.cs`); 3 dim bước tia beam (`KtTia`, layer `PCCC_BC_TIA_KT`, thông báo `kt=`);
+1–2 `PCCC_KYHIEU`, `PCCC_QUYDINH` + spec `bang` (`09_PCCC/05_THONG_KE/cad/BangMb.cs`); 3 dim bước tia beam (`KtTia`, layer `PCCC_BC_TIA_KT`, thông báo `kt=`);
 4 `PCCC_DAY` hỏi tên zone (nhãn "VỀ TỦ TTBC - ZONE n" + diện tích vùng PCCC_VUNG), điện trở cuối dây ở mút mạch hở dây báo cháy;
 5 `PCCC_RAI` từ khoá Dam với đầu khói: khoang ≥ 9 m² (trần ≥ 4 m) / 4 m² (2–4 m) rải từng khoang, khoang nhỏ gom rải như trần phẳng (5.9.1.1.6 c–f);
 6 `PCCC_THOATNAN` (hatch ANSI31 layer PCCC_THOAT_NAN; luật gạch chéo hiện hữu bỏ qua layer PCCC_*), `PCCC_VUNGBV` mã hệ HVT: vòng nét đứt in được;
@@ -739,7 +748,7 @@ bản quyền (`PCCC_BANQUYEN`, KeyGen, Apps Script). Test tự động đạt h
    khung Hành động xuống đáy, ẩn cột phụ. CÒN xem tận mắt: đổi giao diện tại chỗ, bot chat chạy cùng cầu nối,
    `PCCC_BANQUYEN`, chặn lệnh ở bản `phat_hanh` (giả định `GlobalCommandName` có "#" khi lệnh kết thúc chưa thử). Bot chat cần `claude` CLI đăng nhập lại (`claude` → `/login`; 14/11 báo OAuth hết hạn).
 2. Review Opus max (`cad-review`) cho mốc 13/11 + 14/11 (`git diff 4ba0ba7..HEAD -- cad`).
-3. Người dùng làm 1 lần theo `07_CAD/16_BAN_QUYEN/HUONG_DAN.md` (tạo khoá, Sheet, Apps Script, web app, URL vào `07_CAD/03_DU_LIEU_VE/ban_quyen/cau_hinh_ban_quyen.json`), rồi thử Apps Script thật.
+3. Người dùng làm 1 lần theo `07_CAD/11_BAN_QUYEN/HUONG_DAN.md` (tạo khoá, Sheet, Apps Script, web app, URL vào `07_CAD/03_DU_LIEU_VE/ban_quyen/cau_hinh_ban_quyen.json`), rồi thử Apps Script thật.
 4. Rủi ro gói A: tường giao chữ T còn nét thò qua mặt tường; `cua` chỉ cắt tường hai nét thẳng; CDIM nhớ chuỗi cho cả phiên. Gói B: phân hệ Lệnh (bảng 880 px) chật trong palette 400 px;
    nút Dừng bot chỉ tắt `claude.cmd`, không tắt tiến trình con; chưa có block màu để thử nhánh ByLayer/ByBlock/true color.
 5. Để sau (ý của file tham khảo): phân hệ Báo cháy có thanh trượt k % + KPI, xem trước TransientGraphics, hoàn tác lượt bố trí, tiện ích đánh số / kiểm trùng / kiểm layer.
@@ -767,7 +776,7 @@ phép kiểm `vung_tu_dong` dời sang gốc x 2600000). Sau gộp: build đạt
    (nét chấm gạch, layer trục), đâu là tường (cặp nét song song, layer tường, cột), tự dựng polyline vùng từng phòng; người dùng CLICK vào một vùng là rải theo mục 1.
 3. GIAO DIỆN PANEL BLOCK (`4_panel_block_hien_tai.png` bị chê xấu, đơn điệu): tham khảo GIAO DIỆN (không chép tính năng) của `3_mau_ux_thong_ke_block.png`:
    bảng có cột ảnh ký hiệu lớn, tên đậm, cột đơn vị, số lượng tô màu, nút thao tác tròn màu ở đầu dòng; khung "Hành động" bên phải với nút xanh đậm bo góc, ô chọn, ảnh xem trước,
-   ô tổng số nổi bật; thanh tìm kiếm trên đầu; tiêu đề nhóm nền xanh. File `07_CAD/14_THU_VIEN_BLOCK/ui/BangBlock.cs`; sửa xong chạy `thu_gui.ps1` (chỉ khi không có AutoCAD nào mở).
+   ô tổng số nổi bật; thanh tìm kiếm trên đầu; tiêu đề nhóm nền xanh. File `07_CAD/09_PCCC/06_THU_VIEN_BLOCK/ui/BangBlock.cs`; sửa xong chạy `thu_gui.ps1` (chỉ khi không có AutoCAD nào mở).
 4. `PCCC_HELP` THÀNH PANEL: bảng danh sách mọi lệnh (tên lệnh, việc làm, cách dùng ngắn), tìm kiếm được, SỬA ĐƯỢC PHÍM TẮT (alias) ngay trong panel, lưu lại cho lần sau
    (gợi ý: ghi alias vào file cạnh DLL hoặc acad.pgp của người dùng, có sao lưu; hỏi người dùng nếu phải sửa file cấu hình AutoCAD). Panel để ở `module/ui/`, cùng kiểu với panel Block mới.
 
@@ -775,7 +784,7 @@ phép kiểm `vung_tu_dong` dời sang gốc x 2600000). Sau gộp: build đạt
 - Chuỗi agent `cad-thiet-ke` → `cad-ve` → `cad-kiem` CHƯA chạy thử: cần AutoCAD có plugin. Nối tự động đã thử ĐƯỢC (không đổi cấu hình): PowerShell
   `[Runtime.InteropServices.Marshal]::GetActiveObject("AutoCAD.Application").ActiveDocument.SendCommand('(command "_.NETLOAD" "D:/1_Claude/TKPCCC/cad/TKPCCC.bundle/Contents/TKPCCC.Cad.dll") ')`
   rồi `cad_tt` ra `ok`. Lúc thử AutoCAD mở `PCCC HOÁ CHẤT.dwg` của người dùng (KHÔNG vẽ vào); chạy chuỗi trên bản chép `12_KET_QUA/cad_mau/cad/t1_spr.dwg`.
-- G7 Hub (người dùng muốn "cài MCP một lần, sau mở CAD là có"): làm `19_HUB/` → `TKPCCC.Hub.exe` bản đầu gồm (1) autoload plugin: registry HKCU
+- G7 Hub (người dùng muốn "cài MCP một lần, sau mở CAD là có"): làm `14_HUB/` → `TKPCCC.Hub.exe` bản đầu gồm (1) autoload plugin: registry HKCU
   `Software\Autodesk\AutoCAD\R24.0\<ACAD-id>\Applications\TKPCCC` (LOADER, MANAGED=1, LOADCTRLS=2), có lệnh gỡ; (2) ghi `mcpServers` cho Claude Code/Desktop, sao lưu trước; (3) chẩn đoán + thử bắt tay MCP.
   Chạy thử trên thư mục giả trước; ghi registry/cấu hình máy thật phải hỏi người dùng. Việc nhỏ hơn có thể làm trước: cho `TKPCCC.Mcp.exe` tự NETLOAD qua COM như trên (Bước 6).
 
@@ -834,7 +843,7 @@ phép kiểm `vung_tu_dong` dời sang gốc x 2600000). Sau gộp: build đạt
 - 14:45 ngày 12/11: agent `cad-lap-trinh` (Opus) SỬA XONG review 12/11 (`12_KET_QUA/cad_review/review_2026-11-12.md`): 1 CHẶN (`pdf` với PDF có mật khẩu, chỉ khoá chống sửa, file hỏng:
   báo lỗi, không gọi `-PDFIMPORT`) + 5 NÊN SỬA (`cot` nối chồng, `xuong_ca`/`cot` đè ống chính khi `truc` có đỉnh thẳng hàng, `theo_hang` theo `s` thừa thiết bị, `theo_hang` theo `buoc` vượt `dt` không báo,
   phép kiểm phá hoà). 5 GHI CHÚ để nguyên. `chay_thu.ps1` 54/54, `thu_mcp.ps1` 9/9, bundle build lại 14:45. CHƯA commit.
-  VIỆC KẾ: review lại HẸP bằng `cad-review` (Opus max) chỉ các sửa này (`git diff` của `09_RAI_THIET_BI/cad/Rai.cs`, `Spec.cs`, `04_KIEM_THU/`), rồi chốt mốc Bước 5 (commit); sau đó phần còn lại của Bước 5.
+  VIỆC KẾ: review lại HẸP bằng `cad-review` (Opus max) chỉ các sửa này (`git diff` của `09_PCCC/01_RAI_THIET_BI/cad/Rai.cs`, `Spec.cs`, `04_KIEM_THU/`), rồi chốt mốc Bước 5 (commit); sau đó phần còn lại của Bước 5.
 - 14:05 ngày 12/11: agent `cad-lap-trinh` (Opus) XONG Bước 5 mục c, d, e (`tuyen` `cot`; `rai` `le` cùng `s` + `theo_hang`; `rai` theo `tim`). `chay_thu.ps1` 47/47, `thu_mcp.ps1` 9/9, bundle build lại 13:55.
   Vẽ lại tầng 1 ở `12_KET_QUA/cad_mau/cad/lan3/`: 63/64 đầu phun (HL1 9/10, HL2 6/6), lệch vị trí trung bình 546 → 412 mm; chi tiết `07_CAD/00_QUAN_LY_DU_AN/LICH_SU.md`. CHƯA commit.
   VIỆC KẾ: review cả hai lượt (a, b, f + CHẶN/NÊN SỬA, rồi c, d, e) bằng `cad-review` (Opus max), rồi phần còn lại của Bước 5 (đo token, trục xả, van).
@@ -853,7 +862,7 @@ phép kiểm `vung_tu_dong` dời sang gốc x 2600000). Sau gộp: build đạt
 - 22:05: XONG Bước 1b (`cad_anh`), 1c (`rai` + `dt`, `tuyen` `tia`, `PCCC_TUYEN`), 2 (PDF → CAD), 3 (bảng block `PCCC_BLOCK`, `PCCC_THEMBLOCK`) và 4 (agent). VIỆC KẾ: Bước 5.
 - ĐÃ THỬ TRÊN AUTOCAD CÓ GIAO DIỆN bằng `07_CAD\04_KIEM_THU\thu_gui.ps1` (script tự mở AutoCAD thật rồi tự tắt, 7/7 đạt): NETLOAD, cầu nối + máy chủ MCP thật (`cad_tt`, `cad_chay`, `cad_anh`),
   `pdf`, `rai`, `tuyen`, `anh` (`-PLOT` trong AutoCAD thật), bảng `PCCC_BLOCK` hiện 31 dòng + 2 nút. Máy người dùng `SECURELOAD` = 0, nạp plugin bằng NETLOAD tay (bundle không nằm trong ApplicationPlugins).
-- XONG Bước 3: `14_THU_VIEN_BLOCK/cad/Block.cs` (lệnh `PCCC_THEMBLOCK`, ảnh xem trước 64 px tự vẽ vào `Contents\anh_block`) + `14_THU_VIEN_BLOCK/ui/BangBlock.cs` → `TKPCCC.UI.dll` (lệnh `PCCC_BLOCK`).
+- XONG Bước 3: `09_PCCC/06_THU_VIEN_BLOCK/cad/Block.cs` (lệnh `PCCC_THEMBLOCK`, ảnh xem trước 64 px tự vẽ vào `Contents\anh_block`) + `09_PCCC/06_THU_VIEN_BLOCK/ui/BangBlock.cs` → `TKPCCC.UI.dll` (lệnh `PCCC_BLOCK`).
   NETLOAD một file `TKPCCC.Cad.dll` là đủ: nó tự nạp `TKPCCC.UI.dll` khi chạy trong `acad.exe`. `chay_thu.ps1` 33/33, `thu_mcp.ps1` 9/9.
 - XONG Bước 4 (22:15): 4 agent trong `07_CAD/.claude/agents/` (`cad-thiet-ke`, `cad-ve`, `cad-kiem`, `cad-lap-trinh`), bảng việc ở `07_CAD/CLAUDE.md`. CHƯA chạy thử agent nào trên việc thật;
   chưa kiểm Claude Code có nạp agent của thư mục con khi mở ở gốc repo không (README cũ ghi chỉ nạp khi mở tại `07_CAD/`).
@@ -878,7 +887,7 @@ phép kiểm `vung_tu_dong` dời sang gốc x 2600000). Sau gộp: build đạt
   Trên AutoCAD có giao diện: đạt (PNG 800 và 640 px có nét).
 - XONG: MCP CAD (G0–G2), `07_CAD/` thành dự án con, thử thật với AutoCAD đang mở (`luoi_truc`, `dat`, `ong`, `chu`, `dem`, `doc` đều đúng).
   Lưu ý khi vẽ thật: `cad_chay` vẽ vào bản vẽ đang hiện (đổi tab giữa chừng là vẽ sang bản khác); `doc` `vung` chỉ đọc layer `PCCC_VUNG`; `hop` chỉ lấy đối tượng nằm trọn trong hộp.
-- XONG Bước 1 (G3): thao tác `rai`, `tuyen` (3 kiểu `noi_tiep`, `xuong_ca`, `nhanh`), lệnh `PCCC_RAI`. Mã ở `09_RAI_THIET_BI/cad/Rai.cs`, ví dụ `01_TRI_THUC_VE/vi_du/rai.json`,
+- XONG Bước 1 (G3): thao tác `rai`, `tuyen` (3 kiểu `noi_tiep`, `xuong_ca`, `nhanh`), lệnh `PCCC_RAI`. Mã ở `09_PCCC/01_RAI_THIET_BI/cad/Rai.cs`, ví dụ `01_TRI_THUC_VE/vi_du/rai.json`,
   từ vựng trong `01_TRI_THUC_VE/TU_VUNG.md`. `chay_thu.ps1` 21/21, `thu_mcp.ps1` 7/7. CHƯA thử trên AutoCAD có giao diện: nhánh bấm điểm trong phòng của `PCCC_RAI`
   (`Editor.TraceBoundary`) chỉ chạy được ở đó; DLL trong bundle chưa build lại (chạy `07_CAD\build.bat`, tắt mở AutoCAD).
 - Thư mục `07_CAD/layer/` để chứa chuẩn layer; người dùng sẽ nạp qua lệnh plugin (mục "NẠP DỮ LIỆU NGƯỜI DÙNG QUA PLUGIN").
@@ -922,7 +931,7 @@ Người dùng dặn 2026-11-11: lúc dựng khung và viết thuật toán thì
 | `cad-thiet-ke` | Đọc nền kiến trúc, lấy trị số theo `02_LUAT_VE/LUAT.md`, chia zone, chọn vị trí ống chính, lập spec cho cả tầng | đọc file, ghi spec vào thư mục dự án; không gọi `cad_chay` | opus, high |
 | `cad-ve` | Chạy spec đã có qua `cad_chay`, đọc kết quả, sửa lỗi nhỏ của spec | `cad_tt`, `cad_chay`, đọc file | sonnet, low |
 | `cad-kiem` | Soát bản vẽ sau khi vẽ: đếm, vùng hở, đối chiếu luật | `cad_chay` chỉ với `doc`, `dem`; đọc file | sonnet, medium |
-| `cad-lap-trinh` | Sửa plugin C#, thêm thao tác spec, chạy bộ test | sửa `07_CAD/05_NEN_TANG` … `19_HUB`, `07_CAD/04_KIEM_THU`; Bash | opus, high |
+| `cad-lap-trinh` | Sửa plugin C#, thêm thao tác spec, chạy bộ test | sửa `07_CAD/05_NEN_TANG` … `14_HUB`, `07_CAD/04_KIEM_THU`; Bash | opus, high |
 Skill `tkpccc-ve-cad` giữ sonnet/low (vẽ theo spec có sẵn).
 
 ### Bước 5. Vẽ lại một tầng của bản mẫu, đo token (XONG phần mã 2026-11-12 18:20, xem TRẠNG THÁI)

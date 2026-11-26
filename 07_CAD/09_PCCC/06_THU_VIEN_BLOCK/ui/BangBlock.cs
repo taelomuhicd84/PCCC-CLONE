@@ -1,7 +1,7 @@
 ﻿// Bảng block PCCC (lệnh PCCC_BLOCK): PaletteSet liệt kê block của thư viện theo nhóm hệ, kèm ký hiệu, tên, đơn vị, số lượng đang có trong bản vẽ.
 // Bấm đúp một dòng hoặc nút tròn xanh = PCCC_DAT <mã>; nút tròn cam = PCCC_RAI <mã>.
 // DLL riêng (TKPCCC.UI.dll) vì cần acmgd.dll, thứ accoreconsole không nạp được. KHÔNG xử lý bản vẽ ở đây: danh mục, ảnh xem trước,
-// đếm và việc thêm block do TKPCCC.Cad.dll làm (07_CAD/14_THU_VIEN_BLOCK/cad/Block.cs), nhờ vậy phần đó thử được bằng 07_CAD/04_KIEM_THU/chay_thu.ps1.
+// đếm và việc thêm block do TKPCCC.Cad.dll làm (07_CAD/09_PCCC/06_THU_VIEN_BLOCK/cad/Block.cs), nhờ vậy phần đó thử được bằng 07_CAD/04_KIEM_THU/chay_thu.ps1.
 using System;
 using System.Collections.Generic;
 using System.Drawing;

@@ -215,7 +215,7 @@ public static class WinU {
   # PCCC_BOTRI (phan he Bo tri BC): moi dong co tri so trong khoang_cach_rai.json la mot lua chon thiet bi.
   $soTb = @((Get-Content -Raw -Encoding UTF8 "$GOC\03_DU_LIEU\khoang_cach_rai.json" | ConvertFrom-Json).thiet_bi).Count
   # PCCC_TIENICH: luoi the tien ich (BangTienIch.THE), nhom "Tat ca", o tim trong.
-  $soTi = [regex]::Matches((Get-Content -Raw -Encoding UTF8 "$GOC\07_CAD\15_TIEN_ICH\ui\BangTienIch.cs"), 'new\[\] \{ "\d", "').Count
+  $soTi = [regex]::Matches((Get-Content -Raw -Encoding UTF8 "$GOC\07_CAD\10_TIEN_ICH\ui\BangTienIch.cs"), 'new\[\] \{ "\d", "').Count
   Kiem ($so['TienIch'] -eq $soTi) "PCCC_TIENICH mo phan he Tien ich: $($so['TienIch']) the (can $soTi)"
   Kiem ($so['BoTri'] -eq $soTb) "PCCC_BOTRI mo (phan he Bo tri BC): $($so['BoTri']) thiet bi (can $soTb)"
   if ($khung) {

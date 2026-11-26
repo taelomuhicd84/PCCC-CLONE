@@ -1,6 +1,6 @@
 // Palette chính (lệnh PCCC; PCCC_BLOCK, PCCC_HELP mở đúng phân hệ): đầu trang [PCCC] + tên + phiên bản, ô tìm lọc thẻ, thanh dọc chọn phân hệ
 // (Quy trình vẽ · Tiện ích · Báo cháy · Chữa cháy · Thống kê · Thư viện · Lệnh · Cài đặt; nút ☰ đầu trang: menu phân hệ + thu gọn thanh dọc, nhớ `ben_an`), chân trang trạng thái cầu nối MCP + bản vẽ. Chỉ giao diện: lệnh vẽ gửi bằng tên qua GiaoDien.GuiLenh.
-// Bot chat, YouTube là plugin riêng từ 17/11 (người dùng: tách 3 plugin cho đỡ rối): 07_CAD/17_BOT_CHAT (TKBOTCHAT), 07_CAD/18_YOUTUBE (TKYOUTUBE).
+// Bot chat, YouTube là plugin riêng từ 17/11 (người dùng: tách 3 plugin cho đỡ rối): 07_CAD/12_BOT_CHAT (TKBOTCHAT), 07_CAD/13_YOUTUBE (TKYOUTUBE).
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

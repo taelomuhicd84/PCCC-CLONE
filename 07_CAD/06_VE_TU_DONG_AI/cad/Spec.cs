@@ -35,7 +35,7 @@ namespace TKPCCC
             public List<object> Loi = new List<object>();
             public List<object> KqDoc = new List<object>();
             public Dictionary<string, object> Dem, DemLoai;
-            public List<object> KqRai = new List<object>(), KqTuyen = new List<object>();   // 07_CAD/09_RAI_THIET_BI/cad/Rai.cs
+            public List<object> KqRai = new List<object>(), KqTuyen = new List<object>();   // 07_CAD/09_PCCC/01_RAI_THIET_BI/cad/Rai.cs
             public List<List<Point3d>> DiemRai = new List<List<Point3d>>();                 // điểm của "rai" gần nhất, theo từng vùng, để "tuyen" dùng lại
             public List<List<Point2d>> VungRai = new List<List<Point2d>>();                 // đa giác của từng vùng đó (cùng chỉ số): "tuyen" nhận "qua" theo vùng
             public List<object> KqAnh = new List<object>();                                 // đường dẫn PNG của thao tác "anh"
@@ -227,7 +227,7 @@ namespace TKPCCC
                 Dictionary<string, object> d = x as Dictionary<string, object>;
                 string op = d == null ? "" : LayChu(d, "op", "");
                 if (op == "dat" || op == "rai") maDat.Add(LayChu(d, "ma", ""));
-                else if (op == "so_do") maDat.AddRange(MaSoDo(d)); // 07_CAD/12_SO_DO_NGUYEN_LY/cad/SoDo.cs
+                else if (op == "so_do") maDat.AddRange(MaSoDo(d)); // 07_CAD/09_PCCC/04_SO_DO_NGUYEN_LY/cad/SoDo.cs
             }
             if (maDat.Count > 0)
             {
@@ -477,14 +477,14 @@ namespace TKPCCC
                 case "doc": OpDoc(g, o); break;
                 case "sua": OpSua(g, o); break;
                 case "dem": OpDem(g); break;
-                case "rai": OpRai(g, o); break;     // 07_CAD/09_RAI_THIET_BI/cad/Rai.cs
-                case "tuyen": OpTuyen(g, o); break; // 07_CAD/09_RAI_THIET_BI/cad/Rai.cs
-                case "so_do": OpSoDo(g, o); break;  // 07_CAD/12_SO_DO_NGUYEN_LY/cad/SoDo.cs
+                case "rai": OpRai(g, o); break;     // 07_CAD/09_PCCC/01_RAI_THIET_BI/cad/Rai.cs
+                case "tuyen": OpTuyen(g, o); break; // 07_CAD/09_PCCC/01_RAI_THIET_BI/cad/Rai.cs
+                case "so_do": OpSoDo(g, o); break;  // 07_CAD/09_PCCC/04_SO_DO_NGUYEN_LY/cad/SoDo.cs
                 case "vung_tu_dong": OpVungTuDong(g, o); break; // 07_CAD/07_KIEN_TRUC/cad/NhanVung.cs
                 case "tuong": OpTuong(g, o); break;         // 07_CAD/07_KIEN_TRUC/cad/KienTruc.cs
                 case "cua": OpCua(g, o); break;             // 07_CAD/07_KIEN_TRUC/cad/KienTruc.cs
                 case "kt_chuoi": OpKtChuoi(g, o); break;    // 07_CAD/07_KIEN_TRUC/cad/KienTruc.cs (lõi Dim.cs)
-                case "bang": OpBang(g, o); break;           // 07_CAD/13_THONG_KE/cad/BangMb.cs (bảng ký hiệu, bảng quy định lắp đặt)
+                case "bang": OpBang(g, o); break;           // 07_CAD/09_PCCC/05_THONG_KE/cad/BangMb.cs (bảng ký hiệu, bảng quy định lắp đặt)
                 // "anh" không ở đây: ThucHienSpec chạy nó sau khi commit (InAnh)
                 default: throw new System.Exception("không có thao tác \"" + ten + "\" (xem 07_CAD/01_TRI_THUC_VE/TU_VUNG.md)");
             }

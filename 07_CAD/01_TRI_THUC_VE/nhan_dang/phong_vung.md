@@ -1,6 +1,6 @@
 # Nhận dạng phòng, dựng vùng rải
 
-Mã: `MatChon`, `CacMat`, `PhongThat`, `CumChinh`, `VungTaiDiem`, `LamGon` (`07_CAD/07_KIEN_TRUC/cad/NhanVung.cs`); `PCCC_RAI` (`07_CAD/09_RAI_THIET_BI/cad/Rai.cs`); thao tác spec `vung_tu_dong` (`07_CAD/01_TRI_THUC_VE/TU_VUNG.md`).
+Mã: `MatChon`, `CacMat`, `PhongThat`, `CumChinh`, `VungTaiDiem`, `LamGon` (`07_CAD/07_KIEN_TRUC/cad/NhanVung.cs`); `PCCC_RAI` (`07_CAD/09_PCCC/01_RAI_THIET_BI/cad/Rai.cs`); thao tác spec `vung_tu_dong` (`07_CAD/01_TRI_THUC_VE/TU_VUNG.md`).
 Nét nào là tường: `tuong_cot.md`. Cửa, thang, khu bỏ: `cua_thang_khu.md`. Khoang dầm, vì kèo: `dam_khoang.md`.
 
 ## Quy trình (người dùng dặn 16/11 và 19/11)

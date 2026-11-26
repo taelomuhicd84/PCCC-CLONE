@@ -78,9 +78,9 @@ TKPCCC/
 │  ├─ 00_QUAN_LY_DU_AN/      TIEN_DO.md · LICH_SU.md · KE_HOACH.md · HUONG_DAN_SU_DUNG.md · viec/ (tiến độ, nhật ký riêng của CAD)
 │  ├─ 01_TRI_THUC_VE/ · 02_LUAT_VE/ · 03_DU_LIEU_VE/   ĐẦU NGUỒN tri thức vẽ (TU_VUNG.md, nhan_dang/, ve/, mau/) · LUAT.md · dữ liệu vẽ
 │  ├─ 04_KIEM_THU/           chay_thu.ps1 (accoreconsole) · thu_mcp.ps1 · thu_bot.ps1 · thu_hub.ps1 · thu_gui.ps1 (AutoCAD thật, không bắt buộc)
-│  ├─ 05_NEN_TANG/ … 19_HUB/ MỖI SỐ MỘT HẠNG MỤC TÍNH NĂNG (26/11): 05 nền tảng · 06 vẽ tự động AI (spec, MCP) · 07 kiến trúc · 08 kích thước
-│  │                         · 09 rải thiết bị · 10 báo cháy · 11 chữa cháy · 12 sơ đồ · 13 thống kê · 14 thư viện block · 15 tiện ích · 16 bản quyền
-│  │                         · 17 bot chat (5 mục con) · 18 YouTube · 19 Hub; trong mỗi mục cad/ -> TKPCCC.Cad.dll, ui/ -> TKPCCC.UI.dll
+│  ├─ 05_NEN_TANG/ … 14_HUB/ MỖI SỐ MỘT HẠNG MỤC TÍNH NĂNG (26/11): 05 nền tảng · 06 vẽ tự động AI (spec, MCP) · 07 kiến trúc · 08 kích thước
+│  │                         · 09_PCCC/ nhóm PCCC (01 rải thiết bị · 02 báo cháy · 03 chữa cháy · 04 sơ đồ · 05 thống kê · 06 thư viện block) · 10 tiện ích · 11 bản quyền
+│  │                         · 12 bot chat (5 mục con) · 13 YouTube · 14 Hub; trong mỗi mục cad/ -> TKPCCC.Cad.dll, ui/ -> TKPCCC.UI.dll
 │  ├─ build.bat · cai_dat.bat · bin/   build DLL + TKPCCC.Mcp.exe, Hub, KeyGen (bin/ không commit) · liên kết bundle cho AutoCAD tự nạp
 │  ├─ TKPCCC*.bundle/        gói AutoCAD tự nạp (DLL do build tạo; PCCC_Blocks.dwg, block_alias.json người dùng sửa)
 │  └─ file_cad_test/         bản vẽ mẫu của khách để học (không commit) · thamkhao_plugincad/ plugin tham khảo (chưa commit)

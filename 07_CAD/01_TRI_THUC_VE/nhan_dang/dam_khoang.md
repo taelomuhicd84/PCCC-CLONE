@@ -1,6 +1,6 @@
 # Nhận dạng loại trần, dầm, khoang (vì kèo, dầm sàn)
 
-Mã: `PCCC_RAI` từ khoá `LoaiTran` [CoTran/KhongTran/HonHop/MaiKeo], `Dam`, `DaySan`, `SuaDam` (`07_CAD/09_RAI_THIET_BI/cad/Rai.cs`); `ChiaKhoang`, `DuongViKeo`, `TimDam` (`NhanVung.cs`).
+Mã: `PCCC_RAI` từ khoá `LoaiTran` [CoTran/KhongTran/HonHop/MaiKeo], `Dam`, `DaySan`, `SuaDam` (`07_CAD/09_PCCC/01_RAI_THIET_BI/cad/Rai.cs`); `ChiaKhoang`, `DuongViKeo`, `TimDam` (`NhanVung.cs`).
 Điều khoản khoang dầm (TCVN 7568-14:2025 5.9.1.1.6): `02_DIEU_KHOAN/07_BAO_CHAY/MOD_dau_bao_khoi_khoang_dam.md` gốc repo. Rải trong khoang: `07_CAD/01_TRI_THUC_VE/ve/bao_chay/rai_dau_bao.md`.
 
 ## Chọn loại trần TRƯỚC khi rải (người dùng 17/11)

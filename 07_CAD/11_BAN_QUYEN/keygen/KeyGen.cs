@@ -1,11 +1,11 @@
-// App tạo key cho chủ plugin (07_CAD\bin\TKPCCC.KeyGen.exe). Biên dịch chung với 16_BAN_QUYEN/cad/BanQuyen.cs (cùng hợp đồng key).
+// App tạo key cho chủ plugin (07_CAD\bin\TKPCCC.KeyGen.exe). Biên dịch chung với 11_BAN_QUYEN/cad/BanQuyen.cs (cùng hợp đồng key).
 // Không đối số: cửa sổ WinForms. Có đối số (bộ test và người quen dòng lệnh):
 //   tao <thư mục khoá công khai> <thư mục khoá riêng>   tạo cặp khoá RSA 2048 (không ghi đè)
 //   ky <khoa_rieng.xml> <email> <mã máy> <yyyy-MM-dd>    in key
 //   kiem <khoa_cong_khai.xml> <key> <email> <mã máy> [yyyy-MM-dd hôm nay]   mã thoát 0 = hợp lệ, 1 = từ chối (in lý do)
 //   kiem_may <khoa_cong_khai.xml> <key> <email>          như plugin: mã máy mới (seri ổ đĩa) rồi mã cũ (MachineGuid)
 //   may | may_cu                                         in mã máy này (seri ổ chứa Windows) | mã cũ theo MachineGuid
-// Bản Python tương đương (không cần .NET): 16_BAN_QUYEN/keygen.py.
+// Bản Python tương đương (không cần .NET): 11_BAN_QUYEN/keygen.py.
 using System;
 using System.Collections.Generic;
 using System.Drawing;

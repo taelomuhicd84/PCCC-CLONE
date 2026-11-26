@@ -1,6 +1,6 @@
 # Sơ đồ nguyên lý (thao tác spec `so_do`, G5)
 
-Mã: `07_CAD/12_SO_DO_NGUYEN_LY/cad/SoDo.cs`. Từ vựng: `07_CAD/01_TRI_THUC_VE/TU_VUNG.md` (dòng `so_do`). Ví dụ: `07_CAD/01_TRI_THUC_VE/vi_du/so_do.json` (sprinkler), `07_CAD/01_TRI_THUC_VE/vi_du/so_do_bc.json` (báo cháy).
+Mã: `07_CAD/09_PCCC/04_SO_DO_NGUYEN_LY/cad/SoDo.cs`. Từ vựng: `07_CAD/01_TRI_THUC_VE/TU_VUNG.md` (dòng `so_do`). Ví dụ: `07_CAD/01_TRI_THUC_VE/vi_du/so_do.json` (sprinkler), `07_CAD/01_TRI_THUC_VE/vi_du/so_do_bc.json` (báo cháy).
 Có hệ SPRINKLER (`he:"spr"`) và BÁO CHÁY HỆ THƯỜNG (`he:"bc"`, mục cuối). Vạch tầng + cao độ chỉ cho `spr` (hàm `VeVachTang`); `bc` không vẽ tầng (theo hồ sơ thật).
 
 ## Nguồn: lấy từ bản mẫu hay tự đặt

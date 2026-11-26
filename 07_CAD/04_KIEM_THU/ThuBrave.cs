@@ -1,5 +1,5 @@
 // Chỉ cho test/thu_brave.ps1 (người dùng 18/11): thử 2 việc của chế độ Brave ngoài AutoCAD, hồ sơ Brave tạm (không đụng Brave của người dùng).
-// 1. Extension 18_YOUTUBE/brave_khung: trang gọi requestFullscreen thì phần tử phủ đúng khung trang (Brave chạy ẩn, đọc tiêu đề trang qua cổng gỡ lỗi).
+// 1. Extension 13_YOUTUBE/brave_khung: trang gọi requestFullscreen thì phần tử phủ đúng khung trang (Brave chạy ẩn, đọc tiêu đề trang qua cổng gỡ lỗi).
 // 2. GanBrave.cs: cửa sổ Brave nhận một Form làm chủ (owner); brave.exe lần hai chỉ chuyển link rồi thoát thì vẫn tìm ra Brave chính (WMI); Tha() trả về độc lập.
 using System;
 using System.Diagnostics;

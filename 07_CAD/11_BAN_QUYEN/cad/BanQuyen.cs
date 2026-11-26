@@ -1,6 +1,6 @@
 // Bản quyền TKPCCC: mã máy (seri ổ chứa Windows; mã cũ MachineGuid vẫn nhận), kiểm key, chống lùi đồng hồ (hợp đồng ở 07_CAD/00_QUAN_LY_DU_AN/viec/viec_14_11.md, mục Gói C), lưu %APPDATA%\TKPCCC\ban_quyen.json, gọi web app Apps Script.
 // Chặn lệnh chỉ có ở bản build "build.bat phat_hanh" (/define:BAN_QUYEN). Ngoài khối #if BAN_QUYEN không đụng AutoCAD
-// nên file này biên dịch chung được vào app tạo key (16_BAN_QUYEN/keygen/KeyGen.cs) và bộ test.
+// nên file này biên dịch chung được vào app tạo key (11_BAN_QUYEN/keygen/KeyGen.cs) và bộ test.
 using System;
 using System.Collections.Generic;
 using System.Globalization;

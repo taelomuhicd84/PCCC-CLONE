@@ -5,8 +5,8 @@ $ErrorActionPreference = 'Stop'
 $ACAD = if ($env:ACAD_DIR) { $env:ACAD_DIR } else { 'C:\Program Files\Autodesk\AutoCAD 2021' }
 $FW = "$env:WINDIR\Microsoft.NET\Framework64\v4.0.30319"
 $GOC = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
-# Moi thu muc so 07_CAD\NN_TEN la mot hang muc tinh nang (26/11): cad\*.cs -> TKPCCC.Cad.dll, ui\*.cs -> TKPCCC.UI.dll (nhu build.bat).
-$CS_CAD = @(Get-ChildItem "$GOC\07_CAD\??_*\cad\*.cs" | ForEach-Object FullName); $CS_UI = @(Get-ChildItem "$GOC\07_CAD\??_*\ui\*.cs" | ForEach-Object FullName)
+# Moi thu muc so 07_CAD\NN_TEN la mot hang muc tinh nang (26/11): cad\*.cs -> TKPCCC.Cad.dll, ui\*.cs -> TKPCCC.UI.dll (nhu build.bat). Nhom linh vuc (09_PCCC\NN_*) gom ca cap con.
+$CS_CAD = @(Get-ChildItem "$GOC\07_CAD\??_*\cad\*.cs", "$GOC\07_CAD\??_*\??_*\cad\*.cs" | ForEach-Object FullName); $CS_UI = @(Get-ChildItem "$GOC\07_CAD\??_*\ui\*.cs", "$GOC\07_CAD\??_*\??_*\ui\*.cs" | ForEach-Object FullName)
 $T = Join-Path $env:TEMP ('tkpccc_mcp_' + [guid]::NewGuid().ToString('N').Substring(0, 8))
 New-Item -ItemType Directory $T | Out-Null
 

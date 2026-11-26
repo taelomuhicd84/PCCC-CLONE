@@ -12,10 +12,11 @@ if not exist "%OUT%" mkdir "%OUT%"
 
 rem Nguoi dung 26/11: moi thu muc so NN_TEN la mot hang muc tinh nang. Plugin PCCC gom tu moi NN_*\cad\*.cs (TKPCCC.Cad.dll,
 rem chay duoc trong accoreconsole) va NN_*\ui\*.cs (TKPCCC.UI.dll, duoc tham chieu acmgd). Them tinh nang = them thu muc, khong sua file nay.
+rem Nguoi dung 26/11 (chieu): gom hang muc theo nhom linh vuc (09_PCCC\NN_*): gom ca NN_*\NN_*\cad, NN_*\NN_*\ui.
 set "CS_CAD="
 set "CS_UI="
-for /d %%d in ("%~dp0??_*") do if exist "%%d\cad\" call set CS_CAD=%%CS_CAD%% "%%d\cad\*.cs"
-for /d %%d in ("%~dp0??_*") do if exist "%%d\ui\" call set CS_UI=%%CS_UI%% "%%d\ui\*.cs"
+for /d %%g in ("%~dp0??_*") do for /d %%d in ("%%~g" "%%~g\??_*") do if exist "%%~d\cad\" call set CS_CAD=%%CS_CAD%% "%%~d\cad\*.cs"
+for /d %%g in ("%~dp0??_*") do for /d %%d in ("%%~g" "%%~g\??_*") do if exist "%%~d\ui\" call set CS_UI=%%CS_UI%% "%%~d\ui\*.cs"
 set CHUNG=%~dp005_NEN_TANG\chung
 
 rem AutoCAD dang mo thi DLL bi khoa ghi nhung van doi ten duoc: doi ten ban cu, AutoCAD mo lai se nap ban moi.
@@ -78,13 +79,13 @@ if exist "%OUTYT%\TKPCCC.YouTube.dll" move /y "%OUTYT%\TKPCCC.YouTube.dll" "%OUT
   /r:"%ACAD%\acdbmgd.dll" /r:"%ACAD%\accoremgd.dll" /r:"%ACAD%\acmgd.dll" /r:"%ACAD%\AdWindows.dll" ^
   /r:"%FW%\WPF\PresentationCore.dll" /r:"%FW%\WPF\WindowsBase.dll" /r:"%FW%\System.Xaml.dll" ^
   /r:"%FW%\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll /r:System.Management.dll ^
-  /r:"%~dp018_YOUTUBE\webview2\Microsoft.Web.WebView2.Core.dll" /r:"%~dp018_YOUTUBE\webview2\Microsoft.Web.WebView2.WinForms.dll" ^
-  "%~dp018_YOUTUBE\*.cs" "%CHUNG%\GiaoDienNho.cs" "%CHUNG%\HangDoi.cs" || exit /b 1
+  /r:"%~dp013_YOUTUBE\webview2\Microsoft.Web.WebView2.Core.dll" /r:"%~dp013_YOUTUBE\webview2\Microsoft.Web.WebView2.WinForms.dll" ^
+  "%~dp013_YOUTUBE\*.cs" "%CHUNG%\GiaoDienNho.cs" "%CHUNG%\HangDoi.cs" || exit /b 1
 rem WebView2: 3 DLL cua Microsoft canh TKPCCC.YouTube.dll. Chi chep khi thieu: AutoCAD dang mo giu khoa file.
-for %%f in (Microsoft.Web.WebView2.Core.dll Microsoft.Web.WebView2.WinForms.dll WebView2Loader.dll) do if not exist "%OUTYT%\%%f" copy /y "%~dp018_YOUTUBE\webview2\%%f" "%OUTYT%\%%f" >nul
+for %%f in (Microsoft.Web.WebView2.Core.dll Microsoft.Web.WebView2.WinForms.dll WebView2Loader.dll) do if not exist "%OUTYT%\%%f" copy /y "%~dp013_YOUTUBE\webview2\%%f" "%OUTYT%\%%f" >nul
 rem Extension Brave "toan man hinh trong khung" (nguoi dung 18/11), nap bang --load-extension khi mo Brave ho so rieng.
 if not exist "%OUTYT%\brave_khung" mkdir "%OUTYT%\brave_khung"
-copy /y "%~dp018_YOUTUBE\brave_khung\*" "%OUTYT%\brave_khung\" >nul
+copy /y "%~dp013_YOUTUBE\brave_khung\*" "%OUTYT%\brave_khung\" >nul
 echo OK: %OUTYT%\TKPCCC.YouTube.dll
 
 set OUTBOT=%~dp0TKPCCC_BotChat.bundle\Contents
@@ -95,7 +96,7 @@ if exist "%OUTBOT%\TKPCCC.BotChat.dll" move /y "%OUTBOT%\TKPCCC.BotChat.dll" "%O
   /r:"%ACAD%\acdbmgd.dll" /r:"%ACAD%\accoremgd.dll" /r:"%ACAD%\acmgd.dll" /r:"%ACAD%\AdWindows.dll" ^
   /r:"%FW%\WPF\PresentationCore.dll" /r:"%FW%\WPF\WindowsBase.dll" /r:"%FW%\System.Xaml.dll" ^
   /r:"%FW%\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll ^
-  /recurse:"%~dp017_BOT_CHAT\*.cs" "%CHUNG%\GiaoDienNho.cs" || exit /b 1
+  /recurse:"%~dp012_BOT_CHAT\*.cs" "%CHUNG%\GiaoDienNho.cs" || exit /b 1
 rem Bot chat tim repo (07_CAD\.mcp.json) tu duong dan nay, nhu plugin PCCC.
 echo %~dp0..\03_DU_LIEU\vat_tu.json>"%OUTBOT%\nguon_vat_tu.txt"
 echo OK: %OUTBOT%\TKPCCC.BotChat.dll
@@ -116,13 +117,13 @@ del /q "%BIN%\TKPCCC.Hub.exe.cu*" >nul 2>&1
 if exist "%BIN%\TKPCCC.Hub.exe" move /y "%BIN%\TKPCCC.Hub.exe" "%BIN%\TKPCCC.Hub.exe.cu%RANDOM%" >nul
 "%FW%\csc.exe" /nologo /target:winexe /codepage:65001 /optimize+ /out:"%BIN%\TKPCCC.Hub.exe" ^
   /r:"%FW%\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll ^
-  "%~dp019_HUB\Hub.cs" "%CHUNG%\HangDoi.cs" || exit /b 1
+  "%~dp014_HUB\Hub.cs" "%CHUNG%\HangDoi.cs" || exit /b 1
 echo OK: %BIN%\TKPCCC.Hub.exe
 
 rem App tao key ban quyen cho chu plugin (khong phat hanh cho khach).
 "%FW%\csc.exe" /nologo /target:winexe /codepage:65001 /optimize+ /out:"%BIN%\TKPCCC.KeyGen.exe" ^
   /r:"%FW%\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Management.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll ^
-  "%~dp016_BAN_QUYEN\keygen\KeyGen.cs" "%~dp016_BAN_QUYEN\cad\BanQuyen.cs" || exit /b 1
+  "%~dp011_BAN_QUYEN\keygen\KeyGen.cs" "%~dp011_BAN_QUYEN\cad\BanQuyen.cs" || exit /b 1
 echo OK: %BIN%\TKPCCC.KeyGen.exe
 rem Nguoi dung 26/11: doi cho / doi ten thu muc du an thi lien ket AutoCAD tu nap van tro ban cu. Build xong tro lai cac lien ket da co ve day,
 rem tru ban build trong worktree / thu muc tam (agent build thu khong duoc chiem lien ket cua AutoCAD that).

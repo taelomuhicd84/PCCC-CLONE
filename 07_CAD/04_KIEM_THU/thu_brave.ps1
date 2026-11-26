@@ -10,9 +10,9 @@ $FW = "$env:WINDIR\Microsoft.NET\Framework64\v4.0.30319"
 $T = Join-Path $env:TEMP ('tkpccc_brave_' + [Guid]::NewGuid().ToString('N').Substring(0, 8))
 New-Item -ItemType Directory $T | Out-Null
 & "$FW\csc.exe" /nologo /target:exe /platform:x64 /codepage:65001 /out:"$T\ThuBrave.exe" /r:System.Windows.Forms.dll /r:System.Drawing.dll /r:System.Management.dll `
-  "$GOC\07_CAD\04_KIEM_THU\ThuBrave.cs" "$GOC\07_CAD\18_YOUTUBE\GanBrave.cs"
+  "$GOC\07_CAD\04_KIEM_THU\ThuBrave.cs" "$GOC\07_CAD\13_YOUTUBE\GanBrave.cs"
 if ($LASTEXITCODE) { throw 'Bien dich ThuBrave loi' }
-& "$T\ThuBrave.exe" $brave "$GOC\07_CAD\18_YOUTUBE\brave_khung" $T
+& "$T\ThuBrave.exe" $brave "$GOC\07_CAD\13_YOUTUBE\brave_khung" $T
 $ma = $LASTEXITCODE
 Start-Sleep 2
 Remove-Item -Recurse -Force $T -ErrorAction SilentlyContinue

@@ -1,6 +1,6 @@
 # Kế hoạch: vẽ CAD tự động, tốn ít token nhất (ROADMAP Pha 6 + 4b)
 
-> Cây thư mục `07_CAD/` đã sắp lại ngày 2026-11-11 (module/, data/, rule/, knowledge/, skills/, .claude/), rồi đánh số theo hạng mục tính năng ngày 2026-11-26 (00_QUAN_LY_DU_AN … 19_HUB). Mục 4 dưới đây là bản cũ; bản đúng ở `07_CAD/README.md`.
+> Cây thư mục `07_CAD/` đã sắp lại ngày 2026-11-11 (module/, data/, rule/, knowledge/, skills/, .claude/), rồi đánh số theo hạng mục tính năng ngày 2026-11-26 (00_QUAN_LY_DU_AN … 14_HUB). Mục 4 dưới đây là bản cũ; bản đúng ở `07_CAD/README.md`.
 
 **Phạm vi làm ngay (bạn chốt): chỉ MCP CAD = giai đoạn G0, G1, G2.** Các phần còn lại (G3–G9) để lại, ghi vào `07_CAD/00_QUAN_LY_DU_AN/TIEN_DO.md` làm việc sau.
 

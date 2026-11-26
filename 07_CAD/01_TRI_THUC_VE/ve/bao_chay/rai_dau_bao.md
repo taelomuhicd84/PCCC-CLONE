@@ -1,6 +1,6 @@
 # Rải đầu báo cháy (khói, nhiệt) trong vùng
 
-Mã: `LuoiVung`, `DoiVao`, `PhuKin`, `KtLuoi` (`07_CAD/09_RAI_THIET_BI/cad/Rai.cs`); thao tác `rai` (`07_CAD/01_TRI_THUC_VE/TU_VUNG.md`), lệnh `PCCC_RAI`. Vùng: `07_CAD/01_TRI_THUC_VE/nhan_dang/phong_vung.md`.
+Mã: `LuoiVung`, `DoiVao`, `PhuKin`, `KtLuoi` (`07_CAD/09_PCCC/01_RAI_THIET_BI/cad/Rai.cs`); thao tác `rai` (`07_CAD/01_TRI_THUC_VE/TU_VUNG.md`), lệnh `PCCC_RAI`. Vùng: `07_CAD/01_TRI_THUC_VE/nhan_dang/phong_vung.md`.
 
 ## Trị số
 - Đầu báo khói, nhiệt (`BC_KHOI`, `BC_KHOI_TRAN`, `BC_NHIET`): theo TCVN 7568-14:2025, trị số + nguyên văn ở `03_DU_LIEU/khoang_cach_rai.json` gốc repo (một chỗ duy nhất).
