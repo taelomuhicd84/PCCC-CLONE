@@ -10,7 +10,7 @@
         "Xét thuộc diện thẩm định thiết kế PCCC (Phụ lục III NĐ 105/2025 đã sửa đổi).",
         "Lập báo cáo khảo sát ở tab Khảo sát (Claude gợi ý được)."
       ],
-      "tai_lieu": ["01_TRI_THUC/dinh-nghia/dinh-nghia.md", "01_TRI_THUC/thuat-ngu-chuan.md", "01_TRI_THUC/qcvn06-phu-luc-h.md", "01_TRI_THUC/nghi-dinh-tham-dinh-dieu-chinh.md", "01_TRI_THUC/cv-2360-cahn-1183-c07-dien-tham-dinh.md", "01_TRI_THUC/khao-sat-bao-gia.md"],
+      "tai_lieu": ["01_TRI_THUC/01_CHUNG_THUAT_NGU/dinh-nghia.md", "01_TRI_THUC/01_CHUNG_THUAT_NGU/thuat-ngu-chuan.md", "01_TRI_THUC/04_NGAN_CHAY_CHIU_LUA/qcvn06-phu-luc-h.md", "01_TRI_THUC/02_PHAP_LY_THAM_DINH/nghi-dinh-tham-dinh-dieu-chinh.md", "01_TRI_THUC/02_PHAP_LY_THAM_DINH/cv-2360-cahn-1183-c07-dien-tham-dinh.md", "01_TRI_THUC/11_KHAO_SAT_BAO_GIA/khao-sat-bao-gia.md"],
       "lenh_cad": [], "he": []
     },
     {
@@ -21,7 +21,7 @@
         "Lập danh mục tờ: mặt bằng từng tầng cho từng hệ, sơ đồ nguyên lý, chi tiết, ghi chú chung.",
         "Đường, bãi đỗ xe chữa cháy, khoảng cách PCCC trên tổng mặt bằng."
       ],
-      "tai_lieu": ["01_TRI_THUC/so-bo-thiet-ke-pccc.md", "01_TRI_THUC/qcvn06-dieu-6.md", "01_TRI_THUC/giap-ranh-khoang-cach-pccc.md", "01_TRI_THUC/qcvn06-dieu-4.md"],
+      "tai_lieu": ["01_TRI_THUC/03_GIAO_THONG_CUU_NAN/so-bo-thiet-ke-pccc.md", "01_TRI_THUC/03_GIAO_THONG_CUU_NAN/qcvn06-dieu-6.md", "01_TRI_THUC/03_GIAO_THONG_CUU_NAN/giap-ranh-khoang-cach-pccc.md", "01_TRI_THUC/04_NGAN_CHAY_CHIU_LUA/qcvn06-dieu-4.md"],
       "lenh_cad": ["PCCC_LIB"], "he": []
     },
     {
@@ -32,7 +32,7 @@
         "Bố trí trạm bơm: bơm điện chính, bơm dự phòng, bơm bù áp, tủ điều khiển; trụ nước, họng tiếp nước.",
         "Vẽ thiết bị bằng PCCC_DAT (mã NUOC_*), tuyến ống bằng PCCC_ONG."
       ],
-      "tai_lieu": ["01_TRI_THUC/qcvn10-2025-nuoc-chua-chay.md", "01_TRI_THUC/qcvn10-2025-phu-luc-h.md", "01_TRI_THUC/kiem-bang-tinh-thuy-luc-7336.md"],
+      "tai_lieu": ["01_TRI_THUC/08_CHUA_CHAY_NUOC/qcvn10-2025-nuoc-chua-chay.md", "01_TRI_THUC/08_CHUA_CHAY_NUOC/qcvn10-2025-phu-luc-h.md", "01_TRI_THUC/08_CHUA_CHAY_NUOC/kiem-bang-tinh-thuy-luc-7336.md"],
       "lenh_cad": ["PCCC_DAT", "PCCC_ONG"], "he": ["NUOC", "ONG"]
     },
     {
@@ -43,7 +43,7 @@
         "Rải đầu phun bằng PCCC_DAT (SPR_DAU_*), van báo động, công tắc dòng chảy, van kiểm tra cuối tuyến.",
         "Vẽ ống nhánh, ống chính theo DN bằng PCCC_ONG; kiểm tra thủy lực tuyến bất lợi nhất (tab Thủy lực: dán DN, chiều dài từng đoạn theo bản vẽ rồi Tính, xuất Excel mẫu)."
       ],
-      "tai_lieu": ["01_TRI_THUC/qcvn10-2025-bao-chay-chua-chay-tu-dong.md", "01_TRI_THUC/kiem-bang-tinh-thuy-luc-7336.md"],
+      "tai_lieu": ["01_TRI_THUC/07_BAO_CHAY/qcvn10-2025-bao-chay-chua-chay-tu-dong.md", "01_TRI_THUC/08_CHUA_CHAY_NUOC/kiem-bang-tinh-thuy-luc-7336.md"],
       "lenh_cad": ["PCCC_DAT", "PCCC_ONG"], "he": ["SPR", "ONG"]
     },
     {
@@ -53,7 +53,7 @@
         "Bố trí tủ họng sao cho mọi điểm được phủ; đặt gần lối ra, buồng thang.",
         "Vẽ tủ bằng PCCC_DAT (HVT_TU), ống đứng, ống nhánh bằng PCCC_ONG."
       ],
-      "tai_lieu": ["01_TRI_THUC/qcvn10-2025-nuoc-chua-chay.md", "01_TRI_THUC/qcvn10-2025-phu-luc-h.md", "01_TRI_THUC/tcvn-4513-1988-muc-6-19.md"],
+      "tai_lieu": ["01_TRI_THUC/08_CHUA_CHAY_NUOC/qcvn10-2025-nuoc-chua-chay.md", "01_TRI_THUC/08_CHUA_CHAY_NUOC/qcvn10-2025-phu-luc-h.md", "01_TRI_THUC/08_CHUA_CHAY_NUOC/tcvn-4513-1988-muc-6-19.md"],
       "lenh_cad": ["PCCC_DAT", "PCCC_ONG"], "he": ["HVT", "ONG"]
     },
     {
@@ -64,7 +64,7 @@
         "Bố trí đầu báo, tổ hợp nút ấn-chuông-đèn, tủ trung tâm bằng PCCC_DAT (BC_*).",
         "Vẽ tuyến dây tín hiệu bằng PCCC_ONG (DAY_BC), sơ đồ nguyên lý theo kênh/loop."
       ],
-      "tai_lieu": ["01_TRI_THUC/chon-loai-dau-bao.md", "01_TRI_THUC/tcvn7568-14-2025.md", "02_DIEU_KHOAN/MOD_dau_bao_khoi_khoang_dam.md", "01_TRI_THUC/qcvn10-2025-bao-chay-chua-chay-tu-dong.md"],
+      "tai_lieu": ["01_TRI_THUC/07_BAO_CHAY/chon-loai-dau-bao.md", "01_TRI_THUC/07_BAO_CHAY/tcvn7568-14-2025.md", "02_DIEU_KHOAN/07_BAO_CHAY/MOD_dau_bao_khoi_khoang_dam.md", "01_TRI_THUC/07_BAO_CHAY/qcvn10-2025-bao-chay-chua-chay-tu-dong.md"],
       "lenh_cad": ["PCCC_DAT", "PCCC_ONG"], "he": ["BC", "ONG"]
     },
     {
@@ -74,7 +74,7 @@
         "Chống khói: hút khói hành lang, tăng áp buồng thang (Phụ lục D).",
         "Bố trí đèn chiếu sáng sự cố, đèn EXIT bằng PCCC_DAT (DEN_*); loa thông báo nếu thuộc diện."
       ],
-      "tai_lieu": ["02_DIEU_KHOAN/SKILL_thoat_nan.md", "02_DIEU_KHOAN/MOD_so_luong_loi_ra.md", "02_DIEU_KHOAN/MOD_cau_thang_buong_thang.md", "02_DIEU_KHOAN/MOD_loi_ra_va_cua.md", "02_DIEU_KHOAN/MOD_tinh_toan_khoang_cach.md", "02_DIEU_KHOAN/PHU_LUC_G_QCVN06.md", "02_DIEU_KHOAN/MOD_hanh_lang_bao_che.md", "02_DIEU_KHOAN/MOD_chong_khoi_PL_D.md", "01_TRI_THUC/qcvn10-2025-den-loa.md"],
+      "tai_lieu": ["02_DIEU_KHOAN/05_THOAT_NAN/SKILL_thoat_nan.md", "02_DIEU_KHOAN/05_THOAT_NAN/MOD_so_luong_loi_ra.md", "02_DIEU_KHOAN/05_THOAT_NAN/MOD_cau_thang_buong_thang.md", "02_DIEU_KHOAN/05_THOAT_NAN/MOD_loi_ra_va_cua.md", "02_DIEU_KHOAN/05_THOAT_NAN/MOD_tinh_toan_khoang_cach.md", "02_DIEU_KHOAN/05_THOAT_NAN/PHU_LUC_G_QCVN06.md", "02_DIEU_KHOAN/05_THOAT_NAN/MOD_hanh_lang_bao_che.md", "02_DIEU_KHOAN/06_CHONG_KHOI/MOD_chong_khoi_PL_D.md", "01_TRI_THUC/09_DEN_LOA_SU_CO/qcvn10-2025-den-loa.md"],
       "lenh_cad": ["PCCC_DAT"], "he": ["DEN"]
     },
     {
@@ -84,7 +84,7 @@
         "Bố trí bình, kệ bình bằng PCCC_DAT (BINH_*).",
         "Ngăn cháy: cửa, tường, sàn ngăn cháy; vật liệu hoàn thiện; chống sét."
       ],
-      "tai_lieu": ["01_TRI_THUC/qcvn10-2025-binh-dung-cu-co-gioi.md", "01_TRI_THUC/qcvn06-dieu-4.md", "02_DIEU_KHOAN/SKILL_ngan_chay_cong_nang.md", "02_DIEU_KHOAN/MOD_vat_lieu_hoan_thien.md"],
+      "tai_lieu": ["01_TRI_THUC/10_BINH_DUNG_CU/qcvn10-2025-binh-dung-cu-co-gioi.md", "01_TRI_THUC/04_NGAN_CHAY_CHIU_LUA/qcvn06-dieu-4.md", "02_DIEU_KHOAN/04_NGAN_CHAY_CHIU_LUA/SKILL_ngan_chay_cong_nang.md", "02_DIEU_KHOAN/05_THOAT_NAN/MOD_vat_lieu_hoan_thien.md"],
       "lenh_cad": ["PCCC_DAT"], "he": ["BINH"]
     },
     {
@@ -95,7 +95,7 @@
         "Tab Khối lượng & Báo giá: điền đơn giá, xuất báo giá Excel.",
         "Xuất PDF in ấn theo danh mục tờ."
       ],
-      "tai_lieu": ["01_TRI_THUC/bao-gia-pccc.md"],
+      "tai_lieu": ["01_TRI_THUC/11_KHAO_SAT_BAO_GIA/bao-gia-pccc.md"],
       "lenh_cad": ["PCCC_BOC"], "he": []
     }
   ]

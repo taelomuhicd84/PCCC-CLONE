@@ -119,7 +119,7 @@ def test_trich_dieu_nguyen_van():
     assert bdc._dieu_trong("Mục G.1 QCVN 06:2022 / Mục G.2a / QCVN 06:2022") == [("G.1", "QCVN 06"), ("G.2a", "QCVN 06")]
     assert bdc._dieu_trong("Bảng B.1 mục 1.2 / QCVN 10:2025") == [("B.1", "QCVN 10")]   # "mục 1.2" là dòng của bảng, không phải điều
     noi, doan = bdc._trich_dieu("6.2.1.1", bdc._file_tim("", "QCVN 06"))
-    assert noi.startswith("01_TRI_THUC/qcvn06-dieu-6.md") and doan.startswith("6.2.1.1 ") and "6.2.1.2" not in doan
+    assert noi.startswith("01_TRI_THUC/03_GIAO_THONG_CUU_NAN/qcvn06-dieu-6.md") and doan.startswith("6.2.1.1 ") and "6.2.1.2" not in doan
 
 
 def test_bcks_mau_4_muc(tmp_path):
@@ -178,7 +178,7 @@ def test_job_trich_dinh_nghia_chieu_cao_pccc(tmp_path, ma):
     bdc.lamviec([ma], f, "khao_sat")
     kq = bdc.job(f, ma, 0, 5, tmp_path / "job.md", tmp_path / "phan.json")
     t = (tmp_path / "job.md").read_text(encoding="utf-8")
-    assert "01_TRI_THUC/dinh-nghia/dinh-nghia.md" in t and "mép dưới của lỗ cửa (cửa sổ)" in t, kq
+    assert "01_TRI_THUC/01_CHUNG_THUAT_NGU/dinh-nghia.md" in t and "mép dưới của lỗ cửa (cửa sổ)" in t, kq
     if ma == "KS":
         ks = json.loads((Path(__file__).parents[1] / "data" / "KS.json").read_text(encoding="utf-8"))
         assert "mép dưới" in next(r for r in ks["dong"] if r["idx"] == 2)["goi_y"]

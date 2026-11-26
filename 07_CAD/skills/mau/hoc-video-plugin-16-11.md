@@ -12,7 +12,7 @@ Người dùng dặn: lấy tư duy hay đưa vào plugin, nhanh, tự động, 
 | Nút hành động là hình tròn màu có biểu tượng, nhãn chữ hoa bên dưới, 3 nút một hàng | `NutIcon`, `GiaoDien.NutLuoi`, `XepLuoi` |
 | Tiêu đề nhóm nhỏ chữ hoa mờ + vạch màu ("RANH GIỚI & LAYER", "RẢI & XÓA") | `TieuDeNhom` |
 | Khung TRẠNG THÁI cuối bảng: ⚠ vàng việc chưa đủ, ✔ xanh việc đã xong | `KhungTrangThai`; trang Báo cháy đếm vùng PCCC_VUNG / loại trừ (`Lenh.DemVung`), thiết bị, trần, lượt rải cuối, lần kiểm vùng mù cuối |
-| Nút "Tra cứu TCVN" ngay tại tab khoang dầm: bảng V1–V4 theo h, d, S | `BangTraCuu.cs` đọc mục 2–3 của `02_DIEU_KHOAN/MOD_dau_bao_khoi_khoang_dam.md` (nguyên văn 5.9.1.1.6, build.bat chép cạnh DLL) |
+| Nút "Tra cứu TCVN" ngay tại tab khoang dầm: bảng V1–V4 theo h, d, S | `BangTraCuu.cs` đọc mục 2–3 của `02_DIEU_KHOAN/07_BAO_CHAY/MOD_dau_bao_khoi_khoang_dam.md` (nguyên văn 5.9.1.1.6, build.bat chép cạnh DLL) |
 | Trang Báo cháy chia tab RẢI ĐẦU BÁO · KHOANG DẦM · SĐNL · VẼ DÂY | `BangBoTri.cs`: RẢI ĐẦU BÁO · KHOANG DẦM · KIỂM TRA · ĐI DÂY |
 
 ## 2. Thuật toán, quy trình: đã có sẵn trong TKPCCC (không làm lại)

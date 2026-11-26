@@ -71,7 +71,7 @@ Ví dụ dựng lại đúng số liệu trang 11: `07_CAD/skills/vi_du/so_do_bc
 - Dây: mỗi mã dây một layer (`layer_so_do`, `net`, `mau` trong `03_DU_LIEU/vat_tu.json`): `DAY_BC_10` tín hiệu 2C×1,0 Cu-PVC nét đứt (DASHED), `DAY_BC_10_FR` 2C×1 Cu-PVC/FR nét có chữ FR
   (loại đường `PCCC_FR` tạo trong mã), `DAY_NGUON_15` nguồn 2C×1,5 Cu-PVC nét gạch chấm (DASHDOT), `DAY_NGUON_15_FR` nguồn 2C×1,5 Cu-PVC/FR nét liền. Bản vẽ có sẵn layer thì giữ nét/màu người dùng.
   Bảng ký hiệu in mẫu nét bằng chính layer đó. Dây ngắt qua ký hiệu (trang 11 ký hiệu che dây).
-- Bảng tính nguồn theo phụ lục C TCVN 7568-14:2025 (công thức C.1, C.2, C.3 ở `01_TRI_THUC/tcvn7568-14-2025.md`): C20 = hs[(IQ×TQ)+FC(IA×TA)], IC = hs[(IQ×tq_nap)+(IA×TA)]/t_nap, IPSE = IQ+IC;
+- Bảng tính nguồn theo phụ lục C TCVN 7568-14:2025 (công thức C.1, C.2, C.3 ở `01_TRI_THUC/07_BAO_CHAY/tcvn7568-14-2025.md`): C20 = hs[(IQ×TQ)+FC(IA×TA)], IC = hs[(IQ×tq_nap)+(IA×TA)]/t_nap, IPSE = IQ+IC;
   IQ, IA cộng dòng tủ `i_tu`. Mọi hệ số và dòng từng loại thiết bị truyền từ spec; số lượng cộng từ zone, `sl` ghi đè được (trang 11 tính "trên 1 tầng": 59 H, 24 S, 28 còi, 3 nút, 11 đèn —
   KHÔNG khớp số trên sơ đồ, nên ví dụ ghi `sl`). Kiểm tay: IA 4081 mA, IQ 103,481 mA, C20 8,20568 Ah, IC 0,133 A, IPSE 0,24 A.
 - Tự đặt / khác trang 11: tủ vẽ bằng nét trong mã (số đèn zone theo `zone_tu`), không phải block; vị trí ký hiệu theo cột cố định (nút ấn 697 pt, đầu báo từ 763 pt) trong khi trang 11 đặt tay xê dịch;

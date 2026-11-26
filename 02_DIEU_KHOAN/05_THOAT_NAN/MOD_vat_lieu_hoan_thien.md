@@ -47,7 +47,7 @@ Bảng cấp nguy hiểm cháy vật liệu (B.7, B.8, B.9) nằm ở Phụ lụ
 - F1.1; F2.1; F2.2; F3.3; F3.4; F3.5; F4.1 (karaoke F2.1): > 300 người: CV0 | CV2; > 15 và ≤ 300: CV1 | CV2; ≤ 15: CV3 | CV4.
 - Gian phòng chung có chữa cháy tự động thì không yêu cầu cấp vật liệu (3.5.10 ở trên).
 ## Áp dụng "gian phòng chung" khi kiểm tra vật liệu
-Định nghĩa gian phòng chung: xem `01_TRI_THUC/dinh-nghia/dinh-nghia.md` (1.4.21a).
+Định nghĩa gian phòng chung: xem `01_TRI_THUC/01_CHUNG_THUAT_NGU/dinh-nghia.md` (1.4.21a).
 - DA-10 1: phòng karaoke được xem là gian phòng chung → áp dụng 3.5.10 và Bảng B.9 cho phòng.
 - **Hành lang, tiền sảnh, buồng thang trên đường thoát nạn không phải gian phòng chung:** phòng karaoke có sprinkler được miễn cấp vật liệu theo 3.5.10, nhưng đường thoát nạn vẫn phải theo Bảng B.8 / 3.3.4. Karaoke F2.1: tường và trần tiền sảnh, buồng thang CV0, hành lang chung CV1; sàn tiền sảnh, buồng thang CV1, hành lang chung CV2. Bản vẽ DA-10 1 ghi trần thạch cao là vật liệu không cháy (đạt phần trần); vật liệu tường và sàn hành lang không ghi → khoanh "cần kiểm tra".
 - Chữa cháy tự động ở 3.5.10: phòng chung có chữa cháy tự động thì không yêu cầu cấp vật liệu, trừ phòng > 20 m² điều trị nội trú, dưỡng lão, chăm sóc người khuyết tật.

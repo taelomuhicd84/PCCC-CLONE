@@ -91,7 +91,7 @@ namespace TKPCCC
             f.Controls.Add(hp);
 
             // Bước "Tiêu chuẩn & công năng" (spec addin mẫu): chọn công năng → gợi ý loại đầu báo theo bảng "Loại theo khu vực" của
-            // 01_TRI_THUC/chon-loai-dau-bao.md (nguồn duy nhất, build.bat chép cạnh DLL; không chép bảng vào mã).
+            // 01_TRI_THUC/07_BAO_CHAY/chon-loai-dau-bao.md (nguồn duy nhất, build.bat chép cạnh DLL; không chép bảng vào mã).
             Muc("0", "CÔNG NĂNG", "gợi ý loại đầu báo");
             congNang.DropDownStyle = ComboBoxStyle.DropDownList;
             congNang.Width = 290;

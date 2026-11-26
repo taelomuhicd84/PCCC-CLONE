@@ -34,12 +34,12 @@ rem Tri so rai thiet bi theo tieu chuan (rai / PCCC_RAI khong co "s"): nguon o 0
 copy /y "%~dp0..\03_DU_LIEU\khoang_cach_rai.json" "%OUT%\khoang_cach_rai.json" >nul
 rem Bang DN ong nhanh theo so dau phun (PCCC_TUYEN TuDong): nguon duy nhat 03_DU_LIEU\ong_nhanh_dn.json goc repo.
 copy /y "%~dp0..\03_DU_LIEU\ong_nhanh_dn.json" "%OUT%\ong_nhanh_dn.json" >nul
-rem Bang chon loai dau bao theo cong nang (trang Bao chay doc bang "Loai theo khu vuc"): nguon duy nhat 01_TRI_THUC\chon-loai-dau-bao.md.
-copy /y "%~dp0..\01_TRI_THUC\chon-loai-dau-bao.md" "%OUT%\chon-loai-dau-bao.md" >nul
+rem Bang chon loai dau bao theo cong nang (trang Bao chay doc bang "Loai theo khu vuc"): nguon duy nhat 01_TRI_THUC\07_BAO_CHAY\chon-loai-dau-bao.md.
+copy /y "%~dp0..\01_TRI_THUC\07_BAO_CHAY\chon-loai-dau-bao.md" "%OUT%\chon-loai-dau-bao.md" >nul
 rem Van thuyet minh mau (PCCC_THUYETMINH): nguon duy nhat 07_CAD\skills\ve\mau-thuyet-minh-pccc.md.
 copy /y "%~dp0skills\ve\mau-thuyet-minh-pccc.md" "%OUT%\mau-thuyet-minh-pccc.md" >nul
-rem Bang khoang dam 5.9.1.1.6 (nut Tra cuu TCVN, tab Khoang dam trang Bao chay): nguon duy nhat 02_DIEU_KHOAN\MOD_dau_bao_khoi_khoang_dam.md goc repo.
-copy /y "%~dp0..\02_DIEU_KHOAN\MOD_dau_bao_khoi_khoang_dam.md" "%OUT%\MOD_dau_bao_khoi_khoang_dam.md" >nul
+rem Bang khoang dam 5.9.1.1.6 (nut Tra cuu TCVN, tab Khoang dam trang Bao chay): nguon duy nhat 02_DIEU_KHOAN\07_BAO_CHAY\MOD_dau_bao_khoi_khoang_dam.md goc repo.
+copy /y "%~dp0..\02_DIEU_KHOAN\07_BAO_CHAY\MOD_dau_bao_khoi_khoang_dam.md" "%OUT%\MOD_dau_bao_khoi_khoang_dam.md" >nul
 rem PCCC_THEMBLOCK ghi ma moi vao ca file goc cua repo (nguon duy nhat cua danh muc): de lai duong dan cho plugin.
 echo %~dp0..\03_DU_LIEU\vat_tu.json>"%OUT%\nguon_vat_tu.txt"
 rem Mac dinh ky hieu truc, kich thuoc, chu: nguoi dung sua o 07_CAD\data\ky_hieu, plugin doc ban chep canh DLL.

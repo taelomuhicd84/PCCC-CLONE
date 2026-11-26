@@ -1,6 +1,6 @@
 # SKILL: Ngăn cháy giữa các công năng (PCCC – QCVN 06, điều 4.5)
 
-Bạn là kỹ sư thẩm định PCCC. Đầu vào: mặt bằng kiến trúc + nhóm nguy hiểm cháy theo công năng của từng phòng/phần nhà. Skill này CHỈ xét **ngăn cháy giữa các công năng khác nhau**. Ngăn cháy cho đường thoát nạn xem [MOD_hanh_lang_bao_che.md](MOD_hanh_lang_bao_che.md) – hai việc tách biệt.
+Bạn là kỹ sư thẩm định PCCC. Đầu vào: mặt bằng kiến trúc + nhóm nguy hiểm cháy theo công năng của từng phòng/phần nhà. Skill này CHỈ xét **ngăn cháy giữa các công năng khác nhau**. Ngăn cháy cho đường thoát nạn xem [MOD_hanh_lang_bao_che.md](../05_THOAT_NAN/MOD_hanh_lang_bao_che.md) – hai việc tách biệt.
 
 ## 1. Yêu cầu chung (4.5)
 - Các phần nhà/gian phòng thuộc **nhóm công năng khác nhau** phải ngăn cách nhau bằng bộ phận ngăn chia có giới hạn chịu lửa và cấp nguy hiểm cháy kết cấu theo quy định, hoặc bằng **vách ngăn cháy loại 1 và/hoặc sàn ngăn cháy loại 3**, bộ phận ngăn cháy tối thiểu **EI45** (bậc chịu lửa I–III), **EI15** (bậc IV), hoặc giải pháp tương đương, trừ khi quy chuẩn/tiêu chuẩn chuyên ngành quy định khác.
@@ -31,7 +31,7 @@ Bạn là kỹ sư thẩm định PCCC. Đầu vào: mặt bằng kiến trúc +
 - Mục chưa đạt: ghi "CHƯA ĐẠT" + khoanh hình chữ nhật, đánh số, comment ở lề. Mục nghi vấn (kho sát 10 m², phụ trợ vượt 90%…) cũng khoanh + comment.
 
 ## 7. Dữ liệu từ skill khác
-Nhóm công năng, hạng nguy hiểm cháy nổ, bậc chịu lửa, cấp nguy hiểm cháy kết cấu: xem [DU_LIEU_TU_SKILL_KHAC.md](DU_LIEU_TU_SKILL_KHAC.md). Chưa có → dùng giá trị trên bảng thống kê bản vẽ và ghi "tạm tính".
+Nhóm công năng, hạng nguy hiểm cháy nổ, bậc chịu lửa, cấp nguy hiểm cháy kết cấu: xem [DU_LIEU_TU_SKILL_KHAC.md](../DU_LIEU_TU_SKILL_KHAC.md). Chưa có → dùng giá trị trên bảng thống kê bản vẽ và ghi "tạm tính".
 
 ## 9. Chứng minh bao che hành lang thoát nạn bằng tỉ lệ cửa/tường (học từ DA-10 1, KT-19)
 - Chia hành lang thành các đoạn tường ngăn cháy (TL1, TL2, TL3…). Mỗi đoạn lập bảng: chiều cao tường (4 m) × chiều dài = S1 (tổng diện tích tường ngăn cháy); số cửa chống cháy × 0,9×2,1 = S2; tỉ lệ S2/S1.

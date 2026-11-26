@@ -79,7 +79,7 @@ Mã: `CacMat` (khép khe cửa), `GomCua`, `GomKhu`, `HinhBac`, `TachOX`, `GomCh
   là tường nét đôi (nét song song 0,08–0,45 m phủ ≥ 50 %), mép ngoài không phải tường liền (phủ ≤ 80 %; Quyết Thắng viền mái 2 nét phủ 34–50 %) -> bỏ (`bo_hien=`).
   Bản vẽ tường 1 nét, hành lang có cột trong tường ngoài: chỉ báo (`hien_nghi=`), vẫn rải (review 21/11). Hiên không vẽ cột: người dùng tự vẽ vùng.
 - NGƯỜI DÙNG 23/11 (trường học khung 6, bản chép `hoc_bao_chay.dwg`: "hành lang bên làm gì rải đầu báo"): HÀNH LANG BÊN không đặt đầu báo
-  (QCVN 10:2025 1.5.11, nguyên văn `01_TRI_THUC/qcvn10-2025-chung.md`), với MỌI loại trần, không chỉ `MaiKeo` như L6 Hiên ở trên. Dấu hiệu: dải rộng ≤ 3 m,
+  (QCVN 10:2025 1.5.11, nguyên văn `01_TRI_THUC/01_CHUNG_THUAT_NGU/qcvn10-2025-chung.md`), với MỌI loại trần, không chỉ `MaiKeo` như L6 Hiên ở trên. Dấu hiệu: dải rộng ≤ 3 m,
   dài ≥ 4 lần rộng; một cạnh dài là tường có cửa phòng, cạnh dài kia là hàng cột + lan can / tường lửng / nét mảnh mở ra SÂN TRONG hoặc ra ngoài nhà
   (bên kia không có phòng). Có chữ "HÀNH LANG", "HÀNH LANG THOÁT NẠN" mà mép ngoài hở thì vẫn bỏ. Phần nở rộng của chính hành lang đó (ô 4,1 m trước
   lối xuống sân) cũng bỏ. Dải 1,65 m ngoài cửa sổ phòng (lan can mép ngoài, lam che nắng ngoài nữa) là hành lang ngoài / lô gia: bỏ.

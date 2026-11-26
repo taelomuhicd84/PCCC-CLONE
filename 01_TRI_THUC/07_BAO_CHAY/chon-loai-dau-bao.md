@@ -1,5 +1,5 @@
 # Chọn loại đầu báo cháy theo khu vực và gian phòng (nguồn duy nhất)
-Dùng cho: m11-bao-chay, huong-dan. Chỉ giữ QUYẾT ĐỊNH và con trỏ điều khoản; KHÔNG chép lại nguyên văn. Nguyên văn: `01_TRI_THUC/tcvn7568-14-2025.md` (chọn loại 4.1.5, vị trí 5.8.2, khoảng cách 5.9, Phụ lục A), `01_TRI_THUC/qcvn10-2025-bao-chay-chua-chay-tu-dong.md` (Bảng A.1–A.3), `01_TRI_THUC/qcvn10-2025-chung.md` (1.5.11). Khói trong khoang dầm: `02_DIEU_KHOAN/MOD_dau_bao_khoi_khoang_dam.md` (không lặp ở đây). Không viết thêm bảng loại đầu báo ở file khác: sửa tại đây.
+Dùng cho: m11-bao-chay, huong-dan. Chỉ giữ QUYẾT ĐỊNH và con trỏ điều khoản; KHÔNG chép lại nguyên văn. Nguyên văn: `01_TRI_THUC/07_BAO_CHAY/tcvn7568-14-2025.md` (chọn loại 4.1.5, vị trí 5.8.2, khoảng cách 5.9, Phụ lục A), `01_TRI_THUC/07_BAO_CHAY/qcvn10-2025-bao-chay-chua-chay-tu-dong.md` (Bảng A.1–A.3), `01_TRI_THUC/01_CHUNG_THUAT_NGU/qcvn10-2025-chung.md` (1.5.11). Khói trong khoang dầm: `02_DIEU_KHOAN/07_BAO_CHAY/MOD_dau_bao_khoi_khoang_dam.md` (không lặp ở đây). Không viết thêm bảng loại đầu báo ở file khác: sửa tại đây.
 
 ## Thứ tự xét (mỗi gian phòng)
 1. Có phải lắp không? Nhà/khu vực thuộc diện: QCVN 10 Phụ lục A (Bảng A.1 cả nhà, A.2 khu vực, A.3 gian phòng). Miễn lắp: xem "Khu vực được miễn".

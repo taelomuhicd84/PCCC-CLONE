@@ -3,7 +3,8 @@
 Cây gốc ĐÁNH SỐ theo mẫu danh mục công việc `DA-GT-2026-01` (người dùng giao 2026-11-25): số đầu = thứ tự đọc, tên CHỮ HOA không dấu,
 mỗi số một mảng việc. Trong từng mảng giữ cấu trúc cũ (mã `src/` + `test/`, tri thức tách khỏi mã, kết quả công trình nằm riêng).
 Ở gốc chỉ còn file công cụ bắt buộc: `CLAUDE.md`, `README.md`, `.claude/`, `.mcp.json`, `package.json`, `vitest.config.ts`, `chay.bat`.
-Thêm/đổi/xoá thư mục thì **sửa file này**. Mảng mới: số kế tiếp (`13_...`), không chèn giữa.
+Thêm/đổi/xoá thư mục thì **sửa file này**. Mảng mới: số kế tiếp (`13_...`), không chèn giữa. Tri thức, điều khoản xếp theo hạng mục `NN_TEN` (số chung cho 01 và 02);
+GIỮ tên file khi chuyển hạng mục (bảng đối chiếu tra theo tên ở cột `tra_o`, `bang_doi_chieu.py` tìm đệ quy `**/`).
 
 ```
 TKPCCC/
@@ -27,11 +28,25 @@ TKPCCC/
 │
 ├─ 00_QUAN_LY_DU_AN/       QUẢN LÝ: STRUCTURE.md (file này) · TIEN_DO.md (việc đang làm, việc tiếp theo; cập nhật mỗi mốc, trước khi hết usage)
 │                          · LICH_SU.md (nhật ký theo ngày) · ROADMAP.md (các pha) · KE_HOACH_TONG.md (kế hoạch tổng rà soát 15/11)
-├─ 01_TRI_THUC/            TRI THỨC: quy chuẩn chép nguyên văn + quy tắc nghiệp vụ (chép từ PCCC_he_thong/knowledge)
-│  ├─ dinh-nghia/            định nghĩa QCVN 06
-│  ├─ qcvn06-*.md, qcvn10-2025-*.md, tcvn7568-14-2025.md, nghi-dinh-*.md, cv-2360-*.md
-│  └─ khao-sat-bao-gia.md, bao-gia-pccc.md, so-bo-thiet-ke-pccc.md, chon-loai-dau-bao.md …
-├─ 02_DIEU_KHOAN/          ĐIỀU KHOẢN THEO CHUYÊN ĐỀ (chép từ PCCC_he_thong/skills): MOD_*.md, SKILL_*.md, PHU_LUC_G_QCVN06.md
+├─ 01_TRI_THUC/            TRI THỨC: quy chuẩn chép nguyên văn + quy tắc nghiệp vụ, xếp theo HẠNG MỤC (số dùng chung với 02_DIEU_KHOAN)
+│  ├─ 01_CHUNG_THUAT_NGU/      dinh-nghia.md (QCVN 06 Điều 1.4), thuat-ngu-chuan.md, qcvn10-2025-chung.md
+│  ├─ 02_PHAP_LY_THAM_DINH/    nghi-dinh-tham-dinh-dieu-chinh.md (NĐ 105/2025 + 347/2026), cv-2360-*.md (diện thẩm định), qcvn06-dieu-7.md
+│  ├─ 03_GIAO_THONG_CUU_NAN/   qcvn06-dieu-6.md, so-bo-thiet-ke-pccc.md (đường, bãi đỗ xe chữa cháy), giap-ranh-khoang-cach-pccc.md
+│  ├─ 04_NGAN_CHAY_CHIU_LUA/   qcvn06-dieu-4.md, qcvn06-phu-luc-h.md (bậc chịu lửa, khoang cháy)
+│  ├─ 05_THOAT_NAN/            nhan-dien-thang-thoat-nan.md + hinh/ (lối ra hầm, tách thang hầm, sảnh hai cửa)
+│  ├─ 06_CHONG_KHOI/           hut-khoi-thong-tang.md + hinh/ (màn ngăn khói, buồng đệm tăng áp)
+│  ├─ 07_BAO_CHAY/             tcvn7568-14-2025.md, chon-loai-dau-bao.md, qcvn10-2025-bao-chay-chua-chay-tu-dong.md
+│  ├─ 08_CHUA_CHAY_NUOC/       qcvn10-2025-nuoc-chua-chay.md, qcvn10-2025-phu-luc-h.md, kiem-bang-tinh-thuy-luc-7336.md, tcvn-4513-1988-muc-6-19.md
+│  ├─ 09_DEN_LOA_SU_CO/        qcvn10-2025-den-loa.md
+│  ├─ 10_BINH_DUNG_CU/         qcvn10-2025-binh-dung-cu-co-gioi.md
+│  ├─ 11_KHAO_SAT_BAO_GIA/     khao-sat-bao-gia.md, bao-gia-pccc.md
+│  └─ 12_BAI_HOC_DU_AN/        so-bo-thiet-ke.md (bài học từ dự án)
+├─ 02_DIEU_KHOAN/          ĐIỀU KHOẢN THEO CHUYÊN ĐỀ (chép từ PCCC_he_thong/skills), cùng số hạng mục; chỉ có thư mục khi có file
+│  ├─ 04_NGAN_CHAY_CHIU_LUA/   SKILL_ngan_chay_cong_nang.md
+│  ├─ 05_THOAT_NAN/            SKILL_thoat_nan.md (mục lục), MOD_cau_thang_buong_thang, MOD_hinh_Phu_luc_I_cau_thang, MOD_loi_ra_va_cua,
+│  │                           MOD_so_luong_loi_ra, MOD_hanh_lang_bao_che, MOD_tinh_toan_khoang_cach, MOD_vat_lieu_hoan_thien, PHU_LUC_G_QCVN06
+│  ├─ 06_CHONG_KHOI/           MOD_chong_khoi_PL_D.md
+│  └─ 07_BAO_CHAY/             MOD_dau_bao_khoi_khoang_dam.md
 ├─ 03_DU_LIEU/             DỮ LIỆU CẤU HÌNH
 │  ├─ vat_tu.json            danh mục vật tư: nguồn DUY NHẤT cho plugin + báo giá (loai: block / tuyen / khac)
 │  ├─ khoang_cach_rai.json   trị số rải đầu báo theo mã (TCVN 7568-14 chép nguyên văn): plugin CAD `rai` / `PCCC_RAI` đọc khi không có bước

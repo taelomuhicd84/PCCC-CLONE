@@ -13,20 +13,20 @@ dùng làm bước sàng lọc). Agent: `pccc-xay-dung` (bảng KT), `pccc-he-th
    thiếu thì ghi `cong_trinh.thieu` VÀ comment cam trên bản vẽ ở chỗ lẽ ra có số liệu.
 2. Bốn kết luận: ĐẠT · CHƯA ĐẠT · CẦN XÁC NHẬN · KHÔNG ÁP DỤNG, lý do có số. Thiếu dữ liệu thì CẦN XÁC NHẬN, nêu cần gì; không đoán.
 3. CHƯA ĐẠT phải có phương án điều chỉnh: ưu tiên ít thay đổi kiến trúc; nêu khả thi hay không trên mặt bằng, ảnh hưởng hệ thống kèm theo
-   (tăng áp, sprinkler…); vẽ phương án lên PDF. Cung vế thang và cánh cửa: kiểm không giao nhau, chỉ note, không vẽ cung trừ khi người dùng bảo (2026-11-06, `01_TRI_THUC/nhan-dien-thang-thoat-nan.md` bước 3). Thang thoát nạn làm đủ quy trình `01_TRI_THUC/nhan-dien-thang-thoat-nan.md`.
+   (tăng áp, sprinkler…); vẽ phương án lên PDF. Cung vế thang và cánh cửa: kiểm không giao nhau, chỉ note, không vẽ cung trừ khi người dùng bảo (2026-11-06, `01_TRI_THUC/05_THOAT_NAN/nhan-dien-thang-thoat-nan.md` bước 3). Thang thoát nạn làm đủ quy trình `01_TRI_THUC/05_THOAT_NAN/nhan-dien-thang-thoat-nan.md`.
 4. Chỉ trích điều khoản có trong `01_TRI_THUC/`, `02_DIEU_KHOAN/` hoặc cột Quy định của bảng chính thức; văn bản hết hiệu lực không làm căn cứ.
 5. Chỉ báo cáo; không hỏi người dùng chọn phương án. Điểm luật không rõ: "cần người dùng xem xét" kèm căn cứ. Thiếu kiến thức: nhờ người dùng train.
 6. Hồ sơ khách nằm trong `12_KET_QUA/<dự án>/`, không commit.
 
 ## Ba loại đầu vào
-1. Kiến trúc chỉ có mặt bằng: chiều cao PCCC ước lượng (`01_TRI_THUC/khao-sat-bao-gia.md`); mọi kết luận phụ thuộc chiều cao nằm hai bên ngưỡng
+1. Kiến trúc chỉ có mặt bằng: chiều cao PCCC ước lượng (`01_TRI_THUC/11_KHAO_SAT_BAO_GIA/khao-sat-bao-gia.md`); mọi kết luận phụ thuộc chiều cao nằm hai bên ngưỡng
    (15, 21, 28, 50 m) là CẦN XÁC NHẬN; comment cam "thiếu mặt đứng, mặt cắt".
 2. Có mặt đứng, mặt cắt: đọc cao độ, số tầng, chiều cao PCCC (ghi phép cộng).
 3. Hồ sơ gần đầy đủ (có bản vẽ hệ thống): phần hệ thống xét đủ bảng B theo thiết kế.
    CHƯA CÓ BẢN VẼ HỆ THỐNG = KHÔNG CÓ HỆ THỐNG (người dùng dặn 2026-11-03): dòng đối tượng PHẢI CÓ của bảng A là CHƯA ĐẠT, `ly_do`
    "không có <hệ thống>; phải trang bị (căn cứ có số)", `phuong_an` "thiết kế <hệ thống>" (bước sau: Claude vẽ hệ thống PCCC, skill người
    dùng sẽ train). KHÔNG lập bảng B cho hệ thống không có bản vẽ: bảng B chỉ đối chiếu hệ thống có trên bản vẽ (hoặc do Claude vẽ).
-   Giáp ranh không ghi khoảng cách PCCC: CHƯA ĐẠT (`01_TRI_THUC/giap-ranh-khoang-cach-pccc.md`, Bài học 30; khảo sát sơ bộ thì chỉ khoanh + hướng dẫn).
+   Giáp ranh không ghi khoảng cách PCCC: CHƯA ĐẠT (`01_TRI_THUC/03_GIAO_THONG_CUU_NAN/giap-ranh-khoang-cach-pccc.md`, Bài học 30; khảo sát sơ bộ thì chỉ khoanh + hướng dẫn).
 
 ## Không trùng lắp, không làm thừa (người dùng dặn 2026-11-03)
 - Một số liệu một chỗ: thông tin công trình nằm trong `cong_trinh` của `doi_chieu.json`, lệnh `job` ghi ra `cong_trinh.md` một file, job chỉ

@@ -41,7 +41,7 @@ Nhóm nhà (VD F5.2), chiều cao PCCC, chiều cao công trình, diện tích s
 - Kho DA-12 (nhà kho F5.2, cao PCCC 11 m, 770 m2, chu vi 120,8 m, có sprinkler): 1 bãi 21 m x 3,5 m dọc tường nam; khe Bắc 1,5 m và khe Đông–Bắc 1,8 m (< 3,5 m) không phải đường nên không có đường vòng; đường cụt ~37 m < 46 m nên không cần bãi quay xe. `12_KET_QUA/kho_da12/thiet_ke_m04_kho_da12_v2.png`.
 
 ## Tư vấn thiết kế PCCC: form 7 mục
-Người dùng nói "tư vấn thiết kế PCCC" thì trình bày theo form 7 mục ở `01_TRI_THUC/khao-sat-bao-gia.md` (mục "Form tư vấn thiết kế PCCC"), không trả lời rời rạc.
+Người dùng nói "tư vấn thiết kế PCCC" thì trình bày theo form 7 mục ở `01_TRI_THUC/11_KHAO_SAT_BAO_GIA/khao-sat-bao-gia.md` (mục "Form tư vấn thiết kế PCCC"), không trả lời rời rạc.
 
 ## Thoát nạn: mẫu trình bày
 Chọn phương án: chạy `python scripts/mau_giai_phap.py loc --F <nhóm F> --cao <m> --tang <n> --dt <m2/tầng> --nguoi <người/tầng> --ham 0|1 --cong-nang <chữ>` (bỏ tham số chưa biết), CHỈ dùng các mẫu trả về (yêu cầu, nhận diện, lỗi hay gặp, giải pháp); mẫu có `can_xac_nhan` thì hỏi số liệu đó. Mục lục: `muc-luc`. Nguồn `03_DU_LIEU/mau_giai_phap/*.json`, xem `thu_vien.html`.
@@ -50,7 +50,7 @@ Theo Bài học 24–25 (`bai-hoc.md`): điểm xa nhất, tuyến góc vuông, 
 ## Bảng thông tin PCCC (form đầu ra của bot chat mục 7)
 Khi người dùng cho quy mô (hoặc bảo "tự ướm chừng") và công năng từng tầng, bot lập BẢNG THÔNG TIN PCCC theo form của hồ sơ thiết kế (mẫu KT-03 DA-13; ví dụ `12_KET_QUA/da14_tk/bang_thong_tin_pccc.md`):
 1. Bảng theo tầng: TẦNG | DIỆN TÍCH (m2) | CHIỀU CAO (m) | KHỐI TÍCH (m3) = diện tích x chiều cao | TỈ LỆ DT SÀN (%) = diện tích tầng / tổng diện tích sàn | CÔNG NĂNG | NHÓM NHÀ (F1.2 khách sạn, F3.2 nhà hàng, F5.1 kỹ thuật...). Hàng TỔNG: tổng diện tích và tổng khối tích.
-2. Bảng chỉ tiêu: tổng số tầng; chiều cao PCCC (từ mặt đường xe chữa cháy tới mép dưới cửa sổ tầng trên cùng, QCVN 06 Đ 1.4.9, `01_TRI_THUC/dinh-nghia/dinh-nghia.md`; ghi phép cộng); chiều cao mái (ước tính); tổng khối tích; nhóm nhà (nhà hỗn hợp liệt kê từng nhóm); bậc chịu lửa (tra Bảng H.2 Phụ lục H theo chiều cao PCCC và diện tích tầng; khách sạn bậc II S0 được đến 50 m, không mặc định bậc I); cấp nguy hiểm cháy kết cấu (S0); sàn tầng lớn nhất; số người giả định mỗi tầng và tổng.
+2. Bảng chỉ tiêu: tổng số tầng; chiều cao PCCC (từ mặt đường xe chữa cháy tới mép dưới cửa sổ tầng trên cùng, QCVN 06 Đ 1.4.9, `01_TRI_THUC/01_CHUNG_THUAT_NGU/dinh-nghia.md`; ghi phép cộng); chiều cao mái (ước tính); tổng khối tích; nhóm nhà (nhà hỗn hợp liệt kê từng nhóm); bậc chịu lửa (tra Bảng H.2 Phụ lục H theo chiều cao PCCC và diện tích tầng; khách sạn bậc II S0 được đến 50 m, không mặc định bậc I); cấp nguy hiểm cháy kết cấu (S0); sàn tầng lớn nhất; số người giả định mỗi tầng và tổng.
 3. Hệ quả sơ bộ: bãi đỗ xe chữa cháy (bắt buộc khi cao PCCC > 28 m; chú thích 1 Bảng 14 chỉ miễn cho nhà cao > 15 m đến 28 m), chiều dài theo Bảng 15/16, rộng theo Bảng 14, lối vào từ trên cao theo tầng, thang máy chữa cháy khi cao PCCC > 28 m (Đ 6.13), số lối ra mỗi tầng (Đ 3.2.6.1), đường thoát nạn.
 4. Quy ước: số liệu người dùng cho thì dùng nguyên; thiếu thì tự ướm chừng và ghi rõ "giả định/ước tính" trong bảng (kích thước theo mặt bằng chữ L trên bản vẽ, chiều cao tầng, số người). Số thập phân dùng dấu phẩy, hàng nghìn dấu chấm.
 

@@ -60,7 +60,8 @@ Làm module nào: đọc `.claude/skills/<skill>/SKILL.md` của module đó và
   Chi tiết và các bài học đã train nằm trong skill `tkpccc-khao-sat-tu-van`, `tkpccc-tham-dinh`.
 - Không trùng lắp, không làm việc thừa (người dùng dặn 2026-11-03): một số liệu một chỗ rồi link tới; chỉ làm, chỉ tra phần công việc
   yêu cầu và đối tượng có thật (không có hệ thống thì không tra chi tiết hệ thống đó); kết luận biết trước thì điền hàng loạt, không giao agent.
-- Tri thức/điều khoản chép nguyên văn vào `01_TRI_THUC/` hoặc `02_DIEU_KHOAN/`, không viết theo trí nhớ.
+- Tri thức/điều khoản chép nguyên văn vào `01_TRI_THUC/<NN_HANG_MUC>/` hoặc `02_DIEU_KHOAN/<NN_HANG_MUC>/` (12 hạng mục, số chung, danh sách ở
+  `00_QUAN_LY_DU_AN/STRUCTURE.md`), không viết theo trí nhớ; giữ tên file.
 - Gọi Claude **không dùng API key**: `04_BACKEND/src/engines/claude.ts` spawn `claude -p` bằng đăng nhập CLI, chỉ công cụ đọc, không nạp hook/plugin cá nhân.
 - `03_DU_LIEU/vat_tu.json` là nguồn DUY NHẤT của danh mục vật tư (plugin + báo giá).
 - Số người dùng nhập kiểu Việt Nam ("1.200" = 1200, "3,5" = 3.5): đọc bằng `docSoVN` (`04_BACKEND/shared/src/bao_gia.ts`).

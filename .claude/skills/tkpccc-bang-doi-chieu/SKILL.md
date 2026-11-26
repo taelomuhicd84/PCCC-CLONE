@@ -50,7 +50,7 @@ KẾT LUẬN TRƯỚC, không dẫn điều khoản, không giải thích dài; 
 - KHOẢNG CÁCH PCCC: "- Các mặt công trình giáp với ranh đất <3m cần xây tường cao tới mái và không trổ ô cửa sổ".
 - GIAO THÔNG: "-Đảm bảo" (hoặc việc phải làm, ngắn).
 - THOÁT NẠN: "Công trình có N thang. Tuy nhiên <lỗi chính> => Chưa đảm bảo làm thang thoát nạn. Cần cải tạo lại thang (<số tối thiểu>), thang phải được đóng kín bằng tường gạch và cửa chống cháy." Ví dụ lỗi chính: thang rẽ quạt.
-- NGĂN CHÁY (có sảnh thông tầng / thang hở nối tầng nổi: áp `01_TRI_THUC/hut-khoi-thong-tang.md`, thêm "nếu không đóng kín phải có màn ngăn khói E45 và hút khói đồng thời các tầng thông nhau"): "Công trình có <lỗ giếng trời lấy sáng (lỗ thông tầng)> => Cần đóng kín bằng tường hoặc kính chống cháy hoặc kính cường lực dày 6mm có trang bị đai Sprinkler".
+- NGĂN CHÁY (có sảnh thông tầng / thang hở nối tầng nổi: áp `01_TRI_THUC/06_CHONG_KHOI/hut-khoi-thong-tang.md`, thêm "nếu không đóng kín phải có màn ngăn khói E45 và hút khói đồng thời các tầng thông nhau"): "Công trình có <lỗ giếng trời lấy sáng (lỗ thông tầng)> => Cần đóng kín bằng tường hoặc kính chống cháy hoặc kính cường lực dày 6mm có trang bị đai Sprinkler".
 - HỆ THỐNG PCCC: "Các hệ thống PCCC cần trang bị:" + "- …" chỉ tên hệ thống, không ngoặc, không số căn cứ. Người dùng dặn 2026-11-06 (áp mãi mãi):
   (a) "họng nước chữa cháy" mặc định gọi là "Hệ thống chữa cháy vách tường (+ bơm)"; (b) sprinkler tầng hầm ghi "tầng hầm để xe" khi là hầm xe;
   (c) CÓ chữa cháy vách tường hoặc sprinkler thì BẮT BUỘC thêm dòng bể nước, chữ ĐỎ ĐẬM: `!- Bể nước PCCC: 126m3 (hầm để xe)` hoặc `9m3 (hầm kỹ thuật)`
@@ -60,7 +60,7 @@ KẾT LUẬN TRƯỚC, không dẫn điều khoản, không giải thích dài; 
 - (2026-11-10) BCKS BẮT BUỘC có ảnh note ở cột GHI CHÚ (`bcks.ghi_chu.<mục>.anh`), mặt bằng xoay trong trang thì thêm `"quay": 90`; không để `ghi_chu: {}`. Mục TƯ VẤN/kết luận chỉ việc quan trọng (thoát nạn, hệ thống PCCC, bơm bể, đóng kín buồng thang, hút khói), bỏ GHCL, bổ sung bản vẽ, bậc chịu lửa.
 - (2026-11-10) Ảnh note của BCKS phải thấy NÉT LINE trên bản vẽ: phương án (tường, cửa) vẽ như các lần train; chỗ chưa đạt mà không có phương án vẽ được (hai cửa thang gần nhau, hành lang/hầm cần hút khói, vị trí bãi đỗ xe chữa cháy) thì khoanh bằng `net` đỏ khép kín (điểm đầu lặp lại ở cuối) + note; xem mẫu cuối `12_KET_QUA/tkcs_kientruc/dien.py` (hàm `khoanh`, đổi toạ độ trang xoay: x = Y nhìn thấy, y = H − X nhìn thấy).
 - (2026-11-10) Khoanh CỤ THỂ từng đối tượng sai: mỗi thang một nét khoanh riêng (không khoanh chung cả cụm; chỉ khoanh chung khi chính khoang đệm/cụm đó có vấn đề), rồi `leader` mũi tên từ ô note (khung = TT) tới nét khoanh; ô note ghi ngắn dễ hiểu. Mẫu: `12_KET_QUA/tkcs_kientruc/dien.py` hàm `khoanh`.
-- (cùng ngày) GIAO THÔNG khi cao PCCC > 15 m: ghi "Cần bố trí bãi đỗ xe chữa cháy: rộng ≥ 6 m, dài ≥ … m" — riêng nhà cao > 15 m đến 28 m xét trước chú thích 1) Bảng 14 (`01_TRI_THUC/qcvn06-dieu-6.md`, nguyên văn: "Không yêu cầu có bãi đỗ xe chữa cháy đối với nhà có số người sử dụng trên mỗi tầng, tính theo Bảng G.9 (Phụ lục G), không vượt quá 50 người và khoảng cách từ đường cho xe chữa cháy đến họng tiếp nước vào nhà không được lớn hơn 18 m."): đủ cả hai ⇒ không yêu cầu bãi đỗ; thiếu số người/tầng hoặc khoảng cách tới họng tiếp nước ⇒ CẦN XÁC NHẬN, không tự miễn, không tự bắt buộc (sửa 2026-11-15) (Bảng 14 rộng; Bảng 15 dài theo diện tích sàn tổng và chu vi: 2.000–4.000 m² chưa sprinkler toàn nhà = 1/4 chu vi, có sprinkler = 1/6 chu vi, ≥ 15 m); khoảng lùi đủ chỗ thì không ghi "chưa đảm bảo" chung chung.
+- (cùng ngày) GIAO THÔNG khi cao PCCC > 15 m: ghi "Cần bố trí bãi đỗ xe chữa cháy: rộng ≥ 6 m, dài ≥ … m" — riêng nhà cao > 15 m đến 28 m xét trước chú thích 1) Bảng 14 (`01_TRI_THUC/03_GIAO_THONG_CUU_NAN/qcvn06-dieu-6.md`, nguyên văn: "Không yêu cầu có bãi đỗ xe chữa cháy đối với nhà có số người sử dụng trên mỗi tầng, tính theo Bảng G.9 (Phụ lục G), không vượt quá 50 người và khoảng cách từ đường cho xe chữa cháy đến họng tiếp nước vào nhà không được lớn hơn 18 m."): đủ cả hai ⇒ không yêu cầu bãi đỗ; thiếu số người/tầng hoặc khoảng cách tới họng tiếp nước ⇒ CẦN XÁC NHẬN, không tự miễn, không tự bắt buộc (sửa 2026-11-15) (Bảng 14 rộng; Bảng 15 dài theo diện tích sàn tổng và chu vi: 2.000–4.000 m² chưa sprinkler toàn nhà = 1/4 chu vi, có sprinkler = 1/6 chu vi, ≥ 15 m); khoảng lùi đủ chỗ thì không ghi "chưa đảm bảo" chung chung.
 - (cùng ngày) KHOẢNG CÁCH PCCC: "khoảng lùi 6 m" là khoảng từ tường nhà tới RANH ĐẤT; công trình lân cận ít nhất sát ranh nên cách tường nhà ≥ khoảng lùi ⇒ so Bảng E.3 (≥ 3 m theo ranh) rồi KẾT LUẬN đạt/không, không ghi "chưa có khoảng cách tới công trình lân cận".
 - (cùng ngày) NGĂN CHÁY: sảnh thông tầng đã ngăn bằng kính cường lực chống cháy (hoặc đóng kín) ⇒ KHÔNG cần hút khói đồng thời các tầng thông nhau; chỉ ghi hút khói cho hành lang > 15 m, hầm.
 - TƯ VẤN: "+ …" 4–6 việc ngắn của CĐT (đóng kín buồng thang, cửa chống cháy các gian phòng tiếp giáp sảnh, số người ≤ 20/tầng nếu 1 thang, lắp hệ thống như đã yêu cầu, tường giáp ranh).
@@ -107,11 +107,11 @@ Không mở cả file JSON bảng gốc (tới 160 KB): đọc bằng `khung`, `
 ## Cột "Tra ở" → file TKPCCC
 | Ghi trong bảng | Mở |
 |---|---|
-| `MOD_<tên>` (vd MOD_loi_ra_va_cua, MOD_hanh_lang) | `02_DIEU_KHOAN/MOD_<tên>*.md` |
-| `SKILL_ngan_chay`, `SKILL_thoat_nan` | `02_DIEU_KHOAN/SKILL_ngan_chay_cong_nang.md`, `02_DIEU_KHOAN/SKILL_thoat_nan.md` |
+| `MOD_<tên>` (vd MOD_loi_ra_va_cua, MOD_hanh_lang) | `02_DIEU_KHOAN/**/MOD_<tên>*.md` |
+| `SKILL_ngan_chay`, `SKILL_thoat_nan` | `02_DIEU_KHOAN/04_NGAN_CHAY_CHIU_LUA/SKILL_ngan_chay_cong_nang.md`, `02_DIEU_KHOAN/05_THOAT_NAN/SKILL_thoat_nan.md` |
 | `chưa nạp: đọc cột quy định của bảng`, `bảng hệ thống B34–B50` | cột Quy định của chính dòng; kết luận theo đó, nguồn ghi "bảng đối chiếu chính thức" |
 | `01_TRI_THUC/…`, `02_DIEU_KHOAN/…` (bảng KS) | đúng file đó; chọn file quy chuẩn theo skill `tkpccc-tra-quy-chuan` |
-Đối tượng trang bị hệ thống (báo cháy, chữa cháy…): TKPCCC đã có QCVN 10:2025 (`01_TRI_THUC/qcvn10-2025-*.md`), dùng thay tiêu chuẩn trang bị cũ.
+Đối tượng trang bị hệ thống (báo cháy, chữa cháy…): TKPCCC đã có QCVN 10:2025 (`01_TRI_THUC/**/qcvn10-2025-*.md`), dùng thay tiêu chuẩn trang bị cũ.
 
 ## Lưu ý dữ liệu
 - Bảng KT dựng từ bộ bảng cũ: đầu bảng còn liệt kê NĐ 136/2020, TCVN cũ. Khi trích căn cứ chỉ dùng văn bản hiện hành (skill `tkpccc-tra-quy-chuan`).

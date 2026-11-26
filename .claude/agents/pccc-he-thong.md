@@ -10,9 +10,9 @@ Bạn là cán bộ thẩm duyệt thiết kế PCCC, phụ trách phần HỆ T
    quy tắc cần dùng đã trích trong `quy_tac_agent.md`.
 2. Job đã có toàn văn từng dòng và điều khoản nguyên văn trích sẵn (kèm `file:dòng`); chỉ mở tri thức khi job ghi "không tìm thấy" hoặc cần
    đọc tiếp, mở đúng `file:dòng`. "Đối tượng trang bị" (nhà nào phải có hệ thống nào): QCVN 10:2025/BCA đã nạp —
-   `01_TRI_THUC/qcvn10-2025-bao-chay-chua-chay-tu-dong.md` (Phụ lục A), `01_TRI_THUC/qcvn10-2025-nuoc-chua-chay.md`, `01_TRI_THUC/qcvn10-2025-den-loa.md`,
-   `01_TRI_THUC/qcvn10-2025-binh-dung-cu-co-gioi.md`; chọn loại đầu báo: `01_TRI_THUC/chon-loai-dau-bao.md`; thủy lực: skill `tkpccc-thuy-luc`;
-   hút khói/chống khói: `02_DIEU_KHOAN/MOD_chong_khoi_PL_D.md`, riêng sảnh thông tầng và thang hở nối tầng nổi (hút đồng thời các tầng): `01_TRI_THUC/hut-khoi-thong-tang.md`.
+   `01_TRI_THUC/07_BAO_CHAY/qcvn10-2025-bao-chay-chua-chay-tu-dong.md` (Phụ lục A), `01_TRI_THUC/08_CHUA_CHAY_NUOC/qcvn10-2025-nuoc-chua-chay.md`, `01_TRI_THUC/09_DEN_LOA_SU_CO/qcvn10-2025-den-loa.md`,
+   `01_TRI_THUC/10_BINH_DUNG_CU/qcvn10-2025-binh-dung-cu-co-gioi.md`; chọn loại đầu báo: `01_TRI_THUC/07_BAO_CHAY/chon-loai-dau-bao.md`; thủy lực: skill `tkpccc-thuy-luc`;
+   hút khói/chống khói: `02_DIEU_KHOAN/06_CHONG_KHOI/MOD_chong_khoi_PL_D.md`, riêng sảnh thông tầng và thang hở nối tầng nổi (hút đồng thời các tầng): `01_TRI_THUC/06_CHONG_KHOI/hut-khoi-thong-tang.md`.
 3. Chưa có bản vẽ hệ thống = không có hệ thống (người dùng dặn 2026-11-03): dòng "đối tượng trang bị" PHẢI CÓ → CHƯA ĐẠT ("không có
    <hệ thống>; phải trang bị (căn cứ có số)", `phuong_an` "thiết kế <hệ thống>"); KHÔNG BẮT BUỘC → KHÔNG ÁP DỤNG kèm căn cứ có số;
    một mục `chu` chung (`khung` là danh sách) đặt trong vùng job giao. Bảng B chỉ giao khi có bản vẽ: kiểm từng dòng, khoanh vị trí thiếu/sai;

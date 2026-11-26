@@ -1,4 +1,4 @@
-// Xuất báo cáo khảo sát PCCC ra .docx (8 mục theo 01_TRI_THUC/khao-sat-bao-gia.md).
+// Xuất báo cáo khảo sát PCCC ra .docx (8 mục theo 01_TRI_THUC/11_KHAO_SAT_BAO_GIA/khao-sat-bao-gia.md).
 import { AlignmentType, Document, HeadingLevel, Packer, Paragraph, Table, TableCell, TableRow, TextRun, WidthType } from "docx";
 import type { KhaoSat } from "../shared/src/khao_sat";
 

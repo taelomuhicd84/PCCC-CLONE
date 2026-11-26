@@ -2,10 +2,10 @@
 Đọc khi cần xác định loại thang trên bản vẽ hoặc kiểm tra yêu cầu N1. Hình nhận dạng chi tiết ở MOD_hinh_Phu_luc_I_cau_thang.md.
 
 ### Định nghĩa loại thang và buồng thang
-Cầu thang loại 1, 2, 3; thang chữa cháy P1, P2; buồng thang L1, L2, N1, N2, N3; khoang đệm, khoảng đệm không nhiễm khói: xem `01_TRI_THUC/dinh-nghia/dinh-nghia.md` (2.4.2, 2.4.3).
+Cầu thang loại 1, 2, 3; thang chữa cháy P1, P2; buồng thang L1, L2, N1, N2, N3; khoang đệm, khoảng đệm không nhiễm khói: xem `01_TRI_THUC/01_CHUNG_THUAT_NGU/dinh-nghia.md` (2.4.2, 2.4.3).
 
 ### 15.3 Cách dùng khi đọc bản vẽ
-1. Tên thang trên bản vẽ ("CT1", "thang thoát nạn số 01") không nói loại. Xác định loại bằng hình: có tường bao + cửa (FD1) và nhãn "buồng thang" → loại 1; thang trong nhà không có buồng → loại 2; thang ngoài nhà không có buồng → loại 3. Nếu không chắc, ghi "suy ra từ bản vẽ, cần xác nhận", không tự gán. Trước khi xếp loại, phóng to từng chiếu nghỉ: bậc chéo, rẽ quạt, cong, xoắn thì xét `01_TRI_THUC/nhan-dien-thang-thoat-nan.md` (3.3.7, 3.4.4) trước.
+1. Tên thang trên bản vẽ ("CT1", "thang thoát nạn số 01") không nói loại. Xác định loại bằng hình: có tường bao + cửa (FD1) và nhãn "buồng thang" → loại 1; thang trong nhà không có buồng → loại 2; thang ngoài nhà không có buồng → loại 3. Nếu không chắc, ghi "suy ra từ bản vẽ, cần xác nhận", không tự gán. Trước khi xếp loại, phóng to từng chiếu nghỉ: bậc chéo, rẽ quạt, cong, xoắn thì xét `01_TRI_THUC/05_THOAT_NAN/nhan-dien-thang-thoat-nan.md` (3.3.7, 3.4.4) trước.
 2. Loại buồng thang bộ (L1, L2, N1–N3) xác định theo cách chiếu sáng/chống nhiễm khói thể hiện: lỗ lấy sáng trên **tường ngoài** mỗi tầng → L1; lỗ lấy sáng **trên mái** → L2; có khoang đệm, vùng đệm, tăng áp → N1–N3.
 3. Yêu cầu buồng thang loại nào cho nhà nào (chiều cao PCCC, nhóm nhà, số tầng) thuộc skill khác (DU_LIEU_TU_SKILL_KHAC.md mục 6, 9); chưa có thì chỉ nêu loại theo bản vẽ, không kết luận đạt/không đạt.
 4. Dùng với 3.2.1b: "vào buồng thang bộ hoặc tới cầu thang bộ loại 3"; với **loại 3 phải có tính toán thoát nạn theo Phụ lục G**; với **loại 2** (cầu thang hở trong nhà) chỉ được tính là lối thoát nạn khi quy chuẩn cho phép (G.1.2.1: "cầu thang bộ loại 2 mà quy chuẩn cho phép thoát nạn"; 3.2.1b: hành lang bên nhà dưới 28 m).

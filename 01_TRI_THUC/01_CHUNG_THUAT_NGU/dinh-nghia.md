@@ -4,24 +4,24 @@ Lớp tri thức (knowledge), không phải điều kiện xét. Các skill và 
 ## 1.4.21a Gian phòng chung
 Gian phòng có công năng dùng để tổ chức sự kiện (ví dụ hội họp, hội thảo, trình diễn, thể thao và tương tự), có sự tập trung cùng lúc một nhóm người trong một khoảng thời gian ấn định. Nhóm người này có đặc điểm chung là không quen thuộc với địa điểm tập trung (không thường xuyên hoặc không định kỳ có mặt).
 Không phải gian phòng chung: văn phòng, gian phòng sản xuất và các gian phòng dùng chủ yếu cho người trong nội bộ tòa nhà (phòng họp nội bộ, phòng ăn nội bộ, phòng sinh hoạt chung nội bộ và tương tự).
-**Dùng ở:** 3.5.3 (Bảng B.9), 3.5.10 (có chữa cháy tự động thì không yêu cầu cấp nguy hiểm cháy vật liệu) và 3.2.2c (phòng chờ, gửi đồ, hút thuốc, vệ sinh tầng hầm) → xem `02_DIEU_KHOAN/MOD_vat_lieu_hoan_thien.md`.
+**Dùng ở:** 3.5.3 (Bảng B.9), 3.5.10 (có chữa cháy tự động thì không yêu cầu cấp nguy hiểm cháy vật liệu) và 3.2.2c (phòng chờ, gửi đồ, hút thuốc, vệ sinh tầng hầm) → xem `02_DIEU_KHOAN/05_THOAT_NAN/MOD_vat_lieu_hoan_thien.md`.
 **Ví dụ:** bản vẽ DA-10 1 xem các phòng karaoke là gian phòng chung (khách bên ngoài, không nội bộ). Hành lang, tiền sảnh, buồng thang trên đường thoát nạn không phải gian phòng chung; chúng theo Bảng B.8.
 
 ## 1.4.22 Gian phòng có người làm việc thường xuyên
 Gian phòng mà con người có mặt không ít hơn 2 giờ liên tục hoặc có mặt tổng cộng 6 giờ trong một ngày đêm.
-**Dùng ở:** 3.2.10 (phòng kho ≤ 200 m² không có người làm việc thường xuyên được miễn chiều mở cửa), 3.2.6.2b và nhiều điều khác → `02_DIEU_KHOAN/MOD_loi_ra_va_cua.md`, `02_DIEU_KHOAN/MOD_so_luong_loi_ra.md`.
+**Dùng ở:** 3.2.10 (phòng kho ≤ 200 m² không có người làm việc thường xuyên được miễn chiều mở cửa), 3.2.6.2b và nhiều điều khác → `02_DIEU_KHOAN/05_THOAT_NAN/MOD_loi_ra_va_cua.md`, `02_DIEU_KHOAN/05_THOAT_NAN/MOD_so_luong_loi_ra.md`.
 
 ## 1.4.23 Hành lang bên (bản sửa đổi)
 Hành lang mà ở một phía có thông gió với bên ngoài qua các lỗ mở thông với không khí bên ngoài khi có cháy, với chiều cao thông thủy tính từ đỉnh tường chắn ở mép hành lang lên phía trên không nhỏ hơn 1,2 m. Phía kia là tường + cửa ngăn cháy của phòng. Hành lang **trong** = kín, không có lỗ mở ra ngoài; không thấy lỗ mở trên bản vẽ thì không gọi là hành lang bên.
 Kích thước lỗ mở (chú thích): khi hành lang bên được ngăn cách với phòng liền kề bằng bộ phận ngăn cháy, tổng diện tích lỗ mở ≥ 15% diện tích sàn hành lang và mọi điểm trên hành lang cách mép gần nhất của lỗ mở ≤ 9 m theo phương ngang. Trường hợp hành lang bên không ngăn cách bằng bộ phận ngăn cháy còn yêu cầu khác (chưa nạp).
-**Dùng ở:** 3.2.1b (hành lang bên nhà < 28 m dẫn vào thang loại 2), 3.2.8 (đo phân tán dọc hành lang), 3.3.5 (không yêu cầu GHCL tường, cửa giữa phòng và hành lang bên, trừ F5 hạng A, B, C và bếp), Phụ lục D, Hình I.8 h, i, k → `02_DIEU_KHOAN/MOD_hanh_lang_bao_che.md`. Hình minh họa: `hinh/`. Bản tóm tắt cũ: `memory/memory.md`.
+**Dùng ở:** 3.2.1b (hành lang bên nhà < 28 m dẫn vào thang loại 2), 3.2.8 (đo phân tán dọc hành lang), 3.3.5 (không yêu cầu GHCL tường, cửa giữa phòng và hành lang bên, trừ F5 hạng A, B, C và bếp), Phụ lục D, Hình I.8 h, i, k → `02_DIEU_KHOAN/05_THOAT_NAN/MOD_hanh_lang_bao_che.md`. Hình minh họa: `hinh/`. Bản tóm tắt cũ: `memory/memory.md`.
 ## 2.4.2 Phân loại cầu thang bộ thoát nạn
 - **Loại 1:** cầu thang bên trong nhà, đặt trong buồng thang (kín).
 - **Loại 2:** cầu thang bên trong nhà, để hở.
 - **Loại 3:** cầu thang bên ngoài nhà, để hở.
 - "Để hở" = không được đặt trong buồng thang bộ.
 - **Thang chữa cháy** (không phải thang thoát nạn): P1 thang đứng; P2 thang bậc, độ nghiêng không quá 6:1 (không quá 80°).
-**Dùng ở:** 3.2.1b (lối ra tầng khác tầng 1), 3.3.3, 3.4.2 (thang loại 3), 3.4.11, 3.4.16, G.1.2.1 → `02_DIEU_KHOAN/MOD_cau_thang_buong_thang.md`. Hình nhận dạng: `02_DIEU_KHOAN/MOD_hinh_Phu_luc_I_cau_thang.md` (Hình I.6).
+**Dùng ở:** 3.2.1b (lối ra tầng khác tầng 1), 3.3.3, 3.4.2 (thang loại 3), 3.4.11, 3.4.16, G.1.2.1 → `02_DIEU_KHOAN/05_THOAT_NAN/MOD_cau_thang_buong_thang.md`. Hình nhận dạng: `02_DIEU_KHOAN/05_THOAT_NAN/MOD_hinh_Phu_luc_I_cau_thang.md` (Hình I.6).
 
 ## 2.4.3 Phân loại buồng thang bộ thoát nạn (theo mức bảo vệ chống nhiễm khói)
 - **Buồng thang thông thường:**
@@ -31,7 +31,7 @@ Kích thước lỗ mở (chú thích): khi hành lang bên được ngăn cách
   - **N1:** lối vào buồng thang từ mỗi tầng qua một **vùng đệm không khí không nhiễm khói** theo đường chuyển tiếp hở. Được thay N1 bằng buồng thang có lối vào từ mỗi tầng qua **khoang đệm**, cả khoang đệm và buồng thang có áp suất dương khi cháy, cấp không khí vào hai nơi độc lập.
   - **N2:** buồng thang có áp suất không khí dương (cao hơn bên ngoài) khi có cháy.
   - **N3:** lối vào buồng thang từ mỗi tầng qua **khoang đệm ngăn cháy** luôn có áp suất dương (thường xuyên hoặc khi có cháy); trong buồng thang không cần áp suất dương.
-**Dùng ở:** 3.4.8 (chiếu sáng), 3.4.9, 3.4.10 (khoảng đệm N1), 3.4.11, 3.4.12, 3.4.13 (khi nào cần N1) → `02_DIEU_KHOAN/MOD_cau_thang_buong_thang.md`; Phụ lục D (cấp không khí) → `02_DIEU_KHOAN/MOD_chong_khoi_PL_D.md`.
+**Dùng ở:** 3.4.8 (chiếu sáng), 3.4.9, 3.4.10 (khoảng đệm N1), 3.4.11, 3.4.12, 3.4.13 (khi nào cần N1) → `02_DIEU_KHOAN/05_THOAT_NAN/MOD_cau_thang_buong_thang.md`; Phụ lục D (cấp không khí) → `02_DIEU_KHOAN/06_CHONG_KHOI/MOD_chong_khoi_PL_D.md`.
 
 ## Khoang đệm, khoảng đệm không nhiễm khói
 - **Khoang đệm (ngăn cháy):** gian nhỏ giữa hành lang và buồng thang, có cửa ngăn cháy hai đầu; ở N3 luôn áp suất dương (diện tích ≥ 3,0 m², ≥ 6,0 m² nếu đồng thời là sảnh thang máy chữa cháy, 3.4.9). Khoang đệm ngăn cháy loại 1 dùng ở 3.2.2 (tầng hầm).
@@ -43,8 +43,8 @@ Kích thước lỗ mở (chú thích): khi hành lang bên được ngăn cách
 - **Ban công thoáng, sân thượng thoáng** (3.2.6.2): hở ra ngoài trời, bộ phận bao che (nếu có) không cản thoát nạn, cứu nạn khi lực lượng chữa cháy tiếp cận.
 - **Khu vực không có thông gió tự nhiên khi cháy** (Phụ lục D): không có ô cửa mở trên tường ngoài, hoặc có nhưng diện tích không đủ thoát sản phẩm cháy.
 - **Màn ngăn khói** (D.7): màn cuốn điều khiển tự động từ xa hoặc kết cấu cố định, không nguy hiểm hơn Ch1 trên nền không cháy, hạ xuống ≥ chiều dày lớp khói, dùng chia vùng khói.
-- **Đường thoát nạn không gồm** thang máy, thang cuốn và các đoạn nêu ở 3.3.3 → `02_DIEU_KHOAN/MOD_hanh_lang_bao_che.md`.
-- **Mật độ dòng người** = tổng số người phải thoát / diện tích đường thoát nạn (Phụ lục G, chú thích Bảng G.2a) → `02_DIEU_KHOAN/MOD_tinh_toan_khoang_cach.md`.
+- **Đường thoát nạn không gồm** thang máy, thang cuốn và các đoạn nêu ở 3.3.3 → `02_DIEU_KHOAN/05_THOAT_NAN/MOD_hanh_lang_bao_che.md`.
+- **Mật độ dòng người** = tổng số người phải thoát / diện tích đường thoát nạn (Phụ lục G, chú thích Bảng G.2a) → `02_DIEU_KHOAN/05_THOAT_NAN/MOD_tinh_toan_khoang_cach.md`.
 ## 1.4.9 Chiều cao phòng cháy chữa cháy (chiều cao PCCC) của nhà
 Nguồn nguyên văn: cột Quy định của bảng đối chiếu chính thức (`.claude/skills/tkpccc-bang-doi-chieu/data/A2.json`, dòng idx 3 "Chiều cao phục vụ PCCC",
 Khoản Điều "Đ 1.4.9 / QCVN 06:2022/BXD và Sửa đổi 1: 2023"; cùng câu ở các bảng A khác). Văn bản QCVN 06 Điều 1.4 gốc chưa nạp vào `01_TRI_THUC/`.
@@ -57,15 +57,15 @@ Khoản Điều "Đ 1.4.9 / QCVN 06:2022/BXD và Sửa đổi 1: 2023"; cùng c�
 > CHÚ THÍCH 4: Trong trường hợp các mặt đường tiếp cận nhà có cao độ khác nhau thì nhà có thể có các chiều cao PCCC khác nhau tùy thuộc vào phương án thiết kế an toàn cháy cụ thể.
 
 Cách ghi: KHÔNG dừng ở cao độ sàn (người dùng sửa 2026-11-02: ghi chú đặt tại mép dưới cửa sổ) và KHÔNG tính từ ±0.000 (phải từ mặt đường); ghi phép cộng đủ ba phần: cao độ sàn tầng trên cùng
-+ bậu cửa sổ (hoặc lan can) + chênh giữa ±0.000 và mặt đường xe chữa cháy. Chỉ có mặt bằng thì ước lượng theo `01_TRI_THUC/khao-sat-bao-gia.md` mục "Ước lượng chiều cao", có nhãn "ước lượng".
++ bậu cửa sổ (hoặc lan can) + chênh giữa ±0.000 và mặt đường xe chữa cháy. Chỉ có mặt bằng thì ước lượng theo `01_TRI_THUC/11_KHAO_SAT_BAO_GIA/khao-sat-bao-gia.md` mục "Ước lượng chiều cao", có nhãn "ước lượng".
 **Dùng ở:** mọi ngưỡng chiều cao (15, 21, 25, 28, 30, 50 m) của QCVN 06 và QCVN 10; ghi chú PDF đặt nét tại mép dưới cửa sổ (skill `tkpccc-ghi-chu-ban-ve`, quy tắc 1).
 
 ## Nhà ở có kinh doanh: phân loại theo ba mặt (gom 2026-11-15, review R1)
 Một căn nhà có thể vừa "không phải nhà hỗn hợp" (diện thẩm định) vừa "trang bị như nhà hỗn hợp" (hệ thống). Xét riêng từng mặt, ghi rõ mặt nào:
 | Mặt | Căn cứ (nguyên văn ở) | Quy tắc |
 |---|---|---|
-| Diện thẩm định | NĐ 105/2025 Phụ lục III mục 8 + công văn C07 (`01_TRI_THUC/cv-2360-cahn-1183-c07-dien-tham-dinh.md` mục 1) | Mục 8 "trừ công trình nhà ở riêng lẻ có kết hợp sản xuất, kinh doanh"; có yếu tố ở của chủ hộ thì không xác định là đa năng, hỗn hợp |
-| Trang bị hệ thống | QCVN 10:2025 Bảng A.1 mục 1–2, chú thích (2) (`01_TRI_THUC/qcvn10-2025-bao-chay-chua-chay-tu-dong.md`) | Tính TỔNG phần diện tích sản xuất, kinh doanh: < 30 % tổng sàn ⇒ mục 1–2; 30–70 % ⇒ "như đối với nhà hỗn hợp" (mục 21); > 70 % ⇒ theo công năng sản xuất, kinh doanh |
-| Bảng kiến trúc (KT) | QCVN 06 Điều 1.4 "nhà hỗn hợp" | `01_TRI_THUC/thuat-ngu-chuan.md` ghi ngưỡng 70 % mỗi công năng; nguyên văn Điều 1.4 CHƯA NẠP (CẦN NGUỒN) |
+| Diện thẩm định | NĐ 105/2025 Phụ lục III mục 8 + công văn C07 (`01_TRI_THUC/02_PHAP_LY_THAM_DINH/cv-2360-cahn-1183-c07-dien-tham-dinh.md` mục 1) | Mục 8 "trừ công trình nhà ở riêng lẻ có kết hợp sản xuất, kinh doanh"; có yếu tố ở của chủ hộ thì không xác định là đa năng, hỗn hợp |
+| Trang bị hệ thống | QCVN 10:2025 Bảng A.1 mục 1–2, chú thích (2) (`01_TRI_THUC/07_BAO_CHAY/qcvn10-2025-bao-chay-chua-chay-tu-dong.md`) | Tính TỔNG phần diện tích sản xuất, kinh doanh: < 30 % tổng sàn ⇒ mục 1–2; 30–70 % ⇒ "như đối với nhà hỗn hợp" (mục 21); > 70 % ⇒ theo công năng sản xuất, kinh doanh |
+| Bảng kiến trúc (KT) | QCVN 06 Điều 1.4 "nhà hỗn hợp" | `01_TRI_THUC/01_CHUNG_THUAT_NGU/thuat-ngu-chuan.md` ghi ngưỡng 70 % mỗi công năng; nguyên văn Điều 1.4 CHƯA NẠP (CẦN NGUỒN) |
 Ví dụ: nhà ở 60 %, cà phê 20 %, spa 20 % ⇒ tổng KD 40 % ⇒ hệ thống trang bị như nhà hỗn hợp (không xét từng loại KD dưới 30 %).
 **Dùng ở:** chọn bảng (`tkpccc-bang-doi-chieu` lệnh `chon`), dòng diện thẩm định của bảng KS, mục Hệ thống của BCKS.

@@ -433,7 +433,7 @@ BỐ TRÍ, hoàn tác, vẽ loop, kiểm tra, báo cáo); Dim đối tượng 5 
   tách 20 x 10 m tại x 8 m ra 80 + 120 m²).
 - Thêm: `PCCC_ADIMMOC` (bấm trước mép tường cho ADIM, nhớ ở `Lenh.AdimMoc`, ADIM dùng xong xoá), trang ADIM 2 nút mốc hiện ✓ toạ độ + ✕;
   `PCCC_KT` ghi `KetQuaKtCuoi`, trang Báo cháy hiện ở chân (mù %, cảnh báo). Test 118/118 (2 mốc bấm trước ra cùng 4 dim như gõ trong lệnh).
-- Thêm: bước "Công năng" trang Báo cháy: đọc bảng "Loại theo khu vực" của `01_TRI_THUC/chon-loai-dau-bao.md` (không chép bảng vào mã), gợi ý loại + căn cứ,
+- Thêm: bước "Công năng" trang Báo cháy: đọc bảng "Loại theo khu vực" của `01_TRI_THUC/07_BAO_CHAY/chon-loai-dau-bao.md` (không chép bảng vào mã), gợi ý loại + căn cứ,
   tự chọn đầu khói / nhiệt; chỉ xét phần loại trước ngoặc (karaoke ghi "Nhiệt (… khói thuốc …)" phải ra nhiệt). `build.bat` chép file .md cạnh DLL.
 - Thêm: ống gió (spec "vật cản trần"): `PCCC_RAI` tách polyline kín / vòng tròn layer tên có ONG_GIO, ONG-GIO, ONGGIO, DUCT khỏi vùng chọn; đầu báo rơi vào
   ống dịch tới cạnh gần nhất + 0,1 m (còn trong phòng, không vào ống khác), không dịch được thì báo `ket`. Test 119/119 (ống 2 x 2 m trùm 1 đầu: dịch, vẫn 6 đầu).
@@ -668,7 +668,7 @@ Nút ☰ đầu palette: menu phân hệ + thu gọn / hiện thanh dọc (nhớ
 - Bot chat (không có Bash): mặt bằng trên vẽ lại bộ 25 vùng đã duyệt 19/11 (đọc lại từ nhật ký phiên và `b4_vung.json`, dời theo `goc`) + rải 55 BC_KHOI;
   mặt bằng dưới là kết quả plugin người dùng chạy: 35 vùng, 69 đầu báo. `rai` nhận `vung` là toạ độ đỉnh, không phải handle (lỗi "Input string" nếu đưa handle).
 - Plugin sai vì cột chữ I trên layer tên ống bị coi là tường 2 nét rồi bắc cầu thành tường ảo; thiếu luật khoang vì kèo, khu mái che / phòng bơm / hiên; bỏ sót 2 phòng văn phòng.
-  Luật dạy plugin L1–L8 + test: `01_TRI_THUC/hoc/phan-vung-xuong-mai-keo.md`. Chưa sửa mã (việc kế ở `TIEN_DO.md`).
+  Luật dạy plugin L1–L8 + test: `01_TRI_THUC/12_BAI_HOC_DU_AN/phan-vung-xuong-mai-keo.md`. Chưa sửa mã (việc kế ở `TIEN_DO.md`).
 
 ## 2026-11-20 — Viết mã phân vùng như AI: cột theo hình, khoang vì kèo, khu không rải theo chữ (chưa build)
 - Bot chat lượt 2 (không có shell): đọc lại cột trên "BEAM QUYẾT THẮNG.dwg": chữ I 507 x 830 mm, layer `$.2.9DN25`, 4 hàng dọc x 9 hàng ngang cách 6 m.

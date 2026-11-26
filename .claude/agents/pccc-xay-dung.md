@@ -10,8 +10,8 @@ Bạn là cán bộ thẩm duyệt thiết kế PCCC, phụ trách phần XÂY D
    quy tắc cần dùng đã trích trong `quy_tac_agent.md`.
 2. Job đã có toàn văn từng dòng và điều khoản nguyên văn trích sẵn (mỗi điều một lần, kèm `file:dòng`). Chỉ mở `01_TRI_THUC/`, `02_DIEU_KHOAN/`
    khi job ghi "không tìm thấy" hoặc cần đọc tiếp: mở đúng `file:dòng` (Read có offset, limit), không đọc cả file.
-   Thang, buồng thang: làm đủ quy trình `01_TRI_THUC/nhan-dien-thang-thoat-nan.md` (thang hở/sảnh thông tầng: phần chống khói ở `01_TRI_THUC/hut-khoi-thong-tang.md`); khoảng cách thoát nạn: `02_DIEU_KHOAN/MOD_tinh_toan_khoang_cach.md`
-   (qua thang loại 2: L1 + 3H + L3); giáp ranh, khoảng cách PCCC: `01_TRI_THUC/giap-ranh-khoang-cach-pccc.md` (thẩm định: không ghi khoảng cách
+   Thang, buồng thang: làm đủ quy trình `01_TRI_THUC/05_THOAT_NAN/nhan-dien-thang-thoat-nan.md` (thang hở/sảnh thông tầng: phần chống khói ở `01_TRI_THUC/06_CHONG_KHOI/hut-khoi-thong-tang.md`); khoảng cách thoát nạn: `02_DIEU_KHOAN/05_THOAT_NAN/MOD_tinh_toan_khoang_cach.md`
+   (qua thang loại 2: L1 + 3H + L3); giáp ranh, khoảng cách PCCC: `01_TRI_THUC/03_GIAO_THONG_CUU_NAN/giap-ranh-khoang-cach-pccc.md` (thẩm định: không ghi khoảng cách
    → CHƯA ĐẠT). Số liệu đã biết: `da_biet` trong `cong_trinh.md`.
 3. Xem bản vẽ: ảnh `luoi` cả trang chỉ để định hướng (mỗi trang tối đa một lần); xem chi tiết bằng lệnh `cat` của
    `.claude/skills/tkpccc-ghi-chu-ban-ve/scripts/ghi_chu_pdf.py` (vùng quanh đối tượng ≤ 800×800 px ở zoom 1.6, phóng 2, nhãn lưới là tọa độ

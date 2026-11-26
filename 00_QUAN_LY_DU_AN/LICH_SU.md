@@ -5,7 +5,7 @@
   MVP bóc KL + báo giá, block do tool tạo (attribute MA_VT, sửa hình được), đơn giá: tool tạo mẫu, gọi Claude không dùng API key.
 - Pha 1: `03_DU_LIEU/vat_tu.json` (51 mã), plugin `PCCC_LIB/DAT/ONG/BOC`, runner (`/api/khoi-luong`, đơn giá mẫu Excel, báo giá Excel có công thức),
   web tab Khối lượng & Báo giá, `/api/claude` qua `claude -p`.
-- Pha 2: tab Hướng dẫn B0–B7 (theo quy trình người dùng: B0, B1, B4, B5a, B5b, B6a, B6b, B6c, B7) đọc nguyên văn `01_TRI_THUC/*.md`,
+- Pha 2: tab Hướng dẫn B0–B7 (theo quy trình người dùng: B0, B1, B4, B5a, B5b, B6a, B6b, B6c, B7) đọc nguyên văn `01_TRI_THUC/**/*.md`,
   hỏi Claude theo tài liệu của bước; tab Khảo sát 8 mục (Claude gợi ý, xuất Word); báo giá sơ bộ theo m².
 - Tham khảo LHB Block Scheduler (chỉ tính năng, DLL có khoá bản quyền nên không dịch ngược): thêm không đếm trùng, block lồng/MINSERT,
   bỏ XREF, tách theo tầng/khu (`PCCC_BOC` → sheet `TheoKhuVuc`), `PCCC_GAN` (gán block có sẵn → mã), `PCCC_BANG`, `PCCC_VUNGBV`.
@@ -37,7 +37,7 @@
 - Pha 4a xong (người dùng chọn: tab web + xuất Excel mẫu): chép lõi thủy lực TCVN 7336 + test + Excel mẫu + script xuất từ SKILL-PCCC-NEW;
   `runner/src/thuy_luc.ts`, 4 route, tab web "Thủy lực". Đối chiếu Excel (Excel COM tính lại) với web phát hiện 2 lỗi của Excel mẫu/xuất:
   F106 lưu lượng hàng II dùng áp nút a (TCVN 7336 B.2.10.12 là nút b) và bảng nhánh phải giữ số cũ khi đối xứng → sửa lúc xuất; sau sửa
-  Q sprinkler Excel 76,2816 / web 76,2801. Ghi lỗi 13 vào `01_TRI_THUC/kiem-bang-tinh-thuy-luc-7336.md`. Kiểm: npm test 56, pytest 2.
+  Q sprinkler Excel 76,2816 / web 76,2801. Ghi lỗi 13 vào `01_TRI_THUC/08_CHUA_CHAY_NUOC/kiem-bang-tinh-thuy-luc-7336.md`. Kiểm: npm test 56, pytest 2.
 - Người dùng: tự sửa 2 lỗi Excel bên SKILL-PCCC-NEW; chốt luật họng "tối thiểu 2,5 (H.5/H.6), tính toán theo H.7 tra chiều cao tia đặc".
   Áp vào TKPCCC: Excel xuất D184 dùng I162 (H.7) thay H18; lõi `thuy_luc.ts` QBmin mặc định 2,5 (trước lấy lăng H.7) + cảnh báo lăng < tối thiểu;
   web thêm ô tối thiểu 1 tia; lỗi 14 trong sổ tri thức. Excel và web khớp (Q bơm 81,4816 / 81,4801). npm test 57.
@@ -50,16 +50,16 @@
 - Người dùng train quy trình đánh giá thang thoát nạn trong nhà (PDF có nét tím = PA1, xanh lá = PA2 đóng kín thang giữa, xanh dương = khoảng
   mép bậc tới tường; ảnh mẫu cung chiếu nghỉ CT1/FD1). Tra luật theo yêu cầu: 3.4.8b cho chiếu sáng nhân tạo khi không trổ được ô lấy sáng;
   3.4.3 chiếu ≥ bản thang, cánh cửa không làm giảm bề rộng tính toán; 4.23 + bảng cửa: cửa giếng thang máy E 30; 3.2.1b liệt kê "trực tiếp
-  vào buồng thang bộ" (người dùng muốn được hỏi); thang loại 2 chờ người dùng train. Ghi vào `01_TRI_THUC/nhan-dien-thang-thoat-nan.md`.
+  vào buồng thang bộ" (người dùng muốn được hỏi); thang loại 2 chờ người dùng train. Ghi vào `01_TRI_THUC/05_THOAT_NAN/nhan-dien-thang-thoat-nan.md`.
 - Người dùng dặn (ghi vào `CLAUDE.md`): việc của Claude là báo cáo, chấp nhận hay không là việc người dùng (không hỏi chọn); kết quả tư vấn
   theo khung bảng đối chiếu chính thức (TT, Nội dung đối chiếu, Nội dung thiết kế, Quy định, Khoản Điều, Kết luận). `tu_van_thiet_ke.md` bản 5
   (27 dòng) và PDF sửa chữ thang đã gửi; khung PDF chưa đánh số theo TT. Dừng ở usage 5 giờ 86%.
 - Người dùng sửa: thang ngoài nhà ở mặt tiền là PHƯƠNG ÁN 3 do mình đề xuất, không phải hạng mục đối chiếu. `tu_van_thiet_ke.md` bản 6
-  (23 dòng): PA1, PA2, PA3 chuyển vào cột Kết luận; luật ghi vào `CLAUDE.md` và `01_TRI_THUC/nhan-dien-thang-thoat-nan.md`.
+  (23 dòng): PA1, PA2, PA3 chuyển vào cột Kết luận; luật ghi vào `CLAUDE.md` và `01_TRI_THUC/05_THOAT_NAN/nhan-dien-thang-thoat-nan.md`.
 - Người dùng train thang loại 2, phần đường thoát nạn: 3.3.2 bản sửa đổi (chép nguyên văn từ ảnh bản hợp nhất) đo trên tầng tới mép
   bậc đầu tiên của thang loại 2, đoạn trên thang lấy 3H. Người dùng xác nhận PHẢI CỘNG L1 + 3H + L3 rồi so Phụ lục G (ví dụ vẽ mặt bằng
-  + mặt cắt: 19,0 + 10,8 + 3,0 = 32,8 m > 30 m). Ghi vào `02_DIEU_KHOAN/MOD_tinh_toan_khoang_cach.md`, trỏ từ `01_TRI_THUC/nhan-dien-thang-thoat-nan.md`
-  bước 5 và `02_DIEU_KHOAN/MOD_cau_thang_buong_thang.md`.
+  + mặt cắt: 19,0 + 10,8 + 3,0 = 32,8 m > 30 m). Ghi vào `02_DIEU_KHOAN/05_THOAT_NAN/MOD_tinh_toan_khoang_cach.md`, trỏ từ `01_TRI_THUC/05_THOAT_NAN/nhan-dien-thang-thoat-nan.md`
+  bước 5 và `02_DIEU_KHOAN/05_THOAT_NAN/MOD_cau_thang_buong_thang.md`.
 - Pha 5a (người dùng giao Claude tự quyết; dặn thêm giữa chừng: chừa đường thiết kế CAD qua MCP, mỗi module một skill để sửa đỡ tốn token):
   module `tkpccc-bang-doi-chieu` (chép 76 bảng A/B/KT từ SKILL-PCCC-NEW 24743f9 + khung KS; CLI chon, khung, dong, tim, lamviec, job, gop,
   kiem, xlsx, md), `tkpccc-ghi-chu-ban-ve` (annotation PDF thật: khung, callout, leader, nét, tường, cửa, chữ; trang xoay; neo theo chữ;
@@ -72,7 +72,7 @@
   dòng (`khung` là danh sách); khung phương án chỉ hiện nhãn PA. Tra thêm 4.28, 6.13, Bảng 14 chú thích 1), 3.3.6, 6.6, 6.7, D.2.
 - Người dùng dặn: vẽ buồng thang bằng NÉT LIỀN KHÉP KÍN và vẽ ở TẤT CẢ các tầng (không chỉ tầng điển hình); hỏi lại cung vế thang (đã train,
   lần trước bỏ sót). Thêm kiểu `cung` vào `tkpccc-ghi-chu-ban-ve` (1/4 tròn tô nhạt, tâm đầu mép bậc sát giếng thang, R = bề rộng vế);
-  ghi quy tắc vào SKILL.md và `01_TRI_THUC/nhan-dien-thang-thoat-nan.md`. Hồ sơ DA-01: vẽ PA1/PA2 thang giữa + cung ở tầng 1, lửng,
+  ghi quy tắc vào SKILL.md và `01_TRI_THUC/05_THOAT_NAN/nhan-dien-thang-thoat-nan.md`. Hồ sơ DA-01: vẽ PA1/PA2 thang giữa + cung ở tầng 1, lửng,
   2–4, thượng; thang trái hiện có + cung; hầm: đóng kín buồng thang hầm + khoang đệm thang máy (4.28). Phát hiện thêm: cửa thang trái mở ra
   hành lang, ngược chiều thoát (3.2.10), đổi chiều thì quét vào cung vế; tầng 1 PA2 phải có lối ra theo 3.4.7. File mới
   `12_KET_QUA/canho/ban_ve_ghi_chu_moi_tang.pdf` (165 annotation; file cũ đang mở nên không ghi đè được).
@@ -103,7 +103,7 @@
    Thang hở (loại 2) cũng vậy: chỉ là kiến thức dùng để tư vấn (thang hiện có đủ điều kiện loại 2 thì ghi "được dùng thang hở theo điều …"
    trong Kết luận của dòng thang), không thành dòng riêng. Bảng bản 6 còn dòng 14 "Thang hở (loại 2)": phải bỏ.
 3. Chỉ báo cáo; chấp nhận hay không là việc người dùng: không hỏi chọn, không đặt nút "chấp nhận / không". Thiếu kiến thức thì nhờ train.
-4. Thang thoát nạn: làm đủ quy trình `01_TRI_THUC/nhan-dien-thang-thoat-nan.md` (nhận diện từng thang → đạt/không → phương án từng thang →
+4. Thang thoát nạn: làm đủ quy trình `01_TRI_THUC/05_THOAT_NAN/nhan-dien-thang-thoat-nan.md` (nhận diện từng thang → đạt/không → phương án từng thang →
    kiểm khả thi trên mặt bằng → thang ngoài nhà → không có thì báo người dùng xem xét). Không loại thang vì thiếu ô lấy sáng (3.4.8b).
    Không có số trên bản vẽ thì ghi "phải đảm bảo ≥ …". Chỉ ghi "cửa chống cháy" khi bản vẽ có ký hiệu.
 5. Bản vẽ cải tạo (2 mặt bằng cùng tờ) xét theo mặt bằng cải tạo phía dưới; tầng thượng xây kín hoặc vượt diện tích tum thì tính 1 tầng.
@@ -114,7 +114,7 @@
    bản 6); vẫn chờ người dùng train điều kiện thang loại 2.
 10. Cửa thang máy E 30 CHỈ khi thang máy nằm NGOÀI buồng thang (PA1). Mở rộng buồng thang ra sảnh thang máy (PA2) thì thang máy nằm TRONG
    buồng thang: xét 3.4.6 (≤ 2 thang chở người, chỉ xuống tới tầng 1; thang máy DA-01 xuống hầm), không xét E 30 (người dùng sửa
-   2026-11-02; đã sửa bảng bản 6 dòng 11, PDF, `01_TRI_THUC/nhan-dien-thang-thoat-nan.md`).
+   2026-11-02; đã sửa bảng bản 6 dòng 11, PDF, `01_TRI_THUC/05_THOAT_NAN/nhan-dien-thang-thoat-nan.md`).
 
 ## 2026-11-03
 - (02/11 khuya → 03/11 sáng, máy PCCCVIP) Thử luồng THẨM ĐỊNH (skill `tkpccc-tham-dinh`) trên hồ sơ Q.4 để đo cỡ job: `cong_trinh` chép từ
@@ -129,7 +129,7 @@
   (≤ 2 agent một lượt, kiểm usage giữa lượt, agent chết vì 429 thì SendMessage làm tiếp), ≤ 55 dòng một job, `da_biet`, chia vùng ô chữ
   chung theo job, quy tắc PHẢI CÓ khi chưa có bản vẽ hệ thống (CẦN XÁC NHẬN, chờ người dùng xác nhận), giáp ranh theo Bài học 30;
   agent `pccc-xay-dung`, `pccc-he-thong` thêm cách tiết kiệm token (đọc 8–10 dòng một lệnh, ghi JSON một lần bằng script); lệnh `job` tự tạo
-  thư mục `phan/`; sửa `01_TRI_THUC/chon-loai-dau-bao.md` (trần giả, sàn nâng là Bảng A.2 mục 7 QCVN 10:2025, không phải A.3); ghi lỗi cột
+  thư mục `phan/`; sửa `01_TRI_THUC/07_BAO_CHAY/chon-loai-dau-bao.md` (trần giả, sàn nâng là Bảng A.2 mục 7 QCVN 10:2025, không phải A.3); ghi lỗi cột
   Tra ở và ngưỡng khối tích cũ của bảng A5 vào skill `tkpccc-bang-doi-chieu`.
 - (03/11 sáng, máy D:/1_Claude/TKPCCC, người dùng chép `12_KET_QUA/q4`, `12_KET_QUA/q4_tham_dinh` sang) Làm tiếp thẩm định Q.4: chạy lại KT7.1 idx
   81–151 từ đầu (52/52, 34 phút, 478 nghìn token, 100 lệnh; 9 CHƯA ĐẠT; vẽ PA1 đóng kín buồng thang T1 ở Trệt, Lầu 1, Lầu 2 và buồng T3 + cửa
@@ -162,11 +162,11 @@
   `tkpccc-khao-sat-tu-van`). Chưa làm lại BCKS Q4 v2 vì hết usage: việc kế tiếp, thêm `bcks.ghi_chu.tu_van.anh` (thang Trệt + xe máy,
   đường thoát nạn Lầu 2) rồi chạy lại `bcks`.
 - Người dùng gửi `ban_ve_ghi_chu.pdf` Q.4 có vẽ tay đường thoát nạn nét xanh dương và train: đường thoát nạn đo từ vị trí xa nhất TRONG PHÒNG
-  (không từ cửa phòng); cửa chống cháy ngay cửa phòng. Ghi vào `01_TRI_THUC/nhan-dien-thang-thoat-nan.md`, skill khảo sát, `MOD_tinh_toan_khoang_cach.md`.
+  (không từ cửa phòng); cửa chống cháy ngay cửa phòng. Ghi vào `01_TRI_THUC/05_THOAT_NAN/nhan-dien-thang-thoat-nan.md`, skill khảo sát, `MOD_tinh_toan_khoang_cach.md`.
   L1 Q.4 Lầu 2 đúng ≈ 9,2 m (trước ghi 7,9 m đo từ cửa phòng). Chưa sửa hồ sơ Q.4 vì usage 99 %: việc làm tiếp ở TIEN_DO.
 
 ## 2026-11-05
-- Người dùng cập nhật Excel thủy lực mới (Smin/Stt, Qtt, Ω = Stt/ntt,tk, q1min). Ghi tư duy tính vào `tkpccc-thuy-luc/SKILL.md` và `01_TRI_THUC/kiem-bang-tinh-thuy-luc-7336.md`; script/bản đồ ô chưa đồng bộ (xem TIEN_DO).
+- Người dùng cập nhật Excel thủy lực mới (Smin/Stt, Qtt, Ω = Stt/ntt,tk, q1min). Ghi tư duy tính vào `tkpccc-thuy-luc/SKILL.md` và `01_TRI_THUC/08_CHUA_CHAY_NUOC/kiem-bang-tinh-thuy-luc-7336.md`; script/bản đồ ô chưa đồng bộ (xem TIEN_DO).
 
 ## 2026-11-06 (toi)
 - BCKS "Nha pho - Can ho dich vu 8m": doc xong 8 trang ban ve, nhan dien ghi trong 00_QUAN_LY_DU_AN/TIEN_DO.md; dung vi usage tuan 95 %, chua lap doi_chieu.json.
@@ -219,3 +219,7 @@
   thẩm duyệt / nghiệm thu ⇒ cây hồ sơ dự án PCCC (`10_DRIVE/cay_du_an.json`) bỏ BIM, thêm 06_THAM_DUYET_NGHIEM_THU.
 - Module mới `10_DRIVE` + skill `tkpccc-quan-ly-drive`: quét OneDrive + Google Drive (DriveFS) trên máy, lịch sử thay đổi, tìm, dựng cây hồ sơ,
   xếp file có hoàn tác, chia sẻ qua rclone. Kiểm: npm 68, pytest 54, CAD build + thu_mcp đạt; chay_thu 213 DAT + 1 LOI có sẵn (Karaoke 1 + 2).
+
+## 2026-11-26
+- Tri thức (`01_TRI_THUC/`) + điều khoản (`02_DIEU_KHOAN/`) xếp vào 12 hạng mục đánh số chung: 01_CHUNG_THUAT_NGU … 05_THOAT_NAN … 12_BAI_HOC_DU_AN.
+  Giữ tên file; liên kết tương đối trong .md tính lại; mã tìm file đệ quy. Kiểm: npm 68, pytest 54, kiem_lien_ket 0 lỗi, build CAD đạt.

@@ -17,7 +17,7 @@ Phát triển module này: chỉ đọc file trong bảng dưới. Báo cáo kh�
 | `04_BACKEND/src/xuat_docx.ts` | Word báo cáo khảo sát |
 | `04_BACKEND/src/server.ts` | route `/api/vat-tu`, `/api/khoi-luong`, `/api/don-gia`, `/api/don-gia/mau`, `/api/bao-gia`, `/api/bao-gia.xlsx`, `/api/khao-sat`, `/api/khao-sat.docx`, `/api/khao-sat/goi-y`, `/api/khao-sat/so-bo`, `/api/du-an` |
 | `05_FRONTEND/index.html` | tab "Khảo sát" (`ks`), "Khối lượng & Báo giá" (`bg`) |
-| `01_TRI_THUC/bao-gia-pccc.md`, `01_TRI_THUC/khao-sat-bao-gia.md` | quy tắc báo giá sơ bộ, 8 mục khảo sát |
+| `01_TRI_THUC/11_KHAO_SAT_BAO_GIA/bao-gia-pccc.md`, `01_TRI_THUC/11_KHAO_SAT_BAO_GIA/khao-sat-bao-gia.md` | quy tắc báo giá sơ bộ, 8 mục khảo sát |
 | `04_BACKEND/shared/test/bao_gia.test.ts`, `04_BACKEND/shared/test/khao_sat.test.ts`, `04_BACKEND/shared/test/mau.ts`, `04_BACKEND/test/runner.test.ts` | test |
 
 Bóc khối lượng trong AutoCAD: lệnh `PCCC_BOC` (skill `tkpccc-cad-console`) gửi `POST /api/khoi-luong`.
@@ -25,7 +25,7 @@ Bóc khối lượng trong AutoCAD: lệnh `PCCC_BOC` (skill `tkpccc-cad-console
 ## Quy tắc
 - Thêm vật tư: 1 dòng trong `03_DU_LIEU/vat_tu.json` → `07_CAD\build.bat` → `PCCC_LIB` (tự thêm block mặc định cho mã mới).
 - Số người dùng nhập kiểu Việt Nam ("1.200" = 1200, "3,5" = 3.5): đọc bằng `docSoVN`.
-- Báo giá sơ bộ theo m² dùng quy tắc mặc định của `01_TRI_THUC/bao-gia-pccc.md` (DN ống ghi "cỡ ống chờ thiết kế").
+- Báo giá sơ bộ theo m² dùng quy tắc mặc định của `01_TRI_THUC/11_KHAO_SAT_BAO_GIA/bao-gia-pccc.md` (DN ống ghi "cỡ ống chờ thiết kế").
 
 ## Kiểm
 `npx vitest run 04_BACKEND/shared/test/bao_gia.test.ts 04_BACKEND/shared/test/khao_sat.test.ts 04_BACKEND/test/runner.test.ts`.

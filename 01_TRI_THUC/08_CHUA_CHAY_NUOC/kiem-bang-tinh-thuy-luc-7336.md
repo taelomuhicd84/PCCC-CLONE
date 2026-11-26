@@ -1,5 +1,5 @@
 # Kiểm bảng tính thủy lực sprinkler theo TCVN 7336:2021 (rút từ 3 bảng Excel người dùng đưa, 2026-10-27)
-Dùng khi người dùng đưa bảng Excel/PDF tính thủy lực và hỏi "đúng chưa". Toàn văn: `runner/cache/van_ban/TCVN 7336_2021.pdf.txt` (Phụ lục B, Bảng 1–3, B.2). Kho giá kệ cao > 5,5 m: TCVN 14496:2025 (`01_TRI_THUC/hoc/_da_duyet.md`, mục 5).
+Dùng khi người dùng đưa bảng Excel/PDF tính thủy lực và hỏi "đúng chưa". Toàn văn: `runner/cache/van_ban/TCVN 7336_2021.pdf.txt` (Phụ lục B, Bảng 1–3, B.2). Kho giá kệ cao > 5,5 m: TCVN 14496:2025 (`01_TRI_THUC/12_BAI_HOC_DU_AN/_da_duyet.md`, mục 5).
 
 ## Công thức chuẩn (đúng thì ghi ĐÚNG, không nghi ngờ thừa)
 - q = 10·K·√P (K theo l/(s·MPa^0,5) của tài liệu hãng; dạng K' = K gpm/psi^0,5 × 0,7598 rồi q = K'·√P), ΔP = Q²·L/(100·KT) với KT Bảng B.2, Bp = Q²/Pa, mạng cụt không đối xứng Q' = Q·√(Pa/P'a) (B.2.11.3), mạng vòng chia 50% lưu lượng mỗi nửa (B.2.12), PB = ΣΔP + ΣPCB + PĐP + Z − PH (B.3.9), cục bộ gần đúng 20% ΣΔP (B.3.13), vận tốc ≤ 10 m/s (B.1.9), áp tại bộ điều khiển ≤ 1 MPa (B.3.14), điều kiện QH ≤ QC (B.3.1), họng trong nhà dùng chung bơm: Q = QCCTĐ + QTN, thời gian họng = thời gian sprinkler (B.3.8, B.3.16).

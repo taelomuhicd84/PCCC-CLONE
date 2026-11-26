@@ -9,8 +9,8 @@ Dùng các module: `tkpccc-bang-doi-chieu` (bảng KS, xuất), `tkpccc-ghi-chu-
 Không đọc cả `01_TRI_THUC/`: mở file theo cột "Tra ở" của từng dòng. Thẩm định đầy đủ (xây dựng + hệ thống) là skill `tkpccc-tham-dinh`.
 
 ## Bài học đã train (người dùng nhắc 2026-11-01: phải áp phần đã train và GHI NOTE LÊN PDF)
-- Trước khi viết: đọc `01_TRI_THUC/hoc/du-an/so-bo-thiet-ke.md` (bài học: thang bậc chéo, thang ngoài nhà loại 3, sân thượng, số người…),
-  `01_TRI_THUC/nhan-dien-thang-thoat-nan.md` (phóng to từng thang xem chiếu nghỉ; quy trình nhận diện → đạt/không → phương án từng thang
+- Trước khi viết: đọc `01_TRI_THUC/12_BAI_HOC_DU_AN/so-bo-thiet-ke.md` (bài học: thang bậc chéo, thang ngoài nhà loại 3, sân thượng, số người…),
+  `01_TRI_THUC/05_THOAT_NAN/nhan-dien-thang-thoat-nan.md` (phóng to từng thang xem chiếu nghỉ; quy trình nhận diện → đạt/không → phương án từng thang
   → kiểm khả thi → không có thì báo cần người dùng xem xét; thang loại 2 và khoảng cách 3.3.2), lọc `03_DU_LIEU/mau_giai_phap/thoat_nan.json`
   theo F, cao PCCC, số tầng, diện tích, người (lọc tay theo trường `loc`).
 - Bản vẽ cải tạo (2 mặt bằng cùng tờ: trên = xin phép, dưới = cải tạo): xét theo mặt bằng CẢI TẠO phía dưới. Tầng thượng đã xây kín tính 1 tầng.
@@ -24,15 +24,15 @@ Không đọc cả `01_TRI_THUC/`: mở file theo cột "Tra ở" của từng d
 - Việc của Claude là BÁO CÁO (nhận diện, đánh giá, phương án, khả thi, căn cứ); chấp nhận hay không là việc người dùng: không hỏi người dùng
   chọn, kể cả câu hỏi cuối lượt; điểm luật không rõ thì ghi "cần người dùng xem xét". Thiếu kiến thức thì nhờ người dùng train.
 - Chỉ CẦN XÁC NHẬN khi thiếu số liệu thật (người dùng dặn 2026-11-02). Tum đủ tiêu chí thì ghi thông tin, không hỏi.
-  Tum không tính tầng (sửa 2026-11-15, một cách đọc duy nhất): căn cứ chính là nguyên văn QCVN 10:2025 mục 1.4.24 chú thích (1) (`01_TRI_THUC/qcvn10-2025-chung.md`):
+  Tum không tính tầng (sửa 2026-11-15, một cách đọc duy nhất): căn cứ chính là nguyên văn QCVN 10:2025 mục 1.4.24 chú thích (1) (`01_TRI_THUC/01_CHUNG_THUAT_NGU/qcvn10-2025-chung.md`):
   "Tầng tum không tính vào số tầng khi chỉ có chức năng bao che lồng cầu thang bộ/giếng thang máy và che chắn thiết bị kỹ thuật, diện tích mái tum không vượt quá 30 % diện tích sàn mái."
   ⇒ KHÔNG tính tầng khi ĐỦ HAI: (a) chỉ che thang bộ, giếng thang máy, thiết bị kỹ thuật; (b) diện tích mái tum ≤ 30 % diện tích sàn mái. Ghi số đo cả hai điều kiện.
   Ghi chú áp dụng (người dùng dặn 2026-11-03): WC, kho nhỏ trong tum là phụ trợ, không làm tum có "công năng" ở điều kiện (a); không viết "có WC nên tính 1 tầng", không đưa 2 phương án chiều cao.
   Tum có phòng sử dụng (ngủ, làm việc, kinh doanh…) mà mái tum ≤ 30 %, hoặc tum chỉ thang + WC mà mái tum > 30 %: nguyên văn và cách xét cũ của người dùng ("phần công năng > 30 % mới tính") cho kết quả khác nhau ⇒ dòng số tầng là CẦN XÁC NHẬN, nêu cả hai căn cứ và số đo.
   Khoảng cách thoát nạn tính ra (hoặc Bảng G) vượt giới hạn ⇒ CHƯA ĐẠT + phương án, không để CẦN XÁC NHẬN.
 - Đường thoát nạn đo từ ĐIỂM XA NHẤT TRONG PHÒNG (không từ cửa phòng), vẽ nét xanh có mũi tên đầu trong phòng; cửa chống cháy đặt ngay cửa
-  phòng (người dùng dặn 2026-11-03; chi tiết và lỗi Q.4 7,9 m → ≈ 9,2 m: `01_TRI_THUC/nhan-dien-thang-thoat-nan.md`).
-- Cung vế thang và cánh cửa (người dùng dặn 2026-11-06): kiểm vùng quét cánh cửa không giao cung vế (cả hai vế; cửa trái/phải tự phán đoán theo ký hiệu), ghi vào ô Kết luận và ghi chú bằng chữ, KHÔNG vẽ cung lên PDF trừ khi người dùng bảo; chi tiết `01_TRI_THUC/nhan-dien-thang-thoat-nan.md` bước 3.
+  phòng (người dùng dặn 2026-11-03; chi tiết và lỗi Q.4 7,9 m → ≈ 9,2 m: `01_TRI_THUC/05_THOAT_NAN/nhan-dien-thang-thoat-nan.md`).
+- Cung vế thang và cánh cửa (người dùng dặn 2026-11-06): kiểm vùng quét cánh cửa không giao cung vế (cả hai vế; cửa trái/phải tự phán đoán theo ký hiệu), ghi vào ô Kết luận và ghi chú bằng chữ, KHÔNG vẽ cung lên PDF trừ khi người dùng bảo; chi tiết `01_TRI_THUC/05_THOAT_NAN/nhan-dien-thang-thoat-nan.md` bước 3.
 - Cửa PHÒNG mở vào trong phòng thì KHÔNG bao giờ vướng cung vế thang/đường thoát nạn: không ghi "kiểm cung cánh cửa phòng" (người dùng dặn 2026-11-06). Chỉ kiểm cánh cửa của buồng thang (cửa EI mở ra sảnh) có chắn đường thoát nạn của các phòng tiếp giáp không: chắn thì ghi "bề rộng đường thoát nạn không đảm bảo, công trình không thuộc diện thẩm định nên tạm chấp nhận".
 - Thang hở nhiều tầng, nhà không thuộc diện thẩm định (người dùng dặn 2026-11-06): hầm và trệt BẮT BUỘC quây kín thang (tường + cửa EI); các tầng trên có thể thay bằng cửa chống cháy EI cho từng phòng/căn hộ mở vào thang, hành lang.
 - Không có số trên bản vẽ thì ghi "phải đảm bảo ≥ …". Chỉ ghi "cửa chống cháy" khi bản vẽ có ký hiệu.
@@ -41,7 +41,7 @@ Không đọc cả `01_TRI_THUC/`: mở file theo cột "Tra ở" của từng d
 ## Đầu vào
 1. Bản vẽ PDF (mặt bằng; có thể kèm mặt đứng, mặt cắt): làm đủ quy trình dưới.
 2. Chỉ thông tin bằng chữ: bỏ bước PDF; dòng cần bản vẽ (số lối, thang, khoảng cách) là CẦN XÁC NHẬN và nêu yêu cầu theo quy chuẩn.
-   Chiều cao không có thì ước lượng theo `01_TRI_THUC/khao-sat-bao-gia.md` mục "Ước lượng chiều cao", có nhãn "ước lượng".
+   Chiều cao không có thì ước lượng theo `01_TRI_THUC/11_KHAO_SAT_BAO_GIA/khao-sat-bao-gia.md` mục "Ước lượng chiều cao", có nhãn "ước lượng".
 
 ## Quy trình
 ```

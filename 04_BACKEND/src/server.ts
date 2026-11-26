@@ -133,7 +133,7 @@ async function xuLy(req: IncomingMessage, res: ServerResponse) {
     const vao = JSON.parse((await docBody(req)).toString("utf8"));
     const ks = chuanHoaKhaoSat(vao, tenThuMuc(vao?.du_an));
     const cauHoi = [
-      "Đọc 01_TRI_THUC/khao-sat-bao-gia.md và làm đúng hướng dẫn trong đó (8 mục, định dạng trả lời có một khối ```json {\"khao_sat\": …} ở cuối). Tri thức quy chuẩn nằm trong 01_TRI_THUC/ (QCVN 06, QCVN 10:2025, nghị định thẩm định, định nghĩa) và 02_DIEU_KHOAN/ (MOD_*, SKILL_thoat_nan: điều khoản thoát nạn theo chuyên đề); chỉ trích điều khoản có trong các file này. Trả lời tiếng Việt.",
+      "Đọc 01_TRI_THUC/11_KHAO_SAT_BAO_GIA/khao-sat-bao-gia.md và làm đúng hướng dẫn trong đó (8 mục, định dạng trả lời có một khối ```json {\"khao_sat\": …} ở cuối). Tri thức quy chuẩn nằm trong 01_TRI_THUC/ (QCVN 06, QCVN 10:2025, nghị định thẩm định, định nghĩa) và 02_DIEU_KHOAN/ (MOD_*, SKILL_thoat_nan: điều khoản thoát nạn theo chuyên đề); chỉ trích điều khoản có trong các file này. Trả lời tiếng Việt.",
       "Không có bản vẽ, chỉ có số liệu dưới đây (đầu vào loại 3). Số liệu đã có thì dùng nguyên, ô trống thì ước lượng có nhãn \"ước lượng\" hoặc ghi CẦN XÁC NHẬN.",
       "Mục he_thong trả đúng các tên sau, đúng thứ tự: " + HE_THONG.map((h) => h.ten).join("; ") + ".",
       "Số liệu hiện có (JSON): " + JSON.stringify(ks),

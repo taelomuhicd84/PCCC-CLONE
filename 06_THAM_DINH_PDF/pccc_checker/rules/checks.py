@@ -300,7 +300,7 @@ def min_exits_per_floor(rule: dict, d: DrawingExtraction) -> Iterable[Finding]:
             f = make_finding(rule, dsach[0], n, 2,
                              f"đếm được {n} lối ra nhưng chỉ {n_chac} lối chắc chắn; chưa xét hình dạng thang / lối ra "
                              f"nhận từ chữ đứng riêng: {', '.join(ds)}. Thang rẽ quạt, bậc chéo, thang cong, xoắn không tính "
-                             "thoát nạn (trừ 3.4.4) — 01_TRI_THUC/nhan-dien-thang-thoat-nan.md")
+                             "thoát nạn (trừ 3.4.4) — 01_TRI_THUC/05_THOAT_NAN/nhan-dien-thang-thoat-nan.md")
             f.status = "xm"
             yield f
             continue

@@ -10,7 +10,7 @@ Chỉ mở khi kiểm tra hút xả khói, cấp không khí chống khói, tho�
 - Được thay đổi các yêu cầu Phụ lục D nếu có thiết kế chống khói phù hợp tiêu chuẩn được phép áp dụng và thỏa D.1.1. Phòng đặc biệt (phòng sạch, kho lạnh): theo tài liệu chuẩn, vẫn bảo đảm an toàn cho người thoát nạn và lực lượng cứu hộ.
 
 > Không gian thông tầng (sảnh thông tầng, thang hở nối tầng nổi): D.1.5, D.2 e), D.7, D.8 + 4.35 c), e) → bài học hút đồng thời các tầng,
-> danh sách số liệu cần có, ví dụ: `01_TRI_THUC/hut-khoi-thong-tang.md`.
+> danh sách số liệu cần có, ví dụ: `01_TRI_THUC/06_CHONG_KHOI/hut-khoi-thong-tang.md`.
 
 ## D.2 Việc thoát khói khi có cháy phải được thực hiện từ các khu vực sau (bản sửa đổi bỏ chữ "hút xả khói": có thể thoát khói tự nhiên hoặc hút xả cơ khí)
 - a) Hành lang (trừ hành lang bên) và sảnh nhà ở, nhà công cộng, hành chính – phụ trợ, nhà hỗn hợp **cao PCCC > 28 m**.

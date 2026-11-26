@@ -50,9 +50,9 @@ Sau bảng: liệt kê lỗi thiết kế phát hiện được, điểm cần x
 ## Module tham chiếu (chỉ mở file cần dùng, đừng đọc hết)
 | Cần làm gì | Mở file |
 |---|---|
-| Thứ tự làm việc cả hồ sơ (GĐ0–GĐ8), 4 loại kết luận | [SKILL_quy_trinh_tham_dinh.md](SKILL_quy_trinh_tham_dinh.md) |
-| Trường thông tin công trình, quy tắc suy ra yêu cầu Y01–Y24, ai tạo ai dùng | [../01_TRI_THUC/truong-thong-tin.md](../01_TRI_THUC/truong-thong-tin.md) |
-| Bảng đối chiếu chính thức theo công năng và theo hệ thống; chọn bảng; công cụ đọc bảng | [../bang_doi_chieu/DANH_MUC.md](../bang_doi_chieu/DANH_MUC.md), công cụ scripts/bang_doi_chieu_tool.py |
+| Thứ tự làm việc cả hồ sơ (GĐ0–GĐ8), 4 loại kết luận | [SKILL_quy_trinh_tham_dinh.md](../SKILL_quy_trinh_tham_dinh.md) |
+| Trường thông tin công trình, quy tắc suy ra yêu cầu Y01–Y24, ai tạo ai dùng | [../../01_TRI_THUC/truong-thong-tin.md](../../01_TRI_THUC/truong-thong-tin.md) |
+| Bảng đối chiếu chính thức theo công năng và theo hệ thống; chọn bảng; công cụ đọc bảng | [../bang_doi_chieu/DANH_MUC.md](../../bang_doi_chieu/DANH_MUC.md), công cụ scripts/bang_doi_chieu_tool.py |
 | Lối ra nào được tính là lối thoát nạn; cửa cuốn/quay/trượt/xếp; chiều mở cửa (3.1, 3.2.1–3.2.4, 3.2.9–3.2.14: cửa, kích thước, lối khẩn cấp, tầng hầm) | [MOD_loi_ra_va_cua.md](MOD_loi_ra_va_cua.md) |
 | Số lối ra tối thiểu của phòng, tầng, nhà; khi nào được 1 lối ra (3.2.5–3.2.7) | [MOD_so_luong_loi_ra.md](MOD_so_luong_loi_ra.md) |
 | Vật liệu hoàn thiện, trang trí, ốp lát (3.3.4, 3.5.x) và Phụ lục B (cấp CV0–CV5, Bảng B.8, B.9) | [MOD_vat_lieu_hoan_thien.md](MOD_vat_lieu_hoan_thien.md) |
@@ -60,11 +60,11 @@ Sau bảng: liệt kê lỗi thiết kế phát hiện được, điểm cần x
 | Tra bảng Phụ lục G (G.1–G.9) | [PHU_LUC_G_QCVN06.md](PHU_LUC_G_QCVN06.md) |
 | Đường thoát nạn và hành lang: bao che, cửa chống cháy, karaoke, WC, bề rộng, giật cấp (3.3.1–3.3.7) | [MOD_hanh_lang_bao_che.md](MOD_hanh_lang_bao_che.md) |
 | Loại cầu thang/buồng thang (L1, L2, N1–N3), từ loại thang suy ra lối ra thoát nạn hợp lệ, khi nào cần N1 (2.4.2, 2.4.3, 3.2.1b, 3.4.1–3.4.17) | [MOD_cau_thang_buong_thang.md](MOD_cau_thang_buong_thang.md) |
-| Bảo vệ chống khói: hút xả khói, cấp khí áp dương (Phụ lục D) | [MOD_chong_khoi_PL_D.md](MOD_chong_khoi_PL_D.md) |
+| Bảo vệ chống khói: hút xả khói, cấp khí áp dương (Phụ lục D) | [MOD_chong_khoi_PL_D.md](../06_CHONG_KHOI/MOD_chong_khoi_PL_D.md) |
 | Nhận dạng loại thang trên hình, các dạng khoảng đệm N1; hình phân tán, tầng hầm (Hình I.1–I.9) | [MOD_hinh_Phu_luc_I_cau_thang.md](MOD_hinh_Phu_luc_I_cau_thang.md) |
-| Ví dụ thực tế đã làm với DA-10 1 (đối chiếu cách tư duy, số liệu mẫu) | [VI_DU_da10_1.md](VI_DU_da10_1.md) |
-| Định nghĩa QCVN (gian phòng chung, hành lang bên, gian phòng có người làm việc thường xuyên) | [../01_TRI_THUC/dinh-nghia/dinh-nghia.md](../01_TRI_THUC/dinh-nghia/dinh-nghia.md) |
-| Dữ liệu cần lấy từ skill khác (Sprinkler, nhóm nhà, bậc chịu lửa...) | [DU_LIEU_TU_SKILL_KHAC.md](DU_LIEU_TU_SKILL_KHAC.md) |
-| Ngăn cháy công năng, tỉ lệ cửa/tường | [SKILL_ngan_chay_cong_nang.md](SKILL_ngan_chay_cong_nang.md) |
+| Ví dụ thực tế đã làm với DA-10 1 (đối chiếu cách tư duy, số liệu mẫu) | [VI_DU_da10_1.md](../VI_DU_da10_1.md) |
+| Định nghĩa QCVN (gian phòng chung, hành lang bên, gian phòng có người làm việc thường xuyên) | [../01_TRI_THUC/01_CHUNG_THUAT_NGU/dinh-nghia.md](../../01_TRI_THUC/01_CHUNG_THUAT_NGU/dinh-nghia.md) |
+| Dữ liệu cần lấy từ skill khác (Sprinkler, nhóm nhà, bậc chịu lửa...) | [DU_LIEU_TU_SKILL_KHAC.md](../DU_LIEU_TU_SKILL_KHAC.md) |
+| Ngăn cháy công năng, tỉ lệ cửa/tường | [SKILL_ngan_chay_cong_nang.md](../04_NGAN_CHAY_CHIU_LUA/SKILL_ngan_chay_cong_nang.md) |
 
 Ghi nhớ nhanh: karaoke đo khoảng cách từ **cửa phòng** (G.1.2.1); cửa mở ra hành lang phải là cửa chống cháy; ngoại lệ WC của 3.2.10 chỉ miễn chiều mở, không miễn cửa chống cháy.

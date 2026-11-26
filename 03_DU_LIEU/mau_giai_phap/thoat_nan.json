@@ -49,7 +49,7 @@
     "Đảo chiều bản lề cho cánh mở theo hướng thoát."
    ],
    "nguon": [
-    "02_DIEU_KHOAN/MOD_loi_ra_va_cua.md"
+    "02_DIEU_KHOAN/05_THOAT_NAN/MOD_loi_ra_va_cua.md"
    ],
    "the": [
     "loi-ra-thoat-nan"
@@ -90,8 +90,8 @@
     "Dời một thang ra đầu hồi để đạt L >= 1/2 D (1/3 D nếu có sprinkler toàn nhà)."
    ],
    "nguon": [
-    "02_DIEU_KHOAN/MOD_so_luong_loi_ra.md",
-    "02_DIEU_KHOAN/MOD_tinh_toan_khoang_cach.md"
+    "02_DIEU_KHOAN/05_THOAT_NAN/MOD_so_luong_loi_ra.md",
+    "02_DIEU_KHOAN/05_THOAT_NAN/MOD_tinh_toan_khoang_cach.md"
    ],
    "the": [
     "so-loi-ra-thoat-nan"
@@ -123,7 +123,7 @@
     "Gian đông người (hội trường, nhà hàng): đề xuất trước hết ghi SỨC CHỨA THIẾT KẾ trên mặt bằng; số người lấy theo thiết kế, Bảng G.9 chỉ dùng khi thiết kế không ghi (G.3 chú thích 1). Chỉ mở rộng thang/cửa khi sức chứa chủ đầu tư cần vượt ngưỡng."
    ],
    "nguon": [
-    "02_DIEU_KHOAN/MOD_so_luong_loi_ra.md"
+    "02_DIEU_KHOAN/05_THOAT_NAN/MOD_so_luong_loi_ra.md"
    ],
    "the": []
   },
@@ -168,7 +168,7 @@
     "Mở ban công thành thoáng: bỏ bao che kín, lan can không cản cứu nạn."
    ],
    "nguon": [
-    "02_DIEU_KHOAN/MOD_so_luong_loi_ra.md"
+    "02_DIEU_KHOAN/05_THOAT_NAN/MOD_so_luong_loi_ra.md"
    ],
    "the": [
     "cho-phep-bo-tri-mot-loi-ra-thoat-nan",
@@ -211,7 +211,7 @@
     "Thêm thang dây/thang kim loại ở ban công mỗi tầng hoặc bảo đảm lên sân thượng thoáng."
    ],
    "nguon": [
-    "02_DIEU_KHOAN/MOD_so_luong_loi_ra.md"
+    "02_DIEU_KHOAN/05_THOAT_NAN/MOD_so_luong_loi_ra.md"
    ],
    "the": [
     "cho-phep-bo-tri-mot-loi-ra-thoat-nan"
@@ -253,7 +253,7 @@
     "Bổ sung sprinkler toàn nhà và báo cháy tự động, hoặc làm lối thứ hai."
    ],
    "nguon": [
-    "02_DIEU_KHOAN/MOD_so_luong_loi_ra.md"
+    "02_DIEU_KHOAN/05_THOAT_NAN/MOD_so_luong_loi_ra.md"
    ],
    "the": [
     "cho-phep-bo-tri-mot-loi-ra-thoat-nan"
@@ -312,8 +312,8 @@
     "Làm cửa ra ngoài trực tiếp ở chân thang hoặc tiền sảnh vách ngăn cháy loại 1."
    ],
    "nguon": [
-    "02_DIEU_KHOAN/MOD_cau_thang_buong_thang.md",
-    "02_DIEU_KHOAN/MOD_hinh_Phu_luc_I_cau_thang.md"
+    "02_DIEU_KHOAN/05_THOAT_NAN/MOD_cau_thang_buong_thang.md",
+    "02_DIEU_KHOAN/05_THOAT_NAN/MOD_hinh_Phu_luc_I_cau_thang.md"
    ],
    "the": [
     "cau-thang-bo-loai-1",
@@ -357,7 +357,7 @@
     "Mở rộng giếng thang đủ 0,7 m."
    ],
    "nguon": [
-    "02_DIEU_KHOAN/MOD_cau_thang_buong_thang.md"
+    "02_DIEU_KHOAN/05_THOAT_NAN/MOD_cau_thang_buong_thang.md"
    ],
    "the": [
     "buong-thang-bo-thong-thuong"
@@ -402,8 +402,8 @@
     "Nhà có sẵn 2 buồng thang thường (bài học thiết kế thật, khách sạn 10 tầng): chỉ định một thang là \"thang di chuyển nội bộ, không thoát nạn\" (vẫn trong buồng thang ngăn cháy), thang kia thêm buồng đệm; xây buồng thang mới ở đất trống sát nhà (sân sau, góc lô) có buồng đệm dùng chung với thang máy chữa cháy mới (>= 6 m2). Ít đục phá hơn đổi cả hai thang sang N2/N3."
    ],
    "nguon": [
-    "02_DIEU_KHOAN/MOD_cau_thang_buong_thang.md",
-    "02_DIEU_KHOAN/MOD_chong_khoi_PL_D.md"
+    "02_DIEU_KHOAN/05_THOAT_NAN/MOD_cau_thang_buong_thang.md",
+    "02_DIEU_KHOAN/06_CHONG_KHOI/MOD_chong_khoi_PL_D.md"
    ],
    "the": [
     "buong-thang-bo-khong-nhiem-khoi-loai-n1",
@@ -443,8 +443,8 @@
     "Ngăn thang hầm ở tầng 1 bằng vách và cửa ngăn cháy, cho ra ngoài trực tiếp."
    ],
    "nguon": [
-    "02_DIEU_KHOAN/MOD_cau_thang_buong_thang.md",
-    "02_DIEU_KHOAN/MOD_loi_ra_va_cua.md"
+    "02_DIEU_KHOAN/05_THOAT_NAN/MOD_cau_thang_buong_thang.md",
+    "02_DIEU_KHOAN/05_THOAT_NAN/MOD_loi_ra_va_cua.md"
    ],
    "the": []
   },
@@ -483,8 +483,8 @@
     "Tường cạnh thang đặc, không mở cửa sổ sát vế thang."
    ],
    "nguon": [
-    "02_DIEU_KHOAN/MOD_cau_thang_buong_thang.md",
-    "02_DIEU_KHOAN/PHU_LUC_G_QCVN06.md"
+    "02_DIEU_KHOAN/05_THOAT_NAN/MOD_cau_thang_buong_thang.md",
+    "02_DIEU_KHOAN/05_THOAT_NAN/PHU_LUC_G_QCVN06.md"
    ],
    "the": [
     "cau-thang-bo-loai-3"
@@ -533,7 +533,7 @@
     "Bao thang thành buồng L1, hoặc bổ sung buồng thang khác làm lối thoát."
    ],
    "nguon": [
-    "02_DIEU_KHOAN/MOD_cau_thang_buong_thang.md"
+    "02_DIEU_KHOAN/05_THOAT_NAN/MOD_cau_thang_buong_thang.md"
    ],
    "the": [
     "cau-thang-bo-loai-2",
@@ -612,7 +612,7 @@
    ],
    "nguon": [
     "01_TRI_THUC/bai-hoc.md",
-    "02_DIEU_KHOAN/MOD_hanh_lang_bao_che.md"
+    "02_DIEU_KHOAN/05_THOAT_NAN/MOD_hanh_lang_bao_che.md"
    ],
    "the": []
   },
@@ -645,7 +645,7 @@
     "Chỉ dùng làm điều kiện bổ sung; số lối thoát nạn vẫn phải đủ."
    ],
    "nguon": [
-    "02_DIEU_KHOAN/MOD_loi_ra_va_cua.md"
+    "02_DIEU_KHOAN/05_THOAT_NAN/MOD_loi_ra_va_cua.md"
    ],
    "the": [
     "loi-ra-khan-cap",
@@ -739,7 +739,7 @@
    ],
    "nguon": [
     "01_TRI_THUC/loi-vao-tren-cao.md",
-    "01_TRI_THUC/qcvn06-dieu-6.md"
+    "01_TRI_THUC/03_GIAO_THONG_CUU_NAN/qcvn06-dieu-6.md"
    ],
    "the": [
     "loi-vao-tu-tren-cao"

@@ -261,7 +261,7 @@ def phep10():
 
 # ---------- 11. ban chep bundle ----------
 def phep11():
-    cap = [('03_DU_LIEU/vat_tu.json', 'vat_tu.json'), ('03_DU_LIEU/khoang_cach_rai.json', 'khoang_cach_rai.json'), ('01_TRI_THUC/chon-loai-dau-bao.md', 'chon-loai-dau-bao.md'),
+    cap = [('03_DU_LIEU/vat_tu.json', 'vat_tu.json'), ('03_DU_LIEU/khoang_cach_rai.json', 'khoang_cach_rai.json'), ('01_TRI_THUC/07_BAO_CHAY/chon-loai-dau-bao.md', 'chon-loai-dau-bao.md'),
            ('07_CAD/data/ky_hieu/ky_hieu.json', 'ky_hieu.json'), ('07_CAD/data/ky_hieu/hinh_bc.json', 'hinh_bc.json'), ('07_CAD/skills/ve/mau-thuyet-minh-pccc.md', 'mau-thuyet-minh-pccc.md')]
     for nguon, ban in cap:
         b = ROOT / '07_CAD/TKPCCC.bundle/Contents' / ban

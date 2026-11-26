@@ -6,7 +6,7 @@ Hai văn bản đi cùng nhau, đọc như một bộ:
 
 **Giá trị sử dụng:** hướng dẫn nghiệp vụ của C07 (không phải văn bản quy phạm pháp luật). Từ 22/4/2026 các cách hiểu dưới đây **dùng được làm căn cứ lập luận**, trích "2360/CAHN-PC07, được C07 thống nhất tại 1183/C07-P4". Văn bản gốc (scan) người dùng giữ: `2630 đề xuất hướng dẫn thẩm định.pdf`, `1183 c07 trả lời 2630.pdf`. Không lưu PDF trong repo.
 
-Liên kết: diện thẩm định, Phụ lục III, điều chỉnh, cải tạo → `01_TRI_THUC/nghi-dinh-tham-dinh-dieu-chinh.md` (mục 5.5 trỏ về file này); báo cáo khảo sát, tư vấn mục 2 → `01_TRI_THUC/khao-sat-bao-gia.md`; phân loại m01 → `02_DIEU_KHOAN/` và thẻ khái niệm `01_TRI_THUC/hoc/khai-niem/`.
+Liên kết: diện thẩm định, Phụ lục III, điều chỉnh, cải tạo → `01_TRI_THUC/02_PHAP_LY_THAM_DINH/nghi-dinh-tham-dinh-dieu-chinh.md` (mục 5.5 trỏ về file này); báo cáo khảo sát, tư vấn mục 2 → `01_TRI_THUC/11_KHAO_SAT_BAO_GIA/khao-sat-bao-gia.md`; phân loại m01 → `02_DIEU_KHOAN/` và thẻ khái niệm `01_TRI_THUC/12_BAI_HOC_DU_AN/khai-niem/`.
 
 ## 1. Nhà hỗn hợp, nhà đa năng, nhà ở riêng lẻ kết hợp sản xuất, kinh doanh (mục 8 Phụ lục III NĐ 105/2025)
 Mục 8 Phụ lục III: "Công trình đa năng, công trình hỗn hợp (có từ 2 công năng trở lên, **trừ công trình nhà ở riêng lẻ có kết hợp sản xuất, kinh doanh**) trong đó có phần công trình có quy mô, công năng thuộc các mục 1 đến mục 7 Phụ lục này hoặc cao từ 7 tầng trở lên hoặc có tổng diện tích sàn từ 3.000 m² trở lên."

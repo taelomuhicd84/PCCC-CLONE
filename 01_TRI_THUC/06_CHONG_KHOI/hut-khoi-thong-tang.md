@@ -2,14 +2,14 @@
 
 Bài học người dùng dạy 2026-11-06, bổ sung từ bản vẽ KT-21/KT-22 (Karaoke DA-10 2). Áp cho tư vấn và thẩm định. CHỈ xét các tầng NỔI;
 tầng hầm là khoang cháy riêng, không ghi bài này cho hầm. Phần CHỐNG KHÓI thôi; phần nhận diện thang nằm ở
-`01_TRI_THUC/nhan-dien-thang-thoat-nan.md`, phần ngăn cháy 4.35 a)–d), f), g) nằm ở `01_TRI_THUC/qcvn06-dieu-4.md`.
+`01_TRI_THUC/05_THOAT_NAN/nhan-dien-thang-thoat-nan.md`, phần ngăn cháy 4.35 a)–d), f), g) nằm ở `01_TRI_THUC/04_NGAN_CHAY_CHIU_LUA/qcvn06-dieu-4.md`.
 
 ## 1. Khi nào áp
 - Có sảnh thông tầng, hoặc thang bộ hở (thang xoắn, thang trang trí, thang "nội bộ, không dùng thoát nạn") nối các tầng nổi mà không đóng
-  kín: các tầng nó nối là MỘT không gian thông tầng (nhận diện: `01_TRI_THUC/nhan-dien-thang-thoat-nan.md`, mục thang hở nối tầng nổi).
+  kín: các tầng nó nối là MỘT không gian thông tầng (nhận diện: `01_TRI_THUC/05_THOAT_NAN/nhan-dien-thang-thoat-nan.md`, mục thang hở nối tầng nổi).
 - Ghi "không dùng thoát nạn" chỉ bỏ thang khỏi số lối thoát nạn, KHÔNG miễn yêu cầu chống khói.
 
-## 2. Căn cứ (QCVN 06:2022 sửa đổi 01:2023; Phụ lục D trong repo là bản RÚT GỌN `02_DIEU_KHOAN/MOD_chong_khoi_PL_D.md`, ghi vào bảng thì nêu số điều)
+## 2. Căn cứ (QCVN 06:2022 sửa đổi 01:2023; Phụ lục D trong repo là bản RÚT GỌN `02_DIEU_KHOAN/06_CHONG_KHOI/MOD_chong_khoi_PL_D.md`, ghi vào bảng thì nêu số điều)
 | Ý | Điều | Nội dung |
 |---|---|---|
 | Phải thoát khói | D.2 e) | sảnh thông tầng (và hành lang thương mại bao quanh) là khu vực phải thoát khói khi cháy |
@@ -27,7 +27,7 @@ tầng hầm là khoang cháy riêng, không ghi bài này cho hầm. Phần CH�
 2. Cưỡng bức: sơ đồ hút khói, quạt chung HÚT ĐỒNG THỜI các tầng thông nhau, lưu lượng tính (D.4), bù không khí (D.1.6).
 3. Tự nhiên: vị trí, diện tích, cao độ cửa thoát khói trên cao (mép dưới ≥ 2 m so với biên lớp khói), cửa mở khi cháy, cửa bù khí phía dưới, bản tính (luận cứ).
 4. Màn ngăn khói: loại (cố định/tự hạ), GHCL ≥ E 45, cao độ đáy, CHIỀU CAO màn còn lại, bản tính chiều dày lớp khói (đáy lớp khói ≥ 2,5 m).
-5. Khoang cháy: tổng diện tích các tầng thông nhau, nhóm nhà, bậc chịu lửa, hạn mức Phụ lục H (nối sang ngăn cháy 4.35 d, `01_TRI_THUC/qcvn06-phu-luc-h.md`).
+5. Khoang cháy: tổng diện tích các tầng thông nhau, nhóm nhà, bậc chịu lửa, hạn mức Phụ lục H (nối sang ngăn cháy 4.35 d, `01_TRI_THUC/04_NGAN_CHAY_CHIU_LUA/qcvn06-phu-luc-h.md`).
 6. Tắt thông gió/điều hòa và đóng van ngăn cháy khi hút khói (D.1.4); điều khiển liên động với báo cháy.
 
 ## 4. Ghi chú mẫu lên bản vẽ
@@ -41,7 +41,7 @@ hút xả khói chung, hút đồng thời các tầng thông nhau (PL D, D.1.5)
 - Điểm c) thiếu bản tính chiều dày lớp khói; chiều cao màn đọc từ chi tiết ở mục 6 (ghi "2500" là cao độ ĐÁY màn so với sàn từng tầng, KHÔNG cộng thành 5 m).
 
 ## 6. Chi tiết mẫu: cao độ và chiều cao màn ngăn khói cố định (mặt cắt KT-21/22, người dùng gửi 2026-11-06)
-Ảnh: `01_TRI_THUC/hinh/man-ngan-khoi-mat-cat-1.png` (cắt qua thang + lan can), `01_TRI_THUC/hinh/man-ngan-khoi-mat-cat-2.png` (cắt dọc ranh sảnh, có cửa EI60).
+Ảnh: `01_TRI_THUC/06_CHONG_KHOI/hinh/man-ngan-khoi-mat-cat-1.png` (cắt qua thang + lan can), `01_TRI_THUC/06_CHONG_KHOI/hinh/man-ngan-khoi-mat-cat-2.png` (cắt dọc ranh sảnh, có cửa EI60).
 - Cách đọc: mỗi tầng một dải màn gạch chéo "màn ngăn khói cố định GHCL E45"; con số 2500 là khoảng từ MẶT SÀN của tầng đó tới ĐÁY màn;
   phần dưới đáy màn là tường gạch 200 REI150 (có cửa EI60). Đáy màn = biên dưới lớp khói ≥ 2,5 m (4.35 c).
 - Số đo (tỷ lệ theo ảnh, ước lượng): sàn T1 +0,5, sàn T2 +4,3 (cao 3,8 m); mái cao ≈ 3,4 m trên sàn T2.

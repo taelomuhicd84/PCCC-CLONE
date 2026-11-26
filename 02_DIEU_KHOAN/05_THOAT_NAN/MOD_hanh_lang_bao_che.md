@@ -27,4 +27,4 @@
 - **3.3.6** Chiều cao thông thủy đoạn nằm ngang đường thoát nạn ≥ 2 m. Chiều rộng thông thủy đoạn nằm ngang và đoạn dốc ≥: **1,2 m** hành lang chung thoát nạn cho > 15 người từ phòng F1 hoặc > 50 người từ phòng công năng khác; **0,7 m** lối đến chỗ làm việc đơn lẻ; **1,0 m** các trường hợp còn lại. Phải đủ rộng để vận chuyển cáng tải thương.
 - **3.3.7** Sàn đường thoát nạn không có giật cấp nhỏ hơn 45 cm hoặc gờ nhô (trừ ngưỡng cửa). Chỗ giật cấp: bậc thang ≥ 3 bậc hoặc dốc ≤ 1:6 (chênh ≤ 10 cm trên 60 cm, góc ≤ 9,5°); chênh cao > 45 cm phải có lan can tay vịn. Không có thang xoắn ốc, thang cong toàn phần/từng phần (trừ 3.4.4); trong một bản thang và buồng thang không có bậc cao/rộng khác nhau; không bố trí gương soi gây nhầm đường thoát.
 ## Định nghĩa
-Hành lang bên, hành lang trong, gian phòng có người làm việc thường xuyên: xem `01_TRI_THUC/dinh-nghia/dinh-nghia.md` (1.4.22, 1.4.23).
+Hành lang bên, hành lang trong, gian phòng có người làm việc thường xuyên: xem `01_TRI_THUC/01_CHUNG_THUAT_NGU/dinh-nghia.md` (1.4.22, 1.4.23).

@@ -1,4 +1,4 @@
-// Báo cáo khảo sát PCCC (8 mục theo 01_TRI_THUC/khao-sat-bao-gia.md) + ước khối lượng sơ bộ theo m² (01_TRI_THUC/bao-gia-pccc.md).
+// Báo cáo khảo sát PCCC (8 mục theo 01_TRI_THUC/11_KHAO_SAT_BAO_GIA/khao-sat-bao-gia.md) + ước khối lượng sơ bộ theo m² (01_TRI_THUC/11_KHAO_SAT_BAO_GIA/bao-gia-pccc.md).
 import { docSoVN, type KhoiLuong } from "./bao_gia";
 
 export type TrangThai = "CÓ" | "KHÔNG" | "CẦN XÁC NHẬN" | "";
@@ -135,7 +135,7 @@ function trangThai(ks: KhaoSat, ma: string): TrangThai {
 export type DongUoc = { ma: string; sl: number; cach_uoc: string; cho_xac_nhan: boolean };
 
 /**
- * Ước khối lượng sơ bộ theo quy tắc mặc định của 01_TRI_THUC/bao-gia-pccc.md, chỉ cho hệ thống CÓ / CẦN XÁC NHẬN.
+ * Ước khối lượng sơ bộ theo quy tắc mặc định của 01_TRI_THUC/11_KHAO_SAT_BAO_GIA/bao-gia-pccc.md, chỉ cho hệ thống CÓ / CẦN XÁC NHẬN.
  * Đây là ƯỚC LƯỢNG: mỗi dòng ghi cách ước. Hệ CẦN XÁC NHẬN đánh dấu cho_xac_nhan.
  */
 export function uocKhoiLuong(ks: KhaoSat): DongUoc[] {

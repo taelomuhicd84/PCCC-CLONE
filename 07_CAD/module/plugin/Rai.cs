@@ -1791,7 +1791,7 @@ namespace TKPCCC
                     else
                     {
                         ed.WriteMessage("\n[TKPCCC] " + v.ma + ": tiêu chuẩn không giảm bước khi có dầm. Đầu báo khói kiểu điểm xét từng ô giữa dầm theo TCVN 7568-14:2025 5.9.1.1.6"
-                            + " (02_DIEU_KHOAN/MOD_dau_bao_khoi_khoang_dam.md): bấm nét dầm ở bước nét DẦM mẫu; độ sâu dầm lấy từ ký hiệu b x h (hỏi nếu không có), dầm ≤ 0,3 m bỏ;"
+                            + " (02_DIEU_KHOAN/07_BAO_CHAY/MOD_dau_bao_khoi_khoang_dam.md): bấm nét dầm ở bước nét DẦM mẫu; độ sâu dầm lấy từ ký hiệu b x h (hỏi nếu không có), dầm ≤ 0,3 m bỏ;"
                             + " khoang ≥ ngưỡng (9 m² trần ≥ 4 m, 4 m² trần 2–4 m) rải từng khoang, khoang nhỏ hơn rải chung như trần phẳng (lắp ở mặt dưới dầm).");
                         khoangDam = true;
                         hTran = hcr.Status == PromptStatus.OK ? hcr.Value : 0;

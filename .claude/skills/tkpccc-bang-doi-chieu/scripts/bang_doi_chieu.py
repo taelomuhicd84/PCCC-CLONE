@@ -292,10 +292,10 @@ def gop(ra: Path, phan: list[Path], giu_so: bool) -> dict:
 
 GOC = Path(__file__).resolve().parents[4]          # thư mục dự án TKPCCC
 # Văn bản nêu ở cột Khoản Điều → file tri thức chép nguyên văn (tìm điều trong các file này)
-VAN_BAN = {"QCVN 06": (r"QCVN\s*0?6\b", ["02_DIEU_KHOAN/*.md", "01_TRI_THUC/qcvn06-*.md", "01_TRI_THUC/dinh-nghia/*.md"]),
-           "QCVN 10": (r"QCVN\s*10\b", ["01_TRI_THUC/qcvn10-2025-*.md"]),
-           "TCVN 7568-14": (r"7568", ["01_TRI_THUC/tcvn7568-14-2025.md"]),
-           "NĐ 105/2025": (r"105/2025|347/2026", ["01_TRI_THUC/nghi-dinh-tham-dinh-dieu-chinh.md"])}
+VAN_BAN = {"QCVN 06": (r"QCVN\s*0?6\b", ["02_DIEU_KHOAN/**/*.md", "01_TRI_THUC/**/qcvn06-*.md", "01_TRI_THUC/**/dinh-nghia.md"]),
+           "QCVN 10": (r"QCVN\s*10\b", ["01_TRI_THUC/**/qcvn10-2025-*.md"]),
+           "TCVN 7568-14": (r"7568", ["01_TRI_THUC/07_BAO_CHAY/tcvn7568-14-2025.md"]),
+           "NĐ 105/2025": (r"105/2025|347/2026", ["01_TRI_THUC/02_PHAP_LY_THAM_DINH/nghi-dinh-tham-dinh-dieu-chinh.md"])}
 SO = r"((?:[A-Z]\.\d{1,2}|\d{1,2}\.\d{1,2})(?:\.\d{1,2})*[a-z]?)(?![\w.])"    # 3.2.6.1, G.1.2, G.2a; không bắt 1.500, 10.2023
 SO_DIEU = re.compile(r"(?<![0-9A-Za-z_.])" + SO)          # nhận cả "Đ3.2.6.2" (số dính liền chữ Đ)
 # Văn bản KHÔNG có trong VAN_BAN (không có file nguyên văn): số điều của nó không được gán sang văn bản bên cạnh
@@ -353,7 +353,7 @@ def _file_tim(tra_o: str, vb: str | None) -> list:
     for t in re.split(r"[,;+]\s*|\s+\+\s+", str(tra_o or "")):
         t = t.strip().split(" ")[0].removesuffix(".md")
         if re.fullmatch(r"[\w-]{4,}", t):
-            ds += sorted(GOC.glob(f"02_DIEU_KHOAN/{t}*.md")) + sorted(GOC.glob(f"01_TRI_THUC/{t}*.md")) + sorted(GOC.glob(f"01_TRI_THUC/*/{t}*.md"))
+            ds += sorted(GOC.glob(f"02_DIEU_KHOAN/**/{t}*.md")) + sorted(GOC.glob(f"01_TRI_THUC/**/{t}*.md"))  # thư mục hạng mục 01_…12_
     ds = [p for p in ds if any(fnmatch.fnmatch(p.relative_to(GOC).as_posix(), g) for g in mau)]
     for g in mau:
         ds += sorted(GOC.glob(g))

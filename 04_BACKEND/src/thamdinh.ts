@@ -45,7 +45,7 @@ export function cauHoiXet(dong: DongThamDinh, thongTin: Record<string, unknown>,
   const trang = dong.trang ? `đúng trang ${dong.trang} của ${thuMuc}/ban_ve.pdf bằng Read (tham số pages: "${dong.trang}")` : `trang cần xem của ${thuMuc}/ban_ve.pdf bằng Read (tham số pages)`;
   return [
     "Bạn là kỹ sư thẩm định PCCC. Máy kiểm bản vẽ PDF theo QCVN 06:2022 (sửa đổi 1:2023) và xếp dòng dưới đây là CẦN XÁC MINH. Hãy xét dòng này.",
-    "- Đọc .claude/skills/tkpccc-tra-quy-chuan/SKILL.md để chọn file quy chuẩn (thoát nạn: 02_DIEU_KHOAN/SKILL_thoat_nan.md rồi 02_DIEU_KHOAN/MOD_*.md). Grep theo số điều trước, chỉ Read đoạn cần.",
+    "- Đọc .claude/skills/tkpccc-tra-quy-chuan/SKILL.md để chọn file quy chuẩn (thoát nạn: 02_DIEU_KHOAN/05_THOAT_NAN/SKILL_thoat_nan.md rồi 02_DIEU_KHOAN/05_THOAT_NAN/MOD_*.md). Grep theo số điều trước, chỉ Read đoạn cần.",
     "- CHỈ trích nguyên văn điều khoản có trong 01_TRI_THUC/ hoặc 02_DIEU_KHOAN/, ghi file + mục. Không có thì ghi \"cần tra <văn bản>\". Không viết theo trí nhớ.",
     `- Số liệu máy trích từ bản vẽ: ${thuMuc}/extraction.md. Cần xem hình thì mở ${trang}, không đọc cả file.`,
     "- Không đoán số liệu: bản vẽ không thể hiện thì giữ CẦN XÁC MINH và nói rõ cần kiểm gì.",

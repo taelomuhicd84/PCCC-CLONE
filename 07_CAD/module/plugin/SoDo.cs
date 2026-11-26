@@ -374,7 +374,7 @@ namespace TKPCCC
             {
                 foreach (string kh in new[] { "tq", "ta", "fc", "hs", "tq_nap", "t_nap", "i_tu" })
                 {
-                    if (Lay(ng, kh) == null) throw new System.Exception("\"nguon\" thiếu \"" + kh + "\" (công thức C.1, C.2 phụ lục C TCVN 7568-14:2025, 01_TRI_THUC/tcvn7568-14-2025.md)");
+                    if (Lay(ng, kh) == null) throw new System.Exception("\"nguon\" thiếu \"" + kh + "\" (công thức C.1, C.2 phụ lục C TCVN 7568-14:2025, 01_TRI_THUC/07_BAO_CHAY/tcvn7568-14-2025.md)");
                     double hsv = LaySo(ng, kh, 0);
                     if (kh == "i_tu" ? hsv < 0 : hsv <= 0) throw new System.Exception("\"nguon." + kh + "\" phải " + (kh == "i_tu" ? ">= 0" : "> 0"));
                 }
@@ -650,7 +650,7 @@ namespace TKPCCC
             if (ng != null) VeBangNguon(g, ng, tbs, nzTu, yN, S, M, Ke, ChuM);
         }
 
-        /// Bảng tính nguồn tủ trung tâm theo phụ lục C TCVN 7568-14:2025 (công thức C.1, C.2, C.3 chép ở 01_TRI_THUC/tcvn7568-14-2025.md), hệ số lấy từ spec:
+        /// Bảng tính nguồn tủ trung tâm theo phụ lục C TCVN 7568-14:2025 (công thức C.1, C.2, C.3 chép ở 01_TRI_THUC/07_BAO_CHAY/tcvn7568-14-2025.md), hệ số lấy từ spec:
         /// C20 = hs[(IQ × TQ) + FC(IA × TA)]; IC = hs[(IQ × tq_nap) + (IA × TA)] / t_nap; IPSE = IQ + IC. IQ, IA gồm dòng tủ i_tu.
         static void VeBangNguon(GoiSpec g, Dictionary<string, object> ng, List<TbNguon> tbs, int nzTu, double y0, double S, Func<double, double, Point3d> M,
             Func<double, double, double, double, Polyline> Ke, Func<Point3d, string, double, AttachmentPoint, double, MText> ChuM)

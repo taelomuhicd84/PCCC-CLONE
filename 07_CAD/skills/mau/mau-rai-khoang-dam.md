@@ -2,7 +2,7 @@
 
 Nguồn: bản vẽ người dùng gửi tối 16/11/2026 (hồ sơ khách, nằm trong `12_KET_QUA/`, không đưa vào repo), tờ "Mặt bằng tổng thể hệ thống báo cháy",
 nhà xưởng 2 tầng, tầng 1 có 118 đầu, tầng 2 có 120 đầu báo khói thường. Số liệu dưới đây đo bằng toạ độ block đầu báo, không phải đoán.
-Điều khoản: `02_DIEU_KHOAN/MOD_dau_bao_khoi_khoang_dam.md` (TCVN 7568-14:2025 5.9.1.1.6 và khoảng cách 7,2 m / 10,2 m / 5,1 m).
+Điều khoản: `02_DIEU_KHOAN/07_BAO_CHAY/MOD_dau_bao_khoi_khoang_dam.md` (TCVN 7568-14:2025 5.9.1.1.6 và khoảng cách 7,2 m / 10,2 m / 5,1 m).
 
 ## Đo được
 - Lưới cột 10,0 m (X) x 10,6 m (Y); dầm chạy trên các trục cột. Khoang = ô giữa hai trục dầm.

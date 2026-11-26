@@ -16,7 +16,7 @@ Thang rẽ quạt, bậc chéo, thang cong, thang xoắn thường KHÔNG đư�
 | Thấy gì | Là gì | Tính thoát nạn? |
 |---|---|---|
 | Chiếu nghỉ là ô phẳng, không có nét bậc, dài ≥ bề rộng vế; hai vế song song chạy thẳng | Thang 2 vế thẳng có chiếu nghỉ | Xét tiếp 3.4.1–3.4.3, 3.4.7 |
-| Ở chiếu nghỉ, các nét chéo tỏa từ đầu tường giữa hai vế (hình chữ V, rẻ quạt) | Bậc chéo (rẽ quạt) ở chiếu nghỉ (ảnh mẫu `bac_cheo_chieu_nghi_mau.png` chưa có trong `01_TRI_THUC/hinh/`: cần người dùng gửi lại) | Chỉ được khi nhà F1.2, F1.3, F2–F5 cao PCCC ≤ 15 m VÀ ≤ 15 người/tầng, tối đa 3 bậc tại góc xoay ≤ 90° (3.4.4). Ngoài ra KHÔNG |
+| Ở chiếu nghỉ, các nét chéo tỏa từ đầu tường giữa hai vế (hình chữ V, rẻ quạt) | Bậc chéo (rẽ quạt) ở chiếu nghỉ (ảnh mẫu `bac_cheo_chieu_nghi_mau.png` chưa có trong `01_TRI_THUC/05_THOAT_NAN/hinh/`: cần người dùng gửi lại) | Chỉ được khi nhà F1.2, F1.3, F2–F5 cao PCCC ≤ 15 m VÀ ≤ 15 người/tầng, tối đa 3 bậc tại góc xoay ≤ 90° (3.4.4). Ngoài ra KHÔNG |
 | Bậc hình thang hẹp đầu ở góc quay, tâm là một điểm | Bậc rẻ quạt ở góc | Như trên |
 | Các bậc là cung tròn đồng tâm, hoặc vế cong | Thang cong | Chỉ khi đủ mọi điều kiện 3.4.4: F1.2, F1.3, F2–F5; chiều cao thang ≤ 9 m; bán kính ≥ 2 lần bề rộng vế; cổ bậc 150–190; mặt bậc phía trong ≥ 220, ở giữa ≥ 250, phía ngoài ≤ 450 mm. Thiếu kích thước thì CẦN XÁC NHẬN, thường là KHÔNG |
 | Vòng tròn có trụ giữa, bậc tỏa quanh trụ | Thang xoắn ốc | KHÔNG tính thoát nạn: trên đường thoát nạn cấm thang xoắn ốc, thang cong toàn phần hoặc từng phần trừ trường hợp 3.4.4 (3.3.7). Chỉ là thang nội bộ hoặc thang lên mái kỹ thuật |
@@ -36,8 +36,8 @@ Thang rẽ quạt, bậc chéo, thang cong, thang xoắn thường KHÔNG đư�
 - **Nhãn của người thiết kế** ("thang di chuyển nội bộ, không dùng thoát nạn", "đóng kín thang không sử dụng", "thang sắt thoát nạn") chỉ để đối chiếu. Vẫn phải xếp loại theo hình rồi so với nhãn; lệch thì báo.
 
 ## Thang rẻ quạt, bậc chéo: hai điều kiện của QCVN 06 3.4.4 (đọc nguyên văn 2026-10-30)
-Hình A.12 TCVN 13967:2024 (trang 48; ảnh Hình A.12 chưa có trong `01_TRI_THUC/hinh/`: cần chép lại từ TCVN 13967:2024) minh họa rẻ quạt cho công trình bất kỳ có thang thoát nạn (người dùng dặn). A = vùng mặt bậc an toàn để đi, B = dải đánh dấu mép bậc; 9.3.3.3.1 c (trang 30) yêu cầu giải pháp nhận biết mép bậc.
-QCVN 06 3.4.4 (bản hợp nhất cũ `01_TRI_THUC/hoc/hop-nhat/qcvn-6.md` không còn trong repo; tóm tắt ở `02_DIEU_KHOAN/MOD_cau_thang_buong_thang.md` mục 3.4.4): được dùng thang cong, thang bậc chéo khi thỏa MỘT trong hai:
+Hình A.12 TCVN 13967:2024 (trang 48; ảnh Hình A.12 chưa có trong `01_TRI_THUC/05_THOAT_NAN/hinh/`: cần chép lại từ TCVN 13967:2024) minh họa rẻ quạt cho công trình bất kỳ có thang thoát nạn (người dùng dặn). A = vùng mặt bậc an toàn để đi, B = dải đánh dấu mép bậc; 9.3.3.3.1 c (trang 30) yêu cầu giải pháp nhận biết mép bậc.
+QCVN 06 3.4.4 (bản hợp nhất cũ `01_TRI_THUC/12_BAI_HOC_DU_AN/hop-nhat/qcvn-6.md` không còn trong repo; tóm tắt ở `02_DIEU_KHOAN/05_THOAT_NAN/MOD_cau_thang_buong_thang.md` mục 3.4.4): được dùng thang cong, thang bậc chéo khi thỏa MỘT trong hai:
 1) Mỗi bậc có một phần mặt bậc thỏa 3.4.1 (bản thang ≥ 0,9 m; ≥ 0,7 m nếu nhà ≤ 15 m và ≤ 15 người/tầng) và 3.4.2 (mặt bậc ≥ 250 mm, cao ≤ 220 mm). Phần đó chính là vùng A của Hình A.12.
 2) Nhóm F1.2, F1.3, F2–F5, cao PCCC ≤ 15 m, ≤ 15 người/tầng: tại mỗi chiếu nghỉ hoặc góc xoay ≤ 90° tối đa 3 bậc chéo (rẻ quạt).
 Cách kiểm trên bản vẽ: đếm bậc chéo; nếu > 3 thì tính vùng A: bậc xoay quanh tâm với góc θ mỗi bậc, bề rộng mặt bậc = r·θ, vùng A bắt đầu ở r = 250/θ (mm); bề rộng vùng A = bề rộng vế − r. Đạt điều kiện 1 khi vùng A ≥ 0,7/0,9 m. Thêm dải đánh dấu mép bậc (Hình A.12). Thang xoắn ốc tròn trụ giữa vẫn không tính.
@@ -65,7 +65,7 @@ Không chọn thang theo cảm tính, không tự quyết phương án. Làm đ�
    - Ô lấy sáng KHÔNG phải lý do loại một thang. Không mở được ô ≥ 1,2 m²/tầng (nhà phố xây sát nhau) thì chiếu sáng nhân tạo theo 3.4.8b: cấp điện như chú thích 3.4.13 (duy trì liên tục khi cháy), đủ sáng, không lóa. Buồng thang thông thường thì thêm lỗ thoát khói trên tum thang ≥ 10 % diện tích phủ bì sàn buồng thang; miễn khi nhà có ≥ 2 thang thoát nạn hoặc 1 thang nhưng có lối thoát khẩn cấp theo 3.2.6.2. Ô kính lấy sáng trên mái (buồng thang L2) chỉ dùng khi đạt 3.4.12 (cao ≤ 9 m, tới 12 m nếu lỗ tự mở khi cháy), ít khi đạt.
    - Căn hộ phải mở cửa thẳng vào buồng thang: QCVN 06 3.2.1b có liệt kê "trực tiếp vào buồng thang bộ" là lối ra thoát nạn (tầng 1: 3.2.1a "qua buồng thang bộ"), nhưng người dùng thấy bất hợp lý (đi qua buồng thang rồi ra sảnh). Gặp thì ghi "cần người dùng xem xét", kèm căn cứ.
 4. **Không thang trong nhà nào cải tạo được** thì xét thang ngoài nhà (thường ở mặt tiền): tính thử bề rộng vế, bậc, chiếu nghỉ theo luật và các vướng ở tầng 1 (ram dốc, bậc tam cấp). Vẫn không được thì KẾT LUẬN "không có phương án khả thi, cần người dùng xem xét". Không tự chọn một phương án vi phạm.
-5. **Thang loại 2 (thang hở trong nhà)**: thỏa điều kiện thì trả lời "được dùng thang hở theo điều …". Điều kiện nhiều: 3.2.1b (hành lang bên, nhà < 28 m), 3.2.6 (thay buồng thang bằng thang loại 2 khi đồng thời đủ các điều kiện; đoạn này trong bản hợp nhất bị lỗi chữ), 3.4.15, 3.4.16. Ngoài điều kiện về thang, đường thoát nạn qua thang loại 2 phải thỏa 3.3.2 + Phụ lục G: L = L1 (trên tầng, tới mép bậc đầu tiên) + 3H (H = chiều cao thang) + L3 (chân thang tới lối ra thật) ≤ giới hạn Phụ lục G; phải cộng cả, không dừng ở L1 (người dùng dạy 2026-11-02; nguyên văn 3.3.2 và ví dụ: `02_DIEU_KHOAN/MOD_tinh_toan_khoang_cach.md`). Chưa được train đủ: hỏi người dùng, không tự kết luận.
+5. **Thang loại 2 (thang hở trong nhà)**: thỏa điều kiện thì trả lời "được dùng thang hở theo điều …". Điều kiện nhiều: 3.2.1b (hành lang bên, nhà < 28 m), 3.2.6 (thay buồng thang bằng thang loại 2 khi đồng thời đủ các điều kiện; đoạn này trong bản hợp nhất bị lỗi chữ), 3.4.15, 3.4.16. Ngoài điều kiện về thang, đường thoát nạn qua thang loại 2 phải thỏa 3.3.2 + Phụ lục G: L = L1 (trên tầng, tới mép bậc đầu tiên) + 3H (H = chiều cao thang) + L3 (chân thang tới lối ra thật) ≤ giới hạn Phụ lục G; phải cộng cả, không dừng ở L1 (người dùng dạy 2026-11-02; nguyên văn 3.3.2 và ví dụ: `02_DIEU_KHOAN/05_THOAT_NAN/MOD_tinh_toan_khoang_cach.md`). Chưa được train đủ: hỏi người dùng, không tự kết luận.
 
 ### Ví dụ: Căn hộ DV DA-01 (6 tầng nổi + hầm, cao PCCC 18,4 m, ~160 m²/tầng)
 | Thang | Nhận diện | Đánh giá | Phương án | Khả thi |
@@ -94,8 +94,8 @@ Kết luận đúng: không có phương án khả thi, cần người dùng xem
   với PA1 đóng kín buồng thang chưa được người dùng nói rõ: khi gặp, ghi vị trí cửa chống cháy tại cửa phòng và "cần người dùng xem xét".
 
 ## Tách thang hầm → tầng 1 khỏi thang các tầng trên → tầng 1 (người dùng train 2026-11-05, hồ sơ DA-02)
-Ảnh mẫu người dùng vẽ: `01_TRI_THUC/hinh/tach_thang_ham_tret_PA_tang1.png` (tầng 1), `01_TRI_THUC/hinh/tach_thang_ham_tret_PA_ham.png` (hầm).
-Hình QCVN 06 tham khảo: `01_TRI_THUC/hinh/qcvn06_hinh_I1_loi_ra_ham_truc_tiep.png` (Hình I.1: lối ra từ hầm trực tiếp ra ngoài), `01_TRI_THUC/hinh/qcvn06_hinh_I2_loi_ra_ham_qua_sanh.png` (Hình I.2: từ hầm lên sảnh tầng 1 rồi có lối đi riêng ra ngoài).
+Ảnh mẫu người dùng vẽ: `01_TRI_THUC/05_THOAT_NAN/hinh/tach_thang_ham_tret_PA_tang1.png` (tầng 1), `01_TRI_THUC/05_THOAT_NAN/hinh/tach_thang_ham_tret_PA_ham.png` (hầm).
+Hình QCVN 06 tham khảo: `01_TRI_THUC/05_THOAT_NAN/hinh/qcvn06_hinh_I1_loi_ra_ham_truc_tiep.png` (Hình I.1: lối ra từ hầm trực tiếp ra ngoài), `01_TRI_THUC/05_THOAT_NAN/hinh/qcvn06_hinh_I2_loi_ra_ham_qua_sanh.png` (Hình I.2: từ hầm lên sảnh tầng 1 rồi có lối đi riêng ra ngoài).
 - MÀU ĐỎ = tường quây kín buồng thang (hầm và tầng 1; ở tầng 1 có thêm vách ngăn cháy loại 1 chia buồng thang làm hai phần: phần thang hầm lên và phần thang các tầng trên xuống).
 - MÀU XANH LÁ = cửa đi từ hầm lên tầng 1 (lối ra riêng của thang hầm). MÀU XANH DƯƠNG = cửa đi từ các tầng trên xuống tầng 1. Mỗi cửa có mũi tên ghi "≥ 900 mm".
 - Thang hầm chỉ lên tới sàn tầng 1; thang các tầng trên chỉ xuống tới sàn tầng 1; hai phần ngăn bằng vách ngăn cháy loại 1, mỗi phần có cửa riêng ra tầng 1/ngoài nhà (Hình I.1, I.2).
@@ -124,7 +124,7 @@ Hình QCVN 06 tham khảo: `01_TRI_THUC/hinh/qcvn06_hinh_I1_loi_ra_ham_truc_tiep
   mặt ngoài tường giếng, không đo từ tường mới vẽ lệch).
 
 ### Mẫu nhận diện đúng: hầm vào thang chung qua BUỒNG ĐỆM có quạt tăng áp (người dùng xác nhận 2026-11-06, hồ sơ karaoke 32,8 × 10,55 m, ST1)
-Hình: `01_TRI_THUC/hinh/st1_ham_buong_dem_quat_tang_ap.png` (hầm), `01_TRI_THUC/hinh/st1_tang1_sanh_hai_cua.png` (tầng 1).
+Hình: `01_TRI_THUC/06_CHONG_KHOI/hinh/st1_ham_buong_dem_quat_tang_ap.png` (hầm), `01_TRI_THUC/05_THOAT_NAN/hinh/st1_tang1_sanh_hai_cua.png` (tầng 1).
 Đây là cách thứ hai của 3.2.1 (nhà < 28 m không có lối riêng ra ngoài cho thang hầm: vào buồng thang chung từ hầm qua khoang đệm),
 khác mẫu DA-02 (vách ngăn chia buồng thang ở tầng 1). Gặp bản vẽ kiểu này thì nhận diện và ghi chú như sau:
 - **Dấu hiệu ở hầm**: thang 2 vế nằm trong một gian riêng, trước gian thang có phòng ghi "BUỒNG ĐỆM" (≈ 10,9 m²) bao tường TG2 (REI 90);
@@ -147,12 +147,12 @@ khác mẫu DA-02 (vách ngăn chia buồng thang ở tầng 1). Gặp bản v�
 - Thang bộ hở (thang xoắn, thang trang trí, thang nội bộ ghi "không dùng thoát nạn") không đóng kín giữa các tầng nổi: các tầng nó nối
   là MỘT không gian thông tầng. Ghi "không dùng thoát nạn" chỉ bỏ nó khỏi số lối thoát nạn, KHÔNG miễn các yêu cầu ngăn cháy, chống khói.
 - Căn cứ (QCVN 06:2022 sửa đổi 2023):
-  - 4.35 (nguyên văn `01_TRI_THUC/qcvn06-dieu-4.md`): sảnh thông tầng "kể cả trang bị trong khối tích của nó các cầu thang bộ hở"; a) các
+  - 4.35 (nguyên văn `01_TRI_THUC/04_NGAN_CHAY_CHIU_LUA/qcvn06-dieu-4.md`): sảnh thông tầng "kể cả trang bị trong khối tích của nó các cầu thang bộ hở"; a) các
     tầng thông nhau trong cùng một khoang cháy; b) kết cấu bao phòng, hành lang tiếp giáp EI 60 (hoặc kính cường lực ≥ 6 mm + sprinkler);
     c) lỗ mở dẫn vào có rèm, màn ngăn khói E 45 tự hạ khi cháy hoặc màn cố định; d) diện tích khoang cháy cộng các tầng theo Phụ lục H.
   - CHỐNG KHÓI (hút đồng thời các tầng thông nhau, D.1.5, D.7, 4.35 e, tự nhiên, màn, lớp khói, ghi chú mẫu): tách sang
-    `01_TRI_THUC/hut-khoi-thong-tang.md`, không lặp ở đây.
-- Ghi chú lên bản vẽ ở thang hở: nhận diện + ngăn cháy ở đây, phần hút khói theo `01_TRI_THUC/hut-khoi-thong-tang.md` mục 4.
+    `01_TRI_THUC/06_CHONG_KHOI/hut-khoi-thong-tang.md`, không lặp ở đây.
+- Ghi chú lên bản vẽ ở thang hở: nhận diện + ngăn cháy ở đây, phần hút khói theo `01_TRI_THUC/06_CHONG_KHOI/hut-khoi-thong-tang.md` mục 4.
 
 
 ## Vẽ tường quây buồng thang khi đóng kín (người dùng dặn 2026-11-06, áp mọi dự án)
@@ -167,7 +167,7 @@ khác mẫu DA-02 (vách ngăn chia buồng thang ở tầng 1). Gặp bản v�
 
 ### Checklist vẽ buồng thang (đọc TRƯỚC khi đặt `tuong`/`cua`; người dùng dặn "đừng sai mãi" 2026-11-06; gom 2026-11-15 từ bài 06/11 và bài 09/11 bên dưới, bỏ các ý đã bị ghi đè)
 1. Có nét người dùng vẽ (tường đỏ, cửa xanh) trên PDF ⇒ GIỮ đúng nét đó, không tự vẽ thêm; số liệu dưới đây chỉ dùng khi chưa có nét mẫu.
-2. HẦM (QCVN 06 4.28, nguyên văn `01_TRI_THUC/qcvn06-dieu-4.md`: "Trong các tầng hầm hoặc tầng nửa hầm, trước lối vào các thang máy phải bố trí các khoang đệm ngăn cháy loại 1 có áp suất không khí dương khi cháy."):
+2. HẦM (QCVN 06 4.28, nguyên văn `01_TRI_THUC/04_NGAN_CHAY_CHIU_LUA/qcvn06-dieu-4.md`: "Trong các tầng hầm hoặc tầng nửa hầm, trước lối vào các thang máy phải bố trí các khoang đệm ngăn cháy loại 1 có áp suất không khí dương khi cháy."):
    quây một khối gồm CẢ thang bộ lẫn thang máy (tường ở mép ngoài, cách người dùng vẽ 09/11) và có khoang đệm như trên trước lối vào thang máy; chỉ 1 cửa EI 60 ở vế đi LÊN (hầm là tầng thấp nhất, không có cửa "đi xuống").
    Thang hầm chung buồng thang các tầng trên (nhà < 28 m, không có lối riêng ra ngoài) thì vào buồng thang qua khoang đệm (3.2.1).
 3. TRỆT: tường quây hai vế, cách mép bậc đầu TỪNG vế ≈ 900 mm (đo bậc đầu từng vế bằng ảnh phóng 4 lần); 2 cửa EI ra sảnh ở đầu hai vế, đặt sát mép phía có cửa phòng mở ra sảnh (T-01, T-02) để không va.

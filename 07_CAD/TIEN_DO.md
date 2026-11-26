@@ -580,7 +580,7 @@ Người dùng gửi 3 video TikTok, dặn: lấy tư duy hay, nhanh, tự độ
 Đã làm (chỉ `module/ui/` + 1 hàm đọc ở `DayBc.cs`): thanh dọc thành ô biểu tượng màu; widget `NutIcon`, `ThanhTab`, `TieuDeNhom`, `KhungTrangThai` (`GiaoDien.cs`);
 trang Báo cháy 4 tab RẢI ĐẦU BÁO · KHOANG DẦM (ranh giới, Tra cứu TCVN, h trần, rải `PCCC_RAI BC_KHOI Dam h`) · KIỂM TRA · ĐI DÂY, khung TRẠNG THÁI cuối mỗi tab
 (`Lenh.DemVung` đếm PCCC_VUNG / PCCC_LOAITRU); lưới Tiện ích / Chữa cháy / Thống kê: tab viên thuốc + vòng tròn màu ghi mã tắt, palette hẹp thì 1 cột;
-`BangTraCuu.cs` (bảng 5.9.1.1.6 đọc từ `02_DIEU_KHOAN/MOD_dau_bao_khoi_khoang_dam.md`, build.bat chép cạnh DLL).
+`BangTraCuu.cs` (bảng 5.9.1.1.6 đọc từ `02_DIEU_KHOAN/07_BAO_CHAY/MOD_dau_bao_khoi_khoang_dam.md`, build.bat chép cạnh DLL).
 Xem thử ngoài AutoCAD: dựng exe giả lập lớp AutoCAD (scratchpad, không commit), chụp tab tối + sáng: đạt. `chay_thu.ps1`, `thu_mcp.ps1` TAT CA DAT, bundle đã build.
 CHƯA: `thu_gui.ps1` (AutoCAD đang mở bản vẽ của người dùng); người dùng tắt hẳn AutoCAD mở lại để nạp, xem tận mắt.
 VIỆC KẾ (chờ người dùng chọn, xem mục 3 file kiến thức): 1 ghi m² từng khoang + đánh dấu ô nhỏ + bấm tay đặt giữa dầm; 2 ống nhánh tự chọn DN theo số đầu phun
@@ -673,7 +673,7 @@ BC_BEAM vẽ tia, `PCCC_DAY` dây loop, cự ly 45 m). Đợt 2 xong (trang Ti�
 Đợt 4 xong (trang con ADIM 5 bước, `PCCC_ADIM` lọc Mline): `chay_thu.ps1` 114/114, `thu_mcp`, `thu_gui` đạt.
 Luật hạn mức (người dùng dặn 14/11): tới 95 % thì ghi 2 file này + push; 19h reset thì TỰ làm tiếp, toàn quyền. Đợt 5 xong (thanh dọc 9 phân hệ, thêm Chữa cháy, Thống kê; Bố trí nhanh đa giác đều). Sau đó: TZ `PCCC_TACHVUNG`, MZ `PCCC_KHUVUC`, vòng tròn PCCC_VUNG / PCCC_LOAITRU làm vùng (Bố trí nhanh "Tròn"): `chay_thu.ps1` 117/117,
 `thu_gui` đạt. Thêm: trang ADIM bấm trước 2 mép tường (`PCCC_ADIMMOC`, hiện toạ độ), trang Báo cháy hiện kết quả kiểm vùng mù: 118/118.
-Bước "Công năng" của trang Báo cháy đọc `01_TRI_THUC/chon-loai-dau-bao.md`; ống gió (layer ONG_GIO / DUCT) dịch đầu báo: `chay_thu.ps1` 119/119.
+Bước "Công năng" của trang Báo cháy đọc `01_TRI_THUC/07_BAO_CHAY/chon-loai-dau-bao.md`; ống gió (layer ONG_GIO / DUCT) dịch đầu báo: `chay_thu.ps1` 119/119.
 ĐÃ XONG HẾT danh sách spec làm được (file việc, mục "Còn lại" chỉ còn việc của người dùng). VIỆC KẾ: người dùng mở AutoCAD xem, cho Fable kiểm toàn dự án;
 lỗi họ báo thì sửa theo `07_CAD/README.md` bảng "Sửa gì vào đâu". Người dùng tự mở AutoCAD xem và cho Fable kiểm.
 
@@ -713,7 +713,7 @@ phép kiểm `vung_tu_dong` dời sang gốc x 2600000). Sau gộp: build đạt
 Ảnh người dùng gửi: `12_KET_QUA/cad_test/2026-11-13/` (không commit). Làm song song = chia agent theo file không chồng nhau (Rai.cs / module/ui / SoDo.cs), mỗi lúc chỉ một agent sửa một file.
 1. RẢI SAI KHOẢNG CÁCH (`1_rai_6771.png`): vùng đa giác lồi lõm, người dùng đặt bước tối đa 10,5 m, cách tường tối đa 1/2 bước (5,25 m), nhưng có đầu báo cách tường 6771 mm
    (đo theo phương đứng tới cạnh xiên dưới). Sửa `rai` / `PCCC_RAI` để mọi điểm của vùng (kể cả góc nhọn, cạnh xiên) nằm trong bán kính phủ theo bước và cách tường; thêm phép kiểm với chính đa giác đó.
-   Kèm: KHÔNG hỏi người dùng khoảng cách hay m². Nối với tiêu chuẩn báo cháy (skill `tkpccc-tra-quy-chuan`, `01_TRI_THUC/tcvn7568-14-2025.md`, `07_CAD/rule/LUAT.md`): lấy bước, cách tường,
+   Kèm: KHÔNG hỏi người dùng khoảng cách hay m². Nối với tiêu chuẩn báo cháy (skill `tkpccc-tra-quy-chuan`, `01_TRI_THUC/07_BAO_CHAY/tcvn7568-14-2025.md`, `07_CAD/rule/LUAT.md`): lấy bước, cách tường,
    diện tích bảo vệ tối đa theo loại đầu báo + chiều cao trần (và sprinkler theo TCVN 7336) rồi tự thiết kế. Trị số vẫn đọc từ file luật/knowledge, không viết cứng trong mã C#.
    Kèm (dặn 13/11, ảnh `5_dim_cheo_goc_7m2.png`): đầu báo GẦN GÓC phòng phải có kích thước CHÉO (aligned) từ đầu báo tới góc tường, ví dụ 7,2 m; KHÔNG vẽ vòng tròn bán kính.
    Khoảng cách chéo góc tối đa lấy theo tiêu chuẩn báo cháy (skill `tkpccc-tra-quy-chuan` / `knowledge/`), không viết cứng. Ảnh mẫu còn ghi kích thước bước (10,2) và cách tường (5,1) theo hai phương.
