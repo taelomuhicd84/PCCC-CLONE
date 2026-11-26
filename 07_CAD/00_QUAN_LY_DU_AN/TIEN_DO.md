@@ -3,7 +3,14 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `07_CAD/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `07_CAD/00_QUAN_LY_DU_AN/KE_HOACH.md`. Nhật ký: `07_CAD/00_QUAN_LY_DU_AN/LICH_SU.md`. Luật riêng: `07_CAD/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `07_CAD/00_QUAN_LY_DU_AN/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`07_CAD/CLAUDE.md`).
 
-## 26/11 chiều (tiếp 3): THƯ VIỆN BLOCK RA NGOÀI `15_THU_VIEN_BLOCK/` (3 MENU KIẾN TRÚC · XÂY DỰNG · PCCC) + DỌN GỐC 07_CAD — XONG MÃ, chưa push
+## 26/11 chiều (tiếp 4): BLOCK PCCC VÀO `15_THU_VIEN_BLOCK/01_PCCC/` — XONG, build 7/7
+- Người dùng: mọi thứ liên quan block PCCC vào thư mục PCCC trong thư viện block; sau này thêm kiến trúc, xây dựng (`02_KIEN_TRUC/`, `03_XAY_DUNG/` cùng kiểu).
+- `01_PCCC/`: `cad/ThuVien.cs` (PCCC_LIB), `cad/DatThietBi.cs` (PCCC_DAT, PCCC_ONG), `ui/BangChonVatTu.cs`, `hinh_bc.json` (từ `03_DU_LIEU_VE/ky_hieu/`; build.bat, chay_thu, hinh_tu_pdf.py, kiem_lien_ket đổi theo).
+  Phần chung ở gốc `15_THU_VIEN_BLOCK/`: `cad/Block.cs` (PCCC_THEMBLOCK, ảnh xem trước), `ui/BangBlock.cs` (3 tab).
+- CHƯA dời: `PCCC_Blocks.dwg`, `block_alias.json` ở `TKPCCC.bundle/Contents` (plugin đọc + PCCC_THEMBLOCK ghi tại chỗ, người dùng BEDIT ở đó; dời cần sửa mã trỏ về nguồn như `nguon_vat_tu.txt`).
+- Test: build.bat 7/7; thu_mcp TAT CA DAT; chay_thu chỉ 1 LOI cũ (Karaoke 123); kiem_lien_ket 0 lỗi. Đã push.
+
+## 26/11 chiều (tiếp 3): THƯ VIỆN BLOCK RA NGOÀI `15_THU_VIEN_BLOCK/` (3 MENU KIẾN TRÚC · XÂY DỰNG · PCCC) + DỌN GỐC 07_CAD — XONG, đã push b06c986
 - Người dùng: thư viện block dùng chung cho 3 lĩnh vực, nay chỉ PCCC có block; bỏ thứ không dùng; bản vẽ test vào hạng mục Test.
 - `09_PCCC/06_THU_VIEN_BLOCK` → `15_THU_VIEN_BLOCK` (nhóm PCCC còn 01–05). Lĩnh vực mới: nhóm `16_<LINH_VUC>/NN_*`; tính năng PCCC mới: `09_PCCC/06_...`.
 - Bảng `PCCC_BLOCK` (`15_THU_VIEN_BLOCK/ui/BangBlock.cs`): hàng tab KIẾN TRÚC · XÂY DỰNG · PCCC (mặc định PCCC), lọc theo trường mới `linh_vuc` của `VatTu`
@@ -802,7 +809,7 @@ phép kiểm `vung_tu_dong` dời sang gốc x 2600000). Sau gộp: build đạt
 - 13/11: `so_do` `bc` LÀM LẠI giống quy cách trang 11 hồ sơ thật (commit `b0af585`, `f07433c`): bảng ký hiệu (mẫu nét theo layer dây), ghi chú, bảng tính nguồn phụ lục C
   TCVN 7568-14:2025 (hệ số, dòng tĩnh/báo cháy từ spec; ra đúng 4081 mA, 8,20568 Ah), tủ có đèn zone, điện thoại, tiếp địa, nguồn 220 V/24 V, bó dây FR có elip, zone giám sát van,
   cột còi đèn, zone dự phòng, liên động ngang, tiêu đề. Nhãn zone 3 dòng: khu vực có tầng / DIỆN TÍCH BẢO VỆ: x M² / ZONE n (zone theo tầng lấy từ trang 5–8).
-  Ký hiệu: block có sẵn trong bản vẽ được GIỮ (NapBlock không ghi đè, riêng PCCC_LIB cập nhật); bộ mặc định lấy từ nét PDF (`07_CAD/03_DU_LIEU_VE/ky_hieu/hinh_bc.json`, script
+  Ký hiệu: block có sẵn trong bản vẽ được GIỮ (NapBlock không ghi đè, riêng PCCC_LIB cập nhật); bộ mặc định lấy từ nét PDF (`07_CAD/15_THU_VIEN_BLOCK/01_PCCC/hinh_bc.json`, script
   `07_CAD/.claude/skills/tkpccc-cad-console/scripts/hinh_tu_pdf.py`). Mã mới: `BC_CHI_THI`, `BC_CHI_THI_HL`, `BC_COI_DEN`, `BC_DIEN_THOAI`, `DAY_BC_10`, `DAY_BC_10_FR`, `DAY_NGUON_15`, `DAY_NGUON_15_FR`.
   Review Opus max (`12_KET_QUA/cad_review/review_2026-11-13.md`): 0 CHẶN, 3 NÊN SỬA, 9 GHI CHÚ, 14 chỗ khác trang 11. ĐÃ SỬA 3 NÊN SỬA + cỡ thiết bị chỉ thị (tỉ lệ 1,47), dây nối nét đứt;
   `chay_thu.ps1` 78/78, `thu_mcp.ps1` 9/9.

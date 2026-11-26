@@ -39,7 +39,7 @@ Copy-Item "$GOC\03_DU_LIEU\vat_tu.json" $T
 Copy-Item "$GOC\03_DU_LIEU\khoang_cach_rai.json" $T  # tri so rai theo tieu chuan (rai / PCCC_RAI khong co s)
 Copy-Item "$GOC\03_DU_LIEU\ong_nhanh_dn.json" $T  # bang DN theo so dau phun (PCCC_TUYEN TuDong)
 Copy-Item "$GOC\07_CAD\01_TRI_THUC_VE\ve\mau-thuyet-minh-pccc.md" $T  # van thuyet minh mau (PCCC_THUYETMINH)
-Copy-Item "$GOC\07_CAD\03_DU_LIEU_VE\ky_hieu\hinh_bc.json" $T  # hinh block mac dinh (lay tu PDF trang 11): PCCC_LIB tao thu vien moi theo hinh nay
+Copy-Item "$GOC\07_CAD\15_THU_VIEN_BLOCK\01_PCCC\hinh_bc.json" $T  # hinh block mac dinh (lay tu PDF trang 11): PCCC_LIB tao thu vien moi theo hinh nay
 # File danh muc "goc" cua repo: tro toi ban chep tam (nhu build.bat ghi nguon_vat_tu.txt) de PCCC_THEMBLOCK ghi ca hai file ma khong dung repo.
 New-Item -ItemType Directory "$T\goc" | Out-Null
 Copy-Item "$GOC\03_DU_LIEU\vat_tu.json" "$T\goc"

@@ -65,7 +65,7 @@ Ví dụ dựng lại đúng số liệu trang 11: `07_CAD/01_TRI_THUC_VE/vi_du/
 - Toạ độ trong `SoDo.cs` viết theo pt của trang 11 (A3), đổi ra bản vẽ bằng S = 33 mm/pt × k (vòng H của bảng ký hiệu 12,12 pt = 400 mm như block thư viện).
   Gốc `p` = góc dưới trái mặt tủ. Hàng zone cách `h` (mặc định 1500 mm, tối thiểu 38 pt). Phần bên phải bó dây cố định theo tủ; bảng ký hiệu đặt ở đỉnh trang hoặc cao hơn nếu nhiều zone.
 - Ký hiệu (quy tắc người dùng): dùng block mang mã thiết bị đã có trong bản vẽ, KHÔNG ghi đè bằng thư viện (`NapBlock` chỉ chép mã bản vẽ chưa có; riêng lệnh `PCCC_LIB` vẫn cập nhật).
-  Hình block mặc định các mã báo cháy lấy từ nét vector bảng ký hiệu trang 11: `07_CAD/03_DU_LIEU_VE/ky_hieu/hinh_bc.json`, sinh bằng `07_CAD/.claude/skills/tkpccc-cad-console/scripts/hinh_tu_pdf.py`
+  Hình block mặc định các mã báo cháy lấy từ nét vector bảng ký hiệu trang 11: `07_CAD/15_THU_VIEN_BLOCK/01_PCCC/hinh_bc.json`, sinh bằng `07_CAD/.claude/skills/tkpccc-cad-console/scripts/hinh_tu_pdf.py`
   (H, S, nút ấn, Ω, thiết bị chỉ thị + HL, còi đèn, OS&Y, FS, van báo động, điện thoại). Thư viện cũ còn block mặc định vòng tròn + chữ thì `PCCC_LIB` vẽ lại; block người dùng đã sửa giữ nguyên.
   Trên sơ đồ ký hiệu phóng so với bảng ký hiệu theo `TlKyHieu` (đo trang 11: đầu báo 1,75; nút ấn 1,95; còi 1,83; FS 1,65; OS&Y 1,43; Ω 0,87).
 - Dây: mỗi mã dây một layer (`layer_so_do`, `net`, `mau` trong `03_DU_LIEU/vat_tu.json`): `DAY_BC_10` tín hiệu 2C×1,0 Cu-PVC nét đứt (DASHED), `DAY_BC_10_FR` 2C×1 Cu-PVC/FR nét có chữ FR

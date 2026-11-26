@@ -19,7 +19,7 @@ Mọi file `cad/` là phần nối của `partial class Lenh` (bot chat: `partia
 ├─ 00_QUAN_LY_DU_AN/     TIEN_DO.md · LICH_SU.md · KE_HOACH.md · HUONG_DAN_SU_DUNG.md (hướng dẫn kỹ sư: cài, mọi lệnh, mã, layer; sửa lệnh thì sửa cả file này + `DS_LENH`) · viec/ (phiếu việc cũ)
 ├─ 01_TRI_THUC_VE/       ĐẦU NGUỒN tri thức vẽ cho MỌI AI (mục lục README.md): TU_VUNG.md (từ vựng spec) · vi_du/ · nhan_dang/ (đọc bản vẽ) · ve/ (vẽ + quy ước layer) · mau/ (bằng chứng từ bản mẫu)
 ├─ 02_LUAT_VE/           LUAT.md: việc trên CAD ↔ file quy chuẩn nguyên văn ↔ skill, agent
-├─ 03_DU_LIEU_VE/        ban_quyen/ (cau_hinh_ban_quyen.json, khoa_cong_khai.xml; khoá riêng KHÔNG ở repo) · ky_hieu/ (ky_hieu.json, hinh_bc.json) · block/ · ong/ · bom/ · mau/ (chờ file người dùng)
+├─ 03_DU_LIEU_VE/        ban_quyen/ (cau_hinh_ban_quyen.json, khoa_cong_khai.xml; khoá riêng KHÔNG ở repo) · ky_hieu/ (ky_hieu.json) · block/ · ong/ · bom/ · mau/ (chờ file người dùng)
 ├─ 04_KIEM_THU/          chay_thu.ps1 (plugin + PCCC_SPEC) · thu_mcp.ps1 · thu_hub.ps1 · thu_bot.ps1 + ThuBot.cs · thu_brave.ps1 + ThuBrave.cs · thu_ban_quyen.ps1 · thu_gui.ps1 (AutoCAD thật) · ThuBlockDong.cs · mau_kt.pdf + tao_pdf_mau.py
 │
 ├─ 05_NEN_TANG/          khung plugin: cad/ Lenh.cs (khởi động, đăng ký mọi lệnh PCCC_*, DS_LENH, layer, đơn vị, hỏi mã) · CaiDat.cs (cai_dat.json: layer dây, dây theo thiết bị, kiểu dim)
@@ -41,7 +41,9 @@ Mọi file `cad/` là phần nối của `partial class Lenh` (bot chat: `partia
 │                        03_PHIEN_LICH_SU/ (LichSu.cs hội thoại mới, lịch sử, link phiên; PhienAi.cs đọc phiên, chỗ skill -> cờ CLI, MCP) · 04_DU_AN_SKILL/ (DuAnSkill.cs thư mục dự án, skill; ChonThuMuc.cs) · 05_DINH_KEM/ (DinhKem.cs ảnh, vùng chọn CAD)
 ├─ 13_YOUTUBE/           PLUGIN RIÊNG -> TKPCCC_YouTube.bundle (TKYOUTUBE): BangYoutube.cs · LenhYoutube.cs · GanBrave.cs · webview2/ (3 DLL NuGet 1.0.2903.40) · brave_khung/ (extension Brave)
 ├─ 14_HUB/               Hub.cs -> bin/TKPCCC.Hub.exe (cài mọi thứ: Nền tảng · MCP cad · Bot chat · YouTube)
-└─ 15_THU_VIEN_BLOCK/    cad/ ThuVien.cs (PCCC_LIB, hình mặc định) · Block.cs (PCCC_THEMBLOCK, ảnh xem trước) · DatThietBi.cs (PCCC_DAT, PCCC_ONG) · ui/ BangBlock.cs (PCCC_BLOCK) · BangChonVatTu.cs  — DÙNG CHUNG: menu Kiến trúc · Xây dựng · PCCC (nay chỉ PCCC có block)
+└─ 15_THU_VIEN_BLOCK/    DÙNG CHUNG, menu Kiến trúc · Xây dựng · PCCC. Phần chung: cad/ Block.cs (PCCC_THEMBLOCK, ảnh xem trước) · ui/ BangBlock.cs (PCCC_BLOCK, 3 tab)
+   └─ 01_PCCC/           block PCCC: cad/ ThuVien.cs (PCCC_LIB, hình mặc định) · DatThietBi.cs (PCCC_DAT, PCCC_ONG) · ui/ BangChonVatTu.cs (bảng chọn mã) · hinh_bc.json (hình block báo cháy)
+                         (sau này 02_KIEN_TRUC/, 03_XAY_DUNG/ cùng kiểu). Bản vẽ block PCCC_Blocks.dwg + block_alias.json vẫn ở TKPCCC.bundle/Contents (plugin đọc, ghi tại đó)
 ```
 Hạng mục tính năng ↔ trang palette: Quy trình vẽ = 06–08 + `09_PCCC/01` · Báo cháy = `09_PCCC/01` + `02` · Chữa cháy = `09_PCCC/03` · Thống kê = `09_PCCC/05` · Thư viện = 15 · Tiện ích = 10 · Lệnh, Cài đặt = 05.
 
