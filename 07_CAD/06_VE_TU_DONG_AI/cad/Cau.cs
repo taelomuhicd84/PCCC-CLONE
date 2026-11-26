@@ -34,36 +34,49 @@ namespace TKPCCC
                     HangDoi.GhiAnToan(HangDoi.Song, new JavaScriptSerializer().Serialize(new Dictionary<string, object> {
                         { "luc", DateTime.UtcNow.ToString("o") }, { "ban_ve", doc == null ? "" : Path.GetFileName(doc.Name) } }));
                 if (doc == null) return;
-                string f = Directory.GetFiles(HangDoi.Vao, "*.json").OrderBy(x => x).FirstOrDefault();
-                if (f == null) return;
-                // Người dùng đang dở lệnh khác: chờ. Máy chủ MCP tự báo "đang bận" khi quá giờ.
-                if (Convert.ToInt32(AcApp.GetSystemVariable("CMDACTIVE")) != 0) return;
-                if (!BanQuyen.ChoChay())
+                // Gói spec trước còn chạy (in ảnh, nhập pdf, lệnh PCCC_* có bơm thông điệp): không chạy lồng vào giữa nó.
+                if (Lenh.DangSpec || (doc.CommandInProgress ?? "").StartsWith("PCCC", StringComparison.OrdinalIgnoreCase)) return;
+                // Người dùng 26/11: "ra lệnh ở tab đó, qua tab khác thao tác, tab cũ vẫn thực thi". Trước đây tab đang hiện dở lệnh (CMDACTIVE) là
+                // cả hàng đợi đứng, việc của tab cũ chờ tới khi máy chủ MCP báo "đang bận". Nay chỉ việc của tab đang hiện mới chờ lệnh của người dùng;
+                // việc khoá bản vẽ khác chạy nền ngay (Lenh.ChayNen), chỉ chờ khi chính bản đó còn dở lệnh.
+                bool banHien = Convert.ToInt32(AcApp.GetSystemVariable("CMDACTIVE")) != 0;
+                foreach (string f in Directory.GetFiles(HangDoi.Vao, "*.json").OrderBy(x => x))
                 {
-                    // Trả lỗi ngay để máy chủ MCP không chờ tới hết giờ.
-                    HangDoi.GhiAnToan(Path.Combine(HangDoi.Ra, Path.GetFileName(f)), "{\"ok\":false,\"ve\":0,\"xoa\":0,\"loi\":[{\"i\":-1,\"op\":\"spec\",\"ly_do\":\"Chưa có bản quyền TKPCCC: gõ PCCC_BANQUYEN trong AutoCAD.\"}]}");
-                    File.Delete(f);
-                    return;
-                }
-                // Việc khoá "ban_ve" (Bot chat gắn bản vẽ lúc gửi lời nhắn): chạy trên đúng bản vẽ đó dù người dùng đã sang tab khác.
-                Document dich = doc;
-                string banVe = BanVeCuaViec(f);
-                if (banVe != null)
-                {
-                    dich = Lenh.TimBanVe(banVe);
-                    if (dich == null)
+                    if (!BanQuyen.ChoChay())
                     {
-                        HangDoi.GhiAnToan(Path.Combine(HangDoi.Ra, Path.GetFileName(f)), new JavaScriptSerializer().Serialize(new Dictionary<string, object> {
-                            { "ok", false }, { "ve", 0 }, { "xoa", 0 }, { "loi", new object[] { new Dictionary<string, object> { { "i", -1 }, { "op", "spec" },
-                            { "ly_do", "bản vẽ \"" + banVe + "\" không còn mở (đã đóng hoặc lưu tên khác): không vẽ gì. Bản vẽ đang hiện: \"" + Path.GetFileName(doc.Name) + "\"" } } } } }));
+                        // Trả lỗi ngay để máy chủ MCP không chờ tới hết giờ.
+                        HangDoi.GhiAnToan(Path.Combine(HangDoi.Ra, Path.GetFileName(f)), "{\"ok\":false,\"ve\":0,\"xoa\":0,\"loi\":[{\"i\":-1,\"op\":\"spec\",\"ly_do\":\"Chưa có bản quyền TKPCCC: gõ PCCC_BANQUYEN trong AutoCAD.\"}]}");
                         File.Delete(f);
                         return;
                     }
+                    // Việc khoá "ban_ve" (Bot chat gắn bản vẽ lúc gửi lời nhắn): chạy trên đúng bản vẽ đó dù người dùng đã sang tab khác.
+                    Document dich = doc;
+                    string banVe = BanVeCuaViec(f);
+                    if (banVe != null)
+                    {
+                        dich = Lenh.TimBanVe(banVe);
+                        if (dich == null)
+                        {
+                            HangDoi.GhiAnToan(Path.Combine(HangDoi.Ra, Path.GetFileName(f)), new JavaScriptSerializer().Serialize(new Dictionary<string, object> {
+                                { "ok", false }, { "ve", 0 }, { "xoa", 0 }, { "loi", new object[] { new Dictionary<string, object> { { "i", -1 }, { "op", "spec" },
+                                { "ly_do", "bản vẽ \"" + banVe + "\" không còn mở (đã đóng hoặc lưu tên khác): không vẽ gì. Bản vẽ đang hiện: \"" + Path.GetFileName(doc.Name) + "\"" } } } } }));
+                            File.Delete(f);
+                            return;
+                        }
+                    }
+                    bool laHien = dich.UnmanagedObject == doc.UnmanagedObject;
+                    // Bản đích đang dở lệnh: việc này chờ nhịp sau (máy chủ MCP tự báo "đang bận" khi quá giờ), xét việc kế trong hàng.
+                    if (laHien ? banHien : (dich.CommandInProgress ?? "") != "") continue;
+                    string dang = Path.Combine(HangDoi.Dang, Path.GetFileName(f));
+                    File.Move(f, dang); // chuyển trước khi chạy để một việc không chạy hai lần
+                    if (laHien) doc.SendStringToExecute("PCCC_SPEC\n" + dang + "\n", true, false, false);
+                    else
+                    {
+                        string kq = Lenh.ChayNen(dich, dang);
+                        if (!banHien) doc.Editor.WriteMessage(kq + "\n"); // người dùng đang dở lệnh: không chen chữ vào dấu nhắc của họ
+                    }
+                    return;
                 }
-                string dang = Path.Combine(HangDoi.Dang, Path.GetFileName(f));
-                File.Move(f, dang); // chuyển trước khi chạy để một việc không chạy hai lần
-                if (dich.UnmanagedObject == doc.UnmanagedObject) doc.SendStringToExecute("PCCC_SPEC\n" + dang + "\n", true, false, false);
-                else doc.Editor.WriteMessage(Lenh.ChayNen(dich, dang) + "\n");
             }
             catch (System.Exception) { } // nhịp sau thử lại; lỗi nền không được làm phiền người đang vẽ
         }

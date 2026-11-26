@@ -233,6 +233,16 @@ public static class WinU {
   Kiem (-not $r.isError -and $r.content[0].text -match 'NEN_BOT') "ban ve dau co vong tron layer NEN_BOT (ve nen dung file): $($r.content[0].text)"
   $r = GoiCongCu 9 'cad_chay' @{ ban_ve = 'khong_mo.dwg'; ops = @(@{ op = 'dem' }) }
   Kiem ($r.content[0].text -match 'kh.ng c.n m') "ban ve khong con mo: tu choi ca goi"
+  # Nguoi dung 26/11: "ra lenh o tab do, qua tab khac thao tac, tab cu van thuc thi". Ban ve thu hai dang do lenh LINE (cho diem):
+  # viec khoa ban ve dau van chay nen ngay (truoc day ca hang doi dung cho toi khi nguoi dung xong lenh, MCP bao "dang ban" sau 60 s).
+  $dangLenh = $false
+  for ($i = 0; $i -lt 20 -and -not $dangLenh; $i++) { try { $moi.SendCommand('_.LINE '); $dangLenh = $true } catch { Start-Sleep -Milliseconds 500 } }
+  Start-Sleep -Seconds 2
+  $cmd = try { $moi.GetVariable('CMDACTIVE') } catch { '?' }
+  $giay = [Diagnostics.Stopwatch]::StartNew()
+  $r = GoiCongCu 10 'cad_chay' @{ ban_ve = $dau; ops = @(@{ op = 'tron'; l = 'NEN_BOT'; c = @(500, 0); r = 100 }) }
+  $k5 = if ($r.isError) { $null } else { $r.content[0].text | ConvertFrom-Json }
+  Kiem ($dangLenh -and $k5 -and $k5.ban_ve -eq $dau -and $k5.ve -eq 1 -and $giay.Elapsed.TotalSeconds -lt 20) "ban ve dang hien do lenh LINE (CMDACTIVE $cmd): viec khoa '$dau' chay nen ngay ($([int]$giay.Elapsed.TotalSeconds) s): $($r.content[0].text)"
 }
 finally {
   if ($mcp) { try { $mcp.StandardInput.Close() } catch { }; if (-not $mcp.WaitForExit(5000)) { $mcp.Kill() } }

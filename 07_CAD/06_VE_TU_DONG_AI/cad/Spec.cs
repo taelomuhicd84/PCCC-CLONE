@@ -186,7 +186,8 @@ namespace TKPCCC
         static void CanDangHien(GoiSpec g, string op)
         {
             if (!DangHien(g.Doc))
-                throw new System.Exception(op + " chỉ chạy trên bản vẽ đang hiện: người dùng đang ở tab khác, chuyển về \"" + Path.GetFileName(g.Doc.Name) + "\" rồi gọi lại");
+                throw new System.Exception(op + " chỉ chạy trên bản vẽ đang hiện: người dùng đang ở tab khác, chuyển về \"" + Path.GetFileName(g.Doc.Name) + "\" rồi gọi lại"
+                    + (op == "anh" ? ". Các thao tác vẽ / đọc khác vẫn chạy nền trên bản này: đừng dừng chờ, kiểm bằng doc / dem rồi làm tiếp, cuối lượt mới nhắc người dùng xem" : ""));
         }
 
         static Dictionary<string, object> ThucHienSpec(Document doc, string json, out bool zoom)

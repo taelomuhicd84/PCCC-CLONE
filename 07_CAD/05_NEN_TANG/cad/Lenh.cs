@@ -107,6 +107,7 @@ namespace TKPCCC
 
         const int HAN_SPEC_S = 75;
         static int hanChot; // Environment.TickCount lúc hết hạn gói spec đang chạy; 0 = không giới hạn (lệnh gõ tay)
+        internal static bool DangSpec { get { return hanChot != 0; } } // Cau.cs: không chạy lồng gói nền vào giữa gói đang chạy
 
         static void Chay(Action viec)
         {
