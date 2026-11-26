@@ -1,4 +1,4 @@
-// Rải thiết bị theo lưới trong vùng (thao tác "rai", lệnh PCCC_RAI) và đi tuyến ống/dây qua các điểm (thao tác "tuyen").
+﻿// Rải thiết bị theo lưới trong vùng (thao tác "rai", lệnh PCCC_RAI) và đi tuyến ống/dây qua các điểm (thao tác "tuyen").
 // Không chứa trị số quy chuẩn: bước rải do người gọi đưa vào, hoặc đọc theo mã thiết bị từ 03_DU_LIEU/khoang_cach_rai.json (07_CAD/02_LUAT_VE/LUAT.md chỉ nơi tra).
 // Cách vẽ theo bản mẫu của người dùng: 07_CAD/01_TRI_THUC_VE/mau/mau-ban-ve-pccc.md.
 using System;
@@ -1469,6 +1469,51 @@ namespace TKPCCC
                             if (boKhu.Count > 0) ed.WriteMessage("\n[TKPCCC] bo_khu_khong_bao=" + boKhu.Count + " m2="
                                 + string.Join(",", boKhu.Select(f0 => Math.Round(DienTichDaGiac(f0) * m * m, 1).ToString(CultureInfo.InvariantCulture)))
                                 + " (lõi thang máy, buồng thang, WC: không đặt đầu báo; cần rải thì bấm điểm trong phòng đó).");
+                            // Người dùng 26/11 (TESTBCHAY_20_11: "vùng wc nhỏ trong phòng này, không được bao phòng này; các phòng có wc nhỏ cũng tương tự"):
+                            // phòng nhỏ ≤ 8 m², không chữ tên, có ký hiệu cửa, mọi cửa của nó chỉ mở sang PHÒNG (không sang dải hành lang) = WC riêng trong phòng:
+                            // không vùng, không đầu báo (vùng phòng chủ đã chừa nó ra vì nó có tường / ô cửa có cánh, GopMatNho không gộp).
+                            // shortcut: kho nhỏ ≤ 8 m² không ghi chữ, cửa mở vào phòng cũng bị coi là WC: cần rải thì bấm điểm trong phòng đó.
+                            Func<List<Point2d>, bool> laHanhLang = g0 =>
+                            {
+                                double a0 = Math.Abs(DienTichDaGiac(g0)) * m * m, p0 = 0;
+                                for (int i = 0; i < g0.Count; i++) p0 += g0[i].GetDistanceTo(g0[(i + 1) % g0.Count]) * m;
+                                double r0 = p0 > 0 ? 2 * a0 / p0 : 0;
+                                // dải: rộng TB ≤ 2,5 m và dài ≥ 3 lần rộng (chữ nhật w x l: A / r0² = (w + l)² / (w l) ≥ 5,33); phòng 6 x 3,9 m (r0 2,36) không phải dải
+                                return r0 > 0 && r0 <= 2.5 && a0 / (r0 * r0) >= 5.3;
+                            };
+                            // tâm hộp cửa cách mặt ≤ nửa cạnh hộp (bán kính cánh / 2) + 0,3 m (bề dày tường): cửa thuộc mặt đó
+                            Func<List<Point2d>, Point2d[], bool> ganCua = (g0, h) => { Point2d c = new Point2d((h[0].X + h[1].X) / 2, (h[0].Y + h[1].Y) / 2);
+                                return TrongDaGiac(g0, c) || CachVien(g0, c) <= Math.Max(h[1].X - h[0].X, h[1].Y - h[0].Y) / 2 + 0.3 / m; };
+                            List<List<Point2d>> wcTrong = vung.Where(f0 =>
+                            {
+                                if (Math.Abs(DienTichDaGiac(f0)) * m * m > 8 || nhanThem.TenChu.Any(p => TrongDaGiac(f0, p)) || nhanThem.TenPhong.Any(p => TrongDaGiac(f0, p))) return false;
+                                List<Point2d[]> cuaF = nhanThem.Cua.Where(h => ganCua(f0, h)).ToList();
+                                if (cuaF.Count == 0) return false;
+                                // bên kia cửa = mặt khác GẦN tâm hộp cửa nhất (cửa sát góc: hành lang sau tường vuông góc cách xa hơn phòng chủ)
+                                bool coPhong = false;
+                                foreach (Point2d[] h in cuaF)
+                                {
+                                    List<Point2d> benKia = null;
+                                    double ganNhat = double.MaxValue;
+                                    foreach (List<Point2d> g0 in phongDu)
+                                    {
+                                        if (g0 == f0 || !ganCua(g0, h)) continue;
+                                        Point2d c = new Point2d((h[0].X + h[1].X) / 2, (h[0].Y + h[1].Y) / 2);
+                                        double kc = TrongDaGiac(g0, c) ? 0 : CachVien(g0, c);
+                                        if (kc < ganNhat) { ganNhat = kc; benKia = g0; }
+                                    }
+                                    if (benKia == null) continue;
+                                    if (laHanhLang(benKia)) return false;
+                                    coPhong = true;
+                                }
+                                return coPhong;
+                            }).ToList();
+                            if (wcTrong.Count > 0)
+                            {
+                                vung = vung.Where(f0 => !wcTrong.Contains(f0)).ToList();
+                                ed.WriteMessage("\n[TKPCCC] bo_wc_trong_phong=" + wcTrong.Count + " m2=" + string.Join(",", wcTrong.Select(f0 => Math.Round(Math.Abs(DienTichDaGiac(f0)) * m * m, 1).ToString(CultureInfo.InvariantCulture)))
+                                    + " (phòng nhỏ không chữ, cửa chỉ mở vào phòng khác = WC riêng trong phòng: không đặt đầu báo; cần rải thì bấm điểm trong phòng đó).");
+                            }
                             // Người dùng 16/11 + 17/11 (vẽ lại vùng tầng 8 KOCHAM): sảnh thang máy không đặt đầu báo. Bản vẽ không ghi chữ "SẢNH": nhận là phòng
                             // ≤ 30 m² sát giếng thang (ô có dấu X, cách ≤ 0,6 m = bề dày vách). shortcut: ô X cũng là lỗ thông tầng, phòng nhỏ sát lỗ thông tầng bị bỏ theo.
                             Func<List<Point2d>, List<Point2d>, bool> keNhau = (a, b) => a.Any(p => CachVien(b, p) <= 0.6 / m) || b.Any(p => CachVien(a, p) <= 0.6 / m);

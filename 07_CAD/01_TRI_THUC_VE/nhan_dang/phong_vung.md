@@ -20,10 +20,16 @@ Nét nào là tường: `tuong_cot.md`. Cửa, thang, khu bỏ: `cua_thang_khu.m
 - NGƯỜI DÙNG 26/11 (`07_CAD/file_cad_test/TESTBCHAY_20_11.dwg`, vùng tay ở `12_KET_QUA/TESTBCHAY_20_11/cad/skills/b4a_vung.json`): CỬA chia vùng.
   (1) Sảnh vào (trục 1–2) mở thông ra hành lang vẫn là vùng RIÊNG, ranh theo mặt tường hành lang kéo dài (miệng chữ L), không gộp với hành lang.
   (2) Hành lang có cửa đi ngang (tường + ô cửa cắt ngang hành lang, trục 7) thì tách hai vùng ở tường đó.
-  (3) Ô nhỏ (1,4 x 1,85 m) thông với phòng qua Ô CỬA CÓ CÁNH (tường hai bên, cánh phủ kín ô) là vùng riêng, KHÔNG gộp vào phòng ("không, phải tách
-  riêng biệt"). Chỉ sảnh WC MỞ (không cánh, hoặc cánh chỉ phủ một phần chỗ thông) mới gộp như mục 6 dưới. Sảnh rửa tay trong khối WC chung, vào từ hành lang qua cửa: cũng là vùng riêng.
-  Plugin: (1), (2) đã đúng sẵn (`CacMat` khép miệng chữ L; khe có ký hiệu cửa thì khép); (3) làm 26/11 (`GopMatNho`, in `o_nho_qua_cua=`, test E34).
-  Plugin không phân được buồng xí không vẽ bồn cầu với kho nhỏ: buồng xí 1,4 x 1,85 m sau cửa cũng ra vùng riêng; xoá tay nếu là WC.
+  (3) Ô nhỏ thông với phòng qua Ô CỬA CÓ CÁNH (tường hai bên, cánh phủ kín ô) KHÔNG gộp vào phòng ("không, phải tách riêng biệt").
+  (4) Cùng ngày, nói rõ (3): "vùng wc nhỏ trong phòng này, không được bao phòng này; các phòng có wc nhỏ cũng tương tự" = ô nhỏ trong phòng đó là WC riêng
+  của phòng: KHÔNG VÙNG, KHÔNG ĐẦU BÁO; vùng phòng chủ chạy theo tường ngoài của WC (chữ L, khấc), không bao WC. Áp cho mọi phòng có WC nhỏ: phòng
+  ≤ 8 m², không chữ tên, có ký hiệu cửa, cửa chỉ mở sang phòng (không sang dải hành lang). Kho nhỏ có cửa ra hành lang vẫn rải.
+  Ở TESTBCHAY: ô 2,5 x 1,1 m trong phòng 6–7, ô 2,5 x 2,75 m (cánh vẽ polyline cung) trong phòng 8–9, 6 ô 1,4 x 1,85 m của 3 cột WC dãy dưới.
+  Chỉ sảnh WC MỞ (không cánh, hoặc cánh chỉ phủ một phần chỗ thông) mới gộp vào phòng như mục 6 dưới.
+  Plugin: (1), (2) đã đúng sẵn (`CacMat` khép miệng chữ L; khe có ký hiệu cửa thì khép); (3) `GopMatNho` (`o_nho_qua_cua=`, test E34);
+  (4) lọc `bo_wc_trong_phong=` trong `PCCC_RAI` (`Rai.cs`; bên kia cửa = mặt gần tâm hộp cửa nhất; dải hành lang = rộng TB ≤ 2,5 m, dài ≥ 3 lần rộng;
+  test E35). `CungCua` nhận thêm cánh cửa vẽ LWPOLYLINE hở 1–2 đoạn có một cung 60–120°.
+  shortcut: kho nhỏ ≤ 8 m² không ghi chữ mà cửa mở vào phòng cũng bị coi là WC: cần rải thì bấm điểm trong phòng đó.
 
 ## Soát chỗ hay thiếu vùng sau khi dựng (người dùng khoanh đỏ 21/11, Karaoke 123 tầng 2; AI vẽ bằng chatbot làm y như plugin)
 Dựng xong (`PCCC_RAI` Enter mọi phòng, hoặc `vung_tu_dong`), chụp ảnh và dò từng chỗ sau. Mọi khoảng sàn đi lại được trong phạm vi đều phải nằm trong một vùng,

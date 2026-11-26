@@ -1290,6 +1290,16 @@ foreach ($y in (0..8 | ForEach-Object { 6000 * $_ })) {
   '_.LINE', '2714800,1500', '2716000,1500', '', '_.LINE', '2714800,3000', '2716000,3000', '', '-LAYER', 'S', '0', '', '_.RECTANG', '2715200,3900', '2715600,4500',
   '_.ARC', 'C', '2714800,1500', '2714800,3000', 'A', '90',
   'PCCC_RAI', 'BC_KHOI', '', '', 'C', '2709500,-500', '2716500,5500', '', '', '',
+  # E35 (nguoi dung 26/11 "vung wc nho trong phong nay, khong duoc bao phong nay"): hanh lang 10 x 1,8 m; phong A 6 x 4,2 m co WC 1,8 x 2 m o goc,
+  #    cua WC (cung 0,8 m) mo vao phong A; phong B 4 x 4,2 m co kho 1,8 x 2 m cua mo ra HANH LANG. Ky vong: WC khong vung (bo_wc_trong_phong=1),
+  #    phong A 21,6 m2 chua WC; kho van la vung 3,6 m2; phong B 13,2 m2; hanh lang 18 m2.
+  '(princ "\n==E35==")', '-LAYER', 'M', 'TUONG', '', '_.ZOOM', 'W', '2729000,-1000', '2741000,7000', '_.RECTANG', '2730000,0', '2740000,6000',
+  '_.LINE', '2730000,1800', '2731000,1800', '', '_.LINE', '2732000,1800', '2736200,1800', '', '_.LINE', '2737000,1800', '2738800,1800', '', '_.LINE', '2739600,1800', '2740000,1800', '',
+  '_.LINE', '2736000,1800', '2736000,6000', '', '_.LINE', '2734200,6000', '2734200,4800', '', '_.LINE', '2734200,4000', '2736000,4000', '',
+  '_.LINE', '2738200,1800', '2738200,3800', '', '_.LINE', '2738200,3800', '2740000,3800', '', '-LAYER', 'S', '0', '',
+  '_.ARC', 'C', '2731000,1800', '2732000,1800', 'A', '90', '_.ARC', 'C', '2736200,1800', '2737000,1800', 'A', '90',
+  '_.ARC', 'C', '2738800,1800', '2739600,1800', 'A', '90', '_.ARC', 'C', '2734200,4000', '2734200,4800', 'A', '90',
+  'PCCC_RAI', 'BC_KHOI', '', '', 'C', '2729500,-500', '2740500,6500', '', '', '',
   '(princ "\n==EHET==")', '_.QSAVE')) -join "`r`n" | Set-Content -Encoding ascii "$T\kb7.scr"
 $p7 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb7.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb7.out.txt"
 if (-not $p7.WaitForExit(180000)) { Stop-Process -Id $p7.Id -Force; throw "accoreconsole qua 3 phut (review 20/11): $T\kb7.out.txt" }
@@ -1394,8 +1404,11 @@ $e33 = CaRv 'E33'
 Kiem ($e33 -match 'gop_sanh=1 ' -and (DtVung $e33) -contains 25.8) `
   "Nguoi dung 25/11: canh cua WC (polyline 40 x 900 layer tuong) khac vao sanh truoc WC van gop sanh vao phong: 25,8 m2 (vung=$((DtVung $e33) -join ','))"
 $e34 = CaRv 'E34'
-Kiem ($e34 -match 'o_nho_qua_cua=1 ' -and $e34 -notmatch 'gop_sanh=[1-9]' -and (DtVung $e34) -contains 24 -and (DtVung $e34) -contains 1.8) `
-  "Nguoi dung 26/11: o nho vao tu phong qua o cua co cung canh la vung rieng 1,8 m2, khong gop (phong 24 m2) (vung=$((DtVung $e34) -join ','))"
+Kiem ($e34 -match 'o_nho_qua_cua=1 ' -and $e34 -notmatch 'gop_sanh=[1-9]' -and $e34 -match 'bo_wc_trong_phong=1 ' -and (DtVung $e34).Count -eq 1 -and (DtVung $e34) -contains 24) `
+  "Nguoi dung 26/11: o nho vao tu phong qua o cua co cung canh khong gop vao phong (24 m2, khong 25,8) va la WC trong phong: khong vung (vung=$((DtVung $e34) -join ','))"
+$e35 = CaRv 'E35'
+Kiem ($e35 -match 'bo_wc_trong_phong=1 ' -and (DtVung $e35) -contains 21.6 -and (DtVung $e35) -contains 3.6 -and (DtVung $e35) -contains 13.2 -and (DtVung $e35) -contains 18 -and (DtVung $e35) -notcontains 25.2) `
+  "Nguoi dung 26/11: WC nho trong phong (cua chi mo vao phong) khong vung, phong chua WC ra (21,6); kho cua mo ra hanh lang van rai 3,6 m2 (vung=$((DtVung $e35) -join ','))"
 $e25 = CaRv 'E25'
 $ktd = @([regex]::Matches($e25, 'KTD (-?\d+),(-?\d+) (-?\d+),(-?\d+) (-?\d+),(-?\d+)') | ForEach-Object { , @($_.Groups[1..6] | ForEach-Object { [double]$_.Value }) })
 $ktN = @($ktd | Where-Object { $_[3] -eq $_[5] }); $ktD = @($ktd | Where-Object { $_[2] -eq $_[4] })

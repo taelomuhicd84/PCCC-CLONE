@@ -400,6 +400,19 @@ namespace TKPCCC
         {
             Arc a = e as Arc;
             Ellipse el = e as Ellipse; // Karaoke ABC 21/11: cánh cửa vẽ bằng cung elip gần tròn (block A$Cf159a6b7, layer "net mo": tỉ lệ 0,9, 95°)
+            // TESTBCHAY_20_11 (26/11): cánh cửa phòng nhỏ vẽ LWPOLYLINE hở 1–2 đoạn có MỘT đoạn cung (bulge). Polyline nhiều đoạn (tường bo góc) không tính.
+            Polyline pl = e as Polyline;
+            if (pl != null && !pl.Closed && pl.NumberOfVertices >= 2 && pl.NumberOfVertices <= 3)
+            {
+                int soCung = 0, iCung = -1;
+                for (int i = 0; i < pl.NumberOfVertices - 1; i++) if (Math.Abs(pl.GetBulgeAt(i)) > 1e-6) { soCung++; iCung = i; }
+                if (soCung != 1) return null;
+                double gocP = 4 * Math.Atan(Math.Abs(pl.GetBulgeAt(iCung))) * 180 / Math.PI;
+                CircularArc3d ca = pl.GetArcSegmentAt(iCung);
+                double rP = ca.Radius * 0.002 / n.Tol;
+                if (gocP < 60 || gocP > 120 || rP < 0.4 || rP > 3) return null;
+                return new[] { ca.Center, ca.StartPoint, ca.EndPoint };
+            }
             if (a == null && (el == null || el.RadiusRatio < 0.8)) return null;
             double goc = a != null ? a.TotalAngle * 180 / Math.PI : (el.EndAngle - el.StartAngle) * 180 / Math.PI;
             if (goc < 0) goc += 360;

@@ -12,7 +12,10 @@ Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `07_CAD/00_QUA
   thì không gộp, ô thành vùng riêng, in `o_nho_qua_cua=`), test E34. Karaoke 123 T2 vẫn 16 vùng (sảnh WC cánh tự do phủ 59 %: vẫn gộp).
 - Chạy `PCCC_RAI` Enter mọi phòng trên bản chép TESTBCHAY: 34 vùng, khớp vùng tay; khác: buồng xí 1,4 x 1,85 m sau cửa (không vẽ bồn cầu) cũng ra vùng.
 - Ca "Karaoke 123 tầng 1 + 2" vẫn LOI vung=30 — bản HEAD chưa sửa cũng ra 30, vùng trùng khớp: lỗi có sẵn, chưa xử lý.
-- Tiếp theo: chờ người dùng duyệt vùng TESTBCHAY rồi rải đầu báo; `cad-review` mốc này.
+- Lượt sau (người dùng: "vùng wc nhỏ trong phòng này, không được bao phòng này… tư duy lên"): WC nhỏ trong phòng KHÔNG VÙNG. Plugin: lọc
+  `bo_wc_trong_phong=` (Rai.cs), `CungCua` nhận cánh polyline cung; test E35, E34 đổi kỳ vọng. Bản chép TESTBCHAY: 25 vùng, bỏ 8 ô WC.
+  Gói vùng tay `b4a_vung.json` còn 25 vùng (bỏ 6 vùng ô WC + sảnh khối WC) — CHƯA chạy lên bản vẽ: TESTBCHAY không mở lúc đó; chạy lại file khi mở.
+- Tiếp theo: chờ người dùng duyệt vùng TESTBCHAY rồi rải đầu báo; `cad-review` mốc này; build.bat (AutoCAD tắt) để plugin đang dùng có bản sửa.
 
 ## 26/11: CÂY 07_CAD ĐÁNH SỐ THEO HẠNG MỤC TÍNH NĂNG — XONG (build 7/7, test đạt trừ ca cũ bên dưới; chưa push)
 Người dùng: "điều chỉnh danh mục theo thứ tự như folder lớn ở ngoài… kiểm soát từng tính năng trong plugin và bot chat (mỗi mục là 1 hạng mục tính năng)".
