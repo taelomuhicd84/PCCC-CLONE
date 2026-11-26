@@ -3,6 +3,17 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `07_CAD/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `07_CAD/00_QUAN_LY_DU_AN/KE_HOACH.md`. Nhật ký: `07_CAD/00_QUAN_LY_DU_AN/LICH_SU.md`. Luật riêng: `07_CAD/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `07_CAD/00_QUAN_LY_DU_AN/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`07_CAD/CLAUDE.md`).
 
+## 26/11 chiều: VÙNG BÁO CHÁY TESTBCHAY_20_11 + LUẬT "CỬA CHIA VÙNG" — XONG MÃ + TEST E34 (chưa review `cad-review`, chưa push)
+- Bot chat, `07_CAD/file_cad_test/TESTBCHAY_20_11.dwg` (trục 1–9 / A–F): vẽ tay 31 vùng `PCCC_VUNG` bằng spec `12_KET_QUA/TESTBCHAY_20_11/cad/skills/b4a_vung.json`
+  (chạy lại = xoá vùng cũ + vẽ lại). `vung_tu_dong` không dùng được ở bản này (block cửa `A$C…` trên layer `tuong`: cạnh vùng bám cung cánh).
+  Hai lần đầu vùng mất giữa các lượt (Undo hoặc bản vẽ mở lại chưa lưu): đã nhắc người dùng Ctrl+S.
+- Người dùng chốt: sảnh vào tách khỏi hành lang; hành lang có cửa ngang thì tách; ô nhỏ thông với phòng qua ô cửa có cánh là vùng riêng. Ghi ở
+  `01_TRI_THUC_VE/nhan_dang/phong_vung.md` (mục Luật vùng + 2b). Plugin: (1), (2) đúng sẵn; (3) sửa `GopMatNho` (`cauCua`: hộp cung cánh phủ ≥ 80 % cầu
+  thì không gộp, ô thành vùng riêng, in `o_nho_qua_cua=`), test E34. Karaoke 123 T2 vẫn 16 vùng (sảnh WC cánh tự do phủ 59 %: vẫn gộp).
+- Chạy `PCCC_RAI` Enter mọi phòng trên bản chép TESTBCHAY: 34 vùng, khớp vùng tay; khác: buồng xí 1,4 x 1,85 m sau cửa (không vẽ bồn cầu) cũng ra vùng.
+- Ca "Karaoke 123 tầng 1 + 2" vẫn LOI vung=30 — bản HEAD chưa sửa cũng ra 30, vùng trùng khớp: lỗi có sẵn, chưa xử lý.
+- Tiếp theo: chờ người dùng duyệt vùng TESTBCHAY rồi rải đầu báo; `cad-review` mốc này.
+
 ## 26/11: CÂY 07_CAD ĐÁNH SỐ THEO HẠNG MỤC TÍNH NĂNG — XONG (build 7/7, test đạt trừ ca cũ bên dưới; chưa push)
 Người dùng: "điều chỉnh danh mục theo thứ tự như folder lớn ở ngoài… kiểm soát từng tính năng trong plugin và bot chat (mỗi mục là 1 hạng mục tính năng)".
 - `00_QUAN_LY_DU_AN/` (file này, LICH_SU, KE_HOACH, HUONG_DAN_SU_DUNG, `viec/` = `tien_do/` cũ) · `01_TRI_THUC_VE/` (= `skills/`) · `02_LUAT_VE/` (= `rule/`) · `03_DU_LIEU_VE/` (= `data/`) · `04_KIEM_THU/` (= `test/`).

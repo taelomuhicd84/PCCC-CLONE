@@ -1283,6 +1283,13 @@ foreach ($y in (0..8 | ForEach-Object { 6000 * $_ })) {
   '_.LINE', '2694800,1500', '2696000,1500', '', '_.LINE', '2694800,3000', '2696000,3000', '', '_.PLINE', '2695800,1500', '2695840,1500', '2695840,2400', '2695800,2400', 'C',
   '-LAYER', 'S', '0', '', '_.RECTANG', '2695200,3900', '2695600,4500',
   'PCCC_RAI', 'BC_KHOI', '', '', 'C', '2689500,-500', '2696500,5500', '', '', '',
+  # E34 (nguoi dung 26/11 TESTBCHAY_20_11 "khong, phai tach rieng biet"): nhu E22 nhung o 1,2 x 1,5 m vao tu phong qua o cua phu kin canh o (y 1,5-3,0)
+  #    CO CUNG CANH r 1,5 m (layer 0): khong gop sanh nhu E22 ma thanh vung rieng 1,8 m2; phong 24 m2. (Canh chi phu mot phan cho thong = sanh mo, van gop.)
+  '(princ "\n==E34==")', '-LAYER', 'M', 'TUONG', '', '_.ZOOM', 'W', '2709000,-1000', '2717000,6000', '_.RECTANG', '2710000,0', '2716000,5000',
+  '_.LINE', '2714800,0', '2714800,1500', '', '_.LINE', '2714800,3100', '2714800,3800', '', '_.LINE', '2714800,4500', '2714800,5000', '',
+  '_.LINE', '2714800,1500', '2716000,1500', '', '_.LINE', '2714800,3000', '2716000,3000', '', '-LAYER', 'S', '0', '', '_.RECTANG', '2715200,3900', '2715600,4500',
+  '_.ARC', 'C', '2714800,1500', '2714800,3000', 'A', '90',
+  'PCCC_RAI', 'BC_KHOI', '', '', 'C', '2709500,-500', '2716500,5500', '', '', '',
   '(princ "\n==EHET==")', '_.QSAVE')) -join "`r`n" | Set-Content -Encoding ascii "$T\kb7.scr"
 $p7 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb7.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb7.out.txt"
 if (-not $p7.WaitForExit(180000)) { Stop-Process -Id $p7.Id -Force; throw "accoreconsole qua 3 phut (review 20/11): $T\kb7.out.txt" }
@@ -1386,6 +1393,9 @@ Kiem ($e32 -match 'PCCC_RAI BC_KHOI n=3 manh=2 ' -and ($ktlN -join ',') -eq '500
 $e33 = CaRv 'E33'
 Kiem ($e33 -match 'gop_sanh=1 ' -and (DtVung $e33) -contains 25.8) `
   "Nguoi dung 25/11: canh cua WC (polyline 40 x 900 layer tuong) khac vao sanh truoc WC van gop sanh vao phong: 25,8 m2 (vung=$((DtVung $e33) -join ','))"
+$e34 = CaRv 'E34'
+Kiem ($e34 -match 'o_nho_qua_cua=1 ' -and $e34 -notmatch 'gop_sanh=[1-9]' -and (DtVung $e34) -contains 24 -and (DtVung $e34) -contains 1.8) `
+  "Nguoi dung 26/11: o nho vao tu phong qua o cua co cung canh la vung rieng 1,8 m2, khong gop (phong 24 m2) (vung=$((DtVung $e34) -join ','))"
 $e25 = CaRv 'E25'
 $ktd = @([regex]::Matches($e25, 'KTD (-?\d+),(-?\d+) (-?\d+),(-?\d+) (-?\d+),(-?\d+)') | ForEach-Object { , @($_.Groups[1..6] | ForEach-Object { [double]$_.Value }) })
 $ktN = @($ktd | Where-Object { $_[3] -eq $_[5] }); $ktD = @($ktd | Where-Object { $_[2] -eq $_[4] })

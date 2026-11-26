@@ -2394,9 +2394,9 @@ namespace TKPCCC
         /// (rộng TB ≤ 2,5 m, hành lang) kề nhau qua cầu gộp làm một.
         /// Buồng xí nhận theo dấu hiệu WC (GomKhu) hoặc hình kín cỡ bồn cầu / lavabo bên trong (GomVatDung).
         /// shortcut: sảnh có lavabo đặt trong cũng không gộp (người dùng vẽ tay); buồng xí trống không vật dụng kề thẳng phòng qua cầu thì bị gộp: xoá tay.
-        static List<List<Point2d>> GopMatNho(List<List<Point2d>> mat, List<List<Point2d>> pt, List<Point2d[]> doan, List<Point2d> khuKhong, List<Point2d> vatDung, double m, out int gopSanh, out int gopNho, List<Point2d[]> cua = null, List<Point2d[]> lanCan = null)
+        static List<List<Point2d>> GopMatNho(List<List<Point2d>> mat, List<List<Point2d>> pt, List<Point2d[]> doan, List<Point2d> khuKhong, List<Point2d> vatDung, double m, out int gopSanh, out int gopNho, out int oCua, List<Point2d[]> cua = null, List<Point2d[]> lanCan = null)
         {
-            gopSanh = 0; gopNho = 0;
+            gopSanh = 0; gopNho = 0; oCua = 0;
             if (doan == null || doan.Count == 0) return pt; // không biết nét thật: không phân được cầu với tường 1 nét
             double tol = 0.002 / m;
             Func<List<Point2d>, List<Point2d>> ccw = f => { List<Point2d> g = new List<Point2d>(f); if (DienTichDaGiac(g) < 0) g.Reverse(); return g; };
@@ -2413,10 +2413,43 @@ namespace TKPCCC
             Func<List<Point2d>, bool> ngang = f => f.Max(q => q.X) - f.Min(q => q.X) >= f.Max(q => q.Y) - f.Min(q => q.Y);
             Func<List<Point2d>, List<Point2d>, bool> hopCham = (a, b) => a.Max(q => q.X) >= b.Min(q => q.X) - tol && b.Max(q => q.X) >= a.Min(q => q.X) - tol
                 && a.Max(q => q.Y) >= b.Min(q => q.Y) - tol && b.Max(q => q.Y) >= a.Min(q => q.Y) - tol;
+            // Người dùng 26/11 (TESTBCHAY_20_11, ô 1,4 x 1,85 m trước buồng xí, vào từ phòng qua ô cửa có cánh: "không, phải tách riêng biệt"):
+            // hai mặt mà cầu chung nằm ở Ô CỬA CÓ KÝ HIỆU CỬA (hộp cung cánh chạm cầu, phủ ≥ 80 % chiều dài cầu) là hai không gian: không gộp.
+            // Sảnh WC mở (không cánh E22, hoặc cánh chỉ phủ một phần chỗ thông như Karaoke 123) vẫn gộp như cũ.
+            Func<List<Point2d>, List<Point2d>, bool> cauCua = (a, b) =>
+            {
+                if (cua == null || cua.Count == 0) return false;
+                for (int i = 0; i < a.Count; i++)
+                {
+                    Point2d p = a[i], q = a[(i + 1) % a.Count];
+                    Vector2d d = q - p;
+                    double L = d.Length;
+                    if (L <= tol) continue;
+                    d = d / L;
+                    for (int j = 0; j < b.Count; j++)
+                    {
+                        Vector2d r = b[j] - p, s = b[(j + 1) % b.Count] - p;
+                        if (Math.Abs(d.X * r.Y - d.Y * r.X) > tol || Math.Abs(d.X * s.Y - d.Y * s.X) > tol) continue;
+                        double t0 = Math.Max(0, Math.Min(r.DotProduct(d), s.DotProduct(d))), t1 = Math.Min(L, Math.Max(r.DotProduct(d), s.DotProduct(d)));
+                        if (t1 - t0 <= tol * 50) continue; // cầu < 0,1 m
+                        Point2d c0 = p + d * t0, c1 = p + d * t1;
+                        foreach (Point2d[] h in cua)
+                        {
+                            if (!CatHop(c0, c1, h, tol * 25)) continue;
+                            // phần hộp cửa chiếu lên phương cầu
+                            double[] tg = { (h[0] - p).DotProduct(d), (new Point2d(h[1].X, h[0].Y) - p).DotProduct(d), (new Point2d(h[0].X, h[1].Y) - p).DotProduct(d), (h[1] - p).DotProduct(d) };
+                            // ≥ 80 %: cánh phủ kín chỗ thông. Karaoke 123 T2 (sảnh WC người dùng bắt gộp): cánh 0,89 m đứng tự do, phía trên hở 0,6 m: 59 %, vẫn gộp.
+                            if (Math.Min(t1, tg.Max()) - Math.Max(t0, tg.Min()) >= 0.8 * (t1 - t0)) return true;
+                        }
+                    }
+                }
+                return false;
+            };
             List<List<Point2d>> kq = pt.Select(ccw).ToList();
             // (a) sảnh nhỏ bị bỏ -> phòng gốc kề lớn nhất
             List<List<Point2d>> goc = new List<List<Point2d>>(kq);
             HashSet<List<Point2d>> giu = new HashSet<List<Point2d>>(pt);
+            List<List<Point2d>> rieng = new List<List<Point2d>>(); // ô nhỏ chỉ kề phòng qua ô cửa có cánh: vùng riêng
             foreach (List<Point2d> f0 in mat)
             {
                 if (giu.Contains(f0)) continue;
@@ -2427,13 +2460,20 @@ namespace TKPCCC
                 if (a0 < 0.8 || a0 > 6 || Math.Max(rong(f0), rHop) < 0.5 || khuKhong.Any(p => TrongDaGiac(f0, p)) || vatDung.Any(p => TrongDaGiac(f0, p))) continue;
                 List<Point2d> f = ccw(f0);
                 int chon = -1;
+                bool keCua = false;
                 for (int i = 0; i < goc.Count; i++) // xét phòng GỐC (chưa gộp): buồng xí chỉ kề sảnh không kéo theo
-                    if (hopCham(f, goc[i]) && GopHai(goc[i], f, doan, tol) != null && (chon < 0 || dt(goc[i]) > dt(goc[chon]))) chon = i;
-                if (chon < 0) continue;
+                    if (hopCham(f, goc[i]) && GopHai(goc[i], f, doan, tol) != null)
+                    {
+                        if (cauCua(f, goc[i])) { keCua = true; continue; }
+                        if (chon < 0 || dt(goc[i]) > dt(goc[chon])) chon = i;
+                    }
+                if (chon < 0) { if (keCua) rieng.Add(f); continue; }
                 List<Point2d> moi = GopHai(kq[chon], f, doan, tol);
                 if (moi == null) continue;
                 kq[chon] = moi; gopSanh++;
             }
+            kq.AddRange(rieng);
+            oCua = rieng.Count;
             // (b) ô nhỏ -> phòng kề lớn nhất; hành lang + hành lang -> một
             while (true)
             {
@@ -2448,6 +2488,7 @@ namespace TKPCCC
                         // hành lang nối tiếp CÙNG PHƯƠNG (người dùng 21/11: lối dọc trái vẫn là vùng riêng với hành lang ngang)
                         bool nho = ai <= 4 && aj >= ai, hl = j > i && dai(kq[i]) && dai(kq[j]) && ngang(kq[i]) == ngang(kq[j]);
                         if ((!nho && !hl) || aj <= tot) continue;
+                        if (nho && !hl && cauCua(kq[i], kq[j])) continue; // ô nhỏ vào qua ô cửa có cánh: vùng riêng (người dùng 26/11)
                         List<Point2d> g = GopHai(kq[j], kq[i], doan, tol);
                         if (g == null) continue;
                         // cầu phải cắt ngang trọn bề rộng hành lang (cầu giữa 2 mặt cột, Karaoke 123); cầu ô cửa 0,9 m giữa phòng và hành lang thì không

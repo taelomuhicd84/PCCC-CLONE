@@ -17,6 +17,13 @@ Nét nào là tường: `tuong_cot.md`. Cửa, thang, khu bỏ: `cua_thang_khu.m
 - Dải không có tường ngăn với xưởng thì gộp vào khoang xưởng kề bên (cạnh theo tường xiên thật). Vách ngăn trong xưởng cắt khoang theo vách.
 - Trước khi vẽ `PCCC_VUNG`: liệt kê tường kín -> phòng; phần còn lại của xưởng -> khoang vì kèo. Dò mọi nét tường trong khoang trước khi rải.
 - Bản mẫu đã thẩm định chỉ là tham khảo CÁCH chia vùng (người dùng 20/11), số đầu báo vẫn theo TCVN 7568-14:2025.
+- NGƯỜI DÙNG 26/11 (`07_CAD/file_cad_test/TESTBCHAY_20_11.dwg`, vùng tay ở `12_KET_QUA/TESTBCHAY_20_11/cad/skills/b4a_vung.json`): CỬA chia vùng.
+  (1) Sảnh vào (trục 1–2) mở thông ra hành lang vẫn là vùng RIÊNG, ranh theo mặt tường hành lang kéo dài (miệng chữ L), không gộp với hành lang.
+  (2) Hành lang có cửa đi ngang (tường + ô cửa cắt ngang hành lang, trục 7) thì tách hai vùng ở tường đó.
+  (3) Ô nhỏ (1,4 x 1,85 m) thông với phòng qua Ô CỬA CÓ CÁNH (tường hai bên, cánh phủ kín ô) là vùng riêng, KHÔNG gộp vào phòng ("không, phải tách
+  riêng biệt"). Chỉ sảnh WC MỞ (không cánh, hoặc cánh chỉ phủ một phần chỗ thông) mới gộp như mục 6 dưới. Sảnh rửa tay trong khối WC chung, vào từ hành lang qua cửa: cũng là vùng riêng.
+  Plugin: (1), (2) đã đúng sẵn (`CacMat` khép miệng chữ L; khe có ký hiệu cửa thì khép); (3) làm 26/11 (`GopMatNho`, in `o_nho_qua_cua=`, test E34).
+  Plugin không phân được buồng xí không vẽ bồn cầu với kho nhỏ: buồng xí 1,4 x 1,85 m sau cửa cũng ra vùng riêng; xoá tay nếu là WC.
 
 ## Soát chỗ hay thiếu vùng sau khi dựng (người dùng khoanh đỏ 21/11, Karaoke 123 tầng 2; AI vẽ bằng chatbot làm y như plugin)
 Dựng xong (`PCCC_RAI` Enter mọi phòng, hoặc `vung_tu_dong`), chụp ảnh và dò từng chỗ sau. Mọi khoảng sàn đi lại được trong phạm vi đều phải nằm trong một vùng,
@@ -57,6 +64,8 @@ Mọi chỗ bổ sung tay ghi lại vào file `07_CAD/01_TRI_THUC_VE/mau/` của
    theo mặt ngoài tường WC (phòng 25,65 → 27,3 m², như các phòng tầng 2). Lỗi: cánh cửa WC vẽ polyline kín 40 x 690 mm trên LAYER TƯỜNG, dựng như tường
    khoét vào sảnh 1,1 x 1,5 m, chu vi tăng 1,4 m, 2A/P còn 0,49 < 0,5 nên (a) không gộp. Sửa: bề rộng của (a) lấy thêm theo chu vi HỘP BAO (khấc, gai
    mỏng không tính). Test E33.
+   NGƯỜI DÙNG 26/11: (a), (b) KHÔNG gộp khi cầu chung nằm ở ô cửa có cung cánh (hộp cung chạm cầu, phủ ≥ 80 % chiều dài cầu): ô đó thành vùng riêng
+   (`o_nho_qua_cua=`). Test E34. Karaoke 123 T2: cánh 0,89 m đứng tự do trên chỗ thông 1,5 m (phía trên hở) = sảnh mở, vẫn gộp (59 %; bản chép giữ 16 vùng).
 3. Lọc lần lượt, mỗi lọc in một dòng: ô X, gạch chéo (`bo_phong=`), ngoài trục (`bo_ngoai_truc=`), WC / thang (`bo_khu_khong_bao=`), sảnh thang (`bo_sanh_thang=`),
    chữ khu (`bo_khu_ten=`), hiên (`bo_hien=`), cụm phòng nhỏ tách xa mặt bằng chính (hình chi tiết, mặt cắt: `bo_cum=`).
    `bo_cum` không xét phòng có tâm trong khung trục (trường học khung 6, 21/11: 2 tầng chọn một lần, nhà thi đấu cách dãy học một sân > 2 m
