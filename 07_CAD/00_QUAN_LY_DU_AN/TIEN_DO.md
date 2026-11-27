@@ -3,6 +3,20 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `07_CAD/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `07_CAD/00_QUAN_LY_DU_AN/KE_HOACH.md`. Nhật ký: `07_CAD/00_QUAN_LY_DU_AN/LICH_SU.md`. Luật riêng: `07_CAD/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `07_CAD/00_QUAN_LY_DU_AN/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`07_CAD/CLAUDE.md`).
 
+## 27/11 trưa: MÉP VÙNG KẸP SÁT TƯỜNG + DẦM CÓ THÔNG SỐ (PCCC_DAM, PCCC_GANDAM) — XONG MÃ, build 7/7, CHƯA THỬ TRONG AUTOCAD
+- Người dùng (TESTBCHAY T1 trục 2–3, "chưa kẹp sát mép tường", nhiều phòng): đầu tường cụt + má cửa WC thẳng hàng cách 1,5 m bị khép như ô cửa, mặt tường thật
+  cách 50 mm. Sửa `CacMat` (`07_KIEN_TRUC/cad/NhanVung.cs`, hàm `khGia`): cầu có nét thật song song 10–150 mm phủ ≥ 90 % khe, bên kia không có cầu song đôi
+  (ô cửa tường dày) thì bỏ. Test E37 (28,2 m², trước 28,13). Áp cả `PCCC_RAI` lẫn `vung_tu_dong`.
+- Người dùng duyệt phương án dầm (1, 2, 3 = ok): `09_PCCC/06_DAM/cad/Dam.cs` mới: `PCCC_DAM` (b x h, bấm tim; dầm bẹt hỏi Giu/DaoNguoc), `PCCC_GANDAM`
+  (gán cỡ cho line / polyline có sẵn), XData `TKPCCC_DAM`, nhãn "D bxh" layer `PCCC_DAM_NHAN`, thao tác spec `dam`, `doc` trả `dam`.
+  `PCCC_RAI`: dầm có cỡ không bao giờ làm tường; KhongTran / HonHop chia khoang theo mép dầm sâu (d = h − dày sàn > 0,3 m), không hỏi nét mẫu; `lech_dam`
+  khi cỡ gán khác nhãn bản vẽ cạnh dầm. Không mặt bằng dầm: Enter = CoTran (trần phẳng) như cũ. Test E38 (2 khoang), E39 (gán bẹt, spec dam + doc).
+- Tri thức: `01_TRI_THUC_VE/nhan_dang/phong_vung.md` mục "AI vẽ vùng qua spec phải KHỚP plugin" (luật 1–8), `dam_khoang.md` (dầm có thông số); TU_VUNG `dam`.
+- Test: chay_thu 219 DAT, 1 LOI cũ (Karaoke tầng 1 + 2 vung=30, HEAD cũng LOI); thu_mcp TAT CA DAT; build.bat OK. CHƯA: thu_gui, cad-review; thử trong AutoCAD
+  thật (tắt hẳn AutoCAD, mở lại): PCCC_DAM / PCCC_GANDAM, PCCC_RAI lại TESTBCHAY xem phòng T1 trục 2–3 hết hở.
+- Để lại: `07_CAD/.claude/skills/tkpccc-ve-cad/SKILL.md` thêm 1 dòng trỏ mục "AI vẽ vùng ... KHỚP plugin" (bị từ chối quyền ghi); thao tác spec `vung_tang`
+  (gọi đúng "Enter mọi phòng" của PCCC_RAI cho AI) đã đề xuất, chờ người dùng.
+
 ## 27/11: BOT CHAT NHƯ CLAUDE CODE (EFFORT + ULTRACODE, MENU "/", CHÉP TỪNG TIN, TÀI KHOẢN PRO/FP, /usage) — XONG MÃ, build 7/7, CHƯA THỬ TRONG AUTOCAD
 - Người dùng (đêm 26/11, làm tiếp sáng 27/11): bot chat như Claude Code: menu effort như ảnh (Low…Max, Medium "Recommended", xhigh = "Extra") + Ultracode;
   bấm một tin rồi Ctrl+A / Ctrl+C chép riêng tin đó; gõ "/" hiện menu lệnh, skill, plugin, help, usage.

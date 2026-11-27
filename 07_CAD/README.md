@@ -33,7 +33,8 @@ Mọi file `cad/` là phần nối của `partial class Lenh` (bot chat: `partia
 │  ├─ 02_BAO_CHAY/        cad/ DayBc.cs (PCCC_DAYBC hệ thường / địa chỉ) · DayTay.cs (PCCC_DAY) · ui/ BangBoTri.cs (trang Báo cháy 4 tab, PCCC_BOTRI) · BangTraCuu.cs (Tra cứu TCVN khoang dầm)
 │  ├─ 03_CHUA_CHAY/       cad/ Tuyen.cs (tuyen, PCCC_TUYEN, ống nhánh tự chọn DN) · VungBaoVe.cs (PCCC_VUNGBV)
 │  ├─ 04_SO_DO_NGUYEN_LY/ cad/ SoDo.cs (so_do spr / bc)
-│  └─ 05_THONG_KE/        cad/ BocKhoiLuong.cs (PCCC_GAN, PCCC_BOC, PCCC_BANG) · BangMb.cs (PCCC_KYHIEU, PCCC_QUYDINH, PCCC_THUYETMINH, thao tác bang)
+│  ├─ 05_THONG_KE/        cad/ BocKhoiLuong.cs (PCCC_GAN, PCCC_BOC, PCCC_BANG) · BangMb.cs (PCCC_KYHIEU, PCCC_QUYDINH, PCCC_THUYETMINH, thao tác bang)
+│  └─ 06_DAM/             cad/ Dam.cs (PCCC_DAM vẽ dầm b x h, PCCC_GANDAM gán cỡ, XData TKPCCC_DAM, thao tác spec dam; PCCC_RAI đọc qua DamThongSo)
 ├─ 10_TIEN_ICH/          cad/ TienIch.cs (PCCC_KT, TRUNG, LOPCHUAN, DANHSO, XOAY, TYLE, DOIBLOCK, CANDIM, DOIDN, TACHVUNG, KHUVUC, THOATNAN) · ui/ BangTienIch.cs (PCCC_TIENICH)
 ├─ 11_BAN_QUYEN/         HUONG_DAN.md · cad/ BanQuyen.cs · ui/ BanQuyenUi.cs (PCCC_BANQUYEN) · keygen/ KeyGen.cs -> 17_KEYGEN/TKPCCC.KeyGen.exe, keygen.py, apps_script/Code.gs
 ├─ 12_BOT_CHAT/          PLUGIN RIÊNG -> TKPCCC_BotChat.bundle (lệnh TKBOTCHAT, TKBOTCHON); build gom cả cây con:
@@ -97,6 +98,7 @@ AI chỉ viết một gói thao tác ngắn (spec JSON), plugin sinh hình. Mộ
 | Thêm một luật vẽ, nối tới quy chuẩn | 1 dòng trong `02_LUAT_VE/LUAT.md` |
 | Ghi bài học khi vẽ | luật -> đúng file `01_TRI_THUC_VE/nhan_dang/` hoặc `01_TRI_THUC_VE/ve/`; số đo bản mẫu -> `01_TRI_THUC_VE/mau/` (mục lục `01_TRI_THUC_VE/README.md`) |
 | Bảng KÝ HIỆU mặt bằng `PCCC_KYHIEU`, bảng quy định lắp đặt đầu báo `PCCC_QUYDINH`, thao tác spec `bang` | `09_PCCC/05_THONG_KE/cad/BangMb.cs` (trị số từ `03_DU_LIEU/khoang_cach_rai.json`) |
+| Dầm có thông số: vẽ `PCCC_DAM`, gán cỡ `PCCC_GANDAM`, thao tác spec `dam`, cách `PCCC_RAI` chia khoang theo dầm đã gán | `09_PCCC/06_DAM/cad/Dam.cs` (`DamThongSo`); chỗ gọi trong `09_PCCC/01_RAI_THIET_BI/cad/Rai.cs` (`RaiTay`, biến `coSo`) |
 | Thuyết minh theo hệ có trên bản vẽ `PCCC_THUYETMINH` (mục chọn ở `MUC_THEO_HE`) | `09_PCCC/05_THONG_KE/cad/BangMb.cs`; văn mẫu `01_TRI_THUC_VE/ve/mau-thuyet-minh-pccc.md` (build.bat chép cạnh DLL) |
 | Dim bước tia beam (`PCCC_RAI` BC_BEAM, layer `PCCC_BC_TIA_KT`); nhãn zone + diện tích, điện trở cuối dây (`PCCC_DAY`) | `09_PCCC/01_RAI_THIET_BI/cad/Tia.cs` (`KtTia`), `09_PCCC/02_BAO_CHAY/cad/DayTay.cs` (`DayTay`) |
 | Rải theo khoang dầm (`PCCC_RAI` từ khoá Dam, đầu khói): bấm nét DẦM mẫu, độ sâu d từ ký hiệu b x h (không có thì hỏi cỡ chung / TungDam), d ≤ 0,3 m bỏ dầm; khoang ≥ 9 m² (trần ≥ 4 m) / 4 m² (2–4 m) rải từng khoang, khoang nhỏ gom rải như trần phẳng | `09_PCCC/01_RAI_THIET_BI/cad/Rai.cs` (`khoangDam`, `hopNho`); nguyên văn 5.9.1.1.6 ở `01_TRI_THUC/07_BAO_CHAY/tcvn7568-14-2025.md` |

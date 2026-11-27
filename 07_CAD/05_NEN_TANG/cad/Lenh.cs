@@ -157,6 +157,8 @@ namespace TKPCCC
             new[] { "PCCC_DAT", "Đặt thiết bị theo mã vật tư", "Nhập mã (? = danh sách, gõ một phần tên hoặc mã để tìm), bấm điểm đặt" },
             new[] { "PCCC_ONG", "Vẽ ống, dây trên layer PCCC_<mã>", "Nhập mã ống, dây (vd ONG_DN50), bấm các điểm" },
             new[] { "PCCC_RAI", "Rải thiết bị theo lưới trong phòng", "Nhập mã (đầu báo: chiều cao trần; HeSo = mức tối ưu k 50–100 %, Dam = trần có dầm > 0,3 m, XemTruoc = chỉ đếm; sprinkler: Dam ở dấu nhắc S), quét chọn mặt bằng, bấm nét phân vùng mẫu (mỗi màu một lần, Enter = tự nhận từ tường), Enter = mọi vùng hoặc bấm điểm từng vùng; tự vẽ vùng PCCC_VUNG rồi rải; BC_BEAM vẽ tia nối hai tường" },
+            new[] { "PCCC_DAM", "Vẽ dầm có thông số b x h (rộng x cao) theo tim", "Nhập b x h (vd 400x600; dầm bẹt rộng > cao thì hỏi lại), bấm điểm đầu, cuối tim từng dầm; KichThuoc = đổi cỡ; PCCC_RAI LoaiTran KhongTran chia khoang theo dầm này" },
+            new[] { "PCCC_GANDAM", "Gán thông số b x h cho dầm có sẵn (nét dầm bản kết cấu, dầm PCCC_DAM)", "Nhập b x h, quét chọn line / polyline dầm; cỡ lưu trong dầm, ghi nhãn D bxh; gán lại thì sửa nhãn" },
             new[] { "PCCC_TUYEN", "Ống nhánh sprinkler kiểu xương cá", "Mã ống, hoặc TuDong = DN theo số đầu phun phía sau (bảng ong_nhanh_dn.json); chọn đầu phun, ống chính, bấm vị trí ống góp" },
             new[] { "PCCC_TRUNG", "Kiểm tra thiết bị đặt trùng (CKC)", "Quét vùng (Enter = cả bản vẽ): cùng mã cách nhau ≤ 10 mm thì khoanh đỏ trên PCCC_KIEM" },
             new[] { "PCCC_LOPCHUAN", "Kiểm tra, áp layer chuẩn thiết bị (CKL, APL)", "Quét vùng (Enter = cả bản vẽ); Co = chuyển thiết bị sai về layer PCCC_<hệ>, Khong = khoanh đỏ" },

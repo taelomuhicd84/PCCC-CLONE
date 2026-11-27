@@ -38,6 +38,8 @@
         <Command Local="PCCC_ONG" Global="PCCC_ONG" />
         <Command Local="PCCC_QUYDINH" Global="PCCC_QUYDINH" />
         <Command Local="PCCC_RAI" Global="PCCC_RAI" />
+        <Command Local="PCCC_DAM" Global="PCCC_DAM" />
+        <Command Local="PCCC_GANDAM" Global="PCCC_GANDAM" />
         <Command Local="PCCC_SPEC" Global="PCCC_SPEC" />
         <Command Local="PCCC_TACHVUNG" Global="PCCC_TACHVUNG" />
         <Command Local="PCCC_THEMBLOCK" Global="PCCC_THEMBLOCK" />

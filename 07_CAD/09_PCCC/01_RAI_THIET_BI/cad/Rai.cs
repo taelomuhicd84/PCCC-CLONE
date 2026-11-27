@@ -1221,12 +1221,21 @@ namespace TKPCCC
             List<KeyValuePair<Point2d[], double>> suaDam = new List<KeyValuePair<Point2d[], double>>(); // đoạn dầm -> d (m) người dùng nhập, thắng nhãn
             List<Point2d[]> timTay = new List<Point2d[]>(); // tim dầm vẽ tay (TungDam) không dời được ra mép (thiếu b)
             ObjectId khoiDam = ObjectId.Null; // block ngoài cùng chứa nét dầm mẫu đầu tiên (mặt bằng dầm chép đè)
+            // Người dùng 27/11: dầm có thông số (PCCC_DAM, PCCC_GANDAM, 09_PCCC/06_DAM/cad/Dam.cs) trong vùng chọn: không bao giờ dựng làm tường;
+            // trần có dầm (KhongTran, HonHop) thì chia khoang theo cỡ đã gán, không hỏi nét dầm mẫu / TungDam.
+            int[] demSo;
+            List<string> lechDam = new List<string>();
+            List<Point2d[]> damSo = DamThongSo(db, qr.Value.GetObjectIds(), daySan, timTay, idDam, out demSo, khoangDam && loaiTran < 3 ? lechDam : null);
+            bool coSo = demSo[0] > 0 && khoangDam && loaiTran < 3;
+            if (demSo[0] > 0 && !coSo)
+                ed.WriteMessage("\n[TKPCCC] dam_thong_so=" + demSo[0] + " (bỏ qua: " + (loaiTran == 3 ? "mái kèo" : "loại trần CoTran, rải như trần phẳng / dưới trần giả")
+                    + "; muốn chia khoang theo dầm thì chọn LoaiTran KhongTran).");
             if (khoangDam)
             {
                 damMau = new HashSet<string>();
                 // HonHop (người dùng 17/11): vùng có trần / không trần và dầm đều vẽ tay; không đọc mặt bằng dầm, chọn thẳng line dầm (TungDam).
                 // MaiKeo (20/11): không hỏi dầm, khoang theo hàng vì kèo.
-                while (loaiTran < 2)
+                while (loaiTran < 2 && !coSo)
                 {
                     PromptNestedEntityOptions no = new PromptNestedEntityOptions(damMau.Count == 0
                         ? "\nBấm một nét DẦM mẫu (layer + màu của dầm), Enter = không có: " : "\nBấm nét dầm màu khác, Enter = xong; nhãn dầm ghi sai cỡ thì SuaDam");
@@ -1269,7 +1278,14 @@ namespace TKPCCC
                 }
                 List<KeyValuePair<Point2d, Vector2d>> nhan = loaiTran >= 2 ? new List<KeyValuePair<Point2d, Vector2d>>() : NhanDam(qr.Value.GetObjectIds());
                 double sauChung = -1;
-                if (damMau.Count == 0 || nhan.Count == 0)
+                if (coSo)
+                {
+                    damThem = damThem ?? new List<Point2d[]>();
+                    damThem.AddRange(damSo);
+                    ed.WriteMessage("\n[TKPCCC] dam_thong_so=" + demSo[0] + " sau=" + demSo[1] + " nong=" + demSo[2] + " (dầm có cỡ gán: chia khoang theo mép dầm sâu, dầm ≤ 0,3 m coi như trần phẳng).");
+                    foreach (string l in lechDam) ed.WriteMessage("\n[TKPCCC] lech_dam: " + l + ". Cỡ đã gán được dùng; sai thì PCCC_GANDAM gán lại.");
+                }
+                else if (damMau.Count == 0 || nhan.Count == 0)
                 {
                     string tl = loaiTran == 3 ? "" : "TungDam";
                     if (loaiTran < 2)

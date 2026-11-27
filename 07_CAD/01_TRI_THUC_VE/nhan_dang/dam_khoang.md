@@ -9,6 +9,11 @@ Mã: `PCCC_RAI` từ khoá `LoaiTran` [CoTran/KhongTran/HonHop/MaiKeo], `Dam`, `
   đầu phun bố trí hướng lên giữa các khoang dầm. Nhớ điều này mỗi khi người dùng nói không trần (16/11: bản đầu coi trần phẳng ra 8 đầu, bản gốc 18).
 - **Vừa có vừa không**: người dùng tự vẽ vùng và vẽ dầm ở chỗ không trần.
 - **Mái kèo** (xưởng): khoang = giữa hai hàng vì kèo.
+- NGƯỜI DÙNG 27/11 (thắng các cách hỏi cỡ dưới đây khi có): DẦM CÓ THÔNG SỐ. `PCCC_DAM` vẽ dầm theo tim với b x h (layer `PCCC_DAM`, polyline kín rộng b),
+  `PCCC_GANDAM` gán b x h cho nét dầm có sẵn (bản kết cấu chép vào, tim hoặc hai mép); cỡ lưu trong đối tượng, nhãn "D bxh". AI: thao tác spec `dam`,
+  `doc` trả `dam`. `PCCC_RAI` KhongTran / HonHop dùng thẳng dầm này (mép dầm = ranh khoang, người dùng chốt 27/11: vùng theo MẶT BÊN dầm, không theo tim),
+  không hỏi nét mẫu / TungDam. Không có mặt bằng dầm: Enter mặc định CoTran = trần phẳng. Cỡ gán khác nhãn bản vẽ cạnh dầm: `lech_dam`, người dùng chốt.
+  Mặt cắt cho chiều cao trần h và dày sàn (DaySan); trần giả kín = CoTran.
 - Mặt bằng dầm sàn: người dùng block lại, chép đè lên mặt bằng tầng (khớp trục); plugin đọc cỡ dầm b x h trên đó (nét dầm trong block đó là dầm, không dựng tường).
 
 ## Loại kết cấu quyết định khoang (người dùng 16/11, 19/11)

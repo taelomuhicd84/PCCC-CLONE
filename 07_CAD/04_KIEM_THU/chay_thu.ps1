@@ -1311,7 +1311,30 @@ foreach ($y in (0..8 | ForEach-Object { 6000 * $_ })) {
   '_.ARC', 'C', '2751000,1800', '2752000,1800', 'A', '90', '_.ARC', 'C', '2758000,1800', '2758800,1800', 'A', '90',
   '_.ARC', 'C', '2755300,3250', '2756100,3250', 'A', '-90', '_.ARC', 'C', '2757400,4000', '2758200,4000', 'A', '-90',
   'PCCC_RAI', 'BC_KHOI', '', '', 'C', '2749500,-500', '2760500,6500', '', '', '',
+  # E37 (nguoi dung 27/11 TESTBCHAY T1 truc 2-3 "chua kep sat mep tuong"): phong 7 x 4,5 m, WC 1,1 x 3 m goc duoi phai (cua mo len sanh).
+  #    Dau tuong tren dung o x 6950 (50 mm truoc mat tuong phai x 7000), ma cua WC cung o x 6950: hai dau thang hang cach 1,5 m bi khep nhu o cua,
+  #    vung hut dai 50 x 1500 (28,13 m2). Ky vong: bo cau gia, vung 7 x 4,5 - 1,1 x 3 = 28,2 m2.
+  '(princ "\n==E37==")', '-LAYER', 'M', 'TUONG', '', '_.ZOOM', 'W', '2769000,-1000', '2778000,6000',
+  '_.LINE', '2770000,4500', '2776950,4500', '', '_.LINE', '2776950,4500', '2776950,4700', '', '_.LINE', '2769800,4700', '2776950,4700', '',
+  '_.LINE', '2777000,4500', '2777000,3000', '', '_.LINE', '2777000,3000', '2776950,3000', '', '_.LINE', '2776950,3000', '2776950,2900', '',
+  '_.LINE', '2776950,2900', '2777000,2900', '', '_.LINE', '2777000,2900', '2777000,0', '', '_.LINE', '2777200,4500', '2777200,-200', '',
+  '_.LINE', '2770000,0', '2777000,0', '', '_.LINE', '2769800,-200', '2777200,-200', '', '_.LINE', '2770000,0', '2770000,4500', '', '_.LINE', '2769800,-200', '2769800,4700', '',
+  '_.LINE', '2775900,3000', '2776160,3000', '', '_.LINE', '2776160,3000', '2776160,2900', '', '_.LINE', '2776000,2900', '2776160,2900', '',
+  '_.LINE', '2775900,3000', '2775900,0', '', '_.LINE', '2776000,2900', '2776000,0', '',
+  '-LAYER', 'M', 'COT', '', '_.RECTANG', '2776950,4500', '2777250,4700', '-LAYER', 'S', '0', '',
+  '_.ARC', 'C', '2776950,3000', '2776160,3000', 'A', '-90',
+  'PCCC_RAI', 'BC_KHOI', '', '', 'C', '2769500,-500', '2777500,5000', '', '', '',
+  # E38 (nguoi dung 27/11, dam co thong so): phong 12 x 6 m, PCCC_DAM 400x600 theo tim x 6 m cat doi phong. PCCC_RAI LoaiTran KhongTran (khong day san:
+  #    d 0,6 > 0,3 m) khong hoi net dam mau, chia 2 khoang 5,8 x 6 m theo mep dam; polyline dam khong lam tuong.
+  '(princ "\n==E38==")', '-LAYER', 'M', 'TUONG', '', '_.ZOOM', 'W', '2779000,-1000', '2793000,7000', '_.RECTANG', '2780000,0', '2792000,6000', '-LAYER', 'S', '0', '',
+  'PCCC_DAM', '400x600', '2786000,0', '2786000,6000', '',
+  'PCCC_RAI', 'BC_KHOI', 'LoaiTran', 'KhongTran', '3.5', '', 'C', '2779500,-500', '2792500,6500', '', '', '',
+  # E39: PCCC_GANDAM dam bet 1400x700 cho line co san (Enter = Giu, khong tu dao); spec "dam" ve 2 dam theo tim, "doc" tra truong dam.
+  '(princ "\n==E39==")', '_.LINE', '2800000,0', '2806000,0', '', 'PCCC_GANDAM', '1400x700', '', 'L', '',
+  'PCCC_SPEC', "$T\dam.json",
   '(princ "\n==EHET==")', '_.QSAVE')) -join "`r`n" | Set-Content -Encoding ascii "$T\kb7.scr"
+'{"ops":[{"op":"dam","bxh":"300x500","p":[[2810000,0],[2816000,0],[2816000,4000]]},{"op":"doc","gi":"dt","l":"PCCC_DAM"},{"op":"dam","bxh":"abc","p":[[0,0],[1000,0]]}]}' |
+  Set-Content -Encoding ascii "$T\dam.json"
 $p7 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/s `"$T\kb7.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kb7.out.txt"
 if (-not $p7.WaitForExit(180000)) { Stop-Process -Id $p7.Id -Force; throw "accoreconsole qua 3 phut (review 20/11): $T\kb7.out.txt" }
 $out7 = [Text.Encoding]::Unicode.GetString([IO.File]::ReadAllBytes("$T\kb7.out.txt")) -replace "`0", ''
@@ -1424,6 +1447,16 @@ $e36 = CaRv 'E36'
 Kiem ($e36 -notmatch 'bo_wc_trong_phong=' -and @(DtVung $e36 | Where-Object { $_ -ge 6.8 -and $_ -le 7.0 }).Count -eq 1 -and @(DtVung $e36 | Where-Object { $_ -ge 22.4 -and $_ -le 22.6 }).Count -eq 1 `
   -and $e36 -match 'bo_wc_thiet_bi=1 ' -and (DtVung $e36) -contains 6.6 -and (DtVung $e36) -notcontains 6 -and (DtVung $e36).Count -eq 4) `
   "Nguoi dung 26/11 chieu: o 2,5 x 2,75 m (6,9 m2) trong, cua mo vao phong la kho, van co vung (WC rieng chi toi 5 m2); WC 6 m2 co lavabo net roi khong vung (vung=$((DtVung $e36) -join ','))"
+$e37 = CaRv 'E37'
+Kiem ((DtVung $e37) -contains 28.2 -and (DtVung $e37) -notcontains 28.13) `
+  "Nguoi dung 27/11: dau tuong va ma cua thang hang canh mat tuong that 50 mm khong khep khe gia, vung kep sat tuong 28,2 m2 (vung=$((DtVung $e37) -join ','))"
+$e38 = CaRv 'E38'
+Kiem ($e38 -match 'PCCC_DAM n=1 bxh=400x600' -and $e38 -match 'dam_thong_so=1 sau=1 nong=0' -and $e38 -match 'khoang_dam nguong=4 lon=2 nho=0' -and $e38 -notmatch '\(layer \+ m') `
+  "Nguoi dung 27/11: PCCC_DAM 400x600 cat doi phong, PCCC_RAI KhongTran doc co dam khong hoi net mau, chia 2 khoang ($([regex]::Match($e38, 'khoang_dam \S+ \S+ \S+').Value))"
+$e39 = CaRv 'E39'
+$kqDam = DocKq 'dam'
+Kiem ($e39 -match 'PCCC_GANDAM n=1 bxh=1400x700' -and $kqDam -and @($kqDam.doc[0].ds | Where-Object { $_.dam -eq '300x500' }).Count -eq 2 -and @($kqDam.doc[0].ds | Where-Object { $_.dam -eq '400x600' }).Count -eq 1 -and @($kqDam.loi).Count -eq 1 -and $kqDam.loi[0].i -eq 2) `
+  "Nguoi dung 27/11: PCCC_GANDAM giu dam bet 1400x700; spec dam ve 2 dam + doc tra dam=300x500 (2) va dam E38 400x600, bxh sai bao loi ($(if ($kqDam) { $kqDam | ConvertTo-Json -Compress -Depth 4 }))"
 $e25 = CaRv 'E25'
 $ktd = @([regex]::Matches($e25, 'KTD (-?\d+),(-?\d+) (-?\d+),(-?\d+) (-?\d+),(-?\d+)') | ForEach-Object { , @($_.Groups[1..6] | ForEach-Object { [double]$_.Value }) })
 $ktN = @($ktd | Where-Object { $_[3] -eq $_[5] }); $ktD = @($ktd | Where-Object { $_[2] -eq $_[4] })

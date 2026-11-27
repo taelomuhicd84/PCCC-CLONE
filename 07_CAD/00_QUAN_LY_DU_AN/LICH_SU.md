@@ -875,3 +875,8 @@ git mv tu TKPCCC.bundle/Contents. Lenh.ThuMucBlockPccc suy <repo>/07_CAD/15_THU_
 
 ## 2026-11-27 — Bot chat như Claude Code
 Effort như Claude Code (Extra, Recommended) + Ultracode; menu "/" (LenhGach.cs: lệnh bot, lệnh Claude Code, skill/plugin); bấm tin Ctrl+A/Ctrl+C chép riêng tin; tài khoản Pro/FP tự chuyển; /usage. Kết quả build bin/ → 16_HUB_CAI_DAT, 17_KEYGEN, 18_MCP. Build 7/7, thu_bot + thu_hub đạt; chưa thử trong AutoCAD.
+
+## 2026-11-27 — Mép vùng kẹp sát tường, dầm có thông số
+Người dùng: AI vẽ vùng sai so với plugin (ghi 6 luật vào phong_vung.md); vùng hở 50 mm ở đầu tường cụt cạnh mặt tường thật (CacMat bỏ cầu giả, E37);
+duyệt phương án dầm: PCCC_DAM, PCCC_GANDAM, XData b x h, spec dam, PCCC_RAI chia khoang theo dầm đã gán, mép vùng theo mặt bên dầm (E38, E39).
+chay_thu 219 DAT + 1 LOI cũ (Karaoke 1 + 2); thu_mcp TAT CA DAT; build OK. Chưa thử AutoCAD thật, chưa cad-review.

@@ -1689,6 +1689,50 @@ namespace TKPCCC
             foreach (Point2d[] k in giu)
                 if ((cua != null && cua.Any(h => cuaTrongKhe(k[0], k[1], h)))
                     || (k[0].GetDistanceTo(k[1]) <= soDoiMax && (giu.Any(k2 => k2 != k && SongDoi(k, k2, tol)) || capCot.Any(k2 => SongDoi(k, k2, tol))))) cau.Add(k);
+            // Người dùng 27/11 (TESTBCHAY T1 trục 2–3, "chưa kẹp sát mép tường"): đầu tường trên (dừng 50 mm trước mặt tường phải) và má cửa WC
+            // thẳng hàng cách 1,5 m bị khép như ô cửa, trong khi mặt tường thật chạy song song ngay cạnh (50 mm) phủ kín khe: vùng hụt một dải 50 mm.
+            // Cầu có nét thật song song cách 10–150 mm phủ ≥ 90 % khe, phía bên kia nét đó trong 0,4 m không có cầu song song (ô cửa tường dày:
+            // cầu hai mặt tường, cánh cửa vẽ giữa) = khe giả: bỏ cầu, dải hẹp liền vào phòng. Không xét ký hiệu cửa: cung cửa WC mở vào sảnh nằm sát
+            // khe giả y như cung ở ô cửa thật (E37); ô cửa thật không có mặt tường liền phủ kín ngay cạnh.
+            if (cau.Count > 0)
+            {
+                double dGia = tol * 75, dDoi = tol * 200;
+                Func<Point2d[], Point2d[], Vector2d, Vector2d, double, double[]> chieu = (s, k, u, w, g) =>
+                {
+                    double s0 = u.DotProduct(s[0] - k[0]), s1 = u.DotProduct(s[1] - k[0]);
+                    return new[] { w.DotProduct(s[0] - k[0]), w.DotProduct(s[1] - k[0]), Math.Min(Math.Max(s0, s1), g) - Math.Max(Math.Min(s0, s1), 0) };
+                };
+                Func<Point2d[], bool> khGia = k =>
+                {
+                    double g = k[0].GetDistanceTo(k[1]);
+                    if (g < tol * 100) return false;
+                    Vector2d u = (k[1] - k[0]) / g, w = u.GetPerpendicularVector();
+                    double x0 = Math.Min(k[0].X, k[1].X) - dGia, y0 = Math.Min(k[0].Y, k[1].Y) - dGia, x1 = Math.Max(k[0].X, k[1].X) + dGia, y1 = Math.Max(k[0].Y, k[1].Y) + dGia;
+                    foreach (int j in luoiTT().Tim(x0, y0, x1, y1))
+                    {
+                        Point2d[] s = doan[j];
+                        Vector2d v = s[1] - s[0];
+                        if (v.Length < tol || Math.Abs(u.X * v.Y - u.Y * v.X) > 0.01 * v.Length) continue;
+                        double[] c = chieu(s, k, u, w, g);
+                        if (Math.Abs(c[0] - c[1]) > tolTh || c[2] < 0.9 * g) continue;
+                        double d = (c[0] + c[1]) / 2, dau = Math.Sign(d);
+                        if (Math.Abs(d) <= tolTh || Math.Abs(d) > dGia) continue;
+                        bool doi = cau.Any(k2 =>
+                        {
+                            if (k2 == k) return false;
+                            Vector2d v2 = k2[1] - k2[0];
+                            if (Math.Abs(u.X * v2.Y - u.Y * v2.X) > 0.01 * v2.Length) return false;
+                            double[] c2 = chieu(k2, k, u, w, g);
+                            double d2 = (c2[0] + c2[1]) / 2 * dau;
+                            return d2 > Math.Abs(d) && d2 <= Math.Abs(d) + dDoi && c2[2] >= 0.5 * g;
+                        });
+                        if (!doi) return true;
+                    }
+                    return false;
+                };
+                List<Point2d[]> gia = cau.Where(k => khGia(k)).ToList();
+                foreach (Point2d[] k in gia) cau.Remove(k);
+            }
             // 1b. Khe chữ T có cửa (cửa giữa đầu tường và tường vuông góc / xiên): đầu tường hở, cách hộp cửa ≤ 0,5 m, chiếu thẳng tới nét gần nhất
             //     trong hoCua; tia cắt hộp cửa thì khép.
             if (cua != null && cua.Count > 0 && hoCua > 0)

@@ -85,6 +85,9 @@ ra đúng kết quả "Enter mọi phòng" của `PCCC_RAI`. Đối chiếu plug
 7. PHÒNG CÓ WC RIÊNG: vùng chữ L ôm sảnh trước WC, chừa buồng xí. AI đã đúng, trùng plugin tới mm.
 Cách làm khi AI dựng vùng: `vung_tu_dong` một điểm trong mỗi mặt (phòng, từng ô sảnh nhỏ, từng đoạn hành lang). Rồi áp luật 1–6 để gộp hoặc cắt.
 Gộp bằng `net` `PCCC_VUNG` `kin`, xoá mảnh theo handle. Xong thì đếm số vùng của từng tầng: T1 15 vùng, T2 16 vùng.
+8. MÉP VÙNG KẸP SÁT TƯỜNG (người dùng 27/11, phòng T1 trục 2–3 hở 50 mm): đầu tường cụt và má cửa thẳng hàng mà mặt tường thật chạy song song ngay cạnh
+   (≤ 150 mm, phủ kín khe) thì KHÔNG phải ô cửa: plugin bỏ cầu khép khe đó (`CacMat`, test E37), vùng ra 28,2 m² (trước 28,13). AI tự vẽ thì kiểm
+   mọi cạnh vùng trùng mặt tường thật, không dừng ở đầu tường cụt.
 Mép vùng theo đáy dầm, theo mép sảnh thông tầng: người dùng sẽ train thêm, có mặt cắt (cao trần, b x h dầm) và mặt bằng dầm để đối chiếu.
 Khi đó xem `dam_khoang.md`.
 

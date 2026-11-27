@@ -488,6 +488,7 @@ namespace TKPCCC
                 case "cua": OpCua(g, o); break;             // 07_CAD/07_KIEN_TRUC/cad/KienTruc.cs
                 case "kt_chuoi": OpKtChuoi(g, o); break;    // 07_CAD/07_KIEN_TRUC/cad/KienTruc.cs (lõi Dim.cs)
                 case "bang": OpBang(g, o); break;           // 07_CAD/09_PCCC/05_THONG_KE/cad/BangMb.cs (bảng ký hiệu, bảng quy định lắp đặt)
+                case "dam": OpDam(g, o); break;             // 07_CAD/09_PCCC/06_DAM/cad/Dam.cs (vẽ dầm b x h, gán cỡ cho nét có sẵn)
                 // "anh" không ở đây: ThucHienSpec chạy nó sau khi commit (InAnh)
                 default: throw new System.Exception("không có thao tác \"" + ten + "\" (xem 07_CAD/01_TRI_THUC_VE/TU_VUNG.md)");
             }
@@ -790,6 +791,8 @@ namespace TKPCCC
         {
             Dictionary<string, object> d = new Dictionary<string, object> { { "h", e.Handle.ToString() }, { "loai", e.GetRXClass().DxfName }, { "l", e.Layer } };
             if (e.ColorIndex != 256) d["mau"] = e.ColorIndex;
+            string bxh = BxhCuaDt(e);
+            if (bxh != null) d["dam"] = bxh; // dầm có thông số (Dam.cs)
             try { Extents3d x = e.GeometricExtents; d["hop"] = new double[] { Lt(x.MinPoint.X), Lt(x.MinPoint.Y), Lt(x.MaxPoint.X), Lt(x.MaxPoint.Y) }; }
             catch (System.Exception) { }
             Line ln = e as Line;
