@@ -889,3 +889,6 @@ AI dựng vùng T1 + T2 bằng vung_tu_dong + ghép tay: người dùng chỉ ra
 ranh kéo dài cắt qua cột / khối thang ⇒ luật 9 trong phong_vung.md (đọc nét, mặt tường phía vùng, bảng cạnh khi người dùng báo hở). Người dùng chốt
 "vách thì chạm mép vách, lan can thì chạm tới sảnh" (thay 23/11) ⇒ luật 10 + GopMatNho (d); E23, E27, bản chép Karaoke 123 T2 đổi kỳ vọng.
 chay_thu 219 DAT + 1 LOI cũ; thu_mcp TAT CA DAT. Chưa build vào AutoCAD đang mở, chưa cad-review.
+
+## 2026-11-27 (chiều 2) — Bot chat sửa skill/agent, push GitHub, kéo chọn tự cuộn
+Claude Code 2.1.326 coi .claude/skills|agents là file nhạy cảm: luật allow trong settings không vượt được, bot -p bị từ chối. Bot nay chạy --permission-prompt-tool stdio, trả lời control_request can_use_tool (MayAi.cs TraLoiQuyen): tự cho sửa .claude/skills|agents|commands của dự án và 07_CAD, việc khác hiện hộp hỏi. Push: GCM lưu 2 tài khoản GitHub nên tiến trình nền không chọn được; đặt git config --local credential.https://github.com.username taelomuhicd84 (push nền chạy). Quét chọn chữ kéo quá mép khung tự cuộn (GiaoDienChat.cs KhungCuon.BatDauKeo). SKILL tkpccc-ve-cad thêm dòng AI tự dựng vùng. Đã thử giao thức bằng script (ghi được), build 7/7, thu_bot đạt; chưa thử trong AutoCAD.

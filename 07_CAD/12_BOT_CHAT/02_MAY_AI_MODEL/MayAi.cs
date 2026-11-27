@@ -217,7 +217,7 @@ namespace TKPCCC
                 // --add-dir / --plugin-dir trước --tools: các cờ này nhận nhiều giá trị, cờ kế tiếp mới cắt.
                 // --input-format stream-json: stdin mở suốt lượt để Ctrl+X ghi thêm lời nhắn gấp (GuiGap), đóng khi có dòng result (DongVao).
                 doiSo = "-p --input-format stream-json --output-format stream-json --verbose --model " + model + " --effort " + effort
-                    + " --mcp-config " + Ngoac(KhoPhien.FileMcp(cad, banVe)) + " --strict-mcp-config --setting-sources project,local --permission-mode acceptEdits"
+                    + " --mcp-config " + Ngoac(KhoPhien.FileMcp(cad, banVe)) + " --strict-mcp-config --setting-sources project,local --permission-mode acceptEdits --permission-prompt-tool stdio"
                     + (phien != null ? " --resume " + phien + (tach ? " --fork-session" : "") : "") + themDir + coSkill
                     + " --tools Read Grep Glob Skill Edit Write PowerShell" + (ultra ? " Agent" : "")
                     + " --allowedTools Read Grep Glob Skill Edit Write PowerShell" + (ultra ? " Agent" : "") + " mcp__cad__cad_tt mcp__cad__cad_chay mcp__cad__cad_anh";
@@ -311,6 +311,7 @@ namespace TKPCCC
             if (j.TryGetValue("conversation_id", out v) && v is string) phien = (string)v;
             string loai = j.TryGetValue("type", out v) ? v as string : null;
             string suKien = j.TryGetValue("event", out v) ? v as string : null;
+            if (loai == "control_request") { TraLoiQuyen(j); return; }
             if (loai == "result") { DongVao(); CongUsage(j); }
             if (loai == "rate_limit_event" && j.TryGetValue("rate_limit_info", out v) && v is Dictionary<string, object>)
             {
@@ -401,6 +402,60 @@ namespace TKPCCC
             goiY.SetToolTip(nutGui, "Gửi (Enter)");
             nutGui.Invalidate();
             if (hangCho.Count > 0) { string cau = hangCho.Dequeue(); BeginInvoke((Action)delegate { GiaoDien.An(delegate { Gui(cau); }); }); }
+        }
+
+        // ---------- Hỏi quyền (--permission-prompt-tool stdio) ----------
+        // Người dùng 27/11: bot được sửa skill / agent CAD. Claude Code coi .claude\skills|agents là file nhạy cảm, luật allow trong settings
+        // không vượt được (chỉ duyệt tay); -p không có ai duyệt nên bị từ chối. Nay CLI gửi control_request can_use_tool, bot trả lời:
+        // sửa .claude\skills|agents|commands trong dự án / 07_CAD thì tự cho; việc khác hiện hộp hỏi người dùng.
+
+        void TraLoiQuyen(Dictionary<string, object> j)
+        {
+            object v;
+            Dictionary<string, object> r = j.TryGetValue("request", out v) ? v as Dictionary<string, object> : null;
+            string id = j.TryGetValue("request_id", out v) ? v as string : null;
+            if (r == null || id == null || p == null) return;
+            JavaScriptSerializer js = new JavaScriptSerializer();
+            js.MaxJsonLength = int.MaxValue;
+            if ((r.TryGetValue("subtype", out v) ? v as string : null) != "can_use_tool")
+            {
+                GhiDong(p, js.Serialize(new Dictionary<string, object> { { "type", "control_response" }, { "response", new Dictionary<string, object> {
+                    { "subtype", "error" }, { "request_id", id }, { "error", "Bot chat chưa hỗ trợ yêu cầu này" } } } }));
+                return;
+            }
+            string cc = r.TryGetValue("tool_name", out v) ? Convert.ToString(v) : "";
+            object vao = r.TryGetValue("input", out v) && v != null ? v : new Dictionary<string, object>();
+            Dictionary<string, object> d = vao as Dictionary<string, object>;
+            string f = d != null && d.TryGetValue("file_path", out v) ? v as string : null;
+            string lenh = d != null && d.TryGetValue("command", out v) ? v as string : null;
+            string viec = cc + (f != null ? ": " + f : lenh != null ? ": " + (lenh.Length > 300 ? lenh.Substring(0, 300) + "…" : lenh) : "");
+            string mo = r.TryGetValue("description", out v) && v != null ? Convert.ToString(v) : "";
+            bool tu = f != null && (cc == "Edit" || cc == "Write" || cc == "MultiEdit") && LaSkillAgent(f);
+            bool cho = tu || MessageBox.Show(this, viec + (mo != "" ? "\n\n" + mo : "") + "\n\nCho phép?", "Bot chat hỏi quyền",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes;
+            Ghi(null, (cho ? "Cho phép " : "Từ chối ") + viec, GiaoDien.ChuMo);
+            Dictionary<string, object> tra = cho
+                ? new Dictionary<string, object> { { "behavior", "allow" }, { "updatedInput", vao } }
+                : new Dictionary<string, object> { { "behavior", "deny" }, { "message", "Người dùng không cho phép." } };
+            GhiDong(p, js.Serialize(new Dictionary<string, object> { { "type", "control_response" }, { "response", new Dictionary<string, object> {
+                { "subtype", "success" }, { "request_id", id }, { "response", tra } } } }));
+        }
+
+        /// File nằm trong .claude\skills|agents|commands của thư mục dự án hoặc 07_CAD.
+        bool LaSkillAgent(string f)
+        {
+            string t;
+            try { t = Path.GetFullPath(f); } catch (System.Exception) { return false; }
+            foreach (string goc in new[] { ThuMucLam(), ThuMucCad() })
+            {
+                if (goc == null) continue;
+                foreach (string con in new[] { "skills", "agents", "commands" })
+                {
+                    string g = Path.Combine(Path.GetFullPath(goc), ".claude", con) + "\\";
+                    if (t.StartsWith(g, StringComparison.OrdinalIgnoreCase)) return true;
+                }
+            }
+            return false;
         }
 
         // ---------- Tài khoản Claude: Pro (claude.ai, %USERPROFILE%\.claude) hay cổng FP (CLAUDE_CONFIG_DIR + token trong settings.json) ----------

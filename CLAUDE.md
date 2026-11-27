@@ -80,4 +80,4 @@ Làm module nào: đọc `.claude/skills/<skill>/SKILL.md` của module đó và
 ## Git / GitHub
 - Remote: https://github.com/taelomuhicd84/PCCC-CLONE (nhánh `main`, repo **công khai**: không đưa hồ sơ khách, token, đơn giá vào repo).
 - Commit ở mỗi mốc việc.
-- Push từ Bash của Claude có thể không lấy được đăng nhập Git Credential Manager: chạy `git push` trong tab Terminal của người dùng.
+- Push từ Bash / PowerShell của Claude (kể cả Bot chat CAD, người dùng cho phép 27/11) chạy được khi Git Credential Manager đã lưu đăng nhập; báo lỗi đăng nhập thì chạy `git push` trong tab Terminal của người dùng.

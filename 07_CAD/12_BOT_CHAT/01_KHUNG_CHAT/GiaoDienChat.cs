@@ -166,6 +166,32 @@ namespace TKPCCC
             int y = -AutoScrollPosition.Y - delta * SystemInformation.MouseWheelScrollLines * Font.Height / 120;
             AutoScrollPosition = new Point(0, Math.Max(0, y));
         }
+
+        // Người dùng 27/11: quét chọn chữ kéo chuột ra quá mép trên / dưới thì khung tự cuộn (TextBox không tự cuộn khung cha).
+        System.Windows.Forms.Timer keo;
+        TextBox keoO;
+
+        public void BatDauKeo(TextBox o)
+        {
+            keoO = o;
+            if (keo == null) { keo = new System.Windows.Forms.Timer(); keo.Interval = 40; keo.Tick += KeoTick; }
+            keo.Start();
+        }
+
+        void KeoTick(object s, EventArgs e)
+        {
+            if ((Control.MouseButtons & MouseButtons.Left) == 0 || keoO == null || keoO.IsDisposed) { keo.Stop(); return; }
+            Point p = PointToClient(Cursor.Position);
+            int d = p.Y < 0 ? p.Y : p.Y > ClientSize.Height ? p.Y - ClientSize.Height : 0;
+            if (d == 0) return;
+            int y = -AutoScrollPosition.Y + Math.Sign(d) * Math.Min(80, 6 + Math.Abs(d) / 2);
+            AutoScrollPosition = new Point(0, Math.Max(0, y));
+            // chuột đứng yên thì TextBox không nới vùng chọn: gửi WM_MOUSEMOVE (giữ nút trái) tại chỗ chuột để chọn theo
+            Point q = keoO.PointToClient(Cursor.Position);
+            SendMessage(keoO.Handle, 0x200, (IntPtr)1, (IntPtr)(((q.Y & 0xFFFF) << 16) | (q.X & 0xFFFF)));
+        }
+
+        [System.Runtime.InteropServices.DllImport("user32.dll")] static extern IntPtr SendMessage(IntPtr h, int m, IntPtr w, IntPtr l);
     }
 
     class BongBong : Control
@@ -200,6 +226,7 @@ namespace TKPCCC
             Controls.Add(o);
             // Người dùng 26/11: lăn chuột để đọc lại tin cũ.
             o.MouseWheel += delegate(object s, MouseEventArgs e) { KhungCuon k = Parent as KhungCuon; if (k != null) k.Lan(e.Delta); };
+            o.MouseDown += delegate(object s, MouseEventArgs e) { KhungCuon k = Parent as KhungCuon; if (k != null && e.Button == MouseButtons.Left) k.BatDauKeo(o); };
             // TextBox nhiều dòng không tự làm Ctrl+A; phím tới được đây nhờ BotChat.ChuyenPhim (AutoCAD bắt Ctrl+A/C trước palette).
             o.KeyDown += delegate(object s, KeyEventArgs e)
             {

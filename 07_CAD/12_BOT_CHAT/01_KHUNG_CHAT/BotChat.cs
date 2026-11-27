@@ -294,11 +294,14 @@ namespace TKPCCC
         }
 
         /// Một lời nhắn người dùng dạng stream-json vào stdin của claude.
-        static bool GhiVao(Process q, string chu)
+        static bool GhiVao(Process q, string chu) { return GhiDong(q, KhoPhien.DongNguoiDung(chu)); }
+
+        /// Một dòng JSON vào stdin của claude (lời nhắn, trả lời hỏi quyền).
+        static bool GhiDong(Process q, string json)
         {
             try
             {
-                byte[] b = new UTF8Encoding(false).GetBytes(KhoPhien.DongNguoiDung(chu) + "\n"); // UTF-8 qua stdin: claude.cmd qua cmd làm hỏng chữ Việt trên dòng lệnh
+                byte[] b = new UTF8Encoding(false).GetBytes(json + "\n"); // UTF-8 qua stdin: claude.cmd qua cmd làm hỏng chữ Việt trên dòng lệnh
                 q.StandardInput.BaseStream.Write(b, 0, b.Length);
                 q.StandardInput.BaseStream.Flush();
                 return true;
