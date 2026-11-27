@@ -41,6 +41,7 @@ Tường vẽ bằng `tuong` nên `vung_tu_dong` chỉ dò layer tường, khôn
 ## Vùng, rải thiết bị, đi tuyến
 1. Vùng TRƯỚC khi rải: dựng / vẽ `PCCC_VUNG`, chụp ảnh, soát 5 chỗ hay thiếu vùng (mục "Soát" trong `07_CAD/01_TRI_THUC_VE/nhan_dang/phong_vung.md`), DỪNG cho người dùng duyệt (`phong_vung.md`; khoang dầm, vì kèo: `dam_khoang.md`).
    AI tự dựng vùng: theo mục 'AI vẽ vùng qua spec phải KHỚP plugin' của phong_vung.md (luật 1–10): đọc nét, lấy mặt tường phía vùng, ranh kéo dài khấc theo cột/tường; người dùng báo hở thì lập bảng cạnh – toạ độ – mặt tường trước; vách dừng mặt vách, lan can thì chạm sảnh.
+   Soi nét tường quanh cạnh vùng: `doc` `gi:"dt"` LUÔN kèm `"cat":true` (mặc định chỉ trả nét trọn hộp, sót tường dài); cạnh theo mặt TƯỜNG, không theo mặt cột to hơn tường (luật 9f).
 2. Người dùng báo xong: `doc` `gi`:"vung" đọc lại vùng, rồi `rai` theo `l` (trị số, cách rải, dim: `07_CAD/01_TRI_THUC_VE/ve/bao_chay/rai_dau_bao.md`). `ho` > 0 hoặc `m2` sát `dt` thì nêu cho người dùng.
 3. Chuông, nút, đèn báo phòng: `07_CAD/01_TRI_THUC_VE/ve/bao_chay/chuong_nut_den.md`. Dây zone (chia zone theo LUAT BC-04, X/Y, kẹp tường, đầu ra, điện trở cuối): `07_CAD/01_TRI_THUC_VE/ve/bao_chay/day_zone.md`.
 4. Ống sprinkler, tư duy chung: `07_CAD/01_TRI_THUC_VE/ve/tu-duy-di-day-di-ong.md`. `tuyen` `xuong_ca` chỉ là nháp; vị trí ống góp do người dùng chọn (lệnh `PCCC_TUYEN`, hoặc `qua` một điểm mỗi vùng).

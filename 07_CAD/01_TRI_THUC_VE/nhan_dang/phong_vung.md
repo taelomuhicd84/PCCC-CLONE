@@ -101,6 +101,11 @@ Gộp bằng `net` `PCCC_VUNG` `kin`, xoá mảnh theo handle. Xong thì đếm 
    BÊN KIA là cạnh của VÙNG KỀ; cạnh của vùng đang xét trùng nét viền tường phía mình nên bị nét xám che. Người dùng xác nhận đúng như vậy.
    Trước khi sửa: `doc` `PCCC_VUNG` hai bên tường + nét tường, lập bảng cạnh – toạ độ – mặt tường, chỉ rõ nét hồng nào thuộc vùng nào; chỉ sửa cạnh
    lệch thật, không dời cạnh đúng ra giữa tường. Báo người dùng bằng bảng đó (đỡ một vòng hỏi lại).
+   (f) CỘT TO HƠN TƯỜNG: KHÔNG lấy mặt cột làm cạnh vùng (người dùng 27/11, TESTBCHAY T2 dãy dưới, tường ngăn WC giữa hai phòng): cột 300
+   (x 349465..349765) đầu tường ngăn 200 (mặt thật 349515 / 349715); AI kéo cạnh hai vùng theo mặt cột xuống suốt chiều dài tường nên mỗi bên hở 50 mm.
+   Đúng: cạnh vùng theo mặt TƯỜNG; chỉ đoạn sát cột mới khấc theo mặt cột (cột lồi ≤ 150 mm thì kẹp thẳng mặt tường, như luật 8). Nguyên nhân sót:
+   `doc` mặc định chỉ trả nét nằm TRỌN trong `hop`, nét tường dài vượt hộp soi không hiện, chỉ thấy cột. Soi tường quanh cạnh vùng LUÔN dùng
+   `"cat":true` (plugin thêm 27/11, test `chay_thu.ps1` "doc cat:true"); không thấy nét tường thì chụp `anh` sát (≤ 0,5 m) đo mặt hatch, không đoán theo cột.
 10. VÁCH VÀ LAN CAN (người dùng chốt 27/11, THAY mục 8 "Soát" ngày 23/11 cho lan can): "khi nào đó là vách thì mới chạm tới mép vách, còn lan can
    thì chạm tới sảnh luôn". Vách / tường: vùng dừng ở mặt phía mình. Lan can (2 nét hoặc polyline kín mỏng 30–90 mm trên layer thường): bề dày lan
    can thuộc vùng phía hành lang, vùng chạm mép sảnh / ô thông tầng (TESTBCHAY T2 hành lang C–B x 356715, 35,64 m²). Nét người dùng vẽ thêm để

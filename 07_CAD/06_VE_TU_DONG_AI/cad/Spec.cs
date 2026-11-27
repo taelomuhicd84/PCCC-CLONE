@@ -696,6 +696,16 @@ namespace TKPCCC
             return x.MinPoint.X >= h[0] && x.MinPoint.Y >= h[1] && x.MaxPoint.X <= h[2] && x.MaxPoint.Y <= h[3];
         }
 
+        /// Hộp bao đối tượng GIAO hộp (kể cả nằm trọn). Dùng cho doc "cat":true: tường, dầm dài vượt khỏi hộp soi vẫn được trả
+        /// (27/11: doc chỉ trọn hộp bỏ sót nét tường ngăn dài, vùng dừng ở mép cột thay vì mặt tường).
+        static bool GiaoHop(Entity e, double[] h)
+        {
+            if (h == null) return true;
+            Extents3d x;
+            try { x = e.GeometricExtents; } catch (System.Exception) { return false; }
+            return x.MaxPoint.X >= h[0] && x.MaxPoint.Y >= h[1] && x.MinPoint.X <= h[2] && x.MinPoint.Y <= h[3];
+        }
+
         /// "h": [handle, ...] của thao tác (Bot chat gửi handle vùng người dùng quét chọn), null nếu không có.
         static HashSet<string> HandleOp(Dictionary<string, object> o)
         {
@@ -705,14 +715,14 @@ namespace TKPCCC
             return new HashSet<string>(DS(v, "h").Cast<object>().Select(x => Convert.ToString(x, CultureInfo.InvariantCulture).Trim().ToUpperInvariant()));
         }
 
-        static List<Entity> Loc(GoiSpec g, string l, double[] hop, HashSet<string> h = null)
+        static List<Entity> Loc(GoiSpec g, string l, double[] hop, HashSet<string> h = null, bool cat = false)
         {
             List<Entity> kq = new List<Entity>();
             foreach (ObjectId id in g.Ms)
             {
                 if (h != null && !h.Contains(id.Handle.ToString())) continue;
                 Entity e = g.Tr.GetObject(id, OpenMode.ForRead) as Entity;
-                if (e == null || (l != null && !KhopTen(e.Layer, l)) || !TrongHop(e, hop)) continue;
+                if (e == null || (l != null && !KhopTen(e.Layer, l)) || !(cat ? GiaoHop(e, hop) : TrongHop(e, hop))) continue;
                 kq.Add(e);
             }
             return kq;
@@ -825,17 +835,18 @@ namespace TKPCCC
             string l = LayChu(o, "l", null);
             double[] hop = HopOp(g, o);
             HashSet<string> h = HandleOp(o);
+            bool cat = LayCo(o, "cat", false);
             List<object> ds = new List<object>();
             int n = 0;
             if (gi == "dt")
             {
-                foreach (Entity e in Loc(g, l, hop, h))
+                foreach (Entity e in Loc(g, l, hop, h, cat))
                     if (++n <= DOC_TOI_DA) ds.Add(MoTaDt(g, e));
             }
             else if (gi == "layer")
             {
                 Dictionary<string, int> dem = new Dictionary<string, int>();
-                foreach (Entity e in Loc(g, l, hop, h)) { int c; dem.TryGetValue(e.Layer, out c); dem[e.Layer] = c + 1; }
+                foreach (Entity e in Loc(g, l, hop, h, cat)) { int c; dem.TryGetValue(e.Layer, out c); dem[e.Layer] = c + 1; }
                 n = dem.Count;
                 foreach (KeyValuePair<string, int> p in dem.OrderByDescending(x => x.Value).Take(DOC_TOI_DA))
                     ds.Add(new Dictionary<string, object> { { "l", p.Key }, { "n", p.Value } });
@@ -844,7 +855,7 @@ namespace TKPCCC
             {
                 // Vùng = polyline kín, mặc định trên layer PCCC_VUNG: diện tích m2, hộp bao, đỉnh (tối đa 12).
                 double m = HeSoMet(g.Db);
-                foreach (Entity e in Loc(g, l ?? "PCCC_VUNG", hop, h))
+                foreach (Entity e in Loc(g, l ?? "PCCC_VUNG", hop, h, cat))
                 {
                     Polyline pl = e as Polyline;
                     if (!KinPl(pl)) continue;
@@ -858,7 +869,7 @@ namespace TKPCCC
             }
             else if (gi == "chu")
             {
-                foreach (Entity e in Loc(g, l, hop, h))
+                foreach (Entity e in Loc(g, l, hop, h, cat))
                 {
                     DBText t = e as DBText;
                     MText mt = e as MText;

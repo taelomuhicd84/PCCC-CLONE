@@ -803,7 +803,10 @@ $adG[5] = @(24003, 13000)
  '[20000,15000],[12000,15000],[12000,14600],[6000,14600],[6000,15000],[0,15000],[0,8000],[150,8000],[150,3000],[3150,3000]]},' +
  '{"op":"vung_tu_dong","p":[[10000,8000]]},' +
  # Vung PCCC_VUNG ve tay ve dung diem dau nhung khong khep (Closed = 0, nguoi dung 16/11): van la vung kin.
- '{"op":"net","l":"PCCC_VUNG","p":[[30000,0],[50000,0],[50000,15000],[30000,15000],[30000,0]]},{"op":"doc","gi":"vung","hop":[29000,-1000,51000,16000]}]}') |
+ '{"op":"net","l":"PCCC_VUNG","p":[[30000,0],[50000,0],[50000,15000],[30000,15000],[30000,0]]},{"op":"doc","gi":"vung","hop":[29000,-1000,51000,16000]},' +
+ # doc "cat":true (27/11, TESTBCHAY T2 tuong ngan WC 349515..349715 dai qua hop soi): mac dinh chi tron hop nen bo sot tuong, cat thi thay.
+ '{"op":"net","l":"KT_CAT","kin":true,"p":[[60000,0],[60200,0],[60200,6000],[60000,6000]]},' +
+ '{"op":"doc","gi":"dt","l":"KT_CAT","hop":[59500,2000,60700,3000]},{"op":"doc","gi":"dt","l":"KT_CAT","hop":[59500,2000,60700,3000],"cat":true}]}') |
   Set-Content -Encoding ascii "$T\gon.json"
 @('INSUNITS', '4', 'NETLOAD', "`"$T\TKPCCC.Cad.dll`"", '_.SAVEAS', '2018', "`"$T\kt.dwg`"",
   'PCCC_SPEC', "$T\kt.json", 'PCCC_SPEC', "$T\kt_dat.json", '-LAYER', 'M', 'ADIM_L', '', '_.ZOOM', '_E', 'OSMODE', '0',
@@ -856,6 +859,8 @@ Kiem ($kgon -and @($kgon.vung_tu_dong).Count -eq 1 -and $kgon.vung_tu_dong[0].di
   "Lam gon vung (nguoi dung 16/11): hoc tran, buoc tuong, khac cot, go cua lap ra duong ngoai, giu loi thang: 6 dinh 290,55 m2 ($($kgon.vung_tu_dong | ConvertTo-Json -Compress -Depth 3))"
 $vgKin = @(if ($kgon -and $kgon.doc) { $kgon.doc[0].ds })  # @() ngoai: if tra 1 phan tu thi PowerShell 5 bo mang
 Kiem ($vgKin.Count -eq 1 -and $vgKin[0].m2 -eq 300) "PCCC_VUNG ve ve dung diem dau ma Closed = 0 van la vung kin 300 m2 ($($vgKin | ConvertTo-Json -Compress -Depth 3))"
+Kiem ($kgon -and @($kgon.doc).Count -eq 3 -and $kgon.doc[1].n -eq 0 -and $kgon.doc[2].n -eq 1) `
+  "doc cat:true tra tuong dai vuot hop soi, mac dinh (tron hop) khong tra ($(if ($kgon) { $kgon.doc | ConvertTo-Json -Compress -Depth 2 }))"
 Kiem ($out3 -match 'PCCC_DAYBC he=thuong tin_hieu=10 m=[\d.]+ dtcd=1 chuong=2 m_chuong=[\d.]+ xeo=0') `
   'PCCC_DAYBC he thuong: 1 duong qua 9 dau bao + nut nhan, 1 dien tro cuoi day, chuong 1 duong rieng, khong doan xeo'
 Kiem ($out3 -match 'PCCC_DAYBC he=dia_chi tin_hieu=9 m=[\d.]+ dtcd=1 chuong=2 m_chuong=[\d.]+ vong=4 m_vong=[\d.]+ xeo=0 \(t') `
