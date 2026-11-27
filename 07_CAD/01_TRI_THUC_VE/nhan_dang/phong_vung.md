@@ -62,7 +62,8 @@ Mọi chỗ bổ sung tay ghi lại vào file `07_CAD/01_TRI_THUC_VE/mau/` của
    vô lý. Hành lang tại trục (1''–1')/(E–D) (ô giao đầu hành lang trên) phải liền 1 vùng với hành lang, trừ khi có dầm chặn (`GopMatNho` đã làm; bản
    người dùng chụp còn chạy plugin cũ). Sảnh / lỗ thông tầng: vùng riêng (luật ở `cua_thang_khu.md` mục Thang, giếng, lỗ thông tầng; plugin làm 23/11 tối).
    Soát lại 23/11 tối trên bản chép T2: mọi phòng dãy trên, dãy giữa, dãy dưới đã bám tường, ôm sảnh WC, chừa buồng xí; không còn cạnh băng ngang.
-8. NGƯỜI DÙNG 23/11 ("hơi lố, đường line đầu tiên của lan can hay tường chứ"; hành lang dưới Karaoke 123 T2 kéo tới nét NGOÀI lan can 60 mm):
+8. (LAN CAN: ĐÃ THAY 27/11 bằng luật 10 mục "AI vẽ vùng" dưới: lan can thì vùng chạm sảnh; phần còn đúng: vách / tường dừng nét đầu tiên phía mình)
+   NGƯỜI DÙNG 23/11 ("hơi lố, đường line đầu tiên của lan can hay tường chứ"; hành lang dưới Karaoke 123 T2 kéo tới nét NGOÀI lan can 60 mm):
    cạnh vùng dừng ở nét ĐẦU TIÊN tính từ phía vùng của lan can / tường / vách (mặt phía mình), không lấy nét ngoài, không lấy mặt cột bên cạnh. Bề dày
    lan can không thuộc vùng nào; vùng bên kia (sảnh thông tầng) dừng ở nét phía nó. Sửa tay 23/11: vùng hành lang x 336915..356655 (19,74 x 1,8 m),
    rải lại 2 ĐB 4945 | 9850 | 4945. Plugin làm 23/11 (`LanCanKin` + `GopMatNho` c, test E27): xem `tuong_cot.md` mục lan can.
@@ -88,6 +89,22 @@ Gộp bằng `net` `PCCC_VUNG` `kin`, xoá mảnh theo handle. Xong thì đếm 
 8. MÉP VÙNG KẸP SÁT TƯỜNG (người dùng 27/11, phòng T1 trục 2–3 hở 50 mm): đầu tường cụt và má cửa thẳng hàng mà mặt tường thật chạy song song ngay cạnh
    (≤ 150 mm, phủ kín khe) thì KHÔNG phải ô cửa: plugin bỏ cầu khép khe đó (`CacMat`, test E37), vùng ra 28,2 m² (trước 28,13). AI tự vẽ thì kiểm
    mọi cạnh vùng trùng mặt tường thật, không dừng ở đầu tường cụt.
+9. MỌI CẠNH VÙNG LÀ MẶT TƯỜNG PHÍA VÙNG, ĐO BẰNG NÉT (người dùng 27/11, TESTBCHAY T1 hành lang C–B: "lố qua tường và không kẹp tường").
+   AI lấy toạ độ cạnh từ hộp của mặt PHÒNG KỀ (phòng dãy dưới -55907) nên cạnh hành lang nằm ở mặt tường phía bên kia, ăn hết bề dày tường 200 mm
+   (đúng: -55707); ranh kéo dài theo luật 2 (x 301894) kéo thẳng qua cột 301694..301894 và tường khối thang 301694..301794 (đúng: khấc vào 301694
+   tới đáy khối thang -50208 rồi mới ra 301894). Cách làm: (a) cạnh nào không lấy thẳng từ kết quả `vung_tu_dong` của CHÍNH mặt đó thì `doc` `gi:"dt"`
+   nét tường / cột quanh cạnh, lấy mặt gần vùng nhất; tường dày d thì mặt hai phía chênh d, không dùng toạ độ phòng bên kia. (b) Ranh kéo dài
+   (luật 2, miệng chữ L) đi qua cột, tường, khối thang nào thì khấc theo mặt của chúng. (c) Vẽ xong chụp `anh` sát cạnh (≤ 8 m) xem nét hồng nằm trên
+   mặt tường, không chạy giữa dải gạch tường. (d) Người dùng có thể vừa vẽ thêm nét (T2: nét 1FB0E y -48738 bịt khấc lan can): sửa vùng chỗ nào thì đọc lại nét chỗ đó trước.
+   Plugin không mắc lỗi này (mặt dựng từ nét thật); lỗi chỉ ở phần AI tự ghép.
+   (e) Người dùng báo "vùng chưa sát mép tường" (27/11, TESTBCHAY T2 dãy dưới, tường 342315–342515 giữa hai phòng): nét hồng thấy được ở mặt tường
+   BÊN KIA là cạnh của VÙNG KỀ; cạnh của vùng đang xét trùng nét viền tường phía mình nên bị nét xám che. Người dùng xác nhận đúng như vậy.
+   Trước khi sửa: `doc` `PCCC_VUNG` hai bên tường + nét tường, lập bảng cạnh – toạ độ – mặt tường, chỉ rõ nét hồng nào thuộc vùng nào; chỉ sửa cạnh
+   lệch thật, không dời cạnh đúng ra giữa tường. Báo người dùng bằng bảng đó (đỡ một vòng hỏi lại).
+10. VÁCH VÀ LAN CAN (người dùng chốt 27/11, THAY mục 8 "Soát" ngày 23/11 cho lan can): "khi nào đó là vách thì mới chạm tới mép vách, còn lan can
+   thì chạm tới sảnh luôn". Vách / tường: vùng dừng ở mặt phía mình. Lan can (2 nét hoặc polyline kín mỏng 30–90 mm trên layer thường): bề dày lan
+   can thuộc vùng phía hành lang, vùng chạm mép sảnh / ô thông tầng (TESTBCHAY T2 hành lang C–B x 356715, 35,64 m²). Nét người dùng vẽ thêm để
+   làm thẳng (T2 y -48738, cách lan can 140 mm) là vách: vùng dừng ở đó. Plugin: `GopMatNho` bước (d) (`NhanVung.cs`), test E23, E27, bản chép Karaoke 123 T2.
 Mép vùng theo đáy dầm, theo mép sảnh thông tầng: người dùng sẽ train thêm, có mặt cắt (cao trần, b x h dầm) và mặt bằng dầm để đối chiếu.
 Khi đó xem `dam_khoang.md`.
 

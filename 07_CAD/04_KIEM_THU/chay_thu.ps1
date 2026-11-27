@@ -1229,7 +1229,7 @@ foreach ($y in (0..8 | ForEach-Object { 6000 * $_ })) {
   'PCCC_RAI', 'BC_KHOI', '', '', 'C', '2449500,-500', '2460500,7700', '', '', '',
   # E27 (nguoi dung 23/11 Bot chat "hoi lo, duong line dau tien cua lan can hay tuong chu"): hanh lang 10 x 1,8 m, dau phai 2 cot 0,2 x 0,2 m, giua 2 cot
   #    lan can polyline KIN 60 x 1800 (layer THAY_1) sang sanh 6 x 2,2 m. Truoc sua: polyline kin bi bo -> hanh lang dinh sanh mot vung 31,2 m2;
-  #    nay vung dung o net trong lan can x 9,94 m: 17,89 m2; sanh 13,2 m2.
+  #    23/11 vung dung o net trong lan can x 9,94 m: 17,89 m2; 27/11 nguoi dung "lan can thi cham toi sanh": 18 m2; sanh 13,2 m2.
   '(princ "\n==E27==")', '-LAYER', 'M', 'TUONG', '', '_.ZOOM', 'W', '2469000,-1000', '2487000,3000',
   '_.LINE', '2479800,0', '2470000,0', '2470000,1800', '2479800,1800', '', '_.LINE', '2480000,2000', '2486000,2000', '2486000,-200', '2480000,-200', '',
   '_.RECTANG', '2479800,-200', '2480000,0', '_.RECTANG', '2479800,1800', '2480000,2000',
@@ -1407,8 +1407,8 @@ $e22b = CaRv 'E22B'
 Kiem ($e22b -notmatch 'gop_sanh' -and (DtVung $e22b) -contains 24) `
   "Sanh co hinh kin co bon cau / lavabo (no roi) la buong xi: khong gop, phong 24 m2 (vung=$((DtVung $e22b) -join ','))"
 $e23 = CaRv 'E23'
-Kiem ((DtVung $e23).Count -eq 1 -and (DtVung $e23)[0] -ge 26.1 -and (DtVung $e23)[0] -le 26.2) `
-  "Karaoke 123 21/11: hanh lang qua cot + lan can khong vo doan: 1 vung; 23/11 nguoi dung: bam mat tuong, chi doan lan can 6,8 m khac ra 0,14 m (25,2 + 0,95 = 26,15 m2; truoc 27,16 lan tuong) (vung=$((DtVung $e23) -join ','))"
+Kiem ((DtVung $e23).Count -eq 1 -and (DtVung $e23)[0] -ge 26.5 -and (DtVung $e23)[0] -le 26.6) `
+  "Karaoke 123 21/11: hanh lang qua cot + lan can khong vo doan: 1 vung; 23/11 bam mat tuong, doan lan can khac ra; 27/11 nguoi dung: lan can thi cham sanh (qua long lan can 60 mm): 25,2 + 0,95 + 0,4 = 26,55 m2 (vung=$((DtVung $e23) -join ','))"
 $e24 = CaRv 'E24'
 Kiem ($e24 -match 'o_x=1 ' -and $e24 -match 'thong_tang=1 ' -and (DtVung $e24).Count -eq 1 -and (DtVung $e24) -contains 77.6) `
   "Nguoi dung 23/11: sanh thong tang (dau X layer truc, tuong ho) thanh vung rieng khac theo mep thang 77,6 m2; gieng 2,5 x 2,5 m van khong rai (vung=$((DtVung $e24) -join ','))"
@@ -1416,8 +1416,8 @@ $e26 = CaRv 'E26'
 Kiem ((DtVung $e26) -contains 14.56 -and (DtVung $e26) -contains 20 -and (DtVung $e26) -contains 35) `
   "Nguoi dung 23/11: dai 0,2 m giua o va hanh lang chi co cau khep khe gop vao o (khong ho): o 14,56 m2, vach 2 net 0,2 m ho dau ben trai khong vao o (vung=$((DtVung $e26) -join ','))"
 $e27 = CaRv 'E27'
-Kiem ((DtVung $e27) -contains 17.89 -and (DtVung $e27) -contains 13.2) `
-  "Nguoi dung 23/11: lan can polyline kin 60 x 1800 giua 2 cot: vung hanh lang dung o net dau tien cua lan can 17,89 m2 (truoc dinh sanh 31,2), sanh 13,2 m2 (vung=$((DtVung $e27) -join ','))"
+Kiem ((DtVung $e27) -contains 18 -and (DtVung $e27) -contains 13.2) `
+  "Nguoi dung 27/11 (thay 23/11): lan can polyline kin 60 x 1800 giua 2 cot: vung hanh lang cham sanh (qua long lan can) 18 m2 (23/11: 17,89 dung net trong; truoc nua dinh sanh 31,2), sanh 13,2 m2 (vung=$((DtVung $e27) -join ','))"
 $e28 = CaRv 'E28'
 Kiem ($e28 -match 'bo_hanh_lang_ben=1 ' -and (DtVung $e28).Count -eq 3 -and ((DtVung $e28) | Where-Object { $_ -eq 36 }).Count -eq 3) `
   "Nguoi dung 23/11: hanh lang 2,3 m mo ra san (cot + lan can, ben kia khong phong) = hanh lang ben, khong rai; 3 phong 36 m2 van rai (vung=$((DtVung $e28) -join ','))"
@@ -1501,8 +1501,8 @@ if (Test-Path $hb) {
   $ph = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/i `"$T\hb.dwg`" /s `"$T\kbhb.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kbhb.out.txt"
   if (-not $ph.WaitForExit(300000)) { Stop-Process -Id $ph.Id -Force; throw "accoreconsole qua 5 phut (Karaoke 123): $T\kbhb.out.txt" }
   $oh = [Text.Encoding]::Unicode.GetString([IO.File]::ReadAllBytes("$T\kbhb.out.txt")) -replace "`0", ''
-  Kiem ($oh -match 'thoi_gian rai=\d+ms vung=16\b' -and $oh -match 'gop_sanh=\d+ gop_o_nho=\d+' -and $oh -match 'thong_tang=1 m2=64\.3' -and $oh -match 'm2=35\.53 ') `
-    "Ban chep Karaoke 123 tang 2: 15 vung nhu nguoi dung ve tay + vung sanh thong tang 6,3 x 10,2 m (23/11 toi); hanh lang duoi dung o net trong lan can kin 60 mm: 35,53 m2 (truoc 35,64 toi net ngoai) ($([regex]::Match($oh, 'vung=\d+').Value) $([regex]::Match($oh, 'gop_sanh=\d+ gop_o_nho=\d+').Value))"
+  Kiem ($oh -match 'thoi_gian rai=\d+ms vung=16\b' -and $oh -match 'gop_sanh=\d+ gop_o_nho=\d+' -and $oh -match 'thong_tang=1 m2=64\.3' -and $oh -match 'm2=35\.64 ') `
+    "Ban chep Karaoke 123 tang 2: 15 vung nhu nguoi dung ve tay + vung sanh thong tang 6,3 x 10,2 m (23/11 toi); hanh lang duoi cham sanh thong tang qua lan can kin 60 mm (nguoi dung 27/11): 35,64 m2 (23/11: 35,53 dung net trong) ($([regex]::Match($oh, 'vung=\d+').Value) $([regex]::Match($oh, 'gop_sanh=\d+ gop_o_nho=\d+').Value))"
   # Nguoi dung 25/11: quet tang 1 (y -100 m) + tang 2 mot lan. Chep tang 2 (y -50 m) xuong canh tang 1 (dy -49390,8 nhu ban nguoi dung), them ten mat bang.
   # Truoc sua: khung truc chi nhan o tang 1 -> 16 phong tang 2 bi bo_ngoai_truc; sanh tang 1 duoi o X tang 2 gop chung hanh lang 122,22 m2.
   # Nay: tang 1 122,22 -> 61,77 (nhu vung o X tang 2) + 49,88 hanh lang bam tuong thang (nhu nguoi dung sua tay 25/11), bo ve thang 10,6 m2 (thang net roi

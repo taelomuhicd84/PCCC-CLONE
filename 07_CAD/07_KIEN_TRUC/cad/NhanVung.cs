@@ -2472,7 +2472,7 @@ namespace TKPCCC
         /// (rộng TB ≤ 2,5 m, hành lang) kề nhau qua cầu gộp làm một.
         /// Buồng xí nhận theo dấu hiệu WC (GomKhu) hoặc hình kín cỡ bồn cầu / lavabo bên trong (GomVatDung).
         /// shortcut: sảnh có lavabo đặt trong cũng không gộp (người dùng vẽ tay); buồng xí trống không vật dụng kề thẳng phòng qua cầu thì bị gộp: xoá tay.
-        static List<List<Point2d>> GopMatNho(List<List<Point2d>> mat, List<List<Point2d>> pt, List<Point2d[]> doan, List<Point2d> khuKhong, List<Point2d> vatDung, double m, out int gopSanh, out int gopNho, out int oCua, List<Point2d[]> cua = null, List<Point2d[]> lanCan = null)
+        static List<List<Point2d>> GopMatNho(List<List<Point2d>> mat, List<List<Point2d>> pt, List<Point2d[]> doan, List<Point2d> khuKhong, List<Point2d> vatDung, double m, out int gopSanh, out int gopNho, out int oCua, List<Point2d[]> cua = null, List<Point2d[]> lanCan = null, List<List<Point2d>> thongTang = null)
         {
             gopSanh = 0; gopNho = 0; oCua = 0;
             if (doan == null || doan.Count == 0) return pt; // không biết nét thật: không phân được cầu với tường 1 nét
@@ -2607,6 +2607,42 @@ namespace TKPCCC
                 bool keLanCan = soKe == 1 && lanCan != null && f.Select((q, i) => new[] { q, f[(i + 1) % f.Count] })
                     .Any(c => c[0].GetDistanceTo(c[1]) * m >= 1 && lanCan.Any(l => CachDoan(l, c[0]) <= tol * 5 && CachDoan(l, c[1]) <= tol * 5));
                 if (soKe >= 2 || keLanCan) { kq[chon] = moi; gopSanh++; }
+            }
+            // (d) Người dùng 27/11 (TESTBCHAY_20_11 T2, hành lang C–B đầu lỗ thông tầng): "khi nào đó là vách thì mới chạm tới mép vách, còn lan can thì
+            // chạm tới sảnh luôn" (thay luật 23/11 "dừng ở nét đầu tiên của lan can"). Dải lòng lan can (rộng TB 0,03–0,09 m như LanCanKin, ≥ 2 cạnh
+            // dài ≥ 0,5 m nằm trên nét LanCan) gộp vào mặt kề KHÔNG phải ô thông tầng, hẹp nhất (hành lang). Vách 100 mm, kính 20 mm
+            // không phải lan can: vùng vẫn dừng ở mặt vách. Dải 140 mm giữa nét tường người dùng vẽ thêm và lan can (rộng > 0,09 m) không gộp.
+            if (lanCan != null && lanCan.Count > 0)
+            {
+                HashSet<Point2d[]> lc = new HashSet<Point2d[]>(lanCan);
+                List<Point2d[]> doanBoLc = doan.Where(s => !lc.Contains(s)).ToList();
+                Func<List<Point2d>, bool> laThong = f => thongTang != null && thongTang.Any(o => TrongDaGiac(o, DiemTrongMat(f)));
+                foreach (List<Point2d> f0 in mat)
+                {
+                    if (giu.Contains(f0)) continue;
+                    double r0 = rong(f0);
+                    if (r0 < 0.03 || r0 > 0.09) continue;
+                    List<Point2d> f = ccw(f0);
+                    int trenLc = 0;
+                    for (int i = 0; i < f.Count; i++)
+                    {
+                        Point2d a = f[i], b = f[(i + 1) % f.Count];
+                        if (a.GetDistanceTo(b) * m >= 0.5 && lanCan.Any(l => CachDoan(l, a) <= tol * 5 && CachDoan(l, b) <= tol * 5)) trenLc++;
+                    }
+                    if (trenLc < 2) continue;
+                    int chon = -1;
+                    List<Point2d> moi = null;
+                    for (int i = 0; i < kq.Count; i++)
+                    {
+                        if (!hopCham(f, kq[i]) || laThong(kq[i])) continue;
+                        List<Point2d> g = GopHai(kq[i], f, doanBoLc, tol);
+                        if (g == null) continue;
+                        // mặt hẹp nhất (rộng TB nhỏ nhất) = hành lang đi dọc lan can; E27: hành lang 1,52 m thắng sảnh 6 x 2,2 m (1,61 m, cũng là "dải")
+                        bool tot = chon < 0 || rong(kq[i]) < rong(kq[chon]);
+                        if (tot) { chon = i; moi = g; }
+                    }
+                    if (chon >= 0) { kq[chon] = moi; gopSanh++; }
+                }
             }
             return kq;
         }

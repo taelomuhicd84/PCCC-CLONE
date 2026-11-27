@@ -3,6 +3,14 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `07_CAD/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `07_CAD/00_QUAN_LY_DU_AN/KE_HOACH.md`. Nhật ký: `07_CAD/00_QUAN_LY_DU_AN/LICH_SU.md`. Luật riêng: `07_CAD/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `07_CAD/00_QUAN_LY_DU_AN/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`07_CAD/CLAUDE.md`).
 
+## 27/11 chiều: LAN CAN THÌ VÙNG CHẠM SẢNH (thay luật 23/11) — XONG MÃ + TEST, CHƯA BUILD vào AutoCAD đang mở
+- Người dùng chốt: "vách thì chạm tới mép vách, lan can thì chạm tới sảnh luôn". `GopMatNho` bước (d) (`07_KIEN_TRUC/cad/NhanVung.cs`, tham số mới
+  `thongTang` truyền từ `Rai.cs`): lòng lan can rộng TB 0,03–0,09 m, ≥ 2 cạnh trên nét LanCan, gộp vào mặt kề hẹp nhất không phải ô thông tầng.
+  Test đổi kỳ vọng: E23 26,55; E27 18 (sảnh 13,2); bản chép Karaoke 123 T2 35,64. chay_thu 219 DAT, 1 LOI cũ (Karaoke T1+T2 vung=30, HEAD cũng LOI); thu_mcp TAT CA DAT.
+- Tri thức: `phong_vung.md` mục "AI vẽ vùng" luật 9 (kẹp mặt tường phía vùng, bảng cạnh khi người dùng báo hở; 9e) + luật 10 (vách / lan can); `tuong_cot.md` lan can.
+- TESTBCHAY_20_11: vùng T1 (AI vẽ, 15) + T2 (người dùng chạy PCCC_RAI bản cũ, 16); hành lang C–B T2 sửa tay tới x 356715. Người dùng chưa duyệt để rải.
+- CÒN: build.bat (tắt AutoCAD) để plugin đang chạy có bước (d); `cad-review` mốc; skill `tkpccc-ve-cad` thêm dòng trỏ luật 9–10 (bị chặn quyền ghi `.claude/`).
+
 ## 27/11 trưa: MÉP VÙNG KẸP SÁT TƯỜNG + DẦM CÓ THÔNG SỐ (PCCC_DAM, PCCC_GANDAM) — XONG MÃ, build 7/7, CHƯA THỬ TRONG AUTOCAD
 - Người dùng (TESTBCHAY T1 trục 2–3, "chưa kẹp sát mép tường", nhiều phòng): đầu tường cụt + má cửa WC thẳng hàng cách 1,5 m bị khép như ô cửa, mặt tường thật
   cách 50 mm. Sửa `CacMat` (`07_KIEN_TRUC/cad/NhanVung.cs`, hàm `khGia`): cầu có nét thật song song 10–150 mm phủ ≥ 90 % khe, bên kia không có cầu song đôi

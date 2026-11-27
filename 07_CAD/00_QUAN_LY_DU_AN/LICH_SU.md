@@ -883,3 +883,9 @@ chay_thu 219 DAT + 1 LOI cũ (Karaoke 1 + 2); thu_mcp TAT CA DAT; build OK. Chư
 
 ## 2026-11-27 (chiều) — sửa "Unknown command PCCC"
 TKPCCC.Cad.dll / TKPCCC.UI.dll build sáng 27/11 rỗng (4 KB / 2,5 KB, gom 0 file nguồn, csc chỉ cảnh báo CS2008) nên AutoCAD không có lệnh PCCC. Build lại bằng đường dẫn đầy đủ (Cad 530 KB); build.bat nay dừng báo LOI khi không gom được NN_*\cad, NN_*\ui.
+
+## 2026-11-27 (chiều, tiếp) — Vùng báo cháy TESTBCHAY qua Bot chat; lan can thì vùng chạm sảnh
+AI dựng vùng T1 + T2 bằng vung_tu_dong + ghép tay: người dùng chỉ ra hành lang tách vô lý ở cột, cạnh lố qua tường (lấy toạ độ phòng bên kia tường),
+ranh kéo dài cắt qua cột / khối thang ⇒ luật 9 trong phong_vung.md (đọc nét, mặt tường phía vùng, bảng cạnh khi người dùng báo hở). Người dùng chốt
+"vách thì chạm mép vách, lan can thì chạm tới sảnh" (thay 23/11) ⇒ luật 10 + GopMatNho (d); E23, E27, bản chép Karaoke 123 T2 đổi kỳ vọng.
+chay_thu 219 DAT + 1 LOI cũ; thu_mcp TAT CA DAT. Chưa build vào AutoCAD đang mở, chưa cad-review.
