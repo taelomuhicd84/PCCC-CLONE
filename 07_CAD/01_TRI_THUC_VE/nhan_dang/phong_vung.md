@@ -67,6 +67,27 @@ Mọi chỗ bổ sung tay ghi lại vào file `07_CAD/01_TRI_THUC_VE/mau/` của
    lan can không thuộc vùng nào; vùng bên kia (sảnh thông tầng) dừng ở nét phía nó. Sửa tay 23/11: vùng hành lang x 336915..356655 (19,74 x 1,8 m),
    rải lại 2 ĐB 4945 | 9850 | 4945. Plugin làm 23/11 (`LanCanKin` + `GopMatNho` c, test E27): xem `tuong_cot.md` mục lan can.
 
+## AI vẽ vùng qua spec phải KHỚP plugin (người dùng 27/11, TESTBCHAY T1 + T2: "plugin đã làm đúng, AI thì sai")
+`vung_tu_dong` (= `VungTaiDiem`) chỉ lấy mặt kín nhỏ nhất quanh điểm, KHÔNG chạy bước 2b `GopMatNho` và các lọc ở mục dưới. Vì vậy AI phải tự làm cho
+ra đúng kết quả "Enter mọi phòng" của `PCCC_RAI`. Đối chiếu plugin với AI trên TESTBCHAY (toạ độ mm), từng luật:
+1. HÀNH LANG: mỗi đoạn thẳng là MỘT vùng chữ nhật riêng, KHÔNG gộp thành chữ U / L. Đoạn chính đi trọn từ tường mút này tới tường mút kia, kể cả ô giao
+   ở đầu đoạn (T1 E–D: x 282094..313894, 57,2 m²). Đoạn nối dọc giữa hai hành lang là vùng riêng (T1 và T2 đều 1,8 x 5,4 m = 9,72 m²).
+   AI sai: vẽ một vùng chữ U 97,9 m².
+2. HÀNH LANG THÔNG RA SẢNH: ranh là mặt tường của phòng kéo dài ở phía XA nhất (T1: mặt ngoài tường phải phòng góc dãy dưới, x 301894). Khoảng hở
+   giữa phòng dãy giữa và khối thang (2,5 m) thuộc vùng hành lang: vùng C–B có thêm nhánh lên tới mặt dưới hành lang E–D.
+   AI sai: cắt hành lang ở mặt tường phòng dãy giữa (x 299194).
+3. SẢNH: là vùng riêng. Cạnh trên theo đáy khối thang (T1 -50208). Chừa thang và thang xoắn (bậc tới -51558 ở x 306354..308194). AI sai: chừa cả bề rộng
+   thang 2.
+4. SẢNH WC CHUNG nằm giữa hai phòng (khối WC giữa phòng, cửa vào từ hành lang): CHIA ĐÔI theo vách giữa, mỗi nửa gộp vào phòng kề. Phòng thành chữ L
+   (30,5 → 32 m²). Buồng xí vẫn chừa. AI sai: bỏ cả sảnh.
+5. TIỀN PHÒNG WC kề phòng (ô 1,3 x 2,55 m, chỉ có buồng xí phía trên, T1 trục 6–7) gộp vào phòng kề (37,05 → 40,36 m²). AI sai: để vùng riêng 3,18 m².
+6. KHOẢNG TRỐNG giữa phòng và lỗ thông tầng (T2: 2,7 x 5,4 m, x 354015..356715) có vùng riêng. AI sai: bỏ sót.
+7. PHÒNG CÓ WC RIÊNG: vùng chữ L ôm sảnh trước WC, chừa buồng xí. AI đã đúng, trùng plugin tới mm.
+Cách làm khi AI dựng vùng: `vung_tu_dong` một điểm trong mỗi mặt (phòng, từng ô sảnh nhỏ, từng đoạn hành lang). Rồi áp luật 1–6 để gộp hoặc cắt.
+Gộp bằng `net` `PCCC_VUNG` `kin`, xoá mảnh theo handle. Xong thì đếm số vùng của từng tầng: T1 15 vùng, T2 16 vùng.
+Mép vùng theo đáy dầm, theo mép sảnh thông tầng: người dùng sẽ train thêm, có mặt cắt (cao trần, b x h dầm) và mặt bằng dầm để đối chiếu.
+Khi đó xem `dam_khoang.md`.
+
 ## Plugin dựng phòng thế nào ("Enter mọi phòng" của `PCCC_RAI`)
 1. Gom đoạn nét từ đối tượng quét chọn (`ThuNet`), tách cột, nhận trục, khép khe cửa, dựng mọi mặt kín (`CacMat`), chỉ giữ mặt có tâm trong khung chọn.
 2. `PhongThat`: mặt ≥ 1 m², rộng TB (2A/P) ≥ 1 m, không chứa mặt khác bên trong. 2A/P chỉ bằng nửa cạnh ô vuông: ô ≥ 3 m² có diện tích / cạnh dài
