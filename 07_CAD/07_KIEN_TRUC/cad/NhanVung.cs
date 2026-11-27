@@ -2063,14 +2063,18 @@ namespace TKPCCC
                 return null;
             }
             Extents3d tb = n.ToanBo.Value;
-            double rMax = new[] { p.X - tb.MinPoint.X, tb.MaxPoint.X - p.X, p.Y - tb.MinPoint.Y, tb.MaxPoint.Y - p.Y }.Max();
+            // Người dùng 26/11 (Bot chat thử vùng làm đứng AutoCAD): điểm ngoài công trình hoặc phòng hở mà nới tới cả bản vẽ lớn (1,9 km) thì một điểm mất 30-60 s.
+            // Chỉ nới tới 100 m quanh điểm (phòng 200 m vẫn lọt), không vượt khổ bản vẽ; số nét không đổi thì dùng lại kết quả vòng trước.
+            double rMax = Math.Min(100 / HeSoMet(db), new[] { p.X - tb.MinPoint.X, tb.MaxPoint.X - p.X, p.Y - tb.MinPoint.Y, tb.MaxPoint.Y - p.Y }.Max());
             bool coTuong = n.Lop.Values.Any(k => k == 2);
             foreach (bool chiTuong in new[] { true, false })
             {
                 if (chiTuong && !coTuong) continue;
                 n.ChiTuong = chiTuong;
                 n.NetCua.Clear();
-                for (double R = 10000 * mm; ; R *= 2)
+                int soTruoc = -1;
+                List<Point2d> dTruoc = null;
+                for (double R = Math.Min(10000 * mm, rMax); ; R = Math.Min(R * 2, rMax))
                 {
                     KiemEsc();
                     bool het = R >= rMax;
@@ -2088,12 +2092,13 @@ namespace TKPCCC
                         }
                         doan.AddRange(net);
                     }
-                    List<Point2d> d = doan.Count < 3 ? null : MatChua(doan, p, n.Tol, ho);
+                    List<Point2d> d = doan.Count == soTruoc ? dTruoc : doan.Count < 3 ? null : MatChua(doan, p, n.Tol, ho);
+                    soTruoc = doan.Count; dTruoc = d;
                     if (d != null && (het || d.All(q => Math.Abs(q.X - p.X) < R && Math.Abs(q.Y - p.Y) < R))) return d;
                     if (het) break;
                 }
             }
-            lyDo = "không có đường bao kín quanh điểm (phòng hở khe rộng hơn " + Math.Round(ho / mm / 1000, 2).ToString(CultureInfo.InvariantCulture)
+            lyDo = "không có đường bao kín trong 100 m quanh điểm (phòng hở khe rộng hơn " + Math.Round(ho / mm / 1000, 2).ToString(CultureInfo.InvariantCulture)
                 + " m, hoặc điểm ở ngoài công trình)";
             return null;
         }

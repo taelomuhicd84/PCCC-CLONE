@@ -212,6 +212,9 @@ namespace TKPCCC
             if (khoa != null && !string.Equals(Path.GetFileName(khoa), dangHien, StringComparison.OrdinalIgnoreCase))
                 throw new System.Exception("spec khoá bản vẽ \"" + khoa + "\" nhưng AutoCAD đang hiện \"" + dangHien + "\": không vẽ gì. Chuyển về đúng bản vẽ rồi chạy lại");
             kyHieu = null; // đọc lại ky_hieu.json mỗi lần chạy: sửa file xong không cần mở lại AutoCAD
+            // Người dùng 26/11 (Bot chat "test vùng rải" làm treo AutoCAD): bản vẽ mm để INSUNITS inch thì khe cửa 3 m thành 7,6 cm, phòng không khép,
+            // vung_tu_dong nới tìm ra cả bản vẽ (60 s một điểm). Sửa đơn vị như lệnh gõ tay (PCCC_RAI, PCCC_DAYBC) trước mọi phép đổi m.
+            KiemDonVi(doc);
 
             GoiSpec g = new GoiSpec();
             g.Doc = doc;

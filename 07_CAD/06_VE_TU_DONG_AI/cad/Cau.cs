@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Web.Script.Serialization;
 using Autodesk.AutoCAD.ApplicationServices;
 using AcApp = Autodesk.AutoCAD.ApplicationServices.Core.Application;
@@ -18,11 +19,36 @@ namespace TKPCCC
         public static void BatDau()
         {
             if (dongHo != null) return;
+            TatTietKiemDien();
             HangDoi.TaoThuMuc();
             dongHo = new System.Windows.Forms.Timer();
             dongHo.Interval = 250;
             dongHo.Tick += Nhip;
             dongHo.Start();
+        }
+
+        // Người dùng 26/11: đang chạy Bot chat mà hạ AutoCAD xuống mở Chrome thì AutoCAD đơ (Task Manager hiện "Efficiency mode").
+        // Windows 11 bóp CPU (EcoQoS) cửa sổ nằm nền nên gói spec chạy trên luồng chính chậm hẳn: xin Windows không bóp tiến trình acad.
+        [StructLayout(LayoutKind.Sequential)]
+        struct PowerThrottling { public uint Version, ControlMask, StateMask; }
+
+        [DllImport("kernel32.dll")]
+        static extern bool SetProcessInformation(IntPtr hProcess, int infoClass, ref PowerThrottling info, int size);
+
+        static void TatTietKiemDien()
+        {
+            try
+            {
+                // ProcessPowerThrottling = 4; EXECUTION_SPEED 0x1 | IGNORE_TIMER_RESOLUTION 0x4; StateMask 0 = luôn chạy hết tốc.
+                PowerThrottling p = new PowerThrottling { Version = 1, ControlMask = 0x5, StateMask = 0 };
+                if (!SetProcessInformation(System.Diagnostics.Process.GetCurrentProcess().Handle, 4, ref p, Marshal.SizeOf(p)))
+                {
+                    p.ControlMask = 0x1; // Windows 10 cũ chưa có IGNORE_TIMER_RESOLUTION
+                    SetProcessInformation(System.Diagnostics.Process.GetCurrentProcess().Handle, 4, ref p, Marshal.SizeOf(p));
+                }
+                System.Diagnostics.Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.Normal; // bỏ Idle nếu người dùng lỡ bật Efficiency mode
+            }
+            catch (System.Exception) { } // Windows 7/8 không có hàm này: bỏ qua
         }
 
         static void Nhip(object s, EventArgs e)
