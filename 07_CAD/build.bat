@@ -17,6 +17,9 @@ set "CS_CAD="
 set "CS_UI="
 for /d %%g in ("%~dp0??_*") do for /d %%d in ("%%~g" "%%~g\??_*") do if exist "%%~d\cad\" call set CS_CAD=%%CS_CAD%% "%%~d\cad\*.cs"
 for /d %%g in ("%~dp0??_*") do for /d %%d in ("%%~g" "%%~g\??_*") do if exist "%%~d\ui\" call set CS_UI=%%CS_UI%% "%%~d\ui\*.cs"
+rem 27/11: goi build.bat kieu ".\build.bat" tu PowerShell tung gom rong -> csc chi canh bao CS2008, ra DLL rong 4 KB (lenh PCCC mat). Rong thi dung han.
+if "%CS_CAD%"=="" (echo LOI: khong tim thay NN_*\cad\*.cs tu "%~dp0". Chay bang duong dan day du: "%~f0" & exit /b 1)
+if "%CS_UI%"=="" (echo LOI: khong tim thay NN_*\ui\*.cs tu "%~dp0". Chay bang duong dan day du: "%~f0" & exit /b 1)
 set CHUNG=%~dp005_NEN_TANG\chung
 
 rem AutoCAD dang mo thi DLL bi khoa ghi nhung van doi ten duoc: doi ten ban cu, AutoCAD mo lai se nap ban moi.

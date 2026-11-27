@@ -880,3 +880,6 @@ Effort như Claude Code (Extra, Recommended) + Ultracode; menu "/" (LenhGach.cs:
 Người dùng: AI vẽ vùng sai so với plugin (ghi 6 luật vào phong_vung.md); vùng hở 50 mm ở đầu tường cụt cạnh mặt tường thật (CacMat bỏ cầu giả, E37);
 duyệt phương án dầm: PCCC_DAM, PCCC_GANDAM, XData b x h, spec dam, PCCC_RAI chia khoang theo dầm đã gán, mép vùng theo mặt bên dầm (E38, E39).
 chay_thu 219 DAT + 1 LOI cũ (Karaoke 1 + 2); thu_mcp TAT CA DAT; build OK. Chưa thử AutoCAD thật, chưa cad-review.
+
+## 2026-11-27 (chiều) — sửa "Unknown command PCCC"
+TKPCCC.Cad.dll / TKPCCC.UI.dll build sáng 27/11 rỗng (4 KB / 2,5 KB, gom 0 file nguồn, csc chỉ cảnh báo CS2008) nên AutoCAD không có lệnh PCCC. Build lại bằng đường dẫn đầy đủ (Cad 530 KB); build.bat nay dừng báo LOI khi không gom được NN_*\cad, NN_*\ui.
