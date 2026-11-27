@@ -3,6 +3,15 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `07_CAD/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `07_CAD/00_QUAN_LY_DU_AN/KE_HOACH.md`. Nhật ký: `07_CAD/00_QUAN_LY_DU_AN/LICH_SU.md`. Luật riêng: `07_CAD/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `07_CAD/00_QUAN_LY_DU_AN/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`07_CAD/CLAUDE.md`).
 
+## 27/11 tối: MCP CHẠY ĐƯỢC PCCC_RAI (spec `rai_phong`) — XONG MÃ + TEST + BUILD, CHỜ MỞ LẠI AUTOCAD
+- Người dùng: "máy chủ MCP phải chạy được các tool và plugin" (AI tự `vung_tu_dong` từng điểm thì sai quy trình, vùng khác plugin).
+  `Rai.cs`: tách lõi `RaiLoi(TuyChonRai)` khỏi phần hỏi của `RaiTay` (hỏi điểm / mặt bao qua delegate, dòng lệnh qua `GhiDong`);
+  op `rai_phong` (`OpRaiPhong`): hop | chon, chi_vung, h, k, loai_tran (KhongTran cần dầm có thông số), p, xem, mat_bang; trả n, vung, phong, m2, dong.
+  build.bat: bỏ `call set` (PATH máy người dùng có c:\HVAC15\SET.BAT làm gom rỗng), dùng delayed expansion.
+- Test chay_thu "spec rai_phong" DAT (1 LOI cũ Karaoke T1+T2); thu_mcp TAT CA DAT; build.bat OK. TU_VUNG.md + SKILL tkpccc-ve-cad bước 0.
+- CÒN: người dùng tắt hẳn AutoCAD rồi mở lại → chạy trên TESTBCHAY_20_11: dọn PCCC_VUNG/PCCC_BC của AI (theo handle), `rai_phong` chi_vung hop [274269,-66406,378115,-36783],
+  chụp ảnh, người dùng duyệt, rồi `rai_phong` h 3.5. Lệnh khác chưa có op: PCCC_DAYBC (đi dây), PCCC_KT (kiểm), PCCC_TACHVUNG... làm tiếp cùng cách. `cad-review` mốc.
+
 ## 27/11 chiều: LAN CAN THÌ VÙNG CHẠM SẢNH (thay luật 23/11) — XONG MÃ + TEST, CHƯA BUILD vào AutoCAD đang mở
 - Người dùng chốt: "vách thì chạm tới mép vách, lan can thì chạm tới sảnh luôn". `GopMatNho` bước (d) (`07_KIEN_TRUC/cad/NhanVung.cs`, tham số mới
   `thongTang` truyền từ `Rai.cs`): lòng lan can rộng TB 0,03–0,09 m, ≥ 2 cạnh trên nét LanCan, gộp vào mặt kề hẹp nhất không phải ô thông tầng.

@@ -229,7 +229,7 @@ namespace TKPCCC
             {
                 Dictionary<string, object> d = x as Dictionary<string, object>;
                 string op = d == null ? "" : LayChu(d, "op", "");
-                if (op == "dat" || op == "rai") maDat.Add(LayChu(d, "ma", ""));
+                if (op == "dat" || op == "rai" || op == "rai_phong") maDat.Add(LayChu(d, "ma", ""));
                 else if (op == "so_do") maDat.AddRange(MaSoDo(d)); // 07_CAD/09_PCCC/04_SO_DO_NGUYEN_LY/cad/SoDo.cs
             }
             if (maDat.Count > 0)
@@ -481,6 +481,7 @@ namespace TKPCCC
                 case "sua": OpSua(g, o); break;
                 case "dem": OpDem(g); break;
                 case "rai": OpRai(g, o); break;     // 07_CAD/09_PCCC/01_RAI_THIET_BI/cad/Rai.cs
+                case "rai_phong": OpRaiPhong(g, o); break; // = lệnh PCCC_RAI không hỏi (Enter mọi phòng), cùng lõi RaiLoi trong Rai.cs
                 case "tuyen": OpTuyen(g, o); break; // 07_CAD/09_PCCC/01_RAI_THIET_BI/cad/Rai.cs
                 case "so_do": OpSoDo(g, o); break;  // 07_CAD/09_PCCC/04_SO_DO_NGUYEN_LY/cad/SoDo.cs
                 case "vung_tu_dong": OpVungTuDong(g, o); break; // 07_CAD/07_KIEN_TRUC/cad/NhanVung.cs

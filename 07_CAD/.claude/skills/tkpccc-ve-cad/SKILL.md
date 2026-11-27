@@ -39,6 +39,8 @@ Nền trước (mục trên). Rồi mỗi bước MỘT spec `12_KET_QUA/<dự �
 Tường vẽ bằng `tuong` nên `vung_tu_dong` chỉ dò layer tường, không lẫn nét PDF nền; cửa rộng hơn 3 m (cửa cuốn) thì truyền `ho`.
 
 ## Vùng, rải thiết bị, đi tuyến
+0. Dùng PLUGIN trước (người dùng 27/11 "máy chủ MCP phải chạy được plugin"): `rai_phong` `hop` = khung mặt bằng, `chi_vung`:true = đúng lệnh PCCC_RAI "Enter mọi phòng",
+   rồi mới soát / bổ sung tay bằng `vung_tu_dong` + luật phong_vung.md. Duyệt xong: `rai_phong` cùng `hop` (rải theo PCCC_VUNG có sẵn), `h` trần.
 1. Vùng TRƯỚC khi rải: dựng / vẽ `PCCC_VUNG`, chụp ảnh, soát 5 chỗ hay thiếu vùng (mục "Soát" trong `07_CAD/01_TRI_THUC_VE/nhan_dang/phong_vung.md`), DỪNG cho người dùng duyệt (`phong_vung.md`; khoang dầm, vì kèo: `dam_khoang.md`).
    AI tự dựng vùng: theo mục 'AI vẽ vùng qua spec phải KHỚP plugin' của phong_vung.md (luật 1–10): đọc nét, lấy mặt tường phía vùng, ranh kéo dài khấc theo cột/tường; người dùng báo hở thì lập bảng cạnh – toạ độ – mặt tường trước; vách dừng mặt vách, lan can thì chạm sảnh.
    Soi nét tường quanh cạnh vùng: `doc` `gi:"dt"` LUÔN kèm `"cat":true` (mặc định chỉ trả nét trọn hộp, sót tường dài); cạnh theo mặt TƯỜNG, không theo mặt cột to hơn tường (luật 9f).

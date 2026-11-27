@@ -312,6 +312,11 @@ $HEP = @(@(@(0, 0), @(2500, 0), @(1000, 23000), @(0, 23000)),
 ('{"goc":[3100000,0],"ops":[{"op":"net","l":"KT_A","p":[[0,0],[60000,0],[60000,40000],[0,40000]],"kin":true},' +
  '{"op":"net","l":"KT_A","p":[[5000,5000],[15000,5000],[15000,13000],[5000,13000]],"kin":true},' +
  '{"op":"net","l":"KT_A","p":[[20000,5000],[30000,5000],[30000,13000],[20000,13000]],"kin":true}]}') | Set-Content -Encoding ascii "$T\vung_khung.json"
+# Nguoi dung 27/11 ("may chu MCP phai chay duoc plugin"): spec rai_phong = PCCC_RAI Enter moi phong khong hoi. Ban sao vung_khung o goc 4700000:
+# chi_vung dung 2 vung, chua rai; lan 2 rai theo vung da co (khong ve vung moi), 2 phong.
+(Get-Content "$T\vung_khung.json") -replace '3100000', '4700000' | Set-Content -Encoding ascii "$T\phong_ve.json"
+('{"goc":[4700000,0],"ops":[{"op":"rai_phong","ma":"BC_KHOI","hop":[-1000,-1000,61000,41000],"chi_vung":true},' +
+ '{"op":"rai_phong","ma":"BC_KHOI","hop":[-1000,-1000,61000,41000],"h":3.5},{"op":"rai_phong","ma":"BC_KHOI"}]}') | Set-Content -Encoding ascii "$T\rai_phong.json"
 '{"goc":[2600000,0],"ops":[{"op":"vung_tu_dong","p":[[1500,1200]],"ho":500,"l":"VUNG_THU"},{"op":"xoa","l":"VUNG_THU"},' +
  '{"op":"vung_tu_dong","p":[[1500,1200],[10500,3500]]},{"op":"rai","ma":"SPR_DAU_DOWN","l":"PCCC_VUNG","hop":[-500,-500,12500,5500],"s":4000},' +
  '{"op":"vung_tu_dong","p":[[30000,30000]]}]}' | Set-Content -Encoding ascii "$T\vung_do.json"
@@ -417,7 +422,8 @@ $bamTv = (Get-FileHash "$T\PCCC_Blocks.dwg").Hash
   'PCCC_SPEC', "$T\vung_do.json", 'PCCC_SPEC', "$T\vung_ve2.json", 'OSMODE', '0', '_.ZOOM', 'W', '2699000,-1000', '2714000,6000', 'PCCC_RAI', 'SPR_DAU_DOWN', '4', '', '', '', 'C', '2699000,-1000', '2714000,6000', '', '', '2710500,1200', '',
   'PCCC_SPEC', "$T\vung_mau.json", '_.ZOOM', 'W', '2899000,-1000', '2961000,41000', '-BLOCK', 'KHOI_MB', '2900000,0', 'C', '2899000,-1000', '2961000,41000', '',
   '-INSERT', 'KHOI_MB', '2900000,0', '1', '', '0', 'PCCC_RAI', 'BC_KHOI', '', '', 'L', '', '2905000,12000', '2905000,30000', '', '',
-  'PCCC_SPEC', "$T\vung_khung.json", '_.ZOOM', 'W', '3099000,-1000', '3161000,41000', 'PCCC_RAI', 'BC_KHOI', '', '', 'C', '3099000,-1000', '3161000,41000', '', '', '', '_.QSAVE',
+  'PCCC_SPEC', "$T\vung_khung.json", '_.ZOOM', 'W', '3099000,-1000', '3161000,41000', 'PCCC_RAI', 'BC_KHOI', '', '', 'C', '3099000,-1000', '3161000,41000', '', '', '',
+  'PCCC_SPEC', "$T\phong_ve.json", 'PCCC_SPEC', "$T\rai_phong.json", '_.QSAVE',
   ('(progn (setq f (open "' + ($T -replace '\\', '/') + '/blk.txt" "w")) (setq e (cdr (assoc -2 (tblsearch "BLOCK" "BC_COI_DEN")))) ' +
    '(while e (write-line (cdr (assoc 0 (entget e))) f) (setq e (entnext e))) (setq l (tblsearch "LAYER" "PCCC_SODO_DAY_NGUON")) ' +
    '(write-line (strcat "LAYER " (itoa (cdr (assoc 62 l))) " " (cdr (assoc 6 l))) f) ' +
@@ -724,6 +730,11 @@ $vmXanh = ([regex]::Matches($vm.Value, 'm2=300 \(4 ')).Count; $vmDo = ([regex]::
 Kiem ($vm.Success -and $vm.Groups[1].Value -eq '3' -and $vmXanh -eq 2 -and $vmDo -eq 1 -and $vm.Value -match 'layer VUNG_DO') "PCCC_RAI ban ve la 1 block, bam net mau xanh + do: dung dung 3 vung (2 x 300 + 150 m2), bo khung giay, o khung ten do layer khac ($($vm.Groups[1].Value) vung, xanh $vmXanh, do $vmDo)"
 $vk = [regex]::Match($out2, 'File spec JSON: [^\r\n]*vung_khung\.json[\s\S]*?trong (\d+) ph')
 Kiem ($vk.Success -and $vk.Groups[1].Value -eq '2' -and ([regex]::Matches($vk.Value, 'm2=80 \(4 ')).Count -eq 2) "PCCC_RAI Enter = moi phong (tu nhan tu tuong): khung giay chua 2 phong bi bo, rai dung 2 phong 80 m2 ($($vk.Groups[1].Value) vung)"
+$krp = DocKq 'rai_phong'
+$rp = if ($krp) { @($krp.rai) } else { @() }
+Kiem ($krp -and $rp.Count -eq 2 -and $rp[0].vung -eq 2 -and $rp[0].n -eq 0 -and $rp[1].vung -eq 0 -and $rp[1].phong -eq 2 -and $rp[1].n -ge 2 -and
+  @($krp.loi).Count -eq 1 -and $krp.loi[0].i -eq 2) `
+  "spec rai_phong (= PCCC_RAI Enter moi phong): chi_vung dung 2 vung chua rai; lan 2 rai theo vung da co 2 phong; thieu hop bao loi ($($rp | ConvertTo-Json -Compress -Depth 3))"
 $dm2 = Get-Content -Raw -Encoding UTF8 "$T\vat_tu.json" | ConvertFrom-Json
 $dmGoc2 = Get-Content -Raw -Encoding UTF8 $fGoc | ConvertFrom-Json
 Kiem ((Get-FileHash "$T\PCCC_Blocks.dwg").Hash -eq $bamTv -and $out2 -match 'VAN_TRUNG \S+ c. trong' -and $out2 -match 'kh\S+ng ghi \S+c' -and

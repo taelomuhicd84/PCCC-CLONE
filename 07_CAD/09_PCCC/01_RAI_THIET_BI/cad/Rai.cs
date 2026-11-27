@@ -1036,6 +1036,109 @@ namespace TKPCCC
             }
         }
 
+        /// Thao tác spec "rai_phong" = lệnh PCCC_RAI chạy không hỏi (máy chủ MCP, Bot chat): cùng lõi RaiLoi nên vùng dựng ra y như "Enter mọi phòng"
+        /// (GopMatNho, bỏ WC, sảnh thang, buồng thang, ngoài trục...). Quét chọn = mọi đối tượng GIAO "hop" (hoặc handle "chon"); có polyline kín
+        /// PCCC_VUNG trong vùng chọn thì rải theo vùng đó (vùng đã duyệt). "p": bấm điểm từng phòng thay cho mọi phòng. "chi_vung": chỉ dựng vùng, chưa rải.
+        /// Trần: "h" (m), "k" 50–100 %, "loai_tran" CoTran | KhongTran | MaiKeo (KhongTran chia khoang theo dầm có thông số: op dam / PCCC_GANDAM).
+        static void OpRaiPhong(GoiSpec g, Dictionary<string, object> o)
+        {
+            string ma = LayChu(o, "ma", "");
+            VatTu v = TimMa(g.Dm, ma);
+            if (v == null || v.loai != "block") throw new System.Exception("mã thiết bị không có trong danh mục: " + ma);
+            double[] hop = HopOp(g, o);
+            HashSet<string> chon = null;
+            if (Lay(o, "chon") != null)
+                chon = new HashSet<string>(DS(Lay(o, "chon"), "chon").Cast<object>().Select(x => Convert.ToString(x, CultureInfo.InvariantCulture).Trim().ToUpperInvariant()));
+            if (hop == null && chon == null) throw new System.Exception("rai_phong cần \"hop\" [x1,y1,x2,y2] (vùng quét chọn mặt bằng) hoặc \"chon\" [handle,...]");
+            ObjectId[] ids = Loc(g, null, hop, chon, true).Select(e => e.ObjectId).ToArray();
+            if (ids.Length == 0) throw new System.Exception("vùng chọn không có đối tượng nào");
+            if (Lay(o, "net_mau") != null || Lay(o, "net_dam") != null || Lay(o, "bxh") != null)
+                throw new System.Exception("rai_phong chưa nhận nét phân vùng mẫu / nét dầm mẫu / cỡ dầm chung: gán cỡ dầm bằng op dam (h:[handle], bxh) rồi loai_tran KhongTran");
+
+            TuyChonRai t = new TuyChonRai();
+            double m = HeSoMet(g.Db), h = LaySo(o, "h", 0);
+            t.Db = g.Db; t.V = v; t.M = m; t.K = 0.001 / m; t.CachMin = CachMinRai(null, m);
+            int heSo = (int)Math.Round(LaySo(o, "k", 100));
+            if (heSo < 50 || heSo > 100) throw new System.Exception("\"k\" (mức tối ưu, %) phải trong 50–100");
+            t.LoaiTran = Array.IndexOf(LOAI_TRAN, LayChu(o, "loai_tran", "CoTran"));
+            if (t.LoaiTran < 0 || t.LoaiTran == 2)
+                throw new System.Exception("\"loai_tran\" phải là CoTran, KhongTran hoặc MaiKeo (HonHop: vẽ vùng PCCC_VUNG rồi rải bằng lệnh PCCC_RAI)");
+            double daySan = LaySo(o, "day_san", 0) / 1000;
+            t.Tc = TieuChuanRai(ma, h);
+            if (t.Tc != null)
+            {
+                t.S = D(Lay(t.Tc, "s")) * heSo / 100.0 / m;
+                t.TuongMax = LaySo(t.Tc, "tuong", 0) * heSo / 100.0 / m;
+                t.CachMin = CachMinRai(t.Tc, m);
+                t.Tia = LayChu(t.Tc, "kieu", "") == "tia";
+                if (t.LoaiTran > 0)
+                {
+                    Dictionary<string, object> dam = Lay(t.Tc, "dam") as Dictionary<string, object>;
+                    if (dam != null) t.S *= LaySo(dam, "he_so", 1);
+                    else { t.KhoangDam = true; t.HTran = h; }
+                }
+            }
+            else
+            {
+                // Mã chưa có trị số tiêu chuẩn (sprinkler...): người gọi đưa "s" (m), "dt" (m2), "le" (m) theo TCVN đang áp dụng, như lệnh gõ tay.
+                double sm = LaySo(o, "s", 0);
+                if (sm <= 0) throw new System.Exception("mã " + ma + " chưa có trị số trong 03_DU_LIEU/khoang_cach_rai.json: đưa \"s\" (bước tối đa, m) theo quy chuẩn áp dụng");
+                t.S = sm / m;
+                t.Dt = LaySo(o, "dt", 0) / (m * m);
+                t.Le = Lay(o, "le") != null ? LaySo(o, "le", 0) / m : -1;
+                t.KhoangDam = t.LoaiTran > 0;
+            }
+            t.Xem = LayCo(o, "xem", false);
+            t.TheoHang = LayCo(o, "theo_hang", false);
+            t.ChiVung = LayCo(o, "chi_vung", false);
+            t.HopChon = hop;
+            t.Ids = ids;
+            List<string> dong = new List<string>();
+            t.Ed = new GhiDong(x => { foreach (string d in x.Split('\n')) if (d.Trim() != "") dong.Add(d.Trim()); });
+            // Dầm có thông số (op dam, PCCC_GANDAM) trong vùng chọn: không dựng làm tường; KhongTran thì chia khoang theo cỡ đã gán.
+            int[] demSo;
+            List<string> lechDam = new List<string>();
+            List<Point2d[]> damSo = DamThongSo(g.Db, ids, daySan, t.TimTay, t.IdDam, out demSo, t.KhoangDam && t.LoaiTran < 3 ? lechDam : null);
+            bool coSo = demSo[0] > 0 && t.KhoangDam && t.LoaiTran < 3;
+            if (t.KhoangDam)
+            {
+                t.DamMau = new HashSet<string>();
+                if (t.LoaiTran == 1 && !coSo)
+                    throw new System.Exception("loai_tran KhongTran cần dầm có thông số trong vùng chọn: gán cỡ bằng op dam (h:[handle nét dầm], bxh) trước");
+                if (coSo)
+                {
+                    t.DamThem = damSo;
+                    t.Ed.WriteMessage("\n[TKPCCC] dam_thong_so=" + demSo[0] + " sau=" + demSo[1] + " nong=" + demSo[2]);
+                    foreach (string l in lechDam) t.Ed.WriteMessage("\n[TKPCCC] lech_dam: " + l);
+                }
+                t.GiuDam = GiuDam(t.LoaiTran >= 2 ? new List<KeyValuePair<Point2d, Vector2d>>() : NhanDam(ids), new List<KeyValuePair<Point2d[], double>>(), -1, daySan, m);
+            }
+            // "p": bấm điểm từng phòng (bấm = cho phép, không qua bộ lọc WC / ngoài trục); không có = mọi phòng.
+            List<Point3d> ps = Lay(o, "p") != null ? DsP(g, Lay(o, "p"), "p") : null;
+            int iDiem = 0;
+            t.HoiDiem = (bool dau, out Point2d diem) =>
+            {
+                diem = Point2d.Origin;
+                if (ps == null) return dau ? TAT_CA : XONG;
+                if (iDiem >= ps.Count) return XONG;
+                diem = new Point2d(ps[iDiem].X, ps[iDiem].Y);
+                iDiem++;
+                return DIEM;
+            };
+            bool raiMatBao = LayCo(o, "mat_bao", false);
+            t.HoiMatBao = cau => raiMatBao ? DIEM : XONG;
+            RaiLoi(t);
+            g.Ve += t.Tong + t.SoVung;
+            if (hop != null) MoHop(g, new Extents3d(new Point3d(hop[0], hop[1], 0), new Point3d(hop[2], hop[3], 0)));
+            Dictionary<string, object> kq = new Dictionary<string, object> {
+                { "n", t.Tong }, { "vung", t.SoVung }, { "phong", t.SoPhong }, { "ho", t.SoHo }, { "bo", t.SoBo }, { "ket_qua", KetQuaRaiCuoi } };
+            // Dòng báo của plugin (bo_khu_khong_bao=, gop_sanh=, Vùng tự dựng m2=...): gộp dòng "Vùng tự dựng" thành danh sách m2 cho gọn.
+            List<string> m2 = dong.Where(d => d.StartsWith("[TKPCCC] Vùng tự dựng m2=")).Select(d => d.Substring(25).Split(' ')[0]).ToList();
+            if (m2.Count > 0) kq["m2"] = m2;
+            kq["dong"] = dong.Where(d => !d.StartsWith("[TKPCCC] Vùng tự dựng m2=") && (!d.StartsWith("[TKPCCC] PCCC_RAI ") || d.Contains(" HO="))).Take(60).ToList();
+            g.KqRai.Add(kq);
+        }
+
         // ---------- Đi tuyến ----------
 
         /// PCCC_RAI: hỏi mã thiết bị (và trị số khi mã chưa có tiêu chuẩn), quét chọn mặt bằng, Enter = mọi phòng hoặc bấm điểm từng phòng; vẽ vùng rồi rải.
@@ -1330,46 +1433,10 @@ namespace TKPCCC
                         if (sauChung <= 0) { ed.WriteMessage("\nKhông đọc được b x h \"" + tl + "\"."); return; }
                     }
                 }
-                giuDam = dn =>
-                {
-                    double gan = double.MaxValue, d = -1;
-                    // KOCHAM 16/11: nhãn gần nhất hay là nhãn dầm cắt ngang (dầm sâu bị coi nông, 2 cặp khoang gộp): ưu tiên nhãn chữ song song nét dầm.
-                    Vector2d u = (dn[1] - dn[0]).GetNormal();
-                    Point2d g = dn[0] + (dn[1] - dn[0]) * 0.5;
-                    foreach (KeyValuePair<Point2d[], double> kv in suaDam) // cỡ nhập tay (SuaDam): đoạn song song, trung điểm nằm trên nét đã bấm
-                    {
-                        Vector2d w = kv.Key[1] - kv.Key[0];
-                        if (w.Length > 1e-9 && Math.Abs(u.X * w.Y - u.Y * w.X) <= 0.02 * w.Length && CachDoan(kv.Key, g) <= 0.05 / m)
-                            return kv.Value - daySan > 0.3 + 1e-9;
-                    }
-                    foreach (bool songSong in new[] { true, false })
-                    {
-                        foreach (KeyValuePair<Point2d, Vector2d> kv in nhan)
-                        {
-                            if (songSong && Math.Abs(u.X * kv.Value.Y - u.Y * kv.Value.X) > 0.26 * kv.Value.Length) continue;
-                            double c = CachDoan(dn, kv.Key);
-                            if (c < gan) { gan = c; d = kv.Value.Length; }
-                        }
-                        if (gan <= 10 / m) break;
-                    }
-                    if (gan <= 10 / m) return d - daySan > 0.3 + 1e-9;               // ký hiệu gần nhất trong 10 m
-                    return sauChung > 0 ? sauChung - daySan > 0.3 + 1e-9 : true;     // không ký hiệu gần, không cỡ chung: coi là dầm sâu (chia khoang, rải dày hơn)
-                };
+                giuDam = GiuDam(nhan, suaDam, sauChung, daySan, m);
                 ed.WriteMessage("\n[TKPCCC] dam ky_hieu=" + nhan.Count + (daySan > 0 ? " day_san=" + Math.Round(daySan * 1000) : "") + (sauChung > 0 ? " d_chung=" + sauChung.ToString(CultureInfo.InvariantCulture) : "")
                     + (damThem != null ? " tung_dam=" + damThem.Count : "") + (suaDam.Count > 0 ? " sua_dam=" + suaDam.Count : ""));
             }
-            List<List<Point2d>> vung, mat, oX, gach;
-            ObjectId[] conLai;
-            List<List<Point2d>> loaiTru = TachLoaiTru(db, qr.Value.GetObjectIds(), out conLai);
-            if (loaiTru.Count > 0) ed.WriteMessage("\n[TKPCCC] " + loaiTru.Count + " vùng loại trừ (polyline kín layer " + LAYER_LOAI_TRU + "): không rải trong đó.");
-            List<List<Point2d>> ongGio = TachOngGio(db, conLai, out conLai);
-            if (ongGio.Count > 0) ed.WriteMessage("\n[TKPCCC] " + ongGio.Count + " ống gió (polyline kín layer có ONG_GIO / DUCT): đầu rơi vào ống thì dịch ra ngoài biên.");
-            if (idDam.Count > 0) conLai = conLai.Where(id => !idDam.Contains(id)).ToArray(); // line dầm chọn tay không làm tường
-            int[] demDam;
-            System.Diagnostics.Stopwatch dongHo = System.Diagnostics.Stopwatch.StartNew(); // người dùng 16/11: rải lâu, đứng máy: in thời gian từng pha
-            Dictionary<List<Point2d>, List<Point2d>> khoangChia; // khoang -> vùng vẽ sẵn chứa nó
-            List<Point2d> khuKhong;
-            List<Point2d[]> damSau;
             // Khung quét chọn (W, C, WP, CP): chỉ dựng phòng trong khung. Có đối tượng chọn kiểu khác (bấm, L, !ss) thì không giới hạn.
             double[] hopChon = null;
             foreach (SelectedObject so in qr.Value)
@@ -1383,6 +1450,134 @@ namespace TKPCCC
                     else hopChon = new[] { Math.Min(hopChon[0], p.X), Math.Min(hopChon[1], p.Y), Math.Max(hopChon[2], p.X), Math.Max(hopChon[3], p.Y) };
                 }
             }
+            TuyChonRai t = new TuyChonRai
+            {
+                Db = db, Ed = new GhiDong(ed.WriteMessage), V = v, M = m, S = s, K = k, Dt = dt, Le = le, TuongMax = tuongMax, CachMin = cachMin,
+                Xem = xem, Tia = tia, KhoangDam = khoangDam, HTran = hTran, LoaiTran = loaiTran, Tc = tc, TheoHang = theoHang,
+                Ids = qr.Value.GetObjectIds(), HopChon = hopChon, Mau = mau, DamMau = damMau, GiuDam = giuDam, DamThem = damThem, IdDam = idDam,
+                TimTay = timTay, KhoiDam = khoiDam,
+                HoiDiem = (bool dau, out Point2d diem) =>
+                {
+                    diem = Point2d.Origin;
+                    PromptPointOptions po = new PromptPointOptions(dau ? "\nBấm điểm trong phòng cần rải, Enter = mọi phòng" : "\nBấm điểm trong phòng tiếp theo, Enter = xong");
+                    if (dau) po.Keywords.Add("TatCa"); // AutoCAD tự nối " [TatCa]: "
+                    po.AllowNone = true;
+                    PromptPointResult pr = ed.GetPoint(po);
+                    if (pr.Status == PromptStatus.Cancel) return HUY;
+                    if (pr.Status == PromptStatus.Keyword || (pr.Status == PromptStatus.None && dau)) return TAT_CA;
+                    if (pr.Status != PromptStatus.OK) return XONG;
+                    Point3d q = pr.Value.TransformBy(ed.CurrentUserCoordinateSystem);
+                    diem = new Point2d(q.X, q.Y);
+                    return DIEM;
+                },
+                HoiMatBao = cau =>
+                {
+                    PromptKeywordOptions bo = new PromptKeywordOptions(cau);
+                    bo.Keywords.Add("Co"); bo.Keywords.Add("Khong");
+                    bo.Keywords.Default = "Khong";
+                    bo.AllowNone = true;
+                    PromptResult br = ed.GetKeywords(bo);
+                    return br.Status == PromptStatus.Cancel ? HUY : br.StringResult == "Co" ? DIEM : XONG;
+                }
+            };
+            RaiLoi(t);
+        }
+
+        // ---------- Lõi PCCC_RAI dùng chung: lệnh gõ tay (RaiTay) và thao tác spec "rai_phong" (OpRaiPhong, máy chủ MCP) ----------
+
+        /// Dòng lệnh của lõi: lệnh gõ tay in ra Editor, spec gom vào kết quả trả AI (cùng nội dung, AI đọc được bo_khu_khong_bao=, gop_sanh=...).
+        class GhiDong
+        {
+            readonly Action<string> f;
+            public GhiDong(Action<string> f) { this.f = f; }
+            public void WriteMessage(string s) { f(s); }
+        }
+
+        const int DIEM = 0, TAT_CA = 1, XONG = 2, HUY = 3;
+        /// dau = lần hỏi đầu (chưa có phòng nào). Trả DIEM (kèm điểm WCS), TAT_CA (= Enter mọi phòng), XONG, HUY.
+        delegate int HoiDiemRai(bool dau, out Point2d diem);
+
+        /// Mọi tham số lệnh PCCC_RAI đã hỏi xong (hoặc lấy từ spec): lõi RaiLoi không hỏi gì thêm ngoài HoiDiem, HoiMatBao.
+        class TuyChonRai
+        {
+            public Database Db;
+            public GhiDong Ed;
+            public VatTu V;
+            public double M, S, K, Dt, Le = -1, TuongMax, CachMin, HTran;
+            public bool Xem, Tia, KhoangDam, TheoHang;
+            public bool ChiVung;                 // chỉ dựng + vẽ vùng PCCC_VUNG, không rải (bước duyệt vùng của quy trình)
+            public int LoaiTran;
+            public Dictionary<string, object> Tc;
+            public ObjectId[] Ids;               // đối tượng quét chọn
+            public double[] HopChon;             // khung quét chọn (chỉ dựng phòng có tâm trong khung); null = không giới hạn
+            public HashSet<string> Mau = new HashSet<string>(), DamMau;
+            public Func<Point2d[], bool> GiuDam;
+            public List<Point2d[]> DamThem, TimTay = new List<Point2d[]>();
+            public HashSet<ObjectId> IdDam = new HashSet<ObjectId>();
+            public ObjectId KhoiDam = ObjectId.Null;
+            public HoiDiemRai HoiDiem;
+            public Func<string, int> HoiMatBao;  // câu hỏi -> DIEM (Có), XONG (Không), HUY
+            // Kết quả
+            public int Tong, SoVung, SoPhong, SoHo, SoBo;
+        }
+
+        /// Đoạn dầm có sâu (> 0,3 m dưới sàn) không: cỡ nhập tay (SuaDam) thắng, rồi ký hiệu b x h gần nhất (ưu tiên chữ song song nét), rồi cỡ chung.
+        static Func<Point2d[], bool> GiuDam(List<KeyValuePair<Point2d, Vector2d>> nhan, List<KeyValuePair<Point2d[], double>> suaDam, double sauChung, double daySan, double m)
+        {
+            return dn =>
+            {
+                double gan = double.MaxValue, d = -1;
+                // KOCHAM 16/11: nhãn gần nhất hay là nhãn dầm cắt ngang (dầm sâu bị coi nông, 2 cặp khoang gộp): ưu tiên nhãn chữ song song nét dầm.
+                Vector2d u = (dn[1] - dn[0]).GetNormal();
+                Point2d g = dn[0] + (dn[1] - dn[0]) * 0.5;
+                foreach (KeyValuePair<Point2d[], double> kv in suaDam) // cỡ nhập tay (SuaDam): đoạn song song, trung điểm nằm trên nét đã bấm
+                {
+                    Vector2d w = kv.Key[1] - kv.Key[0];
+                    if (w.Length > 1e-9 && Math.Abs(u.X * w.Y - u.Y * w.X) <= 0.02 * w.Length && CachDoan(kv.Key, g) <= 0.05 / m)
+                        return kv.Value - daySan > 0.3 + 1e-9;
+                }
+                foreach (bool songSong in new[] { true, false })
+                {
+                    foreach (KeyValuePair<Point2d, Vector2d> kv in nhan)
+                    {
+                        if (songSong && Math.Abs(u.X * kv.Value.Y - u.Y * kv.Value.X) > 0.26 * kv.Value.Length) continue;
+                        double c = CachDoan(dn, kv.Key);
+                        if (c < gan) { gan = c; d = kv.Value.Length; }
+                    }
+                    if (gan <= 10 / m) break;
+                }
+                if (gan <= 10 / m) return d - daySan > 0.3 + 1e-9;               // ký hiệu gần nhất trong 10 m
+                return sauChung > 0 ? sauChung - daySan > 0.3 + 1e-9 : true;     // không ký hiệu gần, không cỡ chung: coi là dầm sâu (chia khoang, rải dày hơn)
+            };
+        }
+
+        static void RaiLoi(TuyChonRai tuy)
+        {
+            Database db = tuy.Db;
+            GhiDong ed = tuy.Ed;
+            VatTu v = tuy.V;
+            double m = tuy.M, s = tuy.S, k = tuy.K, dt = tuy.Dt, le = tuy.Le, tuongMax = tuy.TuongMax, cachMin = tuy.CachMin, hTran = tuy.HTran;
+            bool xem = tuy.Xem, tia = tuy.Tia, khoangDam = tuy.KhoangDam, theoHang = tuy.TheoHang;
+            int loaiTran = tuy.LoaiTran;
+            Dictionary<string, object> tc = tuy.Tc;
+            HashSet<string> mau = tuy.Mau, damMau = tuy.DamMau;
+            Func<Point2d[], bool> giuDam = tuy.GiuDam;
+            List<Point2d[]> damThem = tuy.DamThem, timTay = tuy.TimTay;
+            HashSet<ObjectId> idDam = tuy.IdDam;
+            ObjectId khoiDam = tuy.KhoiDam;
+            List<List<Point2d>> vung, mat, oX, gach;
+            ObjectId[] conLai;
+            List<List<Point2d>> loaiTru = TachLoaiTru(db, tuy.Ids, out conLai);
+            if (loaiTru.Count > 0) ed.WriteMessage("\n[TKPCCC] " + loaiTru.Count + " vùng loại trừ (polyline kín layer " + LAYER_LOAI_TRU + "): không rải trong đó.");
+            List<List<Point2d>> ongGio = TachOngGio(db, conLai, out conLai);
+            if (ongGio.Count > 0) ed.WriteMessage("\n[TKPCCC] " + ongGio.Count + " ống gió (polyline kín layer có ONG_GIO / DUCT): đầu rơi vào ống thì dịch ra ngoài biên.");
+            if (idDam.Count > 0) conLai = conLai.Where(id => !idDam.Contains(id)).ToArray(); // line dầm chọn tay không làm tường
+            int[] demDam;
+            System.Diagnostics.Stopwatch dongHo = System.Diagnostics.Stopwatch.StartNew(); // người dùng 16/11: rải lâu, đứng máy: in thời gian từng pha
+            Dictionary<List<Point2d>, List<Point2d>> khoangChia; // khoang -> vùng vẽ sẵn chứa nó
+            List<Point2d> khuKhong;
+            List<Point2d[]> damSau;
+            double[] hopChon = tuy.HopChon;
             if (hopChon != null && (hopChon[2] - hopChon[0] < 1e-9 || hopChon[3] - hopChon[1] < 1e-9)) hopChon = null;
             double[] khungTruc;
             int boTruc;
@@ -1435,12 +1630,10 @@ namespace TKPCCC
                 }
                 while (true)
                 {
-                    PromptPointOptions po = new PromptPointOptions(vung.Count == 0 ? "\nBấm điểm trong phòng cần rải, Enter = mọi phòng" : "\nBấm điểm trong phòng tiếp theo, Enter = xong");
-                    if (vung.Count == 0) po.Keywords.Add("TatCa"); // AutoCAD tự nối " [TatCa]: "
-                    po.AllowNone = true;
-                    PromptPointResult pr = ed.GetPoint(po);
-                    if (pr.Status == PromptStatus.Cancel) return;
-                    if (pr.Status == PromptStatus.Keyword || (pr.Status == PromptStatus.None && vung.Count == 0))
+                    Point2d diemBam;
+                    int traLoi = tuy.HoiDiem(vung.Count == 0, out diemBam);
+                    if (traLoi == HUY) return;
+                    if (traLoi == TAT_CA)
                     {
                         List<List<Point2d>> pt = PhongThat(mat, m);
                         int gopSanh, gopNho, oCua;
@@ -1659,9 +1852,8 @@ namespace TKPCCC
                         tatCa = true;
                         break;
                     }
-                    if (pr.Status != PromptStatus.OK) break;
-                    Point3d q = pr.Value.TransformBy(ed.CurrentUserCoordinateSystem);
-                    List<Point2d> f = mat.Where(x => TrongDaGiac(x, new Point2d(q.X, q.Y))).OrderBy(x => DienTichDaGiac(x)).FirstOrDefault();
+                    if (traLoi != DIEM) break;
+                    List<Point2d> f = mat.Where(x => TrongDaGiac(x, diemBam)).OrderBy(x => DienTichDaGiac(x)).FirstOrDefault();
                     if (f == null) ed.WriteMessage("\nĐiểm không nằm trong phòng kín nào của vùng đã chọn.");
                     else if (MatKhongRai(f, oX, new List<List<Point2d>>())) ed.WriteMessage("\nÔ có dấu X (giếng thang máy, khe giữa hai khối): không rải.");
                     else
@@ -1671,14 +1863,10 @@ namespace TKPCCC
                         int bao = mat.Count(x => x != f && DienTichDaGiac(x) * m * m >= 4 && DienTichDaGiac(x) < sf && TrongDaGiac(f, DiemTrongMat(x)));
                         if (bao >= 3)
                         {
-                            PromptKeywordOptions bo = new PromptKeywordOptions("\nĐiểm bấm rơi vào mặt " + Math.Round(sf * m * m).ToString(CultureInfo.InvariantCulture)
+                            int br = tuy.HoiMatBao("\nĐiểm bấm rơi vào mặt " + Math.Round(sf * m * m).ToString(CultureInfo.InvariantCulture)
                                 + " m² bao " + bao + " phòng khác: phòng quanh điểm này chưa kín (khe tường > 3 m không có ký hiệu cửa?). Vẫn rải cả mặt này?");
-                            bo.Keywords.Add("Co"); bo.Keywords.Add("Khong");
-                            bo.Keywords.Default = "Khong";
-                            bo.AllowNone = true;
-                            PromptResult br = ed.GetKeywords(bo);
-                            if (br.Status == PromptStatus.Cancel) return;
-                            if (br.StringResult != "Co") { ed.WriteMessage("\n[TKPCCC] bo_mat_bao m2=" + Math.Round(sf * m * m).ToString(CultureInfo.InvariantCulture) + " phong_trong=" + bao + ": vẽ polyline kín layer " + LAYER_VUNG + " quanh phòng rồi chọn lại."); continue; }
+                            if (br == HUY) return;
+                            if (br != DIEM) { ed.WriteMessage("\n[TKPCCC] bo_mat_bao m2=" + Math.Round(sf * m * m).ToString(CultureInfo.InvariantCulture) + " phong_trong=" + bao + ": vẽ polyline kín layer " + LAYER_VUNG + " quanh phòng rồi chọn lại."); continue; }
                         }
                         if (!vung.Contains(f)) vung.Add(f);
                     }
@@ -1872,11 +2060,32 @@ namespace TKPCCC
                 Autodesk.AutoCAD.Runtime.ProgressMeter tienDo = new Autodesk.AutoCAD.Runtime.ProgressMeter();
                 tienDo.SetLimit(vungRai.Count);
                 tienDo.Start("TKPCCC: rải " + vungRai.Count + " vùng (Esc = dừng)");
+                // Vẽ vùng tự dựng của d (hộp khoang nhỏ: từng khoang; khoang dầm: phòng chứa nó, một lần) lên PCCC_VUNG.
+                Action<List<Point2d>, List<List<Point2d>>> veVungD = (d0, nho0) =>
+                {
+                    if (!veVung || xem) return;
+                    foreach (List<Point2d> kv in nho0 ?? new List<List<Point2d>> { d0 })
+                    {
+                        List<Point2d> dv;
+                        if (!khoangChia.TryGetValue(kv, out dv)) dv = kv;
+                        if (daCo.Contains(dv) || !daVe.Add(dv)) continue;
+                        Polyline pl = PlVung(dv, lop);
+                        ms.AppendEntity(pl);
+                        tr.AddNewlyCreatedDBObject(pl, true);
+                        VungLenTren(tr, ms, pl);
+                        ed.WriteMessage("\n[TKPCCC] Vùng tự dựng m2=" + Math.Round(DienTichDaGiac(dv) * m * m, 2).ToString(CultureInfo.InvariantCulture)
+                            + " (" + dv.Count + " đỉnh) trên layer " + LAYER_VUNG + ".");
+                    }
+                };
                 try {
                 foreach (List<Point2d> d in vungRai)
                 {
                     tienDo.MeterProgress();
                     KiemEsc();
+                    List<List<Point2d>> nhoD;
+                    bool laHopNho = nhoCuaHop.TryGetValue(d, out nhoD);
+                    // Bước duyệt vùng (người dùng 16/11, 19/11): chỉ vẽ vùng, chưa rải.
+                    if (tuy.ChiVung) { veVungD(d, laHopNho ? nhoD : null); continue; }
                     if (tia)
                     {
                         double bt, tt;
@@ -1893,8 +2102,6 @@ namespace TKPCCC
                             + " tuong=" + Lt(tt).ToString(CultureInfo.InvariantCulture) + (xem ? "" : " kt=" + soKt) + duoi);
                         continue;
                     }
-                    List<List<Point2d>> nhoD;
-                    bool laHopNho = nhoCuaHop.TryGetValue(d, out nhoD);
                     LuoiRai r;
                     // Người dùng 16/11: vùng nhận sai (mặt bao cả mặt bằng, 763 079 m²) cho lưới hàng nghìn thiết bị: bỏ riêng vùng đó, không vẽ vùng, rải tiếp vùng khác.
                     Func<List<Point2d>, LuoiRai> luoiMot = x => LuoiVung(x, s, s, 0, 0, le, le, 0.05 / m, dt, 0, theoHang, tuongMax, cachMin);
@@ -1906,19 +2113,7 @@ namespace TKPCCC
                         ed.WriteMessage("\n[TKPCCC] bo_vung m2=" + Math.Round(DienTichDaGiac(d) * m * m, 2).ToString(CultureInfo.InvariantCulture) + ": " + ex.Message);
                         continue;
                     }
-                    if (veVung && !xem)
-                        foreach (List<Point2d> kv in laHopNho ? nhoD : new List<List<Point2d>> { d })
-                        {
-                            List<Point2d> dv;
-                            if (!khoangChia.TryGetValue(kv, out dv)) dv = kv; // khoang dầm: vẽ phòng chứa nó, một lần
-                            if (daCo.Contains(dv) || !daVe.Add(dv)) continue;
-                            Polyline pl = PlVung(dv, lop);
-                            ms.AppendEntity(pl);
-                            tr.AddNewlyCreatedDBObject(pl, true);
-                            VungLenTren(tr, ms, pl);
-                            ed.WriteMessage("\n[TKPCCC] Vùng tự dựng m2=" + Math.Round(DienTichDaGiac(dv) * m * m, 2).ToString(CultureInfo.InvariantCulture)
-                                + " (" + dv.Count + " đỉnh) trên layer " + LAYER_VUNG + ".");
-                        }
+                    veVungD(d, laHopNho ? nhoD : null);
                     if (laHopNho)
                     {
                         int ngoai = r.Diem.RemoveAll(p => !nhoD.Any(q => TrongDaGiac(q, new Point2d(p.X, p.Y)) || CachVien(q, new Point2d(p.X, p.Y)) <= 0.6 / m));
@@ -1993,6 +2188,13 @@ namespace TKPCCC
                         + " (chữ m² giữa khoang, dấu X = khoang dưới ngưỡng: đầu báo lắp ở mặt dưới dầm; layer " + LAYER_KHOANG + ")");
                 }
                 tr.Commit();
+            }
+            tuy.Tong = tong; tuy.SoVung = daVe.Count; tuy.SoPhong = vung.Count; tuy.SoHo = soHo; tuy.SoBo = soBo;
+            if (tuy.ChiVung)
+            {
+                ed.WriteMessage("\nĐã dựng " + daVe.Count + " vùng " + LAYER_VUNG + " (" + vung.Count + " phòng), chưa rải: duyệt vùng rồi rải theo vùng đã duyệt.");
+                KetQuaRaiCuoi = "Chỉ dựng vùng: " + daVe.Count + " vùng, chưa rải";
+                return;
             }
             ed.WriteMessage("\n" + (xem ? "Xem trước: sẽ rải " : "Đã rải tổng ") + tong + " " + v.ten + (tia ? " (tia)" : "") + " trong " + vung.Count + " phòng.");
             KetQuaRaiCuoi = (xem ? "Xem trước (chưa vẽ): " : "Lượt cuối: ") + tong + " " + v.ma + (tia ? " (tia)" : "") + " trong " + vung.Count + (khoangDam && !tia ? " khoang" : " phòng")

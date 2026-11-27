@@ -18,7 +18,8 @@ Thao tác (`op`):
 - `sua` chọn h | l | hop; đổi doi:[dx,dy], xoay (độ), tl, tam:[x,y], l_moi, mau, t (chữ): sửa vùng người dùng quét chọn (Bot chat gửi handle)
 - `dem` (cái, m)
 - `rai` ma; vùng hop | vung | l (mặc định PCCC_VUNG) | tim (hành lang); s (bước TỐI ĐA) + dt (m²/thiết bị) hoặc buoc:[bx,by]; đầu báo khói, nhiệt bỏ s = TCVN 7568-14; h (trần m), le, theo_hang, kt. Trả n, bx, by, tuong, m2, ho (% hở), cheo
-- `vung_tu_dong` p (điểm trong phòng), ho: dựng polyline PCCC_VUNG từ nét tường
+- `rai_phong` ma, hop (quét chọn mặt bằng) | chon:[handle] = lệnh PCCC_RAI "Enter mọi phòng" KHÔNG hỏi (cùng lõi: gộp sảnh WC, bỏ WC, thang, ngoài trục...); chi_vung:true chỉ dựng PCCC_VUNG (bước duyệt); có PCCC_VUNG trong hop thì rải theo vùng đó; h (trần m), k 50–100, loai_tran CoTran|KhongTran|MaiKeo, p (bấm phòng), xem. Trả n, vung, phong, m2, dong (dòng báo plugin)
+- `vung_tu_dong` p (điểm trong phòng), ho: dựng polyline PCCC_VUNG từ nét tường (một mặt kín, KHÔNG gộp / lọc như PCCC_RAI: dựng cả tầng thì dùng `rai_phong` chi_vung)
 - `tuyen` ma, kieu:"noi_tiep" (tu/den) | "tia" (tới den) | "xuong_ca" | "cot" | "nhanh" (cần truc ống chính), p (bỏ = điểm `rai` trước), nhan. Trả doan, m
 - `so_do` he:"spr" (truc, xa) | "bc" (toi_da, zone:[{ten,kv,dt,dem}], nguon...), p, h, tang:[{ten,cot,dem}]
 - `anh` hop, rong (px): in PNG cuối gói

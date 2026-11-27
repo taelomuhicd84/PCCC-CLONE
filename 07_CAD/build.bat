@@ -15,8 +15,11 @@ rem chay duoc trong accoreconsole) va NN_*\ui\*.cs (TKPCCC.UI.dll, duoc tham chi
 rem Nguoi dung 26/11 (chieu): gom hang muc theo nhom linh vuc (09_PCCC\NN_*): gom ca NN_*\NN_*\cad, NN_*\NN_*\ui.
 set "CS_CAD="
 set "CS_UI="
-for /d %%g in ("%~dp0??_*") do for /d %%d in ("%%~g" "%%~g\??_*") do if exist "%%~d\cad\" call set CS_CAD=%%CS_CAD%% "%%~d\cad\*.cs"
-for /d %%g in ("%~dp0??_*") do for /d %%d in ("%%~g" "%%~g\??_*") do if exist "%%~d\ui\" call set CS_UI=%%CS_UI%% "%%~d\ui\*.cs"
+rem 27/11: khong dung "call set": PATH may nguoi dung co c:\HVAC15\SET.BAT nen "call set" chay nham file do (gom rong). Dung delayed expansion.
+setlocal enabledelayedexpansion
+for /d %%g in ("%~dp0??_*") do for /d %%d in ("%%~g" "%%~g\??_*") do if exist "%%~d\cad\" set CS_CAD=!CS_CAD! "%%~d\cad\*.cs"
+for /d %%g in ("%~dp0??_*") do for /d %%d in ("%%~g" "%%~g\??_*") do if exist "%%~d\ui\" set CS_UI=!CS_UI! "%%~d\ui\*.cs"
+endlocal & set "CS_CAD=%CS_CAD%" & set "CS_UI=%CS_UI%"
 rem 27/11: goi build.bat kieu ".\build.bat" tu PowerShell tung gom rong -> csc chi canh bao CS2008, ra DLL rong 4 KB (lenh PCCC mat). Rong thi dung han.
 if "%CS_CAD%"=="" (echo LOI: khong tim thay NN_*\cad\*.cs tu "%~dp0". Chay bang duong dan day du: "%~f0" & exit /b 1)
 if "%CS_UI%"=="" (echo LOI: khong tim thay NN_*\ui\*.cs tu "%~dp0". Chay bang duong dan day du: "%~f0" & exit /b 1)
