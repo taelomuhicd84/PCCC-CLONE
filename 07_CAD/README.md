@@ -14,7 +14,7 @@ Mọi file `cad/` là phần nối của `partial class Lenh` (bot chat: `partia
 │     .claude/agents/  cad-thiet-ke (lập spec) · cad-ve (chạy spec) · cad-kiem (soát bản vẽ) · cad-lap-trinh (sửa plugin) · cad-review (review mỗi mốc); bảng việc ở CLAUDE.md
 │     .claude/skills/  tkpccc-ve-cad (vẽ qua MCP; scripts/pdf_ti_le.py, scripts/chay_spec.ps1) · tkpccc-cad-console (build, kiểm thử, in PNG; scripts/hinh_tu_pdf.py)
 ├─ build.bat · cai_dat.bat   build mọi DLL + exe, chép dữ liệu vào bundle · liên kết 3 bundle vào %APPDATA%\Autodesk\ApplicationPlugins (`/lai` build tự gọi, `/go` gỡ)
-├─ TKPCCC.bundle/ · TKPCCC_BotChat.bundle/ · TKPCCC_YouTube.bundle/ · bin/   gói AutoCAD tự nạp + kết quả build (giữ ở gốc: liên kết AutoCAD và Hub trỏ tới đây)
+├─ TKPCCC.bundle/ · TKPCCC_BotChat.bundle/ · TKPCCC_YouTube.bundle/   gói AutoCAD tự nạp + kết quả build (giữ ở gốc: liên kết AutoCAD và Hub trỏ tới đây)
 │
 ├─ 00_QUAN_LY_DU_AN/     TIEN_DO.md · LICH_SU.md · KE_HOACH.md · HUONG_DAN_SU_DUNG.md (hướng dẫn kỹ sư: cài, mọi lệnh, mã, layer; sửa lệnh thì sửa cả file này + `DS_LENH`) · viec/ (phiếu việc cũ)
 ├─ 01_TRI_THUC_VE/       ĐẦU NGUỒN tri thức vẽ cho MỌI AI (mục lục README.md): TU_VUNG.md (từ vựng spec) · vi_du/ · nhan_dang/ (đọc bản vẽ) · ve/ (vẽ + quy ước layer) · mau/ (bằng chứng từ bản mẫu)
@@ -24,8 +24,8 @@ Mọi file `cad/` là phần nối của `partial class Lenh` (bot chat: `partia
 │
 ├─ 05_NEN_TANG/          khung plugin: cad/ Lenh.cs (khởi động, đăng ký mọi lệnh PCCC_*, DS_LENH, layer, đơn vị, hỏi mã) · CaiDat.cs (cai_dat.json: layer dây, dây theo thiết bị, kiểu dim)
 │                        ui/ BangChinh.cs (palette PCCC, thanh biểu tượng, trang Cài đặt) · GiaoDien.cs (3 kiểu màu, widget) · PhanHe.cs (lưới thẻ Chữa cháy, Thống kê) · BangLenh.cs (PCCC_HELP, phím tắt) · KhoiDongUi.cs
-│                        chung/ HangDoi.cs (hàng đợi file: plugin + MCP + Hub + YouTube) · GiaoDienNho.cs (màu, chữ chung cho Bot chat, YouTube) · lisp/ TKPCCC.lsp
-├─ 06_VE_TU_DONG_AI/     cad/ Spec.cs (PCCC_SPEC, MotOp, thao tác dat ong net tron chu kt xoa sua doc dem, pdf, anh) · Cau.cs (cầu nối hàng đợi) · mcp/ Mcp.cs -> bin/TKPCCC.Mcp.exe (cad_tt, cad_chay, cad_anh)
+│                        chung/ HangDoi.cs (hàng đợi file: plugin + MCP + Hub + YouTube) · GiaoDienNho.cs (màu, chữ chung cho Bot chat, YouTube) · lisp/ TKPCCC.lsp · TKPCCC_BotChat.lsp · TKPCCC_YouTube.lsp (APPLOAD nạp DLL tương ứng, khỏi NETLOAD)
+├─ 06_VE_TU_DONG_AI/     cad/ Spec.cs (PCCC_SPEC, MotOp, thao tác dat ong net tron chu kt xoa sua doc dem, pdf, anh) · Cau.cs (cầu nối hàng đợi) · mcp/ Mcp.cs -> 18_MCP/TKPCCC.Mcp.exe (cad_tt, cad_chay, cad_anh)
 ├─ 07_KIEN_TRUC/         cad/ KienTruc.cs (tuong, cua, kt_chuoi, PCCC_TRUC/TUONG/CUA) · NhanVung.cs (vung_tu_dong, nhận tường, khe cửa, làm gọn) · Truc.cs (luoi_truc)
 ├─ 08_KICH_THUOC/        cad/ Dim.cs (PCCC_ADIM, PCCC_CDIM, lõi chuỗi dim) · DimRai.cs (dim định vị sau rải) · ui/ BangAdim.cs (trang ADIM 5 bước)
 ├─ 09_PCCC/              NHÓM PCCC (mọi hạng mục riêng của PCCC):
@@ -35,12 +35,12 @@ Mọi file `cad/` là phần nối của `partial class Lenh` (bot chat: `partia
 │  ├─ 04_SO_DO_NGUYEN_LY/ cad/ SoDo.cs (so_do spr / bc)
 │  └─ 05_THONG_KE/        cad/ BocKhoiLuong.cs (PCCC_GAN, PCCC_BOC, PCCC_BANG) · BangMb.cs (PCCC_KYHIEU, PCCC_QUYDINH, PCCC_THUYETMINH, thao tác bang)
 ├─ 10_TIEN_ICH/          cad/ TienIch.cs (PCCC_KT, TRUNG, LOPCHUAN, DANHSO, XOAY, TYLE, DOIBLOCK, CANDIM, DOIDN, TACHVUNG, KHUVUC, THOATNAN) · ui/ BangTienIch.cs (PCCC_TIENICH)
-├─ 11_BAN_QUYEN/         HUONG_DAN.md · cad/ BanQuyen.cs · ui/ BanQuyenUi.cs (PCCC_BANQUYEN) · keygen/ KeyGen.cs -> bin/TKPCCC.KeyGen.exe, keygen.py, apps_script/Code.gs
+├─ 11_BAN_QUYEN/         HUONG_DAN.md · cad/ BanQuyen.cs · ui/ BanQuyenUi.cs (PCCC_BANQUYEN) · keygen/ KeyGen.cs -> 17_KEYGEN/TKPCCC.KeyGen.exe, keygen.py, apps_script/Code.gs
 ├─ 12_BOT_CHAT/          PLUGIN RIÊNG -> TKPCCC_BotChat.bundle (lệnh TKBOTCHAT, TKBOTCHON); build gom cả cây con:
 │                        01_KHUNG_CHAT/ (LenhBotChat.cs palette + theo dõi chọn; BotChat.cs khung, nhập, bong bóng, menu +, Cài đặt; GiaoDienChat.cs widget) · 02_MAY_AI_MODEL/ (MayAi.cs: Claude / Antigravity, model, effort, gọi CLI, đọc dòng; DanhMucModel.cs)
 │                        03_PHIEN_LICH_SU/ (LichSu.cs hội thoại mới, lịch sử, link phiên; PhienAi.cs đọc phiên, chỗ skill -> cờ CLI, MCP) · 04_DU_AN_SKILL/ (DuAnSkill.cs thư mục dự án, skill; ChonThuMuc.cs) · 05_DINH_KEM/ (DinhKem.cs ảnh, vùng chọn CAD)
 ├─ 13_YOUTUBE/           PLUGIN RIÊNG -> TKPCCC_YouTube.bundle (TKYOUTUBE): BangYoutube.cs · LenhYoutube.cs · GanBrave.cs · webview2/ (3 DLL NuGet 1.0.2903.40) · brave_khung/ (extension Brave)
-├─ 14_HUB/               Hub.cs -> bin/TKPCCC.Hub.exe (cài mọi thứ: Nền tảng · MCP cad · Bot chat · YouTube)
+├─ 14_HUB/               Hub.cs -> 16_HUB_CAI_DAT/TKPCCC.Hub.exe (cài mọi thứ: Nền tảng · MCP cad · Bot chat · YouTube; nút "Cài tất cả còn thiếu")
 └─ 15_THU_VIEN_BLOCK/    DÙNG CHUNG, menu Kiến trúc · Xây dựng · PCCC. Phần chung: cad/ Block.cs (PCCC_THEMBLOCK, ảnh xem trước) · ui/ BangBlock.cs (PCCC_BLOCK, 3 tab)
    └─ 01_PCCC/           block PCCC: cad/ ThuVien.cs (PCCC_LIB, hình mặc định) · DatThietBi.cs (PCCC_DAT, PCCC_ONG) · ui/ BangChonVatTu.cs (bảng chọn mã) · hinh_bc.json (hình block báo cháy)
                          (sau này 02_KIEN_TRUC/, 03_XAY_DUNG/ cùng kiểu) · PCCC_Blocks.dwg (bản vẽ block, BEDIT ở đây) · block_alias.json (plugin đọc, ghi tại đây; build chép cạnh DLL cho bản phát hành)
@@ -49,7 +49,7 @@ Hạng mục tính năng ↔ trang palette: Quy trình vẽ = 06–08 + `09_PCCC
 
 ## Vẽ tự động chạy thế nào
 ```
-AI (Claude Code, VS Code, Antigravity...) -> bin\TKPCCC.Mcp.exe -> hàng đợi file -> lệnh PCCC_SPEC trong AutoCAD -> bản vẽ
+AI (Claude Code, VS Code, Antigravity...) -> 18_MCP\TKPCCC.Mcp.exe -> hàng đợi file -> lệnh PCCC_SPEC trong AutoCAD -> bản vẽ
 ```
 AI chỉ viết một gói thao tác ngắn (spec JSON), plugin sinh hình. Một gói = một bước Undo. Kết quả trả về chỉ gồm số đếm và lỗi.
 
@@ -107,7 +107,7 @@ AI chỉ viết một gói thao tác ngắn (spec JSON), plugin sinh hình. Mộ
 | Bảng layer dây báo cháy, ống chữa cháy (thêm, xoá, lấy từ bản vẽ); chọn dây cho từng loại thiết bị | `05_NEN_TANG/cad/CaiDat.cs` (`LOP_MAC_DINH`, `VAI_TRO`); trang Cài đặt `05_NEN_TANG/ui/BangChinh.cs` (`BangLopDay`); trang Báo cháy mục 6 `09_PCCC/02_BAO_CHAY/ui/BangBoTri.cs` (`TaoDiDay`) |
 
 ## Build và kiểm thử
-- `07_CAD\build.bat`: ra `TKPCCC.bundle\Contents\TKPCCC.Cad.dll`, `TKPCCC.UI.dll` và `bin\TKPCCC.Mcp.exe`. AutoCAD đang mở thì tắt hẳn rồi mở lại để nạp bản mới.
+- `07_CAD\build.bat`: ra `TKPCCC.bundle\Contents\TKPCCC.Cad.dll`, `TKPCCC.UI.dll` `18_MCP\TKPCCC.Mcp.exe`, `16_HUB_CAI_DAT\TKPCCC.Hub.exe`, `17_KEYGEN\TKPCCC.KeyGen.exe`. AutoCAD đang mở thì tắt hẳn rồi mở lại để nạp bản mới.
 - `powershell -ExecutionPolicy Bypass -File 07_CAD\04_KIEM_THU\thu_gui.ps1` (không bắt buộc, chạy khi sửa giao diện hoặc cầu nối): tự mở một AutoCAD thật 1–2 phút rồi tự tắt, thử bảng `PCCC_BLOCK` và đường MCP thật. Chỉ chạy khi không có AutoCAD nào đang mở.
 - `powershell -ExecutionPolicy Bypass -File 07_CAD\04_KIEM_THU\chay_thu.ps1`: plugin + `PCCC_SPEC`, không cần mở AutoCAD.
 - `powershell -ExecutionPolicy Bypass -File 07_CAD\04_KIEM_THU\thu_mcp.ps1`: máy chủ MCP + hàng đợi + plugin, không cần mở AutoCAD.
@@ -117,5 +117,5 @@ AI chỉ viết một gói thao tác ngắn (spec JSON), plugin sinh hình. Mộ
 1. Chạy `07_CAD\build.bat`, rồi `07_CAD\cai_dat.bat` MỘT lần (liên kết bundle để AutoCAD tự nạp mỗi lần mở; gỡ bằng `07_CAD\cai_dat.bat /go` trong cmd / PowerShell thường: sandbox của Claude không đi qua và không xoá được liên kết này).
    Đã kiểm 15/11 (ngoài sandbox, liên kết đúng đích): accoreconsole KHÔNG tự nạp bundle này, bộ test không bị ảnh hưởng. AutoCAD có giao diện tự nạp: chưa thử.
    Cách khác: `APPLOAD` file `05_NEN_TANG\lisp\TKPCCC.lsp`, hoặc `NETLOAD` file `TKPCCC.Cad.dll` (file này tự nạp luôn `TKPCCC.UI.dll`). Gõ `PCCC` để mở palette chính (`PCCC_BLOCK` mở thẳng phân hệ Thư viện, `PCCC_HELP` phân hệ Lệnh).
-2. Mở Claude Code ở gốc repo hoặc tại `07_CAD/`: file `.mcp.json` khai máy chủ `cad`. AI khác thì khai lệnh chạy là đường dẫn tới `07_CAD\bin\TKPCCC.Mcp.exe`.
+2. Mở Claude Code ở gốc repo hoặc tại `07_CAD/`: file `.mcp.json` khai máy chủ `cad`. AI khác thì khai lệnh chạy là đường dẫn tới `07_CAD\18_MCP\TKPCCC.Mcp.exe`.
 3. Gõ yêu cầu vẽ. Chạy tay một spec: trong AutoCAD gõ `PCCC_SPEC` rồi dán đường dẫn file `.json`; kết quả nằm ở `<tên>.kq.json`.

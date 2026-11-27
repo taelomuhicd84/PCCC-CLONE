@@ -58,6 +58,7 @@ namespace TKPCCC
             linkTen = null;
             tach = false;
             noiChung = false;
+            DatLaiUsage();
             XoaTin();
             VeChip();
             trangThai.Text = "Hội thoại mới.";

@@ -1,6 +1,6 @@
 # Thu tren AutoCAD CO GIAO DIEN (khong nam trong bo bat buoc): script tu mo mot AutoCAD that khoang 1-2 phut roi tu tat.
 # Nap ban build trong bundle (chay 07_CAD\build.bat truoc) tu mot thu muc tam, mo palette PCCC (lenh PCCC, PCCC_BLOCK, phim tat PHX = PCCC_HELP), roi goi may chu MCP that
-# (07_CAD\bin\TKPCCC.Mcp.exe) qua cau noi: cad_tt, cad_chay (pdf + rai + tuyen + anh), cad_anh; PCCC_DAT go ? (bang chon vat tu). Doc bang bang UI Automation.
+# (07_CAD\18_MCP\TKPCCC.Mcp.exe) qua cau noi: cad_tt, cad_chay (pdf + rai + tuyen + anh), cad_anh; PCCC_DAT go ? (bang chon vat tu). Doc bang bang UI Automation.
 # Chi chay khi KHONG co AutoCAD nao dang mo. Thu vien block, anh, hang doi deu nam trong thu muc tam: khong dung toi file cua nguoi dung.
 # Chay: powershell -ExecutionPolicy Bypass -File 07_CAD\04_KIEM_THU\thu_gui.ps1     (file chi dung chu ASCII)
 $ErrorActionPreference = 'Stop'
@@ -8,7 +8,7 @@ $ACAD = if ($env:ACAD_DIR) { $env:ACAD_DIR } else { 'C:\Program Files\Autodesk\A
 $GOC = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $B = "$GOC\07_CAD\TKPCCC.bundle\Contents"
 if (Get-Process acad -ErrorAction SilentlyContinue) { throw 'Dang co AutoCAD mo: dong lai roi chay (script nay tu mo va tu tat mot AutoCAD rieng).' }
-foreach ($f in "$B\TKPCCC.Cad.dll", "$B\TKPCCC.UI.dll", "$B\vat_tu.json", "$GOC\07_CAD\bin\TKPCCC.Mcp.exe") { if (-not (Test-Path $f)) { throw "Thieu $f - chay 07_CAD\build.bat truoc" } }
+foreach ($f in "$B\TKPCCC.Cad.dll", "$B\TKPCCC.UI.dll", "$B\vat_tu.json", "$GOC\07_CAD\18_MCP\TKPCCC.Mcp.exe") { if (-not (Test-Path $f)) { throw "Thieu $f - chay 07_CAD\build.bat truoc" } }
 # 26/11: may co lien ket bundle trong ApplicationPlugins (cai_dat.bat, build.bat) thi AutoCAD cua lan thu tu nap ban bundle TRUOC khi kich ban NETLOAD ban chep:
 # DLL chay tu thu muc bundle cua nguoi dung (phim_tat.txt khong co PHX, anh_block ghi vao bundle). Go tam lien ket (chi lien ket, khong dung file), tra lai
 # trong finally; lan truoc bi ngat giua chung thi tra lai ngay dau lan nay (file ghi $GHI_LK).
@@ -145,7 +145,7 @@ public static class WinU {
   }
   Start-Sleep -Seconds 8   # cho PCCC_BLOCK trong kich ban khoi dong chay xong
 
-  $psi = New-Object Diagnostics.ProcessStartInfo "$GOC\07_CAD\bin\TKPCCC.Mcp.exe"
+  $psi = New-Object Diagnostics.ProcessStartInfo "$GOC\07_CAD\18_MCP\TKPCCC.Mcp.exe"
   $psi.UseShellExecute = $false; $psi.RedirectStandardInput = $true; $psi.RedirectStandardOutput = $true
   $psi.StandardOutputEncoding = [Text.Encoding]::UTF8; $psi.CreateNoWindow = $true
   $mcp = [Diagnostics.Process]::Start($psi)

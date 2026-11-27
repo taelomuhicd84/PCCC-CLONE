@@ -9,7 +9,7 @@ effort: medium
 Đây cũng là thẻ của MODULE CAD: `07_CAD/05_NEN_TANG/cad/Lenh.cs` (mọi lệnh `PCCC_*`), `07_CAD/build.bat`, `07_CAD/04_KIEM_THU/chay_thu.ps1`,
 `07_CAD/TKPCCC.bundle/PackageContents.xml`, `07_CAD/15_THU_VIEN_BLOCK/01_PCCC/PCCC_Blocks.dwg` + `block_alias.json` (người dùng sửa, có commit).
 
-**MCP CAD (làm 2026-11-10, ROADMAP Pha 6; khi VẼ thì dùng skill `tkpccc-ve-cad`):** AI ↔ `07_CAD/bin/TKPCCC.Mcp.exe` (`07_CAD/06_VE_TU_DONG_AI/mcp/Mcp.cs`, C#, stdio)
+**MCP CAD (làm 2026-11-10, ROADMAP Pha 6; khi VẼ thì dùng skill `tkpccc-ve-cad`):** AI ↔ `07_CAD/18_MCP/TKPCCC.Mcp.exe` (`07_CAD/06_VE_TU_DONG_AI/mcp/Mcp.cs`, C#, stdio)
 ↔ hàng đợi file `%LOCALAPPDATA%\TKPCCC\cad` (`07_CAD/05_NEN_TANG/chung/HangDoi.cs`) ↔ `07_CAD/06_VE_TU_DONG_AI/cad/Cau.cs` (timer trên luồng chính, chỉ bật trong acad.exe;
 cần thêm tham chiếu `System.Windows.Forms` của .NET, không phải `acmgd`) ↔ lệnh `PCCC_SPEC` (`07_CAD/06_VE_TU_DONG_AI/cad/Spec.cs`; từ vựng `07_CAD/01_TRI_THUC_VE/TU_VUNG.md`).
 Thêm thao tác spec: hàm `Op...` + 1 dòng trong `MotOp` + 1 dòng trong `TU_VUNG.md` + 1 dòng kiểm trong `07_CAD/04_KIEM_THU/chay_thu.ps1`.

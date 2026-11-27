@@ -1,4 +1,4 @@
-// TKPCCC Hub (07_CAD\bin\TKPCCC.Hub.exe): MỘT chỗ cài mọi thứ plugin cần, chia theo tính năng (người dùng 17/11, tham khảo "MCP Hub Pro"):
+﻿// TKPCCC Hub (07_CAD\16_HUB_CAI_DAT\TKPCCC.Hub.exe): MỘT chỗ cài mọi thứ plugin cần, chia theo tính năng (người dùng 17/11, tham khảo "MCP Hub Pro"):
 //   Nền tảng (AutoCAD, .NET 4.8, plugin tự nạp) · MCP cad (máy chủ + cấu hình cho từng AI) · Bot chat (lệnh claude, agy) · YouTube (WebView2; Brave tuỳ chọn).
 // Chạy ngoài AutoCAD, không tham chiếu thư viện Autodesk. Phần mềm của hãng khác: Hub chỉ MỞ TRANG TẢI CHÍNH THỨC, không tự tải, không tự chạy bộ cài.
 // Sửa file JSON thì sao lưu <file>.tkpccc_<giờ>.bak trước; Claude Code, Antigravity ghi qua CLI của chính nó (không sửa file của chúng bằng tay:
@@ -47,7 +47,7 @@ namespace TKPCCC
         public static event Action<string> Ghi;
 
         static string Cad { get { return Path.GetDirectoryName(Path.GetDirectoryName(Application.ExecutablePath)); } }
-        static string McpExe { get { return Path.Combine(Cad, "bin", "TKPCCC.Mcp.exe"); } }
+        static string McpExe { get { return Path.Combine(Cad, "18_MCP", "TKPCCC.Mcp.exe"); } }
         static string Bundle { get { return Path.Combine(Cad, "TKPCCC.bundle"); } }
         static string Contents { get { return Path.Combine(Bundle, "Contents"); } }
         static string LienKet { get { return LienKetCua("TKPCCC.bundle"); } }
@@ -108,7 +108,7 @@ namespace TKPCCC
                     HoiGo = "Gỡ liên kết " + LienKetCua(B_BOT) + " (không xoá file plugin)." },
                 new Muc { Ma = "cli_claude", Nhom = BOT, Ten = "Claude Code CLI (lệnh claude)", Kiem = delegate { return KiemCli("claude"); },
                     Cai = delegate { return MoTrang(URL_CLAUDE); },
-                    HoiCai = "Mở trang hướng dẫn cài Claude Code: " + URL_CLAUDE + ". Cài xong mở terminal gõ claude rồi /login." },
+                    HoiCai = "Mở trang hướng dẫn cài Claude Code: " + URL_CLAUDE + ". Cài xong đăng nhập trong Bot chat: nút model → Tài khoản → Đăng nhập Claude Pro (hoặc chọn Cổng FP)." },
                 new Muc { Ma = "cli_agy", Nhom = BOT, Ten = "Antigravity CLI (lệnh agy, Gemini)", Kiem = delegate { return KiemCli("agy"); },
                     Cai = delegate { return MoTrang(URL_AGY); },
                     HoiCai = "Mở trang tải Antigravity: " + URL_AGY + ". Cài xong mở terminal gõ agy để đăng nhập Google." },
@@ -392,7 +392,7 @@ namespace TKPCCC
             int ma;
             string ra = Chay(f, "--version", out ma);
             string ban = ma == 0 && ra != "" ? ra.Split('\n')[0].Trim() + " · " : "";
-            return KQ(1, ban + f + (ten == "claude" ? " (cần đăng nhập: claude rồi /login)" : ""));
+            return KQ(1, ban + f + (ten == "claude" ? " (đăng nhập: Bot chat → nút model → Tài khoản)" : ""));
         }
 
         // ---------- YouTube ----------
@@ -591,6 +591,7 @@ namespace TKPCCC
             cai.FlatStyle = FlatStyle.Flat;
             duoi.Controls.AddRange(new Control[]
             {
+                Nut("Cài tất cả còn thiếu", 160, delegate { ChonThieu(); LamChon(true); }), // 1 chạm: plugin + MCP + Claude/Gemini (người dùng 26/11)
                 cai,
                 Nut("Gỡ mục đã chọn", 130, delegate { LamChon(false); }),
                 Nut("Chọn mục còn thiếu", 140, ChonThieu),

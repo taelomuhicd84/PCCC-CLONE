@@ -1,7 +1,7 @@
 {
   "mcpServers": {
     "cad": {
-      "command": "bin/TKPCCC.Mcp.exe",
+      "command": "18_MCP/TKPCCC.Mcp.exe",
       "args": []
     }
   }

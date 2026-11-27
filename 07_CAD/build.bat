@@ -104,8 +104,8 @@ rem Bot chat tim repo (07_CAD\.mcp.json) tu duong dan nay, nhu plugin PCCC.
 echo %~dp0..\03_DU_LIEU\vat_tu.json>"%OUTBOT%\nguon_vat_tu.txt"
 echo OK: %OUTBOT%\TKPCCC.BotChat.dll
 
-rem May chu MCP (07_CAD\bin\TKPCCC.Mcp.exe): AI goi cad_tt / cad_chay. Dang chay thi doi ten ban cu nhu DLL.
-set BIN=%~dp0bin
+rem May chu MCP (07_CAD\18_MCP\TKPCCC.Mcp.exe): AI goi cad_tt / cad_chay. Dang chay thi doi ten ban cu nhu DLL.
+set BIN=%~dp018_MCP
 if not exist "%BIN%" mkdir "%BIN%"
 del /q "%BIN%\TKPCCC.Mcp.exe.cu*" >nul 2>&1
 if exist "%BIN%\TKPCCC.Mcp.exe" move /y "%BIN%\TKPCCC.Mcp.exe" "%BIN%\TKPCCC.Mcp.exe.cu%RANDOM%" >nul
@@ -115,7 +115,9 @@ if exist "%BIN%\TKPCCC.Mcp.exe" move /y "%BIN%\TKPCCC.Mcp.exe" "%BIN%\TKPCCC.Mcp
 copy /y "%~dp001_TRI_THUC_VE\TU_VUNG.md" "%BIN%\TU_VUNG.md" >nul
 echo OK: %BIN%\TKPCCC.Mcp.exe
 
-rem Hub (07_CAD\bin\TKPCCC.Hub.exe): cai plugin tu nap + ghi MCP cad cho cac AI tren may, chan doan.
+rem Hub (07_CAD\16_HUB_CAI_DAT\TKPCCC.Hub.exe): cai plugin tu nap + ghi MCP cad cho cac AI tren may, chan doan.
+set BIN=%~dp016_HUB_CAI_DAT
+if not exist "%BIN%" mkdir "%BIN%"
 del /q "%BIN%\TKPCCC.Hub.exe.cu*" >nul 2>&1
 if exist "%BIN%\TKPCCC.Hub.exe" move /y "%BIN%\TKPCCC.Hub.exe" "%BIN%\TKPCCC.Hub.exe.cu%RANDOM%" >nul
 "%FW%\csc.exe" /nologo /target:winexe /codepage:65001 /optimize+ /out:"%BIN%\TKPCCC.Hub.exe" ^
@@ -124,6 +126,8 @@ if exist "%BIN%\TKPCCC.Hub.exe" move /y "%BIN%\TKPCCC.Hub.exe" "%BIN%\TKPCCC.Hub
 echo OK: %BIN%\TKPCCC.Hub.exe
 
 rem App tao key ban quyen cho chu plugin (khong phat hanh cho khach).
+set BIN=%~dp017_KEYGEN
+if not exist "%BIN%" mkdir "%BIN%"
 "%FW%\csc.exe" /nologo /target:winexe /codepage:65001 /optimize+ /out:"%BIN%\TKPCCC.KeyGen.exe" ^
   /r:"%FW%\System.Web.Extensions.dll" /r:System.Core.dll /r:System.Management.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll ^
   "%~dp011_BAN_QUYEN\keygen\KeyGen.cs" "%~dp011_BAN_QUYEN\cad\BanQuyen.cs" || exit /b 1
@@ -135,5 +139,5 @@ echo Neu AutoCAD dang mo: tat han AutoCAD roi mo lai de nap ban moi.
 exit /b 0
 
 :khong_khoa
-echo LOI: chua co %KCK% - chay 07_CAD\bin\TKPCCC.KeyGen.exe, bam "Tao cap khoa moi".
+echo LOI: chua co %KCK% - chay 07_CAD\17_KEYGEN\TKPCCC.KeyGen.exe, bam "Tao cap khoa moi".
 exit /b 1

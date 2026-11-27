@@ -153,11 +153,19 @@ namespace TKPCCC
     }
 
     /// Một tin: người dùng (bong bóng màu nhấn, lệch phải), AI (bong bóng nền nhạt, lệch trái), dòng hệ thống / công cụ (chữ mờ, không bong bóng).
-    /// Chuột phải: "Sao chép". Rộng tối đa 85 % khung; cao theo chữ.
+    /// Chuột phải: "Sao chép", "Chọn hết tin này". Rộng tối đa 85 % khung; cao theo chữ.
+    /// Người dùng 27/11 (như Claude Code): bấm vào một tin rồi Ctrl+A chọn hết chữ CỦA TIN ĐÓ, Ctrl+C chép (không chọn gì thì chép cả tin); tin đang chọn có viền.
     /// Khung cuộn tin: bấm vào ô chữ (lấy focus) không cuộn khung tới ô đó, giữ nguyên chỗ người dùng đang đọc.
     class KhungCuon : Panel
     {
         protected override Point ScrollToControl(Control c) { return DisplayRectangle.Location; }
+
+        /// Lăn chuột trên chữ bong bóng (TextBox nuốt WM_MOUSEWHEEL, không chuyển lên khung): cuộn khung như lăn ở chỗ trống.
+        public void Lan(int delta)
+        {
+            int y = -AutoScrollPosition.Y - delta * SystemInformation.MouseWheelScrollLines * Font.Height / 120;
+            AutoScrollPosition = new Point(0, Math.Max(0, y));
+        }
     }
 
     class BongBong : Control
@@ -181,13 +189,27 @@ namespace TKPCCC
             Font = kieu == 2 ? GiaoDien.Nho : GiaoDien.Chu;
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint | ControlStyles.ResizeRedraw, true);
             ContextMenuStrip m = new ContextMenuStrip();
-            m.Items.Add("Sao chép", null, delegate { try { Clipboard.SetText(Text); } catch (Exception) { } });
+            m.Items.Add("Sao chép", null, delegate { Chep(); });
+            m.Items.Add("Chọn hết tin này", null, delegate { o.Focus(); o.SelectAll(); });
             ContextMenuStrip = m;
+            o.ContextMenuStrip = m; // không thì menu mặc định của TextBox đè menu bong bóng
             o.Multiline = true; o.ReadOnly = true; o.WordWrap = true; o.TabStop = false;
             o.BorderStyle = BorderStyle.None; o.ScrollBars = ScrollBars.None;
             o.Font = Font; o.ForeColor = ForeColor; o.BackColor = kieu == 0 ? GiaoDien.XanhDam : kieu == 1 ? GiaoDien.The : GiaoDien.Nen;
             o.Text = chu.Replace("\r\n", "\n").Replace("\n", "\r\n");
             Controls.Add(o);
+            // Người dùng 26/11: lăn chuột để đọc lại tin cũ.
+            o.MouseWheel += delegate(object s, MouseEventArgs e) { KhungCuon k = Parent as KhungCuon; if (k != null) k.Lan(e.Delta); };
+            // TextBox nhiều dòng không tự làm Ctrl+A; phím tới được đây nhờ BotChat.ChuyenPhim (AutoCAD bắt Ctrl+A/C trước palette).
+            o.KeyDown += delegate(object s, KeyEventArgs e)
+            {
+                if (!e.Control || e.Alt || e.Shift) return;
+                if (e.KeyCode == Keys.A) { o.SelectAll(); e.SuppressKeyPress = true; }
+                else if (e.KeyCode == Keys.C || e.KeyCode == Keys.Insert) { Chep(); e.SuppressKeyPress = true; }
+            };
+            // viền tin đang chọn + giữ focus palette khi chuột rời (như ô nhập)
+            o.GotFocus += delegate { Invalidate(); Giu(true); };
+            o.LostFocus += delegate { Invalidate(); Giu(false); };
             if (kieu != 0) return;
             foreach (string f in anhKem ?? DONG_ANH.Matches(chu).Cast<Match>().Select(x => x.Groups[1].Value.Trim()))
             {
@@ -224,6 +246,29 @@ namespace TKPCCC
 
         int NhoTai(Point p) { return oNho.FindIndex(r => r.Contains(p)); }
 
+        /// Chép phần đang chọn; không chọn gì thì chép cả tin.
+        void Chep()
+        {
+            string t = o.SelectionLength > 0 ? o.SelectedText : o.Text;
+            if (t != "") try { Clipboard.SetText(t); } catch (Exception) { }
+        }
+
+        void Giu(bool v)
+        {
+            for (Control c = Parent; c != null; c = c.Parent)
+            {
+                BotChat b = c as BotChat;
+                if (b != null) { if (b.GiuFocus != null) b.GiuFocus(v); return; }
+            }
+        }
+
+        /// Bấm lề bong bóng (ngoài ô chữ) cũng chọn tin này; KhungCuon không cuộn tới.
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            base.OnMouseDown(e);
+            if (NhoTai(e.Location) < 0 && !o.Focused) o.Focus();
+        }
+
         protected override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
@@ -254,6 +299,10 @@ namespace TKPCCC
                 using (SolidBrush b = new SolidBrush(Kieu == 0 ? GiaoDien.XanhDam : GiaoDien.The))
                     g.FillPath(b, p);
             }
+            if (o.Focused)
+                using (GraphicsPath p = GiaoDien.BoGoc(new Rectangle(0, 0, Width - 1, Height - 1), Kieu == 2 ? 4 : 12))
+                using (Pen v = new Pen(Kieu == 0 ? Ve.Tron(GiaoDien.XanhDam, Color.White, 0.6f) : GiaoDien.Xanh, 1.5f))
+                    g.DrawPath(v, p);
             for (int i = 0; i < oNho.Count; i++)
             {
                 g.DrawImage(nho[i], oNho[i]);

@@ -5,9 +5,9 @@ $ErrorActionPreference = 'Stop'
 $FW = "$env:WINDIR\Microsoft.NET\Framework64\v4.0.30319"
 $GOC = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $T = Join-Path $env:TEMP ('tkpccc_hub_' + [guid]::NewGuid().ToString('N').Substring(0, 8))
-$BIN = "$T\cad\bin"
+$BIN = "$T\cad\16_HUB_CAI_DAT"; $BINM = "$T\cad\18_MCP"
 # 17/11: 3 plugin rieng (PCCC, YouTube, Bot chat), moi plugin mot bundle
-New-Item -ItemType Directory $BIN, "$T\cad\TKPCCC.bundle\Contents", "$T\cad\TKPCCC_YouTube.bundle\Contents", "$T\cad\TKPCCC_BotChat.bundle\Contents", "$T\cad\13_YOUTUBE\webview2" | Out-Null
+New-Item -ItemType Directory $BIN, $BINM, "$T\cad\TKPCCC.bundle\Contents", "$T\cad\TKPCCC_YouTube.bundle\Contents", "$T\cad\TKPCCC_BotChat.bundle\Contents", "$T\cad\13_YOUTUBE\webview2" | Out-Null
 'gia' | Set-Content "$T\cad\TKPCCC.bundle\Contents\TKPCCC.Cad.dll"
 'gia' | Set-Content "$T\cad\TKPCCC_YouTube.bundle\Contents\TKPCCC.YouTube.dll"
 'gia' | Set-Content "$T\cad\TKPCCC_BotChat.bundle\Contents\TKPCCC.BotChat.dll"
@@ -17,10 +17,10 @@ foreach ($f in $WV2) { 'gia' | Set-Content "$T\cad\13_YOUTUBE\webview2\$f" }
 & "$FW\csc.exe" /nologo /target:winexe /codepage:65001 /out:"$BIN\TKPCCC.Hub.exe" /r:"$FW\System.Web.Extensions.dll" /r:System.Core.dll `
   /r:System.Windows.Forms.dll /r:System.Drawing.dll "$GOC\07_CAD\14_HUB\Hub.cs" "$GOC\07_CAD\05_NEN_TANG\chung\HangDoi.cs"
 if ($LASTEXITCODE) { throw 'Bien dich Hub loi' }
-& "$FW\csc.exe" /nologo /target:exe /codepage:65001 /out:"$BIN\TKPCCC.Mcp.exe" /r:"$FW\System.Web.Extensions.dll" /r:System.Core.dll `
+& "$FW\csc.exe" /nologo /target:exe /codepage:65001 /out:"$BINM\TKPCCC.Mcp.exe" /r:"$FW\System.Web.Extensions.dll" /r:System.Core.dll `
   "$GOC\07_CAD\06_VE_TU_DONG_AI\mcp\Mcp.cs" "$GOC\07_CAD\05_NEN_TANG\chung\HangDoi.cs"
 if ($LASTEXITCODE) { throw 'Bien dich Mcp loi' }
-Copy-Item "$GOC\07_CAD\01_TRI_THUC_VE\TU_VUNG.md" $BIN
+Copy-Item "$GOC\07_CAD\01_TRI_THUC_VE\TU_VUNG.md" $BINM
 
 # Nha gia: Claude Desktop co san 1 may chu khac + khoa khac (chuoi co ngoac kep, gach cheo, chu Viet), Gemini co khoa dang nhap.
 $NHA = "$T\nha"
@@ -33,7 +33,7 @@ $VIET = 'Vi' + [char]0x1EC7 + 't'
 $LK = "$NHA\AppData\Roaming\Autodesk\ApplicationPlugins\TKPCCC.bundle"
 $LKYT = "$NHA\AppData\Roaming\Autodesk\ApplicationPlugins\TKPCCC_YouTube.bundle"
 $LKBOT = "$NHA\AppData\Roaming\Autodesk\ApplicationPlugins\TKPCCC_BotChat.bundle"
-$MCP = "$BIN\TKPCCC.Mcp.exe"
+$MCP = "$BINM\TKPCCC.Mcp.exe"
 
 $loi = 0
 function Kiem($dk, $ten) { if ($dk) { "DAT   $ten" } else { "LOI   $ten"; $script:loi++ } }

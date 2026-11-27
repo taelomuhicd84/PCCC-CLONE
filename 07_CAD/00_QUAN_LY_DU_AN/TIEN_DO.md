@@ -3,6 +3,21 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `07_CAD/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `07_CAD/00_QUAN_LY_DU_AN/KE_HOACH.md`. Nhật ký: `07_CAD/00_QUAN_LY_DU_AN/LICH_SU.md`. Luật riêng: `07_CAD/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `07_CAD/00_QUAN_LY_DU_AN/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`07_CAD/CLAUDE.md`).
 
+## 27/11: BOT CHAT NHƯ CLAUDE CODE (EFFORT + ULTRACODE, MENU "/", CHÉP TỪNG TIN, TÀI KHOẢN PRO/FP, /usage) — XONG MÃ, build 7/7, CHƯA THỬ TRONG AUTOCAD
+- Người dùng (đêm 26/11, làm tiếp sáng 27/11): bot chat như Claude Code: menu effort như ảnh (Low…Max, Medium "Recommended", xhigh = "Extra") + Ultracode;
+  bấm một tin rồi Ctrl+A / Ctrl+C chép riêng tin đó; gõ "/" hiện menu lệnh, skill, plugin, help, usage.
+- Menu model (`02_MAY_AI_MODEL/MayAi.cs`): nhóm Effort có dòng mô tả; mục Ultracode (`chat_ultracode`: thêm công cụ Agent + từ khoá "ultracode" đầu lời nhắn);
+  nhóm Tài khoản Claude (`chat_tk` tu_dong | pro | fp; Pro lỗi đăng nhập / hết hạn mức thì tự chạy lại bằng cổng FP một lần; "Đăng nhập Claude Pro…" chạy `claude auth login --claudeai` ngầm).
+  Đếm token, chi phí, giới hạn 5 giờ / tuần (rate_limit_event) cho `/usage`.
+- Menu "/" (`04_DU_AN_SKILL/LenhGach.cs` mới, thay `MenuSkill`): bảng nổi trên khung soạn, lọc theo chữ gõ, lên/xuống/Enter/Tab/Esc; nhóm Lệnh bot
+  (/help /clear /new /resume /model /effort /ultracode /usage /cost /status /login /account /mcp /skills /plugins /stop /copy), Lệnh Claude Code
+  (/compact /init /review /security-review gửi nguyên văn), Skill (dự án, 07_CAD, chỗ chứa skill, plugin:skill + mô tả từ SKILL.md).
+- Chép tin (`01_KHUNG_CHAT/GiaoDienChat.cs`, `BotChat.cs` `ChuyenPhim`): bấm tin = chọn (viền), Ctrl+A chọn hết tin đó, Ctrl+C chép phần chọn / cả tin; chuột phải "Chọn hết tin này"; lăn chuột trên chữ cuộn khung.
+  Thêm: Ctrl+X ô trống gửi ngay lời nhắn đang xếp hàng; bấm ảnh đính kèm = xem, ✕ = bỏ; thu nhỏ AutoCAD không còn xếp tin lặp (đơ).
+- Kết quả build dời `bin/` → `16_HUB_CAI_DAT/` (Hub), `17_KEYGEN/`, `18_MCP/` (máy chủ MCP); `.mcp.json`, build.bat, test, tài liệu đổi theo. Hub nút "Cài tất cả còn thiếu".
+- Test: build.bat 7/7; thu_bot, thu_hub TAT CA DAT. CHƯA: thu_gui (cần tắt AutoCAD), thử menu "/", Ctrl+A/C, Ultracode trong AutoCAD thật (tắt hẳn AutoCAD, mở lại, TKBOTCHAT).
+- Chưa commit (phiên khác, để nguyên): `Cau.cs`, `Spec.cs`, `NhanVung.cs`, `11_TIEN_ICH/vscode-usage/`, `ai_vung_t1*.json`, file Excel thủy lực.
+
 ## 26/11 chiều (tiếp 4): BLOCK PCCC VÀO `15_THU_VIEN_BLOCK/01_PCCC/` — XONG, build 7/7
 - Người dùng: mọi thứ liên quan block PCCC vào thư mục PCCC trong thư viện block; sau này thêm kiến trúc, xây dựng (`02_KIEN_TRUC/`, `03_XAY_DUNG/` cùng kiểu).
 - `01_PCCC/`: `cad/ThuVien.cs` (PCCC_LIB), `cad/DatThietBi.cs` (PCCC_DAT, PCCC_ONG), `ui/BangChonVatTu.cs`, `hinh_bc.json` (từ `03_DU_LIEU_VE/ky_hieu/`; build.bat, chay_thu, hinh_tu_pdf.py, kiem_lien_ket đổi theo).

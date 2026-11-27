@@ -8,7 +8,7 @@
 // - Cài đặt "Nối phiên chung" (19/11): VS Code / Claude Code = phiên chọn ở Lịch sử ghi thẳng vào phiên gốc, mở hội thoại bên đó bằng link.
 // - Vùng chọn: đối tượng đang chọn trên CAD (hoặc TKBOTCHON) gửi kèm handle, thành phần, hộp bao để AI đọc (doc gi:"dt") và sửa (sua / xoa theo "h").
 // - Dự án = thư mục làm việc của CLI (CLAUDE.md, skill .claude\skills); khác 07_CAD\ thì vẫn --add-dir 07_CAD\. Chỗ chứa skill, link phiên: PhienAi.cs.
-// Lưu ở cai_dat.json: chat_ai, model, chat_effort, model_gemini, chat_thu_muc, chat_du_an, chat_du_an_ds, chat_skill, agy_models, chat_noi.
+// Lưu ở cai_dat.json: chat_ai, model, chat_effort, model_gemini, chat_thu_muc, chat_du_an, chat_du_an_ds, chat_skill, agy_models, chat_noi, chat_tk (tu_dong | pro | fp), chat_ultracode.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -30,7 +30,7 @@ namespace TKPCCC
     {
         public const string MAU_PDF = "Vẽ theo quy trình 6 bước từ PDF: ";
         public const string MAU_SO_DO = "Vẽ sơ đồ nguyên lý báo cháy từ mặt bằng đang mở";
-        const string CAI_CLAUDE = "Không tìm thấy lệnh claude. Cài Claude Code (npm i -g @anthropic-ai/claude-code), mở terminal gõ claude một lần để đăng nhập, rồi thử lại.";
+        const string CAI_CLAUDE = "Không tìm thấy lệnh claude. Cài Claude Code (npm i -g @anthropic-ai/claude-code) rồi thử lại; đăng nhập: nút model → Tài khoản → Đăng nhập Claude Pro (hoặc chọn Cổng FP).";
         const string CAI_AGY = "Không tìm thấy agy (Antigravity CLI). Cài Antigravity, mở terminal gõ agy một lần để đăng nhập Google, rồi thử lại.";
         static readonly string[] TEN_AI = { "Claude", "Antigravity" };
         static readonly string THU_MUC_ANH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TKPCCC", "botchat", "anh");
@@ -152,16 +152,23 @@ namespace TKPCCC
             nhap.Font = new Font("Segoe UI", 9.5f);
             nhap.KeyDown += delegate(object s, KeyEventArgs e)
             {
+                if (PhimGach(e)) return; // bảng "/" đang mở: lên/xuống/Enter/Tab/Esc thuộc bảng (LenhGach.cs)
                 if (e.KeyCode == Keys.Enter && !e.Shift) { e.SuppressKeyPress = true; GiaoDien.An(GuiNhap); }
                 // Ctrl+X không bôi đen chữ = gửi gấp (người dùng 19/11); có bôi đen thì vẫn là Cắt như thường.
                 else if (e.KeyCode == Keys.X && e.Control && !e.Shift && !e.Alt && nhap.SelectionLength == 0) { e.SuppressKeyPress = true; GiaoDien.An(GuiGap); }
             };
             // Palette mất focus khi chuột rời khỏi nó (AutoCAD trả phím về dòng lệnh): giữ focus khi đang gõ ở ô nhập (LenhBotChat gán GiuFocus).
             nhap.GotFocus += delegate { if (GiuFocus != null) GiuFocus(true); };
-            nhap.LostFocus += delegate { if (GiuFocus != null) GiuFocus(false); };
+            nhap.LostFocus += delegate
+            {
+                if (GiuFocus != null) GiuFocus(false);
+                // focus sang chỗ khác trong bot (bấm một tin...) thì đóng bảng "/"; chỉ palette mất focus thì giữ
+                BeginInvoke((Action)delegate { if (ContainsFocus && !nhap.Focused) AnGach(); });
+            };
+            nhap.PreviewKeyDown += delegate(object s, PreviewKeyDownEventArgs e) { if (e.KeyCode == Keys.Tab && bang != null && bang.Visible) e.IsInputKey = true; };
             dang = this;
             if (!daMoc) { daMoc = true; AcAp.Application.PreTranslateMessage += ChuyenPhim; }
-            nhap.TextChanged += delegate { goiYNhap.Visible = nhap.TextLength == 0; };
+            nhap.TextChanged += delegate { goiYNhap.Visible = nhap.TextLength == 0; LocGach(); };
             nhap.DanAnh = DanAnh;
             nhap.AllowDrop = true;
             nhap.DragEnter += delegate(object s, DragEventArgs e) { e.Effect = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None; };
@@ -175,7 +182,7 @@ namespace TKPCCC
                 });
             };
             goiYNhap.Text = "Thêm yêu cầu…";
-            goiY.SetToolTip(nhap, "Enter gửi (bot đang chạy: xếp hàng), Ctrl+X gửi gấp vào lượt đang chạy, Shift+Enter xuống dòng, Ctrl+V dán ảnh, kéo thả ảnh / file vào đây");
+            goiY.SetToolTip(nhap, "Enter gửi (bot đang chạy: xếp hàng), Ctrl+X gửi gấp vào lượt đang chạy (ô trống: gửi ngay lời nhắn đang xếp hàng), Shift+Enter xuống dòng, Ctrl+V dán ảnh, kéo thả ảnh / file vào đây");
             goiYNhap.ForeColor = GiaoDien.ChuMo;
             goiYNhap.BackColor = GiaoDien.The;
             goiYNhap.Font = nhap.Font;
@@ -190,8 +197,8 @@ namespace TKPCCC
             NutIcon cong = new NutIcon(Ve.THEM, "Đính kèm: ảnh, vùng CAD, thư mục, skill, câu mẫu", goiY);
             cong.Click += delegate { GiaoDien.An(MenuCong); };
             Chip gach = new Chip(null, "/", false);
-            goiY.SetToolTip(gach, "Skill của dự án / chỗ chứa skill");
-            gach.BamChip += MenuSkill;
+            goiY.SetToolTip(gach, "Lệnh, skill (như Claude Code): gõ / đầu ô nhập, /help xem hết");
+            gach.BamChip += MoGach;
             nutModel = new Chip(null, "", false);
             nutModel.BamChip += MenuModel;
             goiY.SetToolTip(nutModel, "Model và effort (mức suy nghĩ: cao hơn = kỹ hơn, chậm và tốn hạn mức hơn)");
@@ -242,7 +249,13 @@ namespace TKPCCC
             System.Windows.Interop.MSG m = e.Message;
             if (m.message < 0x100 || m.message > 0x102) return; // WM_KEYDOWN, WM_KEYUP, WM_CHAR
             BotChat b = dang;
-            if (b == null || b.IsDisposed || !b.nhap.IsHandleCreated || m.hwnd != b.nhap.Handle) return;
+            if (b == null || b.IsDisposed || !b.nhap.IsHandleCreated) return;
+            if (m.hwnd != b.nhap.Handle)
+            {
+                // ô chữ một tin của bot đang focus (Ctrl+A / Ctrl+C chép tin, người dùng 27/11): cũng chuyển thẳng, không để AutoCAD bắt
+                Control c = Control.FromHandle(m.hwnd);
+                if (!(c is TextBox) || !(c.Parent is BongBong) || !b.dsTin.Contains(c)) return;
+            }
             TranslateMessage(ref m);
             DispatchMessage(ref m);
             e.Handled = true;
@@ -258,9 +271,13 @@ namespace TKPCCC
         {
             if (p == null) { GuiNhap(); return; }
             string cau = nhap.Text.Trim();
+            // Người dùng 26/11: lỡ Enter (lời nhắn đã vào hàng chờ) thì Ctrl+X ở ô trống gửi ngay các lời nhắn đang xếp hàng.
+            bool tuHang = cau == "" && hangCho.Count > 0;
+            if (tuHang) cau = string.Join("\n\n", hangCho);
             if (cau == "") return;
             if (!vaoMo)
             {
+                if (tuHang) { trangThai.Text = ai == 0 ? "Lượt này đang kết thúc: lời nhắn đang xếp hàng sẽ gửi ngay sau." : "Antigravity chưa nhận lời nhắn giữa lượt: lời nhắn vẫn xếp hàng."; return; }
                 GuiNhap();
                 trangThai.Text = ai == 0 ? "Lượt này đang kết thúc: lời nhắn xếp hàng." : "Antigravity chưa nhận lời nhắn giữa lượt: lời nhắn xếp hàng.";
                 return;
@@ -270,8 +287,8 @@ namespace TKPCCC
             if (dv != null && banVeTruoc != null && !string.Equals(dv.Name, banVeTruoc, StringComparison.OrdinalIgnoreCase))
                 gui = "(Lời nhắn gửi gấp lúc tôi đang xem \"" + Path.GetFileName(dv.Name) + "\"; công cụ cad của lượt đang chạy vẫn làm trên \""
                     + Path.GetFileName(banVeTruoc) + "\", việc cho bản vẽ kia để lượt sau.)\n\n" + gui;
-            if (!GhiVao(p, gui)) { vaoMo = false; GuiNhap(); return; }
-            nhap.Clear();
+            if (!GhiVao(p, gui)) { vaoMo = false; if (!tuHang) GuiNhap(); return; }
+            if (tuHang) hangCho.Clear(); else nhap.Clear();
             Ghi("Bạn", "[gửi gấp] " + cau + kem, GiaoDien.Xanh, anh.Where(File.Exists).ToList());
             BoDinhKem();
         }
@@ -303,10 +320,11 @@ namespace TKPCCC
             string cau = nhap.Text.Trim();
             if (cau == "") return;
             nhap.Clear();
+            if (ChayLenh(cau)) return; // lệnh bot "/usage", "/effort high"...: chạy ngay, cả khi đang chạy
             if (p != null)
             {
                 hangCho.Enqueue(cau);
-                Ghi(null, "Xếp hàng (gửi khi xong lượt này): " + cau, GiaoDien.ChuMo);
+                Ghi(null, "Xếp hàng (gửi khi xong lượt này; Ctrl+X để gửi ngay): " + cau, GiaoDien.ChuMo);
                 return;
             }
             if (!Gui(cau)) nhap.Text = cau; // chưa gửi được (thiếu CLI, repo): trả chữ lại ô nhập
@@ -342,6 +360,17 @@ namespace TKPCCC
 
         /// Xếp lại bong bóng theo bề rộng khung: người dùng lệch phải, AI lệch trái. cuoi = cuộn xuống tin cuối.
         void XepTin(bool cuoi)
+        {
+            // Người dùng 26/11: hạ AutoCAD xuống là đơ. Thu nhỏ thì khung rộng ~0: xếp ở bề rộng âm làm thanh cuộn bật/tắt -> Resize -> xếp lại mãi.
+            // Khung quá hẹp thì để nguyên, mở lại cửa sổ sẽ có Resize xếp lại; đang xếp thì không xếp lồng.
+            if (dangXep || dsTin.ClientSize.Width < 120 || dsTin.ClientSize.Height < 40) { choCuoi |= cuoi; return; }
+            dangXep = true;
+            try { XepTin0(cuoi || choCuoi); choCuoi = false; } finally { dangXep = false; }
+        }
+
+        bool dangXep, choCuoi; // choCuoi: tin mới tới lúc đang thu nhỏ, mở lại thì cuộn xuống
+
+        void XepTin0(bool cuoi)
         {
             int rong = dsTin.ClientSize.Width - 20, y = dsTin.AutoScrollPosition.Y + 10;
             dsTin.SuspendLayout();
@@ -405,7 +434,7 @@ namespace TKPCCC
             {
                 string ff = f;
                 Label t = new Label();
-                t.Size = new Size(40, 30);
+                t.Size = new Size(56, 42);
                 t.Margin = new Padding(0, 2, 6, 2);
                 t.BackColor = GiaoDien.Nen;
                 t.BackgroundImage = ThuNho(ff);
@@ -415,8 +444,14 @@ namespace TKPCCC
                 t.ForeColor = t.BackgroundImage == null ? GiaoDien.ChuDam : Color.White;
                 t.Font = GiaoDien.Nho;
                 t.Cursor = Cursors.Hand;
-                t.Click += delegate { anh.Remove(ff); VeChip(); };
-                goiY.SetToolTip(t, ff + "\nBấm để bỏ ảnh");
+                // Người dùng 26/11: bấm ảnh = xem ảnh; chỉ bấm ✕ góc trên phải mới bỏ.
+                t.MouseClick += delegate(object s, MouseEventArgs e)
+                {
+                    if (e.Button != MouseButtons.Left) return;
+                    if (e.X >= t.Width - 16 && e.Y <= 16) { anh.Remove(ff); VeChip(); }
+                    else try { Process.Start(ff); } catch (System.Exception) { }
+                };
+                goiY.SetToolTip(t, ff + "\nBấm ảnh để xem, bấm ✕ để bỏ");
                 chip.Controls.Add(t);
             }
             chip.ResumeLayout();

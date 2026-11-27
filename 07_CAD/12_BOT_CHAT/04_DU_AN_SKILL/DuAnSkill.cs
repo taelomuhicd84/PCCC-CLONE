@@ -115,28 +115,7 @@ namespace TKPCCC
 
         // ---------- Hội thoại, lịch sử, link phiên ----------
 
-        /// Menu "/": skill của thư mục dự án, của <repo>\cad (luôn gắn), thư mục gắn kèm, chỗ chứa skill. Chọn = chèn "/tên " đầu ô nhập.
-        void MenuSkill()
-        {
-            List<string> ten = new List<string>();
-            string lam = ThuMucLam(), cad = ThuMucCad();
-            foreach (string d in new[] { lam, cad }.Concat(thuMuc).Where(d => d != null && Directory.Exists(d)))
-                ten.AddRange(KhoPhien.TenSkill(Path.Combine(d, ".claude", "skills"), null));
-            foreach (string d in skill.Where(Directory.Exists))
-            {
-                string tienTo, ms;
-                KhoPhien.CoSkill(d, out tienTo, out ms);
-                ten.AddRange(KhoPhien.TenSkill(ms, tienTo));
-            }
-            ContextMenuStrip m = new ContextMenuStrip();
-            foreach (string t in ten.Distinct().OrderBy(t => t))
-            {
-                string tt = t;
-                m.Items.Add("/" + t, null, delegate { DatCau("/" + tt + " " + nhap.Text.TrimStart()); });
-            }
-            if (m.Items.Count == 0) m.Items.Add("(chưa có skill: + → Chỗ chứa skill, hoặc chọn dự án có .claude\\skills)").Enabled = false;
-            HienMenu(m, khungSoan);
-        }
+        // Menu "/" (lệnh + skill như Claude Code): LenhGach.cs.
 
     }
 }

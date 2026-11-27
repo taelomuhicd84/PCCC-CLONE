@@ -1,4 +1,4 @@
-// App tạo key cho chủ plugin (07_CAD\bin\TKPCCC.KeyGen.exe). Biên dịch chung với 11_BAN_QUYEN/cad/BanQuyen.cs (cùng hợp đồng key).
+// App tạo key cho chủ plugin (07_CAD\17_KEYGEN\TKPCCC.KeyGen.exe). Biên dịch chung với 11_BAN_QUYEN/cad/BanQuyen.cs (cùng hợp đồng key).
 // Không đối số: cửa sổ WinForms. Có đối số (bộ test và người quen dòng lệnh):
 //   tao <thư mục khoá công khai> <thư mục khoá riêng>   tạo cặp khoá RSA 2048 (không ghi đè)
 //   ky <khoa_rieng.xml> <email> <mã máy> <yyyy-MM-dd>    in key

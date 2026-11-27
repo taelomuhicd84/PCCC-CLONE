@@ -12,8 +12,8 @@ Làm MỘT lần theo thứ tự dưới đây. Không cần biết lập trình
 - Chỉ bản build `07_CAD\build.bat phat_hanh` mới khoá lệnh. Bản build thường (`07_CAD\build.bat`) dùng nội bộ, không khoá.
 
 ## Bước 1. Tạo cặp khoá
-1. Chạy `07_CAD\build.bat` (một lần) để có `07_CAD\bin\TKPCCC.KeyGen.exe`.
-2. Mở `07_CAD\bin\TKPCCC.KeyGen.exe`, bấm **Tạo cặp khoá mới**.
+1. Chạy `07_CAD\build.bat` (một lần) để có `07_CAD\17_KEYGEN\TKPCCC.KeyGen.exe`.
+2. Mở `07_CAD\17_KEYGEN\TKPCCC.KeyGen.exe`, bấm **Tạo cặp khoá mới**.
    - Khoá công khai ghi vào `07_CAD\03_DU_LIEU_VE\ban_quyen\khoa_cong_khai.xml` (được commit lên GitHub, không sao).
    - Khoá riêng ghi vào `C:\Users\<bạn>\TKPCCC_KHOA\` (`khoa_rieng.xml`, `khoa_rieng.pem`). **Sao lưu thư mục này ra USB.**
      KHÔNG chép vào repo, không gửi ai. Mất khoá riêng = không cấp thêm key được; lộ khoá riêng = ai cũng tự cấp key được.
@@ -48,7 +48,7 @@ Làm MỘT lần theo thứ tự dưới đây. Không cần biết lập trình
 
 ## Bước 5. Build bản phát hành
 1. Chạy `07_CAD\build.bat phat_hanh` (thiếu khoá công khai thì báo lỗi, quay lại Bước 1).
-2. Gửi khách thư mục `07_CAD\TKPCCC.bundle` (KHÔNG gửi `07_CAD\bin\TKPCCC.KeyGen.exe`, không gửi thư mục `TKPCCC_KHOA`).
+2. Gửi khách thư mục `07_CAD\TKPCCC.bundle` (KHÔNG gửi `07_CAD\17_KEYGEN\TKPCCC.KeyGen.exe`, không gửi thư mục `TKPCCC_KHOA`).
 
 ## Hằng ngày
 - Khách: `PCCC_BANQUYEN` → nhập email → **Đăng ký** → chờ vài phút → **Lấy key tự động** (hoặc dán key bạn gửi, bấm **Kích hoạt**).

@@ -1,4 +1,4 @@
-// Người dùng 18/11 (ảnh khung chat mẫu có "Link VS Code session", chọn dự án): Bot chat nối tiếp phiên của Claude Code (VS Code, CLI, Desktop, chính Bot chat)
+﻿// Người dùng 18/11 (ảnh khung chat mẫu có "Link VS Code session", chọn dự án): Bot chat nối tiếp phiên của Claude Code (VS Code, CLI, Desktop, chính Bot chat)
 // và hội thoại Antigravity; chọn thư mục chứa skill. File này chỉ đọc kho phiên trên máy + dựng cờ CLI, không có giao diện (test/thu_bot.ps1 thử ngoài AutoCAD).
 // - Claude: %USERPROFILE%\.claude\projects\<thư mục mã hoá>\<session_id>.jsonl (dòng có cwd, entrypoint; tên ở dòng custom-title / ai-title).
 // - Antigravity: %USERPROFILE%\.gemini\antigravity\conversation_summaries.db (SQLite; .NET 4 không có SQLite nên đọc thô bản ghi bảng conversation_summaries).
@@ -35,10 +35,12 @@ namespace TKPCCC
 
         static string Nha() { return Environment.GetFolderPath(Environment.SpecialFolder.UserProfile); }
 
+        /// Gốc lịch sử Claude: CLAUDE_CONFIG_DIR nếu có thư mục projects (.claude-fp\projects là symlink về .claude\projects nên thấy cả phiên Pro),
+        /// không thì %USERPROFILE%\.claude (Pro ghi ở đây).
         static string GocClaude()
         {
             string e = Environment.GetEnvironmentVariable("CLAUDE_CONFIG_DIR");
-            return string.IsNullOrEmpty(e) ? Path.Combine(Nha(), ".claude") : e;
+            return !string.IsNullOrEmpty(e) && Directory.Exists(Path.Combine(e, "projects")) ? e : Path.Combine(Nha(), ".claude");
         }
 
         static string DocDoan(string f, long tu, int dai)
@@ -279,7 +281,7 @@ namespace TKPCCC
         {
             string f = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TKPCCC", "botchat", "mcp.json");
             Directory.CreateDirectory(Path.GetDirectoryName(f));
-            Dictionary<string, object> may = new Dictionary<string, object> { { "command", Path.Combine(cad, "bin", "TKPCCC.Mcp.exe") }, { "args", new object[0] } };
+            Dictionary<string, object> may = new Dictionary<string, object> { { "command", Path.Combine(cad, "18_MCP", "TKPCCC.Mcp.exe") }, { "args", new object[0] } };
             if (banVe != null) may["env"] = new Dictionary<string, object> { { "TKPCCC_CAD_BAN_VE", banVe } };
             System.IO.File.WriteAllText(f, js.Serialize(new Dictionary<string, object> { { "mcpServers", new Dictionary<string, object> { { "cad", may } } } }), new UTF8Encoding(false));
             return f;

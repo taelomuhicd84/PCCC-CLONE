@@ -872,3 +872,6 @@ Nguoi dung: thu vien block ra ngoai nhom PCCC, 3 menu Kien truc / Xay dung / PCC
 Nguoi dung: moi thu lien quan block PCCC vao thu muc PCCC trong thu vien block. git mv ThuVien.cs, DatThietBi.cs (cad), BangChonVatTu.cs (ui), 03_DU_LIEU_VE/ky_hieu/hinh_bc.json -> 15_THU_VIEN_BLOCK/01_PCCC/; Block.cs, BangBlock.cs giu o goc 15 (phan chung). PCCC_Blocks.dwg, block_alias.json van o TKPCCC.bundle/Contents. Test: build 7/7; thu_mcp TAT CA DAT; chay_thu chi 1 LOI cu Karaoke 123; kiem_lien_ket 0 loi.
 ## 2026-11-26 chieu (tiep 5) — PCCC_Blocks.dwg, block_alias.json vao 15_THU_VIEN_BLOCK/01_PCCC
 git mv tu TKPCCC.bundle/Contents. Lenh.ThuMucBlockPccc suy <repo>/07_CAD/15_THU_VIEN_BLOCK/01_PCCC tu nguon_vat_tu.txt (khong co: canh DLL); FileThuVien, FileAlias, ban cat PCCC_Blocks_cu_* dung thu muc do. build.bat chep 2 file canh DLL cho ban phat hanh (gitignore). Test: build 7/7; thu_mcp TAT CA DAT; chay_thu chi 1 LOI cu Karaoke 123; kiem_lien_ket 0 loi; chua thu AutoCAD that.
+
+## 2026-11-27 — Bot chat như Claude Code
+Effort như Claude Code (Extra, Recommended) + Ultracode; menu "/" (LenhGach.cs: lệnh bot, lệnh Claude Code, skill/plugin); bấm tin Ctrl+A/Ctrl+C chép riêng tin; tài khoản Pro/FP tự chuyển; /usage. Kết quả build bin/ → 16_HUB_CAI_DAT, 17_KEYGEN, 18_MCP. Build 7/7, thu_bot + thu_hub đạt; chưa thử trong AutoCAD.
