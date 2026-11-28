@@ -1348,6 +1348,71 @@ foreach ($y in (0..8 | ForEach-Object { 6000 * $_ })) {
   # E39: PCCC_GANDAM dam bet 1400x700 cho line co san (Enter = Giu, khong tu dao); spec "dam" ve 2 dam theo tim, "doc" tra truong dam.
   '(princ "\n==E39==")', '_.LINE', '2800000,0', '2806000,0', '', 'PCCC_GANDAM', '1400x700', '', 'L', '',
   'PCCC_SPEC', "$T\dam.json",
+  # E40 (nguoi dung 28/11 TESTVUNGBCHAY lung, WC sau khu rua P.M03): phong 8 x 5 m tuong 1 net; vach 2 net CO NAP (rectang 100 x 4000) tu tuong duoi,
+  #    dau tren cach tuong tren 1 m, cung canh cua mo vao WC. Truoc sua: dau co nap "da cham net khac", o cua chu T khong khep, 1 vung 39,6 m2.
+  #    Ky vong: khep o cua, 2 vung 25 + 14,5 m2.
+  '(princ "\n==E40==")', '-LAYER', 'M', 'TUONG', '', '_.ZOOM', 'W', '2899000,-1000', '2909000,6000',
+  '_.RECTANG', '2900000,0', '2908000,5000', '_.RECTANG', '2905000,0', '2905100,4000', '-LAYER', 'S', '0', '',
+  '_.ARC', 'C', '2905100,4000', '2906000,4000', 'A', '90',
+  'PCCC_RAI', 'BC_KHOI', '', '', 'C', '2899500,-500', '2908500,5500', '', '', '',
+  # E41 (nguoi dung 28/11 lung truc 4/A-B, phong trong che doi): phong 6 x 4 m, 2 than tuong 3 x 0,2 m tu tuong phai (y 0,5 va 3,3 m), hai NAP dau tuong
+  #    thang hang x 3 m cach 2,6 m. Truoc sua: khep khe giua hai nap nhu o cua, 2 vung. Ky vong: 1 vung 22,8 m2.
+  '(princ "\n==E41==")', '-LAYER', 'M', 'TUONG', '', '_.ZOOM', 'W', '2919000,-1000', '2927000,5000',
+  '_.RECTANG', '2920000,0', '2926000,4000', '_.RECTANG', '2923000,500', '2926000,700', '_.RECTANG', '2923000,3300', '2926000,3500', '-LAYER', 'S', '0', '',
+  'PCCC_RAI', 'BC_KHOI', '', '', 'C', '2919500,-500', '2926500,4500', '', '', '',
+  # E42 (nguoi dung 28/11 lung P.101 dinh o thong tang qua vach 1 net): phong 8 x 4 m, vach x 5 m tren layer thuong (khong lam tuong), o 3 x 4 m co dau X
+  #    NET KHUAT (HIDDEN). Truoc sua: X net dut khong nhan, 1 vung 32 m2. Ky vong: o X co gieng khoet khoi phong, 1 vung 20 m2.
+  '(princ "\n==E42==")', '-LAYER', 'M', 'TUONG', '', '_.ZOOM', 'W', '2939000,-1000', '2949000,5000',
+  '_.RECTANG', '2940000,0', '2948000,4000', '-LAYER', 'M', 'NETTHAY', '', '_.LINE', '2945000,0', '2945000,4000', '',
+  '-LAYER', 'M', 'NETKHUAT', 'L', 'HIDDEN', '', '', '_.LINE', '2945000,0', '2948000,4000', '', '_.LINE', '2945000,4000', '2948000,0', '',
+  '-LAYER', 'S', '0', '', 'PCCC_RAI', 'BC_KHOI', '', '', 'C', '2939500,-500', '2948500,4500', '', '', '',
+  # E43 (nguoi dung 28/11 ram doc lung truc 7-8/A-B): nha 10 x 6 m chia 6 + 4 m; phong phai co 8 chevron ">" net xien 2,8 m buoc 0,3 m (nhu block *U126).
+  #    Truoc sua: phong ram 24 m2 co vung. Ky vong: bo_ram_doc=1, chi con vung 36 m2.
+  '(princ "\n==E43==")', '-LAYER', 'M', 'TUONG', '', '_.ZOOM', 'W', '2959000,-1000', '2971000,7000',
+  '_.RECTANG', '2960000,0', '2970000,6000', '_.LINE', '2966000,0', '2966000,6000', '', '-LAYER', 'M', 'NETMANH', '',
+  '_.PLINE', '2966200,5800', '2966700,3000', '2966200,200', '', '_.PLINE', '2966500,5800', '2967000,3000', '2966500,200', '',
+  '_.PLINE', '2966800,5800', '2967300,3000', '2966800,200', '', '_.PLINE', '2967100,5800', '2967600,3000', '2967100,200', '',
+  '_.PLINE', '2967400,5800', '2967900,3000', '2967400,200', '', '_.PLINE', '2967700,5800', '2968200,3000', '2967700,200', '',
+  '_.PLINE', '2968000,5800', '2968500,3000', '2968000,200', '', '_.PLINE', '2968300,5800', '2968800,3000', '2968300,200', '',
+  '-LAYER', 'S', '0', '', 'PCCC_RAI', 'BC_KHOI', '', '', 'C', '2959500,-500', '2970500,6500', '', '', '',
+  # E44 (nguoi dung 28/11 lo thong tang nhieu tang): 2 mat bang 12 x 6 m (tang 2 doi 20 m), 3 phong 4 x 6 m; phong phai co o 2 x 2 m goc tren.
+  #    Tang 1: o 2 x 2 m la phong co cua (khe 0,9 m + cung canh). Tang 2: o do co dau X net khuat (co gieng). Quet 2 tang mot lan.
+  #    Ky vong: tang 2 o X la lo thong tang nho -> vung rieng 4 m2; tang 1 phong 4 m2 duoi o X khong vung (bo_duoi_lo=4); 7 vung.
+  '(princ "\n==E44==")', '-LAYER', 'M', 'TUONG', '', '_.ZOOM', 'W', '2979000,-3000', '3013000,7000',
+  '_.RECTANG', '2980000,0', '2992000,6000', '_.LINE', '2984000,0', '2984000,6000', '', '_.LINE', '2988000,0', '2988000,6000', '',
+  '_.LINE', '2989000,4000', '2989500,4000', '', '_.LINE', '2990400,4000', '2991000,4000', '', '_.LINE', '2989000,4000', '2989000,6000', '', '_.LINE', '2991000,4000', '2991000,6000', '',
+  '_.RECTANG', '3000000,0', '3012000,6000', '_.LINE', '3004000,0', '3004000,6000', '', '_.LINE', '3008000,0', '3008000,6000', '',
+  '_.LINE', '3009000,4000', '3011000,4000', '', '_.LINE', '3009000,4000', '3009000,6000', '', '_.LINE', '3011000,4000', '3011000,6000', '',
+  '-LAYER', 'M', 'NETKHUAT', '', '_.LINE', '3009000,4000', '3011000,6000', '', '_.LINE', '3009000,6000', '3011000,4000', '',
+  '-LAYER', 'S', '0', '', '_.ARC', 'C', '2989500,4000', '2990400,4000', 'A', '-90',
+  '_.TEXT', '2983000,-2000', '500', '0', 'MAT BANG TANG 1', '_.TEXT', '3003000,-2000', '500', '0', 'MAT BANG TANG 2',
+  'PCCC_RAI', 'BC_KHOI', '', '', 'C', '2979500,-3000', '3012500,6500', '', '', '',
+  # E45 (nguoi dung 28/11 cot loi): phong 8 x 5 m, cot 600 x 1100 loi tu tuong tren 1,1 m (canh >= 1 m: LamGon cu con khac). Ky vong: 40 m2 (4 dinh).
+  '(princ "\n==E45==")', '-LAYER', 'M', 'TUONG', '', '_.ZOOM', 'W', '3019000,-1000', '3029000,6000',
+  '_.RECTANG', '3020000,0', '3028000,5000', '-LAYER', 'M', 'COT', '', '_.RECTANG', '3023700,3900', '3024300,5000', '-LAYER', 'S', '0', '',
+  'PCCC_RAI', 'BC_KHOI', '', '', 'C', '3019500,-500', '3028500,5500', '', '', '',
+  # E46 (nguoi dung 28/11 sanh truoc thang bo + hanh lang): hanh lang 10 x 1,2 m, dau phai sanh 2,2 x 1,2 m truoc buong thang (block THANG_BO46,
+  #    cua thang co cung canh), tru 0,2 x 0,8 m duoi chan tuong buong thang (khe 0,4 m khep). Truoc sua: sanh gop vao hanh lang 14,64 m2.
+  #    Ky vong: sanh_thang_bo=1, hai vung 12 + 2,64 m2.
+  '(princ "\n==E46==")', '-LAYER', 'M', 'TUONG', '', '_.ZOOM', 'W', '3039000,-1000', '3053000,5000',
+  '_.LINE', '3040000,0', '3052200,0', '', '_.LINE', '3040000,0', '3040000,1200', '', '_.LINE', '3040000,1200', '3050000,1200', '',
+  '_.LINE', '3052200,0', '3052200,4200', '', '_.LINE', '3050000,1200', '3050000,4200', '', '_.LINE', '3050000,4200', '3052200,4200', '',
+  '_.RECTANG', '3049800,0', '3050000,800', '_.LINE', '3050000,1200', '3050500,1200', '', '_.LINE', '3051400,1200', '3052200,1200', '',
+  '-LAYER', 'S', '0', '', '_.RECTANG', '3050100,1700', '3052100,4100', '-BLOCK', 'THANG_BO46', '3050100,1700', 'L', '', '-INSERT', 'THANG_BO46', '3050100,1700', '1', '', '0',
+  '_.ARC', 'C', '3050500,1200', '3051400,1200', 'A', '90',
+  'PCCC_RAI', 'BC_KHOI', '', '', 'C', '3039500,-500', '3052700,4700', '', '', '',
+  # E47 (nguoi dung 28/11 lung truc 6-7/A-B): phong 5 x 4,85 m co dau X NET KHUAT ve LECH (net 6 m va 4,8 m cat nhau o 40 % / 58 %, mot dau giua canh trai):
+  #    OXKhuat khong nhan; nhan theo mat (OXMat) -> o thong tang (thong_tang=1).
+  '(princ "\n==E47==")', '-LAYER', 'M', 'TUONG', '', '_.ZOOM', 'W', '3059000,-1000', '3066000,6000', '_.RECTANG', '3060000,0', '3065000,4850',
+  '-LAYER', 'M', 'NETKHUAT', '', '_.LINE', '3060000,0', '3063500,4850', '', '_.LINE', '3063400,0', '3060000,3350', '',
+  '-LAYER', 'S', '0', '', 'PCCC_RAI', 'BC_KHOI', '', '', 'C', '3059500,-500', '3065500,5350', '', '', '',
+  # E48 (nguoi dung 28/11 TESTVUNGBCHAY tang 1 P.104: cot truc 3 tren layer truc, tuong ho dung cho cot): phong 8 x 2,8 m; tuong tren 2 manh ho 0,2 m
+  #    (cho cot), nap manh phai x 3 m; hop tuong nho duoi tuong duoi, mep x 3 m cham GIUA mat tuong duoi. Truoc sua: khep khe 2,8 m nap - hop, che 2 phong.
+  #    Ky vong: 1 vung 22,4 m2.
+  '(princ "\n==E48==")', '-LAYER', 'M', 'TUONG', '', '_.ZOOM', 'W', '3069000,-1000', '3079000,4000',
+  '_.LINE', '3070000,0', '3078000,0', '', '_.LINE', '3070000,0', '3070000,2900', '', '_.LINE', '3078000,0', '3078000,2900', '',
+  '_.RECTANG', '3070000,2800', '3072800,2900', '_.RECTANG', '3073000,2800', '3078000,2900', '_.RECTANG', '3073000,-100', '3073100,0',
+  '-LAYER', 'S', '0', '', 'PCCC_RAI', 'BC_KHOI', '', '', 'C', '3069500,-500', '3078500,3400', '', '', '',
   '(princ "\n==EHET==")', '_.QSAVE')) -join "`r`n" | Set-Content -Encoding ascii "$T\kb7.scr"
 '{"ops":[{"op":"dam","bxh":"300x500","p":[[2810000,0],[2816000,0],[2816000,4000]]},{"op":"doc","gi":"dt","l":"PCCC_DAM"},{"op":"dam","bxh":"abc","p":[[0,0],[1000,0]]}]}' |
   Set-Content -Encoding ascii "$T\dam.json"
@@ -1443,8 +1508,9 @@ Kiem ($e29 -notmatch 'bo_hanh_lang_ben' -and $e29 -match 'bo_khu_khong_bao=1 m2=
 $e30 = CaRv 'E30'
 Kiem ($e30 -match 'khoet_thang=1 m2=3.8 ') "Nguoi dung 23/11: thang ve net roi 8 bac 1,8 m cach 0,3 m: nhan ve thang 1,8 x 2,1 m, khoet 3,8 m2 ($([regex]::Match($e30, 'khoet_thang=\S+ m2=\S+').Value))"
 $e31 = CaRv 'E31'
-Kiem ($e31 -match 'mat_bang_tang=1,2 ' -and $e31 -match 'chieu_thong_tang=1 tang 1 duoi 2 m2=120->60\+60 ' -and (DtVung $e31).Count -eq 10 -and @(DtVung $e31 | Where-Object { $_ -eq 60 }).Count -eq 4) `
-  "Nguoi dung 25/11: quet 2 tang, tang 2 co o X thong tang 6 x 10 m, tang 1 khong co: sanh tang 1 120 m2 tach 60 (nhu o X tang 2) + 60; ten tang tu TEXT + thuoc tinh block ($([regex]::Match($e31, 'chieu_thong_tang=\S+ \S+ \S+ \S+ \S+ \S+').Value); vung=$((DtVung $e31) -join ','))"
+# Nguoi dung 28/11 (THAY 25/11): dau bao cot lo chi lap o tang cao nhat co X, phan tang 1 duoi o X khong vung (25/11: vung rieng 60 m2): 10 -> 9 vung.
+Kiem ($e31 -match 'mat_bang_tang=1,2 ' -and $e31 -match 'chieu_thong_tang=1 tang 1 duoi 2 m2=120->60 bo_duoi_lo=60 ' -and (DtVung $e31).Count -eq 9 -and @(DtVung $e31 | Where-Object { $_ -eq 60 }).Count -eq 3) `
+  "Nguoi dung 25/11 + 28/11: quet 2 tang, tang 2 co o X thong tang 6 x 10 m, tang 1 khong co: sanh tang 1 120 m2 tach 60 duoi o X (khong vung) + 60; ten tang tu TEXT + thuoc tinh block ($([regex]::Match($e31, 'chieu_thong_tang=\S+ \S+ \S+ \S+ \S+ \S+').Value); vung=$((DtVung $e31) -join ','))"
 $e32 = CaRv 'E32'
 $ktl = @([regex]::Matches($e32, 'KTL (-?\d+),(-?\d+) (-?\d+),(-?\d+)') | ForEach-Object { , @($_.Groups[1..4] | ForEach-Object { [double]$_.Value }) })
 $ktlN = @($ktl | Where-Object { $_[1] -eq $_[3] -and $_[1] -lt 1800 } | ForEach-Object { [math]::Abs($_[2] - $_[0]) } | Sort-Object)
@@ -1473,6 +1539,30 @@ $e39 = CaRv 'E39'
 $kqDam = DocKq 'dam'
 Kiem ($e39 -match 'PCCC_GANDAM n=1 bxh=1400x700' -and $kqDam -and @($kqDam.doc[0].ds | Where-Object { $_.dam -eq '300x500' }).Count -eq 2 -and @($kqDam.doc[0].ds | Where-Object { $_.dam -eq '400x600' }).Count -eq 1 -and @($kqDam.loi).Count -eq 1 -and $kqDam.loi[0].i -eq 2) `
   "Nguoi dung 27/11: PCCC_GANDAM giu dam bet 1400x700; spec dam ve 2 dam + doc tra dam=300x500 (2) va dam E38 400x600, bxh sai bao loi ($(if ($kqDam) { $kqDam | ConvertTo-Json -Compress -Depth 4 }))"
+$e40 = CaRv 'E40'
+Kiem ((DtVung $e40) -contains 25 -and (DtVung $e40) -contains 14.5 -and (DtVung $e40).Count -eq 2) `
+  "Nguoi dung 28/11: dau vach 2 net co nap canh o cua chu T (cua 1 m) van khep: phong 25 m2 + WC 14,5 m2, khong mot vung 39,6 (vung=$((DtVung $e40) -join ','))"
+$e41 = CaRv 'E41'
+Kiem ((DtVung $e41).Count -eq 1 -and (DtVung $e41) -contains 22.8) `
+  "Nguoi dung 28/11: hai nap dau tuong thang hang cach 2,6 m khong khep nhu o cua: phong trong 1 vung 22,8 m2 (vung=$((DtVung $e41) -join ','))"
+$e42 = CaRv 'E42'
+Kiem ($e42 -match 'tach_o_x=1 ' -and (DtVung $e42).Count -eq 1 -and (DtVung $e42) -contains 20) `
+  "Nguoi dung 28/11: o dau X net khuat (HIDDEN) dinh phong qua vach 1 net: khoet o khoi phong, 20 m2, o co gieng khong vung (vung=$((DtVung $e42) -join ',')) $([regex]::Match($e42, 'tach_o_x=\S+ m2=\S+').Value)"
+$e43 = CaRv 'E43'
+Kiem ($e43 -match 'bo_ram_doc=1 ' -and (DtVung $e43).Count -eq 1 -and (DtVung $e43) -contains 36) `
+  "Nguoi dung 28/11: ram doc nhan theo hinh (8 chevron net xien buoc 0,3 m): phong ram khong vung, con 36 m2 (vung=$((DtVung $e43) -join ','))"
+$e44 = CaRv 'E44'
+Kiem ($e44 -match 'lo_nho=1 ' -and $e44 -match 'bo_duoi_lo=4\b' -and (DtVung $e44).Count -eq 7 -and @(DtVung $e44 | Where-Object { $_ -eq 4 }).Count -eq 1) `
+  "Nguoi dung 28/11: quet 2 tang, o X co gieng tang 2 tren phong co cua tang 1 = lo thong tang: vung o 4 m2 o tang 2, phong tang 1 duoi o khong vung (vung=$((DtVung $e44) -join ',')) $([regex]::Match($e44, 'chieu_thong_tang=[^\x28]*').Value)"
+$e45 = CaRv 'E45'
+Kiem ($e45 -match 'V\S+ng t\S+ d\S+ng m2=40 \(4 ') "Nguoi dung 28/11: cot loi 1,1 m (600 x 1100) khong khac, vung ke thang mat tuong 40 m2 (vung=$((DtVung $e45) -join ','))"
+$e46 = CaRv 'E46'
+Kiem ($e46 -match 'sanh_thang_bo=1 ' -and @(DtVung $e46 | Where-Object { $_ -ge 11.8 -and $_ -le 12 }).Count -eq 1 -and (DtVung $e46) -contains 2.64) `
+  "Nguoi dung 28/11: sanh truoc thang bo o dau hanh lang la vung rieng chung canh: 12 + 2,64 m2, khong gop 14,64 (vung=$((DtVung $e46) -join ','))"
+$e47 = CaRv 'E47'
+Kiem ($e47 -match 'thong_tang=1 ') "Nguoi dung 28/11: dau X net khuat ve lech (cat nhau 40 % / 58 %) nhan theo mat kin: o thong tang ($([regex]::Match($e47, 'thong_tang=\S+ m2=\S+').Value))"
+$e48 = CaRv 'E48'
+Kiem ((DtVung $e48).Count -eq 1 -and (DtVung $e48) -contains 22.4) "Nguoi dung 28/11: khe tu nap tuong toi diem giua mat tuong vuong goc (xuyen long phong) khong khep: 1 vung 22,4 m2 (vung=$((DtVung $e48) -join ','))"
 $e25 = CaRv 'E25'
 $ktd = @([regex]::Matches($e25, 'KTD (-?\d+),(-?\d+) (-?\d+),(-?\d+) (-?\d+),(-?\d+)') | ForEach-Object { , @($_.Groups[1..6] | ForEach-Object { [double]$_.Value }) })
 $ktN = @($ktd | Where-Object { $_[3] -eq $_[5] }); $ktD = @($ktd | Where-Object { $_[2] -eq $_[4] })
@@ -1533,9 +1623,48 @@ if (Test-Path $hb) {
   $p12 = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/i `"$T\hb12.dwg`" /s `"$T\kbhb12.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kbhb12.out.txt"
   if (-not $p12.WaitForExit(300000)) { Stop-Process -Id $p12.Id -Force; throw "accoreconsole qua 5 phut (Karaoke 123 tang 1 + 2): $T\kbhb12.out.txt" }
   $o12 = [Text.Encoding]::Unicode.GetString([IO.File]::ReadAllBytes("$T\kbhb12.out.txt")) -replace "`0", ''
-  Kiem ($o12 -match 'mat_bang_tang=1,2 ' -and $o12 -notmatch 'bo_ngoai_truc' -and $o12 -match 'chieu_thong_tang=1 tang 1 duoi 2 m2=122\.22->61\.77\+49\.88 bo_ve_thang=10\.6 ' -and $o12 -match 'thoi_gian rai=\d+ms vung=31\b' -and $o12 -match 'PCCC_RAI BC_KHOI n=3 manh=2 ') `
-    "Ban chep Karaoke 123 tang 1 + 2 quet mot lan: tang 2 giu (khong bo ngoai truc), sanh tang 1 = vung o X tang 2 61,77 m2 + hanh lang 49,88 bam tuong, rai 2 manh ($([regex]::Match($o12, 'chieu_thong_tang=\S+ \S+ \S+ \S+ \S+ \S+ \S+').Value) $([regex]::Match($o12, 'vung=\d+').Value))"
+    # Nguoi dung 28/11 (THAY 25/11): phan sanh tang 1 duoi o X tang 2 (61,77 m2) khong con la vung (dau bao chi o tang cao nhat co X): 31 -> 30 vung.
+  Kiem ($o12 -match 'mat_bang_tang=1,2 ' -and $o12 -notmatch 'bo_ngoai_truc' -and $o12 -match 'chieu_thong_tang=1 tang 1 duoi 2 m2=122\.22->49\.8\d bo_duoi_lo=61\.7\d bo_ve_thang=10\.6 ' -and $o12 -match 'thoi_gian rai=\d+ms vung=30\b' -and $o12 -match 'PCCC_RAI BC_KHOI n=3 manh=2 ') `
+    "Ban chep Karaoke 123 tang 1 + 2 quet mot lan: tang 2 giu (khong bo ngoai truc), sanh tang 1 duoi o X tang 2 (61,77 m2) bo, hanh lang 49,85 bam tuong rai 2 manh ($([regex]::Match($o12, 'chieu_thong_tang=\S+ \S+ \S+ \S+ \S+ \S+ \S+ \S+').Value) $([regex]::Match($o12, 'rai=\d+ms vung=\d+').Value))"
 } else { 'BO    ban chep Karaoke 123 12_KET_QUA\HOC_BAO_CHAY\cad\hoc_bao_chay.dwg khong co' }
+
+# Nguoi dung 28/11 (TESTVUNGBCHAY: tang 1 + tang lung cung mot nha, truc 1-8 / A-C, lung = tang 1 doi x +36,1 m): ban chep chay "Enter moi phong"
+# (rai_phong chi_vung) quet rieng lung, roi quet ca 2 tang. Moc: WC sau khu rua khong vao P.M03; P.101 khong chua o thong tang truc 6-7; phong trong
+# truc 3-4 / A-B mot vung; ram doc truc 7-8 / A-B khong vung; hanh lang va sanh thang bo truc 4-5 hai vung; quet 2 tang: o X lung co vung, tang 1 duoi
+# o X khong vung. Chi chay khi may co file.
+$tvb = "$GOC\07_CAD\04_KIEM_THU\file_cad_test\TESTVUNGBCHAY.dwg"
+if (Test-Path $tvb) {
+  Copy-Item $tvb "$T\tvb.dwg"
+  ('{"ops":[{"op":"xoa","l":"PCCC_*","hop":[10000,48000,84000,68000]},{"op":"rai_phong","ma":"BC_KHOI","hop":[40000,50000,82000,68000],"chi_vung":true},' +
+   '{"op":"doc","gi":"vung","hop":[40000,50000,82000,68000]},{"op":"xoa","l":"PCCC_*","hop":[10000,48000,84000,68000]},' +
+   '{"op":"rai_phong","ma":"BC_KHOI","hop":[10000,48000,84000,68000],"chi_vung":true},{"op":"doc","gi":"vung","hop":[10000,48000,84000,68000]}]}') |
+    Set-Content -Encoding ascii "$T\tvb.json"
+  (@('NETLOAD', "`"$T\TKPCCC.Cad.dll`"", 'PCCC_SPEC', "$T\tvb.json", '_.QUIT', '_Y') -join "`r`n") | Set-Content -Encoding ascii "$T\kbtv.scr"
+  $ptv = Start-Process "$ACAD\accoreconsole.exe" -ArgumentList "/i `"$T\tvb.dwg`" /s `"$T\kbtv.scr`" /l en-US" -WorkingDirectory $T -NoNewWindow -PassThru -RedirectStandardOutput "$T\kbtv.out.txt"
+  if (-not $ptv.WaitForExit(300000)) { Stop-Process -Id $ptv.Id -Force; throw "accoreconsole qua 5 phut (TESTVUNGBCHAY): $T\kbtv.out.txt" }
+  $ktv = DocKq 'tvb'
+  $vl = if ($ktv -and $ktv.doc) { @($ktv.doc[0].ds) } else { @() }
+  $v2 = if ($ktv -and @($ktv.doc).Count -ge 2) { @($ktv.doc[1].ds) } else { @() }
+  function VungTai($ds, $x, $y) { @($ds | Where-Object { TrongDg $_.p $x $y }) }
+  $dongL = if ($ktv -and $ktv.rai) { ($ktv.rai[0].dong -join ' ') } else { '' }
+  $dong2 = if ($ktv -and @($ktv.rai).Count -ge 2) { ($ktv.rai[1].dong -join ' ') } else { '' }
+  $pm03 = @(VungTai $vl 56000 61500); $p101 = @(VungTai $vl 71000 61000); $pt34 = @(VungTai $vl 62000 56500); $hl = @(VungTai $vl 58000 59200); $sth = @(VungTai $vl 64300 59100)
+  Kiem ($pm03.Count -eq 1 -and $pm03[0].m2 -lt 23 -and @(VungTai $vl 62160 60850).Count -eq 0) "TESTVUNGBCHAY lung: WC sau khu rua tach khoi P.M03 (P.M03 $(($pm03 | ForEach-Object { $_.m2 }) -join ',') m2, truoc 25,07), WC khong vung"
+  Kiem ($p101.Count -eq 1 -and $p101[0].m2 -lt 10 -and @(VungTai $vl 74363 60500).Count -eq 0) "TESTVUNGBCHAY lung: P.101 khong chua o X thong tang truc 6-7 (P.101 $(($p101 | ForEach-Object { $_.m2 }) -join ',') m2, truoc 16,02); quet 1 tang o co gieng khong vung"
+  Kiem ($pt34.Count -eq 1 -and @(VungTai $vl 63800 56000).Count -eq 1 -and @(VungTai $vl 63800 56000)[0].h -eq $pt34[0].h) "TESTVUNGBCHAY lung: phong trong truc 3-4 / A-B mot vung ($(($pt34 | ForEach-Object { $_.m2 }) -join ',') m2, truoc 5,95 che o x 63060)"
+  Kiem (@(VungTai $vl 79500 56700).Count -eq 0 -and $dongL -match 'bo_ram_doc=') "TESTVUNGBCHAY lung: ram doc truc 7-8 / A-B khong vung (truoc 13,36 m2) ($([regex]::Match($dongL, 'bo_ram_doc=\S+ m2=\S+').Value))"
+  Kiem ($hl.Count -eq 1 -and $sth.Count -eq 1 -and $hl[0].h -ne $sth[0].h -and $dongL -match 'sanh_thang_bo=1 ') "TESTVUNGBCHAY lung: hanh lang $(($hl | ForEach-Object { $_.m2 }) -join ',') + sanh thang bo $(($sth | ForEach-Object { $_.m2 }) -join ',') m2 hai vung (truoc gop 15,73)"
+  # 28/11 (soat lan 3): tang 1 P.104 mot vung ~19 m2 (truoc che o truc 3: 12,04 + 7,1 bi bo nhu WC vi bep); P.giat (ten "P.giat", hep, 2 bac day) co vung.
+  $p104 = @(VungTai $v2 19500 62000); $p104b = @(VungTai $v2 23000 62000)
+  Kiem ($p104.Count -eq 1 -and $p104b.Count -eq 1 -and $p104[0].h -eq $p104b[0].h -and $p104[0].m2 -ge 18.5 -and @(VungTai $v2 26200 62200).Count -eq 1) `
+    "TESTVUNGBCHAY tang 1: P.104 mot vung $(($p104 | ForEach-Object { $_.m2 }) -join ',') m2 (truoc 12,04 + 7,1 bo), P.giat co vung $((@(VungTai $v2 26200 62200) | ForEach-Object { $_.m2 }) -join ',') m2"
+  # 28/11 (soat ban chep 2 tang): o X lung truc 6-7/A-B ve lech (OXMat) la thong tang: lung co vung, tang 1 duoi do (10,79 m2) khong vung;
+  # sanh thang bo tang 1 truc 4-5 bi cat vun: chua dung vung, phai bao sanh_thang_bo_vun.
+  Kiem (@(VungTai $v2 74000 57000).Count -eq 1 -and @(VungTai $v2 38200 57300).Count -eq 0 -and $dong2 -match 'sanh_thang_bo_vun=\d+ m2=[^ ]*@28\d{3},59\d{3}') `
+    "TESTVUNGBCHAY quet tang 1 + lung: o X lech truc 6-7/A-B lung co vung, tang 1 duoi o khong vung (truoc 10,79 m2); sanh thang bo tang 1 truc 4-5 cat vun duoc bao ($([regex]::Match($dong2, 'sanh_thang_bo_vun=\S+ m2=\S+').Value))"
+  Kiem (@(VungTai $v2 74363 60500).Count -eq 1 -and @(VungTai $v2 60160 55500).Count -eq 1 -and @(VungTai $v2 38251 61400).Count -eq 0 -and @(VungTai $v2 24048 56113).Count -eq 0 -and $dong2 -match 'chieu_thong_tang=') `
+    "TESTVUNGBCHAY quet tang 1 + lung: o X lung (truc 6-7, truc 3-4) co vung, tang 1 duoi o X khong vung ($([regex]::Match($dong2, 'o_x_nhieu_tang=[^\x28]*').Value)$([regex]::Match($dong2, 'chieu_thong_tang=[^\x28]*').Value))"
+} else { 'BO    ban chep TESTVUNGBCHAY 07_CAD\04_KIEM_THU\file_cad_test\TESTVUNGBCHAY.dwg khong co' }
 
 # chay_spec.ps1: -Dwg tuong doi tinh theo thu muc hien tai cua PowerShell; thu muc co dau (chu a huyen) va dau cach.
 $tmVN = "$T\Nh$([char]0xE0) A"

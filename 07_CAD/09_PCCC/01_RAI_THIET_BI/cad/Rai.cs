@@ -1611,8 +1611,8 @@ namespace TKPCCC
             if (nhanThem.ThongTang.Count > 0)
                 ed.WriteMessage("\n[TKPCCC] thong_tang=" + nhanThem.ThongTang.Count + " m2=" + string.Join(",", nhanThem.ThongTang.Select(o =>
                     Math.Round(Math.Abs(DienTichDaGiac(o)) * m * m, 1).ToString(CultureInfo.InvariantCulture)
-                    + "(" + Math.Round(o[0].GetDistanceTo(o[1]) * m, 1).ToString(CultureInfo.InvariantCulture) + "x" + Math.Round(o[1].GetDistanceTo(o[2]) * m, 1).ToString(CultureInfo.InvariantCulture) + ")@" + Math.Round(o.Average(q => q.X)).ToString(CultureInfo.InvariantCulture)
-                    + "," + Math.Round(o.Average(q => q.Y)).ToString(CultureInfo.InvariantCulture))) + " (ô dấu X lớn = sảnh / lỗ thông tầng: VÙNG RẢI RIÊNG, đầu báo, đầu phun"
+                    + "(" + Math.Round((o.Max(q => q.X) - o.Min(q => q.X)) * m, 1).ToString(CultureInfo.InvariantCulture) + "x" + Math.Round((o.Max(q => q.Y) - o.Min(q => q.Y)) * m, 1).ToString(CultureInfo.InvariantCulture) + ")@" + Math.Round(TamO(o).X).ToString(CultureInfo.InvariantCulture)
+                    + "," + Math.Round(TamO(o).Y).ToString(CultureInfo.InvariantCulture))) + " (ô dấu X lớn = sảnh / lỗ thông tầng: VÙNG RẢI RIÊNG, đầu báo, đầu phun"
                     + " của vùng này lắp ở ĐỈNH sảnh thông tầng; hành lang, ô giáp sảnh là vùng riêng, lắp ở trần tầng đó).");
             if (gach.Count > 0) ed.WriteMessage("\n[TKPCCC] gach_cheo=" + gach.Count + " (hatch gạch chéo = công trình hiện hữu: Enter mọi phòng thì bỏ qua).");
             bool veVung = vung.Count == 0;
@@ -1620,6 +1620,8 @@ namespace TKPCCC
             HashSet<List<Point2d>> daVe = new HashSet<List<Point2d>>(); // phòng đã vẽ (nhiều khoang dầm chung một phòng)
             HashSet<List<Point2d>> coLo = new HashSet<List<Point2d>>(); // vùng có lỗ nối ra viền bằng khe (ChieuThongTang): không làm gọn
             bool tatCa = false; // Enter = mọi phòng (không bấm điểm từng phòng)
+            List<List<Point2d>> xKhong = new List<List<Point2d>>(), xVung = new List<List<Point2d>>(), xMoThem = new List<List<Point2d>>(); // ô X không rải / là vùng riêng / lỗ nhỏ mới (PhanTangX)
+            HashSet<List<Point2d>> sanhThang = new HashSet<List<Point2d>>(); // sảnh trước thang bộ đầu hành lang (GopMatNho): vùng riêng, không bỏ như sảnh thang máy
             if (veVung)
             {
                 if (mat.Count == 0)
@@ -1636,12 +1638,30 @@ namespace TKPCCC
                     if (traLoi == TAT_CA)
                     {
                         List<List<Point2d>> pt = PhongThat(mat, m);
+                        // Người dùng 28/11 (TESTVUNGBCHAY tầng 1 "P.giặt" 1,4 x 2,4 m, đáy có 2 bậc): mặt kín nhỏ nhất chứa tên phòng là phòng dù PhongThat bỏ (hẹp).
+                        List<List<Point2d>> phongTen = nhanThem.TenPhong.Select(p => mat.Where(f0 => TrongDaGiac(f0, p)).OrderBy(f0 => Math.Abs(DienTichDaGiac(f0))).FirstOrDefault())
+                            .Where(f0 => f0 != null && !pt.Contains(f0) && Math.Abs(DienTichDaGiac(f0)) * m * m >= 1 && !pt.Any(g => TrongDaGiac(f0, DiemTrongMat(g)))).Distinct().ToList();
+                        if (phongTen.Count > 0)
+                        {
+                            pt.AddRange(phongTen);
+                            ed.WriteMessage("\n[TKPCCC] phong_ten=" + phongTen.Count + " m2=" + string.Join(",", phongTen.Select(f0 => Math.Round(Math.Abs(DienTichDaGiac(f0)) * m * m, 1).ToString(CultureInfo.InvariantCulture)))
+                                + " (mặt nhỏ / hẹp có chữ tên phòng: vẫn là phòng, có vùng).");
+                        }
                         int gopSanh, gopNho, oCua;
-                        pt = GopMatNho(mat, pt, nhanThem.Doan, khuKhong, nhanThem.VatDung, m, out gopSanh, out gopNho, out oCua, nhanThem.Cua, nhanThem.LanCan, nhanThem.ThongTang);
+                        pt = GopMatNho(mat, pt, nhanThem.Doan, khuKhong, nhanThem.VatDung, m, out gopSanh, out gopNho, out oCua, nhanThem.Cua, nhanThem.LanCan, nhanThem.ThongTang, nhanThem.ThangBo, sanhThang);
+                        if (sanhThang.Count > 0) ed.WriteMessage("\n[TKPCCC] sanh_thang_bo=" + sanhThang.Count + " m2=" + string.Join(",", sanhThang.Select(f0 => Math.Round(Math.Abs(DienTichDaGiac(f0)) * m * m, 1).ToString(CultureInfo.InvariantCulture)))
+                            + " (sảnh trước thang bộ ở đầu hành lang: vùng riêng, chung cạnh với hành lang tại mép buồng thang).");
                         if (oCua > 0) ed.WriteMessage("\n[TKPCCC] o_nho_qua_cua=" + oCua + " (ô nhỏ chỉ thông với phòng qua ô cửa có cánh: vùng riêng, không gộp).");
                         if (gopSanh + gopNho > 0) ed.WriteMessage("\n[TKPCCC] gop_sanh=" + gopSanh + " gop_o_nho=" + gopNho
                             + " (sảnh nhỏ trước WC, ô giao, đoạn hành lang chỉ ngăn bằng khe hở: gộp vào phòng / hành lang kề).");
-                        vung = pt.Where(f0 => !MatKhongRai(f0, oX, gach)).ToList();
+                        // Người dùng 28/11: quét nhiều tầng thì ô X xét theo cột lỗ (tầng cao nhất có X mới có vùng; ô cỡ giếng trên phòng có cửa = lỗ thông tầng).
+                        List<string> ghiX = new List<string>();
+                        PhanTangX(pt, mat, nhanThem, oX, m, xKhong, xVung, xMoThem, ghiX);
+                        foreach (string d0 in ghiX) ed.WriteMessage("\n[TKPCCC] " + d0 + " (quét nhiều tầng: tầng cao nhất có X của cột lỗ là vùng riêng, tầng dưới không vùng; X ở mọi tầng = giếng).");
+                        if (nhanThem.OXNho.Count > 0) ed.WriteMessage("\n[TKPCCC] o_x_net_khuat=" + nhanThem.OXNho.Count + " (ô dấu X nét khuất cỡ giếng: hộp kỹ thuật, lỗ nhỏ: không rải, khoét khỏi phòng kề).");
+                        loaiTru.AddRange(xKhong.Where(o => !oX.Contains(o)));
+                        // phòng dính ô X (rộng hơn 1,3 lần ô, vd P.101 + ô thông tầng qua vách 1 nét) giữ lại, khoét ô sau LamGon (KhoetOX)
+                        vung = pt.Where(f0 => !MatKhongRai(f0, xKhong.Where(o => Math.Abs(DienTichDaGiac(f0)) <= 1.3 * Math.Abs(DienTichDaGiac(o))).ToList(), gach)).ToList();
                         if (pt.Count > vung.Count) ed.WriteMessage("\n[TKPCCC] bo_phong=" + (pt.Count - vung.Count) + " (ô X, gạch chéo).");
                         // Người dùng 17/11: ngoài đường trục ngoài cùng thì không phân vùng khi chưa được cho phép (bấm điểm trong phòng = cho phép).
                         if (khungTruc != null)
@@ -1695,6 +1715,7 @@ namespace TKPCCC
                                 return TrongDaGiac(g0, c) || CachVien(g0, c) <= Math.Max(h[1].X - h[0].X, h[1].Y - h[0].Y) / 2 + 0.3 / m; };
                             List<List<Point2d>> wcTrong = vung.Where(f0 =>
                             {
+                                if (sanhThang.Contains(f0)) return false; // sảnh trước thang bộ: cửa thang mở vào buồng thang, không phải WC (28/11)
                                 // Người dùng 26/11 chiều (ô 2,5 x 2,75 m = 6,9 m² trong phòng 8–9 TESTBCHAY: "phòng đó cũng khá to, có thể là kho nên phải bao vùng"):
                                 // WC riêng chỉ tới 5 m² (WC thật ở đó 2,6–3,2 m²); ô lớn hơn coi là kho, vẫn có vùng và đầu báo.
                                 if (Math.Abs(DienTichDaGiac(f0)) * m * m > 5 || nhanThem.TenChu.Any(p => TrongDaGiac(f0, p)) || nhanThem.TenPhong.Any(p => TrongDaGiac(f0, p))) return false;
@@ -1744,7 +1765,7 @@ namespace TKPCCC
                             Func<List<Point2d>, int> soCua = f0 => nhanThem.Cua.Count(h => { Point2d c = new Point2d((h[0].X + h[1].X) / 2, (h[0].Y + h[1].Y) / 2);
                                 return TrongDaGiac(f0, c) || CachVien(f0, c) <= 1 / m; });
                             // Người dùng 21/11 (nhắc lại): phòng có chữ SẢNH (không kèm THANG), TIẾP TÂN, LỄ TÂN là sảnh chung: luôn rải.
-                            List<List<Point2d>> sanh = vung.Where(f0 => DienTichDaGiac(f0) * m * m <= 30 && oX.Any(x => keNhau(f0, x))
+                            List<List<Point2d>> sanh = vung.Where(f0 => !sanhThang.Contains(f0) && DienTichDaGiac(f0) * m * m <= 30 && oX.Any(x => keNhau(f0, x))
                                 && !nhanThem.Sanh.Any(p => TrongDaGiac(f0, p))
                                 && (soCua(f0) <= 2 || nhanThem.ThangBo.Any(h => TrongDaGiac(f0, new Point2d((h[0].X + h[1].X) / 2, (h[0].Y + h[1].Y) / 2))))).ToList();
                             vung = vung.Where(f0 => !sanh.Contains(f0)).ToList();
@@ -1872,13 +1893,30 @@ namespace TKPCCC
                     }
                 }
                 // Người dùng 16/11: vùng vẽ ra là đa giác gọn (bỏ khấc cột, cung cửa, gờ < 1 m), không bám từng nét tường.
+                List<int> iSanh = Enumerable.Range(0, vung.Count).Where(i => sanhThang.Contains(vung[i])).ToList();
                 vung = vung.Select(d => LamGon(d, LAM_GON_M / m, 0.002 / m)).ToList();
+                if (iSanh.Count > 0) vung = NoiSanhThang(vung, iSanh, m); // sảnh thang bộ chung cạnh hành lang (LamGon bỏ khấc đầu hành lang)
+                // Người dùng 28/11: ô X không bao giờ gộp với phòng kề (khoét hộp ô X khỏi phòng; ô là vùng riêng thì thêm vùng ô); ram dốc không vùng, không
+                // gộp vào vùng kề (chữ RAM / DỐC, hoặc hộp chevron chiếm ≥ 1/2 vùng: bỏ cả vùng; ít hơn: khoét). Sau LamGon: làm gọn không lấp lại hộp đã khoét.
+                if (tatCa)
+                {
+                    List<string> ghiKx = new List<string>(), ghiRam = new List<string>();
+                    vung = KhoetOX(vung, xKhong.Concat(xVung).ToList(), xVung, xMoThem, v.he == "BC" ? nhanThem.RamDoc : new List<Point2d[]>(), mat, m, coLo, ghiKx, ghiRam);
+                    if (v.he == "BC")
+                    {
+                        List<List<Point2d>> ramChu = vung.Where(f0 => Math.Abs(DienTichDaGiac(f0)) * m * m <= 150 && nhanThem.RamChu.Any(p => TrongDaGiac(f0, p))).ToList();
+                        vung = vung.Where(f0 => !ramChu.Contains(f0)).ToList();
+                        ghiRam.AddRange(ramChu.Select(f0 => Math.Round(Math.Abs(DienTichDaGiac(f0)) * m * m, 1).ToString(CultureInfo.InvariantCulture)));
+                    }
+                    if (ghiKx.Count > 0) ed.WriteMessage("\n[TKPCCC] tach_o_x=" + ghiKx.Count + " m2=" + string.Join(";", ghiKx) + " (ô X không gộp với phòng kề: khoét hộp ô X khỏi phòng; ô X là vùng riêng thì thêm vùng ô).");
+                    if (ghiRam.Count > 0) ed.WriteMessage("\n[TKPCCC] bo_ram_doc=" + ghiRam.Count + " m2=" + string.Join(";", ghiRam) + " (ram dốc: chevron nét xiên lặp đều hoặc chữ RAM / DỐC: không vùng, không đầu báo, không gộp vào vùng kề).");
+                }
                 // Người dùng 25/11: quét nhiều tầng (Enter mọi phòng), tầng trên có ô X thông tầng mà tầng ngay dưới không có: vùng tầng dưới ở đó lấy như vùng
                 // ô X tầng trên. Sau LamGon: phòng chưa làm gọn có thể tự chạm (khe cửa 100 mm của kho gầm thang Karaoke 123 tầng 1), Region không dựng được.
                 if (tatCa)
                 {
                     List<string> chieu = new List<string>();
-                    vung = ChieuThongTang(vung, nhanThem, oX, m, coLo, chieu);
+                    vung = ChieuThongTang(vung, nhanThem, xVung, xKhong.Concat(xVung).ToList(), m, coLo, chieu);
                     if (chieu.Count > 0) ed.WriteMessage("\n[TKPCCC] chieu_thong_tang=" + chieu.Count + " " + string.Join("; ", chieu)
                         + " (tầng dưới sảnh thông tầng không có dấu X: vùng ở đó lấy đúng như vùng ô X tầng trên, đầu báo / đầu phun lắp ở ĐỈNH sảnh;"
                         + " phần còn lại của phòng là vùng riêng, lắp ở trần tầng đó; vế thang cạnh sảnh bỏ).");
@@ -1895,7 +1933,11 @@ namespace TKPCCC
                         bool bo = false;
                         foreach (Point2d[] h in nhanThem.ThangBo)
                         {
-                            if (!TrongDaGiac(kq, new Point2d((h[0].X + h[1].X) / 2, (h[0].Y + h[1].Y) / 2))) continue;
+                            // thang 2 vế: tâm hộp rơi vào tường giữa hai vế (vùng buồng thang ôm tường giữa thành chữ U, TESTVUNGBCHAY tầng 1 trục 1–2):
+                            // xét cả tâm hai nửa hộp theo cạnh ngắn
+                            bool ngH = h[1].X - h[0].X <= h[1].Y - h[0].Y;
+                            double xc = (h[0].X + h[1].X) / 2, yc = (h[0].Y + h[1].Y) / 2, dx4 = ngH ? (h[1].X - h[0].X) / 4 : 0, dy4 = ngH ? 0 : (h[1].Y - h[0].Y) / 4;
+                            if (!new[] { new Point2d(xc, yc), new Point2d(xc - dx4, yc - dy4), new Point2d(xc + dx4, yc + dy4) }.Any(q => TrongDaGiac(kq, q))) continue;
                             double dtZ = Math.Abs(DienTichDaGiac(kq)) * m * m, dtH = (h[1].X - h[0].X) * (h[1].Y - h[0].Y) * m * m;
                             if (dtH >= 0.5 * dtZ) { bo = true; buong.Add(Math.Round(dtZ, 1).ToString(CultureInfo.InvariantCulture)); break; }
                             List<Point2d> t = KhoetHop(kq, NanHop(kq, h, 0.3 / m, 0.01 / m), 0.002 / m);
@@ -1908,6 +1950,36 @@ namespace TKPCCC
                     vung = conT;
                     if (khoet.Count > 0) ed.WriteMessage("\n[TKPCCC] khoet_thang=" + khoet.Count + " m2=" + string.Join(",", khoet) + " (thang bộ trong phòng khoét ra như lỗ thông tầng: không đặt đầu báo trên thang).");
                     if (buong.Count > 0) ed.WriteMessage("\n[TKPCCC] bo_buong_thang=" + buong.Count + " m2=" + string.Join(",", buong) + " (thang bộ chiếm ≥ 50 % phòng = buồng thang: không đặt đầu báo; cần rải thì vẽ polyline kín " + LAYER_VUNG + " quanh phòng rồi chọn lại).");
+                }
+                // Người dùng 28/11 (TESTVUNGBCHAY tầng 1 trục 4–5/B–C): sảnh trước thang bộ giữa hai cửa đối nhau bị khe khép ngang sảnh (má cửa ngắn thẳng hàng,
+                // tường giữa hai vế thang thẳng hàng tường dưới) cắt vụn, không mảnh nào thành vùng. Chưa tự dựng (thử nhận má cửa làm sảnh lửng nuốt chiếu
+                // nghỉ): chỉ báo cụm mặt nhỏ (≥ 0,3 m², rộng TB ≥ 0,25 m) sát hộp thang bộ (≤ 0,6 m, không chồng hộp), ngoài mọi vùng, tổng ≥ 1,5 m².
+                if (tatCa && v.he == "BC" && nhanThem.ThangBo.Count > 0)
+                {
+                    double ganT = 0.6 / m, ganC = 0.5 / m;
+                    List<List<Point2d>> vun = mat.Where(f0 =>
+                    {
+                        double a0 = Math.Abs(DienTichDaGiac(f0)) * m * m, p0 = 0;
+                        for (int i = 0; i < f0.Count; i++) p0 += f0[i].GetDistanceTo(f0[(i + 1) % f0.Count]) * m;
+                        if (a0 < 0.3 || a0 > 6 || 2 * a0 / p0 < 0.25) return false;
+                        Point2d c0 = DiemTrongMat(f0);
+                        double x0 = f0.Min(q => q.X), y0 = f0.Min(q => q.Y), x1 = f0.Max(q => q.X), y1 = f0.Max(q => q.Y);
+                        return !vung.Any(z => TrongDaGiac(z, c0)) && !khuKhong.Any(q => TrongDaGiac(f0, q)) && !nhanThem.VatDung.Any(q => TrongDaGiac(f0, q))
+                            && !xKhong.Concat(xVung).Any(o => TrongDaGiac(o, c0))
+                            && nhanThem.ThangBo.Any(h => h[0].X <= x1 + ganT && h[1].X >= x0 - ganT && h[0].Y <= y1 + ganT && h[1].Y >= y0 - ganT)
+                            && !nhanThem.ThangBo.Any(h => h[0].X < x1 && h[1].X > x0 && h[0].Y < y1 && h[1].Y > y0);
+                    }).ToList();
+                    int[] cumV = CumPhong(vun, ganC);
+                    List<string> ghiV = new List<string>();
+                    foreach (IGrouping<int, int> g in Enumerable.Range(0, vun.Count).GroupBy(i => cumV[i]))
+                    {
+                        double aC = g.Sum(i => Math.Abs(DienTichDaGiac(vun[i]))) * m * m;
+                        if (aC < 1.5) continue;
+                        double cx = g.Average(i => DiemTrongMat(vun[i]).X), cy = g.Average(i => DiemTrongMat(vun[i]).Y);
+                        ghiV.Add(Math.Round(aC, 1).ToString(CultureInfo.InvariantCulture) + "@" + Math.Round(cx).ToString(CultureInfo.InvariantCulture) + "," + Math.Round(cy).ToString(CultureInfo.InvariantCulture));
+                    }
+                    if (ghiV.Count > 0) ed.WriteMessage("\n[TKPCCC] sanh_thang_bo_vun=" + ghiV.Count + " m2=" + string.Join(";", ghiV)
+                        + " (sảnh trước thang bộ bị khe khép ngang cắt vụn, chưa thành vùng: kiểm lại; cần rải thì bấm điểm trong sảnh hoặc vẽ polyline kín " + LAYER_VUNG + ").");
                 }
                 List<List<Point2d>> coSan = VungCoSan(db);
                 if (coSan.Count > 0)

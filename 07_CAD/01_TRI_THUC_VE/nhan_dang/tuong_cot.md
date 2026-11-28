@@ -36,6 +36,12 @@ Mã: `ThuNet`, `LoaiLop`, `NetLien`, `GhiCotUng`, `TachCot`, `MatChon` trong `07
 - Hàng cột là cơ sở chia khoang vì kèo: `07_CAD/01_TRI_THUC_VE/nhan_dang/dam_khoang.md`.
 
 ## Vùng kẹp sát mặt tường (người dùng 20/11, CHƯA có mã)
+- NGƯỜI DÙNG 28/11 (THAY ngưỡng "cột lồi ≤ 150 mm" ở `phong_vung.md` luật 9f): cột lồi ra bao nhiêu cũng KHÔNG khấc. Vùng bao theo đường mặt tường,
+  kẻ thẳng qua chỗ cột; phần cột lồi nằm trong vùng.
+  Plugin ĐÃ LÀM 28/11: `LamGon` vốn đã bỏ khấc có mọi cạnh < 1 m (ngưỡng "sâu" thật là 1 m, không phải 150 mm: 150 mm chỉ là luật AI tự vẽ). Thêm
+  `BoCotLoi` sau làm gọn: khấc cỡ cột (mặt cột ≤ 1,2 m, lồi vào lòng vùng ≤ 1,2 m) giữa tường hoặc ở góc phòng kẻ thẳng theo mặt tường. Đuôi tường ngăn
+  dài hơn 1,2 m không phải cột: vẫn khấc (`vung_tu_dong` "ho 500"). Kết quả tự cắt / nở > 25 % thì giữ bản cũ. Test E45 (cột 600 x 1100: 40 m²);
+  trường học khung 6 một vùng 10,81 → 10,85.
 - Vùng rải chạy thẳng theo MẶT TƯỜNG. Tường 200 có cột 300 lồi ra 100 thì vùng đi thẳng theo mặt tường 200, không bao vòng phần cột lồi.
 - Nội thất trong phòng (bàn, tủ, thiết bị vệ sinh...) không bao: chỉ bao tường phòng. Plugin hiện bỏ nội thất kín < 1 m² hoặc hẹp; nội thất lớn kín
   có thể làm mất phòng (`PhongThat` bỏ mặt chứa mặt khác): cần nhận nội thất theo layer / block rồi bỏ khỏi `doan`.

@@ -41,6 +41,24 @@ Nét nào là tường: `tuong_cot.md`. Cửa, thang, khu bỏ: `cua_thang_khu.m
   (4) lọc `bo_wc_trong_phong=` trong `PCCC_RAI` (`Rai.cs`; bên kia cửa = mặt gần tâm hộp cửa nhất; dải hành lang = rộng TB ≤ 2,5 m, dài ≥ 3 lần rộng;
   test E35). `CungCua` nhận thêm cánh cửa vẽ LWPOLYLINE hở 1–2 đoạn có một cung 60–120°.
   shortcut: kho nhỏ ≤ 5 m² không ghi chữ mà cửa mở vào phòng cũng bị coi là WC: cần rải thì bấm điểm trong phòng đó.
+- NGƯỜI DÙNG 28/11 (TESTVUNGBCHAY, góp ý spec phân vùng): (1) CHỈ MỘT layer `PCCC_VUNG`, không tách layer theo loại, không vẽ vùng cho WC, sảnh / buồng
+  đệm thang máy, thang, giếng, ram dốc. (2) Phòng trống (không thiết bị WC, không tên) vẫn khoanh dù nhỏ, không có ngưỡng 6 m² (lửng trục 4–5/A–B).
+  (3) Lỗ thông tầng nhiều tầng: `cua_thang_khu.md` gạch 28/11. Ram dốc: `cua_thang_khu.md` mục Khu không đặt đầu báo. Cột lồi: `tuong_cot.md` 28/11.
+  (4) Sảnh trước thang và hành lang thông nhau: hai vùng riêng, ranh là đường ảo vuông góc trục hành lang tại mép buồng thang / giếng thang máy
+  (spec người dùng dán 28/11, mục 4). Không phân định được thì để nguyên và in dòng báo.
+  Plugin ĐÃ LÀM 28/11: (2) phòng trống trục 3–4 / A–B lửng một vùng 10,17 m² (trước chẻ 5,95 + mất nửa phải): nắp đầu tường không khép khe
+  (`cua_thang_khu.md` mục Cửa), hộp kỹ thuật có X khoét ra. (4) `GopMatNho` (a): mặt nhỏ bị `PhongThat` bỏ nằm ở ĐẦU hành lang (dọc trục hành lang,
+  chung ≥ 1/2 bề rộng) và cách hộp thang bộ ≤ 0,6 m thì thành vùng riêng (cả khi nối qua ô cửa thang), không gộp ở (b), không bị bỏ như sảnh thang
+  máy hay WC riêng; in `sanh_thang_bo=N m2=..`. Sau `LamGon` nối sảnh tới mép hành lang (khe ≤ 0,3 m, `NoiSanhThang`) cho hai vùng chung cạnh.
+  TESTVUNGBCHAY lửng: hành lang 15,73 → 12,48 + sảnh 2,5 m², chung cạnh x 63060. Sảnh thang máy (trước cabin) vẫn không vùng. Test E46.
+  Sảnh không ở đầu hành lang hay không sát thang: gộp như cũ (không in dòng).
+  Tên phòng (người dùng 28/11): chữ "P." + mã / chữ ("P.104", "P.giặt") là tên phòng như chữ có "PHÒNG". Mặt kín nhỏ nhất chứa tên phòng là phòng dù
+  `PhongThat` bỏ vì hẹp (`phong_ten=`; P.giặt 1,4 x 2,4 m, 2 bậc ở đáy để ngoài); bếp / bồn rửa trong phòng có tên không làm phòng thành WC.
+  CHƯA TỰ DỰNG (chỉ báo `sanh_thang_bo_vun=N m2=a@x,y`): sảnh trước thang bộ bị khe khép ngang cắt vụn (TESTVUNGBCHAY tầng 1 trục 4–5/B–C: hai cửa
+  đối nhau qua sảnh có má cửa ngắn thẳng hàng cách 2,3 m, tường giữa hai vế thang thẳng hàng tường dưới; mảnh 1,06 / 0,34 / 1,16 m² không mảnh nào
+  thành vùng). Đã thử coi má cửa (chạm hộp cung cánh) là nắp: sảnh lửng nuốt chiếu nghỉ, bỏ. Người dùng vẽ PCCC_VUNG hoặc bấm điểm.
+  Sảnh thang máy tầng 1 trục 5 mở thẳng ra hành lang (không vách ngăn) vẫn theo luật 21/11 (`cua_thang_khu.md`: chỉ bỏ sảnh thang máy trong buồng
+  đệm ≤ 2 cửa; căn hộ 441 = nhà này, mẫu có đầu báo ở đó): thuộc vùng hành lang 8,96 m², không tách.
 
 ## Soát chỗ hay thiếu vùng sau khi dựng (người dùng khoanh đỏ 21/11, Karaoke 123 tầng 2; AI vẽ bằng chatbot làm y như plugin)
 Dựng xong (`PCCC_RAI` Enter mọi phòng, hoặc `vung_tu_dong`), chụp ảnh và dò từng chỗ sau. Mọi khoảng sàn đi lại được trong phạm vi đều phải nằm trong một vùng,
@@ -133,7 +151,9 @@ Khi đó xem `dam_khoang.md`.
    chữ khu (`bo_khu_ten=`), hiên (`bo_hien=`), cụm phòng nhỏ tách xa mặt bằng chính (hình chi tiết, mặt cắt: `bo_cum=`).
    `bo_cum` không xét phòng có tâm trong khung trục (trường học khung 6, 21/11: 2 tầng chọn một lần, nhà thi đấu cách dãy học một sân > 2 m
    thành cụm < 20 % cả tầng 2, bị bỏ như hình chi tiết; mẫu có 15 đầu báo). Hình chi tiết ngoài trục đã lọc ở `bo_ngoai_truc`.
-4. Mặt tự dựng được làm gọn (`LamGon`: bỏ bậc tường, học trần, góc cột) rồi vẽ lên `PCCC_VUNG`.
+4. Mặt tự dựng được làm gọn (`LamGon`: bỏ bậc tường, học trần, góc cột; cột lồi cỡ ≤ 1,2 m bất kể sâu: `BoCotLoi`) rồi vẽ lên `PCCC_VUNG`.
+   Người dùng 28/11: trước bước 3 `PhanTangX` xét ô X theo tầng; sau `LamGon` `NoiSanhThang`, `KhoetOX` (khoét ô X, ram dốc khỏi phòng kề;
+   `tach_o_x=`, `bo_ram_doc=`), rồi `ChieuThongTang` (tầng sàn lỗ: bỏ phần dưới ô X), khoét thang (tâm hộp hoặc tâm hai nửa hộp thang trong vùng).
 Bấm điểm trong phòng (`VungTaiDiem`): dò dần bán kính từ 10 m, lấy mặt kín nhỏ nhất chứa điểm; không áp các bộ lọc trên (bấm = cho phép).
 
 ## Xưởng

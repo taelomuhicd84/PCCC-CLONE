@@ -7,6 +7,16 @@ Mã: `CacMat` (khép khe cửa), `GomCua`, `GomKhu`, `HinhBac`, `TachOX`, `GomCh
 - Khe 3 m tới `HO_CUA_MAX_M` (12 m): chỉ khép khi có ký hiệu cửa NẰM TRONG khe (hộp cửa phủ ≥ 25 % chiều dài khe), hoặc tường 2 nét hở đúng chỗ đó (khe ≤ 6 m).
   Người dùng 14/11: "cứ có cửa mình khép lại 1 vùng". Khe 11 m có cung nắp bồn cầu chạm một đầu thì không khép (KOCHAM 17/11).
 - Khe chữ T có cửa (cửa giữa đầu tường và tường vuông góc): đầu tường cách hộp cửa ≤ 0,5 m, chiếu tới nét gần nhất trong 12 m, tia cắt hộp cửa thì khép.
+  Plugin ĐÃ LÀM 28/11 (TESTVUNGBCHAY lửng, WC sau khu rửa P.M03 bị nuốt): đầu tường 2 nét có NẮP (polyline kín) cũng là đầu tường: điểm đầu chỉ chạm một
+  nét nắp vuông góc 50–600 mm, đầu kia của nắp nối mặt tường bên kia đi lùi vào thân (không đi tiếp qua nắp: bậc đổi bề dày tường không phải đầu tường).
+  Cầu từ đầu có nắp chỉ tới 3 m (trường học khung 6: nắp bậc tường cho cầu 5,5–8,5 m dọc lớp học). `CacMat` bước 1b `chiNap`, test E40.
+- NẮP ĐẦU TƯỜNG không làm "tường thẳng hàng" (người dùng 28/11, lửng trục 4/A–B: nắp tường ngoài trục A và cạnh 0,66 m đầu tường ngang thẳng hàng cách
+  2,9 m bị khép, phòng trống chẻ đôi). Plugin ĐÃ LÀM 28/11 (`CacMat` `napDau`): khe ≥ 0,6 m mà CẢ HAI đầu là nắp (đoạn ≤ 1 m, hai đầu nối nét vuông góc đi
+  cùng phía, thân dài ≥ 1,5 lần nắp và > 1,2 m) thì không khép. Một đầu là mặt tường / mặt cột vẫn khép (cột 200 x 500 không phải thân tường: trường học
+  khung 6 cầu mặt trong hai cột qua dải cửa sổ giữ nguyên). Test E41.
+  Cũng không khép khe ≥ 0,6 m có một đầu là nắp, đầu kia nằm GIỮA một mặt tường vuông góc khe (mặt chạy tiếp ≥ 50 mm cả hai phía): khe xuyên lòng phòng
+  (TESTVUNGBCHAY tầng 1 P.104: cột trục 3 vẽ trên layer trục, tường hở chỗ cột, nắp tường ngoài thẳng hàng mép hộp tường chồng trong tường hành lang
+  cách 2,8 m; `giuaMat`, test E48).
 - Khe XUYÊN không gian liền thì KHÔNG khép (Karaoke ABC 21/11, `dauXuyen` trong `CacMat`): tường ngăn hai bên hành lang thẳng hàng (mặt tường cùng
   toạ độ) làm khe ngang hành lang 1,7 m trông như ô cửa, hành lang vỡ 5 vùng; mẫu đã thẩm định rải đều cả hành lang. Khe 0,7 m tới max(3 m, 6 m)
   mà ở CẢ HAI đầu có nét vuông góc chạy liền hai phía (mặt hành lang chạy tiếp qua đầu tường, chữ T) trong 0,6 m trước hoặc sau đầu khe
@@ -61,9 +71,38 @@ Mã: `CacMat` (khép khe cửa), `GomCua`, `GomKhu`, `HinhBac`, `TachOX`, `GomCh
   `bo_ngoai_truc`). Test E31 + phép kiểm bản chép Karaoke tầng 1 + 2 trong `chay_thu.ps1`.
   shortcut: không có tên mặt bằng ghi số tầng, mặt bằng đặt xoay / lật, hoặc quét từng tầng riêng thì không chiếu: vẽ polyline `PCCC_VUNG` theo ô X tầng trên.
   CÒN: thang tầng 1 Karaoke (nét rời, vế cong) chưa nhận là thang bộ (không `khoet_thang`); mảnh vế thang chỉ bỏ nhờ luật "dưới lỗ tầng trên".
+- NGƯỜI DÙNG 28/11 (`07_CAD/04_KIEM_THU/file_cad_test/TESTVUNGBCHAY.dwg`, tầng 1 + tầng lửng; THAY phần "lắp ở đâu" của gạch 23/11 và 25/11 trên):
+  plugin TỰ đọc các tầng người dùng quét (tên mặt bằng), "quét tới đâu tính tới đó", không hỏi. Ô X cùng vị trí ở các tầng liền nhau = một cột lỗ thông tầng;
+  gọi k là tầng CAO NHẤT có X của cột lỗ.
+  (a) Trên k còn tầng đã quét KHÔNG có X ở đó, hoặc k là tầng cao nhất đã quét → lỗ DỪNG ở k: ô X tầng k là vùng riêng, rải đầu báo ở đó.
+  (b) X lên tới tầng trên cùng của nhà (MÁI / TUM) → thông toàn bộ: không vùng, không đầu báo ở mọi tầng của cột lỗ.
+  Các tầng có X thấp hơn k: không vùng. Tầng sàn lỗ (ngay dưới cột lỗ, không có X): chỉ lắp ở tầng k, nên phần nằm dưới ô X được tách khỏi phòng, không vùng
+  (cách hiểu của Claude, người dùng: "tại vị trí tầng cao nhất có dấu X đó thì rải vùng báo cháy rồi rải đầu báo").
+  Ô X nhỏ (cỡ giếng) mà tầng ngay dưới cùng vị trí là phòng có cửa, không có X là LỖ THÔNG TẦNG, không phải giếng / hộp kỹ thuật (TESTVUNGBCHAY lửng
+  trục 3–4/A–B: ô X 2,3 x 1,1 m dưới khối WC; tầng 1 ở đó là phòng nhỏ có cửa). Giếng thang máy, hộp kỹ thuật (X ở mọi tầng, block / cabin thang máy) vẫn không rải.
+  Ô X không bao giờ gộp với phòng kề (lửng: ô thông tầng có thang trục 6–7/B–C dính vào P.101 qua vách 1 nét).
+  Plugin ĐÃ LÀM 28/11: (1) dấu X vẽ NÉT KHUẤT (line / polyline 2 đỉnh kiểu nét đứt, mọi layer) nhận bằng `OXKhuat` (hai nét xiên dài lệch ≤ 10 %, cắt nhau
+  gần trung điểm ≤ 5 %, bốn đầu ở bốn góc hộp; không đòi đầu chạm tường: ô trục 6–7 vẽ lệch 100 mm). Cỡ giếng vào `OXNho` (không rải, KHÔNG làm giếng
+  thang máy cho luật sảnh thang: phòng sát hộp kỹ thuật không bị bỏ), lớn vào thông tầng; X nằm trong ram dốc là của ram. In `o_x_net_khuat=`.
+  X vẽ LỆCH (lửng trục 6–7/A–B: nét 6 m và 4,8 m cắt nhau ở 40 % / 58 %, một đầu giữa cạnh) nhận theo MẶT (`OXMat`): mặt kín nhỏ nhất ≥ 1 m² chứa
+  giao điểm, bốn đầu nét cách viền ≤ 0,3 m, mỗi nét ≥ 1/2 đường chéo hộp mặt; ô = chính mặt đó (lửng: thông tầng 21,8 m², test E47). X vẽ trùng
+  trên hai xref chỉ nhận một lần.
+  (2) `KhoetOX` sau `LamGon`: hộp ô X (và hộp ram) khoét khỏi phòng kề khi phần chung ≥ 0,2 m² và ≥ 1/4 ô (`tach_o_x=` cũ->mới): P.101 16,02 → 9,02,
+  hộp kỹ thuật trục 4 khoét khỏi phòng trống. Phòng rộng hơn 1,3 lần ô mà có điểm trong nằm trong ô không bị `MatKhongRai` bỏ cả phòng. Test E42.
+  (3) Quét nhiều tầng (`PhanTangX`, in `o_x_nhieu_tang= vung lo_nho duoi_lo mai_ram gieng ghep_tang`): cột lỗ theo dời tầng `DoiTang`; k là tầng cao nhất
+  có X: tầng dưới k không vùng; k = MÁI / TUM hoặc cột lên tới ram: không vùng; ô lớn ở k: vùng; ô cỡ giếng ở k: X ở mọi tầng = giếng, tầng ngay dưới
+  đáy cột là phòng có cửa (mặt kín ≥ 1 m² chứa tâm, có hộp cửa trong / cách ≤ 0,5 m) = lỗ thông tầng nhỏ → vùng (mặt kín quanh tâm ô). Tầng sàn lỗ:
+  `ChieuThongTang` tách phần dưới ô và BỎ (thay 25/11), in `chieu_thong_tang=... m2=cũ->còn lại bo_duoi_lo=`. Dải ≤ 0,2 m giữa mép ô và mép phòng dưới
+  (tường hai tầng lệch 0,1 m) chỉ trừ thêm khi mảnh còn lại bị `PhongThat` bỏ (`DaiKhe`). `DoiTang`: dời lấy TRUNG VỊ (một cặp lệch 50 mm kéo cả tầng
+  5 mm), thiếu 3 cặp phòng khớp thì nhận cặp đưa hộp tầng phủ ≥ 80 % hộp tầng kia (TESTVUNGBCHAY: chỉ P.M02 trùng). TESTVUNGBCHAY 2 tầng: ô lửng trục 6–7
+  vùng 7 m² (sau khoét thang), ô lửng trục 3–4 vùng 2,48 m², tầng 1 dưới ô trục 6–7: 17,83 → 8,3 (bỏ 9,52). Karaoke 123 T1+T2: 122,22 → 49,88
+  (bỏ 61,77 dưới ô X, vế thang 10,6), 30 vùng (trước 31). Tầng 1 dưới ô X lệch trục 6–7/A–B: phòng 10,79 m² bỏ, hành lang 12,54 → 7,64.
+  Test E31 (đổi kỳ vọng), E44, bản chép TESTVUNGBCHAY + Karaoke trong `chay_thu.ps1`.
+  shortcut: tầng nhận theo tên mặt bằng; không ghép được tầng (một tầng, thiếu tên) thì ô cỡ giếng không vùng, ô lớn rải như vùng thường (như cũ).
 - Sảnh thang máy (người dùng 16–17/11): phòng ≤ 30 m² sát giếng thang (cách ≤ 0,6 m) không đặt đầu báo (`bo_sanh_thang=`).
   NGƯỜI DÙNG 21/11 (căn hộ 441, mẫu có đầu báo ở sảnh trước thang máy): chỉ bỏ khi sảnh nằm trong BUỒNG ĐỆM (≤ 2 ký hiệu cửa có tâm trong phòng hoặc
   cách biên ≤ 1 m) hoặc trong BUỒNG THANG (phòng chứa tâm hộp thang bộ). Sảnh tiếp tân, thông tầng, hành lang chung nhiều cửa phòng: RẢI theo mẫu (test E16).
+  NGƯỜI DÙNG 28/11 (phong_vung.md 28/11 (4)): sảnh trước THANG BỘ ở đầu hành lang là vùng riêng (không bỏ như sảnh thang máy, không coi là WC riêng).
   Người dùng nhắc lại 21/11: "sảnh thang máy thì không, sảnh tiếp tân hoặc sảnh thì có". Chữ trong phòng thắng phép đoán theo hình: có chữ SẢNH (không kèm
   THANG), TIẾP TÂN, LỄ TÂN thì luôn rải (`Sanh` trong `GomKhu`, test E20); chữ "SẢNH THANG MÁY" chứa THANG MÁY nên bỏ theo `bo_khu_khong_bao`.
 
@@ -73,6 +112,14 @@ Mã: `CacMat` (khép khe cửa), `GomCua`, `GomKhu`, `HinhBac`, `TachOX`, `GomCh
   (rộng TB 2A/P ≤ 6 m, review 21/11) chứa tâm chữ bị bỏ (`bo_khu_ten=`); phòng khác chỉ báo (`chu_khu_trong_phong_lon`): người dùng vẽ `PCCC_VUNG` tách ra.
   MaiKeo: khoang chứa chữ chỉ bỏ khi là khoang đầu / cuối theo phương chia và < 0,9 x diện tích khoang trung vị (`mai_keo bo_khoang_khu_ten=`);
   chữ ở khoang giữa (mái che dọc cạnh dài không tường ngăn) chỉ báo (`mai_keo chu_khu_khoang_giua=`).
+- RAM DỐC (người dùng 28/11, "ghi nhớ luôn"): không vùng, không đầu báo, không gộp vào vùng kề. Hình nhận: dải nét xiên ngắn song song xếp thành hàng
+  mũi tên (chevron) lặp đều, thường là hatch / block ẩn danh màu xanh trên layer HATCH, kèm nét tâm dọc và dấu X nét khuất. TESTVUNGBCHAY lửng trục 7–8/A–B:
+  block `*U126` layer `xref_FRASER_ARC_TL$0$NA_08. HATCH` hộp 76935–81847 x 55145–58345; X trên layer `...04. NET KHUAT`, nét tâm `...03. NET MANH` y 56746.
+  Chữ RAM / DỐC trong vùng cũng là ram dốc.
+  Plugin ĐÃ LÀM 28/11 (`RamDoc`, `KhoetOX`, in `bo_ram_doc=N m2=..`): ≥ 6 chữ V (hai nét xiên cùng dài 0,3–3 m chung đỉnh, đầu kia tự do: không chạm nét
+  CÙNG cỡ) cùng hướng mũi, đỉnh thẳng hàng theo hướng mũi, cách đều 0,1–0,6 m → hộp ram; vùng chung ≥ 1/2 với hộp ram: bỏ cả vùng, ít hơn: khoét hộp ram
+  (lửng: ram 13,36 m² bỏ, phòng trục 6–7/A–B 22 → 19,68 vì chevron lấn qua trục 7). Chữ: nhãn ≤ 12 ký tự bắt đầu RAM / DỐC (vùng ≤ 150 m²). Test E43.
+  shortcut: hatch mẫu chevron không nổ chưa nhận; ram dốc chỉ áp cho báo cháy (như các khu không đặt đầu báo khác).
 - Phòng bơm PCCC đứng riêng, không thuộc hạng mục nào: KHÔNG lắp báo cháy. Nằm trong hạng mục có báo cháy thì xét theo hạng mục đó.
   Plugin (review 21/11): phòng có chữ PHÒNG BƠM / TRẠM BƠM / NHÀ BƠM thuộc cụm mặt bằng chính (trong nhà, tầng hầm): vẫn rải, chỉ báo (`phong_bom_trong_nha`); nhà bơm tách rời (cụm nhỏ, kể cả sát bể nước) vẫn bỏ.
 - Hiên (L6, chỉ `LoaiTran MaiKeo`): dải hẹp rộng TB ≤ 3 m, ≤ 200 m² có ≥ 2 cột không thuộc phòng khác, VÀ mép trong (cạnh sát phòng thật)

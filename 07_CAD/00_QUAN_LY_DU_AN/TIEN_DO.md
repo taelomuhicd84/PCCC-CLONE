@@ -3,6 +3,62 @@
 Phiên mới làm việc CAD: đọc file này trước, rồi `07_CAD/README.md` (cây thư mục, sửa gì vào đâu). Kế hoạch tổng G0–G9: `07_CAD/00_QUAN_LY_DU_AN/KE_HOACH.md`. Nhật ký: `07_CAD/00_QUAN_LY_DU_AN/LICH_SU.md`. Luật riêng: `07_CAD/CLAUDE.md`.
 Luật: dùng tới 90 % hạn mức thì dừng, ghi file này + `07_CAD/00_QUAN_LY_DU_AN/LICH_SU.md`, commit, push; usage hồi lại thì tự làm tiếp, không hỏi (`07_CAD/CLAUDE.md`).
 
+## 28/11: DỰNG VÙNG "ENTER MỌI PHÒNG" THEO LUẬT 28/11 (TESTVUNGBCHAY) — ĐÃ COMMIT TẠM (dừng 87 % hạn mức 5 giờ), cad-review CÓ 1 CHẶN: CHƯA CHỐT MỐC
+**VIỆC TIẾP (phiên sau làm ngay, không hỏi):** giao `cad-lap-trinh` (Opus, effort high) sửa theo cad-review 28/11 dưới đây: CHẶN 1 trước, rồi NÊN SỬA 2–9;
+chay_thu + thu_mcp TAT CA DAT; chạy lại `cad-review` (Opus effort max) một lần; ghi file này + LICH_SU, commit, push. Mục 10 (bộ lọc layer xref) để mốc riêng sau.
+**cad-review 28/11** (chay_thu 239 DAT, thu_mcp 11 DAT; bản vẽ thật 12,2 / 11,7 s, HEAD 11,5 / 10,1 s; dòng dauXuyen Karaoke ABC 21/11 giống HEAD):
+  1. CHẶN `NhanVung.cs` ~1595 `KhoetOX`: khoét ô X xong, mảnh phòng còn lại có đuôi hẹp (2A/P < 1 m) bị `PhongThat` bỏ cả, không dòng báo. TESTVUNGBCHAY
+     tầng 1 trục 7–8, hop [10000,48000,48000,68000]: HEAD 1 vùng chữ L 22,21 m²; mã mới chỉ còn ô 14,31, dải 1,5 x 4,4 m trước cửa 2 cánh cạnh thang
+     (x 44223–45748) mất vùng; quét 2 tầng mất cả 22,21. Sửa: trừ dải khe ≤ 0,5 m (`DaiKhe`) rồi xét lại `PhongThat`, hoặc giữ mảnh; thêm phép kiểm
+     điểm tầng 1 (44900,61000).
+  2. NÊN SỬA `NhanVung.cs` ~2155 `napDau` (+ `giuaMat` ~2165): khe giữa hai nắp không khép cả khi có ký hiệu cửa trong khe, trái luật 14/11 "có cửa thì khép".
+     Hình E41 + cửa 2 cánh 1,3 m trong khe 2,6 m: HEAD 2 vùng (7,8 + 15), mới 1 vùng 22,8. Sửa: thêm `!cua.Any(cuaTrong…)` như dòng ~2154.
+  3. NÊN SỬA `NhanVung.cs` ~555 + `Rai.cs` ~1907: nhãn dốc thoát nước "DỐC 1%" bị coi là ram, bỏ cả phòng. Không nhận nhãn có "%" / "i="; chỉ "RAM…",
+     "DỐC" đứng riêng hoặc kèm tỉ lệ "1:n".
+  4. NÊN SỬA `NhanVung.cs` ~349 `NetKhuat`: gom cả nét trục CENTER trên layer TRUC (nhà vuông xoay 45° cạnh 25 m, 2 trục giữa CENTER: mới 0 vùng, HEAD 2 vùng
+     312,5). Chỉ gom layer loai ≥ 1, hoặc bỏ kiểu nét CENTER / DASHDOT / PHANTOM.
+  5. NÊN SỬA `Rai.cs` ~1642 `phong_ten` + `NhanVung.cs` ~697 luật "P.": ô khung tên ghi "P. GIAM DOC" (2 x 0,8 m, layer 0) thành vùng 1,6 m², L8 giữ qua
+     `bo_ngoai_truc` / `bo_cum`. Không cho mặt `phong_ten` hưởng miễn trừ L8, hoặc chỉ nhận khi gần phòng thật.
+  6. NÊN SỬA `NhanVung.cs` ~1525, ~1537 `PhanTangX`: luật ram áp mọi hệ (SPR_DAU_DOWN cũng mất sảnh lối vào tầng 1); truyền hệ vào, chỉ xét ram khi BC.
+  7. NÊN SỬA `phong_vung.md` ~49 + `Rai.cs` ~1716: tài liệu ghi luật (2) "phòng trống nhỏ vẫn khoanh" ĐÃ LÀM nhưng `wcTrong` vẫn bỏ phòng trống nhỏ mở
+     vào phòng lớn (1,5 x 2 m: `bo_wc_trong_phong=1`; HEAD cũng vậy). Sửa tài liệu đúng phạm vi đã làm; luật 26/11 hay 28/11 thắng → hỏi người dùng.
+  8. NÊN SỬA `phong_vung.md` ~124 luật 9f vẫn ghi "cột lồi ≤ 150 mm", trái `tuong_cot.md` 28/11: thêm ghi chú "THAY 28/11" tại 9f.
+  9. NÊN SỬA `chay_thu.ps1` ~1563, ~1659–1665 kiểm lỏng: P.giặt chỉ đòi "có vùng chứa điểm" (gộp vào hành lang 17,18 vẫn DAT); ô X lửng và E47 không kiểm m²;
+     thiếu điểm tầng 1 trục 7–8. Kiểm m2.
+  10. GHI CHÚ `NhanVung.cs` ~231 `LoaiLop` (cả ~471, 493, 519, 859): bộ lọc tên layer xét cả TÊN FILE xref (`xref_FRASER_ARC_TRUC$0$NA_01A. COT BTCT` bị
+      bỏ vì "TRUC") → nên chỉ xét phần sau `$n$` / `|`. Review thử bản tạm: chay_thu 238/239 (sảnh thang bộ lửng vụn, cột 6 → 63, P.giặt gộp hành lang);
+      P.104 một vùng cả khi tắt `giuaMat`. MỐC RIÊNG sau.
+  11–12. CHỜ NGƯỜI DÙNG: (a) `mai_ram` (cột lỗ lên tới ram → không vùng) là cách hiểu của agent: ô X tầng 1 14,31 m² @43108,57314 dưới ram lửng không vùng
+      (đã hỏi người dùng 28/11, chưa trả lời); (b) tầng sàn lỗ bỏ phần dưới ô X là "cách hiểu của Claude" (`cua_thang_khu.md` ~79) nhưng chú thích mã / test
+      ghi là luật người dùng: sửa chú thích cho khớp.
+  13. GHI CHÚ: tầng 1 trục 4–5 HEAD có vùng sảnh 1,2 m², mã mới không (chỉ `sanh_thang_bo_vun`): ghi rõ là chỗ lùi.
+  14. GHI CHÚ `NhanVung.cs` ~1289–1291 `DoiTang`: nhánh "dời theo tâm hộp" chưa có trong tài liệu; nhánh phụ còn lấy trung bình (nhánh chính trung vị).
+  Chưa kiểm: AutoCAD thật, thu_gui; `PhanTangX` khi một lần quét nhiều cụm cùng số tầng (2 nhà / bản BC + CC) nghi gán sai tầng.
+- Sửa `07_KIEN_TRUC/cad/NhanVung.cs` + `09_PCCC/01_RAI_THIET_BI/cad/Rai.cs` (luật ở `01_TRI_THUC_VE/nhan_dang/` cua_thang_khu, phong_vung, tuong_cot, dòng
+  "Plugin ĐÃ LÀM 28/11"). Kết quả tầng lửng (bản chép, quét [40000,50000,82000,68000]): 11 vùng.
+  1. WC sau khu rửa: ô cửa chữ T cạnh đầu tường có NẮP nay khép (`CacMat` 1b `chiNap`); P.M03 25,07 → 21,76, WC 3,2 m² bỏ (`bo_wc_thiet_bi`). E40.
+  2. P.101 16,02 → 9,02: dấu X nét khuất (`OXKhuat`) + `KhoetOX` khoét ô X khỏi phòng kề. E42.
+  3. Phòng trống trục 3–4/A–B một vùng 10,17 m² (trước 5,95 chẻ ở x 63060): khe giữa hai NẮP đầu tường ≥ 0,6 m không khép (`napDau`). E41.
+  4. Ram dốc trục 7–8/A–B (13,36 m²) không vùng: chevron (`RamDoc`) hoặc chữ RAM/DỐC, in `bo_ram_doc=`; phòng 6–7/A–B 22 → 19,68 (khoét phần ram lấn). E43.
+  5. Quét 2 tầng: `PhanTangX` (cột lỗ, giếng, lỗ nhỏ trên phòng có cửa), `ChieuThongTang` bỏ phần dưới ô X (thay 25/11). Ô lửng trục 6–7/B–C vùng 7 m²,
+     trục 3–4 vùng 2,48 m²; tầng 1 dưới ô 6–7/B–C: 17,83 → 8,3. Soát lần 2: ô X lửng trục 6–7/A–B vẽ LỆCH nay nhận theo mặt (`OXMat`, E47) → tầng 1
+     dưới đó: phòng 10,79 m² bỏ, hành lang 12,54 → 7,64. Quét 2 tầng 22 → 21 vùng. Karaoke 123 T1+T2: 31 → 30 vùng (bỏ 61,77). E31 đổi kỳ vọng, E44.
+  6. Cột lồi: `LamGon` vốn bỏ khấc < 1 m; thêm `BoCotLoi` cho cột cỡ ≤ 1,2 m sâu ≥ 1 m. E45.
+  7. Hành lang 15,73 → 12,48 + sảnh thang bộ 2,5 m² chung cạnh (`GopMatNho` sảnh đầu hành lang sát thang, `NoiSanhThang`). E46.
+     Tầng 1 trục 4–5: sảnh thang bộ bị khe khép ngang cắt vụn → CHƯA dựng vùng, chỉ báo `sanh_thang_bo_vun=` (1,9 m² @28275,59725); sảnh thang máy
+     tầng 1 mở thẳng ra hành lang giữ trong hành lang 8,96 (luật 21/11 căn hộ 441: chỉ bỏ sảnh thang máy trong buồng đệm).
+  8. Soát lần 3 (tầng 1): P.104 12,04 (+ 7,1 bị bỏ như WC vì bếp) → MỘT vùng 19,18 m²: cột trục 3 nằm trên layer trục nên tường hở đúng chỗ cột; khe
+     2,8 m từ NẮP tường ngoài tới điểm GIỮA mặt tường hành lang (vuông góc khe) không khép nữa (`CacMat` `giuaMat`, E48). Tên "P.xxx" là tên phòng
+     (`GomChuKhu`): bếp / bồn rửa trong phòng có tên không làm phòng thành WC. P.giặt (1,4 x 2,4 m, hẹp, 2 bậc ở đáy) → vùng 3,33 m²: mặt kín nhỏ nhất
+     chứa tên phòng là phòng dù `PhongThat` bỏ (`phong_ten=`, Rai.cs). Quét 2 tầng 21 → 22 vùng; quét lửng không đổi; khung 4–6 không đổi.
+- Kiểm: `chay_thu.ps1` 239 DAT, TAT CA DAT (gồm 9 ca E40–E48, 8 phép kiểm bản chép TESTVUNGBCHAY lửng + 2 tầng, Karaoke T1+T2 hết LOI);
+  `thu_mcp.ps1` TAT CA DAT. Mốc cũ: Quyết Thắng 25/57, Karaoke T2 16 vùng, bản vẽ thật < 15 s giữ; khung 4, 5 giữ nguyên; khung 6 giữ 79 vùng
+  (2 vùng đổi diện tích: 614,4 → 608 không còn ăn dải tường 200 mm, 10,81 → 10,85 cột lồi); khung 3 (cùng nhà TESTVUNGBCHAY) đổi đúng theo 7 lỗi.
+- Ảnh: `12_KET_QUA/TESTVUNGBCHAY/anh/vung_lung_28_11.png`, `vung_2tang_t1_28_11.png`, `vung_2tang_lung_28_11.png` (+ 2 DWG bản chép cạnh đó).
+- build.bat OK 7/7 (AutoCAD đang mở: tắt hẳn rồi mở lại để nạp). CÒN: sửa theo cad-review (đầu mục), người dùng duyệt vùng lửng / 2 tầng (ảnh dưới).
+  Chưa làm: hatch mẫu chevron không nổ (ram) chưa nhận; quét một tầng thì ô X cỡ giếng không vùng (như cũ); tầng 1 vùng ô X ở ram (14,31 m²) khi quét
+  khung 3 hoc_bao_chay không có tên mặt bằng: rải như thông tầng (luật một tầng).
+
 ## 27/11 tối: MCP CHẠY ĐƯỢC PCCC_RAI (spec `rai_phong`) — XONG MÃ + TEST + BUILD, CHỜ MỞ LẠI AUTOCAD
 - Người dùng: "máy chủ MCP phải chạy được các tool và plugin" (AI tự `vung_tu_dong` từng điểm thì sai quy trình, vùng khác plugin).
   `Rai.cs`: tách lõi `RaiLoi(TuyChonRai)` khỏi phần hỏi của `RaiTay` (hỏi điểm / mặt bao qua delegate, dòng lệnh qua `GhiDong`);
@@ -1090,3 +1146,9 @@ xếp sau Bước 5 hoặc gộp vào G6 (bảng trong CAD). Trong lúc chưa c�
 - `build.bat` đổi tên DLL/exe đang bị khoá thành `*.cu*` rồi build bản mới. Build hỏng giữa chừng thì bundle tạm không có DLL: sửa lỗi rồi chạy lại `build.bat`.
 - PDF người dùng gửi là dữ liệu chưa tin: script đọc PDF chạy bằng `python -I`, script đặt ở thư mục khác với PDF.
 - Lệnh Bash dài quá khoảng 8000 ký tự bị cắt (báo thiếu dấu nháy): nội dung dài thì ghi ra file bằng công cụ Write rồi mới chạy lệnh ngắn.
+- Region AutoCAD: giao hai đa giác TRÙNG MÉP khít (dời tầng đúng tới mm) hay ra rỗng (`MatRegion` không khép vòng); phép trừ vẫn đúng. Diện tích phần chung
+  tính bằng phòng trừ phần còn lại (`ChieuThongTang`). Hộp lệch mặt tường 0,1 mm: phép trừ ra GAI mỏng dọc cạnh (2A/P tụt, `PhongThat` bỏ cả phòng): `BoGai`.
+- PowerShell 5.1: hàm trả MỘT PSCustomObject thì `.Count` là `$null` (không phải 1): bọc `@(...)` mọi lời gọi trả danh sách (chay_thu `VungTai`).
+- Regex trong `"$(...)"` của PowerShell không viết được `[^(]`: dùng `[^\x28]`.
+- Gỡ lỗi dựng vùng không sửa mã repo: file `Dbg.cs` (partial class Lenh, lệnh TKDBG gọi `MatChon` rồi ghi OX / TT / CUA / THANG / mặt ra file) build
+  chung nguồn vào DLL tạm ở scratchpad; dump nét bản vẽ bằng LISP `ssget` + `entget` (accoreconsole không có `vla-*`), nổ block bằng `_.EXPLODE` từng cái.

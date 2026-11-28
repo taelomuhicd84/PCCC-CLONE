@@ -895,3 +895,41 @@ Claude Code 2.1.326 coi .claude/skills|agents là file nhạy cảm: luật allo
 
 ## 2026-11-27 (tối) — MCP chạy được PCCC_RAI: spec rai_phong
 Người dùng thấy AI dựng vùng bằng vung_tu_dong từng điểm (sai quy trình, khác plugin) và yêu cầu máy chủ MCP chạy được plugin. Rai.cs: lõi RaiLoi(TuyChonRai) dùng chung cho lệnh gõ tay (RaiTay chỉ còn phần hỏi) và op rai_phong (= Enter mọi phòng không hỏi; chi_vung cho bước duyệt; có PCCC_VUNG thì rải theo vùng đó). build.bat: "call set" chạy nhầm c:\HVAC15\SET.BAT trên PATH -> delayed expansion. chay_thu: phép thử rai_phong DAT, chỉ còn LOI cũ Karaoke T1+T2; thu_mcp TAT CA DAT; build bundle OK. Chưa thử trong AutoCAD thật (cần mở lại AutoCAD), chưa cad-review.
+
+## 2026-11-28 — Dựng vùng "Enter mọi phòng" theo luật 28/11 (TESTVUNGBCHAY tầng 1 + lửng)
+Người dùng chốt 28/11 (cua_thang_khu, phong_vung, tuong_cot) qua góp ý spec phân vùng TESTVUNGBCHAY. Sửa `NhanVung.cs`, `Rai.cs`:
+- `CacMat`: đầu tường có NẮP cạnh ô cửa chữ T vẫn khép (1b, cầu ≤ 3 m; bậc đổi bề dày tường không tính); khe ≥ 0,6 m giữa hai nắp đầu tường (thân > 1,2 m)
+  không khép. Lần đầu bỏ mọi nắp khỏi khép khe: lửng vỡ (P.M01 dính WC bồn tắm, P.101 dính 2 phòng) → chỉ bỏ cặp nắp–nắp; lần hai bỏ cả mặt cột 200 x 500
+  (trường học khung 6 hở dải cửa sổ) → thân phải > 1,2 m; nắp bậc tường cho cầu 8,5 m dọc lớp học → không nhận bậc, cầu ≤ 3 m.
+- Dấu X nét khuất `OXKhuat` (ô lệch 100 mm vẫn nhận), `OXNho` (cỡ giếng, không làm giếng thang máy cho sảnh thang), `KhoetOX` sau LamGon (ô X, ram khoét
+  khỏi phòng kề), `BoGai`; `RamDoc` chevron (chạm đầu bởi nét xiên khác cỡ vẫn nhận) + chữ RAM/DỐC.
+- `PhanTangX` (cột lỗ nhiều tầng), `ChieuThongTang` bỏ phần dưới ô X (thay 25/11: E31 10 → 9 vùng, Karaoke T1+T2 31 → 30), `DaiKhe`, `DoiTang` trung vị
+  + nhận cặp phòng khớp ít mà phủ hộp tầng ≥ 80 % (TESTVUNGBCHAY hai tầng khác bố trí). Trung bình dời làm lệch 5 mm, hành lang Karaoke rải 3 mảnh;
+  dời đúng khít thì Region giao ra rỗng → phần dưới lỗ tính bằng phép trừ. Karaoke về đúng 49,88 / 61,77 / 10,6 như 25/11.
+- `BoCotLoi` sau LamGon (cột ≤ 1,2 m sâu ≥ 1 m). Lần đầu đặt trước LamGon, không giới hạn sâu: vung_tu_dong "ho 500" lấp đuôi tường 3,8 m, sảnh Karaoke T1
+  tự chồng mép (Region hỏng) → sau LamGon, sâu ≤ 1,2 m, kết quả tự cắt thì bỏ.
+- `GopMatNho` sảnh trước thang bộ ở đầu hành lang (cả qua ô cửa thang) thành vùng riêng (`sanh_thang_bo=`), không gộp (b), không bỏ như sảnh thang máy /
+  WC riêng; `NoiSanhThang` sau LamGon cho chung cạnh. Buồng thang 2 vế: tâm hộp rơi vào tường giữa → xét cả tâm hai nửa hộp (tầng 1 trục 1–2).
+Kiểm: chay_thu 235 DAT TAT CA DAT (E40–E46 mới; E31, Karaoke T1+T2 đổi kỳ vọng; bản chép TESTVUNGBCHAY lửng 5 phép + 2 tầng 1 phép); thu_mcp TAT CA DAT.
+So HEAD trên hoc_bao_chay.dwg (rai_phong chi_vung từng khung): khung 4, 5 không đổi; khung 6 79 = 79 vùng (608 thay 614,4: hết ăn dải tường 200 mm;
+10,85 thay 10,81); khung 3 = nhà TESTVUNGBCHAY đổi theo 7 lỗi. Quyết Thắng 25 / 57 giữ. Ảnh `12_KET_QUA/TESTVUNGBCHAY/anh/`.
+Cuối: `KhoetOX` tính phần chung bằng phép trừ (giao Region trùng mép có thể rỗng), ram chỉ bỏ cả vùng khi chung ≥ 1/2; chạy lại chay_thu 235 DAT, thu_mcp TAT CA DAT. build.bat OK 7/7 (AutoCAD đang mở, chưa nạp lại). Chưa kiểm: AutoCAD thật, thu_gui (AutoCAD đang mở), cad-review, người dùng duyệt ảnh.
+Soát lần 2 (bản chép 2 tầng, 28/11 chiều): (1) tầng 1 vùng 10,79 m² nằm dưới ô X lửng trục 6–7/A–B: gốc là dấu X ở đó vẽ LỆCH (cắt nhau 40 % / 58 %,
+dài 6 / 4,8 m) nên không được nhận là ô X, `ChieuThongTang` không có gì để chiếu. Thêm `OXMat` (X theo mặt kín, E47): tầng 1 phòng 10,79 bỏ, hành lang
+12,54 → 7,64; 2 tầng 22 → 21 vùng. (2) Sảnh thang bộ tầng 1 trục 4–5 bị khe khép ngang (má cửa hai cửa đối nhau thẳng hàng, tường giữa vế thang) cắt
+vụn: thử coi má cửa chạm hộp cung cánh là nắp → sảnh lửng nuốt chiếu nghỉ, bỏ; chỉ báo `sanh_thang_bo_vun=`. Sảnh thang máy tầng 1 mở ra hành lang giữ
+luật 21/11 (rải). Sửa thêm: `KhoetOX` phần chung = min(giao, vùng − còn lại) (X trùng hai xref làm khung 3 mất phòng 10,17), OXKhuat bỏ X trùng.
+chay_thu 237 DAT, thu_mcp TAT CA DAT; khung 3–6 hoc_bao_chay như lần 1; build.bat lại.
+Soát lần 3 (tầng 1): P.104 chẻ ở trục 3 → một vùng 19,18 m². Cột trục 3 vẽ trên layer `...TRUC...COT BTCT` (LOP_BO vì có chữ TRUC) nên plugin không thấy cột,
+tường hở đúng chỗ cột; khe 2,8 m nối nắp tường ngoài (thân 4,3 m) với mép một hộp tường nằm chồng trong tường hành lang (đầu khe ở giữa mặt tường).
+Thử (1) xét mặt cột: cột không có trong nét tường → vô dụng; (2) khe xuyên chạy tiếp qua khoảng hở cỡ cột 0,6 m: hành lang lửng vỡ, bỏ. Chốt: khe ≥ 0,6 m
+có một đầu là nắp, đầu kia nằm giữa mặt tường vuông góc khe (≥ 50 mm mỗi phía) không khép (`giuaMat`, E48). Lỗi tự gây giữa chừng: cắt mã làm mất dòng
+khe xuyên (dauXuyen) → lửng vỡ; đã khôi phục, so diff với HEAD chỉ còn phần cố ý. "P.xxx" là tên phòng; mặt kín nhỏ nhất chứa tên phòng thành vùng
+(P.giặt 3,33 m²). chay_thu 239 DAT, thu_mcp TAT CA DAT; khung 3 thêm P.104 / P.giặt, khung 4–6 không đổi.
+
+
+cad-review 28/11 (Opus effort max, chỉ đọc): 1 CHẶN, 8 NÊN SỬA, 6 GHI CHÚ; chay_thu 239 DAT, thu_mcp 11 DAT; bản vẽ thật 12,2 / 11,7 s (HEAD 11,5 / 10,1).
+CHẶN: `KhoetOX` khoét ô X làm `PhongThat` bỏ mảnh phòng còn lại có đuôi hẹp (TESTVUNGBCHAY tầng 1 trục 7–8: HEAD 22,21 m² chữ L, mới chỉ ô 14,31; 2 tầng mất
+cả). NÊN SỬA: napDau bỏ qua ký hiệu cửa trong khe; "DỐC 1%" thành ram; NetKhuat gom trục CENTER; "P. GIAM DOC" khung tên thành vùng; ram áp cả sprinkler;
+tài liệu phòng trống nhỏ / luật 9f lệch mã; chay_thu kiểm lỏng. Bộ lọc layer xét cả tên file xref ("TRUC") là gốc lỗi P.104: mốc riêng. Danh sách đủ
+ở TIEN_DO mục 28/11. Hạn mức 5 giờ 87 % → dừng, commit tạm (mốc CHƯA chốt), push; hẹn làm tiếp sau reset 19:00.
