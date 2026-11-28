@@ -90,7 +90,8 @@ Mã: `CacMat` (khép khe cửa), `GomCua`, `GomKhu`, `HinhBac`, `TachOX`, `GomCh
   (2) `KhoetOX` sau `LamGon`: hộp ô X (và hộp ram) khoét khỏi phòng kề khi phần chung ≥ 0,2 m² và ≥ 1/4 ô (`tach_o_x=` cũ->mới): P.101 16,02 → 9,02,
   hộp kỹ thuật trục 4 khoét khỏi phòng trống. Phòng rộng hơn 1,3 lần ô mà có điểm trong nằm trong ô không bị `MatKhongRai` bỏ cả phòng. Test E42.
   (3) Quét nhiều tầng (`PhanTangX`, in `o_x_nhieu_tang= vung lo_nho duoi_lo mai_ram gieng ghep_tang`): cột lỗ theo dời tầng `DoiTang`; k là tầng cao nhất
-  có X: tầng dưới k không vùng; k = MÁI / TUM hoặc cột lên tới ram: không vùng; ô lớn ở k: vùng; ô cỡ giếng ở k: X ở mọi tầng = giếng, tầng ngay dưới
+  có X: tầng dưới k không vùng; k = MÁI / TUM hoặc cột lên tới ram: không vùng (NGƯỜI DÙNG 28/11 chốt "không rải": ô X tầng 1 trục 7–8/A–B
+  TESTVUNGBCHAY ngay dưới ram dốc lửng không vùng, không đầu báo; phần phòng ngoài ô X vẫn là vùng riêng); ô lớn ở k: vùng; ô cỡ giếng ở k: X ở mọi tầng = giếng, tầng ngay dưới
   đáy cột là phòng có cửa (mặt kín ≥ 1 m² chứa tâm, có hộp cửa trong / cách ≤ 0,5 m) = lỗ thông tầng nhỏ → vùng (mặt kín quanh tâm ô). Tầng sàn lỗ:
   `ChieuThongTang` tách phần dưới ô và BỎ (thay 25/11), in `chieu_thong_tang=... m2=cũ->còn lại bo_duoi_lo=`. Dải ≤ 0,2 m giữa mép ô và mép phòng dưới
   (tường hai tầng lệch 0,1 m) chỉ trừ thêm khi mảnh còn lại bị `PhongThat` bỏ (`DaiKhe`). `DoiTang`: dời lấy TRUNG VỊ (một cặp lệch 50 mm kéo cả tầng

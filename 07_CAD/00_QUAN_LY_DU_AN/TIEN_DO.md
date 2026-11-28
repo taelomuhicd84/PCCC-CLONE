@@ -28,8 +28,8 @@ chay_thu + thu_mcp TAT CA DAT; chạy lại `cad-review` (Opus effort max) một
   10. GHI CHÚ `NhanVung.cs` ~231 `LoaiLop` (cả ~471, 493, 519, 859): bộ lọc tên layer xét cả TÊN FILE xref (`xref_FRASER_ARC_TRUC$0$NA_01A. COT BTCT` bị
       bỏ vì "TRUC") → nên chỉ xét phần sau `$n$` / `|`. Review thử bản tạm: chay_thu 238/239 (sảnh thang bộ lửng vụn, cột 6 → 63, P.giặt gộp hành lang);
       P.104 một vùng cả khi tắt `giuaMat`. MỐC RIÊNG sau.
-  11–12. CHỜ NGƯỜI DÙNG: (a) `mai_ram` (cột lỗ lên tới ram → không vùng) là cách hiểu của agent: ô X tầng 1 14,31 m² @43108,57314 dưới ram lửng không vùng
-      (đã hỏi người dùng 28/11, chưa trả lời); (b) tầng sàn lỗ bỏ phần dưới ô X là "cách hiểu của Claude" (`cua_thang_khu.md` ~79) nhưng chú thích mã / test
+  11–12. (a) `mai_ram` ĐÚNG: người dùng chốt 28/11 "không rải" ô X tầng 1 14,31 m² @43108,57314 dưới ram lửng (ghi `cua_thang_khu.md`). Nhưng dải 1,5 x 4,4 m
+      trước cửa 2 cánh (x 44223–45748) ngoài ô X vẫn phải có vùng riêng (CHẶN 1), cả khi quét 2 tầng. Sửa mục 6: truyền hệ, ram chỉ áp BC. (b) tầng sàn lỗ bỏ phần dưới ô X là "cách hiểu của Claude" (`cua_thang_khu.md` ~79) nhưng chú thích mã / test
       ghi là luật người dùng: sửa chú thích cho khớp.
   13. GHI CHÚ: tầng 1 trục 4–5 HEAD có vùng sảnh 1,2 m², mã mới không (chỉ `sanh_thang_bo_vun`): ghi rõ là chỗ lùi.
   14. GHI CHÚ `NhanVung.cs` ~1289–1291 `DoiTang`: nhánh "dời theo tâm hộp" chưa có trong tài liệu; nhánh phụ còn lấy trung bình (nhánh chính trung vị).
